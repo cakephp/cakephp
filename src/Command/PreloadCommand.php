@@ -19,18 +19,29 @@ namespace Cake\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Core\Preload;
-use LogicException;
+use Cake\Preload\Preloader;
+use SplFileInfo;
 
 /**
  * Generates a preload file
  *
- * Example Regex Patterns:
+ * This can be included as part of your build process.
  *
- * @example bin/cake preload -r "/^(((?!\/tests\/).)+\.php$)*$/"
+ * @see https://www.php.net/manual/en/opcache.preloading.php
  */
 class PreloadCommand extends Command
 {
+    /**
+     * @var \Cake\Preload\Preloader
+     */
+    private $preloader;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->preloader = new Preloader();
+    }
+
     /**
      * Generates a preload file
      *
@@ -40,35 +51,95 @@ class PreloadCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $options = [
-            'path' => ROOT . DS . $args->getOption('name'),
-            'regex' => $args->getOption('regex'),
-            'src' => $args->getOption('src'),
-        ];
+        $this->cakephp();
+        $this->packages($args);
+        $this->applications($args);
 
-        if (is_string($args->getOption('plugins'))) {
-            $options['plugins'] = explode(',', $args->getOption('plugins'));
-        }
-
-        $preload = new Preload($options);
-
-        // $files is a flat array of absolute file paths
-        $result = $preload->write(function ($files) use ($preload) {
-            return $preload->filter($files);
-        });
+        $result = $this->preloader->write($args->getOption('name'));
 
         if ($result) {
             $io->hr();
-            $io->success('Preload written to ' . $options['path']);
+            $io->success('Preload written to ' . $args->getOption('name'));
+            $io->out('You must restart your PHP service for the changes to take effect.');
             $io->hr();
-            $this->status($io);
 
             return static::CODE_SUCCESS;
         }
 
-        $io->err('Error encountered writing to ' . $options['path']);
+        $io->err('Error encountered writing to ' . $args->getOption('name'));
 
         return static::CODE_ERROR;
+    }
+
+    /**
+     * Loads the CakePHP framework
+     *
+     * @return void
+     */
+    private function cakephp(): void
+    {
+        $ignorePaths = implode('|', ['src\/Console', 'src\/Command', 'src\/Shell', 'src\/TestSuite']);
+
+        $this->preloader->loadPath(CAKE, function(SplFileInfo $file) use ($ignorePaths) {
+            return !preg_match("/($ignorePaths)/", $file->getPathname());
+        });
+    }
+
+    /**
+     * Adds a list of vendor packages
+     *
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @return void
+     */
+    private function packages(Arguments $args): void
+    {
+        if (empty($args->getOption('packages'))) {
+            return;
+        }
+
+        $packages = explode(',', $args->getOption('packages'));
+        $packages = array_filter($packages, function ($package) {
+            $path = ROOT . DS . 'vendor' . DS . $package;
+            if (file_exists($path)) {
+                return true;
+            }
+            triggerWarning("Package $package could not be located at $path");
+        });
+
+        $packages = array_map(function($package){
+            return ROOT . DS . 'vendor' . DS . $package;
+        }, $packages);
+
+        foreach ($packages as $package) {
+            $this->preloader->loadPath($package);
+        }
+    }
+
+    /**
+     * Adds the users APP and plugins into the preloader
+     *
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @return void
+     */
+    private function applications(Arguments $args): void
+    {
+        $apps = $args->getOption('app') ? [APP] : [];
+
+        if ($args->getOption('plugins') === '*') {
+            $apps[] = ROOT . DS . 'plugins';
+        } else if (!empty($args->getOption('plugins'))) {
+            foreach (explode(',', $args->getOption('plugins')) as $plugin) {
+                $apps[] = ROOT . DS . 'plugins' . DS  . $plugin . DS . 'src';
+            }
+        }
+
+        $ignorePaths = implode('|', ['src\/Console', 'src\/Command', 'tests\/']);
+
+        foreach ($apps as $app) {
+            $this->preloader->loadPath($app, function(SplFileInfo $file) use ($ignorePaths) {
+                return !preg_match("/($ignorePaths)/", $file->getPathname());
+            });
+        }
     }
 
     /**
@@ -82,61 +153,21 @@ class PreloadCommand extends Command
         $parser
             ->setDescription('Generate a preload file')
             ->addOption('name', [
-                'help' => 'The file name of the preloader',
-                'short' => 'n',
-                'default' => 'preload.php',
+                'help' => 'The preload file path.',
+                'default' => ROOT . DS . 'preload.php',
             ])
-            ->addOption('regex', [
-                'help' => 'Regex pattern for files to match on',
-                'short' => 'r',
-                'default' => '/^(((?!\/tests\/).)+\.php$)*$/i',
-            ])
-            ->addOption('src', [
-                'help' => 'Add your applications src directory into preload',
-                'short' => 's',
+            ->addOption('app', [
+                'help' => 'Add your applications src directory into the preloader',
                 'boolean' => true,
                 'default' => false,
             ])
             ->addOption('plugins', [
-                'help' => 'Comma separated list of plugins (e.g. MyPlugin,Cake/TwigView) to add to the preload',
-                'short' => 'p',
+                'help' => 'A comma separated list of your plugins to load or `*` to load all plugins/*',
+            ])
+            ->addOption('packages', [
+                'help' => 'A comma separated list of packages (e.g. vendor-name/package-name) to add to the preloader',
             ]);
 
         return $parser;
-    }
-
-    /**
-     * Display opcache statistics if any exist
-     *
-     * @param \Cake\Console\ConsoleIo $io The console io
-     * @return void
-     */
-    private function status(ConsoleIo $io): void
-    {
-        if (!function_exists('opcache_get_status')) {
-            throw new LogicException('OPcache must be enabled');
-        }
-
-        $status = opcache_get_status();
-        if (!is_array($status)) {
-            return;
-        }
-
-        $io->info('OPcache Status');
-
-        $memory = $status['memory_usage'];
-        $stats = $status['opcache_statistics'];
-        $wastedMem = $memory['wasted_memory'];
-
-        $io->helper('table')->output([
-            ['Item', 'Value'],
-            ['Free Memory', round($memory['free_memory'] / 1024 / 1024) . 'MB'],
-            ['Used Memory', round($memory['used_memory'] / 1024 / 1024) . 'MB'],
-            ['Wasted Memory', round($wastedMem > 0 ? $wastedMem / 1024 / 1024 : 0) . 'MB'],
-            ['Scripts', $stats['num_cached_scripts'] ?? ''],
-            ['Keys', $stats['num_cached_keys'] ?? ''],
-            ['Hits', $stats['hits'] ?? ''],
-            ['Misses', $stats['misses'] ?? ''],
-        ]);
     }
 }
