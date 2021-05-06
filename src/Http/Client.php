@@ -531,11 +531,7 @@ class Client implements ClientInterface
         if ($query) {
             $q = strpos($url, '?') === false ? '?' : '&';
             $url .= $q;
-            if (is_string($query)) {
-                $url .= $query;
-            } else {
-                $url .= http_build_query($query, '', '&', PHP_QUERY_RFC3986);
-            }
+            $url .= is_string($query) ? $query : http_build_query($query, '', '&', PHP_QUERY_RFC3986);
         }
 
         if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
