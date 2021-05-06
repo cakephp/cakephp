@@ -163,7 +163,7 @@ class ClientTest extends TestCase
                 'options do not duplicate',
             ],
             [
-                'http://example.com/search?q=hi+there&cat%5Bid%5D%5B0%5D=2&cat%5Bid%5D%5B1%5D=3',
+                'http://example.com/search?q=hi%20there&cat%5Bid%5D%5B0%5D=2&cat%5Bid%5D%5B1%5D=3',
                 'http://example.com/search',
                 ['q' => 'hi there', 'cat' => ['id' => [2, 3]]],
                 [],
@@ -198,18 +198,11 @@ class ClientTest extends TestCase
                 'protocol relative url',
             ],
             [
-                'https://example.com/operations?%24filter=operation_id+eq+12',
-                'https://example.com/operations',
-                ['$filter' => 'operation_id eq 12'],
-                ['queryEncoding' => PHP_QUERY_RFC1738],
-                'check the alternate RFC 1738 query encoding',
-            ],
-            [
                 'https://example.com/operations?%24filter=operation_id%20eq%2012',
                 'https://example.com/operations',
                 ['$filter' => 'operation_id eq 12'],
                 [],
-                'check the default RFC 3986 query encoding',
+                'check the RFC 3986 query encoding',
             ],
         ];
     }
@@ -320,7 +313,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame(
-                    'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
+                    'http://cakephp.org/search?q=hi%20there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
                     $request->getUri() . ''
                 );
 
@@ -742,7 +735,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertSame(Request::METHOD_HEAD, $request->getMethod());
-                $this->assertSame('http://cakephp.org/search?q=hi+there', '' . $request->getUri());
+                $this->assertSame('http://cakephp.org/search?q=hi%20there', '' . $request->getUri());
 
                 return true;
             }))
@@ -1025,7 +1018,6 @@ class ClientTest extends TestCase
             'ssl_verify_host' => true,
             'redirect' => false,
             'protocolVersion' => '1.1',
-            'queryEncoding' => PHP_QUERY_RFC3986,
         ];
         $this->assertSame($expected, $config);
     }
