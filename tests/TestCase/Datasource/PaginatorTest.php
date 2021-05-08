@@ -165,4 +165,27 @@ class PaginatorTest extends TestCase
         $this->assertSame(2, $pagingParams['PaginatorPosts']['end']);
         $this->assertFalse($pagingParams['PaginatorPosts']['nextPage']);
     }
+
+    /**
+     * test direction setting.
+     *
+     * @return void
+     */
+    public function testPaginateDefaultDirection()
+    {
+        $settings = [
+            'PaginatorPosts' => [
+                'order' => ['Other.title' => 'ASC'],
+            ],
+        ];
+
+        $this->loadFixtures('Posts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $this->Paginator->paginate($table, [], $settings);
+        $pagingParams = $this->Paginator->getPagingParams();
+
+        $this->assertSame('Other.title', $pagingParams['PaginatorPosts']['sort']);
+        $this->assertNull($pagingParams['PaginatorPosts']['direction']);
+    }
 }
