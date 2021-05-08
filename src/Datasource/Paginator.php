@@ -367,7 +367,7 @@ class Paginator implements PaginatorInterface
 
         $params += [
             'sort' => $data['options']['sort'],
-            'direction' => isset($data['options']['sort']) ? current($order) : null,
+            'direction' => isset($data['options']['sort']) && count($order) ? current($order) : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'completeSort' => $order,
