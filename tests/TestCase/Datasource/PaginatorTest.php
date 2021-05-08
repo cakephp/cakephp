@@ -171,7 +171,7 @@ class PaginatorTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateDirection()
+    public function testPaginateDefaultDirection()
     {
         $settings = [
             'PaginatorPosts' => [
