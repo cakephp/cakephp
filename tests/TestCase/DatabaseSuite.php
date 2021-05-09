@@ -34,7 +34,6 @@ class DatabaseSuite extends TestSuite
     public static function suite()
     {
         $suite = new static('Database related tests');
-        $suite->addTestFile(__DIR__ . DS . 'Database' . DS . 'ConnectionTest.php');
         $suite->addTestDirectoryRecursive(__DIR__ . DS . 'Database');
         $suite->addTestDirectoryRecursive(__DIR__ . DS . 'ORM');
 

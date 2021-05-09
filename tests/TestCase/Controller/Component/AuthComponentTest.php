@@ -1428,20 +1428,21 @@ class AuthComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('action', 'add'));
         $this->Auth->startup(new Event('Controller.startup', $this->Controller));
 
-        $this->Auth->Flash->expects($this->at(0))
+        $this->Auth->Flash->expects($this->exactly(2))
             ->method('set')
-            ->with(
-                'Auth failure',
+            ->withConsecutive(
                 [
-                    'key' => 'auth-key',
-                    'element' => 'error',
-                    'params' => ['class' => 'error'],
+                    'Auth failure',
+                    [
+                        'key' => 'auth-key',
+                        'element' => 'error',
+                        'params' => ['class' => 'error'],
+                    ],
+                ],
+                [
+                    'Auth failure', ['key' => 'auth-key', 'element' => 'custom'],
                 ]
             );
-
-        $this->Auth->Flash->expects($this->at(1))
-            ->method('set')
-            ->with('Auth failure', ['key' => 'auth-key', 'element' => 'custom']);
 
         $this->Auth->setConfig('flash', [
             'key' => 'auth-key',
@@ -1590,26 +1591,27 @@ class AuthComponentTest extends TestCase
                     'name' => 'Members',
                 ],
                 'is_admin' => false,
-            ]];
-            $this->Auth->getController()->getRequest()->getSession()->write('Auth', $data);
+            ],
+        ];
+        $this->Auth->getController()->getRequest()->getSession()->write('Auth', $data);
 
-            $result = $this->Auth->user();
-            $this->assertEquals($data['User'], $result);
+        $result = $this->Auth->user();
+        $this->assertEquals($data['User'], $result);
 
-            $result = $this->Auth->user('username');
-            $this->assertSame($data['User']['username'], $result);
+        $result = $this->Auth->user('username');
+        $this->assertSame($data['User']['username'], $result);
 
-            $result = $this->Auth->user('Group.name');
-            $this->assertSame($data['User']['Group']['name'], $result);
+        $result = $this->Auth->user('Group.name');
+        $this->assertSame($data['User']['Group']['name'], $result);
 
-            $result = $this->Auth->user('invalid');
-            $this->assertNull($result);
+        $result = $this->Auth->user('invalid');
+        $this->assertNull($result);
 
-            $result = $this->Auth->user('Company.invalid');
-            $this->assertNull($result);
+        $result = $this->Auth->user('Company.invalid');
+        $this->assertNull($result);
 
-            $result = $this->Auth->user('is_admin');
-            $this->assertFalse($result);
+        $result = $this->Auth->user('is_admin');
+        $this->assertFalse($result);
     }
 
     /**

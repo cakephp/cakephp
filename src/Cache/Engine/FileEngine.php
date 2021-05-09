@@ -254,11 +254,13 @@ class FileEngine extends CacheEngine
         /** @var \SplFileInfo $fileInfo */
         foreach ($contents as $fileInfo) {
             if ($fileInfo->isFile()) {
+                unset($fileInfo);
                 continue;
             }
 
             $realPath = $fileInfo->getRealPath();
             if (!$realPath) {
+                unset($fileInfo);
                 continue;
             }
 
@@ -267,7 +269,14 @@ class FileEngine extends CacheEngine
                 $this->_clearDirectory($path);
                 $cleared[] = $path;
             }
+
+            // possible inner iterators need to be unset too in order for locks on parents to be released
+            unset($fileInfo);
         }
+
+        // unsetting iterators helps releasing possible locks in certain environments,
+        // which could otherwise make `rmdir()` fail
+        unset($directory, $contents);
 
         return true;
     }
@@ -482,6 +491,10 @@ class FileEngine extends CacheEngine
             // phpcs:ignore
             @unlink($path);
         }
+
+        // unsetting iterators helps releasing possible locks in certain environments,
+        // which could otherwise make `rmdir()` fail
+        unset($directoryIterator, $contents, $filtered);
 
         return true;
     }

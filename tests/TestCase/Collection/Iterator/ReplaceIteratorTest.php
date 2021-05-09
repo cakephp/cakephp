@@ -32,21 +32,13 @@ class ReplaceIteratorTest extends TestCase
     public function testReplace()
     {
         $items = new \ArrayIterator([1, 2, 3]);
-        $callable = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 0, $items)
-            ->will($this->returnValue(1));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 1, $items)
-            ->will($this->returnValue(4));
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(3, 2, $items)
-            ->will($this->returnValue(9));
+        $callable = function ($value, $key, $itemsArg) use ($items) {
+            $this->assertSame($items, $itemsArg);
+            $this->assertContains($value, $items);
+            $this->assertContains($key, [0, 1, 2]);
+
+            return $value > 1 ? $value * $value : $value;
+        };
 
         $map = new ReplaceIterator($items, $callable);
         $this->assertEquals([1, 4, 9], iterator_to_array($map));

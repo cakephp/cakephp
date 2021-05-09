@@ -267,10 +267,11 @@ class EventManagerTest extends TestCase
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
-        $listener->expects($this->at(0))->method('listenerFunction')
+        $listener->expects($this->once())
+            ->method('listenerFunction')
             ->with($event)
             ->will($this->returnValue('something special'));
-        $anotherListener->expects($this->at(0))
+        $anotherListener->expects($this->once())
             ->method('listenerFunction')
             ->with($event);
         $manager->dispatch($event);
@@ -294,7 +295,7 @@ class EventManagerTest extends TestCase
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
-        $listener->expects($this->at(0))->method('listenerFunction')
+        $listener->expects($this->once())->method('listenerFunction')
             ->with($event)
             ->will($this->returnValue(false));
         $anotherListener->expects($this->never())
@@ -345,7 +346,7 @@ class EventManagerTest extends TestCase
         $this->assertEquals($expected, $listener->callList);
 
         $event = new Event('another.event', $this, ['some' => 'data']);
-        $listener->expects($this->at(0))
+        $listener->expects($this->once())
             ->method('secondListenerFunction')
             ->with($event, 'data');
         $manager->dispatch($event);

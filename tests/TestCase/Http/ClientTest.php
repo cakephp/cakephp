@@ -635,7 +635,7 @@ class ClientTest extends TestCase
             'Set-Cookie: expiring=now; Expires=Wed, 09-Jun-1999 10:18:14 GMT',
         ];
         $response = new Response($headers, '');
-        $adapter->expects($this->at(0))
+        $adapter->expects($this->once())
             ->method('send')
             ->will($this->returnValue([$response]));
 
@@ -769,57 +769,56 @@ class ClientTest extends TestCase
             'Location: http://cakephp.org/redirect1?foo=bar',
             'Set-Cookie: redirect1=true;path=/',
         ]);
-        $adapter->expects($this->at(0))
-            ->method('send')
-            ->with(
-                $this->callback(function (Request $request) use ($url) {
-                    $this->assertInstanceOf(Request::class, $request);
-                    $this->assertSame($url, (string)$request->getUri());
-
-                    return true;
-                }),
-                $this->callback(function ($options) {
-                    $this->assertArrayNotHasKey('redirect', $options);
-
-                    return true;
-                })
-            )
-            ->willReturn([$redirect]);
 
         $redirect2 = new Response([
             'HTTP/1.0 301',
             'Location: /redirect2#foo',
             'Set-Cookie: redirect2=true;path=/',
         ]);
-        $adapter->expects($this->at(1))
-            ->method('send')
-            ->with(
-                $this->callback(function (Request $request) use ($url) {
-                    $this->assertInstanceOf(Request::class, $request);
-                    $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
-
-                    return true;
-                }),
-                $this->callback(function ($options) {
-                    $this->assertArrayNotHasKey('redirect', $options);
-
-                    return true;
-                })
-            )
-            ->willReturn([$redirect2]);
 
         $response = new Response([
             'HTTP/1.0 200',
         ]);
-        $adapter->expects($this->at(2))
-            ->method('send')
-            ->with($this->callback(function (Request $request) use ($url) {
-                $this->assertInstanceOf(Request::class, $request);
-                $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
 
-                return true;
-            }))
-            ->willReturn([$response]);
+        $adapter->expects($this->exactly(3))
+            ->method('send')
+            ->withConsecutive(
+                [
+                    $this->callback(function (Request $request) use ($url) {
+                        $this->assertInstanceOf(Request::class, $request);
+                        $this->assertSame($url, (string)$request->getUri());
+
+                        return true;
+                    }),
+                    $this->callback(function ($options) {
+                        $this->assertArrayNotHasKey('redirect', $options);
+
+                        return true;
+                    }),
+                ],
+                [
+                    $this->callback(function (Request $request) use ($url) {
+                        $this->assertInstanceOf(Request::class, $request);
+                        $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
+
+                        return true;
+                    }),
+                    $this->callback(function ($options) {
+                        $this->assertArrayNotHasKey('redirect', $options);
+
+                        return true;
+                    }),
+                ],
+                [
+                    $this->callback(function (Request $request) use ($url) {
+                        $this->assertInstanceOf(Request::class, $request);
+                        $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
+
+                        return true;
+                    }),
+                ]
+            )
+            ->will($this->onConsecutiveCalls([$redirect], [$redirect2], [$response]));
 
         $client = new Client([
             'adapter' => $adapter,
@@ -897,22 +896,23 @@ class ClientTest extends TestCase
             'HTTP/1.0 301',
             'Location: http://backstage.example.org',
         ]);
-        $adapter->expects($this->at(0))
-            ->method('send')
-            ->willReturn([$redirect]);
-
         $response = new Response([
             'HTTP/1.0 200',
         ]);
-        $adapter->expects($this->at(1))
+        $adapter->expects($this->exactly(2))
             ->method('send')
-            ->with($this->callback(function ($request) {
-                $this->assertSame('http://backstage.example.org', (string)$request->getUri());
-                $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
+            ->withConsecutive(
+                [$this->anything()],
+                [
+                    $this->callback(function ($request) {
+                        $this->assertSame('http://backstage.example.org', (string)$request->getUri());
+                        $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
-                return true;
-            }))
-            ->willReturn([$response]);
+                        return true;
+                    }),
+                ]
+            )
+            ->will($this->OnConsecutiveCalls([$redirect], [$response]));
 
         $client = new Client([
             'adapter' => $adapter,

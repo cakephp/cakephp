@@ -558,6 +558,8 @@ class Folder
             );
             $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
         } catch (Exception $e) {
+            unset($directory, $iterator);
+
             if ($type === null) {
                 return [[], []];
             }
@@ -573,12 +575,14 @@ class Folder
             if ($skipHidden) {
                 $subPathName = $fsIterator->getSubPathname();
                 if ($subPathName[0] === '.' || strpos($subPathName, DIRECTORY_SEPARATOR . '.') !== false) {
+                    unset($fsIterator);
                     continue;
                 }
             }
             /** @var \FilesystemIterator $item */
             $item = $fsIterator->current();
             if (!empty($exceptions) && isset($exceptions[$item->getFilename()])) {
+                unset($fsIterator, $item);
                 continue;
             }
 
@@ -587,7 +591,15 @@ class Folder
             } elseif ($item->isDir() && !$item->isDot()) {
                 $directories[] = $itemPath;
             }
+
+            // inner iterators need to be unset too in order for locks on parents to be released
+            unset($fsIterator, $item);
         }
+
+        // unsetting iterators helps releasing possible locks in certain environments,
+        // which could otherwise make `rmdir()` fail
+        unset($directory, $iterator);
+
         if ($type === null) {
             return [$directories, $files];
         }
@@ -707,6 +719,8 @@ class Folder
                 $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::CURRENT_AS_SELF);
                 $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
             } catch (Exception $e) {
+                unset($directory, $iterator);
+
                 return false;
             }
 
@@ -728,10 +742,19 @@ class Folder
                     } else {
                         $this->_errors[] = sprintf('%s NOT removed', $filePath);
 
+                        unset($directory, $iterator, $item);
+
                         return false;
                     }
                 }
+
+                // inner iterators need to be unset too in order for locks on parents to be released
+                unset($item);
             }
+
+            // unsetting iterators helps releasing possible locks in certain environments,
+            // which could otherwise make `rmdir()` fail
+            unset($directory, $iterator);
 
             $path = rtrim($path, DIRECTORY_SEPARATOR);
             // phpcs:disable

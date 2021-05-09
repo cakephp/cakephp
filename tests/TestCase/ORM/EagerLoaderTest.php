@@ -137,7 +137,7 @@ class EagerLoaderTest extends TestCase
     {
         $contains = [
             'clients' => [
-            'orders' => [
+                'orders' => [
                     'orderTypes',
                     'stuff' => ['stuffTypes'],
                 ],
@@ -155,74 +155,73 @@ class EagerLoaderTest extends TestCase
 
         $query->setTypeMap($this->clientsTypeMap);
 
-        $query->expects($this->at(0))->method('join')
-            ->with(['clients' => [
-                'table' => 'clients',
-                'type' => 'LEFT',
-                'conditions' => new QueryExpression([
-                    ['clients.id' => new IdentifierExpression('foo.client_id')],
-                ], new TypeMap($this->clientsTypeMap->getDefaults())),
-            ]])
-            ->will($this->returnValue($query));
-
-        $query->expects($this->at(1))->method('join')
-            ->with(['orders' => [
-                'table' => 'orders',
-                'type' => 'LEFT',
-                'conditions' => new QueryExpression([
-                    ['clients.id' => new IdentifierExpression('orders.client_id')],
-                ], $this->ordersTypeMap),
-            ]])
-            ->will($this->returnValue($query));
-
-        $query->expects($this->at(2))->method('join')
-            ->with(['orderTypes' => [
-                'table' => 'order_types',
-                'type' => 'LEFT',
-                'conditions' => new QueryExpression([
-                    ['orderTypes.id' => new IdentifierExpression('orders.order_type_id')],
-                ], $this->orderTypesTypeMap),
-            ]])
-            ->will($this->returnValue($query));
-
-        $query->expects($this->at(3))->method('join')
-            ->with(['stuff' => [
-                'table' => 'things',
-                'type' => 'LEFT',
-                'conditions' => new QueryExpression([
-                    ['orders.id' => new IdentifierExpression('stuff.order_id')],
-                ], $this->stuffTypeMap),
-            ]])
-            ->will($this->returnValue($query));
-
-        $query->expects($this->at(4))->method('join')
-            ->with(['stuffTypes' => [
-                'table' => 'stuff_types',
-                'type' => 'LEFT',
-                'conditions' => new QueryExpression([
-                    ['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')],
-                ], $this->stuffTypesTypeMap),
-            ]])
-            ->will($this->returnValue($query));
-
-        $query->expects($this->at(5))->method('join')
-            ->with(['companies' => [
-                'table' => 'organizations',
-                'type' => 'LEFT',
-                'conditions' => new QueryExpression([
-                    ['companies.id' => new IdentifierExpression('clients.organization_id')],
-                ], $this->companiesTypeMap),
-            ]])
-            ->will($this->returnValue($query));
-
-        $query->expects($this->at(6))->method('join')
-            ->with(['categories' => [
-                'table' => 'categories',
-                'type' => 'LEFT',
-                'conditions' => new QueryExpression([
-                    ['categories.id' => new IdentifierExpression('companies.category_id')],
-                ], $this->categoriesTypeMap),
-            ]])
+        $query->expects($this->exactly(7))
+            ->method('join')
+            ->withConsecutive(
+                [
+                    ['clients' => [
+                        'table' => 'clients',
+                        'type' => 'LEFT',
+                        'conditions' => new QueryExpression([
+                            ['clients.id' => new IdentifierExpression('foo.client_id')],
+                        ], new TypeMap($this->clientsTypeMap->getDefaults())),
+                    ]],
+                ],
+                [
+                    ['orders' => [
+                        'table' => 'orders',
+                        'type' => 'LEFT',
+                        'conditions' => new QueryExpression([
+                            ['clients.id' => new IdentifierExpression('orders.client_id')],
+                        ], $this->ordersTypeMap),
+                    ]],
+                ],
+                [
+                    ['orderTypes' => [
+                        'table' => 'order_types',
+                        'type' => 'LEFT',
+                        'conditions' => new QueryExpression([
+                            ['orderTypes.id' => new IdentifierExpression('orders.order_type_id')],
+                        ], $this->orderTypesTypeMap),
+                    ]],
+                ],
+                [
+                    ['stuff' => [
+                        'table' => 'things',
+                        'type' => 'LEFT',
+                        'conditions' => new QueryExpression([
+                            ['orders.id' => new IdentifierExpression('stuff.order_id')],
+                        ], $this->stuffTypeMap),
+                    ]],
+                ],
+                [
+                    ['stuffTypes' => [
+                        'table' => 'stuff_types',
+                        'type' => 'LEFT',
+                        'conditions' => new QueryExpression([
+                            ['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')],
+                        ], $this->stuffTypesTypeMap),
+                    ]],
+                ],
+                [
+                    ['companies' => [
+                        'table' => 'organizations',
+                        'type' => 'LEFT',
+                        'conditions' => new QueryExpression([
+                            ['companies.id' => new IdentifierExpression('clients.organization_id')],
+                        ], $this->companiesTypeMap),
+                    ]],
+                ],
+                [
+                    ['categories' => [
+                        'table' => 'categories',
+                        'type' => 'LEFT',
+                        'conditions' => new QueryExpression([
+                            ['categories.id' => new IdentifierExpression('companies.category_id')],
+                        ], $this->categoriesTypeMap),
+                    ]],
+                ]
+            )
             ->will($this->returnValue($query));
 
         $loader = new EagerLoader();
@@ -279,11 +278,9 @@ class EagerLoaderTest extends TestCase
             'companies' => 'categories',
         ]);
         $expected = [
-            'clients' => [
-            ],
+            'clients' => [],
             'companies' => [
-                'categories' => [
-                ],
+                'categories' => [],
             ],
         ];
         $this->assertEquals($expected, $loader->getContain());

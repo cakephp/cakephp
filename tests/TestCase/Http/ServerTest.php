@@ -140,9 +140,9 @@ class ServerTest extends TestCase
             ->addMethods(['pluginEvents'])
             ->setConstructorArgs([$this->config])
             ->getMock();
-        $app->expects($this->at(0))
+        $app->expects($this->once())
             ->method('pluginBootstrap');
-        $app->expects($this->at(1))
+        $app->expects($this->once())
             ->method('pluginMiddleware')
             ->with($this->isInstanceOf(MiddlewareQueue::class))
             ->will($this->returnCallback(function ($middleware) {

@@ -208,12 +208,19 @@ class Filesystem
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {
                 // phpcs:ignore
                 $result = $result && @rmdir($fileInfo->getPathname());
+                unset($fileInfo);
                 continue;
             }
 
             // phpcs:ignore
             $result = $result && @unlink($fileInfo->getPathname());
+            // possible inner iterators need to be unset too in order for locks on parents to be released
+            unset($fileInfo);
         }
+
+        // unsetting iterators helps releasing possible locks in certain environments,
+        // which could otherwise make `rmdir()` fail
+        unset($iterator);
 
         // phpcs:ignore
         $result = $result && @rmdir($path);

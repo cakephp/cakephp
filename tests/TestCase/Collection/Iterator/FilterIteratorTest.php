@@ -32,21 +32,13 @@ class FilterIteratorTest extends TestCase
     public function testFilter()
     {
         $items = new \ArrayIterator([1, 2, 3]);
-        $callable = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 0, $items)
-            ->will($this->returnValue(false));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 1, $items)
-            ->will($this->returnValue(true));
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(3, 2, $items)
-            ->will($this->returnValue(false));
+        $callable = function ($value, $key, $itemArg) use ($items) {
+            $this->assertSame($items, $itemArg);
+            $this->assertContains($value, $items);
+            $this->assertContains($key, [0, 1, 2]);
+
+            return $value === 2;
+        };
 
         $filter = new FilterIterator($items, $callable);
         $this->assertEquals([1 => 2], iterator_to_array($filter));

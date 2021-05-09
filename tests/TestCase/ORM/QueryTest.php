@@ -2521,13 +2521,9 @@ class QueryTest extends TestCase
             ->onlyMethods(['_performCount'])
             ->getMock();
 
-        $query->expects($this->at(0))
+        $query->expects($this->exactly(2))
             ->method('_performCount')
-            ->will($this->returnValue(1));
-
-        $query->expects($this->at(1))
-            ->method('_performCount')
-            ->will($this->returnValue(2));
+            ->will($this->onConsecutiveCalls(1, 2));
 
         $result = $query->count();
         $this->assertSame(1, $result, 'The result of the sql query should be returned');

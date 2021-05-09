@@ -160,12 +160,12 @@ class ShellTest extends TestCase
      */
     public function testIn()
     {
-        $this->io->expects($this->at(0))
+        $this->io->expects($this->once())
             ->method('askChoice')
             ->with('Just a test?', ['y', 'n'], 'n')
             ->will($this->returnValue('n'));
 
-        $this->io->expects($this->at(1))
+        $this->io->expects($this->once())
             ->method('ask')
             ->with('Just a test?', 'n')
             ->will($this->returnValue('n'));
@@ -388,7 +388,7 @@ class ShellTest extends TestCase
         $this->expectExceptionMessage('Foo Not Found');
         $this->expectExceptionCode(1);
 
-        $this->io->expects($this->at(0))
+        $this->io->expects($this->once())
             ->method('err')
             ->with('<error>Foo Not Found</error>');
 
@@ -1375,15 +1375,13 @@ TEXT;
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->disableOriginalConstructor()
             ->getMock();
+
         $io->expects($this->once())
             ->method('level')
             ->with(Shell::QUIET);
-        $io->expects($this->at(0))
+        $io->expects($this->exactly(2))
             ->method('setLoggers')
-            ->with(true);
-        $io->expects($this->at(2))
-            ->method('setLoggers')
-            ->with(ConsoleIo::QUIET);
+            ->withConsecutive([true], [ConsoleIo::QUIET]);
 
         $this->Shell = $this->getMockBuilder(ShellTestShell::class)
             ->addMethods(['welcome'])

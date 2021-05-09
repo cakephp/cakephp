@@ -136,6 +136,9 @@ class AssetTest extends TestCase
         // URL encoding is done
         $result = Asset::url('dir/big+tall/image', ['ext' => '.jpg']);
         $this->assertSame('/dir/big%2Btall/image.jpg', $result);
+
+        $result = Asset::url('/posts/index/adbirawwy/page:6/sort:type/');
+        $this->assertSame('/posts/index/adbirawwy/page%3A6/sort%3Atype/', $result);
     }
 
     /**

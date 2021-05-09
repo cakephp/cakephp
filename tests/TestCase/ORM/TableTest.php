@@ -3275,32 +3275,28 @@ class TableTest extends TestCase
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
 
-        $mock->expects($this->at(0))
+        $mock->expects($this->once())
             ->method('on');
 
-        $mock->expects($this->at(1))
-            ->method('dispatch');
-
-        $mock->expects($this->at(2))
+        $mock->expects($this->exactly(4))
             ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) use ($entity, $options) {
-                return $event->getName() === 'Model.beforeDelete' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options];
-            }));
-
-        $mock->expects($this->at(3))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) use ($entity, $options) {
-                return $event->getName() === 'Model.afterDelete' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options];
-            }));
-
-        $mock->expects($this->at(4))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) use ($entity, $options) {
-                return $event->getName() === 'Model.afterDeleteCommit' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options];
-            }));
+            ->withConsecutive(
+                [$this->anything()],
+                [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                    return $event->getName() === 'Model.beforeDelete' &&
+                        $event->getData() == ['entity' => $entity, 'options' => $options];
+                })],
+                [
+                    $this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.afterDelete' &&
+                            $event->getData() == ['entity' => $entity, 'options' => $options];
+                    }),
+                ],
+                [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                    return $event->getName() === 'Model.afterDeleteCommit' &&
+                        $event->getData() == ['entity' => $entity, 'options' => $options];
+                })]
+            );
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->setNew(false);
@@ -3380,7 +3376,7 @@ class TableTest extends TestCase
         $options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
-        $mock->expects($this->at(2))
+        $mock->expects($this->any())
             ->method('dispatch')
             ->will($this->returnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
@@ -3405,7 +3401,7 @@ class TableTest extends TestCase
         $options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
-        $mock->expects($this->at(2))
+        $mock->expects($this->any())
             ->method('dispatch')
             ->will($this->returnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
@@ -3739,10 +3735,11 @@ class TableTest extends TestCase
         $expected = new QueryExpression([], $this->usersTypeMap);
         $expected->add(
             [
-            'OR' => [
-                'Users.username' => 'garrett',
-                'Users.id' => 4,
-            ]]
+                'OR' => [
+                    'Users.username' => 'garrett',
+                    'Users.id' => 4,
+                ],
+            ]
         );
         $this->assertEquals($expected, $result->clause('where'));
     }
@@ -4706,7 +4703,7 @@ class TableTest extends TestCase
 
         $sizeArticles = count($newArticles);
 
-        $articlesToUnlink = [ $author->articles[0], $author->articles[1] ];
+        $articlesToUnlink = [$author->articles[0], $author->articles[1]];
 
         $authors->Articles->unlink($author, $articlesToUnlink);
 
@@ -4754,7 +4751,7 @@ class TableTest extends TestCase
 
         $sizeArticles = count($newArticles);
 
-        $articlesToUnlink = [ $author->articles[0], $author->articles[1] ];
+        $articlesToUnlink = [$author->articles[0], $author->articles[1]];
 
         $authors->Articles->unlink($author, $articlesToUnlink, ['cleanProperty' => false]);
 
@@ -5598,8 +5595,8 @@ class TableTest extends TestCase
     public function providerForTestGet()
     {
         return [
-            [ ['fields' => ['id']] ],
-            [ ['fields' => ['id'], 'cache' => false] ],
+            [['fields' => ['id']]],
+            [['fields' => ['id'], 'cache' => false]],
         ];
     }
 
@@ -5650,7 +5647,7 @@ class TableTest extends TestCase
     public function providerForTestGetWithCustomFinder()
     {
         return [
-            [ ['fields' => ['id'], 'finder' => 'custom'] ],
+            [['fields' => ['id'], 'finder' => 'custom']],
         ];
     }
 
