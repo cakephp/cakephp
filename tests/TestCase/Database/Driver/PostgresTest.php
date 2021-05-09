@@ -67,9 +67,12 @@ class PostgresTest extends TestCase
                 $this->returnArgument(0)
             ));
 
-        $connection->expects($this->at(1))->method('exec')->with('SET NAMES utf8');
-        $connection->expects($this->at(3))->method('exec')->with('SET search_path TO public');
-        $connection->expects($this->exactly(2))->method('exec');
+        $connection->expects($this->exactly(2))
+            ->method('exec')
+            ->withConsecutive(
+                ['SET NAMES utf8'],
+                ['SET search_path TO public']
+            );
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
