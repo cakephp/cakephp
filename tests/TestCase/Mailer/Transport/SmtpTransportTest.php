@@ -368,7 +368,7 @@ class SmtpTransportTest extends TestCase
                 ["RCPT TO:<cake@cakephp.org>\r\n"],
                 ["RCPT TO:<mark@cakephp.org>\r\n"],
                 ["RCPT TO:<juan@cakephp.org>\r\n"],
-                ["RCPT TO:<phpnut@cakephp.org>\r\n"],
+                ["RCPT TO:<phpnut@cakephp.org>\r\n"]
             );
 
         $this->SmtpTransport->sendRcpt($message);
@@ -439,7 +439,7 @@ class SmtpTransportTest extends TestCase
             ->method('read')
             ->will($this->onConsecutiveCalls(
                 "354 OK\r\n",
-                "250 OK\r\n",
+                "250 OK\r\n"
             ));
 
         $this->socket->expects($this->exactly(2))
@@ -737,7 +737,7 @@ class SmtpTransportTest extends TestCase
                 "250 OK\r\n",
                 "250 OK\r\n",
                 "354 OK\r\n",
-                "250 OK\r\n",
+                "250 OK\r\n"
             ));
 
         $this->socket->expects($this->atLeast(6))
