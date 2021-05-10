@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
+use Cake\TestSuite\Schema\SchemaGenerator;
 use Cake\Utility\Security;
 
 if (is_file('vendor/autoload.php')) {
@@ -139,3 +140,7 @@ ini_set('session.gc_divisor', '1');
 // does not allow the sessionid to be set after stdout
 // has been written to.
 session_id('cli');
+
+// Create test database schema.
+$schema = new SchemaGenerator(CORE_TESTS . 'schema.php', 'test');
+$schema->reload();
