@@ -83,11 +83,10 @@ class SchemaManager
 
         foreach ($stmts as $stmt) {
             ConnectionManager::get($connectionName)->execute($stmt);
-
-            $migrator->io->success(
-                'Dump of schema in file ' . $file . ' for connection ' . $connectionName . ' successful.'
-            );
         }
+        $migrator->io->success(
+            'Dump of schema in file ' . $file . ' for connection ' . $connectionName . ' successful.'
+        );
 
         $schemaCleaner->truncateTables($connectionName);
     }

@@ -40,9 +40,9 @@ class SchemaGeneratorTest extends TestCase
         $connection = ConnectionManager::get('test');
         $schema = $connection->getSchemaCollection();
 
-        $tables = $schema->listTables();
-        $this->assertContains('schema_generator', $tables);
-        $this->assertContains('schema_generator_comment', $tables);
+        $result = $schema->listTables();
+        $this->assertContains('schema_generator', $result);
+        $this->assertContains('schema_generator_comment', $result);
 
         foreach ($tables as $table) {
             $meta = $schema->describe($table);
