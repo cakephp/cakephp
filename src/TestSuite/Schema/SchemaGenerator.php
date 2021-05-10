@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use RuntimeException;
@@ -70,6 +71,9 @@ class SchemaGenerator
 
         $config = include $this->file;
         $connection = ConnectionManager::get($this->connection);
+        if (!($connection instanceof Connection)) {
+            throw new RuntimeException("The `{$this->connection}` connection is not a Cake\Database\Connection");
+        }
 
         foreach ($config as $metadata) {
             $table = new TableSchema($metadata['table'], $metadata['columns']);
