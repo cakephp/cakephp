@@ -78,7 +78,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
         $this->socket->expects($this->any())
-           ->method('read')
+            ->method('read')
             ->will($this->onConsecutiveCalls("220 Welcome message\r\n", "250 Accepted\r\n"));
         $this->socket->expects($this->once())->method('write')->with("EHLO localhost\r\n");
         $this->SmtpTransport->connect();
@@ -201,8 +201,8 @@ class SmtpTransportTest extends TestCase
 
     public function testAuthPlain()
     {
-        $this->socket->expects($this->at(0))->method('write')->with("AUTH PLAIN {$this->credentialsEncoded}\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("235 OK\r\n"));
+        $this->socket->expects($this->once())->method('write')->with("AUTH PLAIN {$this->credentialsEncoded}\r\n");
+        $this->socket->expects($this->once())->method('read')->will($this->returnValue("235 OK\r\n"));
         $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->auth();
     }
@@ -359,16 +359,17 @@ class SmtpTransportTest extends TestCase
         $message->setBcc('phpnut@cakephp.org');
         $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
 
-        $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(4))->method('write')->with("RCPT TO:<mark@cakephp.org>\r\n");
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<juan@cakephp.org>\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(8))->method('write')->with("RCPT TO:<phpnut@cakephp.org>\r\n");
-        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->any())->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $this->socket->expects($this->exactly(5))
+            ->method('write')
+            ->withConsecutive(
+                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                ["RCPT TO:<cake@cakephp.org>\r\n"],
+                ["RCPT TO:<mark@cakephp.org>\r\n"],
+                ["RCPT TO:<juan@cakephp.org>\r\n"],
+                ["RCPT TO:<phpnut@cakephp.org>\r\n"]
+            );
 
         $this->SmtpTransport->sendRcpt($message);
     }
@@ -385,11 +386,14 @@ class SmtpTransportTest extends TestCase
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
 
-        $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<pleasereply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->exactly(2))->method('read')->will($this->returnValue("250 OK\r\n"));
 
+        $this->socket->expects($this->exactly(2))
+            ->method('write')
+            ->withConsecutive(
+                ["MAIL FROM:<pleasereply@cakephp.org>\r\n"],
+                ["RCPT TO:<cake@cakephp.org>\r\n"]
+            );
         $this->SmtpTransport->sendRcpt($message);
     }
 
@@ -431,10 +435,19 @@ class SmtpTransportTest extends TestCase
         $data .= "\r\n";
         $data .= "\r\n\r\n.\r\n";
 
-        $this->socket->expects($this->at(0))->method('write')->with("DATA\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("354 OK\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with($data);
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "354 OK\r\n",
+                "250 OK\r\n"
+            ));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('write')
+            ->withConsecutive(
+                ["DATA\r\n"],
+                [$data]
+            );
 
         $this->SmtpTransport->sendData($message);
     }
@@ -446,7 +459,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testQuit()
     {
-        $this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
+        $this->socket->expects($this->once())->method('write')->with("QUIT\r\n");
         $this->socket->connected = true;
         $this->SmtpTransport->disconnect();
     }
@@ -525,10 +538,15 @@ class SmtpTransportTest extends TestCase
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
 
-        $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->exactly(2))
+            ->method('write')
+            ->withConsecutive(
+                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                ["RCPT TO:<cake@cakephp.org>\r\n"]
+            );
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->returnValue("250 OK\r\n"));
 
         $this->SmtpTransport->sendRcpt($message);
 
@@ -601,8 +619,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testAutoDisconnect()
     {
-        $this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
-        $this->socket->expects($this->at(1))->method('disconnect');
+        $this->socket->expects($this->once())->method('write')->with("QUIT\r\n");
+        $this->socket->expects($this->once())->method('disconnect');
         $this->socket->connected = true;
         unset($this->SmtpTransport);
     }
@@ -614,8 +632,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testExplicitDisconnect()
     {
-        $this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
-        $this->socket->expects($this->at(1))->method('disconnect');
+        $this->socket->expects($this->once())->method('write')->with("QUIT\r\n");
+        $this->socket->expects($this->once())->method('disconnect');
         $this->socket->connected = true;
         $this->SmtpTransport->disconnect();
     }
@@ -708,24 +726,31 @@ class SmtpTransportTest extends TestCase
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line']));
 
-        $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->atLeast(6))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 OK\r\n",
+                "250 OK\r\n",
+                "250 OK\r\n",
+                "354 OK\r\n",
+                "250 OK\r\n"
+            ));
 
-        $this->socket->expects($this->at(4))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->atLeast(6))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                ["RCPT TO:<cake@cakephp.org>\r\n"],
+                ["DATA\r\n"],
+                [$this->stringContains('First Line')],
+                ["QUIT\r\n"]
+            );
 
-        $this->socket->expects($this->at(8))->method('write')->with("DATA\r\n");
-        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("354 OK\r\n"));
-        $this->socket->expects($this->at(10))->method('write')->with($this->stringContains('First Line'));
-        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 OK\r\n"));
-
-        $this->socket->expects($this->at(12))->method('write')->with("QUIT\r\n");
-        $this->socket->expects($this->at(13))->method('disconnect');
+        $this->socket->expects($this->once())->method('disconnect');
 
         $this->SmtpTransport->send($message);
     }
@@ -745,21 +770,28 @@ class SmtpTransportTest extends TestCase
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line']));
 
-        $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->atLeast(6))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 OK\r\n",
+                "250 OK\r\n",
+                "250 OK\r\n",
+                "354 OK\r\n",
+                'Message size too large'
+            ));
 
-        $this->socket->expects($this->at(4))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 OK\r\n"));
-
-        $this->socket->expects($this->at(8))->method('write')->with("DATA\r\n");
-        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("354 OK\r\n"));
-        $this->socket->expects($this->at(10))->method('write')->with($this->stringContains('First Line'));
-        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue('Message size too large'));
+        $this->socket->expects($this->exactly(5))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                ["RCPT TO:<cake@cakephp.org>\r\n"],
+                ["DATA\r\n"],
+                [$this->stringContains('First Line')]
+            );
 
         $this->expectException(SocketException::class);
         $this->expectExceptionMessage('Message size too large');
@@ -774,10 +806,16 @@ class SmtpTransportTest extends TestCase
      */
     public function testSerializeCleanupSocket()
     {
-        $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 OK\r\n"
+            ));
+        $this->socket->expects($this->once())
+            ->method('write')
+            ->with("EHLO localhost\r\n");
 
         $smtpTransport = new SmtpTestTransport();
         $smtpTransport->setSocket($this->socket);
