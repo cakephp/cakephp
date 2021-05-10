@@ -75,23 +75,25 @@ class SchemaGenerator
             throw new RuntimeException("The `{$this->connection}` connection is not a Cake\Database\Connection");
         }
 
-        foreach ($config as $metadata) {
-            $table = new TableSchema($metadata['table'], $metadata['columns']);
-            if (isset($metadata['indexes'])) {
-                foreach ($metadata['indexes'] as $key => $index) {
-                    $table->addIndex($key, $index);
+        $connection->disableConstraints(function ($connection) use ($config) {
+            foreach ($config as $metadata) {
+                $table = new TableSchema($metadata['table'], $metadata['columns']);
+                if (isset($metadata['indexes'])) {
+                    foreach ($metadata['indexes'] as $key => $index) {
+                        $table->addIndex($key, $index);
+                    }
+                }
+                if (isset($metadata['constraints'])) {
+                    foreach ($metadata['constraints'] as $key => $index) {
+                        $table->addConstraint($key, $index);
+                    }
+                }
+                // Generate SQL for each table.
+                $stmts = $table->createSql($connection);
+                foreach ($stmts as $stmt) {
+                    $connection->execute($stmt);
                 }
             }
-            if (isset($metadata['constraints'])) {
-                foreach ($metadata['constraints'] as $key => $index) {
-                    $table->addConstraint($key, $index);
-                }
-            }
-            // Generate SQL for each table.
-            $stmts = $table->createSql($connection);
-            foreach ($stmts as $stmt) {
-                $connection->execute($stmt);
-            }
-        }
+        });
     }
 }
