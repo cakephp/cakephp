@@ -46,6 +46,7 @@
         <!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
         <!-- E_ALL (32767) -->
         <ini name="error_reporting" value="32767"/>
+        <env name="FIXTURE_SCHEMA_METADATA" value="./tests/schema.php"/>
 
         <!-- SQLite
         <env name="DB_URL" value="sqlite:///:memory:"/>

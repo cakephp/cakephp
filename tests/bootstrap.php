@@ -142,7 +142,7 @@ ini_set('session.gc_divisor', '1');
 session_id('cli');
 
 // Create test database schema as long as we are not in an isolated process test.
-if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
-    $schema = new SchemaGenerator(CORE_TESTS . 'schema.php', 'test');
+if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP']) && env('FIXTURE_SCHEMA_METADATA')) {
+    $schema = new SchemaGenerator(env('FIXTURE_SCHEMA_METADATA'), 'test');
     $schema->reload();
 }
