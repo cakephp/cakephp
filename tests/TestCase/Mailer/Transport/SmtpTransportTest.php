@@ -100,14 +100,14 @@ class SmtpTransportTest extends TestCase
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
                 "220 Server ready\r\n",
-                "250 Accepted\r\n",
+                "250 Accepted\r\n"
             ));
         $this->socket->expects($this->exactly(3))
             ->method('write')
             ->withConsecutive(
                 ["EHLO localhost\r\n"],
                 ["STARTTLS\r\n"],
-                ["EHLO localhost\r\n"],
+                ["EHLO localhost\r\n"]
             );
         $this->socket->expects($this->once())->method('enableCrypto')
             ->with('tls')
@@ -202,7 +202,7 @@ class SmtpTransportTest extends TestCase
             ->method('write')
             ->withConsecutive(
                 ["EHLO localhost\r\n"],
-                ["HELO localhost\r\n"],
+                ["HELO localhost\r\n"]
             );
 
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
@@ -352,7 +352,7 @@ class SmtpTransportTest extends TestCase
             ->method('write')
             ->withConsecutive(
                 ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"],
+                ["AUTH LOGIN\r\n"]
             );
         $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->auth();
@@ -377,7 +377,7 @@ class SmtpTransportTest extends TestCase
             ->withConsecutive(
                 ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
                 ["AUTH LOGIN\r\n"],
-                ["bWFyaw==\r\n"],
+                ["bWFyaw==\r\n"]
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -779,7 +779,7 @@ class SmtpTransportTest extends TestCase
                 "250 OK\r\n",
                 "250 OK\r\n",
                 "354 OK\r\n",
-                "250 OK\r\n",
+                "250 OK\r\n"
             ));
         $this->socket->expects($this->exactly(10))
             ->method('write')
@@ -794,7 +794,7 @@ class SmtpTransportTest extends TestCase
                 ["MAIL FROM:<noreply@cakephp.org>\r\n"],
                 ["RCPT TO:<cake@cakephp.org>\r\n"],
                 ["DATA\r\n"],
-                [$this->stringContains('First Line')],
+                [$this->stringContains('First Line')]
             );
 
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
