@@ -29,7 +29,7 @@ class TupleComparison extends ComparisonExpression
     /**
      * The type to be used for casting the value to a database representation
      *
-     * @var array
+     * @var array<string|null>
      * @psalm-suppress NonInvariantDocblockPropertyType
      */
     protected $_type;
@@ -39,7 +39,7 @@ class TupleComparison extends ComparisonExpression
      *
      * @param string|array|\Cake\Database\ExpressionInterface $fields the fields to use to form a tuple
      * @param array|\Cake\Database\ExpressionInterface $values the values to use to form a tuple
-     * @param array $types the types names to use for casting each of the values, only
+     * @param array<string|null> $types the types names to use for casting each of the values, only
      * one type per position in the value array in needed
      * @param string $conjunction the operator used for comparing field and value
      */
@@ -49,6 +49,16 @@ class TupleComparison extends ComparisonExpression
         $this->setField($fields);
         $this->setValue($values);
         $this->_operator = $conjunction;
+    }
+
+    /**
+     * Returns the type to be used for casting the value to a database representation
+     *
+     * @return array<string|null>
+     */
+    public function getType(): array
+    {
+        return $this->_type;
     }
 
     /**

@@ -71,6 +71,13 @@ trait TupleComparisonTranslatorTrait
             return;
         }
 
+        $type = $expression->getType();
+        if ($type) {
+            $typeMap = array_combine($fields, $type);
+        } else {
+            $typeMap = [];
+        }
+
         $surrogate = $query->getConnection()
             ->newQuery()
             ->select($true);
@@ -87,7 +94,7 @@ trait TupleComparisonTranslatorTrait
             }
             $conditions['OR'][] = $item;
         }
-        $surrogate->where($conditions);
+        $surrogate->where($conditions, $typeMap);
 
         $expression->setField($true);
         $expression->setValue($surrogate);
