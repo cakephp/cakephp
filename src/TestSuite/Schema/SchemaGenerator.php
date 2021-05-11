@@ -75,6 +75,10 @@ class SchemaGenerator
             throw new RuntimeException("The `{$this->connection}` connection is not a Cake\Database\Connection");
         }
 
+        if (!count($config)) {
+            return;
+        }
+
         $connection->disableConstraints(function ($connection) use ($config) {
             foreach ($config as $metadata) {
                 $table = new TableSchema($metadata['table'], $metadata['columns']);

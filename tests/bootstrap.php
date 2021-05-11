@@ -111,11 +111,11 @@ Configure::write('Session', [
 Configure::write('Debugger.exportFormatter', TextFormatter::class);
 
 Log::setConfig([
-    // 'queries' => [
-    //     'className' => 'Console',
-    //     'stream' => 'php://stderr',
-    //     'scopes' => ['queriesLog']
-    // ],
+    'queries' => [
+        'className' => 'Console',
+        'stream' => 'php://stderr',
+        'scopes' => ['queriesLog'],
+    ],
     'debug' => [
         'engine' => 'Cake\Log\Engine\FileLog',
         'levels' => ['notice', 'info', 'debug'],
@@ -141,6 +141,8 @@ ini_set('session.gc_divisor', '1');
 // has been written to.
 session_id('cli');
 
-// Create test database schema.
-$schema = new SchemaGenerator(CORE_TESTS . 'schema.php', 'test');
-$schema->reload();
+// Create test database schema as long as we are not in an isolated process test.
+if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
+    $schema = new SchemaGenerator(CORE_TESTS . 'schema.php', 'test');
+    $schema->reload();
+}
