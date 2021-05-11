@@ -50,6 +50,10 @@ class SchemaGenerator
     {
         $this->file = $file;
         $this->connection = $connection;
+
+        if (!file_exists($this->file)) {
+            throw new RuntimeException("Cannot load `{$this->file}`");
+        }
     }
 
     /**
@@ -62,10 +66,6 @@ class SchemaGenerator
      */
     public function reload(?array $tables = null): void
     {
-        if (!file_exists($this->file)) {
-            throw new RuntimeException("Cannot load `{$this->file}`");
-        }
-
         $cleaner = new SchemaCleaner();
         $cleaner->dropTables($this->connection, $tables);
 
