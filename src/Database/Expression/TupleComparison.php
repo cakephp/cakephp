@@ -52,6 +52,16 @@ class TupleComparison extends ComparisonExpression
     }
 
     /**
+     * Returns the type to be used for casting the value to a database representation
+     *
+     * @return array
+     */
+    public function getType(): array
+    {
+        return $this->_type;
+    }
+
+    /**
      * Sets the value
      *
      * @param mixed $value The value to compare
