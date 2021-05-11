@@ -111,11 +111,11 @@ Configure::write('Session', [
 Configure::write('Debugger.exportFormatter', TextFormatter::class);
 
 Log::setConfig([
-    'queries' => [
-        'className' => 'Console',
-        'stream' => 'php://stderr',
-        'scopes' => ['queriesLog'],
-    ],
+    // 'queries' => [
+    //     'className' => 'Console',
+    //     'stream' => 'php://stderr',
+    //     'scopes' => ['queriesLog'],
+    // ],
     'debug' => [
         'engine' => 'Cake\Log\Engine\FileLog',
         'levels' => ['notice', 'info', 'debug'],
