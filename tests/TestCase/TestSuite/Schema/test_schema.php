@@ -3,6 +3,13 @@ declare(strict_types=1);
 
 return [
     [
+        'table' => 'schema_generator_comment',
+        'columns' => [
+            'id' => ['type' => 'integer'],
+            'title' => ['type' => 'string', 'null' => true],
+        ],
+    ],
+    [
         'table' => 'schema_generator',
         'columns' => [
             'id' => ['type' => 'integer'],
@@ -23,13 +30,6 @@ return [
                 'type' => 'index',
                 'columns' => ['title'],
             ],
-        ],
-    ],
-    [
-        'table' => 'schema_generator_comment',
-        'columns' => [
-            'id' => ['type' => 'integer'],
-            'title' => ['type' => 'string', 'null' => true],
         ],
     ],
 ];
