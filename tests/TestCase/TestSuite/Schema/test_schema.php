@@ -13,19 +13,23 @@ return [
         'table' => 'schema_generator',
         'columns' => [
             'id' => ['type' => 'integer'],
-            'relation_id' => ['type' => 'integer', 'null' => true],
+            'relation_id' => ['type' => 'integer'],
             'title' => ['type' => 'string', 'null' => true],
             'body' => 'text',
         ],
         'constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'relation_idx' => [
+            'relation_fk' => [
                 'type' => 'foreign',
                 'columns' => ['relation_id'],
                 'references' => ['schema_generator_comment', 'id'],
             ],
         ],
         'indexes' => [
+            'relation_idx' => [
+                'type' => 'index',
+                'columns' => ['relation_id'],
+            ],
             'title_idx' => [
                 'type' => 'index',
                 'columns' => ['title'],
