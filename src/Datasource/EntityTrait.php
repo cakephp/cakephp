@@ -104,7 +104,7 @@ trait EntityTrait
      * means no fields are accessible
      *
      * The special field '\*' can also be mapped, meaning that any other field
-     * not defined in the map will take its value. For example, `'\*' => true`
+     * not defined in the map will take its value. For example, `'*' => true`
      * means that any field not defined in the map will be accessible by default
      *
      * @var bool[]
