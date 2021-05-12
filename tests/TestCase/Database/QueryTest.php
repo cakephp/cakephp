@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
 use Cake\Database\Statement\StatementDecorator;
@@ -3881,6 +3882,87 @@ class QueryTest extends TestCase
             'substractYears' => '2005-03-18',
         ];
         $this->assertEquals($expected, $result[0]);
+    }
+
+    /**
+     * Tests that the values in tuple comparison expression are being bound correctly,
+     * specifically for dialects that translate tuple comparisons.
+     *
+     * @return void
+     * @see \Cake\Database\Dialect\TupleComparisonTranslatorTrait::_transformTupleComparison()
+     * @see \Cake\Database\Driver\Sqlite::_expressionTranslators()
+     * @see \Cake\Database\Driver\Sqlserver::_expressionTranslators()
+     */
+    public function testTupleComparisonValuesAreBeingBoundCorrectly()
+    {
+        // Load with force dropping tables to avoid identities not being reset properly
+        // in SQL Server when reseeding is applied directly after table creation.
+        $this->fixtureManager->loadSingle('Profiles', null, true);
+
+        $profiles = $this->getTableLocator()->get('Profiles');
+
+        $query = $profiles
+            ->find()
+            ->where(
+                new TupleComparison(
+                    ['id', 'user_id'],
+                    [[1, 1]],
+                    ['integer', 'integer'],
+                    'IN'
+                )
+            );
+
+        $result = $query->firstOrFail();
+
+        $bindings = array_values($query->getValueBinder()->bindings());
+        $this->assertCount(2, $bindings);
+        $this->assertSame(1, $bindings[0]['value']);
+        $this->assertSame('integer', $bindings[0]['type']);
+        $this->assertSame(1, $bindings[1]['value']);
+        $this->assertSame('integer', $bindings[1]['type']);
+
+        $this->assertSame(1, $result['id']);
+        $this->assertSame(1, $result['user_id']);
+    }
+
+    /**
+     * Tests that the values in tuple comparison expressions are being bound as expected
+     * when types are omitted, specifically for dialects that translate tuple comparisons.
+     *
+     * @return void
+     * @see \Cake\Database\Dialect\TupleComparisonTranslatorTrait::_transformTupleComparison()
+     * @see \Cake\Database\Driver\Sqlite::_expressionTranslators()
+     * @see \Cake\Database\Driver\Sqlserver::_expressionTranslators()
+     */
+    public function testTupleComparisonTypesCanBeOmitted()
+    {
+        // Load with force dropping tables to avoid identities not being reset properly
+        // in SQL Server when reseeding is applied directly after table creation.
+        $this->fixtureManager->loadSingle('Profiles', null, true);
+
+        $profiles = $this->getTableLocator()->get('Profiles');
+
+        $query = $profiles
+            ->find()
+            ->where(
+                new TupleComparison(
+                    ['id', 'user_id'],
+                    [[1, 1]],
+                    [],
+                    'IN'
+                )
+            );
+        $result = $query->firstOrFail();
+
+        $bindings = array_values($query->getValueBinder()->bindings());
+        $this->assertCount(2, $bindings);
+        $this->assertSame(1, $bindings[0]['value']);
+        $this->assertNull($bindings[0]['type']);
+        $this->assertSame(1, $bindings[1]['value']);
+        $this->assertNull($bindings[1]['type']);
+
+        $this->assertSame(1, $result['id']);
+        $this->assertSame(1, $result['user_id']);
     }
 
     /**
