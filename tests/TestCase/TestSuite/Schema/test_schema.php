@@ -8,6 +8,9 @@ return [
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'string', 'null' => true],
         ],
+        'constraints' => [
+            'primary' => ['type' => 'primary', 'columns' => ['id']],
+        ],
     ],
     [
         'table' => 'schema_generator',
@@ -26,10 +29,6 @@ return [
             ],
         ],
         'indexes' => [
-            'relation_idx' => [
-                'type' => 'index',
-                'columns' => ['relation_id'],
-            ],
             'title_idx' => [
                 'type' => 'index',
                 'columns' => ['title'],
