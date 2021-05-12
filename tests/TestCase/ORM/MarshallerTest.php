@@ -3558,4 +3558,46 @@ class MarshallerTest extends TestCase
         ];
         $this->assertEquals($expected, $result->toArray());
     }
+
+    /**
+     * Tests that ID values are being bound with the correct type when loading associated records.
+     */
+    public function testInvalidTypesWhenLoadingAssociatedByIds()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
+
+        $data = [
+            'title' => 'article',
+            'body' => 'some content',
+            'comments' => [
+                '_ids' => ['foobar'],
+            ],
+        ];
+
+        $marshaller = new Marshaller($this->articles);
+        $marshaller->one($data, ['associated' => ['Comments']]);
+    }
+
+    /**
+     * Tests that composite ID values are being bound with the correct type when loading associated records.
+     */
+    public function testInvalidTypesWhenLoadingAssociatedByCompositeIds()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
+
+        $data = [
+            'title' => 'article',
+            'body' => 'some content',
+            'comments' => [
+                '_ids' => [['foo', 'bar']],
+            ],
+        ];
+
+        $this->articles->Comments->setPrimaryKey(['id', 'article_id']);
+
+        $marshaller = new Marshaller($this->articles);
+        $marshaller->one($data, ['associated' => ['Comments']]);
+    }
 }

@@ -496,7 +496,12 @@ class Marshaller
             if (!is_array($first) || count($first) !== count($primaryKey)) {
                 return [];
             }
-            $filter = new TupleComparison($primaryKey, $ids, [], 'IN');
+            $type = [];
+            $schema = $target->getSchema();
+            foreach ((array)$target->getPrimaryKey() as $column) {
+                $type[] = $schema->getColumnType($column);
+            }
+            $filter = new TupleComparison($primaryKey, $ids, $type, 'IN');
         } else {
             $filter = [$primaryKey[0] . ' IN' => $ids];
         }
