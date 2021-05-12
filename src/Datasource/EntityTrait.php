@@ -1191,8 +1191,7 @@ trait EntityTrait
      */
     public function isAccessible(string $field): bool
     {
-        $value = $this->_accessible[$field] ??
-            null;
+        $value = $this->_accessible[$field] ?? null;
 
         return ($value === null && !empty($this->_accessible['*'])) || $value;
     }
