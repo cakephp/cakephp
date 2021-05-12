@@ -46,6 +46,16 @@ class TupleComparison extends Comparison
     }
 
     /**
+     * Returns the type to be used for casting the value to a database representation
+     *
+     * @return array
+     */
+    public function getType()
+    {
+        return $this->_type;
+    }
+
+    /**
      * Convert the expression into a SQL fragment.
      *
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
