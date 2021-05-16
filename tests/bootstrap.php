@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
+use Cake\TestSuite\Schema\SchemaGenerator;
 use Cake\Utility\Security;
 
 if (is_file('vendor/autoload.php')) {
@@ -113,7 +114,7 @@ Log::setConfig([
     // 'queries' => [
     //     'className' => 'Console',
     //     'stream' => 'php://stderr',
-    //     'scopes' => ['queriesLog']
+    //     'scopes' => ['queriesLog'],
     // ],
     'debug' => [
         'engine' => 'Cake\Log\Engine\FileLog',
@@ -139,3 +140,9 @@ ini_set('session.gc_divisor', '1');
 // does not allow the sessionid to be set after stdout
 // has been written to.
 session_id('cli');
+
+// Create test database schema as long as we are not in an isolated process test.
+if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP']) && env('FIXTURE_SCHEMA_METADATA')) {
+    $schema = new SchemaGenerator(env('FIXTURE_SCHEMA_METADATA'), 'test');
+    $schema->reload();
+}
