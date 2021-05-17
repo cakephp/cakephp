@@ -271,7 +271,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * For example:
      *
      * ```
-     * $this->loadComponent('Acl.Acl');
+     * $this->loadComponent('Authentication.Authentication');
      * ```
      *
      * Will result in a `Toolbar` property being set.
