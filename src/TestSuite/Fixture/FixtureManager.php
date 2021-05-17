@@ -89,6 +89,22 @@ class FixtureManager extends FixtureLoader
     }
 
     /**
+     * Implemented to satisfy the abstract base class.
+     *
+     * For backwards compatibility reasons fixtures are loaded
+     * via `fixturize` which is called by the TestListener.
+     * While this method could call `fixturize()` it would duplicate
+     * work and impact test suite performance.
+     *
+     * @param \Cake\TestSuite\TestCase $test The test case.
+     * @return void
+     */
+    public function setupTest(TestCase $test): void
+    {
+        // Do nothing
+    }
+
+    /**
      * @inheritDoc
      */
     public function fixturize(TestCase $test): void

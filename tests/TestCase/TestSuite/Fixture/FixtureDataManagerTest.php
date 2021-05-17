@@ -69,20 +69,20 @@ class FixtureDataManagerTest extends TestCase
     }
 
     /**
-     * Test that fixturize() errors on missing fixture
+     * Test that setupTest() errors on missing fixture
      *
      * @dataProvider invalidProvider
      * @param string $name Fixture name
      * @return void
      */
-    public function testFixturizeErrorOnUnknown($name)
+    public function testSetupTestErrorOnUnknown($name)
     {
         $manager = new FixtureDataManager();
         $this->fixtures = [$name];
 
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Referenced fixture class');
-        $manager->fixturize($this);
+        $manager->setupTest($this);
     }
 
     /**
@@ -100,13 +100,13 @@ class FixtureDataManagerTest extends TestCase
     }
 
     /**
-     * Test that fixturize() loads fixtures.
+     * Test that setupTest() loads fixtures.
      *
      * @dataProvider validProvider
      * @param string $name The fixture name
      * @return void
      */
-    public function testFixturizeLoads($name)
+    public function testSetupTestLoads($name)
     {
         $this->setAppNamespace();
         // Also loads TestPlugin
@@ -114,7 +114,7 @@ class FixtureDataManagerTest extends TestCase
 
         $manager = new FixtureDataManager();
         $this->fixtures = [$name];
-        $manager->fixturize($this);
+        $manager->setupTest($this);
 
         $fixtures = $manager->loaded();
         $this->assertCount(1, $fixtures);
@@ -122,14 +122,15 @@ class FixtureDataManagerTest extends TestCase
     }
 
     /**
-     * Test that fixturize() loads fixtures.
+     * Test that setupTest() loads fixtures.
      *
      * @return void
      */
-    public function testFixturizeLoadsMultipleFixtures()
+    public function testSetupTestLoadsMultipleFixtures()
     {
         $manager = new FixtureDataManager();
-        $manager->fixturize($this);
+        $this->autoFixtures = false;
+        $manager->setupTest($this);
 
         $fixtures = $manager->loaded();
         $this->assertCount(2, $fixtures);
@@ -145,7 +146,8 @@ class FixtureDataManagerTest extends TestCase
     public function testLoadSingleValid()
     {
         $manager = new FixtureDataManager();
-        $manager->fixturize($this);
+        $this->autoFixtures = false;
+        $manager->setupTest($this);
 
         $manager->loadSingle('Articles');
         $db = ConnectionManager::get('test');
@@ -164,23 +166,22 @@ class FixtureDataManagerTest extends TestCase
     public function testLoadSingleInvalid()
     {
         $manager = new FixtureDataManager();
-        $manager->fixturize($this);
+        $this->autoFixtures = false;
+        $manager->setupTest($this);
 
         $this->expectException(UnexpectedValueException::class);
         $manager->loadSingle('Nope');
     }
 
     /**
-     * Test load()
+     * Test load() via setupTest()
      *
      * @return void
      */
     public function testLoad()
     {
         $manager = new FixtureDataManager();
-        $manager->fixturize($this);
-
-        $manager->load($this);
+        $manager->setupTest($this);
 
         $db = ConnectionManager::get('test');
         $stmt = $db->newQuery()->select(['count(*)'])->from('articles')->execute();

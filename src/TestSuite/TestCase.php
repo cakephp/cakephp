@@ -213,6 +213,8 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         $this->fixtureManager = FixtureLoader::getInstance();
+        $this->fixtureManager->setupTest($this);
+
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }

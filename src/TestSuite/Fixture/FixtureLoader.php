@@ -79,12 +79,14 @@ abstract class FixtureLoader
     abstract public function load(TestCase $test): void;
 
     /**
-     * Inspects the test to to load fixture classes.
+     * Setup fixtures for the provided test.
      *
-     * @param \Cake\TestSuite\TestCase $test The test case to inspect.
+     * Called by TestCase during its setUp() method.
+     *
+     * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
      * @return void
      */
-    abstract public function fixturize(TestCase $test): void;
+    abstract public function setupTest(TestCase $test): void;
 
     /**
      * Get the fixtures fixtures.

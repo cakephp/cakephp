@@ -218,12 +218,13 @@ class FixtureDataManager extends FixtureLoader
     /**
      * @inheritDoc
      */
-    public function fixturize(TestCase $test): void
+    public function setupTest(TestCase $test): void
     {
         if (!$test->getFixtures()) {
             return;
         }
         $this->loadFixtures($test);
+        $this->load($test);
     }
 
     /**
