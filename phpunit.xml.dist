@@ -17,13 +17,14 @@
         </testsuite>
     </testsuites>
 
-    <listeners>
-        <listener class="Cake\TestSuite\Fixture\FixtureInjector">
+    <extensions>
+        <extension class="Cake\TestSuite\FixtureSchemaExtension">
             <arguments>
-                <object class="Cake\TestSuite\Fixture\FixtureManager"/>
+                <!-- core tests create/modify tables so we can't use TransactionStrategy -->
+                <string>Cake\TestSuite\Fixture\TruncationStrategy</string>
             </arguments>
-        </listener>
-    </listeners>
+        </extension>
+    </extensions>
 
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
     <filter>
