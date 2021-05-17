@@ -526,7 +526,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * // Bring only articles that were tagged with 'cake'
      * $query->matching('Tags', function ($q) {
      *     return $q->where(['name' => 'cake']);
-     * );
+     * });
      * ```
      *
      * It is possible to filter by deep associations by using dot notation:
@@ -537,7 +537,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * // Bring only articles that were commented by 'markstory'
      * $query->matching('Comments.Users', function ($q) {
      *     return $q->where(['username' => 'markstory']);
-     * );
+     * });
      * ```
      *
      * As this function will create `INNER JOIN`, you might want to consider
@@ -550,9 +550,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * ```
      * // Bring unique articles that were commented by 'markstory'
      * $query->distinct(['Articles.id'])
-     * ->matching('Comments.Users', function ($q) {
-     *     return $q->where(['username' => 'markstory']);
-     * );
+     *     ->matching('Comments.Users', function ($q) {
+     *         return $q->where(['username' => 'markstory']);
+     *     });
      * ```
      *
      * Please note that the query passed to the closure will only accept calling
@@ -620,11 +620,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * ```
      * // Total comments in articles by 'markstory'
      * $query
-     *  ->select(['total_comments' => $query->func()->count('Comments.id')])
-     *  ->leftJoinWith('Comments.Users', function ($q) {
-     *     return $q->where(['username' => 'markstory']);
-     * )
-     * ->group(['Users.id']);
+     *     ->select(['total_comments' => $query->func()->count('Comments.id')])
+     *     ->leftJoinWith('Comments.Users', function ($q) {
+     *         return $q->where(['username' => 'markstory']);
+     *     })
+     *    ->group(['Users.id']);
      * ```
      *
      * Please note that the query passed to the closure will only accept calling
@@ -663,7 +663,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * // Bring only articles that were tagged with 'cake'
      * $query->innerJoinWith('Tags', function ($q) {
      *     return $q->where(['name' => 'cake']);
-     * );
+     * });
      * ```
      *
      * This will create the following SQL:
@@ -711,7 +711,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * // Bring only articles that were not tagged with 'cake'
      * $query->notMatching('Tags', function ($q) {
      *     return $q->where(['name' => 'cake']);
-     * );
+     * });
      * ```
      *
      * It is possible to filter by deep associations by using dot notation:
@@ -722,7 +722,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * // Bring only articles that weren't commented by 'markstory'
      * $query->notMatching('Comments.Users', function ($q) {
      *     return $q->where(['username' => 'markstory']);
-     * );
+     * });
      * ```
      *
      * As this function will create a `LEFT JOIN`, you might want to consider
@@ -735,9 +735,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * ```
      * // Bring unique articles that were commented by 'markstory'
      * $query->distinct(['Articles.id'])
-     * ->notMatching('Comments.Users', function ($q) {
-     *     return $q->where(['username' => 'markstory']);
-     * );
+     *     ->notMatching('Comments.Users', function ($q) {
+     *         return $q->where(['username' => 'markstory']);
+     *     });
      * ```
      *
      * Please note that the query passed to the closure will only accept calling

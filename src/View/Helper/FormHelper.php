@@ -679,7 +679,7 @@ class FormHelper extends Helper
     {
         if ($this->formProtector === null) {
             throw new CakeException(
-                '`FormProtector` instance has not been created. Ensure you have loaded the `FormProtectorComponent`'
+                '`FormProtector` instance has not been created. Ensure you have loaded the `FormProtectionComponent`'
                 . ' in your controller and called `FormHelper::create()` before calling `FormHelper::unlockField()`.'
             );
         }
