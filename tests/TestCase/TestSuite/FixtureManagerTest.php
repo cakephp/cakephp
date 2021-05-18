@@ -443,7 +443,6 @@ class FixtureManagerTest extends TestCase
                 'test' => $fixtures,
             ]));
         $manager->fixturize($test);
-        $manager->loadSingle('Products');
 
         $e = null;
         try {
