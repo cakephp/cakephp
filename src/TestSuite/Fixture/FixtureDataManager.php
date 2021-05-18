@@ -52,13 +52,18 @@ class FixtureDataManager extends FixtureLoader
     protected $nameMap = [];
 
     /**
+     * @var string[]
+     */
+    protected $inserted = [];
+
+    /**
      * Looks for fixture files and instantiates the classes accordingly
      *
      * @param \Cake\TestSuite\TestCase $test The test suite to load fixtures for.
      * @return void
      * @throws \UnexpectedValueException when a referenced fixture does not exist.
      */
-    protected function loadFixtures(TestCase $test): void
+    protected function loadFixtureClasses(TestCase $test): void
     {
         $fixtures = $test->getFixtures();
         if (!$fixtures) {
@@ -137,6 +142,7 @@ class FixtureDataManager extends FixtureLoader
         }
 
         $fixture->insert($connection);
+        $this->inserted[] = $fixture->table;
     }
 
     /**
@@ -154,6 +160,7 @@ class FixtureDataManager extends FixtureLoader
                 foreach ($fixtures as $fixture) {
                     try {
                         $fixture->insert($db);
+                        $this->inserted[] = $fixture->table;
                     } catch (PDOException $e) {
                         $msg = sprintf(
                             'Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s',
@@ -220,10 +227,11 @@ class FixtureDataManager extends FixtureLoader
      */
     public function setupTest(TestCase $test): void
     {
+        $this->inserted = [];
         if (!$test->getFixtures()) {
             return;
         }
-        $this->loadFixtures($test);
+        $this->loadFixtureClasses($test);
         $this->load($test);
     }
 
@@ -233,5 +241,13 @@ class FixtureDataManager extends FixtureLoader
     public function loaded(): array
     {
         return $this->fixtures;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function lastInserted(): array
+    {
+        return $this->inserted;
     }
 }

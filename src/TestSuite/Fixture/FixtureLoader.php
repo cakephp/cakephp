@@ -89,9 +89,16 @@ abstract class FixtureLoader
     abstract public function setupTest(TestCase $test): void;
 
     /**
-     * Get the fixtures fixtures.
+     * Get the list of all fixtures that have been loaded.
      *
      * @return \Cake\Datasource\FixtureInterface[]
      */
     abstract public function loaded(): array;
+
+    /**
+     * Get the list of fixture tables that were loaded since the last call to setupTest.
+     *
+     * @return string[]
+     */
+    abstract public function lastInserted(): array;
 }

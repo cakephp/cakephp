@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Database\Connection;
-use Cake\Database\Schema\SqlGeneratorInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 
@@ -31,7 +30,8 @@ use Cake\Datasource\ConnectionManager;
  * transactions.
  *
  * This mode also offers 'backwards compatible' behavior
- * with the schema + data fixture system.
+ * with the schema + data fixture system. Only tables that have
+ * fixture data 'loaded' will be truncated.
  */
 class TruncationStrategy implements StateResetStrategyInterface
 {
@@ -88,6 +88,7 @@ class TruncationStrategy implements StateResetStrategyInterface
      */
     public function beforeTest(string $test): void
     {
+        $fixtures = FixtureLoader::getInstance();
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
             if (strpos($connection, 'test') !== 0) {
@@ -97,10 +98,12 @@ class TruncationStrategy implements StateResetStrategyInterface
             if (!($db instanceof Connection)) {
                 continue;
             }
+            $schema = $db->getSchemaCollection();
+            $tables = $schema->listTables();
+            $tables = array_intersect($schema->listTables(), $fixtures->lastInserted());
 
-            $db->disableConstraints(function (Connection $db): void {
-                $schema = $db->getSchemaCollection();
-                foreach ($schema->listTables() as $table) {
+            $db->disableConstraints(function (Connection $db) use ($tables): void {
+                foreach ($tables as $table) {
                     $tableSchema = new TableSchema($table, []);
                     $sql = $tableSchema->truncateSql($db);
                     foreach ($sql as $stmt) {

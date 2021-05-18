@@ -66,6 +66,7 @@ class FixtureManagerTest extends TestCase
             ->willReturn(['core.Articles']);
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
+
         $this->manager->unload($test);
         $this->assertCount(1, $fixtures);
         $this->assertArrayHasKey('core.Articles', $fixtures);
@@ -349,8 +350,12 @@ class FixtureManagerTest extends TestCase
             ->method('getFixtures')
             ->willReturn(['core.Articles', 'core.Tags']);
         $this->manager->fixturize($test);
+        $this->assertEquals([], $this->manager->lastInserted());
+
         $this->manager->loadSingle('Articles');
         $this->manager->loadSingle('Tags');
+
+        $this->assertEquals(['articles', 'tags'], $this->manager->lastInserted());
 
         $table = $this->getTableLocator()->get('Articles');
         $results = $table->find('all')->toArray();

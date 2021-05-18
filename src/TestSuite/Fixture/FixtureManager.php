@@ -126,6 +126,21 @@ class FixtureManager extends FixtureLoader
     }
 
     /**
+     * @inheritDoc
+     */
+    public function lastInserted(): array
+    {
+        $inserted = [];
+        foreach ($this->_insertionMap as $fixtures) {
+            foreach ($fixtures as $fixture) {
+                $inserted[] = $fixture->table;
+            }
+        }
+
+        return $inserted;
+    }
+
+    /**
      * Add aliases for all non test prefixed connections.
      *
      * This allows models to use the test connections without
