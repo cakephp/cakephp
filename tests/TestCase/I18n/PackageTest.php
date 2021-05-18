@@ -25,7 +25,9 @@ use Cake\TestSuite\TestCase;
 class PackageTest extends TestCase
 {
     /**
-     * @covers void
+     * Test adding messages.
+     *
+     * @return void
      */
     public function testAddMessage()
     {
