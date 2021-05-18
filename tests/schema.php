@@ -1137,6 +1137,13 @@ return [
                     'tag_id',
                 ],
             ],
+            'author_id_fk' => [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade',
+            ],
         ],
     ],
     [

@@ -19,6 +19,7 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
+use RuntimeException;
 
 /**
  * Fixture state strategy that truncates tables before a test.
@@ -89,6 +90,10 @@ class TruncationStrategy implements StateResetStrategyInterface
     public function beforeTest(string $test): void
     {
         $fixtures = FixtureLoader::getInstance();
+        if (!$fixtures) {
+            throw new RuntimeException('Cannot truncate tables without a FixtureLoader');
+        }
+
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
             if (strpos($connection, 'test') !== 0) {

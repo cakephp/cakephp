@@ -142,7 +142,7 @@ class FixtureDataManager extends FixtureLoader
         }
 
         $fixture->insert($connection);
-        $this->inserted[] = $fixture->table;
+        $this->inserted[] = $fixture->sourceName();
     }
 
     /**
@@ -160,7 +160,7 @@ class FixtureDataManager extends FixtureLoader
                 foreach ($fixtures as $fixture) {
                     try {
                         $fixture->insert($db);
-                        $this->inserted[] = $fixture->table;
+                        $this->inserted[] = $fixture->sourceName();
                     } catch (PDOException $e) {
                         $msg = sprintf(
                             'Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s',
