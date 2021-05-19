@@ -400,14 +400,17 @@ class Number
         /** @var \NumberFormatter $formatter */
         $formatter = static::$_formatters[$locale][$type];
 
-        $options = array_intersect_key($options, [
-            'places' => null,
-            'precision' => null,
-            'pattern' => null,
-            'useIntlCode' => null,
-        ]);
-        if (empty($options)) {
-            return $formatter;
+        // PHP 8.0.0 - 8.0.6 throws an exception when cloning NumberFormatter after a failed parse
+        if (version_compare(PHP_VERSION, '8.0.6', '>') || version_compare(PHP_VERSION, '8.0.0', '<')) {
+            $options = array_intersect_key($options, [
+                'places' => null,
+                'precision' => null,
+                'pattern' => null,
+                'useIntlCode' => null,
+            ]);
+            if (empty($options)) {
+                return $formatter;
+            }
         }
 
         $formatter = clone $formatter;
