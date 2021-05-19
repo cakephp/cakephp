@@ -122,6 +122,24 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Http/Client/Request.php">
+    <PropertyTypeCoercion occurrences="1">
+      <code>$this-&gt;headerNames</code>
+    </PropertyTypeCoercion>
+  </file>
+  <file src="src/Http/Client/Response.php">
+    <PropertyTypeCoercion occurrences="3">
+      <code>$this-&gt;headerNames</code>
+      <code>$this-&gt;headers</code>
+      <code>$this-&gt;headers</code>
+    </PropertyTypeCoercion>
+  </file>
+  <file src="src/Http/Response.php">
+    <PropertyTypeCoercion occurrences="2">
+      <code>$this-&gt;headerNames</code>
+      <code>$this-&gt;headers</code>
+    </PropertyTypeCoercion>
+  </file>
   <file src="src/Http/ServerRequest.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$this-&gt;data</code>
