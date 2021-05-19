@@ -94,7 +94,7 @@ jobs:
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
         else
-          composer install
+          composer update
         fi
 
     - name: Setup problem matchers for PHPUnit
@@ -178,7 +178,7 @@ jobs:
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
     - name: Composer install
-      run: composer install
+      run: composer update
 
     - name: Run PHPUnit
       env:
@@ -196,7 +196,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.3'
+        php-version: '7.4'
         extensions: mbstring, intl, apcu, memcached, redis
         tools: cs2pr
         coverage: none
