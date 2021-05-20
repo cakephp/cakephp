@@ -37,6 +37,15 @@ use RuntimeException;
 class TruncationStrategy implements StateResetStrategyInterface
 {
     /**
+     * A map of connections to the tables they contain.
+     * Caching schema descriptions helps improve performance and
+     * is required for SQLServer to reset sequences.
+     *
+     * @var array
+     */
+    protected $tables = [];
+
+    /**
      * Constructor.
      *
      * @param bool $enableLogging Whether or not to enable query logging.
@@ -109,7 +118,7 @@ class TruncationStrategy implements StateResetStrategyInterface
 
             $db->disableConstraints(function (Connection $db) use ($tables): void {
                 foreach ($tables as $table) {
-                    $tableSchema = new TableSchema($table, []);
+                    $tableSchema = $this->getTableSchema($db, $table);
                     $sql = $tableSchema->truncateSql($db);
                     foreach ($sql as $stmt) {
                         $db->execute($stmt)->closeCursor();
@@ -130,5 +139,28 @@ class TruncationStrategy implements StateResetStrategyInterface
     public function afterTest(string $test): void
     {
         // Do nothing
+    }
+
+    /**
+     * Get the schema description for a table.
+     *
+     * Lazily populates with fixtures as they are used to reduce
+     * the number of reflection queries we use.
+     *
+     * @param \Cake\Database\Connection $db The connection to use.
+     * @param string $table The table to reflect.
+     * @return \Cake\Database\Schema\TableSchema
+     */
+    protected function getTableSchema(Connection $db, string $table): TableSchema
+    {
+        $name = $db->configName();
+        if (isset($this->tables[$name][$table])) {
+            return $this->tables[$name][$table];
+        }
+        $schema = $db->getSchemaCollection();
+        $tableSchema = $schema->describe($table);
+        $this->tables[$name][$table] = $tableSchema;
+
+        return $tableSchema;
     }
 }
