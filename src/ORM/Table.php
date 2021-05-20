@@ -2174,9 +2174,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to save due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to save.
      * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface|false False on failure, entities list on success.
+     * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface|false False on failure, entities list on success.
      * @throws \Exception
      */
     public function saveMany(iterable $entities, $options = [])
@@ -2195,9 +2195,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to save due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to save.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
+     * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */
@@ -2207,11 +2207,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to save.
      * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      * @throws \Exception If an entity couldn't be saved.
-     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
+     * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface Entities list.
      */
     protected function _saveMany(iterable $entities, $options = []): iterable
     {
@@ -2226,7 +2226,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         /** @var bool[] $isNew */
         $isNew = [];
         $cleanup = function ($entities) use (&$isNew): void {
-            /** @var \Cake\Datasource\EntityInterface[] $entities */
+            /** @var array<\Cake\Datasource\EntityInterface> $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unset($this->getPrimaryKey());
@@ -2329,9 +2329,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to delete due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
+     * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface|false Entities list
+     * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface|false Entities list
      *   on success, false on failure.
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
@@ -2353,9 +2353,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to delete due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
+     * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
+     * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
@@ -2371,7 +2371,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
+     * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used.
      * @return \Cake\Datasource\EntityInterface|null
      */
@@ -2781,7 +2781,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param array $data The data to build an entity with.
      * @param array $options A list of options for the objects hydration.
-     * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
+     * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      */
     public function newEntities(array $data, array $options = []): array
     {
@@ -2879,11 +2879,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Traversable $entities the entities that will get the
+     * @param array<\Cake\Datasource\EntityInterface>|\Traversable $entities the entities that will get the
      * data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array $options A list of options for the objects hydration.
-     * @return \Cake\Datasource\EntityInterface[]
+     * @return array<\Cake\Datasource\EntityInterface>
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
@@ -3060,10 +3060,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * The properties for the associations to be loaded will be overwritten on each entity.
      *
-     * @param \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[] $entities a single entity or list of entities
+     * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
      * @see \Cake\ORM\Query::contain()
-     * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]
+     * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>
      */
     public function loadInto($entities, array $contain)
     {

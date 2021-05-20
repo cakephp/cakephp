@@ -204,7 +204,7 @@ class Filesystem
 
         $result = true;
         foreach ($iterator as $fileInfo) {
-            $isWindowsLink = DS === '\\' && $fileInfo->getType() === 'link';
+            $isWindowsLink = DIRECTORY_SEPARATOR === '\\' && $fileInfo->getType() === 'link';
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {
                 // phpcs:ignore
                 $result = $result && @rmdir($fileInfo->getPathname());
