@@ -121,7 +121,7 @@ parameters:
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$var_array of function extract is passed by reference, so it expects variables only\\.$#"
+			message: "#^Parameter \\#1 \\$(var_)?array of function extract is passed by reference, so it expects variables only\\.$#"
 			count: 1
 			path: src/Command/I18nExtractCommand.php
 
@@ -166,7 +166,7 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$autoload_function of function spl_autoload_register expects callable\\(string\\)\\: void, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
+			message: "#^Parameter \\#1 \\$(autoload_function|callback) of function spl_autoload_register expects \\(?callable\\(string\\)\\: void(\\)\\|null)?, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
 			count: 1
 			path: src/Core/ClassLoader.php
 
@@ -276,6 +276,26 @@ parameters:
 			path: src/Http/Client.php
 
 		-
+			message: "#^Parameter \\#1 \\$ch of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:exec\\(\\) expects resource, CurlHandle given\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
+
+		-
+			message: "#^Parameter \\#1 \\$handle of function curl_exec expects CurlHandle, resource given\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
+
+		-
+			message: "#^Parameter \\#1 \\$handle of function curl_getinfo expects CurlHandle, resource given\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
+
+		-
+			message: "#^Parameter \\#1 \\$handle of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:createResponse\\(\\) expects resource, CurlHandle given\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
+
+		-
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 			count: 1
 			path: src/Http/Client/Auth/Digest.php
@@ -321,6 +341,11 @@ parameters:
 			path: src/I18n/Date.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/I18n/Date.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Date.php
@@ -331,12 +356,22 @@ parameters:
 			path: src/I18n/FrozenDate.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/I18n/FrozenDate.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/FrozenTime.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
@@ -352,6 +387,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/Time.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
@@ -376,7 +416,7 @@ parameters:
 			path: src/Mailer/Renderer.php
 
 		-
-			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(?callable\\(mixed, mixed\\)\\: bool(\\)\\|null)?, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Association/BelongsToMany.php
 
@@ -396,7 +436,7 @@ parameters:
 			path: src/ORM/Marshaller.php
 
 		-
-			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(?callable\\(mixed, mixed\\)\\: bool(\\)\\|null)?, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Marshaller.php
 
@@ -431,7 +471,7 @@ parameters:
 			path: src/ORM/ResultSet.php
 
 		-
-			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(?callable\\(mixed, mixed\\)\\: bool(\\)\\|null)?, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Rule/IsUnique.php
 
@@ -544,4 +584,9 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between array and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/View/View.php
 
