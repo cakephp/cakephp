@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
+use Cake\Utility\Hash;
 
 /**
  * Checks that a list of fields from an entity are unique in the table
@@ -79,7 +80,7 @@ class IsUnique
         if ($entity->isNew() === false) {
             $keys = (array)$options['repository']->getPrimaryKey();
             $keys = $this->_alias($alias, $entity->extract($keys));
-            if (array_filter($keys, 'strlen')) {
+            if (Hash::filter($keys)) {
                 $conditions['NOT'] = $keys;
             }
         }
