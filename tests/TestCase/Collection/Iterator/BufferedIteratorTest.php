@@ -90,4 +90,25 @@ class BufferedIteratorTest extends TestCase
         }
         $this->assertEquals([1, 2, 3], $result);
     }
+
+    /**
+     * Testing serialize and unserialize features.
+     *
+     * @return void
+     */
+    public function testSerialization()
+    {
+        $items = new ArrayObject([
+            'a' => 1,
+            'b' => 2,
+            'c' => 3,
+        ]);
+        $expected = (array)$items;
+
+        $iterator = new BufferedIterator($items);
+
+        $serialized = serialize($iterator);
+        $outcome = unserialize($serialized);
+        $this->assertEquals($expected, $outcome->toArray());
+    }
 }

@@ -663,6 +663,16 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
+     * Magic method used for serializing the view builder object.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return $this->jsonSerialize();
+    }
+
+    /**
      * Unserializes the view builder object.
      *
      * @param string $data Serialized string.
@@ -671,5 +681,16 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function unserialize($data): void
     {
         $this->createFromArray(unserialize($data));
+    }
+
+    /**
+     * Magic method used to rebuild the view builder object.
+     *
+     * @param array $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->createFromArray($data);
     }
 }
