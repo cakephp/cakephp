@@ -17,7 +17,8 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Database\Connection;
-use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\SqlGeneratorInterface;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionManager;
 use RuntimeException;
 
@@ -119,9 +120,11 @@ class TruncationStrategy implements StateResetStrategyInterface
             $db->disableConstraints(function (Connection $db) use ($tables): void {
                 foreach ($tables as $table) {
                     $tableSchema = $this->getTableSchema($db, $table);
-                    $sql = $tableSchema->truncateSql($db);
-                    foreach ($sql as $stmt) {
-                        $db->execute($stmt)->closeCursor();
+                    if ($tableSchema instanceof SqlGeneratorInterface) {
+                        $sql = $tableSchema->truncateSql($db);
+                        foreach ($sql as $stmt) {
+                            $db->execute($stmt)->closeCursor();
+                        }
                     }
                 }
             });
@@ -149,9 +152,9 @@ class TruncationStrategy implements StateResetStrategyInterface
      *
      * @param \Cake\Database\Connection $db The connection to use.
      * @param string $table The table to reflect.
-     * @return \Cake\Database\Schema\TableSchema
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    protected function getTableSchema(Connection $db, string $table): TableSchema
+    protected function getTableSchema(Connection $db, string $table): TableSchemaInterface
     {
         $name = $db->configName();
         if (isset($this->tables[$name][$table])) {
