@@ -145,6 +145,10 @@ class Oauth
         ];
         $baseString = $this->baseString($request, $values);
 
+        // Consumer key should only be encoded for base string calculation as
+        // auth header generation already encodes independently
+        $values['oauth_consumer_key'] = $credentials['consumerKey'];
+
         if (isset($credentials['realm'])) {
             $values['oauth_realm'] = $credentials['realm'];
         }
