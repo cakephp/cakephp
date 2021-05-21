@@ -138,7 +138,7 @@ class Oauth
             'oauth_timestamp' => $timestamp,
             'oauth_signature_method' => 'HMAC-SHA1',
             'oauth_token' => $credentials['token'],
-            'oauth_consumer_key' => $credentials['consumerKey'],
+            'oauth_consumer_key' => $this->_encode($credentials['consumerKey']),
         ];
         $baseString = $this->baseString($request, $values);
 
