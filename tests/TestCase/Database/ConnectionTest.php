@@ -321,14 +321,14 @@ class ConnectionTest extends TestCase
 
         $collection = new Collection($statement);
         $result = $collection->extract('id')->toArray();
-        $this->assertSame([1, 2], $result);
+        $this->assertEquals(['1', '2'], $result);
 
         // Check iteration after extraction
         $result = [];
         foreach ($collection as $v) {
             $result[] = $v['id'];
         }
-        $this->assertSame([1, 2], $result);
+        $this->assertEquals(['1', '2'], $result);
     }
 
     /**
