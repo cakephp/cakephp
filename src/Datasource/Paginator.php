@@ -202,7 +202,7 @@ class Paginator implements PaginatorInterface
      * @param array $data Pagination data.
      * @return \Cake\Datasource\QueryInterface
      */
-    protected function getQuery(RepositoryInterface $object, ?QueryInterface $query = null, array $data): QueryInterface
+    protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface
     {
         if ($query === null) {
             $query = $object->find($data['finder'], $data['options']);
