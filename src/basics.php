@@ -98,11 +98,12 @@ if (!function_exists('breakpoint')) {
      * Works the same way as eval(\Psy\sh());
      * psy/psysh must be loaded in your project
      *
-     * @link http://psysh.org/
      * ```
      * eval(breakpoint());
      * ```
+     *
      * @return string|null
+     * @link http://psysh.org/
      */
     function breakpoint()
     {
