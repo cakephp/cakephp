@@ -431,12 +431,14 @@ class TestCaseTest extends TestCase
     public function testGetMockForModelSetTable()
     {
         static::setAppNamespace();
+        ConnectionManager::alias('test', 'custom_i18n_datasource');
 
         $I18n = $this->getMockForModel('CustomI18n', ['save']);
         $this->assertSame('custom_i18n_table', $I18n->getTable());
 
         $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('tags', $Tags->getTable());
+        ConnectionManager::dropAlias('custom_i18n_datasource');
     }
 
     /**
