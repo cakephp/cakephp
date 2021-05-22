@@ -25,6 +25,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectWithPivotLoader;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
@@ -1168,7 +1169,7 @@ class BelongsToMany extends Association
         $bindingKey = (array)$this->getBindingKey();
         $primaryValue = $sourceEntity->extract($bindingKey);
 
-        if (count(array_filter($primaryValue, 'strlen')) !== count($bindingKey)) {
+        if (count(Hash::filter($primaryValue)) !== count($bindingKey)) {
             $message = 'Could not find primary key value for source entity';
             throw new InvalidArgumentException($message);
         }
