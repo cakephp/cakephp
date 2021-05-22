@@ -332,7 +332,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = '2hr/eoFyTSuWc6SfZIvkhpeRHdM=';
-        $this->assertStringContainsString(
+        $this->assertContains(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );
