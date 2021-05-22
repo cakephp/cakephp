@@ -83,6 +83,8 @@ class TranslateBehaviorTest extends TestCase
      */
     public function testCustomTranslationTable()
     {
+        ConnectionManager::setConfig('custom_i18n_datasource', ['url' => getenv('DB_URL')]);
+
         $table = $this->getTableLocator()->get('Articles');
 
         $table->addBehavior('Translate', [
@@ -95,8 +97,10 @@ class TranslateBehaviorTest extends TestCase
 
         $this->assertSame('CustomI18n', $i18n->getName());
         $this->assertInstanceOf(CustomI18nTable::class, $i18n->getTarget());
-        $this->assertSame('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
+        $this->assertSame('custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
         $this->assertSame('custom_i18n_table', $i18n->getTarget()->getTable());
+
+        ConnectionManager::drop('custom_i18n_datasource');
     }
 
     /**

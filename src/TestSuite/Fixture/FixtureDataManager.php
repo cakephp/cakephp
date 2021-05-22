@@ -57,6 +57,14 @@ class FixtureDataManager extends FixtureLoader
     protected $inserted = [];
 
     /**
+     * A map of test classes and whether or not their fixtures have
+     * been added to the nameMap.
+     *
+     * @var bool[]
+     */
+    protected $visitedTests = [];
+
+    /**
      * Looks for fixture files and instantiates the classes accordingly
      *
      * @param \Cake\TestSuite\TestCase $test The test suite to load fixtures for.
@@ -66,9 +74,11 @@ class FixtureDataManager extends FixtureLoader
     protected function loadFixtureClasses(TestCase $test): void
     {
         $fixtures = $test->getFixtures();
-        if (!$fixtures) {
+        if (!$fixtures || isset($this->visitedTests[get_class($test)])) {
             return;
         }
+        $this->visitedTests[get_class($test)] = true;
+
         foreach ($fixtures as $fixture) {
             if (isset($this->fixtures[$fixture])) {
                 continue;
