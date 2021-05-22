@@ -30,6 +30,8 @@ class SqliteStatement extends StatementDecorator
      */
     public function execute(?array $params = null): bool
     {
+        $this->_hasExecuted = true;
+
         if ($this->_statement instanceof BufferedStatement) {
             $this->_statement = $this->_statement->getInnerStatement();
         }
@@ -50,7 +52,7 @@ class SqliteStatement extends StatementDecorator
     {
         /** @psalm-suppress NoInterfaceProperties */
         if (
-            $this->_statement->queryString &&
+            $this->_hasExecuted &&
             preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)
         ) {
             $changes = $this->_driver->prepare('SELECT CHANGES()');

@@ -32,6 +32,7 @@ class MysqlStatement extends PDOStatement
      */
     public function execute(?array $params = null): bool
     {
+        $this->_hasExecuted = true;
         $connection = $this->_driver->getConnection();
 
         try {
