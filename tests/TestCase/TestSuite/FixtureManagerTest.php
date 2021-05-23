@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -153,6 +154,9 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizeCoreConstraint()
     {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf($driver instanceof Sqlserver, 'This fails in SQLServer');
+
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -412,7 +416,7 @@ class FixtureManagerTest extends TestCase
     public function testExceptionOnLoadFixture($method, $expectedMessage)
     {
         $fixture = $this->getMockBuilder('Cake\Test\Fixture\ProductsFixture')
-            ->onlyMethods([$method])
+            ->onlyMethods(['drop', 'create', $method])
             ->getMock();
         $fixture->expects($this->once())
             ->method($method)

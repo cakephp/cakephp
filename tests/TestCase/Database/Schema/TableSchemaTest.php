@@ -574,6 +574,7 @@ class TableSchemaTest extends TestCase
      */
     public function testConstraintForeignKeyTwoColumns()
     {
+        $this->getTableLocator()->clear();
         $table = $this->getTableLocator()->get('Orders');
         $connection = $table->getConnection();
         $this->skipIf(
