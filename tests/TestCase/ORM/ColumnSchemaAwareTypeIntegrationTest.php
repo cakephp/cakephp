@@ -91,6 +91,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
             });
 
         TypeFactory::set('text', $type);
+        TypeFactory::set('nvarchar', $type);
 
         $table->getSchema()->getColumn('val');
     }

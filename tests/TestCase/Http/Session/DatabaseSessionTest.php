@@ -50,6 +50,9 @@ class DatabaseSessionTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         $this->storage = new DatabaseSession();
+
+        // With metadata caching on SQLServer/windows tests fail.
+        ConnectionManager::get('test')->cacheMetadata(false);
     }
 
     /**
