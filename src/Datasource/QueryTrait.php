@@ -503,18 +503,22 @@ trait QueryTrait
     /**
      * Get the first result from the executing query or raise an exception.
      *
+     * @param string $message Custom message returns when record not found
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
      * @return \Cake\Datasource\EntityInterface|array The first result from the ResultSet.
      */
-    public function firstOrFail()
+    public function firstOrFail(string $message = null)
     {
         $entity = $this->first();
         if (!$entity) {
             $table = $this->getRepository();
-            throw new RecordNotFoundException(sprintf(
-                'Record not found in table "%s"',
-                $table->getTable()
-            ));
+            if ($message)
+                throw new RecordNotFoundException($message);
+            else
+                throw new RecordNotFoundException(sprintf(
+                    'Record not found in table "%s"',
+                    $table->getTable()
+                ));
         }
 
         return $entity;
