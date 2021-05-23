@@ -113,9 +113,13 @@ class TruncationStrategy implements StateResetStrategyInterface
             if (!($db instanceof Connection)) {
                 continue;
             }
+            $lastInserted = $fixtures->lastInserted();
+            if (empty($lastInserted)) {
+                continue;
+            }
             $schema = $db->getSchemaCollection();
             $tables = $schema->listTables();
-            $tables = array_intersect($tables, $fixtures->lastInserted());
+            $tables = array_intersect($tables, $lastInserted);
 
             $db->disableConstraints(function (Connection $db) use ($tables): void {
                 foreach ($tables as $table) {
