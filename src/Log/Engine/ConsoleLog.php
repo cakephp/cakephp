@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
+use Cake\Log\Formatter\DefaultFormatter;
 use InvalidArgumentException;
 
 /**
@@ -34,7 +35,10 @@ class ConsoleLog extends BaseLog
         'levels' => null,
         'scopes' => [],
         'outputAs' => null,
-        'dateFormat' => 'Y-m-d H:i:s',
+        'formatter' => [
+            'className' => DefaultFormatter::class,
+            'includeTags' => true,
+        ],
     ];
 
     /**
@@ -74,6 +78,11 @@ class ConsoleLog extends BaseLog
         if (isset($config['outputAs'])) {
             $this->_output->setOutputAs($config['outputAs']);
         }
+
+        if (isset($this->_config['dateFormat'])) {
+            deprecationWarning('`dateFormat` option should now be set in the formatter options.');
+            $this->formatter->setConfig('dateFormat', $this->_config['dateFormat']);
+        }
     }
 
     /**
@@ -88,8 +97,6 @@ class ConsoleLog extends BaseLog
     public function log($level, $message, array $context = [])
     {
         $message = $this->_format($message, $context);
-        $output = $this->_getFormattedDate() . ' ' . ucfirst($level) . ': ' . $message;
-
-        $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level));
+        $this->_output->write($this->formatter->format($level, $message, $context));
     }
 }

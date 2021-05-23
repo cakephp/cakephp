@@ -21,8 +21,10 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Http\Response;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Psr\Log\LogLevel;
 use TestApp\Log\Engine\TestBaseLog;
+use TestApp\Log\Formatter\InvalidFormatter;
 
 class BaseLogTest extends TestCase
 {
@@ -143,5 +145,16 @@ class BaseLogTest extends TestCase
             ['val']
         );
         $this->assertSame('val', $this->logger->getMessage());
+    }
+
+    /**
+     * Test creating log engine with invalid formatter.
+     *
+     * @return void
+     */
+    public function testInvalidFormatter()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new TestBaseLog(['formatter' => InvalidFormatter::class]);
     }
 }

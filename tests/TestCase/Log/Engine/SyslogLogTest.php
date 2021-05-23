@@ -89,6 +89,28 @@ class SyslogLogTest extends TestCase
     }
 
     /**
+     * Test deprecated format option
+     *
+     * @return void
+     */
+    public function testDeprecatedFormat()
+    {
+        $this->deprecated(function () {
+            $log = $this->getMockBuilder(SyslogLog::class)
+                ->setConstructorArgs(['config' => ['format' => 'custom %s: %s']])
+                ->onlyMethods(['_open', '_write'])
+                ->getMock();
+            $log->expects($this->exactly(2))
+                ->method('_write')
+                ->withConsecutive(
+                    [LOG_DEBUG, 'custom debug: Foo'],
+                    [LOG_DEBUG, 'custom debug: Bar']
+                );
+            $log->log('debug', "Foo\nBar");
+        });
+    }
+
+    /**
      * Data provider for the write function test
      *
      * @return array

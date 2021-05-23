@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Log\Engine;
 
 use Cake\Core\Configure;
+use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Utility\Text;
 
 /**
@@ -53,7 +54,9 @@ class FileLog extends BaseLog
         'rotate' => 10,
         'size' => 10485760, // 10MB
         'mask' => null,
-        'dateFormat' => 'Y-m-d H:i:s',
+        'formatter' => [
+            'className' => DefaultFormatter::class,
+        ],
     ];
 
     /**
@@ -105,6 +108,11 @@ class FileLog extends BaseLog
                 $this->_size = Text::parseFileSize($this->_config['size']);
             }
         }
+
+        if (isset($this->_config['dateFormat'])) {
+            deprecationWarning('`dateFormat` option should now be set in the formatter options.');
+            $this->formatter->setConfig('dateFormat', $this->_config['dateFormat']);
+        }
     }
 
     /**
@@ -119,7 +127,8 @@ class FileLog extends BaseLog
     public function log($level, $message, array $context = []): void
     {
         $message = $this->_format($message, $context);
-        $output = $this->_getFormattedDate() . ' ' . ucfirst($level) . ': ' . $message . "\n";
+        $message = $this->formatter->format($level, $message, $context);
+
         $filename = $this->_getFilename($level);
         if ($this->_size) {
             $this->_rotateFile($filename);
@@ -128,13 +137,13 @@ class FileLog extends BaseLog
         $pathname = $this->_path . $filename;
         $mask = $this->_config['mask'];
         if (!$mask) {
-            file_put_contents($pathname, $output, FILE_APPEND);
+            file_put_contents($pathname, $message . "\n", FILE_APPEND);
 
             return;
         }
 
         $exists = is_file($pathname);
-        file_put_contents($pathname, $output, FILE_APPEND);
+        file_put_contents($pathname, $message . "\n", FILE_APPEND);
         static $selfError = false;
 
         if (!$selfError && !$exists && !chmod($pathname, (int)$mask)) {

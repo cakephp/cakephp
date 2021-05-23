@@ -208,13 +208,29 @@ class FileLogTest extends TestCase
     {
         $this->_deleteLogs(LOGS);
 
-        // original 'Y-m-d H:i:s' format test was testLogFileWriting() method
-
         // 'c': ISO 8601 date (added in PHP 5)
-        $log = new FileLog(['path' => LOGS, 'dateFormat' => 'c']);
+        $log = new FileLog(['path' => LOGS, 'formatter.dateFormat' => 'c']);
         $log->log('warning', 'Test warning');
 
         $result = file_get_contents(LOGS . 'error.log');
         $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Warning: Test warning/', $result);
+    }
+
+    /**
+     * Test deprecated dateFormat option
+     *
+     * @return void
+     */
+    public function testDeprecatedDateFormat()
+    {
+        $this->deprecated(function () {
+            $this->_deleteLogs(LOGS);
+
+            $log = new FileLog(['path' => LOGS, 'dateFormat' => 'c']);
+            $log->log('warning', 'Test warning');
+
+            $result = file_get_contents(LOGS . 'error.log');
+            $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Warning: Test warning/', $result);
+        });
     }
 }
