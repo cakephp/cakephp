@@ -27,6 +27,8 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 
         $this->textType = TypeFactory::build('text');
         TypeFactory::map('text', ColumnSchemaAwareType::class);
+        // For SQLServer.
+        TypeFactory::map('nvarchar', ColumnSchemaAwareType::class);
 
         $this->loadFixtures('ColumnSchemaAwareTypeValues');
     }
@@ -35,6 +37,10 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
     {
         parent::tearDown();
         TypeFactory::set('text', $this->textType);
+
+        $map = TypeFactory::getMap();
+        unset($map['nvarchar']);
+        TypeFactory::setMap($map);
     }
 
     public function testCustomTypesCanBeUsedInFixtures()
