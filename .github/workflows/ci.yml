@@ -14,21 +14,16 @@ on:
 jobs:
   testsuite:
     runs-on: ubuntu-18.04
-    continue-on-error: ${{ matrix.allow-failure }}
     strategy:
       fail-fast: false
       matrix:
         php-version: ['7.2', '7.4', '8.0']
         db-type: [sqlite, mysql, pgsql]
         prefer-lowest: ['']
-        allow-failure: [false]
         exclude:
           - php-version: '7.2'
             db-type: 'mysql'
         include:
-          - php-version: '8.1'
-            db-type: sqlite
-            allow-failure: true
           - php-version: '7.2'
             db-type: 'mariadb'
             allow-failure: false
