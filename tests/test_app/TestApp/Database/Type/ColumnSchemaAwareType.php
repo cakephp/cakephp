@@ -82,7 +82,7 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
     public function convertColumnDefinition(array $definition, DriverInterface $driver): ?array
     {
         return [
-            'type' => $this->_name,
+            'type' => 'text',
             'length' => 255,
             'comment' => 'Custom schema aware type comment',
         ];

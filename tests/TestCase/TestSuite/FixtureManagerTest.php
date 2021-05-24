@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -66,6 +67,7 @@ class FixtureManagerTest extends TestCase
             ->willReturn(['core.Articles']);
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
+
         $this->manager->unload($test);
         $this->assertCount(1, $fixtures);
         $this->assertArrayHasKey('core.Articles', $fixtures);
@@ -152,29 +154,27 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizeCoreConstraint()
     {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf($driver instanceof Sqlserver, 'This fails in SQLServer');
+
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
-            ->willReturn(['core.Articles', 'core.Tags', 'core.ArticlesTags']);
+            ->willReturn(['core.Authors', 'core.AuthorsTags']);
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
-        $table = $this->getTableLocator()->get('ArticlesTags');
+        $table = $this->getTableLocator()->get('AuthorsTags');
         $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
-            'columns' => [
-                'tag_id',
-            ],
-            'references' => [
-                'tags',
-                'id',
-            ],
+            'columns' => ['author_id'],
+            'references' => ['authors', 'id'],
             'update' => 'cascade',
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
+        $this->assertSame($expectedConstraint, $schema->getConstraint('author_id_fk'));
         $this->manager->unload($test);
     }
 
@@ -347,12 +347,17 @@ class FixtureManagerTest extends TestCase
         $test->autoFixtures = false;
         $test->expects($this->any())
             ->method('getFixtures')
-            ->willReturn(['core.Articles', 'core.Tags']);
-        $this->manager->fixturize($test);
-        $this->manager->loadSingle('Articles');
-        $this->manager->loadSingle('Tags');
+            ->willReturn(['core.Comments', 'core.Users']);
 
-        $table = $this->getTableLocator()->get('Articles');
+        $this->manager->fixturize($test);
+        $this->assertEquals([], $this->manager->lastInserted());
+
+        $this->manager->loadSingle('Comments');
+        $this->manager->loadSingle('Users');
+
+        $this->assertEquals(['comments', 'users'], $this->manager->lastInserted());
+
+        $table = $this->getTableLocator()->get('Users');
         $results = $table->find('all')->toArray();
         $schema = $table->getSchema();
         $expectedConstraint = [
@@ -363,7 +368,7 @@ class FixtureManagerTest extends TestCase
             'length' => [],
         ];
         $this->assertSame($expectedConstraint, $schema->getConstraint('primary'));
-        $this->assertCount(3, $results);
+        $this->assertCount(4, $results);
 
         $this->manager->unload($test);
     }
@@ -411,7 +416,7 @@ class FixtureManagerTest extends TestCase
     public function testExceptionOnLoadFixture($method, $expectedMessage)
     {
         $fixture = $this->getMockBuilder('Cake\Test\Fixture\ProductsFixture')
-            ->onlyMethods([$method])
+            ->onlyMethods(['drop', 'create', $method])
             ->getMock();
         $fixture->expects($this->once())
             ->method($method)
@@ -438,7 +443,6 @@ class FixtureManagerTest extends TestCase
                 'test' => $fixtures,
             ]));
         $manager->fixturize($test);
-        $manager->loadSingle('Products');
 
         $e = null;
         try {

@@ -103,7 +103,6 @@ if (!getenv('DB_URL')) {
 }
 
 ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
-ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('DB_URL')]);
 
 Configure::write('Session', [
     'defaults' => 'php',

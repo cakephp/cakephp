@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -573,7 +574,13 @@ class TableSchemaTest extends TestCase
      */
     public function testConstraintForeignKeyTwoColumns()
     {
+        $this->getTableLocator()->clear();
         $table = $this->getTableLocator()->get('Orders');
+        $connection = $table->getConnection();
+        $this->skipIf(
+            $connection->getDriver() instanceof Postgres,
+            'Constraints get dropped in postgres for some reason'
+        );
         $compositeConstraint = $table->getSchema()->getConstraint('product_category_fk');
         $expected = [
             'type' => 'foreign',

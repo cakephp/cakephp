@@ -18,7 +18,9 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Database\Connection;
 use Cake\Database\Schema\SqlGeneratorInterface;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionManager;
+use RuntimeException;
 
 /**
  * Fixture state strategy that truncates tables before a test.
@@ -30,10 +32,20 @@ use Cake\Datasource\ConnectionManager;
  * transactions.
  *
  * This mode also offers 'backwards compatible' behavior
- * with the schema + data fixture system.
+ * with the schema + data fixture system. Only tables that have
+ * fixture data 'loaded' will be truncated.
  */
 class TruncationStrategy implements StateResetStrategyInterface
 {
+    /**
+     * A map of connections to the tables they contain.
+     * Caching schema descriptions helps improve performance and
+     * is required for SQLServer to reset sequences.
+     *
+     * @var array
+     */
+    protected $tables = [];
+
     /**
      * Constructor.
      *
@@ -87,6 +99,11 @@ class TruncationStrategy implements StateResetStrategyInterface
      */
     public function beforeTest(string $test): void
     {
+        $fixtures = FixtureLoader::getInstance();
+        if (!$fixtures) {
+            throw new RuntimeException('Cannot truncate tables without a FixtureLoader');
+        }
+
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
             if (strpos($connection, 'test') !== 0) {
@@ -96,17 +113,22 @@ class TruncationStrategy implements StateResetStrategyInterface
             if (!($db instanceof Connection)) {
                 continue;
             }
+            $lastInserted = $fixtures->lastInserted();
+            if (empty($lastInserted)) {
+                continue;
+            }
+            $schema = $db->getSchemaCollection();
+            $tables = $schema->listTables();
+            $tables = array_intersect($tables, $lastInserted);
 
-            $db->disableConstraints(function (Connection $db): void {
-                $schema = $db->getSchemaCollection();
-                foreach ($schema->listTables() as $table) {
-                    $tableSchema = $schema->describe($table);
-                    if (!($tableSchema instanceof SqlGeneratorInterface)) {
-                        continue;
-                    }
-                    $sql = $tableSchema->truncateSql($db);
-                    foreach ($sql as $stmt) {
-                        $db->execute($stmt)->closeCursor();
+            $db->disableConstraints(function (Connection $db) use ($tables): void {
+                foreach ($tables as $table) {
+                    $tableSchema = $this->getTableSchema($db, $table);
+                    if ($tableSchema instanceof SqlGeneratorInterface) {
+                        $sql = $tableSchema->truncateSql($db);
+                        foreach ($sql as $stmt) {
+                            $db->execute($stmt)->closeCursor();
+                        }
                     }
                 }
             });
@@ -124,5 +146,28 @@ class TruncationStrategy implements StateResetStrategyInterface
     public function afterTest(string $test): void
     {
         // Do nothing
+    }
+
+    /**
+     * Get the schema description for a table.
+     *
+     * Lazily populates with fixtures as they are used to reduce
+     * the number of reflection queries we use.
+     *
+     * @param \Cake\Database\Connection $db The connection to use.
+     * @param string $table The table to reflect.
+     * @return \Cake\Database\Schema\TableSchemaInterface
+     */
+    protected function getTableSchema(Connection $db, string $table): TableSchemaInterface
+    {
+        $name = $db->configName();
+        if (isset($this->tables[$name][$table])) {
+            return $this->tables[$name][$table];
+        }
+        $schema = $db->getSchemaCollection();
+        $tableSchema = $schema->describe($table);
+        $this->tables[$name][$table] = $tableSchema;
+
+        return $tableSchema;
     }
 }

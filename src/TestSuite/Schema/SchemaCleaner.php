@@ -18,7 +18,7 @@ namespace Cake\TestSuite\Schema;
 use Cake\Console\ConsoleIo;
 use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\CollectionInterface;
-use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\SqlGeneratorInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 
@@ -52,6 +52,7 @@ class SchemaCleaner
      */
     public function dropTables(string $connectionName, $tables = null): void
     {
+        $this->handle($connectionName, 'dropConstraintSql', 'dropping constraints', $tables);
         $this->handle($connectionName, 'dropTableSql', 'dropping', $tables);
     }
 
@@ -95,9 +96,9 @@ class SchemaCleaner
 
         $stmts = [];
         foreach ($tables as $table) {
-            $table = $schema->describe($table);
-            if ($table instanceof TableSchema) {
-                $stmts = array_merge($stmts, $dialect->{$dialectMethod}($table));
+            $tableSchema = $schema->describe($table);
+            if ($tableSchema instanceof SqlGeneratorInterface) {
+                $stmts = array_merge($stmts, $dialect->{$dialectMethod}($tableSchema));
             }
         }
 

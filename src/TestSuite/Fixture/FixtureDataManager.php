@@ -52,18 +52,33 @@ class FixtureDataManager extends FixtureLoader
     protected $nameMap = [];
 
     /**
+     * @var string[]
+     */
+    protected $inserted = [];
+
+    /**
+     * A map of test classes and whether or not their fixtures have
+     * been added to the nameMap.
+     *
+     * @var bool[]
+     */
+    protected $visitedTests = [];
+
+    /**
      * Looks for fixture files and instantiates the classes accordingly
      *
      * @param \Cake\TestSuite\TestCase $test The test suite to load fixtures for.
      * @return void
      * @throws \UnexpectedValueException when a referenced fixture does not exist.
      */
-    protected function loadFixtures(TestCase $test): void
+    protected function loadFixtureClasses(TestCase $test): void
     {
         $fixtures = $test->getFixtures();
-        if (!$fixtures) {
+        if (!$fixtures || isset($this->visitedTests[get_class($test)])) {
             return;
         }
+        $this->visitedTests[get_class($test)] = true;
+
         foreach ($fixtures as $fixture) {
             if (isset($this->fixtures[$fixture])) {
                 continue;
@@ -137,6 +152,7 @@ class FixtureDataManager extends FixtureLoader
         }
 
         $fixture->insert($connection);
+        $this->inserted[] = $fixture->sourceName();
     }
 
     /**
@@ -154,6 +170,7 @@ class FixtureDataManager extends FixtureLoader
                 foreach ($fixtures as $fixture) {
                     try {
                         $fixture->insert($db);
+                        $this->inserted[] = $fixture->sourceName();
                     } catch (PDOException $e) {
                         $msg = sprintf(
                             'Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s',
@@ -218,12 +235,14 @@ class FixtureDataManager extends FixtureLoader
     /**
      * @inheritDoc
      */
-    public function fixturize(TestCase $test): void
+    public function setupTest(TestCase $test): void
     {
+        $this->inserted = [];
         if (!$test->getFixtures()) {
             return;
         }
-        $this->loadFixtures($test);
+        $this->loadFixtureClasses($test);
+        $this->load($test);
     }
 
     /**
@@ -232,5 +251,13 @@ class FixtureDataManager extends FixtureLoader
     public function loaded(): array
     {
         return $this->fixtures;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function lastInserted(): array
+    {
+        return $this->inserted;
     }
 }
