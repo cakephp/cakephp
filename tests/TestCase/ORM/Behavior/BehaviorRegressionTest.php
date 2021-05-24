@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use Cake\Database\Driver\SqlServer;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\NumberTree;
 
@@ -42,6 +44,12 @@ class BehaviorRegressionTest extends TestCase
      */
     public function testTreeAndTranslateIntegration()
     {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(
+            $connection->getDriver() instanceof Sqlserver,
+            'This test fails sporadically in SQLServer'
+        );
+
         $table = $this->getTableLocator()->get('NumberTrees');
         $table->setPrimaryKey(['id']);
         $table->addBehavior('Tree');

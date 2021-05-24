@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Query;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -106,6 +107,11 @@ class CounterCacheBehaviorTest extends TestCase
      */
     public function testAdd()
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'This test fails sporadically in SQLServer'
+        );
+
         $this->post->belongsTo('Users');
 
         $this->post->addBehavior('CounterCache', [
