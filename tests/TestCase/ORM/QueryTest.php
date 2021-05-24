@@ -1938,6 +1938,7 @@ class QueryTest extends TestCase
             ->getMock();
         $query->select();
         $resultSet = $this->getMockbuilder('Cake\ORM\ResultSet')
+            ->onlyMethods([$method])
             ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
             ->getMock();
         $query->expects($this->once())

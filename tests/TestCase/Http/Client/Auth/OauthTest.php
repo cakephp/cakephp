@@ -360,6 +360,37 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
     }
 
     /**
+     * Test HMAC-SHA1 signing with a base64 consumer key
+     *
+     * @return void
+     */
+    public function testHmacBase64Signing()
+    {
+        $request = new Request(
+            'http://photos.example.net/photos',
+            'GET'
+        );
+
+        $options = [
+            'consumerKey' => 'ZHBmNDNmM3AybDRrM2wwMw==',
+            'consumerSecret' => 'kd94hf93k423kf44',
+            'tokenSecret' => 'pfkkdhi9sl3r4s00',
+            'token' => 'nnch734d00sl2jdk',
+            'nonce' => 'kllo9940pd9333jh',
+            'timestamp' => '1191242096',
+        ];
+        $auth = new Oauth();
+        $request = $auth->authentication($request, $options);
+
+        $result = $request->getHeaderLine('Authorization');
+        $expected = '2hr/eoFyTSuWc6SfZIvkhpeRHdM=';
+        $this->assertStringContainsString(
+            'oauth_signature="' . $expected . '"',
+            urldecode($result)
+        );
+    }
+
+    /**
      * Test RSA-SHA1 signing with a private key string
      *
      * Hash result + parameters taken from
