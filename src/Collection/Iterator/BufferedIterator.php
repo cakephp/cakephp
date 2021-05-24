@@ -204,13 +204,13 @@ class BufferedIterator extends Collection implements Countable, Serializable
     /**
      * Unserializes the passed string and rebuilds the BufferedIterator instance
      *
-     * @param string $buffer The serialized buffer iterator
+     * @param string $collection The serialized buffer iterator
      * @return void
      */
-    public function unserialize($buffer): void
+    public function unserialize($collection): void
     {
         $this->__construct([]);
-        $this->_buffer = unserialize($buffer);
+        $this->_buffer = unserialize($collection);
         $this->_started = true;
         $this->_finished = true;
     }
