@@ -22,6 +22,9 @@ jobs:
         db-type: [sqlite, mysql, pgsql]
         prefer-lowest: ['']
         allow-failure: [false]
+        exclude:
+          - php-version: '7.2'
+            db-type: 'mysql'
         include:
           - php-version: '8.1'
             db-type: sqlite

@@ -218,14 +218,14 @@ class CommandRunner implements EventDispatcherInterface
      * If the application does not support events and this method is used as
      * a setter, an exception will be raised.
      *
-     * @param \Cake\Event\EventManagerInterface $events The event manager to set.
+     * @param \Cake\Event\EventManagerInterface $eventManager The event manager to set.
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function setEventManager(EventManagerInterface $eventManager)
     {
         if ($this->app instanceof PluginApplicationInterface) {
-            $this->app->setEventManager($events);
+            $this->app->setEventManager($eventManager);
 
             return $this;
         }

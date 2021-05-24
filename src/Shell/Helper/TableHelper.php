@@ -136,31 +136,31 @@ class TableHelper extends Helper
      * Data will be output based on the order of the values
      * in the array. The keys will not be used to align data.
      *
-     * @param array $rows The data to render out.
+     * @param array $args The data to render out.
      * @return void
      */
-    public function output(array $rows): void
+    public function output(array $args): void
     {
-        if (empty($rows)) {
+        if (empty($args)) {
             return;
         }
 
         $this->_io->setStyle('text-right', ['text' => null]);
 
         $config = $this->getConfig();
-        $widths = $this->_calculateWidths($rows);
+        $widths = $this->_calculateWidths($args);
 
         $this->_rowSeparator($widths);
         if ($config['headers'] === true) {
-            $this->_render(array_shift($rows), $widths, ['style' => $config['headerStyle']]);
+            $this->_render(array_shift($args), $widths, ['style' => $config['headerStyle']]);
             $this->_rowSeparator($widths);
         }
 
-        if (empty($rows)) {
+        if (empty($args)) {
             return;
         }
 
-        foreach ($rows as $line) {
+        foreach ($args as $line) {
             $this->_render($line, $widths);
             if ($config['rowSeparator'] === true) {
                 $this->_rowSeparator($widths);

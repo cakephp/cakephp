@@ -71,35 +71,35 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * All calls to the `Email` component would use `AliasedEmail` instead.
      *
-     * @param string $objectName The name/class of the object to load.
+     * @param string $name The name/class of the object to load.
      * @param array $config Additional settings to use when loading the object.
      * @return mixed
      * @psalm-return TObject
      * @throws \Exception If the class cannot be found.
      */
-    public function load(string $objectName, array $config = [])
+    public function load(string $name, array $config = [])
     {
         if (isset($config['className'])) {
-            $name = $objectName;
-            $objectName = $config['className'];
+            $objName = $name;
+            $name = $config['className'];
         } else {
-            [, $name] = pluginSplit($objectName);
+            [, $objName] = pluginSplit($name);
         }
 
-        $loaded = isset($this->_loaded[$name]);
+        $loaded = isset($this->_loaded[$objName]);
         if ($loaded && !empty($config)) {
-            $this->_checkDuplicate($name, $config);
+            $this->_checkDuplicate($objName, $config);
         }
         if ($loaded) {
-            return $this->_loaded[$name];
+            return $this->_loaded[$objName];
         }
 
-        $className = $objectName;
-        if (is_string($objectName)) {
-            $className = $this->_resolveClassName($objectName);
+        $className = $name;
+        if (is_string($name)) {
+            $className = $this->_resolveClassName($name);
             if ($className === null) {
-                [$plugin, $objectName] = pluginSplit($objectName);
-                $this->_throwMissingClassError($objectName, $plugin);
+                [$plugin, $name] = pluginSplit($name);
+                $this->_throwMissingClassError($name, $plugin);
             }
         }
 
@@ -107,8 +107,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
          * @psalm-var TObject $instance
          * @psalm-suppress PossiblyNullArgument
          **/
-        $instance = $this->_create($className, $name, $config);
-        $this->_loaded[$name] = $instance;
+        $instance = $this->_create($className, $objName, $config);
+        $this->_loaded[$objName] = $instance;
 
         return $instance;
     }
@@ -332,24 +332,24 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * If this collection implements events, the passed object will
      * be attached into the event manager
      *
-     * @param string $objectName The name of the object to set in the registry.
+     * @param string $name The name of the object to set in the registry.
      * @param object $object instance to store in the registry
      * @return $this
      * @psalm-param TObject $object
      * @psalm-suppress MoreSpecificReturnType
      */
-    public function set(string $objectName, object $object)
+    public function set(string $name, object $object)
     {
-        [, $name] = pluginSplit($objectName);
+        [, $objName] = pluginSplit($name);
 
         // Just call unload if the object was loaded before
-        if (array_key_exists($objectName, $this->_loaded)) {
-            $this->unload($objectName);
+        if (array_key_exists($name, $this->_loaded)) {
+            $this->unload($name);
         }
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
             $this->getEventManager()->on($object);
         }
-        $this->_loaded[$name] = $object;
+        $this->_loaded[$objName] = $object;
 
         /** @psalm-suppress LessSpecificReturnStatement */
         return $this;
@@ -360,22 +360,22 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * If this registry has an event manager, the object will be detached from any events as well.
      *
-     * @param string $objectName The name of the object to remove from the registry.
+     * @param string $name The name of the object to remove from the registry.
      * @return $this
      * @psalm-suppress MoreSpecificReturnType
      */
-    public function unload(string $objectName)
+    public function unload(string $name)
     {
-        if (empty($this->_loaded[$objectName])) {
-            [$plugin, $objectName] = pluginSplit($objectName);
-            $this->_throwMissingClassError($objectName, $plugin);
+        if (empty($this->_loaded[$name])) {
+            [$plugin, $name] = pluginSplit($name);
+            $this->_throwMissingClassError($name, $plugin);
         }
 
-        $object = $this->_loaded[$objectName];
+        $object = $this->_loaded[$name];
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
             $this->getEventManager()->off($object);
         }
-        unset($this->_loaded[$objectName]);
+        unset($this->_loaded[$name]);
 
         /** @psalm-suppress LessSpecificReturnStatement */
         return $this;

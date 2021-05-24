@@ -328,13 +328,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param callable $visitor A function or callable to be executed for each part
+     * @param callable $callback A function or callable to be executed for each part
      * @return $this
      */
-    public function traverse($visitor)
+    public function traverse($callback)
     {
         foreach ($this->_parts as $name => $part) {
-            $visitor($part, $name);
+            $callback($part, $name);
         }
 
         return $this;

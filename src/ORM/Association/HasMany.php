@@ -637,16 +637,16 @@ class HasMany extends Association
     /**
      * Parse extra options passed in the constructor.
      *
-     * @param array $opts original list of options passed in constructor
+     * @param array $options original list of options passed in constructor
      * @return void
      */
-    protected function _options(array $opts): void
+    protected function _options(array $options): void
     {
-        if (!empty($opts['saveStrategy'])) {
-            $this->setSaveStrategy($opts['saveStrategy']);
+        if (!empty($options['saveStrategy'])) {
+            $this->setSaveStrategy($options['saveStrategy']);
         }
-        if (isset($opts['sort'])) {
-            $this->setSort($opts['sort']);
+        if (isset($options['sort'])) {
+            $this->setSort($options['sort']);
         }
     }
 
