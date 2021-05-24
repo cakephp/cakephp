@@ -1895,6 +1895,18 @@ class Message implements JsonSerializable, Serializable
      */
     public function serialize(): string
     {
+        $array = $this->__serialize();
+
+        return serialize($array);
+    }
+
+    /**
+     * Magic method used for serializing the Message object.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
@@ -1902,7 +1914,7 @@ class Message implements JsonSerializable, Serializable
             }
         });
 
-        return serialize($array);
+        return $array;
     }
 
     /**
@@ -1919,5 +1931,16 @@ class Message implements JsonSerializable, Serializable
         }
 
         $this->createFromArray($array);
+    }
+
+    /**
+     * Magic method used to rebuild the Message object.
+     *
+     * @param array $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->createFromArray($data);
     }
 }

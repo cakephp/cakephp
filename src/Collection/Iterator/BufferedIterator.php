@@ -202,6 +202,20 @@ class BufferedIterator extends Collection implements Countable, Serializable
     }
 
     /**
+     * Magic method used for serializing the iterator instance.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        if (!$this->_finished) {
+            $this->count();
+        }
+
+        return iterator_to_array($this->_buffer);
+    }
+
+    /**
      * Unserializes the passed string and rebuilds the BufferedIterator instance
      *
      * @param string $buffer The serialized buffer iterator
@@ -211,6 +225,24 @@ class BufferedIterator extends Collection implements Countable, Serializable
     {
         $this->__construct([]);
         $this->_buffer = unserialize($buffer);
+        $this->_started = true;
+        $this->_finished = true;
+    }
+
+    /**
+     * Magic method used to rebuild the iterator instance.
+     *
+     * @param array $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->__construct([]);
+
+        foreach ($data as $value) {
+            $this->_buffer->push($value);
+        }
+
         $this->_started = true;
         $this->_finished = true;
     }

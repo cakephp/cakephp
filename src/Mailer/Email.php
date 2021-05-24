@@ -586,6 +586,18 @@ class Email implements JsonSerializable, Serializable
      */
     public function serialize(): string
     {
+        $array = $this->__serialize();
+
+        return serialize($array);
+    }
+
+    /**
+     * Magic method used for serializing the Email object.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
@@ -593,7 +605,7 @@ class Email implements JsonSerializable, Serializable
             }
         });
 
-        return serialize($array);
+        return $array;
     }
 
     /**
@@ -605,6 +617,17 @@ class Email implements JsonSerializable, Serializable
     public function unserialize($data): void
     {
         $this->createFromArray(unserialize($data));
+    }
+
+    /**
+     * Magic method used to rebuild the Email object.
+     *
+     * @param array $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->createFromArray($data);
     }
 
     /**

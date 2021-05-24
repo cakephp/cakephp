@@ -140,13 +140,18 @@ abstract class BaseLog extends AbstractLogger
             }
 
             if (is_object($value)) {
-                if (method_exists($value, '__toString')) {
-                    $replacements['{' . $key . '}'] = (string)$value;
+                if (method_exists($value, 'toArray')) {
+                    $replacements['{' . $key . '}'] = json_encode($value->toArray(), JSON_UNESCAPED_UNICODE);
                     continue;
                 }
 
-                if (method_exists($value, 'toArray')) {
-                    $replacements['{' . $key . '}'] = json_encode($value->toArray(), JSON_UNESCAPED_UNICODE);
+                if (method_exists($value, '__serialize')) {
+                    $replacements['{' . $key . '}'] = serialize($value);
+                    continue;
+                }
+
+                if (method_exists($value, '__toString')) {
+                    $replacements['{' . $key . '}'] = (string)$value;
                     continue;
                 }
 
