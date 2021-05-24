@@ -21,6 +21,8 @@ jobs:
         db-type: [sqlite, mysql, pgsql]
         prefer-lowest: ['']
         include:
+          - php-version: '8.1'
+            db-type: sqlite
           - php-version: '7.2'
             db-type: 'mariadb'
           - php-version: '7.2'
@@ -93,6 +95,8 @@ jobs:
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
+        elif ${{ matrix.php-version == '8.1' }}; then
+          composer update --ignore-platform-reqs
         else
           composer update
         fi
