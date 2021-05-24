@@ -20,6 +20,9 @@ jobs:
         php-version: ['7.2', '7.4', '8.0']
         db-type: [sqlite, mysql, pgsql]
         prefer-lowest: ['']
+        exclude:
+          - php-version: '7.2'
+            db-type: 'mysql'
         include:
           - php-version: '7.2'
             db-type: 'mariadb'
