@@ -33,7 +33,7 @@ class TransactionStrategy implements StateResetStrategyInterface
     /**
      * Constructor.
      *
-     * @param \Cake\TestSuite\Fixture\FixtureLoader $fixtures The fixture loader being used.
+     * @param \Cake\TestSuite\Fixture\FixtureLoader $loader The fixture loader being used.
      * @return void
      */
     public function __construct(FixtureLoader $loader)

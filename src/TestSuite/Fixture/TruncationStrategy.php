@@ -48,17 +48,17 @@ class TruncationStrategy implements StateResetStrategyInterface
     /**
      * @var \Cake\TestSuite\Fixture\FixtureLoader
      */
-    protected $fixtures;
+    protected $loader;
 
     /**
      * Constructor.
      *
-     * @param \Cake\TestSuite\Fixture\FixtureLoader $fixtures The fixture loader being used.
+     * @param \Cake\TestSuite\Fixture\FixtureLoader $loader The fixture loader being used.
      * @return void
      */
     public function __construct(FixtureLoader $loader)
     {
-        $this->fixtures = $loader;
+        $this->loader = $loader;
     }
 
     /**
@@ -77,7 +77,7 @@ class TruncationStrategy implements StateResetStrategyInterface
             if (!($db instanceof Connection)) {
                 continue;
             }
-            $lastInserted = $this->fixtures->lastInserted();
+            $lastInserted = $this->loader->lastInserted();
             if (empty($lastInserted)) {
                 continue;
             }

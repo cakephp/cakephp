@@ -90,6 +90,7 @@ abstract class TestCase extends BaseTestCase
      * If null the TruncationStrategy will be used.
      *
      * @var string|null
+     * @psalm-var class-string|null
      */
     protected $stateResetStrategy;
 
@@ -1070,6 +1071,7 @@ abstract class TestCase extends BaseTestCase
             );
         }
 
+        /** @var \Cake\TestSuite\Fixture\StateResetStrategyInterface */
         return $reflect->newInstance($this->fixtureManager);
     }
 }
