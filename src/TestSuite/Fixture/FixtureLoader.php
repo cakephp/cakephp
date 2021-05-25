@@ -89,6 +89,16 @@ abstract class FixtureLoader
     abstract public function setupTest(TestCase $test): void;
 
     /**
+     * Teardown fixtures for the provided test.
+     *
+     * Called by TestCase during its tearDown() method.
+     *
+     * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
+     * @return void
+     */
+    abstract public function teardownTest(TestCase $test): void;
+
+    /**
      * Get the list of all fixtures that have been loaded.
      *
      * @return \Cake\Datasource\FixtureInterface[]

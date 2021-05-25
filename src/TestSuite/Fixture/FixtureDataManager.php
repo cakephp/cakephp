@@ -237,12 +237,28 @@ class FixtureDataManager extends FixtureLoader
      */
     public function setupTest(TestCase $test): void
     {
+        $stateReset = $test->getStateResetStrategy();
+        $stateReset->setupTest();
+
         $this->inserted = [];
         if (!$test->getFixtures()) {
             return;
         }
         $this->loadFixtureClasses($test);
         $this->load($test);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function teardownTest(TestCase $test): void
+    {
+        if (!$test->getFixtures()) {
+            return;
+        }
+
+        $stateReset = $test->getStateResetStrategy();
+        $stateReset->teardownTest();
     }
 
     /**

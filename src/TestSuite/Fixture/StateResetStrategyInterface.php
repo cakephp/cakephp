@@ -30,18 +30,16 @@ interface StateResetStrategyInterface
      *
      * Fired before each test is started.
      *
-     * @param string $test The test class::method that is going to run.
      * @return void
      */
-    public function beforeTest(string $test): void;
+    public function setupTest(): void;
 
     /**
      * After test hook
      *
      * Fired after each test is complete.
      *
-     * @param string $test The test class::method that was completed.
      * @return void
      */
-    public function afterTest(string $test): void;
+    public function teardownTest(): void;
 }

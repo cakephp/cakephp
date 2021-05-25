@@ -18,12 +18,7 @@
     </testsuites>
 
     <extensions>
-        <extension class="Cake\TestSuite\FixtureSchemaExtension">
-            <arguments>
-                <!-- core tests create/modify tables so we can't use TransactionStrategy -->
-                <string>Cake\TestSuite\Fixture\TruncationStrategy</string>
-            </arguments>
-        </extension>
+        <extension class="Cake\TestSuite\FixtureSchemaExtension" />
     </extensions>
 
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
