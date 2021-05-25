@@ -17,20 +17,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['7.2', '7.4', '8.0']
-        db-type: [sqlite, mysql, pgsql]
+        php-version: ['8.1']
+        db-type: [sqlite]
         prefer-lowest: ['']
-        exclude:
-          - php-version: '7.2'
-            db-type: 'mysql'
-        include:
-          - php-version: '7.2'
-            db-type: 'mariadb'
-            allow-failure: false
-          - php-version: '7.2'
-            db-type: 'mysql'
-            prefer-lowest: 'prefer-lowest'
-            allow-failure: false
 
     services:
       redis:
@@ -132,6 +121,7 @@ jobs:
   testsuite-windows:
     runs-on: windows-2019
     name: Windows - PHP 8.0 & SQL Server
+    if: ${{ false }}
 
     env:
       EXTENSIONS: mbstring, intl, apcu, memcached, redis, wincache, pdo_sqlsrv
@@ -196,6 +186,7 @@ jobs:
   cs-stan:
     name: Coding Standard & Static Analysis
     runs-on: ubuntu-18.04
+    if: ${{ false }}
 
     steps:
     - uses: actions/checkout@v2
