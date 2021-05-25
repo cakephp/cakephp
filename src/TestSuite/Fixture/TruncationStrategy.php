@@ -56,9 +56,9 @@ class TruncationStrategy implements StateResetStrategyInterface
      * @param \Cake\TestSuite\Fixture\FixtureLoader $fixtures The fixture loader being used.
      * @return void
      */
-    public function __construct(FixtureLoader $fixtures)
+    public function __construct(FixtureLoader $loader)
     {
-        $this->fixtures = $fixtures;
+        $this->fixtures = $loader;
     }
 
     /**
