@@ -69,22 +69,27 @@ abstract class BaseLog extends AbstractLogger
             $this->_config['levels'] = (array)$this->_config['types'];
         }
 
-        // Default to DefaultFormatter for BC with custom loggers that don't set `formatter` in $_defaultConfig
-        $formatterConfig = $this->_config['formatter'] ?? DefaultFormatter::class;
-        if (!is_array($formatterConfig)) {
-            $formatterConfig = ['className' => $formatterConfig];
+        $formatter = $this->_config['formatter'] ?? DefaultFormatter::class;
+        if (!is_object($formatter)) {
+            if (is_array($formatter)) {
+                $class = $formatter['className'];
+                $options = $formatter;
+            } else {
+                $class = $formatter;
+                $options = [];
+            }
+            /** @var class-string<\Cake\Log\Formatter\AbstractFormatter> $class */
+            $formatter = new $class($options);
         }
 
-        /** @var class-string<\Cake\Log\Formatter\AbstractFormatter> $className */
-        $className = $formatterConfig['className'];
-        $this->formatter = new $className($formatterConfig);
-        if (!$this->formatter instanceof AbstractFormatter) {
+        if (!$formatter instanceof AbstractFormatter) {
             throw new InvalidArgumentException(sprintf(
                 'Formatter must extend `%s`, got `%s` instead',
                 AbstractFormatter::class,
-                $className
+                get_class($formatter)
             ));
         }
+        $this->formatter = $formatter;
     }
 
     /**
