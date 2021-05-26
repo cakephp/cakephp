@@ -162,6 +162,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $plugin;
 
     /**
+     * Middlewares list.
+     *
+     * @var array
+     * @psalm-var array<int, array{middleware:string|\Closure|\Psr\Http\Server\MiddlewareInterface, options:array}>
+     */
+    protected $middlewares = [];
+
+    /**
      * Constructor.
      *
      * Sets a number of properties based on conventions if they are empty. To override the
@@ -542,6 +550,57 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($result) {
             $this->response = $result;
         }
+    }
+
+    /**
+     * Register middleware for the controller.
+     *
+     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware Middleware.
+     * @param array $options Valid options:
+     *  - `only`: (array|string) Only run the middleware for specified actions.
+     *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
+     * @return void
+     * @psalm-var array{?only: string|array, ?except: string|array}
+     */
+    public function middleware($middleware, array $options = [])
+    {
+        $this->middlewares[] = [
+            'middleware' => $middleware,
+            'options' => $options,
+        ];
+    }
+
+    /**
+     * Get middleware to be applied for this controller.
+     *
+     * @return array
+     */
+    public function getMiddleware(): array
+    {
+        $matching = [];
+        $action = $this->request->getParam('action');
+
+        foreach ($this->middlewares as $middleware) {
+            $options = $middleware['options'];
+            if (!empty($options['only'])) {
+                if (in_array($action, (array)$options['only'], true)) {
+                    $matching[] = $middleware['middleware'];
+                }
+
+                continue;
+            }
+
+            if (
+                !empty($options['except']) &&
+                in_array($action, (array)$options['except'], true)
+            ) {
+                continue;
+            }
+
+            $matching[] = $middleware['middleware'];
+        }
+
+        return $matching;
     }
 
     /**

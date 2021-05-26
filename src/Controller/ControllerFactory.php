@@ -20,12 +20,15 @@ use Cake\Core\App;
 use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\MiddlewareQueue;
+use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionNamedType;
@@ -35,12 +38,17 @@ use ReflectionNamedType;
  *
  * @implements \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
  */
-class ControllerFactory implements ControllerFactoryInterface
+class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInterface
 {
     /**
      * @var \Cake\Core\ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var \Cake\Controller\Controller
+     */
+    protected $controller;
 
     /**
      * Constructor
@@ -94,6 +102,32 @@ class ControllerFactory implements ControllerFactoryInterface
      */
     public function invoke($controller): ResponseInterface
     {
+        $this->controller = $controller;
+
+        $middlewares = $controller->getMiddleware();
+
+        if ($middlewares) {
+            $middlewareQueue = new MiddlewareQueue($middlewares);
+            $runner = new Runner();
+
+            return $runner->run($middlewareQueue, $controller->getRequest(), $this);
+        }
+
+        return $this->handle($controller->getRequest());
+    }
+
+    /**
+     * Invoke the action.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $controller = $this->controller;
+        /** @psalm-suppress ArgumentTypeCoercion */
+        $controller->setRequest($request);
+
         $result = $controller->startupProcess();
         if ($result instanceof ResponseInterface) {
             return $result;
