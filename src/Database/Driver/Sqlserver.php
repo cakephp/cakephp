@@ -238,7 +238,8 @@ class Sqlserver extends Driver
      */
     public function releaseSavePointSQL($name): string
     {
-        return 'COMMIT TRANSACTION t' . $name;
+        // SQLServer has no release save point operation.
+        return '';
     }
 
     /**
