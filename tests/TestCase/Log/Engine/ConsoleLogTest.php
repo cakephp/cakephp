@@ -88,11 +88,31 @@ class ConsoleLogTest extends TestCase
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([
             'stream' => $filename,
-            'dateFormat' => 'c',
+            'formatter.dateFormat' => 'c',
         ]);
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
         $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Error: oh noes/', $line);
+    }
+
+    /**
+     * Test deprecated dateFormat option
+     *
+     * @return void
+     */
+    public function testDeprecatedDateFormat()
+    {
+        $this->deprecated(function () {
+            $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+            $log = new ConsoleLog([
+                'stream' => $filename,
+                'dateFormat' => 'c',
+            ]);
+            $log->log('error', 'oh noes');
+            $fh = fopen($filename, 'r');
+            $line = fgets($fh);
+            $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Error: oh noes/', $line);
+        });
     }
 }

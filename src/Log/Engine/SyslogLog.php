@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Engine;
 
+use Cake\Log\Formatter\SyslogFormatter;
+
 /**
  * Syslog stream for Logging. Writes logs to the system logger
  */
@@ -52,10 +54,12 @@ class SyslogLog extends BaseLog
     protected $_defaultConfig = [
         'levels' => [],
         'scopes' => [],
-        'format' => '%s: %s',
         'flag' => LOG_ODELAY,
         'prefix' => '',
         'facility' => LOG_USER,
+        'formatter' => [
+            'className' => SyslogFormatter::class,
+        ],
     ];
 
     /**
@@ -82,6 +86,19 @@ class SyslogLog extends BaseLog
     protected $_open = false;
 
     /**
+     * @inheritDoc
+     */
+    public function __construct(array $config = [])
+    {
+        parent::__construct($config);
+
+        if (isset($this->_config['format'])) {
+            deprecationWarning('`format` option should now be set in the formatter options.');
+            $this->formatter->setConfig('format', $this->_config['format']);
+        }
+    }
+
+    /**
      * Writes a message to syslog
      *
      * Map the $level back to a LOG_ constant value, split multi-line messages into multiple
@@ -106,10 +123,9 @@ class SyslogLog extends BaseLog
             $priority = $this->_levelMap[$level];
         }
 
-        $messages = explode("\n", $this->_format($message, $context));
-        foreach ($messages as $message) {
-            $message = sprintf($this->_config['format'], $level, $message);
-            $this->_write($priority, $message);
+        $lines = explode("\n", $this->_format($message, $context));
+        foreach ($lines as $line) {
+            $this->_write($priority, $this->formatter->format($level, $line, $context));
         }
     }
 
