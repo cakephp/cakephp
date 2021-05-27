@@ -260,19 +260,21 @@
       <code>$this</code>
     </DeprecatedClass>
   </file>
+  <file src="src/TestSuite/Fixture/FixtureDataManager.php">
+    <DeprecatedProperty occurrences="1">
+      <code>$test-&gt;autoFixtures</code>
+    </DeprecatedProperty>
+  </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
     <DeprecatedInterface occurrences="1">
       <code>FixtureInjector</code>
     </DeprecatedInterface>
   </file>
-  <file src="src/TestSuite/Fixture/TestFixture.php">
-    <ArgumentTypeCoercion occurrences="5">
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-    </ArgumentTypeCoercion>
+  <file src="src/TestSuite/Fixture/FixtureManager.php">
+    <DeprecatedProperty occurrences="2">
+      <code>$test-&gt;autoFixtures</code>
+      <code>$test-&gt;dropTables</code>
+    </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -288,6 +290,12 @@
       <code>\Cake\Console\Shell</code>
       <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
+  </file>
+  <file src="src/TestSuite/TestCase.php">
+    <DeprecatedProperty occurrences="2">
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+    </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">

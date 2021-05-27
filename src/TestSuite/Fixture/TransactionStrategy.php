@@ -33,53 +33,32 @@ class TransactionStrategy implements StateResetStrategyInterface
     /**
      * Constructor.
      *
-     * @param bool $enableLogging Whether or not to enable query logging.
+     * @param \Cake\TestSuite\Fixture\FixtureLoader $loader The fixture loader being used.
      * @return void
      */
-    public function __construct(bool $enableLogging = false)
+    public function __construct(FixtureLoader $loader)
     {
-        $this->aliasConnections($enableLogging);
+        $this->checkConnections();
     }
 
     /**
-     * Alias non test connections to the test ones
-     * so that models reach the test database connections instead.
+     * Ensure that all `Connection` connections support savepoints.
      *
-     * @param bool $enableLogging Whether or not to enable query logging.
      * @return void
      */
-    protected function aliasConnections(bool $enableLogging): void
+    protected function checkConnections(): void
     {
         $connections = ConnectionManager::configured();
-        ConnectionManager::alias('test', 'default');
-        $map = [];
-        foreach ($connections as $connection) {
-            if ($connection === 'test' || $connection === 'default') {
-                continue;
-            }
-            if (isset($map[$connection])) {
-                continue;
-            }
-            if (strpos($connection, 'test_') === 0) {
-                $map[$connection] = substr($connection, 5);
-            } else {
-                $map['test_' . $connection] = $connection;
-            }
-        }
-        foreach ($map as $testConnection => $normal) {
-            ConnectionManager::alias($testConnection, $normal);
-            $connection = ConnectionManager::get($normal);
+        foreach ($connections as $name) {
+            $connection = ConnectionManager::get($name);
             if ($connection instanceof Connection) {
                 $connection->enableSavePoints();
                 if (!$connection->isSavePointsEnabled()) {
                     throw new RuntimeException(
-                        "Could not enable save points for the `{$normal}` connection. " .
+                        "Could not enable save points for the `{$name}` connection. " .
                             'Your database needs to support savepoints in order to use the ' .
                             'TransactionStrategy for fixtures.'
                     );
-                }
-                if ($enableLogging) {
-                    $connection->enableQueryLogging();
                 }
             }
         }
@@ -88,10 +67,9 @@ class TransactionStrategy implements StateResetStrategyInterface
     /**
      * Before each test start a transaction.
      *
-     * @param string $test The test class::method that was completed.
      * @return void
      */
-    public function beforeTest(string $test): void
+    public function setupTest(): void
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
@@ -113,10 +91,9 @@ class TransactionStrategy implements StateResetStrategyInterface
      * operations we should end up at a transaction depth of 0
      * and we will rollback the root transaction started in beforeTest()
      *
-     * @param string $test The test class::method that was completed.
      * @return void
      */
-    public function afterTest(string $test): void
+    public function teardownTest(): void
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {

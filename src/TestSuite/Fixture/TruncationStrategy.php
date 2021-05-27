@@ -20,7 +20,6 @@ use Cake\Database\Connection;
 use Cake\Database\Schema\SqlGeneratorInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionManager;
-use RuntimeException;
 
 /**
  * Fixture state strategy that truncates tables before a test.
@@ -47,63 +46,28 @@ class TruncationStrategy implements StateResetStrategyInterface
     protected $tables = [];
 
     /**
-     * Constructor.
-     *
-     * @param bool $enableLogging Whether or not to enable query logging.
-     * @return void
+     * @var \Cake\TestSuite\Fixture\FixtureLoader
      */
-    public function __construct(bool $enableLogging = false)
-    {
-        $this->aliasConnections($enableLogging);
-    }
+    protected $loader;
 
     /**
-     * Alias non test connections to the test ones
-     * so that models reach the test database connections instead.
+     * Constructor.
      *
-     * @param bool $enableLogging Whether or not to enable query logging.
+     * @param \Cake\TestSuite\Fixture\FixtureLoader $loader The fixture loader being used.
      * @return void
      */
-    protected function aliasConnections(bool $enableLogging): void
+    public function __construct(FixtureLoader $loader)
     {
-        $connections = ConnectionManager::configured();
-        ConnectionManager::alias('test', 'default');
-        $map = [];
-        foreach ($connections as $connection) {
-            if ($connection === 'test' || $connection === 'default') {
-                continue;
-            }
-            if (isset($map[$connection])) {
-                continue;
-            }
-            if (strpos($connection, 'test_') === 0) {
-                $map[$connection] = substr($connection, 5);
-            } else {
-                $map['test_' . $connection] = $connection;
-            }
-        }
-        foreach ($map as $testConnection => $normal) {
-            ConnectionManager::alias($testConnection, $normal);
-            $connection = ConnectionManager::get($normal);
-            if ($connection instanceof Connection && $enableLogging) {
-                $connection->enableQueryLogging();
-            }
-        }
+        $this->loader = $loader;
     }
 
     /**
      * Before each test start a transaction.
      *
-     * @param string $test The test class::method that was completed.
      * @return void
      */
-    public function beforeTest(string $test): void
+    public function setupTest(): void
     {
-        $fixtures = FixtureLoader::getInstance();
-        if (!$fixtures) {
-            throw new RuntimeException('Cannot truncate tables without a FixtureLoader');
-        }
-
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
             if (strpos($connection, 'test') !== 0) {
@@ -113,7 +77,7 @@ class TruncationStrategy implements StateResetStrategyInterface
             if (!($db instanceof Connection)) {
                 continue;
             }
-            $lastInserted = $fixtures->lastInserted();
+            $lastInserted = $this->loader->lastInserted();
             if (empty($lastInserted)) {
                 continue;
             }
@@ -136,16 +100,12 @@ class TruncationStrategy implements StateResetStrategyInterface
     }
 
     /**
-     * No op.
+     * No op. Implemented because of interface.
      *
-     * Implemented to satisfy the interface.
-     *
-     * @param string $test The test class::method that was completed.
      * @return void
      */
-    public function afterTest(string $test): void
+    public function teardownTest(): void
     {
-        // Do nothing
     }
 
     /**

@@ -626,7 +626,10 @@ class Connection implements ConnectionInterface
      */
     public function releaseSavePoint($name): void
     {
-        $this->execute($this->_driver->releaseSavePointSQL($name))->closeCursor();
+        $sql = $this->_driver->releaseSavePointSQL($name);
+        if ($sql) {
+            $this->execute($sql)->closeCursor();
+        }
     }
 
     /**

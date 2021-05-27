@@ -105,6 +105,20 @@ class FixtureManager extends FixtureLoader
     }
 
     /**
+     * Implemented to satisfy the abstract base class.
+     *
+     * For backwards compatibility reasons fixtures are reset
+     * via `shutdown` which is called by the TestListener.
+     *
+     * @param \Cake\TestSuite\TestCase $test The test case.
+     * @return void
+     */
+    public function teardownTest(TestCase $test): void
+    {
+        // Do nothing
+    }
+
+    /**
      * @inheritDoc
      */
     public function fixturize(TestCase $test): void

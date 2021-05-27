@@ -16,69 +16,73 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
+use Cake\Database\Connection;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\FixtureDataManager;
 use Cake\TestSuite\Fixture\FixtureLoader;
-use Cake\TestSuite\Fixture\StateResetStrategyInterface;
-use Cake\TestSuite\Fixture\TransactionStrategy;
-use InvalidArgumentException;
-use PHPUnit\Runner\AfterTestHook;
-use PHPUnit\Runner\BeforeTestHook;
-use ReflectionClass;
+use PHPUnit\Runner\BeforeFirstTestHook;
 
 /**
  * PHPUnit extension to integrate CakePHP's data-only fixtures.
  */
-class FixtureSchemaExtension implements
-    AfterTestHook,
-    BeforeTestHook
+class FixtureSchemaExtension implements BeforeFirstTestHook
 {
     /**
-     * @var \Cake\TestSuite\Fixture\StateResetStrategyInterface
+     * Constructor. Set the record only fixture manager as the singleton.
      */
-    protected $state;
-
-    /**
-     * Constructor.
-     *
-     * @param string $stateStrategy The state management strategy to use.
-     * @psalm-param class-string<\Cake\TestSuite\Fixture\StateResetStrategyInterface> $stateStrategy
-     */
-    public function __construct(string $stateStrategy = TransactionStrategy::class)
+    public function __construct()
     {
-        $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
-        $class = new ReflectionClass($stateStrategy);
-        if (!$class->implementsInterface(StateResetStrategyInterface::class)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid stateStrategy provided. State strategies must implement `%s`. Got `%s`.',
-                StateResetStrategyInterface::class,
-                $stateStrategy
-            ));
-        }
-        $this->state = new $stateStrategy($enableLogging);
-
         FixtureLoader::setInstance(new FixtureDataManager());
+
+        // This isn't a great place for this, but I plan on revisiting
+        // how DB logging works in tests soon.
+        $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
+        $this->aliasConnections($enableLogging);
     }
 
     /**
-     * BeforeTestHook implementation
+     * Alias non test connections to the test ones
+     * so that models reach the test database connections instead.
      *
-     * @param string $test The test class::method being run.
+     * @param bool $enableLogging Whether or not to enable query logging.
      * @return void
      */
-    public function executeBeforeTest(string $test): void
+    protected function aliasConnections(bool $enableLogging): void
     {
-        $this->state->beforeTest($test);
+        $connections = ConnectionManager::configured();
+        ConnectionManager::alias('test', 'default');
+        $map = [];
+        foreach ($connections as $connection) {
+            if ($connection === 'test' || $connection === 'default') {
+                continue;
+            }
+            if (isset($map[$connection])) {
+                continue;
+            }
+            if (strpos($connection, 'test_') === 0) {
+                $map[$connection] = substr($connection, 5);
+            } else {
+                $map['test_' . $connection] = $connection;
+            }
+        }
+        foreach ($map as $testConnection => $normal) {
+            ConnectionManager::alias($testConnection, $normal);
+            $connection = ConnectionManager::get($normal);
+            if ($connection instanceof Connection && $enableLogging) {
+                $connection->enableQueryLogging();
+            }
+        }
     }
 
     /**
-     * AfterTestHook implementation
+     * First test hook.
      *
-     * @param string $test The test class::method being run.
-     * @param float $time The duration the test took.
      * @return void
      */
-    public function executeAfterTest(string $test, float $time): void
+    public function executeBeforeFirstTest(): void
     {
-        $this->state->afterTest($test);
+        // Do nothing as we setup in the constructor
+        // to avoid applications hitting non-test DB
+        // during bootstrap.
     }
 }
