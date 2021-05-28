@@ -119,8 +119,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
     /**
      * Creates the controller to perform rendering on the error response.
-     * If the error is a Cake\Core\Exception\CakeException it will be converted to either a 400 or a 500
-     * code error depending on the code used to construct the error.
      *
      * @param \Throwable $exception Exception.
      * @param \Cake\Http\ServerRequest $request The request if this is set it will be used
