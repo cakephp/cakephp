@@ -23,6 +23,7 @@ use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
+use Cake\Form\Form;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
@@ -502,6 +503,20 @@ object(SplFixedArray) id:0 {
 }
 TEXT;
         $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * test exportVar with cyclic objects.
+     *
+     * @return void
+     */
+    public function testExportVarDebugInfo()
+    {
+        $form = new Form();
+
+        $result = Debugger::exportVar($form, 6);
+        $this->assertStringContainsString("'_schema' => [", $result, 'Has debuginfo keys');
+        $this->assertStringContainsString("'_validator' => [", $result);
     }
 
     /**
