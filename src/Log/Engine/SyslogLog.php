@@ -16,7 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Engine;
 
-use Cake\Log\Formatter\SyslogFormatter;
+use Cake\Log\Formatter\DefaultFormatter;
+use Cake\Log\Formatter\LegacySyslogFormatter;
 
 /**
  * Syslog stream for Logging. Writes logs to the system logger
@@ -58,7 +59,8 @@ class SyslogLog extends BaseLog
         'prefix' => '',
         'facility' => LOG_USER,
         'formatter' => [
-            'className' => SyslogFormatter::class,
+            'className' => DefaultFormatter::class,
+            'includeDate' => false,
         ],
     ];
 
@@ -90,12 +92,18 @@ class SyslogLog extends BaseLog
      */
     public function __construct(array $config = [])
     {
-        parent::__construct($config);
-
-        if (isset($this->_config['format'])) {
-            deprecationWarning('`format` option should now be set in the formatter options.');
-            $this->formatter->setConfig('format', $this->_config['format']);
+        if (isset($config['format'])) {
+            deprecationWarning(
+                '`format` option is now deprecated in favor of custom formatters. ' .
+                'Switching to `LegacySyslogFormatter`.'
+            );
+            /** @psalm-suppress DeprecatedClass */
+            $config['formatter'] = [
+                'className' => LegacySyslogFormatter::class,
+                'format' => $config['format'],
+            ];
         }
+        parent::__construct($config);
     }
 
     /**

@@ -111,6 +111,18 @@ class SyslogLogTest extends TestCase
     }
 
     /**
+     * Test deprecated format option
+     *
+     * @return void
+     */
+    public function testDeprecatedFormatMessage()
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('`format` option is now deprecated in favor of custom formatters');
+        new SyslogLog(['format' => 'custom %s: %s']);
+    }
+
+    /**
      * Data provider for the write function test
      *
      * @return array

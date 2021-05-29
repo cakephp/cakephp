@@ -16,7 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Formatter;
 
-class SyslogFormatter extends AbstractFormatter
+/**
+ * @deprecated 4.3.0 Create a custom formatter and set it with `formatter` config instead.
+ */
+class LegacySyslogFormatter extends AbstractFormatter
 {
     /**
      * Default config for this class
