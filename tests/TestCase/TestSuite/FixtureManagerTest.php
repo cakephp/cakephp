@@ -350,12 +350,12 @@ class FixtureManagerTest extends TestCase
             ->willReturn(['core.Comments', 'core.Users']);
 
         $this->manager->fixturize($test);
-        $this->assertEquals([], $this->manager->lastInserted());
+        $this->assertEquals([], $this->manager->getInserted());
 
         $this->manager->loadSingle('Comments');
         $this->manager->loadSingle('Users');
 
-        $this->assertEquals(['comments', 'users'], $this->manager->lastInserted());
+        $this->assertEquals(['comments', 'users'], $this->manager->getInserted());
 
         $table = $this->getTableLocator()->get('Users');
         $results = $table->find('all')->toArray();

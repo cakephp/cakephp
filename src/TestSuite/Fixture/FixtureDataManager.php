@@ -272,7 +272,7 @@ class FixtureDataManager extends FixtureLoader
     /**
      * @inheritDoc
      */
-    public function lastInserted(): array
+    public function getInserted(): array
     {
         return $this->inserted;
     }

@@ -142,7 +142,7 @@ class FixtureManager extends FixtureLoader
     /**
      * @inheritDoc
      */
-    public function lastInserted(): array
+    public function getInserted(): array
     {
         $inserted = [];
         foreach ($this->_insertionMap as $fixtures) {

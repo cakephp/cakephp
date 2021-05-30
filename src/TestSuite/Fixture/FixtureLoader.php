@@ -110,5 +110,5 @@ abstract class FixtureLoader
      *
      * @return string[]
      */
-    abstract public function lastInserted(): array;
+    abstract public function getInserted(): array;
 }
