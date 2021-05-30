@@ -196,35 +196,35 @@ class FixtureDataManagerTest extends TestCase
     }
 
     /**
-     * Test lastInserted()
+     * Test getInserted()
      *
      * @return void
      */
-    public function testLastInserted()
+    public function testGetInserted()
     {
         $manager = new FixtureDataManager();
         $manager->setupTest($this);
 
-        $results = $manager->lastInserted();
+        $results = $manager->getInserted();
         $this->assertEquals(['articles', 'comments'], $results);
     }
 
     /**
-     * Test lastInserted() with autoFixtures
+     * Test getInserted() with autoFixtures
      *
      * @return void
      */
-    public function testLastInsertedAutofixtures()
+    public function testGetInsertedAutofixtures()
     {
         $manager = new FixtureDataManager();
         $this->autoFixtures = false;
         $manager->setupTest($this);
 
-        $results = $manager->lastInserted();
+        $results = $manager->getInserted();
         $this->assertEquals([], $results);
 
         $manager->loadSingle('Articles');
-        $results = $manager->lastInserted();
+        $results = $manager->getInserted();
         $this->assertEquals(['articles'], $results);
     }
 }
