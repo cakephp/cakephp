@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 /**
@@ -15,7 +14,6 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\TestSuite;
 
 use Cake\Database\Connection;
@@ -38,17 +36,17 @@ class FixtureSchemaExtension implements BeforeFirstTestHook
         FixtureLoader::setInstance(new FixtureDataManager());
 
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
-        $this->configureLogging($enableLogging);
+        $this->enableLogging($enableLogging);
         $this->aliasConnections($enableLogging);
     }
 
     /**
-     * Configures a logger for SQL queries.
+     * Enables a logger for SQL queries.
      *
      * @param bool $enableLogging Whether or not logging should be enabled.
      * @return void
      */
-    protected function configureLogging(bool $enableLogging): void
+    protected function enableLogging(bool $enableLogging): void
     {
         if (!$enableLogging) {
             return;
