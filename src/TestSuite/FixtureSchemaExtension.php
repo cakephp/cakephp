@@ -36,26 +36,14 @@ class FixtureSchemaExtension implements BeforeFirstTestHook
         FixtureLoader::setInstance(new FixtureDataManager());
 
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
-        $this->enableLogging($enableLogging);
         $this->aliasConnections($enableLogging);
-    }
-
-    /**
-     * Enables a logger for SQL queries.
-     *
-     * @param bool $enableLogging Whether or not logging should be enabled.
-     * @return void
-     */
-    protected function enableLogging(bool $enableLogging): void
-    {
-        if (!$enableLogging) {
-            return;
+        if ($enableLogging) {
+            Log::setConfig('queries', [
+                'className' => 'Console',
+                'stream' => 'php://stderr',
+                'scopes' => ['queriesLog'],
+            ]);
         }
-        Log::setConfig('queries', [
-            'className' => 'Console',
-            'stream' => 'php://stderr',
-            'scopes' => ['queriesLog'],
-        ]);
     }
 
     /**
