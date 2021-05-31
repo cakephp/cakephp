@@ -743,6 +743,8 @@ class Debugger
                     foreach ($var->__debugInfo() as $key => $val) {
                         $node->addProperty(new PropertyNode("'{$key}'", null, static::export($val, $context)));
                     }
+
+                    return $node;
                 } catch (Exception $e) {
                     $message = $e->getMessage();
 
