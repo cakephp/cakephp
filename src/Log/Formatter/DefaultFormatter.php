@@ -26,6 +26,7 @@ class DefaultFormatter extends AbstractFormatter
     protected $_defaultConfig = [
         'dateFormat' => 'Y-m-d H:i:s',
         'includeTags' => false,
+        'includeDate' => true,
     ];
 
     /**
@@ -41,7 +42,11 @@ class DefaultFormatter extends AbstractFormatter
      */
     public function format($level, string $message, array $context = []): string
     {
-        $message = sprintf('%s %s: %s', date($this->_config['dateFormat']), ucfirst($level), $message);
+        if ($this->_config['includeDate']) {
+            $message = sprintf('%s %s: %s', date($this->_config['dateFormat']), $level, $message);
+        } else {
+            $message = sprintf('%s: %s', $level, $message);
+        }
         if ($this->_config['includeTags']) {
             $message = sprintf('<%s>%s</%s>', $level, $message, $level);
         }
