@@ -3506,7 +3506,10 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/articles/index/whatever/3',
             'params' => [
-                'plugin' => null, 'controller' => 'articles', 'action' => 'index', 'pass' => ['whatever', '3']
+                'plugin' => null,
+                'controller' => 'articles',
+                'action' => 'index',
+                'pass' => ['whatever', '3'],
             ],
             'base' => '',
             'webroot' => '/',
