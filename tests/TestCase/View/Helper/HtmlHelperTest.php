@@ -121,16 +121,16 @@ class HtmlHelperTest extends TestCase
         $expected = ['a' => ['href' => '/home'], 'preg:/\/home/', '/a'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link(['controller' => 'users', 'action' => 'login', '<[You]>']);
+        $result = $this->Html->link(['controller' => 'Users', 'action' => 'login', '<[You]>']);
         $expected = [
-            'a' => ['href' => '/users/login/%3C%5BYou%5D%3E'],
-            'preg:/\/users\/login\/&lt;\[You\]&gt;/',
+            'a' => ['href' => '/Users/login/%3C%5BYou%5D%3E'],
+            'preg:/\/Users\/login\/&lt;\[You\]&gt;/',
             '/a',
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link('Posts', ['controller' => 'posts', 'action' => 'index', '_full' => true]);
-        $expected = ['a' => ['href' => Router::fullBaseUrl() . '/posts'], 'Posts', '/a'];
+        $result = $this->Html->link('Posts', ['controller' => 'Posts', 'action' => 'index', '_full' => true]);
+        $expected = ['a' => ['href' => Router::fullBaseUrl() . '/Posts'], 'Posts', '/a'];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
@@ -246,10 +246,10 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->link('Original size', [
-            'controller' => 'images', 'action' => 'view', 3, '?' => ['height' => 100, 'width' => 200],
+            'controller' => 'Images', 'action' => 'view', 3, '?' => ['height' => 100, 'width' => 200],
         ]);
         $expected = [
-            'a' => ['href' => '/images/view/3?height=100&amp;width=200'],
+            'a' => ['href' => '/Images/view/3?height=100&amp;width=200'],
             'Original size',
             '/a',
         ];
@@ -373,7 +373,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => '//google.com/logo.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->image(['controller' => 'test', 'action' => 'view', 1, '_ext' => 'gif']);
+        $result = $this->Html->image(['controller' => 'Test', 'action' => 'view', 1, '_ext' => 'gif']);
         $expected = ['img' => ['src' => '/test/view/1.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
@@ -394,7 +394,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->image([
-            'controller' => 'images',
+            'controller' => 'Images',
             'action' => 'display',
             'test',
             '?' => ['one' => 'two', 'three' => 'four'],
@@ -1503,15 +1503,15 @@ class HtmlHelperTest extends TestCase
     {
         Router::connect('/:controller', ['action' => 'index']);
 
-        $result = $this->Html->meta('this is an rss feed', ['controller' => 'posts', '_ext' => 'rss']);
+        $result = $this->Html->meta('this is an rss feed', ['controller' => 'Posts', '_ext' => 'rss']);
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('rss', ['controller' => 'posts', '_ext' => 'rss'], ['title' => 'this is an rss feed']);
+        $result = $this->Html->meta('rss', ['controller' => 'Posts', '_ext' => 'rss'], ['title' => 'this is an rss feed']);
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('atom', ['controller' => 'posts', '_ext' => 'xml']);
+        $result = $this->Html->meta('atom', ['controller' => 'Posts', '_ext' => 'xml']);
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.xml/', 'type' => 'application/atom+xml', 'title' => 'atom']];
         $this->assertHtml($expected, $result);
 
@@ -1527,7 +1527,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/atom+xml', 'title' => 'nonexistent']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('atom', ['controller' => 'posts', '_ext' => 'xml'], ['link' => '/articles.rss']);
+        $result = $this->Html->meta('atom', ['controller' => 'Posts', '_ext' => 'xml'], ['link' => '/articles.rss']);
         $expected = ['link' => ['href' => 'preg:/.*\/articles\.rss/', 'type' => 'application/atom+xml', 'title' => 'atom']];
         $this->assertHtml($expected, $result);
 
@@ -1568,11 +1568,11 @@ class HtmlHelperTest extends TestCase
     public function dataMetaLinksProvider()
     {
         return [
-            ['canonical', ['controller' => 'posts', 'action' => 'show'], '/posts/show'],
-            ['first', ['controller' => 'posts', 'action' => 'index'], '/posts'],
-            ['last', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 10]], '/posts?page=10'],
-            ['prev', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 4]], '/posts?page=4'],
-            ['next', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 6]], '/posts?page=6'],
+            ['canonical', ['controller' => 'Posts', 'action' => 'show'], '/posts/show'],
+            ['first', ['controller' => 'Posts', 'action' => 'index'], '/posts'],
+            ['last', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 10]], '/posts?page=10'],
+            ['prev', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 4]], '/posts?page=4'],
+            ['next', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 6]], '/posts?page=6'],
         ];
     }
 

@@ -385,7 +385,7 @@ class BreadcrumbsHelperTest extends TestCase
 
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first', 'innerAttrs' => ['data-foo' => 'bar']])
-            ->add('Some text', ['controller' => 'tests_apps', 'action' => 'some_method'])
+            ->add('Some text', ['controller' => 'TestsApps', 'action' => 'someMethod'])
             ->add('Final crumb', null, ['class' => 'final', 'innerAttrs' => ['class' => 'final-link']]);
 
         $result = $this->breadcrumbs->render(
@@ -406,7 +406,7 @@ class BreadcrumbsHelperTest extends TestCase
             '/span',
             '/li',
             ['li' => []],
-            ['a' => ['href' => '/tests_apps/some_method']],
+            ['a' => ['href' => '/TestsApps/someMethod']],
             'Some text',
             '/a',
             '/li',

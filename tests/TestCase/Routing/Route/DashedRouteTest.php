@@ -108,11 +108,11 @@ class DashedRouteTest extends TestCase
         $this->assertNull($result);
 
         $route = new DashedRoute('/admin/subscriptions/:action/*', [
-            'controller' => 'Subscribe', 'prefix' => 'admin',
+            'controller' => 'Subscribe', 'prefix' => 'Admin',
         ]);
         $result = $route->match([
             'controller' => 'Subscribe',
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'action' => 'editAdminE',
             1,
         ]);
@@ -168,7 +168,7 @@ class DashedRouteTest extends TestCase
 
         $route = new DashedRoute(
             '/admin/:controller',
-            ['prefix' => 'admin', 'action' => 'index']
+            ['prefix' => 'Admin', 'action' => 'index']
         );
         $route->compile();
         $result = $route->parse('/admin/', 'GET');
