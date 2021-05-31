@@ -380,7 +380,7 @@ class Router
      *
      * - `Router::url('/posts/edit/1');` Returns the string with the base dir prepended.
      *   This usage does not use reverser routing.
-     * - `Router::url(['controller' => 'posts', 'action' => 'edit']);` Returns a URL
+     * - `Router::url(['controller' => 'Posts', 'action' => 'edit']);` Returns a URL
      *   generated through reverse routing.
      * - `Router::url(['_name' => 'custom-name', ...]);` Returns a URL generated
      *   through reverse routing. This form allows you to leverage named routes.
