@@ -93,7 +93,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->build('/controller/action/1?one=1&two=2');
         $this->assertSame('/controller/action/1?one=1&amp;two=2', $result);
 
-        $result = $this->Helper->build(['controller' => 'posts', 'action' => 'index', '?' => ['page' => '1" onclick="alert(\'XSS\');"']]);
+        $result = $this->Helper->build(['controller' => 'Posts', 'action' => 'index', '?' => ['page' => '1" onclick="alert(\'XSS\');"']]);
         $this->assertSame('/posts?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this+one+more');
@@ -106,13 +106,13 @@ class UrlHelperTest extends TestCase
         $this->assertSame('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts', 'action' => 'index',
+            'controller' => 'Posts', 'action' => 'index',
             '?' => ['param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'],
         ]);
         $this->assertSame('/posts?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts', 'action' => 'index',
+            'controller' => 'Posts', 'action' => 'index',
             '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple', 'page' => '1'],
         ]);
         $this->assertSame('/posts?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
@@ -130,7 +130,7 @@ class UrlHelperTest extends TestCase
             'params' => [
                 'action' => 'index',
                 'plugin' => null,
-                'controller' => 'subscribe',
+                'controller' => 'Subscribe',
             ],
             'url' => '/subscribe',
             'base' => '/magazine',
@@ -141,7 +141,7 @@ class UrlHelperTest extends TestCase
         $this->assertSame('/magazine/subscribe', $this->Helper->build());
         $this->assertSame(
             '/magazine/articles/add',
-            $this->Helper->build(['controller' => 'articles', 'action' => 'add'])
+            $this->Helper->build(['controller' => 'Articles', 'action' => 'add'])
         );
     }
 
@@ -154,7 +154,7 @@ class UrlHelperTest extends TestCase
         $this->assertSame('/controller/action/1?one=1&two=2', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts',
+            'controller' => 'Posts',
             'action' => 'view',
             '?' => [
                 'k' => 'v',
