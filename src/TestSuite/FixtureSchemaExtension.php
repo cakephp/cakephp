@@ -18,6 +18,7 @@ namespace Cake\TestSuite;
 
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\TestSuite\Fixture\FixtureDataManager;
 use Cake\TestSuite\Fixture\FixtureLoader;
 use PHPUnit\Runner\BeforeFirstTestHook;
@@ -34,10 +35,15 @@ class FixtureSchemaExtension implements BeforeFirstTestHook
     {
         FixtureLoader::setInstance(new FixtureDataManager());
 
-        // This isn't a great place for this, but I plan on revisiting
-        // how DB logging works in tests soon.
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
         $this->aliasConnections($enableLogging);
+        if ($enableLogging) {
+            Log::setConfig('queries', [
+                'className' => 'Console',
+                'stream' => 'php://stderr',
+                'scopes' => ['queriesLog'],
+            ]);
+        }
     }
 
     /**
@@ -50,8 +56,9 @@ class FixtureSchemaExtension implements BeforeFirstTestHook
     protected function aliasConnections(bool $enableLogging): void
     {
         $connections = ConnectionManager::configured();
-        ConnectionManager::alias('test', 'default');
-        $map = [];
+        $map = [
+            'test' => 'default',
+        ];
         foreach ($connections as $connection) {
             if ($connection === 'test' || $connection === 'default') {
                 continue;
