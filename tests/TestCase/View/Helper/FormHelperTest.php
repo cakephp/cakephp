@@ -92,7 +92,7 @@ class FormHelperTest extends TestCase
             'base' => '',
             'url' => '/articles/add',
             'params' => [
-                'controller' => 'articles',
+                'controller' => 'Articles',
                 'action' => 'add',
                 'plugin' => null,
             ],
@@ -731,13 +731,13 @@ class FormHelperTest extends TestCase
 
         $this->article['defaults'] = ['id' => 1];
         $this->View->setRequest($this->View->getRequest()
-            ->withRequestTarget('/articles/edit/1')
+            ->withRequestTarget('/Articles/edit/1')
             ->withParam('action', 'delete'));
         $result = $this->Form->create($this->article, ['url' => ['action' => 'edit', 1]]);
         $expected = [
             'form' => [
                 'method' => 'post',
-                'action' => '/articles/edit/1',
+                'action' => '/Articles/edit/1',
                 'accept-charset' => $encoding,
             ],
             'div' => ['style' => 'display:none;'],
@@ -752,7 +752,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post',
-                'action' => '/articles/publish/1',
+                'action' => '/Articles/publish/1',
                 'accept-charset' => $encoding,
             ],
             'div' => ['style' => 'display:none;'],
@@ -761,9 +761,9 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->create($this->article, ['url' => '/articles/publish']);
+        $result = $this->Form->create($this->article, ['url' => '/Articles/publish']);
         $expected = [
-            'form' => ['method' => 'post', 'action' => '/articles/publish', 'accept-charset' => $encoding],
+            'form' => ['method' => 'post', 'action' => '/Articles/publish', 'accept-charset' => $encoding],
             'div' => ['style' => 'display:none;'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PUT'],
             '/div',
@@ -809,11 +809,11 @@ class FormHelperTest extends TestCase
      */
     public function testCreateCustomRoute()
     {
-        Router::connect('/login', ['controller' => 'users', 'action' => 'login']);
+        Router::connect('/login', ['controller' => 'Users', 'action' => 'login']);
         $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('controller', 'users'));
+            ->withParam('controller', 'Users'));
 
         $result = $this->Form->create(null, ['url' => ['action' => 'login']]);
         $expected = [
@@ -826,7 +826,7 @@ class FormHelperTest extends TestCase
 
         Router::connect(
             '/new-article',
-            ['controller' => 'articles', 'action' => 'myaction'],
+            ['controller' => 'Articles', 'action' => 'myAction'],
             ['_name' => 'my-route']
         );
         $result = $this->Form->create(null, ['url' => ['_name' => 'my-route']]);
@@ -854,7 +854,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'form' => [
-                'method' => 'post', 'action' => '/articles',
+                'method' => 'post', 'action' => '/Articles',
                 'accept-charset' => 'iso-8859-1',
             ],
         ];
@@ -871,7 +871,7 @@ class FormHelperTest extends TestCase
             'type' => 'post',
             'escape' => false,
             'url' => [
-                'controller' => 'controller',
+                'controller' => 'Controller',
                 'action' => 'action',
                 '?' => ['param1' => 'value1', 'param2' => 'value2'],
             ],
@@ -879,7 +879,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post',
-                'action' => '/controller/action?param1=value1&amp;param2=value2',
+                'action' => '/Controller/action?param1=value1&amp;param2=value2',
                 'accept-charset' => $encoding,
             ],
         ];
@@ -888,7 +888,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->create($this->article, [
             'type' => 'post',
             'url' => [
-                'controller' => 'controller',
+                'controller' => 'Controller',
                 'action' => 'action',
                 '?' => ['param1' => 'value1', 'param2' => 'value2'],
             ],
@@ -938,7 +938,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post',
-                'action' => '/articles/edit/myparam',
+                'action' => '/Articles/edit/myparam',
                 'accept-charset' => $encoding,
             ],
         ];
@@ -988,13 +988,13 @@ class FormHelperTest extends TestCase
     public function testGetFormWithFalseModel()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $this->View->setRequest($this->View->getRequest()->withParam('controller', 'contact_test'));
+        $this->View->setRequest($this->View->getRequest()->withParam('controller', 'ContactTest'));
         $result = $this->Form->create(null, [
-            'type' => 'get', 'url' => ['controller' => 'contact_test'],
+            'type' => 'get', 'url' => ['controller' => 'ContactTest'],
         ]);
 
         $expected = ['form' => [
-            'method' => 'get', 'action' => '/contact_test/add',
+            'method' => 'get', 'action' => '/ContactTest/add',
             'accept-charset' => $encoding,
         ]];
         $this->assertHtml($expected, $result);
@@ -6984,11 +6984,11 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->postLink(
             'Delete',
-            ['controller' => 'posts', 'action' => 'delete', 1, '?' => ['a' => 'b', 'c' => 'd']]
+            ['controller' => 'Posts', 'action' => 'delete', 1, '?' => ['a' => 'b', 'c' => 'd']]
         );
         $expected = [
             'form' => [
-                'method' => 'post', 'action' => '/posts/delete/1?a=b&amp;c=d',
+                'method' => 'post', 'action' => '/Posts/delete/1?a=b&amp;c=d',
                 'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
@@ -7099,7 +7099,7 @@ class FormHelperTest extends TestCase
         $this->assertStringContainsString($hash, $result, 'Should contain the correct hash.');
         $reflect = new ReflectionProperty($this->Form, '_lastAction');
         $reflect->setAccessible(true);
-        $this->assertSame('/articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
+        $this->assertSame('/Articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
     }
 
     /**

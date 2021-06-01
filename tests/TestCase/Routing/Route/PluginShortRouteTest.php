@@ -34,7 +34,7 @@ class PluginShortRouteTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Configure::write('Routing', ['admin' => null, 'prefixes' => []]);
+        Configure::write('Routing', ['prefixes' => []]);
         Router::reload();
     }
 
@@ -65,10 +65,10 @@ class PluginShortRouteTest extends TestCase
     {
         $route = new PluginShortRoute('/:plugin', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
-        $result = $route->match(['plugin' => 'foo', 'controller' => 'posts', 'action' => 'index']);
+        $result = $route->match(['plugin' => 'Foo', 'controller' => 'Posts', 'action' => 'index']);
         $this->assertNull($result, 'plugin controller mismatch was converted. %s');
 
-        $result = $route->match(['plugin' => 'foo', 'controller' => 'foo', 'action' => 'index']);
+        $result = $route->match(['plugin' => 'Foo', 'controller' => 'Foo', 'action' => 'index']);
         $this->assertSame('/foo', $result);
     }
 }

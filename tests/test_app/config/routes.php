@@ -18,7 +18,7 @@ use Cake\Routing\Router;
 
 Router::extensions('json');
 Router::scope('/', function (RouteBuilder $routes) {
-    $routes->connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);
+    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $routes->connect(
         '/some_alias',
         [

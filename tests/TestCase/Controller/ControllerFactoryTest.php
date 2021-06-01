@@ -80,7 +80,7 @@ class ControllerFactoryTest extends TestCase
             $request = new ServerRequest([
                 'url' => 'admin/posts/index',
                 'params' => [
-                    'prefix' => 'admin',
+                    'prefix' => 'Admin',
                     'controller' => 'Posts',
                     'action' => 'index',
                 ],
