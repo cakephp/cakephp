@@ -57,7 +57,7 @@ class DatabaseSession implements SessionHandlerInterface
         $tableLocator = $this->getTableLocator();
 
         if (empty($config['model'])) {
-            $config = $tableLocator->exists('Sessions') ? [] : ['table' => 'sessions'];
+            $config = $tableLocator->exists('Sessions') ? [] : ['table' => 'sessions', 'allowFallbackClass' => true];
             $this->_table = $tableLocator->get('Sessions', $config);
         } else {
             $this->_table = $tableLocator->get($config['model']);
