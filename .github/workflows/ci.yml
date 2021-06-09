@@ -124,6 +124,7 @@ jobs:
         else
           vendor/bin/phpunit
         fi
+      continue-on-error: ${{ matrix.php-version == '8.1' }}
 
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
