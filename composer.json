@@ -26,7 +26,7 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^2.0",
+        "cakephp/chronos": "dev-2.next as 2.3",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
         "laminas/laminas-httphandlerrunner": "^1.1",
@@ -55,7 +55,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "^4.0",
+        "cakephp/cakephp-codesniffer": "^4.5",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "^8.5 || ^9.3"
