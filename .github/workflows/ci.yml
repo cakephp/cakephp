@@ -26,11 +26,11 @@ jobs:
         include:
           - php-version: '7.4'
             db-type: 'mariadb'
-            allow-failure: false
           - php-version: '7.2'
             db-type: 'mysql'
             prefer-lowest: 'prefer-lowest'
-            allow-failure: false
+          - php-version: '8.1'
+            db-type: 'sqlite'
 
     services:
       redis:
@@ -124,6 +124,7 @@ jobs:
         else
           vendor/bin/phpunit
         fi
+      continue-on-error: ${{ matrix.php-version == '8.1' }}
 
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
