@@ -59,7 +59,7 @@ class FormProtectionComponentTest extends TestCase
         $request = new ServerRequest([
             'url' => '/articles/index',
             'session' => $session,
-            'params' => ['controller' => 'articles', 'action' => 'index'],
+            'params' => ['controller' => 'Articles', 'action' => 'index'],
         ]);
 
         $this->Controller = new Controller($request);
@@ -104,7 +104,7 @@ class FormProtectionComponentTest extends TestCase
             'base' => '/subfolder',
             'webroot' => '/subfolder/',
             'session' => $session,
-            'params' => ['controller' => 'articles', 'action' => 'index'],
+            'params' => ['controller' => 'Articles', 'action' => 'index'],
         ]);
         Router::setRequest($request);
         $this->Controller->setRequest($request);

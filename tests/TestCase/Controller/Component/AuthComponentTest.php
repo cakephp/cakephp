@@ -602,7 +602,7 @@ class AuthComponentTest extends TestCase
         ]));
 
         $this->Auth->setConfig('loginRedirect', [
-            'controller' => 'pages',
+            'controller' => 'Pages',
             'action' => 'display',
             'welcome',
         ]);
@@ -812,7 +812,7 @@ class AuthComponentTest extends TestCase
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
-                'controller' => 'auth_test',
+                'controller' => 'AuthTest',
                 'action' => 'login',
             ],
             'url' => '/auth_test/login',
@@ -828,7 +828,7 @@ class AuthComponentTest extends TestCase
             ->setMockClassName('NoLoginRedirectMockAuthorize')
             ->getMock();
         $this->Auth->setConfig('authorize', ['NoLoginRedirectMockAuthorize']);
-        $this->Auth->setConfig('loginAction', ['controller' => 'auth_test', 'action' => 'login']);
+        $this->Auth->setConfig('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 
         $event = new Event('Controller.startup', $this->Controller);
         $return = $this->Auth->startup($event);
@@ -847,7 +847,7 @@ class AuthComponentTest extends TestCase
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
-                'controller' => 'auth_test',
+                'controller' => 'AuthTest',
                 'action' => 'login',
             ],
             'query' => ['redirect' => '/admin/articles'],
@@ -859,7 +859,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->getController()->getRequest()->getSession()->clear();
         $this->Auth->setConfig('authenticate', ['Form']);
         $this->Auth->setConfig('authorize', false);
-        $this->Auth->setConfig('loginAction', ['controller' => 'auth_test', 'action' => 'login']);
+        $this->Auth->setConfig('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 
         $event = new Event('Controller.startup', $this->Controller);
         $return = $this->Auth->startup($event);
@@ -894,7 +894,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->setConfig('authorize', ['Controller']);
         $this->Auth->setUser(['username' => 'mariano', 'password' => 'cake']);
         $this->Auth->setConfig('loginRedirect', [
-            'controller' => 'something',
+            'controller' => 'Something',
             'action' => 'else',
         ]);
 
@@ -935,7 +935,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->setConfig('authorize', ['Controller']);
         $this->Auth->setUser(['username' => 'admad', 'password' => 'cake']);
 
-        $expected = ['controller' => 'no_can_do', 'action' => 'jack'];
+        $expected = ['controller' => 'NoCanDo', 'action' => 'jack'];
         $this->Auth->setConfig('unauthorizedRedirect', $expected);
 
         $response = new Response();
@@ -1015,7 +1015,7 @@ class AuthComponentTest extends TestCase
         ]);
         $this->Auth->setConfig('authorize', ['Controller']);
         $this->Auth->setUser(['username' => 'admad', 'password' => 'cake']);
-        $expected = ['controller' => 'no_can_do', 'action' => 'jack'];
+        $expected = ['controller' => 'NoCanDo', 'action' => 'jack'];
         $this->Auth->setConfig('unauthorizedRedirect', $expected);
         $this->Auth->setConfig('authError', false);
 
@@ -1149,7 +1149,7 @@ class AuthComponentTest extends TestCase
 
         $this->Auth->setConfig('loginAction', [
             'prefix' => 'Admin',
-            'controller' => 'auth_test',
+            'controller' => 'AuthTest',
             'action' => 'login',
         ]);
 
@@ -1157,7 +1157,7 @@ class AuthComponentTest extends TestCase
         $redirectHeader = $response->getHeaderLine('Location');
         $expected = Router::url([
             'prefix' => 'Admin',
-            'controller' => 'auth_test',
+            'controller' => 'AuthTest',
             'action' => 'login',
             '?' => ['redirect' => '/admin/auth_test/add'],
         ], true);
@@ -1207,9 +1207,9 @@ class AuthComponentTest extends TestCase
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
-                'controller' => 'auth_test',
+                'controller' => 'AuthTest',
                 'action' => 'login',
-                'prefix' => 'admin',
+                'prefix' => 'Admin',
                 'pass' => [],
             ],
             'webroot' => '/',
@@ -1218,8 +1218,8 @@ class AuthComponentTest extends TestCase
         Router::setRequest($request);
 
         $this->Auth->setConfig('loginAction', [
-            'prefix' => 'admin',
-            'controller' => 'auth_test',
+            'prefix' => 'Admin',
+            'controller' => 'AuthTest',
             'action' => 'login',
         ]);
         $result = $this->Auth->startup($event);
@@ -1275,13 +1275,13 @@ class AuthComponentTest extends TestCase
     public function testComponentSettings(): void
     {
         $this->Auth->setConfig([
-            'loginAction' => ['controller' => 'people', 'action' => 'login'],
-            'logoutRedirect' => ['controller' => 'people', 'action' => 'login'],
+            'loginAction' => ['controller' => 'People', 'action' => 'login'],
+            'logoutRedirect' => ['controller' => 'People', 'action' => 'login'],
         ]);
 
         $expected = [
-            'loginAction' => ['controller' => 'people', 'action' => 'login'],
-            'logoutRedirect' => ['controller' => 'people', 'action' => 'login'],
+            'loginAction' => ['controller' => 'People', 'action' => 'login'],
+            'logoutRedirect' => ['controller' => 'People', 'action' => 'login'],
         ];
         $this->assertEquals(
             $expected['loginAction'],
@@ -1463,7 +1463,7 @@ class AuthComponentTest extends TestCase
      */
     public function testRedirectSet(): void
     {
-        $value = ['controller' => 'users', 'action' => 'home'];
+        $value = ['controller' => 'Users', 'action' => 'home'];
         $result = $this->Auth->redirectUrl($value);
         $this->assertSame('/users/home', $result);
     }
@@ -1475,7 +1475,7 @@ class AuthComponentTest extends TestCase
      */
     public function testRedirectQueryStringRead(): void
     {
-        $this->Auth->setConfig('loginAction', ['controller' => 'users', 'action' => 'login']);
+        $this->Auth->setConfig('loginAction', ['controller' => 'Users', 'action' => 'login']);
         $this->Controller->setRequest($this->Controller->getRequest()->withQueryParams(['redirect' => '/users/custom']));
 
         $result = $this->Auth->redirectUrl();
@@ -1509,8 +1509,8 @@ class AuthComponentTest extends TestCase
     public function testRedirectQueryStringReadEqualToLoginAction(): void
     {
         $this->Auth->setConfig([
-            'loginAction' => ['controller' => 'users', 'action' => 'login'],
-            'loginRedirect' => ['controller' => 'users', 'action' => 'home'],
+            'loginAction' => ['controller' => 'Users', 'action' => 'login'],
+            'loginRedirect' => ['controller' => 'Users', 'action' => 'home'],
         ]);
         $this->Controller->setRequest($this->Controller->getRequest()->withQueryParams(['redirect' => '/users/login']));
 
@@ -1527,8 +1527,8 @@ class AuthComponentTest extends TestCase
     public function testRedirectQueryStringInvalid(): void
     {
         $this->Auth->setConfig([
-            'loginAction' => ['controller' => 'users', 'action' => 'login'],
-            'loginRedirect' => ['controller' => 'users', 'action' => 'home'],
+            'loginAction' => ['controller' => 'Users', 'action' => 'login'],
+            'loginRedirect' => ['controller' => 'Users', 'action' => 'home'],
         ]);
         $this->Controller->setRequest($this->Controller->getRequest()->withQueryParams(['redirect' => 'http://some.domain.example/users/login']));
 
@@ -1564,8 +1564,8 @@ class AuthComponentTest extends TestCase
         ]));
         Router::setRequest($this->Controller->getRequest());
 
-        $this->Auth->setConfig('loginAction', ['controller' => 'users', 'action' => 'login']);
-        $this->Auth->setConfig('loginRedirect', ['controller' => 'users', 'action' => 'home']);
+        $this->Auth->setConfig('loginAction', ['controller' => 'Users', 'action' => 'login']);
+        $this->Auth->setConfig('loginRedirect', ['controller' => 'Users', 'action' => 'home']);
 
         $result = $this->Auth->redirectUrl();
         $this->assertSame('/users/home', $result);
@@ -1676,7 +1676,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->setConfig([
             'authenticate' => ['Form'],
             'authorize' => false,
-            'loginAction' => ['controller' => 'auth_test', 'action' => 'login'],
+            'loginAction' => ['controller' => 'AuthTest', 'action' => 'login'],
         ]);
 
         $event = new Event('Controller.startup', $this->Controller);

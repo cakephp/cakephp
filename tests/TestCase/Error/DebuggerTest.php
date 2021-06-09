@@ -25,6 +25,7 @@ use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
+use Cake\Form\Form;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
@@ -33,6 +34,7 @@ use stdClass;
 use TestApp\Error\TestDebugger;
 use TestApp\Error\Thing\DebuggableThing;
 use TestApp\Error\Thing\SecurityThing;
+use TestApp\Utility\ThrowsDebugInfo;
 
 /**
  * DebuggerTest class
@@ -520,6 +522,32 @@ TEXT;
         Debugger::configInstance('exportFormatter', ConsoleFormatter::class);
         $result = Debugger::exportVarAsPlainText(123);
         $this->assertSame('(int) 123', $result);
+    }
+
+    /**
+     * test exportVar with cyclic objects.
+     *
+     * @return void
+     */
+    public function testExportVarDebugInfo()
+    {
+        $form = new Form();
+
+        $result = Debugger::exportVar($form, 6);
+        $this->assertStringContainsString("'_schema' => [", $result, 'Has debuginfo keys');
+        $this->assertStringContainsString("'_validator' => [", $result);
+    }
+
+    /**
+     * Test exportVar with an exception during __debugInfo()
+     *
+     * @return void
+     */
+    public function testExportVarInvalidDebugInfo()
+    {
+        $result = Debugger::exportVar(new ThrowsDebugInfo());
+        $expected = '(unable to export object: from __debugInfo)';
+        $this->assertTextEquals($expected, $result);
     }
 
     /**

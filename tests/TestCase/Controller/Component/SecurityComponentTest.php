@@ -73,7 +73,7 @@ class SecurityComponentTest extends TestCase
         $request = new ServerRequest([
             'url' => '/articles/index',
             'session' => $session,
-            'params' => ['controller' => 'articles', 'action' => 'index'],
+            'params' => ['controller' => 'Articles', 'action' => 'index'],
         ]);
 
         $this->Controller = new SecurityTestController($request);
@@ -125,7 +125,7 @@ class SecurityComponentTest extends TestCase
             'url' => 'posts/index',
             'session' => new Session(),
             'params' => [
-                'controller' => 'posts',
+                'controller' => 'Posts',
                 'action' => 'index',
             ],
         ]);
@@ -170,7 +170,7 @@ class SecurityComponentTest extends TestCase
             'session' => $this->Security->session,
             'method' => 'POST',
             'params' => [
-                'controller' => 'posts',
+                'controller' => 'Posts',
                 'action' => 'index',
             ],
             'post' => [

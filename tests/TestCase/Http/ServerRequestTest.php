@@ -1324,7 +1324,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest([
             'params' => [
-                'controller' => 'posts',
+                'controller' => 'Posts',
                 'admin' => true,
                 'truthy' => 1,
                 'zero' => '0',
@@ -1333,7 +1333,7 @@ class ServerRequestTest extends TestCase
         $this->assertNull($request->getParam('not_set'));
         $this->assertTrue($request->getParam('admin'));
         $this->assertSame(1, $request->getParam('truthy'));
-        $this->assertSame('posts', $request->getParam('controller'));
+        $this->assertSame('Posts', $request->getParam('controller'));
         $this->assertSame('0', $request->getParam('zero'));
     }
 

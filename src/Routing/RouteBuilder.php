@@ -768,7 +768,7 @@ class RouteBuilder
      * Examples:
      *
      * ```
-     * $routes->redirect('/home/*', ['controller' => 'posts', 'action' => 'view']);
+     * $routes->redirect('/home/*', ['controller' => 'Posts', 'action' => 'view']);
      * ```
      *
      * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
