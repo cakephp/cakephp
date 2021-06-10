@@ -755,15 +755,11 @@ class QueryTest extends TestCase
      */
     public function testFilteringByBelongsToManyNoHydration()
     {
-        $query = new Query($this->connection, $this->table);
         $table = $this->getTableLocator()->get('Articles');
-        $this->getTableLocator()->get('Tags');
-        $this->getTableLocator()->get('ArticlesTags', [
-            'table' => 'articles_tags',
-        ]);
         $table->belongsToMany('Tags');
 
-        $results = $query->repository($table)->select()
+        $query = new Query($this->connection, $table);
+        $results = $query->select()
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.id' => 3]);
             })
@@ -784,33 +780,6 @@ class QueryTest extends TestCase
                         'created' => new Time('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3],
-                ],
-            ],
-        ];
-        $this->assertEquals($expected, $results);
-
-        $query = new Query($this->connection, $table);
-        $results = $query->select()
-            ->matching('Tags', function ($q) {
-                return $q->where(['Tags.name' => 'tag2']);
-            })
-            ->enableHydration(false)
-            ->toArray();
-        $expected = [
-            [
-                'id' => 1,
-                'title' => 'First Article',
-                'body' => 'First Article Body',
-                'author_id' => 1,
-                'published' => 'Y',
-                '_matchingData' => [
-                    'Tags' => [
-                        'id' => 2,
-                        'name' => 'tag2',
-                        'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
-                    ],
-                    'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2],
                 ],
             ],
         ];
