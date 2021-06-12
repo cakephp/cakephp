@@ -21,7 +21,6 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
-use Cake\Core\Exception\MissingPluginException;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
@@ -703,97 +702,11 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * Test exceptions being raised when helpers are missing.
+     * Test rendering with missing layout
      *
      * @return void
      */
-    public function testMissingRenderSafe()
-    {
-        $exception = new MissingHelperException(['class' => 'Fail']);
-        $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
-
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['render'])
-            ->getMock();
-        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->setRequest(new ServerRequest());
-        $controller->expects($this->once())
-            ->method('render')
-            ->with('missingHelper')
-            ->will($this->throwException($exception));
-
-        $ExceptionRenderer->setController($controller);
-
-        $response = $ExceptionRenderer->render();
-        $helpers = $controller->viewBuilder()->getHelpers();
-        sort($helpers);
-        $this->assertEquals([], $helpers);
-        $this->assertStringContainsString('Helper class Fail', (string)$response->getBody());
-    }
-
-    /**
-     * Test that exceptions in beforeRender() are handled by outputMessageSafe
-     *
-     * @return void
-     */
-    public function testRenderExceptionInBeforeRender()
-    {
-        $exception = new NotFoundException('Not there, sorry');
-        $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
-
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['beforeRender'])
-            ->getMock();
-        $controller->request = new ServerRequest();
-        $controller->expects($this->any())
-            ->method('beforeRender')
-            ->will($this->throwException($exception));
-
-        $ExceptionRenderer->setController($controller);
-
-        $response = $ExceptionRenderer->render();
-        $this->assertStringContainsString('Not there, sorry', (string)$response->getBody());
-    }
-
-    /**
-     * Test that missing layoutPath don't cause other fatal errors.
-     *
-     * @return void
-     */
-    public function testMissingLayoutPathRenderSafe()
-    {
-        $this->called = false;
-        $exception = new NotFoundException();
-        $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
-
-        $controller = new Controller();
-        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->getEventManager()->on(
-            'Controller.beforeRender',
-            function (EventInterface $event) {
-                $this->called = true;
-                $event->getSubject()->viewBuilder()->setLayoutPath('boom');
-            }
-        );
-        $controller->setRequest(new ServerRequest());
-        $ExceptionRenderer->setController($controller);
-
-        $response = $ExceptionRenderer->render();
-        $this->assertSame('text/html', $response->getType());
-        $this->assertStringContainsString('Not Found', (string)$response->getBody());
-        $this->assertTrue($this->called, 'Listener added was not triggered.');
-        $this->assertSame('', $controller->viewBuilder()->getLayoutPath());
-        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
-    }
-
-    /**
-     * Test that missing layout don't cause other fatal errors.
-     *
-     * @return void
-     */
-    public function testMissingLayoutRenderSafe()
+    public function testMissingLayoutRender()
     {
         $this->called = false;
         $exception = new NotFoundException();
@@ -811,75 +724,9 @@ class ExceptionRendererTest extends TestCase
         $controller->setRequest(new ServerRequest());
         $ExceptionRenderer->setController($controller);
 
-        $response = $ExceptionRenderer->render();
-        $this->assertSame('text/html', $response->getType());
-        $this->assertStringContainsString('Not Found', (string)$response->getBody());
-        $this->assertTrue($this->called, 'Listener added was not triggered.');
-        $this->assertSame('', $controller->viewBuilder()->getLayoutPath());
-        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
-    }
-
-    /**
-     * Test that missing plugin disables Controller::$plugin if the two are the same plugin.
-     *
-     * @return void
-     */
-    public function testMissingPluginRenderSafe()
-    {
-        $exception = new NotFoundException();
-        $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
-
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['render'])
-            ->getMock();
-        $controller->setPlugin('TestPlugin');
-        $controller->request = new ServerRequest();
-
-        $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
-        $controller->expects($this->once())
-            ->method('render')
-            ->with('error400')
-            ->will($this->throwException($exception));
-
-        $ExceptionRenderer->setController($controller);
-
-        $response = $ExceptionRenderer->render();
-        $body = (string)$response->getBody();
-        $this->assertStringNotContainsString('test plugin error500', $body);
-        $this->assertStringContainsString('Not Found', $body);
-    }
-
-    /**
-     * Test that missing plugin doesn't disable Controller::$plugin if the two aren't the same plugin.
-     *
-     * @return void
-     */
-    public function testMissingPluginRenderSafeWithPlugin()
-    {
-        $this->loadPlugins(['TestPlugin']);
-        $exception = new NotFoundException();
-        $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
-
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['render'])
-            ->getMock();
-        $controller->setPlugin('TestPlugin');
-        $controller->request = new ServerRequest();
-
-        $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
-        $controller->expects($this->once())
-            ->method('render')
-            ->with('error400')
-            ->will($this->throwException($exception));
-
-        $ExceptionRenderer->setController($controller);
-
-        $response = $ExceptionRenderer->render();
-        $body = (string)$response->getBody();
-        $this->assertStringContainsString('test plugin error500', $body);
-        $this->assertStringContainsString('Not Found', $body);
+        $this->expectException(MissingLayoutException::class);
+        $this->expectExceptionMessage('/tests/test_app/templates/layout/does-not-exist.php');
+        $ExceptionRenderer->render();
     }
 
     /**

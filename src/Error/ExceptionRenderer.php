@@ -23,7 +23,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\Exception\CakeException;
-use Cake\Core\Exception\MissingPluginException;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
@@ -276,7 +275,18 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
         $this->controller->setResponse($response);
 
-        return $this->_outputMessage($template);
+        try {
+            return $this->renderTemplate($template);
+        } catch (MissingLayoutException $e) {
+            throw $e;
+        } catch (MissingTemplateException $e) {
+            $this->controller->viewBuilder()
+                ->setHelpers([], false)
+                ->setLayoutPath('')
+                ->setTemplatePath('Error');
+
+            return $this->renderTemplate('error500');
+        }
     }
 
     /**
@@ -379,62 +389,50 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
-     * Generate the response using the controller object.
+     * Renders error template returns response.
+     *
+     * Will walk up the request template path hierarchy looking for template before
+     * throwing MissingTemplateException.
      *
      * @param string $template The template to render.
      * @return \Cake\Http\Response A response object that can be sent.
+     * @throws \Cake\View\Exception\MissingTemplateException When template cannot be found.
      */
-    protected function _outputMessage(string $template): Response
+    protected function renderTemplate(string $template): Response
     {
-        try {
-            $this->controller->render($template);
+        $response = null;
+        while (!$response) {
+            try {
+                $this->controller->render($template);
 
-            return $this->_shutdown();
-        } catch (MissingTemplateException $e) {
-            $attributes = $e->getAttributes();
-            if (
-                $e instanceof MissingLayoutException ||
-                (
-                    isset($attributes['file']) &&
-                    strpos($attributes['file'], 'error500') !== false
-                )
-            ) {
-                return $this->_outputMessageSafe('error500');
+                $response = $this->_shutdown();
+            } catch (MissingLayoutException $e) {
+                // Invalid template, re-throw to exit rendering. Handled by ErrorHandlerMiddleware
+                throw $e;
+            } catch (MissingTemplateException $e) {
+                $request = $this->controller->getRequest();
+
+                // Walk up request template hierarchy one at a time
+                if ($request->getParam('_ext')) {
+                    $this->controller->setRequest($request->withParam('_ext', null));
+                    continue;
+                }
+
+                if ($request->getParam('prefix')) {
+                    $this->controller->setRequest($request->withParam('prefix', null));
+                    continue;
+                }
+
+                if ($request->getParam('plugin')) {
+                    $this->controller->setPlugin(null);
+                    $this->controller->viewBuilder()->setPlugin(null);
+                    continue;
+                }
+
+                // Could not find template in any of hierarchy paths, re-throw to exit rendering.
+                throw $e;
             }
-
-            return $this->_outputMessage('error500');
-        } catch (MissingPluginException $e) {
-            $attributes = $e->getAttributes();
-            if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->getPlugin()) {
-                $this->controller->setPlugin(null);
-            }
-
-            return $this->_outputMessageSafe('error500');
-        } catch (Throwable $e) {
-            return $this->_outputMessageSafe('error500');
         }
-    }
-
-    /**
-     * A safer way to render error messages, replaces all helpers, with basics
-     * and doesn't call component methods.
-     *
-     * @param string $template The template to render.
-     * @return \Cake\Http\Response A response object that can be sent.
-     */
-    protected function _outputMessageSafe(string $template): Response
-    {
-        $builder = $this->controller->viewBuilder();
-        $builder
-            ->setHelpers([], false)
-            ->setLayoutPath('')
-            ->setTemplatePath('Error');
-        $view = $this->controller->createView('View');
-
-        $response = $this->controller->getResponse()
-            ->withType('html')
-            ->withStringBody($view->render($template, 'error'));
-        $this->controller->setResponse($response);
 
         return $response;
     }

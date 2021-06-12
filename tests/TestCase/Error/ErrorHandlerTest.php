@@ -210,8 +210,6 @@ class ErrorHandlerTest extends TestCase
      */
     public function testErrorSuppressed()
     {
-        $this->skipIf(version_compare(PHP_VERSION, '8.0.0-dev', '>='));
-
         $errorHandler = new ErrorHandler();
         $errorHandler->register();
         $this->_restoreError = true;
