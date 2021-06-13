@@ -1008,7 +1008,7 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertSame('debug connection=test duration=0 rows=0 SELECT 1', $messages[0]);
+        $this->assertSame('debug: connection=test duration=0 rows=0 SELECT 1', $messages[0]);
     }
 
     /**
@@ -1069,8 +1069,8 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertSame('debug connection= duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug connection= duration=0 rows=0 ROLLBACK', $messages[1]);
+        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= duration=0 rows=0 ROLLBACK', $messages[1]);
     }
 
     /**
@@ -1093,8 +1093,8 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertSame('debug connection= duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug connection= duration=0 rows=0 COMMIT', $messages[1]);
+        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= duration=0 rows=0 COMMIT', $messages[1]);
     }
 
     /**
