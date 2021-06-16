@@ -28,6 +28,7 @@ use Cake\Routing\RouteBuilder;
 use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DependencyCommand;
+use TestApp\Command\FormatSpecifierCommand;
 
 class Application extends BaseApplication
 {
@@ -54,6 +55,7 @@ class Application extends BaseApplication
     {
         return $commands
             ->add('abort_command', new AbortCommand())
+            ->add('format_specifier_command', new FormatSpecifierCommand())
             ->addMany($commands->autoDiscover());
     }
 
