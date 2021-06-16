@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Http\Session;
 
+use ReturnTypeWillChange;
 use SessionHandlerInterface;
 
 /**
@@ -17,28 +18,34 @@ class TestAppLibSession implements SessionHandlerInterface
         $this->options = $options;
     }
 
-    public function open($savePath, $name)
+    public function open($path, $name): bool
     {
         return true;
     }
 
-    public function close()
+    public function close(): bool
     {
+        return true;
     }
 
+    #[ReturnTypeWillChange]
     public function read($id)
     {
     }
 
-    public function write($id, $data)
+    public function write($id, $data): bool
     {
+        return true;
     }
 
-    public function destroy($id)
+    public function destroy($id): bool
     {
+        return true;
     }
 
+    #[ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
+        return 0;
     }
 }
