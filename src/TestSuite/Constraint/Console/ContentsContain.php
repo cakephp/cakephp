@@ -40,6 +40,6 @@ class ContentsContain extends ContentsBase
      */
     public function toString(): string
     {
-        return sprintf('is in %s,' . PHP_EOL . 'actual result:' . PHP_EOL . $this->contents, $this->output);
+        return sprintf('is in %s,' . PHP_EOL . 'actual result:' . PHP_EOL, $this->output) . $this->contents;
     }
 }
