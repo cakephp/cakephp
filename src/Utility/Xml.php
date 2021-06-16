@@ -208,9 +208,7 @@ class Xml
         }
 
         $internalErrors = libxml_use_internal_errors(true);
-        if (LIBXML_VERSION < 20900 && !$options['loadEntities']) {
-            $previousDisabledEntityLoader = libxml_disable_entity_loader(true);
-        } elseif ($options['loadEntities']) {
+        if ($options['loadEntities']) {
             $flags |= LIBXML_NOENT;
         }
 
@@ -219,9 +217,6 @@ class Xml
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
-            if (isset($previousDisabledEntityLoader)) {
-                libxml_disable_entity_loader($previousDisabledEntityLoader);
-            }
             libxml_use_internal_errors($internalErrors);
         }
     }

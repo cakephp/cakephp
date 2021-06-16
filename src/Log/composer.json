@@ -23,8 +23,8 @@
         "source": "https://github.com/cakephp/log"
     },
     "require": {
-        "php": ">=7.2.0",
-        "cakephp/core": "^4.0",
+        "php": ">=8.0",
+        "cakephp/core": "^5.0",
         "psr/log": "^1.0.0"
     },
     "provide": {

@@ -24,8 +24,8 @@
         "source": "https://github.com/cakephp/datasource"
     },
     "require": {
-        "php": ">=7.2.0",
-        "cakephp/core": "^4.0",
+        "php": ">=8.0",
+        "cakephp/core": "^5.0",
         "psr/log": "^1.1",
         "psr/simple-cache": "^1.0"
     },
