@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.3.0",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
@@ -58,7 +58,7 @@
         "cakephp/cakephp-codesniffer": "^4.0",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
-        "phpunit/phpunit": "^8.5 || ^9.3"
+        "phpunit/phpunit": "^9.3"
     },
     "suggest": {
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
