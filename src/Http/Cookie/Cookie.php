@@ -59,7 +59,7 @@ class Cookie implements CookieInterface
     /**
      * Raw Cookie value.
      *
-     * @var string|array
+     * @var array|string
      */
     protected $value = '';
 
@@ -136,7 +136,7 @@ class Cookie implements CookieInterface
      *
      * @link http://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
-     * @param string|array $value Value of the cookie
+     * @param array|string $value Value of the cookie
      * @param \DateTime|\DateTimeImmutable|null $expiresAt Expiration time and date
      * @param string|null $path Path
      * @param string|null $domain Domain
@@ -210,7 +210,7 @@ class Cookie implements CookieInterface
      * Factory method to create Cookie instances.
      *
      * @param string $name Cookie name
-     * @param string|array $value Value of the cookie
+     * @param array|string $value Value of the cookie
      * @param array $options Cookies options.
      * @return static
      * @see \Cake\Cookie\Cookie::setDefaults()
@@ -463,7 +463,7 @@ class Cookie implements CookieInterface
     /**
      * Setter for the value attribute.
      *
-     * @param string|array $value The value to store.
+     * @param array|string $value The value to store.
      * @return void
      */
     protected function _setValue($value): void
@@ -807,7 +807,7 @@ class Cookie implements CookieInterface
      * Maintains reading backwards compatibility with 1.x CookieComponent::_flatten().
      *
      * @param string $string A string containing JSON encoded data, or a bare string.
-     * @return string|array Map of key and values
+     * @return array|string Map of key and values
      */
     protected function _expand(string $string)
     {

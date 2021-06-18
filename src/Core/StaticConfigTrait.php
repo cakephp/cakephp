@@ -67,7 +67,7 @@ trait StaticConfigTrait
      * Cache::setConfig($arrayOfConfig);
      * ```
      *
-     * @param string|array $key The name of the configuration, or an array of multiple configs.
+     * @param array|string $key The name of the configuration, or an array of multiple configs.
      * @param array|object|null $config An array of name => configuration data for adapter.
      * @throws \BadMethodCallException When trying to modify an existing config.
      * @throws \LogicException When trying to store an invalid structured config array.

@@ -52,7 +52,7 @@ class ExtractIterator extends Collection
      * ```
      *
      * @param iterable $items The list of values to iterate
-     * @param string|callable $path A dot separated path of column to follow
+     * @param callable|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
      */

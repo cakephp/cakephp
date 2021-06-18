@@ -246,7 +246,7 @@ class NumberHelper extends Helper
     /**
      * Formats a number into locale specific ordinal suffix.
      *
-     * @param int|float $value An integer
+     * @param float|int $value An integer
      * @param array $options An array with options.
      * @return string formatted number
      */

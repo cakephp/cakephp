@@ -214,7 +214,7 @@ class Debugger
     /**
      * Read or write configuration options for the Debugger instance.
      *
-     * @param string|array|null $key The key to get/set, or a complete array of configs.
+     * @param array|string|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return mixed Config value being read, or the object itself on write operations.
@@ -267,7 +267,7 @@ class Debugger
      * The file and line.
      *
      * @param string $name The name of the editor.
-     * @param string|\Closure $template The string template or closure
+     * @param \Closure|string $template The string template or closure
      * @return void
      */
     public static function addEditor(string $name, $template): void
@@ -367,7 +367,7 @@ class Debugger
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
      * @param array $options Format for outputting stack trace.
-     * @return string|array Formatted stack trace.
+     * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */
     public static function trace(array $options = [])
@@ -387,9 +387,9 @@ class Debugger
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
-     * @param array|\Throwable $backtrace Trace as array or an exception object.
+     * @param \Throwable|array $backtrace Trace as array or an exception object.
      * @param array $options Format for outputting stack trace.
-     * @return string|array Formatted stack trace.
+     * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */
     public static function formatTrace($backtrace, array $options = [])

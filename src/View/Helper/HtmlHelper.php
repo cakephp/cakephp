@@ -124,9 +124,9 @@ class HtmlHelper extends Helper
      * - `block` - Set to true to append output to view block "meta" or provide
      *   custom block name.
      *
-     * @param string|array $type The title of the external resource, Or an array of attributes for a
+     * @param array|string $type The title of the external resource, Or an array of attributes for a
      *   custom meta tag.
-     * @param string|array|null $content The address of the external resource or string for content attribute
+     * @param array|string|null $content The address of the external resource or string for content attribute
      * @param array $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
      * @return string|null A completed `<link />` element, or null if the element was sent to a block.
@@ -242,9 +242,9 @@ class HtmlHelper extends Helper
      *   over value of `escape`)
      * - `confirm` JavaScript confirmation message.
      *
-     * @param string|array $title The content to be wrapped by `<a>` tags.
+     * @param array|string $title The content to be wrapped by `<a>` tags.
      *   Can be an array if $url is null. If $url is null, $title will be used as both the URL and title.
-     * @param string|array|null $url Cake-relative URL or array of URL parameters, or
+     * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array $options Array of options and HTML attributes.
      * @return string An `<a />` element.
@@ -651,7 +651,7 @@ class HtmlHelper extends Helper
      * - `fullBase` If true the src attribute will get a full address for the image file.
      * - `plugin` False value will prevent parsing path as a plugin
      *
-     * @param string|array $path Path to the image file, relative to the webroot/img/ directory.
+     * @param array|string $path Path to the image file, relative to the webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-images
@@ -985,7 +985,7 @@ class HtmlHelper extends Helper
      * - `pathPrefix` Path prefix to use for relative URLs, defaults to 'files/'
      * - `fullBase` If provided the src attribute will get a full address including domain name
      *
-     * @param string|array $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.
+     * @param array|string $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.
      *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
      * @param array $options Array of HTML attributes, and special options above.
      * @return string Generated media element

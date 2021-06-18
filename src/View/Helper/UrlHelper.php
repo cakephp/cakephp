@@ -73,7 +73,7 @@ class UrlHelper extends Helper
      *    escaped afterwards before being displayed.
      * - `fullBase`: If true, the full base URL will be prepended to the result
      *
-     * @param string|array|null $url Either a relative string URL like `/products/view/23` or
+     * @param array|string|null $url Either a relative string URL like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage
      *    the reverse routing features of CakePHP.
      * @param array $options Array of options.
@@ -226,7 +226,7 @@ class UrlHelper extends Helper
      * a timestamp will be added.
      *
      * @param string $path The file path to timestamp, the path must be inside `App.wwwRoot` in Configure.
-     * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
+     * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
     public function assetTimestamp(string $path, $timestamp = null): string

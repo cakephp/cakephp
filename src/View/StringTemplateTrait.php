@@ -50,7 +50,7 @@ trait StringTemplateTrait
      * Gets templates to use or a specific template.
      *
      * @param string|null $template String for reading a specific template, null for all.
-     * @return string|array
+     * @return array|string
      */
     public function getTemplates(?string $template = null)
     {

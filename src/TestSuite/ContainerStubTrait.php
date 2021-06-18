@@ -135,7 +135,7 @@ trait ContainerStubTrait
      *
      * @param \Cake\Event\EventInterface $event The event
      * @param \Cake\Core\ContainerInterface $container The container to wrap.
-     * @return null|\Cake\Core\ContainerInterface
+     * @return \Cake\Core\ContainerInterface|null
      */
     public function modifyContainer(EventInterface $event, ContainerInterface $container): ?ContainerInterface
     {

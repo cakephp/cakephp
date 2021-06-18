@@ -63,8 +63,8 @@ class TimeHelper extends Helper
     /**
      * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return \Cake\I18n\Time
      */
     public function fromString($dateString, $timezone = null): Time
@@ -80,8 +80,8 @@ class TimeHelper extends Helper
     /**
      * Returns a nicely formatted date string for given Datetime string.
      *
-     * @param int|string|\DateTimeInterface|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @param string|null $locale Locale string.
      * @return string Formatted date string
      */
@@ -95,8 +95,8 @@ class TimeHelper extends Helper
     /**
      * Returns true, if the given datetime string is today.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if the given datetime string is today.
      */
     public function isToday($dateString, $timezone = null): bool
@@ -107,8 +107,8 @@ class TimeHelper extends Helper
     /**
      * Returns true, if the given datetime string is in the future.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if the given datetime string lies in the future.
      */
     public function isFuture($dateString, $timezone = null): bool
@@ -119,8 +119,8 @@ class TimeHelper extends Helper
     /**
      * Returns true, if the given datetime string is in the past.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if the given datetime string lies in the past.
      */
     public function isPast($dateString, $timezone = null): bool
@@ -131,8 +131,8 @@ class TimeHelper extends Helper
     /**
      * Returns true if given datetime string is within this week.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string is within current week
      */
     public function isThisWeek($dateString, $timezone = null): bool
@@ -143,8 +143,8 @@ class TimeHelper extends Helper
     /**
      * Returns true if given datetime string is within this month
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string is within the current month
      */
     public function isThisMonth($dateString, $timezone = null): bool
@@ -155,8 +155,8 @@ class TimeHelper extends Helper
     /**
      * Returns true if given datetime string is within the current year.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string is within current year
      */
     public function isThisYear($dateString, $timezone = null): bool
@@ -167,8 +167,8 @@ class TimeHelper extends Helper
     /**
      * Returns true if given datetime string was yesterday.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string was yesterday
      */
     public function wasYesterday($dateString, $timezone = null): bool
@@ -179,8 +179,8 @@ class TimeHelper extends Helper
     /**
      * Returns true if given datetime string is tomorrow.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string was yesterday
      */
     public function isTomorrow($dateString, $timezone = null): bool
@@ -191,7 +191,7 @@ class TimeHelper extends Helper
     /**
      * Returns the quarter
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
      * @return string[]|int 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
@@ -204,8 +204,8 @@ class TimeHelper extends Helper
     /**
      * Returns a UNIX timestamp from a textual datetime description.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string UNIX timestamp
      * @see \Cake\I18n\Time::toUnix()
      */
@@ -217,8 +217,8 @@ class TimeHelper extends Helper
     /**
      * Returns a date formatted for Atom RSS feeds.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted date string
      * @see \Cake\I18n\Time::toAtom()
      */
@@ -232,8 +232,8 @@ class TimeHelper extends Helper
     /**
      * Formats date for RSS feeds
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted date string
      */
     public function toRss($dateString, $timezone = null): string
@@ -254,7 +254,7 @@ class TimeHelper extends Helper
      *   - `class` - The class name to use, defaults to `time-ago-in-words`.
      *   - `title` - Defaults to the $dateTime input.
      *
-     * @param int|string|\DateTimeInterface $dateTime UNIX timestamp, strtotime() valid
+     * @param \DateTimeInterface|string|int $dateTime UNIX timestamp, strtotime() valid
      *   string or DateTime object.
      * @param array $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
@@ -308,8 +308,8 @@ class TimeHelper extends Helper
      *
      * @param string $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool
      * @see \Cake\I18n\Time::wasWithinLast()
      */
@@ -323,8 +323,8 @@ class TimeHelper extends Helper
      *
      * @param string $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool
      * @see \Cake\I18n\Time::wasWithinLast()
      */
@@ -336,7 +336,7 @@ class TimeHelper extends Helper
     /**
      * Returns gmt as a UNIX timestamp.
      *
-     * @param int|string|\DateTimeInterface|null $string UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeInterface|string|int|null $string UNIX timestamp, strtotime() valid string or DateTime object
      * @return string UNIX timestamp
      * @see \Cake\I18n\Time::gmt()
      */
@@ -351,12 +351,12 @@ class TimeHelper extends Helper
      *
      * This method is an alias for TimeHelper::i18nFormat().
      *
-     * @param int|string|\DateTimeInterface|null $date UNIX timestamp, strtotime() valid string
+     * @param \DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string
      *   or DateTime object (or a date format string).
      * @param int|string|null $format date format string (or a UNIX timestamp,
      *   strtotime() valid string or DateTime object).
      * @param string|false $invalid Default value to display on invalid dates
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string
      * @see \Cake\I18n\Time::i18nFormat()
      */
@@ -369,10 +369,10 @@ class TimeHelper extends Helper
      * Returns a formatted date string, given either a Datetime instance,
      * UNIX timestamp or a valid strtotime() date string.
      *
-     * @param int|string|\DateTimeInterface|null $date UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|int|null $format Intl compatible format string.
      * @param string|false $invalid Default value to display on invalid dates
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string or value for `$invalid` on failure.
      * @throws \Exception When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()

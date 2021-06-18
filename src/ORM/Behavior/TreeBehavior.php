@@ -988,7 +988,7 @@ class TreeBehavior extends Behavior
     /**
      * Returns the depth level of a node in the tree.
      *
-     * @param int|string|\Cake\Datasource\EntityInterface $entity The entity or primary key get the level of.
+     * @param \Cake\Datasource\EntityInterface|string|int $entity The entity or primary key get the level of.
      * @return int|false Integer of the level or false if the node does not exist.
      */
     public function getLevel($entity)

@@ -390,7 +390,7 @@ class RouteCollection
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to register.
+     * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
      * @throws \RuntimeException
      */

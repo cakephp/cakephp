@@ -53,10 +53,10 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface extract($field) Extracts a single column from each row
  * @method mixed max($field) Returns the maximum value for a single column in all the results.
  * @method mixed min($field) Returns the minimum value for a single column in all the results.
- * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
- * @method \Cake\Collection\CollectionInterface indexBy(string|callable $callback) Returns the results indexed by the value of a column.
- * @method \Cake\Collection\CollectionInterface countBy(string|callable $field) Returns the number of unique values for a column
- * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
+ * @method \Cake\Collection\CollectionInterface groupBy(callable|string $field) In-memory group all results by the value of a column.
+ * @method \Cake\Collection\CollectionInterface indexBy(callable|string $callback) Returns the results indexed by the value of a column.
+ * @method \Cake\Collection\CollectionInterface countBy(callable|string $field) Returns the number of unique values for a column
+ * @method float sumOf(callable|string $field) Returns the sum of all values for a single column
  * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
  * @method \Cake\Collection\CollectionInterface sample(int $size = 10) In-memory shuffle the results and return a subset of them.
  * @method \Cake\Collection\CollectionInterface take(int $size = 1, int $from = 0) In-memory limit and offset for the query results.
@@ -220,7 +220,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * all the fields in the schema of the table or the association will be added to
      * the select clause.
      *
-     * @param array|\Cake\Database\ExpressionInterface|callable|string|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields
+     * @param \Cake\Database\ExpressionInterface|array|callable|string|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
@@ -1041,7 +1041,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
-     * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
+     * @param \Cake\Cache\CacheEngine|string $config Either the name of the cache config to use, or
      *   a cache config instance.
      * @return $this
      * @throws \RuntimeException When you attempt to cache a non-select query.
@@ -1240,7 +1240,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This changes the query type to be 'update'.
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param string|\Cake\Database\ExpressionInterface|null $table Unused parameter.
+     * @param \Cake\Database\ExpressionInterface|string|null $table Unused parameter.
      * @return $this
      */
     public function update($table = null)

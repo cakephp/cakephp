@@ -477,7 +477,7 @@ class Number
      *
      * For all other options see formatter().
      *
-     * @param int|float $value An integer
+     * @param float|int $value An integer
      * @param array $options An array with options.
      * @return string
      */

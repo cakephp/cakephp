@@ -80,7 +80,7 @@ class SaveOptionsBuilder extends ArrayObject
     /**
      * Set associated options.
      *
-     * @param string|array $associated String or array of associations.
+     * @param array|string $associated String or array of associations.
      * @return $this
      */
     public function associated($associated)

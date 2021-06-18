@@ -53,7 +53,7 @@ class ConsoleInputSubcommand
     /**
      * Make a new Subcommand
      *
-     * @param string|array $name The long name of the subcommand, or an array with all the properties.
+     * @param array|string $name The long name of the subcommand, or an array with all the properties.
      * @param string $help The help text for this option.
      * @param \Cake\Console\ConsoleOptionParser|array|null $parser A parser for this subcommand.
      *   Either a ConsoleOptionParser, or an array that can be used with ConsoleOptionParser::buildFromArray().

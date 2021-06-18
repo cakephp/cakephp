@@ -77,7 +77,7 @@ class Request extends Message implements RequestInterface
      * Array data will be serialized with Cake\Http\FormData,
      * and the content-type will be set.
      *
-     * @param string|array $content The body for the request.
+     * @param array|string $content The body for the request.
      * @return $this
      */
     protected function setContent($content)

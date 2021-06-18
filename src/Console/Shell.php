@@ -620,7 +620,7 @@ class Shell
      * Prompts the user for input, and returns it.
      *
      * @param string $prompt Prompt text.
-     * @param string|array|null $options Array or string of options.
+     * @param array|string|null $options Array or string of options.
      * @param string|null $default Default input value.
      * @return string|null Either the default value, or the user-provided input.
      * @link https://book.cakephp.org/4/en/console-and-shells.html#Shell::in
@@ -648,7 +648,7 @@ class Shell
      * - `indent` Indent the text with the string provided. Defaults to null.
      *
      * @param string $text Text the text to format.
-     * @param int|array $options Array of options to use, or an integer to wrap the text to.
+     * @param array|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Wrapped / indented text
      * @see \Cake\Utility\Text::wrap()
      * @link https://book.cakephp.org/4/en/console-and-shells.html#Shell::wrapText

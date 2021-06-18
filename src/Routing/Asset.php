@@ -231,7 +231,7 @@ class Asset
      * a timestamp will be added.
      *
      * @param string $path The file path to timestamp, the path must be inside `App.wwwRoot` in Configure.
-     * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
+     * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
     public static function assetTimestamp(string $path, $timestamp = null): string

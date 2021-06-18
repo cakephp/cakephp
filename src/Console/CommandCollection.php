@@ -56,7 +56,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Add a command to the collection
      *
      * @param string $name The name of the command you want to map.
-     * @param string|\Cake\Console\Shell|\Cake\Console\CommandInterface $command The command to map.
+     * @param \Cake\Console\CommandInterface|\Cake\Console\Shell|string $command The command to map.
      *   Can be a FQCN, Shell instance or CommandInterface instance.
      * @return $this
      * @throws \InvalidArgumentException
@@ -129,7 +129,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $name The named shell.
      * @return string|\Cake\Console\Shell|\Cake\Console\CommandInterface Either the command class or an instance.
      * @throws \InvalidArgumentException when unknown commands are fetched.
-     * @psalm-return class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface
+     * @psalm-return \Cake\Console\CommandInterface|\Cake\Console\Shell|class-string
      */
     public function get(string $name)
     {

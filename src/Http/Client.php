@@ -510,7 +510,7 @@ class Client implements ClientInterface
      * Generate a URL based on the scoped client options.
      *
      * @param string $url Either a full URL or just the path.
-     * @param string|array $query The query data for the URL.
+     * @param array|string $query The query data for the URL.
      * @param array $options The config options stored with Client::config()
      * @return string A complete url with scheme, port, host, and path.
      */

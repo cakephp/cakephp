@@ -124,7 +124,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
     /**
      * Create a new immutable time instance.
      *
-     * @param string|int|\DateTimeInterface|null $time Fixed or relative time
+     * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
     public function __construct($time = null, $tz = null)
@@ -191,7 +191,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      *   Or one of DateTimeZone class constants
      * @param string|null $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
-     * @param bool|array $options If true (default value) groups the identifiers list by primary region.
+     * @param array|bool $options If true (default value) groups the identifiers list by primary region.
      *   Otherwise, an array containing `group`, `abbr`, `before`, and `after`
      *   keys. Setting `group` and `abbr` to true will group results and append
      *   timezone abbreviation in the display value. Set `before` and `after`

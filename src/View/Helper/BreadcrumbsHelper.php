@@ -60,7 +60,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * Add a crumb to the end of the trail.
      *
-     * @param string|array $title If provided as a string, it represents the title of the crumb.
+     * @param array|string $title If provided as a string, it represents the title of the crumb.
      * Alternatively, if you want to add multiple crumbs at once, you can provide an array, with each values being a
      * single crumb. Arrays are expected to be of this form:
      *
@@ -68,7 +68,7 @@ class BreadcrumbsHelper extends Helper
      * - *link* The link of the crumb. If not provided, no link will be made
      * - *options* Options of the crumb. See description of params option of this method.
      *
-     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
+     * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -96,7 +96,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * Prepend a crumb to the start of the queue.
      *
-     * @param string|array $title If provided as a string, it represents the title of the crumb.
+     * @param array|string $title If provided as a string, it represents the title of the crumb.
      * Alternatively, if you want to add multiple crumbs at once, you can provide an array, with each values being a
      * single crumb. Arrays are expected to be of this form:
      *
@@ -104,7 +104,7 @@ class BreadcrumbsHelper extends Helper
      * - *link* The link of the crumb. If not provided, no link will be made
      * - *options* Options of the crumb. See description of params option of this method.
      *
-     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
+     * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -141,7 +141,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param int $index The index to insert at.
      * @param string $title Title of the crumb.
-     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
+     * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -171,7 +171,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param string $matchingTitle The title of the crumb you want to insert this one before.
      * @param string $title Title of the crumb.
-     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
+     * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -201,7 +201,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param string $matchingTitle The title of the crumb you want to insert this one after.
      * @param string $title Title of the crumb.
-     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
+     * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:

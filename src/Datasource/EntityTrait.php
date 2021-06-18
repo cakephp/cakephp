@@ -210,7 +210,7 @@ trait EntityTrait
      * $entity->set('name', 'Andrew');
      * ```
      *
-     * @param string|array $field the name of field to set or a list of
+     * @param array|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
@@ -950,7 +950,7 @@ trait EntityTrait
      * ```
      *
      * @param string $field The field to get errors for, or the array of errors to set.
-     * @param string|array $errors The errors to be set for $field
+     * @param array|string $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
@@ -1017,7 +1017,7 @@ trait EntityTrait
     /**
      * Reads if there are errors for one or many objects.
      *
-     * @param array|\Cake\Datasource\EntityInterface $object The object to read errors from.
+     * @param \Cake\Datasource\EntityInterface|array $object The object to read errors from.
      * @return bool
      */
     protected function _readHasErrors($object): bool
@@ -1040,7 +1040,7 @@ trait EntityTrait
     /**
      * Read the error(s) from one or many objects.
      *
-     * @param iterable|\Cake\Datasource\EntityInterface $object The object to read errors from.
+     * @param \Cake\Datasource\EntityInterface|iterable $object The object to read errors from.
      * @param string|null $path The field name for errors.
      * @return array
      */
@@ -1143,7 +1143,7 @@ trait EntityTrait
      * $entity->setAccess('*', false); // Mark all fields as protected
      * ```
      *
-     * @param string|array $field Single or list of fields to change its accessibility
+     * @param array|string $field Single or list of fields to change its accessibility
      * @param bool $set True marks the field as accessible, false will
      * mark it as protected.
      * @return $this
