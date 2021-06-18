@@ -133,7 +133,7 @@ class DatabaseSessionTest extends TestCase
         $this->assertSame($expected, $result);
 
         $result = $this->storage->read('made up value');
-        $this->assertSame('', $result);
+        $this->assertFalse($result);
     }
 
     /**
@@ -146,7 +146,7 @@ class DatabaseSessionTest extends TestCase
         $this->assertTrue($this->storage->write('foo', 'Some value'));
 
         $this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
-        $this->assertSame('', $this->storage->read('foo'), 'Value still present.');
+        $this->assertFalse($this->storage->read('foo'), 'Value still present.');
         $this->assertTrue($this->storage->destroy('foo'), 'Destroy should always return true');
     }
 
@@ -165,7 +165,7 @@ class DatabaseSessionTest extends TestCase
 
         sleep(1);
         $storage->gc(0);
-        $this->assertSame('', $storage->read('foo'));
+        $this->assertFalse($storage->read('foo'));
     }
 
     /**

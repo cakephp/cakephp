@@ -397,7 +397,7 @@ class Folder
      * Returns $path with $element added, with correct slash in-between.
      *
      * @param string $path Path
-     * @param string|array $element Element to add at end of path
+     * @param array|string $element Element to add at end of path
      * @return string Combined path
      */
     public static function addPathElement(string $path, $element): string

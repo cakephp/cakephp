@@ -122,7 +122,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
     /**
      * Create a new mutable time instance.
      *
-     * @param string|int|\DateTimeInterface|null $time Fixed or relative time
+     * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
     public function __construct($time = null, $tz = null)
@@ -143,7 +143,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      *
      * The format to be used is stored in the static property `Time::niceFormat`.
      *
-     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
@@ -271,7 +271,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      *   Or one of DateTimeZone class constants
      * @param string|null $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
-     * @param bool|array $options If true (default value) groups the identifiers list by primary region.
+     * @param array|bool $options If true (default value) groups the identifiers list by primary region.
      *   Otherwise, an array containing `group`, `abbr`, `before`, and `after`
      *   keys. Setting `group` and `abbr` to true will group results and append
      *   timezone abbreviation in the display value. Set `before` and `after`

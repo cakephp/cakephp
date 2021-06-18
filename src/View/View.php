@@ -845,7 +845,7 @@ class View implements EventDispatcherInterface
     /**
      * Saves a variable or an associative array of variables for use inside a template.
      *
-     * @param string|array $name A string or an array of data.
+     * @param array|string $name A string or an array of data.
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
@@ -1335,7 +1335,7 @@ class View implements EventDispatcherInterface
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
             } else {
-                $name = DIRECTORY_SEPARATOR . $subDir . $name;
+                $name = $subDir . $name;
             }
         }
 
@@ -1601,7 +1601,7 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array $options Element options
      * @return array Element Cache configuration.
-     * @psalm-param array{cache:(string|array{key:string, config:string}|null), callbacks:mixed, plugin:mixed} $options
+     * @psalm-param array{cache:(array{key:string, config:string}|string|null), callbacks:mixed, plugin:mixed} $options
      * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array

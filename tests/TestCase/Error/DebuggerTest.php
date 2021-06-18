@@ -748,14 +748,17 @@ TEXT;
     }
 
     /**
-     * Test that exportVar() will stop traversing recursive arrays like GLOBALS.
+     * Test that exportVar() will stop traversing recursive arrays.
      *
      * @return void
      */
     public function testExportVarRecursion()
     {
-        $output = Debugger::exportVar($GLOBALS);
-        $this->assertMatchesRegularExpression("/'GLOBALS' => \[\s+'' \=\> \[maximum depth reached\]/", $output);
+        $array = [];
+        $array['foo'] = &$array;
+
+        $output = Debugger::exportVar($array);
+        $this->assertMatchesRegularExpression("/'foo' => \[\s+'' \=\> \[maximum depth reached\]/", $output);
     }
 
     /**

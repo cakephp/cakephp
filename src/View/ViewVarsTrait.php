@@ -79,7 +79,7 @@ trait ViewVarsTrait
     /**
      * Saves a variable or an associative array of variables for use inside a template.
      *
-     * @param string|array $name A string or an array of data.
+     * @param array|string $name A string or an array of data.
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this

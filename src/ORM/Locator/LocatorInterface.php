@@ -37,7 +37,7 @@ interface LocatorInterface extends \Cake\Datasource\Locator\LocatorInterface
      * Stores a list of options to be used when instantiating an object
      * with a matching alias.
      *
-     * @param string|array $alias Name of the alias or array to completely
+     * @param array|string $alias Name of the alias or array to completely
      *   overwrite current config.
      * @param array|null $options list of options for the alias
      * @return $this

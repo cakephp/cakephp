@@ -469,7 +469,7 @@ class ConsoleIo
      * Prompts the user for input based on a list of options, and returns it.
      *
      * @param string $prompt Prompt text.
-     * @param string|array $options Array or string of options.
+     * @param array|string $options Array or string of options.
      * @param string|null $default Default input value.
      * @return string Either the default value, or the user-provided input.
      */

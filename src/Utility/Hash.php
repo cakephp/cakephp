@@ -37,7 +37,7 @@ class Hash
      * Does not support the full dot notation feature set,
      * but is faster for simple read operations.
      *
-     * @param array|\ArrayAccess $data Array of data or object implementing
+     * @param \ArrayAccess|array $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
      * @param string|int|string[]|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
@@ -116,7 +116,7 @@ class Hash
      * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
      * - `{n}.User[id=1].name` Get the Users name with id matching `1`.
      *
-     * @param array|\ArrayAccess $data The data to extract from.
+     * @param \ArrayAccess|array $data The data to extract from.
      * @param string $path The path to extract.
      * @return array|\ArrayAccess An array of the extracted values. Returns an empty array
      *   if there are no matches.
@@ -235,7 +235,7 @@ class Hash
     /**
      * Checks whether or not $data matches the attribute patterns
      *
-     * @param array|\ArrayAccess $data Array of data to match.
+     * @param \ArrayAccess|array $data Array of data to match.
      * @param string $selector The patterns to match.
      * @return bool Fitness of expression.
      */

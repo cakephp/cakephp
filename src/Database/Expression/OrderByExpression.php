@@ -28,8 +28,8 @@ class OrderByExpression extends QueryExpression
     /**
      * Constructor
      *
-     * @param string|array|\Cake\Database\ExpressionInterface $conditions The sort columns
-     * @param array|\Cake\Database\TypeMap $types The types for each column.
+     * @param \Cake\Database\ExpressionInterface|array|string $conditions The sort columns
+     * @param \Cake\Database\TypeMap|array $types The types for each column.
      * @param string $conjunction The glue used to join conditions together.
      */
     public function __construct($conditions = [], $types = [], $conjunction = '')

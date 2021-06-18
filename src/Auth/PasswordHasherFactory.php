@@ -27,7 +27,7 @@ class PasswordHasherFactory
     /**
      * Returns password hasher object out of a hasher name or a configuration array
      *
-     * @param string|array $passwordHasher Name of the password hasher or an array with
+     * @param array|string $passwordHasher Name of the password hasher or an array with
      * at least the key `className` set to the name of the class to use
      * @return \Cake\Auth\AbstractPasswordHasher Password hasher instance
      * @throws \RuntimeException If password hasher class not found or

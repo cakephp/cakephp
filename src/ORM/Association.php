@@ -182,7 +182,7 @@ abstract class Association
      * The default finder name to use for fetching rows from the target table
      * With array value, finder name and default options are allowed.
      *
-     * @var string|array
+     * @var array|string
      */
     protected $_finder = 'all';
 
@@ -422,7 +422,7 @@ abstract class Association
      * Sets a list of conditions to be always included when fetching records from
      * the target association.
      *
-     * @param array|\Closure $conditions list of conditions to be used
+     * @param \Closure|array $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
      * @return \Cake\ORM\Association
      */
@@ -653,7 +653,7 @@ abstract class Association
     /**
      * Gets the default finder to use for fetching rows from the target table.
      *
-     * @return string|array
+     * @return array|string
      */
     public function getFinder()
     {
@@ -663,7 +663,7 @@ abstract class Association
     /**
      * Sets the default finder to use for fetching rows from the target table.
      *
-     * @param string|array $finder the finder name to use or array of finder name and option.
+     * @param array|string $finder the finder name to use or array of finder name and option.
      * @return $this
      */
     public function setFinder($finder)
@@ -850,7 +850,7 @@ abstract class Association
      * and modifies the query accordingly based of this association
      * configuration
      *
-     * @param string|array|null $type the type of query to perform, if an array is passed,
+     * @param array|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
@@ -870,7 +870,7 @@ abstract class Association
      * Proxies the operation to the target table's exists method after
      * appending the default conditions for this association
      *
-     * @param array|\Closure|\Cake\Database\ExpressionInterface $conditions The conditions to use
+     * @param \Cake\Database\ExpressionInterface|\Closure|array $conditions The conditions to use
      * for checking if any record matches.
      * @see \Cake\ORM\Table::exists()
      * @return bool
@@ -1126,7 +1126,7 @@ abstract class Association
      * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
      * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
      *
-     * @param string|array $finderData The finder name or an array having the name as key
+     * @param array|string $finderData The finder name or an array having the name as key
      * and options as value.
      * @return array
      */

@@ -433,7 +433,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Sets the rule set for a field
      *
      * @param string $field name of the field to set
-     * @param array|\Cake\Validation\ValidationSet $rules set of rules to apply to field
+     * @param \Cake\Validation\ValidationSet|array $rules set of rules to apply to field
      * @return void
      */
     public function offsetSet($field, $rules): void
@@ -500,7 +500,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field from which the rule will be added
      * @param array|string $name The alias for a single rule or multiple rules array
-     * @param array|\Cake\Validation\ValidationRule $rule the rule to add
+     * @param \Cake\Validation\ValidationRule|array $rule the rule to add
      * @throws \InvalidArgumentException If numeric index cannot be resolved to a string one
      * @return $this
      */
@@ -560,7 +560,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @return $this
      */
@@ -603,7 +603,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @return $this
      */
@@ -676,8 +676,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * You can also set mode and message for all passed fields, the individual
      * setting takes precedence over group settings.
      *
-     * @param string|array $field the name of the field or list of fields.
-     * @param bool|string|callable $mode Valid values are true, false, 'create', 'update'.
+     * @param array|string $field the name of the field or list of fields.
+     * @param string|bool|callable $mode Valid values are true, false, 'create', 'update'.
      *   If a callable is passed then the field will be required only when the callback
      *   returns true.
      * @param string|null $message The message to show if the field presence validation fails.
@@ -768,8 +768,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @deprecated 3.7.0 Use {@link allowEmptyString()}, {@link allowEmptyArray()}, {@link allowEmptyFile()},
      *   {@link allowEmptyDate()}, {@link allowEmptyTime()}, {@link allowEmptyDateTime()} or {@link allowEmptyFor()} instead.
-     * @param string|array $field the name of the field or a list of fields
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param array|string $field the name of the field or a list of fields
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @param string|null $message The message to show if the field is not
@@ -867,7 +867,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param int|null $flags A bitmask of EMPTY_* flags which specify what is empty.
      *   If no flags/bitmask is provided only `null` will be allowed as empty value.
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @param string|null $message The message to show if the field is not
@@ -894,7 +894,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -912,7 +912,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -935,7 +935,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -954,7 +954,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -977,7 +977,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      *   Valid values are true, 'create', 'update'. If a callable is passed then
      *   the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -996,7 +996,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -1019,7 +1019,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -1035,7 +1035,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -1060,7 +1060,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -1079,7 +1079,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -1105,7 +1105,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|bool|callable $when Indicates when the field is allowed to be empty
      *   Valid values are true, false, 'create', 'update'. If a callable is passed then
      *   the field will allowed to be empty only when the callback returns false.
      * @return $this
@@ -1124,7 +1124,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -1144,7 +1144,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param int|string $fieldName name of field
      * @param array $defaults default settings
-     * @param string|array $settings settings from data
+     * @param array|string $settings settings from data
      * @return array[]
      * @throws \InvalidArgumentException
      */
@@ -1224,9 +1224,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @deprecated 3.7.0 Use {@link notEmptyString()}, {@link notEmptyArray()}, {@link notEmptyFile()},
      *   {@link notEmptyDate()}, {@link notEmptyTime()} or {@link notEmptyDateTime()} instead.
-     * @param string|array $field the name of the field or list of fields
+     * @param array|string $field the name of the field or list of fields
      * @param string|null $message The message to show if the field is not
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are true (always), 'create', 'update'. If a
      *   callable is passed then the field will allowed to be empty only when
      *   the callback returns false.
@@ -1268,11 +1268,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Invert a when clause for creating notEmpty rules
      *
-     * @param bool|string|callable $when Indicates when the field is not allowed
+     * @param string|bool|callable $when Indicates when the field is not allowed
      *   to be empty. Valid values are true (always), 'create', 'update'. If a
      *   callable is passed then the field will allowed to be empty only when
      *   the callback returns false.
-     * @return bool|string|callable
+     * @return string|bool|callable
      */
     protected function invertWhenClause($when)
     {
@@ -1293,7 +1293,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::notBlank()
      * @return $this
@@ -1312,7 +1312,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::alphaNumeric()
      * @return $this
@@ -1331,7 +1331,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::notAlphaNumeric()
      * @return $this
@@ -1350,7 +1350,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::asciiAlphaNumeric()
      * @return $this
@@ -1369,7 +1369,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::notAlphaNumeric()
      * @return $this
@@ -1389,7 +1389,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param array $range The inclusive minimum and maximum length you want permitted.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::alphaNumeric()
      * @return $this
@@ -1414,7 +1414,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $type The type of cards you want to allow. Defaults to 'all'.
      *   You can also supply an array of accepted card types. e.g `['mastercard', 'visa', 'amex']`
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::creditCard()
      * @return $this
@@ -1432,9 +1432,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a greater than comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param int|float $value The value user data must be greater than.
+     * @param float|int $value The value user data must be greater than.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
      * @return $this
@@ -1452,9 +1452,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a greater than or equal to comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param int|float $value The value user data must be greater than or equal to.
+     * @param float|int $value The value user data must be greater than or equal to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
      * @return $this
@@ -1472,9 +1472,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a less than comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param int|float $value The value user data must be less than.
+     * @param float|int $value The value user data must be less than.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
      * @return $this
@@ -1492,9 +1492,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a less than or equal comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param int|float $value The value user data must be less than or equal to.
+     * @param float|int $value The value user data must be less than or equal to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
      * @return $this
@@ -1512,9 +1512,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a equal to comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param int|float $value The value user data must be equal to.
+     * @param float|int $value The value user data must be equal to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
      * @return $this
@@ -1532,9 +1532,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a not equal to comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param int|float $value The value user data must be not be equal to.
+     * @param float|int $value The value user data must be not be equal to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
      * @return $this
@@ -1556,7 +1556,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1576,7 +1576,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1597,7 +1597,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1618,7 +1618,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1639,7 +1639,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1660,7 +1660,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1681,7 +1681,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1702,7 +1702,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
@@ -1723,7 +1723,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int $limit The minimum number of non-alphanumeric fields required.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
      * @return $this
@@ -1745,7 +1745,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param array $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::date()
      * @return $this
@@ -1765,7 +1765,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param array $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::datetime()
      * @return $this
@@ -1784,7 +1784,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::time()
      * @return $this
@@ -1804,7 +1804,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param string $type Parser type, one out of 'date', 'time', and 'datetime'
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::localizedTime()
      * @return $this
@@ -1823,7 +1823,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::boolean()
      * @return $this
@@ -1843,7 +1843,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int|null $places The number of decimal places to require.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::decimal()
      * @return $this
@@ -1863,7 +1863,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param bool $checkMX Whether or not to check the MX records.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::email()
      * @return $this
@@ -1884,7 +1884,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ip()
      * @return $this
@@ -1903,7 +1903,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ip()
      * @return $this
@@ -1922,7 +1922,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ip()
      * @return $this
@@ -1942,7 +1942,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int $min The minimum length required.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::minLength()
      * @return $this
@@ -1962,7 +1962,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int $min The minimum length required.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::minLengthBytes()
      * @return $this
@@ -1982,7 +1982,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int $max The maximum length allowed.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::maxLength()
      * @return $this
@@ -2002,7 +2002,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int $max The maximum length allowed.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::maxLengthBytes()
      * @return $this
@@ -2021,7 +2021,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::numeric()
      * @return $this
@@ -2040,7 +2040,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::naturalNumber()
      * @return $this
@@ -2059,7 +2059,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::naturalNumber()
      * @return $this
@@ -2079,7 +2079,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param array $range The inclusive upper and lower bounds of the valid range.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::range()
      * @return $this
@@ -2104,7 +2104,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::url()
      * @return $this
@@ -2125,7 +2125,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::url()
      * @return $this
@@ -2145,7 +2145,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param array $list The list of valid options.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::inList()
      * @return $this
@@ -2164,7 +2164,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::uuid()
      * @return $this
@@ -2186,7 +2186,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param array $options An array of options.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::uploadedFile()
      * @return $this
@@ -2207,7 +2207,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::uuid()
      * @return $this
@@ -2226,7 +2226,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::latitude()
      * @return $this
@@ -2245,7 +2245,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::longitude()
      * @return $this
@@ -2264,7 +2264,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ascii()
      * @return $this
@@ -2283,7 +2283,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::utf8()
      * @return $this
@@ -2304,7 +2304,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::utf8()
      * @return $this
@@ -2323,7 +2323,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::isInteger()
      * @return $this
@@ -2342,7 +2342,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::isArray()
      * @return $this
@@ -2361,7 +2361,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::isScalar()
      * @return $this
@@ -2380,7 +2380,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::hexColor()
      * @return $this
@@ -2401,7 +2401,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $options The options for the validator. Includes the options defined in
      *   \Cake\Validation\Validation::multiple() and the `caseInsensitive` parameter.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::multiple()
      * @return $this
@@ -2424,7 +2424,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int $count The number of elements the array should at least have
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::numElements()
      * @return $this
@@ -2451,7 +2451,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The field you want to apply the rule to.
      * @param int $count The number maximum amount of elements the field should have
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::numElements()
      * @return $this
@@ -2511,7 +2511,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field Field name.
      * @param string $regex Regular expression.
      * @param string|null $message The error message when the rule fails.
-     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @return $this
      */

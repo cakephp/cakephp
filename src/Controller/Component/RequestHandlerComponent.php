@@ -246,7 +246,7 @@ class RequestHandlerComponent extends Component
      *
      * Returns true if the client accepts XML.
      *
-     * @param string|array|null $type Can be null (or no parameter), a string type name, or an
+     * @param array|string|null $type Can be null (or no parameter), a string type name, or an
      *   array of types
      * @return mixed If null or no parameter is passed, returns an array of content
      *   types the client accepts. If a string is passed, returns true
@@ -284,7 +284,7 @@ class RequestHandlerComponent extends Component
     /**
      * Determines the content type of the data the client has sent (i.e. in a POST request)
      *
-     * @param string|array|null $type Can be null (or no parameter), a string type name, or an array of types
+     * @param array|string|null $type Can be null (or no parameter), a string type name, or an array of types
      * @return mixed If a single type is supplied a boolean will be returned. If no type is provided
      *   The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
      *   in the request content type will be returned.
@@ -330,7 +330,7 @@ class RequestHandlerComponent extends Component
      * if provided, and secondarily by the list of content-types provided in
      * HTTP_ACCEPT.
      *
-     * @param string|array|null $type An optional array of 'friendly' content-type names, i.e.
+     * @param array|string|null $type An optional array of 'friendly' content-type names, i.e.
      *   'html', 'xml', 'js', etc.
      * @return string|bool|null If $type is null or not provided, the first content-type in the
      *    list, based on preference, is returned. If a single type is provided
@@ -496,8 +496,8 @@ class RequestHandlerComponent extends Component
     /**
      * Maps a content type alias back to its mime-type(s)
      *
-     * @param string|array $alias String alias to convert back into a content type. Or an array of aliases to map.
-     * @return string|array|null Null on an undefined alias. String value of the mapped alias type. If an
+     * @param array|string $alias String alias to convert back into a content type. Or an array of aliases to map.
+     * @return array|string|null Null on an undefined alias. String value of the mapped alias type. If an
      *   alias maps to more than one content type, the first one will be returned. If an array is provided
      *   for $alias, an array of mapped types will be returned.
      */

@@ -58,7 +58,7 @@ abstract class BaseAuthorize
     /**
      * Checks user authorization.
      *
-     * @param array|\ArrayAccess $user Active user data
+     * @param \ArrayAccess|array $user Active user data
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return bool
      */

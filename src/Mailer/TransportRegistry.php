@@ -62,7 +62,7 @@ class TransportRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string|\Cake\Mailer\AbstractTransport $class The classname or object to make.
+     * @param \Cake\Mailer\AbstractTransport|string $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array $config An array of settings to use for the cache engine.
      * @return \Cake\Mailer\AbstractTransport The constructed transport class.
