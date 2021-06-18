@@ -77,7 +77,7 @@ interface CookieInterface
     /**
      * Gets the cookie value
      *
-     * @return string|array
+     * @return array|string
      */
     public function getValue();
 
@@ -93,7 +93,7 @@ interface CookieInterface
     /**
      * Create a cookie with an updated value.
      *
-     * @param string|array $value Value of the cookie to set
+     * @param array|string $value Value of the cookie to set
      * @return static
      */
     public function withValue($value);

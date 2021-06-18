@@ -177,7 +177,7 @@ class SelectBoxWidget extends BasicWidget
     /**
      * Generate the empty value based on the input.
      *
-     * @param string|bool|array $value The provided empty value.
+     * @param array|string|bool $value The provided empty value.
      * @return array The generated option key/value.
      */
     protected function _emptyValue($value): array

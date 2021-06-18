@@ -25,7 +25,7 @@ class Package
     /**
      * Message keys and translations in this package.
      *
-     * @var array<string|array>
+     * @var array<array|string>
      */
     protected $messages = [];
 
@@ -49,7 +49,7 @@ class Package
      *
      * @param string $formatter The name of the formatter to use.
      * @param string|null $fallback The name of the fallback package to use.
-     * @param array<string|array> $messages The messages in this package.
+     * @param array<array|string> $messages The messages in this package.
      */
     public function __construct(
         string $formatter = 'default',
@@ -64,7 +64,7 @@ class Package
     /**
      * Sets the messages for this package.
      *
-     * @param array<string|array> $messages The messages for this package.
+     * @param array<array|string> $messages The messages for this package.
      * @return void
      */
     public function setMessages(array $messages): void
@@ -76,7 +76,7 @@ class Package
      * Adds one message for this package.
      *
      * @param string $key the key of the message
-     * @param string|array $message the actual message
+     * @param array|string $message the actual message
      * @return void
      */
     public function addMessage(string $key, $message): void
@@ -87,7 +87,7 @@ class Package
     /**
      * Adds new messages for this package.
      *
-     * @param array<string|array> $messages The messages to add in this package.
+     * @param array<array|string> $messages The messages to add in this package.
      * @return void
      */
     public function addMessages(array $messages): void
@@ -98,7 +98,7 @@ class Package
     /**
      * Gets the messages for this package.
      *
-     * @return array<string|array>
+     * @return array<array|string>
      */
     public function getMessages(): array
     {
@@ -109,7 +109,7 @@ class Package
      * Gets the message of the given key for this package.
      *
      * @param string $key the key of the message to return
-     * @return string|array|false The message translation, or false if not found.
+     * @return array|string|false The message translation, or false if not found.
      */
     public function getMessage(string $key)
     {

@@ -121,13 +121,13 @@ use InvalidArgumentException;
  * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::getHeaders()}
  * @method string getEmailFormat() Gets email format. {@see \Cake\Mailer\Message::getEmailFormat()}
  * @method $this setMessageId($message) Sets message ID. {@see \Cake\Mailer\Message::setMessageId()}
- * @method bool|string getMessageId() Gets message ID. {@see \Cake\Mailer\Message::getMessageId()}
+ * @method string|bool getMessageId() Gets message ID. {@see \Cake\Mailer\Message::getMessageId()}
  * @method $this setDomain($domain) Sets domain. {@see \Cake\Mailer\Message::setDomain()}
  * @method string getDomain() Gets domain. {@see \Cake\Mailer\Message::getDomain()}
  * @method $this setAttachments($attachments) Add attachments to the email message. {@see \Cake\Mailer\Message::setAttachments()}
  * @method array getAttachments() Gets attachments to the email message. {@see \Cake\Mailer\Message::getAttachments()}
  * @method $this addAttachments($attachments) Add attachments. {@see \Cake\Mailer\Message::addAttachments()}
- * @method string|array getBody(?string $type = null) Get generated message body as array.
+ * @method array|string getBody(?string $type = null) Get generated message body as array.
  *   {@see \Cake\Mailer\Message::getBody()}
  */
 class Mailer implements EventListenerInterface
@@ -294,7 +294,7 @@ class Mailer implements EventListenerInterface
     /**
      * Sets email view vars.
      *
-     * @param string|array $key Variable name or hash of view variables.
+     * @param array|string $key Variable name or hash of view variables.
      * @param mixed $value View variable value.
      * @return $this
      * @deprecated 4.0.0 Use {@link Mailer::setViewVars()} instead.
@@ -309,7 +309,7 @@ class Mailer implements EventListenerInterface
     /**
      * Sets email view vars.
      *
-     * @param string|array $key Variable name or hash of view variables.
+     * @param array|string $key Variable name or hash of view variables.
      * @param mixed $value View variable value.
      * @return $this
      */
@@ -405,7 +405,7 @@ class Mailer implements EventListenerInterface
     /**
      * Sets the configuration profile to use for this instance.
      *
-     * @param string|array $config String with configuration name, or
+     * @param array|string $config String with configuration name, or
      *    an array with config.
      * @return $this
      */
@@ -468,7 +468,7 @@ class Mailer implements EventListenerInterface
      * When setting the transport you can either use the name
      * of a configured transport or supply a constructed transport.
      *
-     * @param string|\Cake\Mailer\AbstractTransport $name Either the name of a configured
+     * @param \Cake\Mailer\AbstractTransport|string $name Either the name of a configured
      *   transport, or a transport instance.
      * @return $this
      * @throws \LogicException When the chosen transport lacks a send method.
@@ -573,7 +573,7 @@ class Mailer implements EventListenerInterface
     /**
      * Set logging config.
      *
-     * @param string|array|true $log Log config.
+     * @param array|string|true $log Log config.
      * @return void
      */
     protected function setLogConfig($log)
@@ -595,7 +595,7 @@ class Mailer implements EventListenerInterface
     /**
      * Converts given value to string
      *
-     * @param string|array $value The value to convert
+     * @param array|string $value The value to convert
      * @return string
      */
     protected function flatten($value): string

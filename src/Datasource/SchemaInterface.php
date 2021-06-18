@@ -53,7 +53,7 @@ interface SchemaInterface
      * - `comment` The comment for the column.
      *
      * @param string $name The name of the column
-     * @param string|array $attrs The attributes for the column or the type name.
+     * @param array|string $attrs The attributes for the column or the type name.
      * @return $this
      */
     public function addColumn(string $name, $attrs);

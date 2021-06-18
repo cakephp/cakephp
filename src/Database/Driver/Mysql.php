@@ -200,7 +200,7 @@ class Mysql extends Driver
     /**
      * Prepares a sql statement to be executed
      *
-     * @param string|\Cake\Database\Query $query The query to prepare.
+     * @param \Cake\Database\Query|string $query The query to prepare.
      * @return \Cake\Database\StatementInterface
      */
     public function prepare($query): StatementInterface

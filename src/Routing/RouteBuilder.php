@@ -349,7 +349,7 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param array|callable $options Options to use when generating REST routes, or a callback.
+     * @param callable|array $options Options to use when generating REST routes, or a callback.
      * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @return $this
@@ -655,7 +655,7 @@ class RouteBuilder
      *
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
-     * @param string|\Cake\Routing\Route\Route $route A string describing the template of the route
+     * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
      * @param array|string $defaults An array describing the default route parameters.
      *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
@@ -691,7 +691,7 @@ class RouteBuilder
     /**
      * Parse the defaults if they're a string
      *
-     * @param string|array $defaults Defaults array from the connect() method.
+     * @param array|string $defaults Defaults array from the connect() method.
      * @return array
      */
     protected function parseDefaults($defaults): array
@@ -706,7 +706,7 @@ class RouteBuilder
     /**
      * Create a route object, or return the provided object.
      *
-     * @param string|\Cake\Routing\Route\Route $route The route template or route object.
+     * @param \Cake\Routing\Route\Route|string $route The route template or route object.
      * @param array $defaults Default parameters.
      * @param array $options Additional options parameters.
      * @return \Cake\Routing\Route\Route
@@ -829,7 +829,7 @@ class RouteBuilder
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
+     * @param callable|array $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return $this
@@ -875,7 +875,7 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $name The plugin name to build routes for
-     * @param array|callable $options Either the options to use, or a callback to build routes.
+     * @param callable|array $options Either the options to use, or a callback to build routes.
      * @param callable|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return $this
@@ -908,7 +908,7 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
-     * @param array|callable $params Either the parameters to add to routes, or a callback.
+     * @param callable|array $params Either the parameters to add to routes, or a callback.
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $params is defined.
      * @return $this
@@ -973,7 +973,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to register.
+     * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */

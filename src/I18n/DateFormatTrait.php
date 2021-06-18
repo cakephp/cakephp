@@ -113,7 +113,7 @@ trait DateFormatTrait
      *
      * The format to be used is stored in the static property `Time::niceFormat`.
      *
-     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
@@ -171,7 +171,7 @@ trait DateFormatTrait
      * If empty, the default will be taken from the `intl.default_locale` ini config.
      *
      * @param string|int|int[]|null $format Format string.
-     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
@@ -395,7 +395,7 @@ trait DateFormatTrait
      * ```
      *
      * @param string $date The date string to parse.
-     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
+     * @param array|string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
     public static function parseDate(string $date, $format = null)

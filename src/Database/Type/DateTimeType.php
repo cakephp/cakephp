@@ -78,7 +78,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      *
      * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
-     * @var string|array|int
+     * @var array|string|int
      */
     protected $_localeMarshalFormat;
 
@@ -164,7 +164,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * Alias for `setDatabaseTimezone()`.
      *
-     * @param string|\DateTimeZone|null $timezone Database timezone.
+     * @param \DateTimeZone|string|null $timezone Database timezone.
      * @return $this
      * @deprecated 4.1.0 Use {@link setDatabaseTimezone()} instead.
      */
@@ -182,7 +182,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * instances and converting DateTime instances to database strings.
      *
      * @see DateTimeType::setKeepDatabaseTimezone
-     * @param string|\DateTimeZone|null $timezone Database timezone.
+     * @param \DateTimeZone|string|null $timezone Database timezone.
      * @return $this
      */
     public function setDatabaseTimezone($timezone)
@@ -200,7 +200,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      *
      * This is the time zone used when marshalling strings to DateTime instances.
      *
-     * @param string|\DateTimeZone|null $timezone User timezone.
+     * @param \DateTimeZone|string|null $timezone User timezone.
      * @return $this
      */
     public function setUserTimezone($timezone)
@@ -427,7 +427,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      *
      * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
-     * @param string|array $format The locale-aware format
+     * @param array|string $format The locale-aware format
      * @see \Cake\I18n\Time::parseDateTime()
      * @return $this
      */

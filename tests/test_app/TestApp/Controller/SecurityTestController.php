@@ -41,7 +41,7 @@ class SecurityTestController extends Controller
     /**
      * redirect method
      *
-     * @param string|array $url
+     * @param array|string $url
      * @param int $status
      * @return \Cake\Http\Response|null
      */

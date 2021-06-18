@@ -165,7 +165,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Middlewares list.
      *
      * @var array
-     * @psalm-var array<int, array{middleware:string|\Closure|\Psr\Http\Server\MiddlewareInterface, options:array}>
+     * @psalm-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array}>
      */
     protected $middlewares = [];
 
@@ -555,12 +555,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Register middleware for the controller.
      *
-     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware Middleware.
+     * @param \Closure|\Psr\Http\Server\MiddlewareInterface|string $middleware Middleware.
      * @param array $options Valid options:
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
-     * @psalm-var array{?only: string|array, ?except: string|array}
+     * @psalm-var array{?only: array|string, ?except: array|string}
      */
     public function middleware($middleware, array $options = [])
     {
@@ -665,7 +665,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Redirects to given $url, after turning off $this->autoRender.
      *
-     * @param string|array|\Psr\Http\Message\UriInterface $url A string, array-based URL or UriInterface instance.
+     * @param \Psr\Http\Message\UriInterface|array|string $url A string, array-based URL or UriInterface instance.
      * @param int $status HTTP status code. Defaults to `302`.
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/4/en/controllers.html#Controller::redirect
@@ -783,7 +783,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Returns the referring URL for this request.
      *
-     * @param string|array|null $default Default URL to use if HTTP_REFERER cannot be read from headers
+     * @param array|string|null $default Default URL to use if HTTP_REFERER cannot be read from headers
      * @param bool $local If false, do not restrict referring URLs to local server.
      *   Careful with trusting external sources.
      * @return string Referring URL
@@ -910,7 +910,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * using controller's response instance.
      *
      * @param \Cake\Event\EventInterface $event An Event instance
-     * @param string|array $url A string or array-based URL pointing to another location within the app,
+     * @param array|string $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null|void

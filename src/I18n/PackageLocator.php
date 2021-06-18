@@ -65,7 +65,7 @@ class PackageLocator
      *
      * @param string $name The package name.
      * @param string $locale The locale for the package.
-     * @param callable|\Cake\I18n\Package $spec A callable that returns a package or Package instance.
+     * @param \Cake\I18n\Package|callable $spec A callable that returns a package or Package instance.
      * @return void
      */
     public function set(string $name, string $locale, $spec): void

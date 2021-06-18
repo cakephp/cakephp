@@ -40,7 +40,7 @@ class PersistenceFailedException extends CakeException
      * Constructor.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity on which the persistence operation failed
-     * @param string|array $message Either the string of the error message, or an array of attributes
+     * @param array|string $message Either the string of the error message, or an array of attributes
      *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
      * @param int $code The code of the error, is also the HTTP status code for the error.
      * @param \Throwable|null $previous the previous exception.

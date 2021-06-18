@@ -76,7 +76,7 @@ class Configure
      * ]);
      * ```
      *
-     * @param string|array $config The key to write, can be a dot notation value.
+     * @param array|string $config The key to write, can be a dot notation value.
      * Alternatively can be an array containing key(s) and value(s).
      * @param mixed $value Value to set for var
      * @return void

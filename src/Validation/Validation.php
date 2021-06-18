@@ -486,7 +486,7 @@ class Validation
      * - `y` 2006 just the year without any separators
      *
      * @param mixed $check a valid date string/object
-     * @param string|array $format Use a string or an array of the keys above.
+     * @param array|string $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', etc]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
      * @return bool Success
@@ -561,7 +561,7 @@ class Validation
      * All values matching the "date" core validation rule, and the "time" one will be valid
      *
      * @param mixed $check Value to check
-     * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
+     * @param array|string $dateFormat Format of the date part. See Validation::date() for more information.
      *   Or `Validation::DATETIME_ISO8601` to validate an ISO8601 datetime value.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used
      *   this is the only validation that will occur.
@@ -857,7 +857,7 @@ class Validation
     /**
      * Checks that value has a valid file extension.
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check
      * @param string[] $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
@@ -1221,7 +1221,7 @@ class Validation
      * by checking the using finfo on the file, not relying on the content-type
      * sent by the client.
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check.
      * @param array|string $mimeTypes Array of mime types or regex pattern to check.
      * @return bool Success
      * @throws \RuntimeException when mime type can not be determined.
@@ -1300,7 +1300,7 @@ class Validation
      * by checking the filesize() on disk and not relying on the length
      * reported by the client.
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check.
      * @param string $operator See `Validation::comparison()`.
      * @param int|string $size Size in bytes or human readable string like '5MB'.
      * @return bool Success
@@ -1323,7 +1323,7 @@ class Validation
     /**
      * Checking for upload errors
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check.
      * @param bool $allowNoFile Set to true to allow UPLOAD_ERR_NO_FILE as a pass.
      * @return bool
      * @see https://secure.php.net/manual/en/features.file-upload.errors.php

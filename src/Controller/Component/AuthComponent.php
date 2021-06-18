@@ -738,7 +738,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *    `loginRedirect`, the `loginRedirect` value is returned.
      *  - If there is no session and no `loginRedirect`, / is returned.
      *
-     * @param string|array|null $url Optional URL to write as the login redirect URL.
+     * @param array|string|null $url Optional URL to write as the login redirect URL.
      * @return string Redirect URL
      */
     public function redirectUrl($url = null): string

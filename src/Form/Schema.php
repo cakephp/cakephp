@@ -59,7 +59,7 @@ class Schema
      * Adds a field to the schema.
      *
      * @param string $name The field name.
-     * @param string|array $attrs The attributes for the field, or the type
+     * @param array|string $attrs The attributes for the field, or the type
      *   as a string.
      * @return $this
      */

@@ -260,7 +260,7 @@ class ConsoleOptionParser
     /**
      * Get or set the command name for shell/task.
      *
-     * @param array|\Cake\Console\ConsoleOptionParser $spec ConsoleOptionParser or spec to merge with.
+     * @param \Cake\Console\ConsoleOptionParser|array $spec ConsoleOptionParser or spec to merge with.
      * @return $this
      */
     public function merge($spec)
@@ -313,7 +313,7 @@ class ConsoleOptionParser
     /**
      * Sets the description text for shell/task.
      *
-     * @param string|array $text The text to set. If an array the
+     * @param array|string $text The text to set. If an array the
      *   text will be imploded with "\n".
      * @return $this
      */
@@ -341,7 +341,7 @@ class ConsoleOptionParser
      * Sets an epilog to the parser. The epilog is added to the end of
      * the options and arguments listing when help is generated.
      *
-     * @param string|array $text The text to set. If an array the text will
+     * @param array|string $text The text to set. If an array the text will
      *   be imploded with "\n".
      * @return $this
      */

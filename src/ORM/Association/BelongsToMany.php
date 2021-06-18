@@ -252,7 +252,7 @@ class BelongsToMany extends Association
      * Sets the table instance for the junction relation. If no arguments
      * are passed, the current configured table instance is returned
      *
-     * @param string|\Cake\ORM\Table|null $table Name or instance for the join table
+     * @param \Cake\ORM\Table|string|null $table Name or instance for the join table
      * @return \Cake\ORM\Table
      * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
@@ -965,7 +965,7 @@ class BelongsToMany extends Association
     /**
      * Sets the current join table, either the name of the Table instance or the instance itself.
      *
-     * @param string|\Cake\ORM\Table $through Name of the Table instance or the instance itself
+     * @param \Cake\ORM\Table|string $through Name of the Table instance or the instance itself
      * @return $this
      */
     public function setThrough($through)
@@ -1057,7 +1057,7 @@ class BelongsToMany extends Association
      * If your association includes conditions or a finder, the junction table will be
      * included in the query's contained associations.
      *
-     * @param string|array|null $type the type of query to perform, if an array is passed,
+     * @param array|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()

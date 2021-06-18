@@ -121,7 +121,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Sets errors for a single field
      *
      * @param string $field The field to get errors for, or the array of errors to set.
-     * @param string|array $errors The errors to be set for $field
+     * @param array|string $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
@@ -130,7 +130,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Stores whether or not a field value can be changed or set in this entity.
      *
-     * @param string|array $field single or list of fields to change its accessibility
+     * @param array|string $field single or list of fields to change its accessibility
      * @param bool $set true marks the field as accessible, false will
      * mark it as protected.
      * @return $this
@@ -181,7 +181,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets one or multiple fields to the specified value
      *
-     * @param string|array $field the name of field to set or a list of
+     * @param array|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options

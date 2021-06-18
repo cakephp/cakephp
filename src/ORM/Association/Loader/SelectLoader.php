@@ -56,7 +56,7 @@ class SelectLoader
     /**
      * The foreignKey to the target association
      *
-     * @var string|array
+     * @var array|string
      */
     protected $foreignKey;
 
@@ -217,7 +217,7 @@ class SelectLoader
      * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
      * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
      *
-     * @param string|array $finderData The finder name or an array having the name as key
+     * @param array|string $finderData The finder name or an array having the name as key
      * and options as value.
      * @return array
      */
@@ -317,7 +317,7 @@ class SelectLoader
      * target table query given a filter key and some filtering values.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string|array $key The fields that should be used for filtering
+     * @param array|string $key The fields that should be used for filtering
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query
      */

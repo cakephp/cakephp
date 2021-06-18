@@ -674,7 +674,7 @@ class Response implements ResponseInterface
      * This is needed for RequestHandlerComponent and recognition of types.
      *
      * @param string $type Content type.
-     * @param string|array $mimeType Definition of the mime type.
+     * @param array|string $mimeType Definition of the mime type.
      * @return void
      */
     public function setTypeMap(string $type, $mimeType): void
@@ -741,7 +741,7 @@ class Response implements ResponseInterface
      * e.g `getMimeType('pdf'); // returns 'application/pdf'`
      *
      * @param string $alias the content type alias to map
-     * @return string|array|false String mapped mime type or false if $alias is not mapped
+     * @return array|string|false String mapped mime type or false if $alias is not mapped
      */
     public function getMimeType(string $alias)
     {
@@ -753,8 +753,8 @@ class Response implements ResponseInterface
      *
      * e.g `mapType('application/pdf'); // returns 'pdf'`
      *
-     * @param string|array $ctype Either a string content type to map, or an array of types.
-     * @return string|array|null Aliases for the types provided.
+     * @param array|string $ctype Either a string content type to map, or an array of types.
+     * @return array|string|null Aliases for the types provided.
      */
     public function mapType($ctype)
     {
@@ -947,7 +947,7 @@ class Response implements ResponseInterface
      * $response->withExpires(new DateTime('+1 day'))
      * ```
      *
-     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTime instance.
+     * @param \DateTimeInterface|string|int|null $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withExpires($time)
@@ -970,7 +970,7 @@ class Response implements ResponseInterface
      * $response->withModified(new DateTime('+1 day'))
      * ```
      *
-     * @param int|string|\DateTimeInterface $time Valid time string or \DateTime instance.
+     * @param \DateTimeInterface|string|int $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withModified($time)
@@ -1044,7 +1044,7 @@ class Response implements ResponseInterface
      * separated string. If no parameters are passed, then an
      * array with the current Vary header value is returned
      *
-     * @param string|array $cacheVariances A single Vary string or an array
+     * @param array|string $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return static
      */
@@ -1085,7 +1085,7 @@ class Response implements ResponseInterface
      * Returns a DateTime object initialized at the $time param and using UTC
      * as timezone
      *
-     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTimeInterface instance.
+     * @param \DateTimeInterface|string|int|null $time Valid time string or \DateTimeInterface instance.
      * @return \DateTimeInterface
      */
     protected function _getUTCDate($time = null): DateTimeInterface

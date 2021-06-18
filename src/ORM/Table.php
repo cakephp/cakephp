@@ -526,7 +526,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * If an array is passed, a new TableSchemaInterface will be constructed
      * out of it and used as the schema for this table.
      *
-     * @param array|\Cake\Database\Schema\TableSchemaInterface $schema Schema to be used for this table
+     * @param \Cake\Database\Schema\TableSchemaInterface|array $schema Schema to be used for this table
      * @return $this
      */
     public function setSchema($schema)
@@ -1598,7 +1598,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param array|callable|\Cake\ORM\Query $search The criteria to find existing
+     * @param \Cake\ORM\Query|callable|array $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
@@ -1629,7 +1629,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param array|callable|\Cake\ORM\Query $search The criteria to find an existing record by, or a callable tha will
+     * @param \Cake\ORM\Query|callable|array $search The criteria to find an existing record by, or a callable tha will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1670,7 +1670,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param array|callable|\Cake\ORM\Query $search The criteria to find existing records by.
+     * @param \Cake\ORM\Query|callable|array $search The criteria to find existing records by.
      * @return \Cake\ORM\Query
      */
     protected function _getFindOrCreateQuery($search): Query

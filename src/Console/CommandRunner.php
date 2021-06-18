@@ -239,7 +239,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
      * @param string $name The command name to find
-     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
+     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell
      */
     protected function getCommand(ConsoleIo $io, CommandCollection $commands, string $name)
     {
@@ -360,7 +360,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param string $className Shell class name.
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
-     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
+     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell
      */
     protected function createCommand(string $className, ConsoleIo $io)
     {
