@@ -23,12 +23,12 @@
         "source": "https://github.com/cakephp/console"
     },
     "require": {
-        "php": ">=7.2.0",
-        "cakephp/core": "^4.0",
-        "cakephp/event": "^4.0",
-        "cakephp/filesystem": "^4.0",
-        "cakephp/log": "^4.0",
-        "cakephp/utility": "^4.0"
+        "php": ">=8.0",
+        "cakephp/core": "^5.0",
+        "cakephp/event": "^5.0",
+        "cakephp/filesystem": "^5.0",
+        "cakephp/log": "^5.0",
+        "cakephp/utility": "^5.0"
     },
     "suggest": {
         "cakephp/datasource": "To use the Shell or Command base classes",

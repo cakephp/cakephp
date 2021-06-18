@@ -22,11 +22,11 @@
         }
     ],
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=8.0",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^2.0",
+        "cakephp/chronos": "^2.2",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
         "laminas/laminas-httphandlerrunner": "^1.1",
@@ -55,10 +55,10 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "^4.0",
-        "mikey179/vfsstream": "^1.6",
+        "cakephp/cakephp-codesniffer": "^4.5",
+        "mikey179/vfsstream": "^1.6.7",
         "paragonie/csp-builder": "^2.3",
-        "phpunit/phpunit": "^8.5 || ^9.3"
+        "phpunit/phpunit": "^9.5"
     },
     "suggest": {
         "ext-curl": "To enable more efficient network calls in Http\\Client.",

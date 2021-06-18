@@ -191,7 +191,7 @@ class Curl implements AdapterInterface
     /**
      * Convert the raw curl response into an Http\Client\Response
      *
-     * @param resource $handle Curl handle
+     * @param \CurlHandle $handle Curl handle
      * @param string $responseData string The response data from curl_exec
      * @return \Cake\Http\Client\Response[]
      */
@@ -208,7 +208,7 @@ class Curl implements AdapterInterface
     /**
      * Execute the curl handle.
      *
-     * @param resource $ch Curl Resource handle
+     * @param \CurlHandle $ch Curl Resource handle
      * @return string|bool
      */
     protected function exec($ch)

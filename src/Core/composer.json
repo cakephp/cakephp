@@ -22,8 +22,8 @@
         "source": "https://github.com/cakephp/core"
     },
     "require": {
-        "php": ">=7.2.0",
-        "cakephp/utility": "^4.0"
+        "php": ">=8.0",
+        "cakephp/utility": "^5.0"
     },
     "suggest": {
         "cakephp/event": "To use PluginApplicationInterface or plugin applications.",

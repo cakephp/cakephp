@@ -306,6 +306,12 @@
       <code>addTestFile</code>
     </InternalMethod>
   </file>
+  <file src="src/Utility/Xml.php">
+    <PossiblyFalseOperand occurrences="2">
+      <code>$key</code>
+      <code>$key</code>
+    </PossiblyFalseOperand>
+  </file>
   <file src="src/View/Helper/NumberHelper.php">
     <DeprecatedMethod occurrences="1">
       <code>defaultCurrency</code>

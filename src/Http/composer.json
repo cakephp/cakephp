@@ -23,10 +23,10 @@
         "source": "https://github.com/cakephp/http"
     },
     "require": {
-        "php": ">=7.2.0",
-        "cakephp/core": "^4.0",
-        "cakephp/event": "^4.0",
-        "cakephp/utility": "^4.0",
+        "php": ">=8.0",
+        "cakephp/core": "^5.0",
+        "cakephp/event": "^5.0",
+        "cakephp/utility": "^5.0",
         "composer/ca-bundle": "^1.2",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",

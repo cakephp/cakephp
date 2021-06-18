@@ -699,8 +699,8 @@ class I18nExtractCommand extends Command
         }
         $oldFileContent = file_get_contents($oldFile);
 
-        $oldChecksum = sha1((string)substr($oldFileContent, $headerLength));
-        $newChecksum = sha1((string)substr($newFileContent, $headerLength));
+        $oldChecksum = sha1(substr($oldFileContent, $headerLength));
+        $newChecksum = sha1(substr($newFileContent, $headerLength));
 
         return $oldChecksum === $newChecksum;
     }

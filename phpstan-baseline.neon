@@ -16,11 +16,6 @@ parameters:
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
-			message: "#^Constructor of class Cake\\\\TestSuite\\\\Fixture\\\\TransactionStrategy has an unused parameter \\$loader\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TransactionStrategy.php
-
-		-
 			message: "#^Method Cake\\\\Auth\\\\Storage\\\\SessionStorage\\:\\:redirectUrl\\(\\) should return array\\|string\\|null but return statement is missing\\.$#"
 			count: 1
 			path: src/Auth/Storage/SessionStorage.php
@@ -126,7 +121,7 @@ parameters:
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$var_array of function extract is passed by reference, so it expects variables only\\.$#"
+			message: "#^Parameter \\#1 \\$array of function extract is passed by reference, so it expects variables only\\.$#"
 			count: 1
 			path: src/Command/I18nExtractCommand.php
 
@@ -176,7 +171,7 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$autoload_function of function spl_autoload_register expects callable\\(string\\)\\: void, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
+			message: "#^Parameter \\#1 \\$callback of function spl_autoload_register expects \\(callable\\(string\\)\\: void\\)\\|null, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
 			count: 1
 			path: src/Core/ClassLoader.php
 
@@ -331,6 +326,11 @@ parameters:
 			path: src/I18n/Date.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/I18n/Date.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Date.php
@@ -341,12 +341,22 @@ parameters:
 			path: src/I18n/FrozenDate.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/I18n/FrozenDate.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/FrozenTime.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
@@ -362,6 +372,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/Time.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
@@ -496,6 +511,11 @@ parameters:
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
+			message: "#^Constructor of class Cake\\\\TestSuite\\\\Fixture\\\\TransactionStrategy has an unused parameter \\$loader\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/TransactionStrategy.php
+
+		-
 			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
@@ -534,4 +554,9 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between array and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/View/View.php
 

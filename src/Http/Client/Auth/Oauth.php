@@ -222,9 +222,6 @@ class Oauth
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);
-        if (PHP_MAJOR_VERSION < 8) {
-            openssl_free_key($privateKey);
-        }
 
         $values['oauth_signature'] = base64_encode($signature);
 

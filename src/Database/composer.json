@@ -24,9 +24,9 @@
         "source": "https://github.com/cakephp/database"
     },
     "require": {
-        "php": ">=7.2.0",
-        "cakephp/core": "^4.0",
-        "cakephp/datasource": "^4.0"
+        "php": ">=8.0",
+        "cakephp/core": "^5.0",
+        "cakephp/datasource": "^5.0"
     },
     "suggest": {
         "cakephp/i18n": "If you are using locale-aware datetime formats or Chronos types."
