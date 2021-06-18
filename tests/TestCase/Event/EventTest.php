@@ -100,7 +100,7 @@ class EventTest extends TestCase
     {
         $data = new ArrayObject(['some' => 'data']);
         $event = new Event('fake.event', $this, $data);
-        $this->assertEquals(['some' => 'data'], $event->getData());
+        $this->assertEquals($data, $event->getData());
 
         $this->assertSame('data', $event->getData('some'));
         $this->assertNull($event->getData('undef'));

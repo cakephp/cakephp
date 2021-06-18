@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
+use ArrayAccess;
+
 /**
  * Represents the transport class of events across the system. It receives a name, subject and an optional
  * payload. The name can be any string that uniquely identifies the event across the application, while the subject
@@ -78,9 +80,9 @@ interface EventInterface
     /**
      * Assigns a value to the data/payload of this event.
      *
-     * @param array|string $key An array will replace all payload data, and a key will set just that array item.
+     * @param \ArrayAccess|array|string $key An array will replace all payload data, and a key will set just that array item.
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setData($key, $value = null);
+    public function setData(ArrayAccess|array|string $key, $value = null);
 }

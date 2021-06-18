@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
+use ArrayAccess;
 use Cake\Core\Exception\CakeException;
 
 /**
@@ -43,9 +44,9 @@ class Event implements EventInterface
     /**
      * Custom data for the method that receives the event
      *
-     * @var array
+     * @var \ArrayAccess|array
      */
-    protected $_data;
+    protected $payload;
 
     /**
      * Property used to retain the result value of the event listeners
@@ -76,15 +77,15 @@ class Event implements EventInterface
      * @param string $name Name of the event
      * @param object|null $subject the object that this event applies to
      *   (usually the object that is generating the event).
-     * @param \ArrayAccess|array|null $data any value you wish to be transported
+     * @param \ArrayAccess|array $payload any value you wish to be transported
      *   with this event to it can be read by listeners.
      * @psalm-param TSubject|null $subject
      */
-    public function __construct(string $name, $subject = null, $data = null)
+    public function __construct(string $name, ?object $subject = null, ArrayAccess|array $payload = [])
     {
         $this->_name = $name;
         $this->_subject = $subject;
-        $this->_data = (array)$data;
+        $this->payload = $payload;
     }
 
     /**
@@ -169,26 +170,25 @@ class Event implements EventInterface
     public function getData(?string $key = null)
     {
         if ($key !== null) {
-            return $this->_data[$key] ?? null;
+            return $this->payload[$key] ?? null;
         }
 
-        /** @psalm-suppress RedundantCastGivenDocblockType */
-        return (array)$this->_data;
+        return $this->payload;
     }
 
     /**
      * Assigns a value to the data/payload of this event.
      *
-     * @param array|string $key An array will replace all payload data, and a key will set just that array item.
+     * @param \ArrayAccess|array|string $key An array will replace all payload data, and a key will set just that array item.
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setData($key, $value = null)
+    public function setData(ArrayAccess|array|string $key, $value = null)
     {
-        if (is_array($key)) {
-            $this->_data = $key;
+        if (is_array($key) || $key instanceof ArrayAccess) {
+            $this->payload = $key;
         } else {
-            $this->_data[$key] = $value;
+            $this->payload[$key] = $value;
         }
 
         return $this;
