@@ -199,7 +199,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of an optgroup element.
      *
      * @param string $label The optgroup label text
-     * @param array|\ArrayAccess $optgroup The opt group data.
+     * @param \ArrayAccess|array $optgroup The opt group data.
      * @param array|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.

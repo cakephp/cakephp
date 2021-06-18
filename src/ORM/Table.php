@@ -1839,7 +1839,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options The options to use when saving.
+     * @param \ArrayAccess|array|\Cake\ORM\SaveOptionsBuilder $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
@@ -1888,7 +1888,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the entity contains errors or the save was aborted by a callback.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param array|\ArrayAccess $options The options to use when saving.
+     * @param \ArrayAccess|array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @see \Cake\ORM\Table::save()
@@ -2174,7 +2174,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to save.
-     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
+     * @param \ArrayAccess|array|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
      * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface|false False on failure, entities list on success.
      * @throws \Exception
      */
@@ -2195,7 +2195,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to save.
-     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @param \ArrayAccess|array $options Options used when calling Table::save() for each entity.
      * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
@@ -2207,7 +2207,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to save.
-     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
+     * @param \ArrayAccess|array|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      * @throws \Exception If an entity couldn't be saved.
      * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface Entities list.
@@ -2296,7 +2296,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the options used in the delete operation.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param array|\ArrayAccess $options The options for the delete.
+     * @param \ArrayAccess|array $options The options for the delete.
      * @return bool success
      */
     public function delete(EntityInterface $entity, $options = []): bool
@@ -2329,7 +2329,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
-     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @param \ArrayAccess|array $options Options used when calling Table::save() for each entity.
      * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface|false Entities list
      *   on success, false on failure.
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
@@ -2353,7 +2353,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
-     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @param \ArrayAccess|array $options Options used when calling Table::save() for each entity.
      * @return array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
@@ -2371,7 +2371,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * @param array<\Cake\Datasource\EntityInterface>|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
-     * @param array|\ArrayAccess $options Options used.
+     * @param \ArrayAccess|array $options Options used.
      * @return \Cake\Datasource\EntityInterface|null
      */
     protected function _deleteMany(iterable $entities, $options = []): ?EntityInterface
@@ -2409,7 +2409,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * has no primary key value, application rules checks failed or the delete was aborted by a callback.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param array|\ArrayAccess $options The options for the delete.
+     * @param \ArrayAccess|array $options The options for the delete.
      * @return true
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete()

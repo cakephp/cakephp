@@ -478,7 +478,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * Each adapter will be checked in sequence, if any of them return true, then the user will
      * be authorized for the request.
      *
-     * @param array|\ArrayAccess|null $user The user to check the authorization of.
+     * @param \ArrayAccess|array|null $user The user to check the authorization of.
      *   If empty the user fetched from storage will be used.
      * @param \Cake\Http\ServerRequest|null $request The request to authenticate for.
      *   If empty, the current request will be used.
@@ -635,7 +635,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * The storage class is configured using `storage` config key or passing
      * instance to AuthComponent::storage().
      *
-     * @param array|\ArrayAccess $user User data.
+     * @param \ArrayAccess|array $user User data.
      * @return void
      * @link https://book.cakephp.org/4/en/controllers/components/authentication.html#identifying-users-and-logging-them-in
      */
