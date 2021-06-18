@@ -1335,7 +1335,7 @@ class View implements EventDispatcherInterface
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
             } else {
-                $name = DIRECTORY_SEPARATOR . $subDir . $name;
+                $name = $subDir . $name;
             }
         }
 
