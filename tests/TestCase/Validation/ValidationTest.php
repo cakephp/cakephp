@@ -3015,65 +3015,6 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * testContainsNonAlphaNumeric method
-     *
-     * @return void
-     */
-    public function testContainNonAlphaNumeric()
-    {
-        $this->deprecated(function () {
-            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
-            $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
-            $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
-            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'));
-
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#'));
-            $this->assertTrue(Validation::containsNonAlphaNumeric("0\n"));
-            $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
-            $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
-            $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
-            $this->assertTrue(Validation::containsNonAlphaNumeric(' '));
-
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#'));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abc def'));
-            $this->assertTrue(Validation::containsNonAlphaNumeric("abcdef\n"));
-
-            $this->assertTrue(Validation::containsNonAlphaNumeric('##abcdef', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef##', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef#', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def#', 2));
-
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
-
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
-
-            $this->assertTrue(Validation::containsNonAlphaNumeric('###abcdef', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abc###def', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef###', 2));
-            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def#', 2));
-
-            $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
-            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
-            $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
-            $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
-
-            // Non alpha numeric should not pass as array
-            $this->assertFalse(Validation::containsNonAlphaNumeric(['abc#']));
-        });
-    }
-
-    /**
      * Test the geoCoordinate method.
      *
      * @return void

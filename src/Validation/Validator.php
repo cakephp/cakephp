@@ -218,21 +218,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
      * @return array[] Array of failed fields
-     * @deprecated 3.9.0 Renamed to {@link validate()}.
-     */
-    public function errors(array $data, bool $newRecord = true): array
-    {
-        deprecationWarning('`Validator::errors()` is deprecated. Use `Validator::validate()` instead.');
-
-        return $this->validate($data, $newRecord);
-    }
-
-    /**
-     * Validates and returns an array of failed fields and their error messages.
-     *
-     * @param array $data The data to be checked for errors
-     * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @return array[] Array of failed fields
      */
     public function validate(array $data, bool $newRecord = true): array
     {
@@ -708,104 +693,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Allows a field to be empty. You can also pass array.
-     * Using an array will let you provide the following keys:
-     *
-     * - `when` individual when condition for field
-     * - 'message' individual message for field
-     *
-     * You can also set when and message for all passed fields, the individual setting
-     * takes precedence over group settings.
-     *
-     * This is the opposite of notEmpty() which requires a field to not be empty.
-     * By using $mode equal to 'create' or 'update', you can allow fields to be empty
-     * when records are first created, or when they are updated.
-     *
-     * ### Example:
-     *
-     * ```
-     * // Email can be empty
-     * $validator->allowEmpty('email');
-     *
-     * // Email can be empty on create
-     * $validator->allowEmpty('email', Validator::WHEN_CREATE);
-     *
-     * // Email can be empty on update
-     * $validator->allowEmpty('email', Validator::WHEN_UPDATE);
-     *
-     * // Email and subject can be empty on update
-     * $validator->allowEmpty(['email', 'subject'], Validator::WHEN_UPDATE;
-     *
-     * // Email can be always empty, subject and content can be empty on update.
-     * $validator->allowEmpty(
-     *      [
-     *          'email' => [
-     *              'when' => true
-     *          ],
-     *          'content' => [
-     *              'message' => 'Content cannot be empty'
-     *          ],
-     *          'subject'
-     *      ],
-     *      Validator::WHEN_UPDATE
-     * );
-     * ```
-     *
-     * It is possible to conditionally allow emptiness on a field by passing a callback
-     * as a second argument. The callback will receive the validation context array as
-     * argument:
-     *
-     * ```
-     * $validator->allowEmpty('email', function ($context) {
-     *  return !$context['newRecord'] || $context['data']['role'] === 'admin';
-     * });
-     * ```
-     *
-     * This method will correctly detect empty file uploads and date/time/datetime fields.
-     *
-     * Because this and `notEmpty()` modify the same internal state, the last
-     * method called will take precedence.
-     *
-     * @deprecated 3.7.0 Use {@link allowEmptyString()}, {@link allowEmptyArray()}, {@link allowEmptyFile()},
-     *   {@link allowEmptyDate()}, {@link allowEmptyTime()}, {@link allowEmptyDateTime()} or {@link allowEmptyFor()} instead.
-     * @param array|string $field the name of the field or a list of fields
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
-     * Valid values are true (always), 'create', 'update'. If a callable is passed then
-     * the field will allowed to be empty only when the callback returns true.
-     * @param string|null $message The message to show if the field is not
-     * @return $this
-     */
-    public function allowEmpty($field, $when = true, $message = null)
-    {
-        deprecationWarning(
-            'allowEmpty() is deprecated. '
-            . 'Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(), allowEmptyDate(), allowEmptyTime(), '
-            . 'allowEmptyDateTime() or allowEmptyFor() instead.'
-        );
-
-        $defaults = [
-            'when' => $when,
-            'message' => $message,
-        ];
-        if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, $defaults);
-        }
-
-        foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
-            $fieldName = array_keys($settings)[0];
-            $this->allowEmptyFor(
-                $fieldName,
-                static::EMPTY_ALL,
-                $settings[$fieldName]['when'],
-                $settings[$fieldName]['message']
-            );
-        }
-
-        return $this;
-    }
-
-    /**
      * Low-level method to indicate that a field can be empty.
      *
      * This method should generally not be used and instead you should
@@ -1162,107 +1049,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $settings += $defaults;
 
         return [$fieldName => $settings];
-    }
-
-    /**
-     * Sets a field to require a non-empty value. You can also pass array.
-     * Using an array will let you provide the following keys:
-     *
-     * - `when` individual when condition for field
-     * - `message` individual error message for field
-     *
-     * You can also set `when` and `message` for all passed fields, the individual setting
-     * takes precedence over group settings.
-     *
-     * This is the opposite of `allowEmpty()` which allows a field to be empty.
-     * By using $mode equal to 'create' or 'update', you can make fields required
-     * when records are first created, or when they are updated.
-     *
-     * ### Example:
-     *
-     * ```
-     * $message = 'This field cannot be empty';
-     *
-     * // Email cannot be empty
-     * $validator->notEmpty('email');
-     *
-     * // Email can be empty on update, but not create
-     * $validator->notEmpty('email', $message, 'create');
-     *
-     * // Email can be empty on create, but required on update.
-     * $validator->notEmpty('email', $message, Validator::WHEN_UPDATE);
-     *
-     * // Email and title can be empty on create, but are required on update.
-     * $validator->notEmpty(['email', 'title'], $message, Validator::WHEN_UPDATE);
-     *
-     * // Email can be empty on create, title must always be not empty
-     * $validator->notEmpty(
-     *      [
-     *          'email',
-     *          'title' => [
-     *              'when' => true,
-     *              'message' => 'Title cannot be empty'
-     *          ]
-     *      ],
-     *      $message,
-     *      Validator::WHEN_UPDATE
-     * );
-     * ```
-     *
-     * It is possible to conditionally disallow emptiness on a field by passing a callback
-     * as the third argument. The callback will receive the validation context array as
-     * argument:
-     *
-     * ```
-     * $validator->notEmpty('email', 'Email is required', function ($context) {
-     *   return $context['newRecord'] && $context['data']['role'] !== 'admin';
-     * });
-     * ```
-     *
-     * Because this and `allowEmpty()` modify the same internal state, the last
-     * method called will take precedence.
-     *
-     * @deprecated 3.7.0 Use {@link notEmptyString()}, {@link notEmptyArray()}, {@link notEmptyFile()},
-     *   {@link notEmptyDate()}, {@link notEmptyTime()} or {@link notEmptyDateTime()} instead.
-     * @param array|string $field the name of the field or list of fields
-     * @param string|null $message The message to show if the field is not
-     * @param string|bool|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are true (always), 'create', 'update'. If a
-     *   callable is passed then the field will allowed to be empty only when
-     *   the callback returns false.
-     * @return $this
-     */
-    public function notEmpty($field, ?string $message = null, $when = false)
-    {
-        deprecationWarning(
-            'notEmpty() is deprecated. '
-            . 'Use notEmptyString(), notEmptyArray(), notEmptyFile(), notEmptyDate(), notEmptyTime() '
-            . 'or notEmptyDateTime() instead.'
-        );
-
-        $defaults = [
-            'when' => $when,
-            'message' => $message,
-        ];
-
-        if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, $defaults);
-        }
-
-        foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
-            $fieldName = current(array_keys($settings));
-
-            $whenSetting = $this->invertWhenClause($settings[$fieldName]['when']);
-
-            $this->field($fieldName)->allowEmpty($whenSetting);
-            $this->_allowEmptyFlags[$fieldName] = static::EMPTY_ALL;
-            if ($settings[$fieldName]['message']) {
-                $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -1714,28 +1500,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         return $this->add($field, 'lessThanOrEqualToField', $extra + [
             'rule' => ['compareFields', $secondField, Validation::COMPARE_LESS_OR_EQUAL],
-        ]);
-    }
-
-    /**
-     * Add a rule to check if a field contains non alpha numeric characters.
-     *
-     * @param string $field The field you want to apply the rule to.
-     * @param int $limit The minimum number of non-alphanumeric fields required.
-     * @param string|null $message The error message when the rule fails.
-     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
-     *   true when the validation rule should be applied.
-     * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
-     * @return $this
-     * @deprecated 4.0.0 Use {@link notAlphaNumeric()} instead. Will be removed in 5.0
-     */
-    public function containsNonAlphaNumeric(string $field, int $limit = 1, ?string $message = null, $when = null)
-    {
-        deprecationWarning('Validator::containsNonAlphaNumeric() is deprecated. Use notAlphaNumeric() instead.');
-        $extra = array_filter(['on' => $when, 'message' => $message]);
-
-        return $this->add($field, 'containsNonAlphaNumeric', $extra + [
-            'rule' => ['containsNonAlphaNumeric', $limit],
         ]);
     }
 
@@ -2617,18 +2381,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         return (bool)$allowed;
-    }
-
-    /**
-     * Returns true if the field is empty in the passed data array
-     *
-     * @param mixed $data Value to check against.
-     * @return bool
-     * @deprecated 3.7.0 Use {@link isEmpty()} instead
-     */
-    protected function _fieldIsEmpty($data): bool
-    {
-        return $this->isEmpty($data, static::EMPTY_ALL);
     }
 
     /**

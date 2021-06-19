@@ -425,28 +425,6 @@ class Validation
     }
 
     /**
-     * Checks if a string contains one or more non-alphanumeric characters.
-     *
-     * Returns true if string contains at least the specified number of non-alphanumeric characters
-     *
-     * @param mixed $check Value to check
-     * @param int $count Number of non-alphanumerics to check for
-     * @return bool Success
-     * @deprecated 4.0.0 Use {@link notAlphaNumeric()} instead. Will be removed in 5.0
-     */
-    public static function containsNonAlphaNumeric($check, int $count = 1): bool
-    {
-        deprecationWarning('Validation::containsNonAlphaNumeric() is deprecated. Use notAlphaNumeric() instead.');
-        if (!is_string($check)) {
-            return false;
-        }
-
-        $matches = preg_match_all('/[^a-zA-Z0-9]/', $check);
-
-        return $matches >= $count;
-    }
-
-    /**
      * Used when a custom regular expression is needed.
      *
      * @param mixed $check The value to check.
