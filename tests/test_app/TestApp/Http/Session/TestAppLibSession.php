@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TestApp\Http\Session;
 
-use ReturnTypeWillChange;
 use SessionHandlerInterface;
 
 /**
@@ -28,8 +27,7 @@ class TestAppLibSession implements SessionHandlerInterface
         return true;
     }
 
-    #[ReturnTypeWillChange]
-    public function read($id)
+    public function read($id): string|false
     {
     }
 
@@ -43,8 +41,7 @@ class TestAppLibSession implements SessionHandlerInterface
         return true;
     }
 
-    #[ReturnTypeWillChange]
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         return 0;
     }
