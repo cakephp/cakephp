@@ -47,19 +47,6 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * Get the fields used in the context as a primary key.
-     *
-     * @return string[]
-     * @deprecated 4.0.0 Renamed to {@link getPrimaryKey()}.
-     */
-    public function primaryKey(): array
-    {
-        deprecationWarning('`FormContext::primaryKey()` is deprecated. Use `FormContext::getPrimaryKey()`.');
-
-        return [];
-    }
-
-    /**
      * @inheritDoc
      */
     public function getPrimaryKey(): array

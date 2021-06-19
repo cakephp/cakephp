@@ -409,22 +409,6 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testErrorsDeprecated()
-    {
-        $validator = new Validator();
-        $validator->requirePresence('title');
-        $this->deprecated(function () use ($validator) {
-            $errors = $validator->errors(['foo' => 'something']);
-            $expected = ['title' => ['_required' => 'This field is required']];
-            $this->assertEquals($expected, $errors);
-        });
-    }
-
-    /**
-     * Tests errors generated when a field presence is required
-     *
-     * @return void
-     */
     public function testErrorsWithPresenceRequired()
     {
         $validator = new Validator();
@@ -765,68 +749,6 @@ class ValidatorTest extends TestCase
         ];
         $result = $validator->validate($data);
         $this->assertNotEmpty($result, 'Invalid file should be caught still.');
-    }
-
-    /**
-     * Tests the allowEmpty as array method
-     *
-     * @return void
-     */
-    public function testAllowEmptyAsArray()
-    {
-        $validator = new Validator();
-
-        $this->deprecated(function () use ($validator) {
-            $validator->allowEmpty([
-                'title',
-                'subject',
-                'posted_at' => [
-                    'when' => false,
-                    'message' => 'Post time cannot be empty',
-                ],
-                'updated_at' => [
-                    'when' => true,
-                ],
-                'show_at' => [
-                    'when' => Validator::WHEN_UPDATE,
-                ],
-            ], 'create', 'Cannot be empty');
-        });
-
-        $this->assertSame('create', $validator->field('title')->isEmptyAllowed());
-        $this->assertSame('create', $validator->field('subject')->isEmptyAllowed());
-        $this->assertFalse($validator->field('posted_at')->isEmptyAllowed());
-        $this->assertTrue($validator->field('updated_at')->isEmptyAllowed());
-        $this->assertSame('update', $validator->field('show_at')->isEmptyAllowed());
-
-        $errors = $validator->validate([
-            'title' => '',
-            'subject' => null,
-            'posted_at' => null,
-            'updated_at' => null,
-            'show_at' => '',
-        ], false);
-
-        $expected = [
-            'title' => ['_empty' => 'Cannot be empty'],
-            'subject' => ['_empty' => 'Cannot be empty'],
-            'posted_at' => ['_empty' => 'Post time cannot be empty'],
-        ];
-        $this->assertEquals($expected, $errors);
-    }
-
-    /**
-     * Tests the allowEmpty failure case
-     *
-     * @return void
-     */
-    public function testAllowEmptyAsArrayFailure()
-    {
-        $this->deprecated(function () {
-            $this->expectException(\InvalidArgumentException::class);
-            $validator = new Validator();
-            $validator->allowEmpty(['title' => 'derp', 'created' => false]);
-        });
     }
 
     /**
@@ -1496,74 +1418,6 @@ class ValidatorTest extends TestCase
 
         $validator->allowEmptyString('title');
         $this->assertTrue($validator->field('title')->isEmptyAllowed());
-    }
-
-    /**
-     * Tests the notEmpty as array method
-     *
-     * @return void
-     */
-    public function testNotEmptyAsArray()
-    {
-        $validator = new Validator();
-        $validator->notEmptyString('title')->notEmptyString('created');
-        $this->assertFalse($validator->field('title')->isEmptyAllowed());
-        $this->assertFalse($validator->field('created')->isEmptyAllowed());
-
-        $this->deprecated(function () use ($validator) {
-            $validator->notEmpty([
-                'title' => [
-                    'when' => false,
-                ],
-                'content' => [
-                    'when' => Validator::WHEN_UPDATE,
-                ],
-                'posted_at' => [
-                    'when' => Validator::WHEN_CREATE,
-                ],
-                'show_at' => [
-                    'message' => 'Show date cannot be empty',
-                    'when' => false,
-                ],
-                'subject',
-            ], 'Not empty', true);
-        });
-
-        $this->assertFalse($validator->field('title')->isEmptyAllowed());
-        $this->assertTrue($validator->isEmptyAllowed('content', true));
-        $this->assertFalse($validator->isEmptyAllowed('content', false));
-        $this->assertFalse($validator->isEmptyAllowed('posted_at', true));
-        $this->assertTrue($validator->isEmptyAllowed('posted_at', false));
-        $this->assertTrue($validator->field('subject')->isEmptyAllowed());
-
-        $errors = $validator->validate([
-            'title' => '',
-            'content' => '',
-            'posted_at' => null,
-            'show_at' => null,
-            'subject' => '',
-        ], false);
-
-        $expected = [
-            'title' => ['_empty' => 'Not empty'],
-            'content' => ['_empty' => 'Not empty'],
-            'show_at' => ['_empty' => 'Show date cannot be empty'],
-        ];
-        $this->assertEquals($expected, $errors);
-    }
-
-    /**
-     * Tests the notEmpty failure case
-     *
-     * @return void
-     */
-    public function testNotEmptyAsArrayFailure()
-    {
-        $this->deprecated(function () {
-            $this->expectException(\InvalidArgumentException::class);
-            $validator = new Validator();
-            $validator->notEmpty(['title' => 'derp', 'created' => false]);
-        });
     }
 
     /**
@@ -2489,20 +2343,6 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', Validation::COMPARE_LESS_OR_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->validate(['username' => 2, 'other' => 1]));
-    }
-
-    /**
-     * Tests the containsNonAlphaNumeric proxy method
-     *
-     * @return void
-     */
-    public function testContainsNonAlphaNumeric()
-    {
-        $this->deprecated(function () {
-            $validator = new Validator();
-            $this->assertProxyMethod($validator, 'containsNonAlphaNumeric', 2, [2]);
-            $this->assertNotEmpty($validator->validate(['username' => '$']));
-        });
     }
 
     /**

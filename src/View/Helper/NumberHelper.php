@@ -216,24 +216,6 @@ class NumberHelper extends Helper
     }
 
     /**
-     * Getter/setter for default currency
-     *
-     * @param string|false|null $currency Default currency string to be used by currency()
-     * if $currency argument is not provided. If boolean false is passed, it will clear the
-     * currently stored value. Null reads the current default.
-     * @return string|null Currency
-     * @deprecated 3.9.0 Use setDefaultCurrency()/getDefaultCurrency() instead.
-     */
-    public function defaultCurrency($currency): ?string
-    {
-        deprecationWarning(
-            'NumberHelper::defaultCurrency() is deprecated. Use setDefaultCurrency() and getDefaultCurrency() instead.'
-        );
-
-        return $this->_engine->defaultCurrency($currency);
-    }
-
-    /**
      * Event listeners.
      *
      * @return array
