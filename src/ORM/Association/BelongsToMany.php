@@ -978,7 +978,7 @@ class BelongsToMany extends Association
     /**
      * Gets the current join table, either the name of the Table instance or the instance itself.
      *
-     * @return string|\Cake\ORM\Table
+     * @return \Cake\ORM\Table|string
      */
     public function getThrough()
     {

@@ -42,7 +42,7 @@ trait FieldTrait
     /**
      * Returns the field name
      *
-     * @return array|string|\Cake\Database\ExpressionInterface
+     * @return \Cake\Database\ExpressionInterfacearray|string
      */
     public function getField()
     {

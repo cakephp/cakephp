@@ -68,7 +68,7 @@ class FactoryLocator
      *
      * @param string $type The repository type to get the factory for.
      * @throws \InvalidArgumentException If the specified repository type has no factory.
-     * @return callable|\Cake\Datasource\Locator\LocatorInterface The factory for the repository type.
+     * @return \Cake\Datasource\Locator\LocatorInterface|callable The factory for the repository type.
      */
     public static function get(string $type)
     {
