@@ -462,44 +462,6 @@ class QueryExpression implements ExpressionInterface, Countable
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 
-    // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-
-    /**
-     * Returns a new QueryExpression object containing all the conditions passed
-     * and set up the conjunction to be "AND"
-     *
-     * @param \Closure|array|string|\Cake\Database\ExpressionInterface $conditions to be joined with AND
-     * @param array $types associative array of fields pointing to the type of the
-     * values that are being passed. Used for correctly binding values to statements.
-     * @return \Cake\Database\Expression\QueryExpression
-     * @deprecated 4.0.0 Use {@link and()} instead.
-     */
-    public function and_($conditions, $types = [])
-    {
-        deprecationWarning('QueryExpression::and_() is deprecated use and() instead.');
-
-        return $this->and($conditions, $types);
-    }
-
-    /**
-     * Returns a new QueryExpression object containing all the conditions passed
-     * and set up the conjunction to be "OR"
-     *
-     * @param \Closure|array|string|\Cake\Database\ExpressionInterface $conditions to be joined with OR
-     * @param array $types associative array of fields pointing to the type of the
-     * values that are being passed. Used for correctly binding values to statements.
-     * @return \Cake\Database\Expression\QueryExpression
-     * @deprecated 4.0.0 Use {@link or()} instead.
-     */
-    public function or_($conditions, $types = [])
-    {
-        deprecationWarning('QueryExpression::or_() is deprecated use or() instead.');
-
-        return $this->or($conditions, $types);
-    }
-
-    // phpcs:enable
-
     /**
      * Adds a new set of conditions to this level of the tree and negates
      * the final result by prepending a NOT, it will look like
@@ -617,30 +579,6 @@ class QueryExpression implements ExpressionInterface, Countable
         $this->_conditions = $parts;
 
         return $this;
-    }
-
-    /**
-     * Check whether or not a callable is acceptable.
-     *
-     * We don't accept ['class', 'method'] style callbacks,
-     * as they often contain user input and arrays of strings
-     * are easy to sneak in.
-     *
-     * @param \Cake\Database\ExpressionInterface|callable|array|string $callable The callable to check.
-     * @return bool Valid callable.
-     * @deprecated 4.2.0 This method is unused.
-     * @codeCoverageIgnore
-     */
-    public function isCallable($callable): bool
-    {
-        if (is_string($callable)) {
-            return false;
-        }
-        if (is_object($callable) && is_callable($callable)) {
-            return true;
-        }
-
-        return is_array($callable) && isset($callable[0]) && is_object($callable[0]) && is_callable($callable);
     }
 
     /**

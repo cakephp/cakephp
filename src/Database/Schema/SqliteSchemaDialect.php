@@ -619,8 +619,3 @@ class SqliteSchemaDialect extends SchemaDialect
         return $this->_hasSequences;
     }
 }
-
-// phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\SqliteSchemaDialect', 'Cake\Database\Schema\SqliteSchema');
-// phpcs:enable

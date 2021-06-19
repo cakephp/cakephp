@@ -339,7 +339,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that the get cache is cleared by unsetProperty.
+     * Tests that the get cache is cleared by unset.
      *
      * @return void
      */
@@ -519,7 +519,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests unsetProperty one property at a time
+     * Tests unset one property at a time
      *
      * @return void
      */
@@ -547,7 +547,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests unsetProperty with multiple properties
+     * Tests unset with multiple properties
      *
      * @return void
      */
@@ -588,22 +588,6 @@ class EntityTest extends TestCase
             ->method('unset')
             ->with('foo');
         unset($entity->foo);
-    }
-
-    /**
-     * Tests the deprecated unsetProperty() method
-     *
-     * @return void
-     */
-    public function testUnsetDeprecated()
-    {
-        $this->deprecated(function () {
-            $entity = new Entity();
-            $entity->foo = 'foo';
-
-            $entity->unsetProperty('foo');
-            $this->assertNull($entity->foo);
-        });
     }
 
     /**

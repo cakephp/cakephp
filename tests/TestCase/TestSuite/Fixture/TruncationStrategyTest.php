@@ -34,8 +34,8 @@ class TruncationStrategyTest extends TestCase
      */
     public function testSetupSimple()
     {
-        $articles = TableRegistry::get('Articles');
-        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articles = TableRegistry::getTableLocator()->get('Articles');
+        $articlesTags = TableRegistry::getTableLocator()->get('ArticlesTags');
 
         $rowCount = $articles->find()->count();
         $this->assertGreaterThan(0, $rowCount);
