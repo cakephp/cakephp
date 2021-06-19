@@ -104,13 +104,13 @@ class App
      *
      * ```
      * App::shortName(
-     *     'Cake\Controller\Component\AuthComponent',
+     *     'Cake\Controller\Component\RequestHanderComponent',
      *     'Controller/Component',
      *     'Component'
      * )
      * ```
      *
-     * Returns: Auth
+     * Returns: RequestHander
      *
      * @param string $class Class name
      * @param string $type Type of class

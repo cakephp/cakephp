@@ -12,9 +12,7 @@
         <directory name="src"/>
         <ignoreFiles>
             <directory name="src/Filesystem"/>
-            <directory name="src/Auth"/>
             <directory name="vendor"/>
-            <file name="src/Controller/Component/AuthComponent.php"/>
         </ignoreFiles>
     </projectFiles>
 
