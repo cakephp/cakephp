@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace Cake\Http\Session;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
-use ReturnTypeWillChange;
 use SessionHandlerInterface;
 
 /**
@@ -110,8 +109,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in database.
      * @return string|false Session data or false if it does not exist.
      */
-    #[ReturnTypeWillChange]
-    public function read($id)
+    public function read($id): string|false
     {
         /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
@@ -178,8 +176,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false The number of deleted sessions on success, or false on failure.
      */
-    #[ReturnTypeWillChange]
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         return $this->_table->deleteAll(['expires <' => time()]);
     }
