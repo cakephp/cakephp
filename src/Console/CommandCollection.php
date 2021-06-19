@@ -127,7 +127,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Get the target for a command.
      *
      * @param string $name The named shell.
-     * @return string|\Cake\Console\Shell|\Cake\Console\CommandInterface Either the command class or an instance.
+     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell|string Either the command class or an instance.
      * @throws \InvalidArgumentException when unknown commands are fetched.
      * @psalm-return \Cake\Console\CommandInterface|\Cake\Console\Shell|class-string
      */

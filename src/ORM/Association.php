@@ -438,7 +438,7 @@ abstract class Association
      * the target association.
      *
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array|\Closure
+     * @return \Closure|array
      */
     public function getConditions()
     {

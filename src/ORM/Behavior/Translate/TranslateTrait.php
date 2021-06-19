@@ -31,7 +31,7 @@ trait TranslateTrait
      * it.
      *
      * @param string $language Language to return entity for.
-     * @return $this|\Cake\Datasource\EntityInterface
+     * @return \Cake\Datasource\EntityInterface|$this
      */
     public function translation(string $language)
     {
