@@ -396,7 +396,7 @@ class TableSchemaTest extends TestCase
      */
     public function testAddConstraintError($props)
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(\Cake\Database\Exception\DatabaseException::class);
         $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer');
         $table->addConstraint('author_idx', $props);
@@ -450,7 +450,7 @@ class TableSchemaTest extends TestCase
      */
     public function testAddIndexError($props)
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(\Cake\Database\Exception\DatabaseException::class);
         $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer');
         $table->addIndex('author_idx', $props);
@@ -641,7 +641,7 @@ class TableSchemaTest extends TestCase
      */
     public function testAddConstraintForeignKeyBadData($data)
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(\Cake\Database\Exception\DatabaseException::class);
         $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer')
             ->addConstraint('author_id_idx', $data);

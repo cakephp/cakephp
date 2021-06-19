@@ -31,7 +31,7 @@ class TransactionStrategyTest extends TestCase
      */
     public function testTransactionWrapping()
     {
-        $users = TableRegistry::get('Users');
+        $users = TableRegistry::getTableLocator()->get('Users');
 
         $strategy = new TransactionStrategy($this->fixtureManager);
         $strategy->setupTest();

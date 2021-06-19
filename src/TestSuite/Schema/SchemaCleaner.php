@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Schema;
 
 use Cake\Console\ConsoleIo;
-use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\CollectionInterface;
+use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqlGeneratorInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -160,9 +160,9 @@ class SchemaCleaner
 
     /**
      * @param  string $connectionName Name of the connection.
-     * @return \Cake\Database\Schema\BaseSchema
+     * @return \Cake\Database\Schema\SchemaDialect
      */
-    protected function getDialect(string $connectionName): BaseSchema
+    protected function getDialect(string $connectionName): SchemaDialect
     {
         return ConnectionManager::get($connectionName)->getDriver()->schemaDialect();
     }

@@ -149,7 +149,7 @@ class ExceptionsTest extends TestCase
             ['Cake\Controller\Exception\SecurityException', 400],
             ['Cake\Core\Exception\CakeException', 0],
             ['Cake\Core\Exception\MissingPluginException', 0],
-            ['Cake\Database\Exception', 0],
+            ['Cake\Database\Exception\DatabaseException', 0],
             ['Cake\Database\Exception\MissingConnectionException', 0],
             ['Cake\Database\Exception\MissingDriverException', 0],
             ['Cake\Database\Exception\MissingExtensionException', 0],

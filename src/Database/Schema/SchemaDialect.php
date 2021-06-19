@@ -335,8 +335,3 @@ abstract class SchemaDialect
      */
     abstract public function truncateTableSql(TableSchema $schema): array;
 }
-
-// phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\SchemaDialect', 'Cake\Database\Schema\BaseSchema');
-// phpcs:enable

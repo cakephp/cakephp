@@ -73,7 +73,7 @@ class CollectionTest extends TestCase
      */
     public function testDescribeIncorrectTable()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(\Cake\Database\Exception\DatabaseException::class);
         $schema = new Collection($this->connection);
         $this->assertNull($schema->describe('derp'));
     }

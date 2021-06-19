@@ -449,20 +449,6 @@ trait EntityTrait
     }
 
     /**
-     * Removes a field or list of fields from this entity
-     *
-     * @deprecated 4.0.0 Use {@link unset()} instead. Will be removed in 5.0.
-     * @param string|string[] $field The field to unset.
-     * @return $this
-     */
-    public function unsetProperty($field)
-    {
-        deprecationWarning('EntityTrait::unsetProperty() is deprecated. Use unset() instead.');
-
-        return $this->unset($field);
-    }
-
-    /**
      * Sets hidden fields.
      *
      * @param string[] $fields An array of fields to hide from array exports.

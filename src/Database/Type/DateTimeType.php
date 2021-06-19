@@ -162,20 +162,6 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Alias for `setDatabaseTimezone()`.
-     *
-     * @param \DateTimeZone|string|null $timezone Database timezone.
-     * @return $this
-     * @deprecated 4.1.0 Use {@link setDatabaseTimezone()} instead.
-     */
-    public function setTimezone($timezone)
-    {
-        deprecationWarning('DateTimeType::setTimezone() is deprecated. Use setDatabaseTimezone() instead.');
-
-        return $this->setDatabaseTimezone($timezone);
-    }
-
-    /**
      * Set database timezone.
      *
      * This is the time zone used when converting database strings to DateTime
