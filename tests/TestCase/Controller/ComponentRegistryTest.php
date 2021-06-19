@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\FlashComponent;
+use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Http\Response;
@@ -181,10 +181,10 @@ class ComponentRegistryTest extends TestCase
     public function testReset(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
-        $instance = $this->Components->load('Auth');
+        $instance = $this->Components->load('RequestHandler');
         $this->assertSame(
             $instance,
-            $this->Components->Auth,
+            $this->Components->RequestHandler,
             'Instance in registry should be the same as previously loaded'
         );
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
@@ -192,7 +192,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertSame($this->Components, $this->Components->reset());
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $this->assertNotSame($instance, $this->Components->load('Auth'));
+        $this->assertNotSame($instance, $this->Components->load('RequestHandler'));
     }
 
     /**
@@ -204,11 +204,11 @@ class ComponentRegistryTest extends TestCase
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
-        $this->Components->load('Auth');
-        $result = $this->Components->unload('Auth');
+        $this->Components->load('RequestHandler');
+        $result = $this->Components->unload('RequestHandler');
 
         $this->assertSame($this->Components, $result);
-        $this->assertFalse(isset($this->Components->Auth), 'Should be gone');
+        $this->assertFalse(isset($this->Components->RequestHandler), 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -221,10 +221,10 @@ class ComponentRegistryTest extends TestCase
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
-        $this->Components->load('Auth');
-        unset($this->Components->Auth);
+        $this->Components->load('RequestHandler');
+        unset($this->Components->RequestHandler);
 
-        $this->assertFalse(isset($this->Components->Auth), 'Should be gone');
+        $this->assertFalse(isset($this->Components->RequestHandler), 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -250,11 +250,11 @@ class ComponentRegistryTest extends TestCase
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $auth = new AuthComponent($this->Components);
-        $result = $this->Components->set('Auth', $auth);
+        $requestHandler = new RequestHandlerComponent($this->Components);
+        $result = $this->Components->set('RequestHandler', $requestHandler);
 
         $this->assertSame($this->Components, $result);
-        $this->assertTrue(isset($this->Components->Auth), 'Should be present');
+        $this->assertTrue(isset($this->Components->RequestHandler), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -268,10 +268,10 @@ class ComponentRegistryTest extends TestCase
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $auth = new AuthComponent($this->Components);
-        $this->Components->Auth = $auth;
+        $requestHandler = new RequestHandlerComponent($this->Components);
+        $this->Components->RequestHandler = $requestHandler;
 
-        $this->assertTrue(isset($this->Components->Auth), 'Should be present');
+        $this->assertTrue(isset($this->Components->RequestHandler), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -282,7 +282,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testCountable(): void
     {
-        $this->Components->load('Auth');
+        $this->Components->load('RequestHandler');
         $this->assertInstanceOf(Countable::class, $this->Components);
         $count = count($this->Components);
         $this->assertSame(1, $count);
@@ -295,7 +295,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testTraversable(): void
     {
-        $this->Components->load('Auth');
+        $this->Components->load('RequestHandler');
         $this->assertInstanceOf(Traversable::class, $this->Components);
 
         $result = null;
