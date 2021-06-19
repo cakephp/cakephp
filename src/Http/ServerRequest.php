@@ -1265,51 +1265,6 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * Read data from `php://input`. Useful when interacting with XML or JSON
-     * request body content.
-     *
-     * Getting input with a decoding function:
-     *
-     * ```
-     * $this->request->input('json_decode');
-     * ```
-     *
-     * Getting input using a decoding function, and additional params:
-     *
-     * ```
-     * $this->request->input('Xml::build', ['return' => 'DOMDocument']);
-     * ```
-     *
-     * Any additional parameters are applied to the callback in the order they are given.
-     *
-     * @deprecated 4.1.0 Use `(string)$request->getBody()` to get the raw PHP input
-     *  as string; use `BodyParserMiddleware` to parse the request body so that it's
-     *  available as array/object through `$request->getParsedBody()`.
-     * @param callable|null $callback A decoding callback that will convert the string data to another
-     *     representation. Leave empty to access the raw input data. You can also
-     *     supply additional parameters for the decoding callback using var args, see above.
-     * @param mixed ...$args The additional arguments
-     * @return mixed The decoded/processed request data.
-     */
-    public function input(?callable $callback = null, ...$args)
-    {
-        deprecationWarning(
-            'Use `(string)$request->getBody()` to get the raw PHP input as string; '
-            . 'use `BodyParserMiddleware` to parse the request body so that it\'s available as array/object '
-            . 'through $request->getParsedBody()'
-        );
-        $this->stream->rewind();
-        $input = $this->stream->getContents();
-        if ($callback) {
-            array_unshift($args, $input);
-
-            return $callback(...$args);
-        }
-
-        return $input;
-    }
-
-    /**
      * Read cookie data from the request's cookie data.
      *
      * @param string $key The key or dotted path you want to read.

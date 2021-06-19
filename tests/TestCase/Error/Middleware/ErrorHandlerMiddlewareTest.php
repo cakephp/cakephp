@@ -178,10 +178,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
         $handler = new TestRequestHandler(function () {
-            $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes']);
-            $this->deprecated(function () use ($err) {
-                $err->addHeaders(['Constructor' => 'no', 'Method' => 'yes']);
-            });
+            $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes', 'Method' => 'yes']);
             throw $err;
         });
 
@@ -191,7 +188,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertEmpty('' . $result->getBody());
         $expected = [
             'location' => ['http://example.org/login'],
-            'Constructor' => ['yes', 'no'],
+            'Constructor' => ['yes'],
             'Method' => ['yes'],
         ];
         $this->assertEquals($expected, $result->getHeaders());

@@ -238,30 +238,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test parsing JSON PUT data into the object.
-     *
-     * @return void
-     * @group deprecated
-     */
-    public function testPutParsingJSON()
-    {
-        $data = '{"Article":["title"]}';
-        $request = new ServerRequest([
-            'input' => $data,
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/json',
-            ],
-        ]);
-        $this->assertEquals([], $request->getData());
-
-        $this->deprecated(function () use ($request) {
-            $result = $request->input('json_decode', true);
-            $this->assertEquals(['title'], $result['Article']);
-        });
-    }
-
-    /**
      * Test that the constructor uses uploaded file objects
      * if they are present. This could happen in test scenarios.
      *
@@ -1557,70 +1533,6 @@ class ServerRequestTest extends TestCase
 
         $result = $request->acceptLanguage('en-US');
         $this->assertFalse($result);
-    }
-
-    /**
-     * Test the input() method.
-     *
-     * @return void
-     */
-    public function testInput()
-    {
-        $request = new ServerRequest([
-            'input' => 'I came from stdin',
-        ]);
-
-        $this->deprecated(function () use ($request) {
-            $result = $request->input();
-            $this->assertSame('I came from stdin', $result);
-        });
-    }
-
-    /**
-     * Test input() decoding.
-     *
-     * @return void
-     * @group deprecated
-     */
-    public function testInputDecode()
-    {
-        $request = new ServerRequest([
-            'input' => '{"name":"value"}',
-        ]);
-
-        $this->deprecated(function () use ($request) {
-            $result = $request->input('json_decode');
-            $this->assertEquals(['name' => 'value'], (array)$result);
-        });
-    }
-
-    /**
-     * Test input() decoding with additional arguments.
-     *
-     * @return void
-     * @group deprecated
-     */
-    public function testInputDecodeExtraParams()
-    {
-        $xml = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<post>
-	<title id="title">Test</title>
-</post>
-XML;
-
-        $request = new ServerRequest([
-            'input' => $xml,
-        ]);
-
-        $this->deprecated(function () use ($request) {
-            $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
-            $this->assertInstanceOf('DOMDocument', $result);
-            $this->assertSame(
-                'Test',
-                $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
-            );
-        });
     }
 
     /**

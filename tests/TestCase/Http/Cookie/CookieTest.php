@@ -122,25 +122,6 @@ class CookieTest extends TestCase
     }
 
     /**
-     * Test getting the value from the cookie
-     *
-     * @return void
-     */
-    public function testGetStringValue()
-    {
-        $this->deprecated(function () {
-            $cookie = new Cookie('cakephp', 'thing');
-            $this->assertSame('thing', $cookie->getStringValue());
-
-            $value = ['user_id' => 1, 'token' => 'abc123'];
-            $cookie = new Cookie('cakephp', $value);
-
-            $this->assertSame($value, $cookie->getValue());
-            $this->assertSame(json_encode($value), $cookie->getStringValue());
-        });
-    }
-
-    /**
      * Test setting domain in cookies
      *
      * @return void

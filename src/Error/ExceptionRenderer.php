@@ -230,12 +230,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $url = $this->controller->getRequest()->getRequestTarget();
         $response = $this->controller->getResponse();
 
-        if ($exception instanceof CakeException) {
-            /** @psalm-suppress DeprecatedMethod */
-            foreach ((array)$exception->responseHeader() as $key => $value) {
-                $response = $response->withHeader($key, $value);
-            }
-        }
         if ($exception instanceof HttpException) {
             foreach ($exception->getHeaders() as $name => $value) {
                 $response = $response->withHeader($name, $value);

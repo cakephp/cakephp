@@ -40,13 +40,6 @@ class CakeException extends RuntimeException
     protected $_messageTemplate = '';
 
     /**
-     * Array of headers to be passed to Cake\Http\Response::header()
-     *
-     * @var array|null
-     */
-    protected $_responseHeaders;
-
-    /**
      * Default exception code
      *
      * @var int
@@ -81,36 +74,6 @@ class CakeException extends RuntimeException
     public function getAttributes(): array
     {
         return $this->_attributes;
-    }
-
-    /**
-     * Get/set the response header to be used
-     *
-     * See also Cake\Http\Response::withHeader()
-     *
-     * @param array|string|null $header A single header string or an associative
-     *   array of "header name" => "header value"
-     * @param string|null $value The header value.
-     * @return array|null
-     * @deprecated 4.2.0 Use `HttpException::setHeaders()` instead. Response headers
-     *   should be set for HttpException only.
-     */
-    public function responseHeader($header = null, $value = null): ?array
-    {
-        if ($header === null) {
-            return $this->_responseHeaders;
-        }
-
-        deprecationWarning(
-            'Setting HTTP response headers from Exception directly is deprecated. ' .
-            'If your exceptions extend Exception, they must now extend HttpException. ' .
-            'You should only set HTTP headers on HttpException instances via the `setHeaders()` method.'
-        );
-        if (is_array($header)) {
-            return $this->_responseHeaders = $header;
-        }
-
-        return $this->_responseHeaders = [$header => $value];
     }
 }
 
