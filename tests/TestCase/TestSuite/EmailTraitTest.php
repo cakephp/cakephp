@@ -16,10 +16,12 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
+use Cake\TestSuite\Constraint\Email\MailSentFrom;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Constraint\LogicalNot;
 
 /**
  * Tests EmailTrait assertions
@@ -122,6 +124,24 @@ class EmailTraitTest extends TestCase
         $this->assertMailContainsAt(1, 'html');
 
         $this->assertMailSentWithAt(0, 'Hello world', 'subject');
+    }
+
+    /**
+     * confirm that "at 0" is really testing email 0, not all the emails
+     *
+     * @return void
+     */
+    public function testAt0()
+    {
+        $this->skipIf(!class_exists('PHPUnit\Framework\Constraint\LogicalNot'), 'LogicalNot class not supported on PHP5.6');
+
+        $this->assertNoMailSent();
+
+        $this->sendEmails();
+
+        $this->assertMailCount(3);
+
+        $this->assertThat('alternate@example.com', new LogicalNot(new MailSentFrom(0)));
     }
 
     /**

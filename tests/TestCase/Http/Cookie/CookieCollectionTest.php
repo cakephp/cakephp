@@ -206,7 +206,7 @@ class CookieCollectionTest extends TestCase
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
-            ->withAddedHeader('Set-Cookie', 'expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;')
+            ->withAddedHeader('Set-Cookie', 'expiring=soon; Expires=Wed, 14-Jun-2023 10:18:14 GMT; Path=/; HttpOnly; Secure;')
             ->withAddedHeader('Set-Cookie', 'session=123abc; Domain=www.example.com')
             ->withAddedHeader('Set-Cookie', 'maxage=value; Max-Age=60; Expires=Wed, 09-Jun-2021 10:18:14 GMT;');
         $new = $collection->addFromResponse($response, $request);
@@ -225,7 +225,7 @@ class CookieCollectionTest extends TestCase
 
         $this->assertNull($new->get('test')->getExpiry(), 'No expiry');
         $this->assertSame(
-            '2021-06-09 10:18:14',
+            '2023-06-14 10:18:14',
             $new->get('expiring')->getExpiry()->format('Y-m-d H:i:s'),
             'Has expiry'
         );

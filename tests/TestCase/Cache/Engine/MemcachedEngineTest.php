@@ -361,6 +361,32 @@ class MemcachedEngineTest extends TestCase
     }
 
     /**
+     * testConfigDifferentPorts method
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid cache configuration. Multiple persistent cache configurations are detected with different 'servers' values. 'servers' values for persistent cache configurations must be the same when using the same persistence id.
+     * @return void
+     */
+    public function testConfigDifferentPorts()
+    {
+        $Memcached1 = new MemcachedEngine();
+        $config1 = [
+            'className' => 'Memcached',
+            'servers' => ['127.0.0.1:11211'],
+            'persistent' => true,
+        ];
+        $Memcached1->init($config1);
+
+        $Memcached2 = new MemcachedEngine();
+        $config2 = [
+            'className' => 'Memcached',
+            'servers' => ['127.0.0.1:11212'],
+            'persistent' => true,
+        ];
+        $Memcached2->init($config2);
+    }
+
+    /**
      * testConfig method
      *
      * @return void
