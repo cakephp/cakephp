@@ -465,25 +465,6 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * Tests setting exception response headers through core Exception
-     *
-     * @return void
-     */
-    public function testExceptionDeprecatedResponseHeader()
-    {
-        $this->deprecated(function () {
-            $exception = new CakeException('Should Not Set Headers');
-            $exception->responseHeader(['Allow' => 'POST, DELETE']);
-
-            $ExceptionRenderer = new ExceptionRenderer($exception);
-
-            $result = $ExceptionRenderer->render();
-            $this->assertTrue($result->hasHeader('Allow'));
-            $this->assertSame('POST, DELETE', $result->getHeaderLine('Allow'));
-        });
-    }
-
-    /**
      * testMissingController method
      *
      * @return void
