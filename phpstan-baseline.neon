@@ -151,11 +151,6 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of function spl_autoload_register expects \\(callable\\(string\\)\\: void\\)\\|null, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
-			count: 1
-			path: src/Core/ClassLoader.php
-
-		-
 			message: "#^Array \\(array\\<TObject\\>\\) does not accept object\\.$#"
 			count: 1
 			path: src/Core/ObjectRegistry.php
@@ -441,21 +436,6 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_err \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/ConsoleIntegrationTestCase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_in \\(Cake\\\\Console\\\\ConsoleInput\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/ConsoleIntegrationTestCase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_out \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/ConsoleIntegrationTestCase.php
-
-		-
 			message: "#^PHPDoc tag @template TCode for class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\StatusCodeBase with bound type array\\<int, int\\> is not supported\\.$#"
 			count: 1
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
@@ -489,31 +469,6 @@ parameters:
 			message: "#^Constructor of class Cake\\\\TestSuite\\\\Fixture\\\\TransactionStrategy has an unused parameter \\$loader\\.$#"
 			count: 1
 			path: src/TestSuite/Fixture/TransactionStrategy.php
-
-		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_layoutName \\(string\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_requestSession \\(Cake\\\\Http\\\\Session\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_viewName \\(string\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

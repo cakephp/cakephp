@@ -312,11 +312,6 @@
       <code>$key</code>
     </PossiblyFalseOperand>
   </file>
-  <file src="src/View/Helper/NumberHelper.php">
-    <DeprecatedMethod occurrences="1">
-      <code>defaultCurrency</code>
-    </DeprecatedMethod>
-  </file>
   <file src="src/View/View.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$options</code>

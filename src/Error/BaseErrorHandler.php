@@ -188,21 +188,6 @@ abstract class BaseErrorHandler
     }
 
     /**
-     * Checks the passed exception type. If it is an instance of `Error`
-     * then, it wraps the passed object inside another Exception object
-     * for backwards compatibility purposes.
-     *
-     * @param \Throwable $exception The exception to handle
-     * @return void
-     * @deprecated 4.0.0 Unused method will be removed in 5.0
-     */
-    public function wrapAndHandleException(Throwable $exception): void
-    {
-        deprecationWarning('This method is no longer in use. Call handleException instead.');
-        $this->handleException($exception);
-    }
-
-    /**
      * Handle uncaught exceptions.
      *
      * Uses a template method provided by subclasses to display errors in an

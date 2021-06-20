@@ -28,7 +28,6 @@ use Cake\Http\Session;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
-use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -1217,20 +1216,6 @@ class IntegrationTestTraitTest extends TestCase
         $this->_response = new Response();
 
         $this->assertNoRedirect();
-    }
-
-    /**
-     * Test the location header assertion.
-     *
-     * @return void
-     */
-    public function testAssertNoRedirectFail()
-    {
-        $test = new AssertIntegrationTestCase('testBadAssertNoRedirect');
-        $result = $test->run();
-
-        $this->assertFalse($result->wasSuccessful());
-        $this->assertSame(1, $result->failureCount());
     }
 
     /**
