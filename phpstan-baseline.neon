@@ -366,11 +366,6 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Mailer/Email.php
-
-		-
 			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
 			count: 1
 			path: src/Mailer/Renderer.php
