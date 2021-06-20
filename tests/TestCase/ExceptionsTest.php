@@ -139,9 +139,6 @@ class ExceptionsTest extends TestCase
         return [
             ['Cake\Console\Exception\ConsoleException', 1],
             ['Cake\Console\Exception\MissingHelperException', 1],
-            ['Cake\Console\Exception\MissingShellException', 1],
-            ['Cake\Console\Exception\MissingShellMethodException', 1],
-            ['Cake\Console\Exception\MissingTaskException', 1],
             ['Cake\Console\Exception\StopException', 1],
             ['Cake\Controller\Exception\AuthSecurityException', 400],
             ['Cake\Controller\Exception\MissingActionException', 0],

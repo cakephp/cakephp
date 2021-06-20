@@ -26,7 +26,7 @@ use UnexpectedValueException;
  * and other repositories onto properties of the host object.
  *
  * Example users of this trait are Cake\Controller\Controller and
- * Cake\Console\Shell.
+ * Cake\Console\Command.
  */
 trait ModelAwareTrait
 {

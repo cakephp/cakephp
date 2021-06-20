@@ -39,8 +39,6 @@ class CompletionCommandTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         Configure::write('Plugins.autoload', ['TestPlugin', 'TestPluginTwo']);
-
-        $this->useCommandRunner();
     }
 
     /**
@@ -95,12 +93,8 @@ class CompletionCommandTest extends TestCase
             'abort',
             'auto_load_model',
             'demo',
-            'i18m',
             'integration',
-            'merge',
             'sample',
-            'shell_test',
-            'testing_dispatch',
         ];
         foreach ($expected as $value) {
             $this->assertOutputContains($value);
@@ -239,23 +233,7 @@ class CompletionCommandTest extends TestCase
     {
         $this->exec('completion subcommands sample');
         $this->assertExitCode(Command::CODE_SUCCESS);
-        $expected = [
-            'derp',
-            'returnValue',
-            'sample',
-            'withAbort',
-        ];
-        foreach ($expected as $value) {
-            $this->assertOutputContains($value);
-        }
-        //Methods overwritten from Shell class should not be included
-        $notExpected = [
-            'runCommand',
-            'getOptionParser',
-        ];
-        foreach ($notExpected as $method) {
-            $this->assertOutputNotContains($method);
-        }
+        $this->assertOutputContains('sub');
     }
 
     /**
@@ -306,20 +284,6 @@ class CompletionCommandTest extends TestCase
     }
 
     /**
-     * test that subCommands with an existing plugin command returns the proper sub commands
-     *
-     * @return void
-     */
-    public function testSubCommandsPluginDotNotation()
-    {
-        $this->exec('completion subcommands test_plugin_two.example');
-        $this->assertExitCode(Command::CODE_SUCCESS);
-
-        $expected = 'say_hello';
-        $this->assertOutputContains($expected);
-    }
-
-    /**
      * test that subCommands with an app shell that is also defined in a plugin and without the prefix "app."
      * returns proper sub commands
      *
@@ -329,16 +293,7 @@ class CompletionCommandTest extends TestCase
     {
         $this->exec('completion subcommands sample');
         $this->assertExitCode(Command::CODE_SUCCESS);
-
-        $expected = [
-            'derp',
-            'returnValue',
-            'sample',
-            'withAbort',
-        ];
-        foreach ($expected as $value) {
-            $this->assertOutputContains($value);
-        }
+        $this->assertOutputContains('sub');
     }
 
     /**
@@ -351,7 +306,7 @@ class CompletionCommandTest extends TestCase
         $this->exec('completion subcommands test_plugin.sample');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $expected = 'example';
+        $expected = 'sub';
         $this->assertOutputContains($expected);
     }
 

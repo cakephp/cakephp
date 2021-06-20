@@ -42,13 +42,6 @@ trait ConsoleIntegrationTestTrait
     use ContainerStubTrait;
 
     /**
-     * Whether or not to use the CommandRunner
-     *
-     * @var bool
-     */
-    protected $_useCommandRunner = false;
-
-    /**
      * Last exit code
      *
      * @var int|null
@@ -130,18 +123,6 @@ trait ConsoleIntegrationTestTrait
         $this->_out = null;
         $this->_err = null;
         $this->_in = null;
-        $this->_useCommandRunner = false;
-    }
-
-    /**
-     * Set this test case to use the CommandRunner rather than the legacy
-     * ShellDispatcher
-     *
-     * @return void
-     */
-    public function useCommandRunner(): void
-    {
-        $this->_useCommandRunner = true;
     }
 
     /**
@@ -275,18 +256,14 @@ trait ConsoleIntegrationTestTrait
     /**
      * Builds the appropriate command dispatcher
      *
-     * @return \Cake\Console\CommandRunner|\Cake\TestSuite\LegacyCommandRunner
+     * @return \Cake\Console\CommandRunner
      */
-    protected function makeRunner()
+    protected function makeRunner(): CommandRunner
     {
-        if ($this->_useCommandRunner) {
-            /** @var \Cake\Core\ConsoleApplicationInterface $app */
-            $app = $this->createApp();
+        /** @var \Cake\Core\ConsoleApplicationInterface $app */
+        $app = $this->createApp();
 
-            return new CommandRunner($app);
-        }
-
-        return new LegacyCommandRunner();
+        return new CommandRunner($app);
     }
 
     /**

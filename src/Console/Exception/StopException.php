@@ -18,8 +18,6 @@ namespace Cake\Console\Exception;
 /**
  * Exception class for halting errors in console tasks
  *
- * @see \Cake\Console\Shell::_stop()
- * @see \Cake\Console\Shell::error()
  * @see \Cake\Command\BaseCommand::abort()
  */
 class StopException extends ConsoleException

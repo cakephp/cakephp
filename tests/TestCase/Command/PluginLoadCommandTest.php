@@ -48,7 +48,6 @@ class PluginLoadCommandTest extends TestCase
         $this->app = APP . DS . 'Application.php';
         $this->originalAppContent = file_get_contents($this->app);
 
-        $this->useCommandRunner();
         $this->setAppNamespace();
     }
 

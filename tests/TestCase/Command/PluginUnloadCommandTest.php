@@ -48,7 +48,6 @@ class PluginUnloadCommandTest extends TestCase
 
         $this->originalAppContent = file_get_contents($this->app);
 
-        $this->useCommandRunner();
         $this->setAppNamespace();
     }
 

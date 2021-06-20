@@ -20,10 +20,10 @@ namespace Cake\Console;
 interface CommandFactoryInterface
 {
     /**
-     * The factory method for creating Command and Shell instances.
+     * The factory method for creating Command  instances.
      *
-     * @param string $className Command/Shell class name.
-     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
+     * @param string $className Command class name.
+     * @return \Cake\Console\CommandInterface
      */
-    public function create(string $className);
+    public function create(string $className): CommandInterface;
 }

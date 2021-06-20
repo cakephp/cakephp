@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
-use Cake\Console\Shell;
+use Cake\Command\Command;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -38,7 +38,6 @@ class CacheCommandsTest extends TestCase
         parent::setUp();
         Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE]);
         $this->setAppNamespace();
-        $this->useCommandRunner();
     }
 
     /**
@@ -61,7 +60,7 @@ class CacheCommandsTest extends TestCase
     {
         $this->exec('cache clear -h');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('engine to clear');
     }
 
@@ -74,7 +73,7 @@ class CacheCommandsTest extends TestCase
     {
         $this->exec('cache clear_all -h');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('Clear all');
     }
 
@@ -87,7 +86,7 @@ class CacheCommandsTest extends TestCase
     {
         $this->exec('cache list');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('- test');
         $this->assertOutputContains('- _cake_core_');
         $this->assertOutputContains('- _cake_model_');
@@ -102,7 +101,7 @@ class CacheCommandsTest extends TestCase
     {
         $this->exec('cache list -h');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('Show a list');
     }
 
@@ -114,7 +113,7 @@ class CacheCommandsTest extends TestCase
     public function testClearInvalidPrefix()
     {
         $this->exec('cache clear foo');
-        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitCode(Command::CODE_ERROR);
         $this->assertErrorContains('The "foo" cache configuration does not exist');
     }
 
@@ -128,7 +127,7 @@ class CacheCommandsTest extends TestCase
         Cache::add('key', 'value', 'test');
         $this->exec('cache clear test');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertNull(Cache::read('key', 'test'));
     }
 
@@ -142,7 +141,7 @@ class CacheCommandsTest extends TestCase
         Cache::add('key', 'value', 'test');
         $this->exec('cache clear _cake_core_');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertSame('value', Cache::read('key', 'test'));
     }
 
@@ -157,7 +156,7 @@ class CacheCommandsTest extends TestCase
         Cache::add('key', 'value3', '_cake_core_');
         $this->exec('cache clear_all');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertNull(Cache::read('key', 'test'));
         $this->assertNull(Cache::read('key', '_cake_core_'));
     }

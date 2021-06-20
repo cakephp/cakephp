@@ -37,7 +37,6 @@ class PluginLoadedCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->useCommandRunner();
         $this->setAppNamespace();
     }
 

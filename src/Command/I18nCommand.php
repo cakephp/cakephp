@@ -34,7 +34,7 @@ class I18nCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $io->out('<info>I18n Shell</info>');
+        $io->out('<info>I18n Command</info>');
         $io->hr();
         $io->out('[E]xtract POT file from sources');
         $io->out('[I]nitialize a language from POT file');

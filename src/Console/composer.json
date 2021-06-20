@@ -31,8 +31,8 @@
         "cakephp/utility": "^5.0"
     },
     "suggest": {
-        "cakephp/datasource": "To use the Shell or Command base classes",
-        "cakephp/orm": "To use the Shell or Command base classes"
+        "cakephp/datasource": "To use the Command base classes",
+        "cakephp/orm": "To use the Command base classes"
     },
     "autoload": {
         "psr-4": {

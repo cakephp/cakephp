@@ -38,7 +38,6 @@ class HelpCommandTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
-        $this->useCommandRunner();
         Plugin::getCollection()->clear();
 
         $app = $this->getMockForAbstractClass(
@@ -92,16 +91,16 @@ class HelpCommandTest extends TestCase
     protected function assertCommandList()
     {
         $this->assertOutputContains('<info>TestPlugin</info>', 'plugin header should appear');
-        $this->assertOutputContains('- widget', 'plugin command should appear');
+        $this->assertOutputContains('- sample', 'plugin command should appear');
         $this->assertOutputNotContains(
-            '- test_plugin.widget',
+            '- test_plugin.sample',
             'only short alias for plugin command.'
         );
         $this->assertOutputContains('<info>App</info>', 'app header should appear');
         $this->assertOutputContains('- sample', 'app shell');
         $this->assertOutputContains('<info>CakePHP</info>', 'cakephp header should appear');
         $this->assertOutputContains('- routes', 'core shell');
-        $this->assertOutputContains('- example', 'short plugin name');
+        $this->assertOutputContains('- sample', 'short plugin name');
         $this->assertOutputContains('- abort', 'command object');
         $this->assertOutputContains('To run a command', 'more info present');
         $this->assertOutputContains('To get help', 'more info present');
@@ -118,14 +117,14 @@ class HelpCommandTest extends TestCase
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('<shells>');
 
-        $find = '<shell name="sample" call_as="sample" provider="TestApp\Shell\SampleShell" help="sample -h"';
+        $find = '<shell name="sample" call_as="sample" provider="TestApp\Command\SampleCommand" help="sample -h"';
         $this->assertOutputContains($find);
 
         $find = '<shell name="schema_cache build" call_as="schema_cache build" ' .
             'provider="Cake\Command\SchemacacheBuildCommand" help="schema_cache build -h"';
         $this->assertOutputContains($find);
 
-        $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Shell\SampleShell" help="test_plugin.sample -h"';
+        $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Command\SampleCommand" help="test_plugin.sample -h"';
         $this->assertOutputContains($find);
     }
 }

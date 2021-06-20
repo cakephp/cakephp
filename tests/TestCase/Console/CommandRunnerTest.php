@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Command\Command;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
-use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventManager;
@@ -32,7 +32,7 @@ use InvalidArgumentException;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
-use TestApp\Shell\SampleShell;
+use TestApp\Command\SampleCommand;
 
 /**
  * Test case for the CommandCollection
@@ -275,7 +275,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'routes'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $contents = implode("\n", $output->messages());
         $this->assertStringContainsString('URI template', $contents);
@@ -298,7 +298,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'schema_cache', 'build'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $contents = implode("\n", $output->messages());
         $this->assertStringContainsString('Cache', $contents);
@@ -311,27 +311,12 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandWithAbort()
     {
-        $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
+        $app = $this->makeAppWithCommands(['failure' => AbortCommand::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
-        $result = $runner->run(['cake', 'failure', 'with_abort'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_ERROR, $result);
-    }
-
-    /**
-     * Test returning a non-zero value
-     *
-     * @return void
-     */
-    public function testRunValidCommandReturnInteger()
-    {
-        $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
-        $output = new ConsoleOutput();
-
-        $runner = new CommandRunner($app, 'cake');
-        $result = $runner->run(['cake', 'failure', 'returnValue'], $this->getMockIo($output));
-        $this->assertSame(99, $result);
+        $result = $runner->run(['cake', 'failure'], $this->getMockIo($output));
+        $this->assertSame(127, $result);
     }
 
     /**
@@ -341,7 +326,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunRootNamePropagates()
     {
-        $app = $this->makeAppWithCommands(['sample' => SampleShell::class]);
+        $app = $this->makeAppWithCommands(['sample' => SampleCommand::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'widget');
@@ -363,7 +348,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'ex'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Demo Command!', $messages);
@@ -384,7 +369,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'tool', 'build'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Demo Command!', $messages);
@@ -405,7 +390,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'tool', 'build', 'assets'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Demo Command!', $messages);
@@ -430,7 +415,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake', $factory);
         $result = $runner->run(['cake', 'ex'], $io);
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Demo Command!', $messages);
@@ -450,7 +435,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'dependency'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Dependency Command', $messages);
@@ -469,7 +454,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'ex', '-h'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Command::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString("\ncake ex [-h]", $messages);

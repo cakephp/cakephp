@@ -35,8 +35,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Command list
      *
      * @var array
-     * @psalm-var (\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string)[]
-     * @psalm-suppress DeprecatedClass
+     * @psalm-var array<string, \Cake\Console\CommandInterface|class-string>
      */
     protected $commands = [];
 
@@ -56,19 +55,19 @@ class CommandCollection implements IteratorAggregate, Countable
      * Add a command to the collection
      *
      * @param string $name The name of the command you want to map.
-     * @param \Cake\Console\CommandInterface|\Cake\Console\Shell|string $command The command to map.
-     *   Can be a FQCN, Shell instance or CommandInterface instance.
+     * @param \Cake\Console\CommandInterface|string $command The command to map.
+     *   Can be a FQCN or CommandInterface instance.
      * @return $this
      * @throws \InvalidArgumentException
+     * @psalm-param \Cake\Console\CommandInterface|class-string $command
      */
-    public function add(string $name, $command)
+    public function add(string $name, CommandInterface|string $command)
     {
-        if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, CommandInterface::class)) {
-            $class = is_string($command) ? $command : get_class($command);
+        if (is_string($command) && !is_subclass_of($command, CommandInterface::class)) {
             throw new InvalidArgumentException(sprintf(
                 "Cannot use '%s' for command '%s'. " .
-                "It is not a subclass of Cake\Console\Shell or Cake\Command\CommandInterface.",
-                $class,
+                "It is not a subclass of Cake\Console\CommandInterface.",
+                $command,
                 $name
             ));
         }
@@ -127,9 +126,9 @@ class CommandCollection implements IteratorAggregate, Countable
      * Get the target for a command.
      *
      * @param string $name The named shell.
-     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell|string Either the command class or an instance.
+     * @return \Cake\Console\CommandInterface|string Either the command class or an instance.
      * @throws \InvalidArgumentException when unknown commands are fetched.
-     * @psalm-return \Cake\Console\CommandInterface|\Cake\Console\Shell|class-string
+     * @psalm-return \Cake\Console\CommandInterface|class-string
      */
     public function get(string $name)
     {
@@ -144,7 +143,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Implementation of IteratorAggregate.
      *
      * @return \Traversable
-     * @psalm-return \Traversable<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string>
+     * @psalm-return \Traversable<string, \Cake\Console\CommandInterface|class-string>
      */
     public function getIterator(): Traversable
     {

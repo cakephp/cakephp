@@ -164,18 +164,13 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         $result = CommandInterface::CODE_ERROR;
-        $shell = $this->getCommand($io, $commands, $name);
-        if ($shell instanceof Shell) {
-            $result = $this->runShell($shell, $argv);
-        }
-        if ($shell instanceof CommandInterface) {
-            $result = $this->runCommand($shell, $argv, $io);
-        }
+        $command = $this->getCommand($io, $commands, $name);
+        $result = $this->runCommand($command, $argv, $io);
 
-        if ($result === null || $result === true) {
+        if ($result === null) {
             return CommandInterface::CODE_SUCCESS;
         }
-        if (is_int($result) && $result >= 0 && $result <= 255) {
+        if ($result >= 0 && $result <= 255) {
             return $result;
         }
 
@@ -239,20 +234,17 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
      * @param string $name The command name to find
-     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell
+     * @return \Cake\Console\CommandInterface
      */
-    protected function getCommand(ConsoleIo $io, CommandCollection $commands, string $name)
+    protected function getCommand(ConsoleIo $io, CommandCollection $commands, string $name): CommandInterface
     {
         $instance = $commands->get($name);
         if (is_string($instance)) {
-            $instance = $this->createCommand($instance, $io);
+            $instance = $this->createCommand($instance);
         }
-        if ($instance instanceof Shell) {
-            $instance->setRootName($this->root);
-        }
-        if ($instance instanceof CommandInterface) {
-            $instance->setName("{$this->root} {$name}");
-        }
+
+        $instance->setName("{$this->root} {$name}");
+
         if ($instance instanceof CommandCollectionAwareInterface) {
             $instance->setCommandCollection($commands);
         }
@@ -338,31 +330,12 @@ class CommandRunner implements EventDispatcherInterface
     }
 
     /**
-     * Execute a Shell class.
+     * The wrapper for creating command instances.
      *
-     * @param \Cake\Console\Shell $shell The shell to run.
-     * @param array $argv The CLI arguments to invoke.
-     * @return int|bool|null Exit code
+     * @param string $className Command class name.
+     * @return \Cake\Console\CommandInterface
      */
-    protected function runShell(Shell $shell, array $argv)
-    {
-        try {
-            $shell->initialize();
-
-            return $shell->runCommand($argv, true);
-        } catch (StopException $e) {
-            return $e->getCode();
-        }
-    }
-
-    /**
-     * The wrapper for creating shell instances.
-     *
-     * @param string $className Shell class name.
-     * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
-     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell
-     */
-    protected function createCommand(string $className, ConsoleIo $io)
+    protected function createCommand(string $className): CommandInterface
     {
         if (!$this->factory) {
             $container = null;
@@ -372,12 +345,7 @@ class CommandRunner implements EventDispatcherInterface
             $this->factory = new CommandFactory($container);
         }
 
-        $shell = $this->factory->create($className);
-        if ($shell instanceof Shell) {
-            $shell->setIo($io);
-        }
-
-        return $shell;
+        return $this->factory->create($className);
     }
 
     /**

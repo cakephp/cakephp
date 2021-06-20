@@ -95,7 +95,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $grouped = [];
         $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
-            preg_match('/^(.+)\\\\(Command|Shell)\\\\/', $class, $matches);
+            preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
             // Probably not a useful class
             if (empty($matches)) {
                 continue;
