@@ -118,7 +118,7 @@ class Hash
      *
      * @param \ArrayAccess|array $data The data to extract from.
      * @param string $path The path to extract.
-     * @return array|\ArrayAccess An array of the extracted values. Returns an empty array
+     * @return \ArrayAccess|array An array of the extracted values. Returns an empty array
      *   if there are no matches.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::extract
      */

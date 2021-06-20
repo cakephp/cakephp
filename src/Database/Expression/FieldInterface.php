@@ -33,7 +33,7 @@ interface FieldInterface
     /**
      * Returns the field name
      *
-     * @return array|string|\Cake\Database\ExpressionInterface
+     * @return \Cake\Database\ExpressionInterface|array|string
      */
     public function getField();
 }

@@ -455,7 +455,7 @@ class ResultSet implements ResultSetInterface
      * Correctly nests results keys including those coming from associations
      *
      * @param array $row Array containing columns and values or false if there is no results
-     * @return array|\Cake\Datasource\EntityInterface Results
+     * @return \Cake\Datasource\EntityInterface|array Results
      */
     protected function _groupResult(array $row)
     {

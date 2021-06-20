@@ -209,7 +209,7 @@ class HelpFormatter
      * Get the help as an XML string.
      *
      * @param bool $string Return the SimpleXml object or a string. Defaults to true.
-     * @return string|\SimpleXMLElement See $string
+     * @return \SimpleXMLElement|string See $string
      */
     public function xml(bool $string = true)
     {
