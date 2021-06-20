@@ -170,27 +170,6 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     }
 
     /**
-     * Get/Set the schema for this form.
-     *
-     * This method will call `_buildSchema()` when the schema
-     * is first built. This hook method lets you configure the
-     * schema or load a pre-defined one.
-     *
-     * @deprecated 4.1.0 Use {@link setSchema()}/{@link getSchema()} instead.
-     * @param \Cake\Form\Schema|null $schema The schema to set, or null.
-     * @return \Cake\Form\Schema the schema instance.
-     */
-    public function schema(?Schema $schema = null): Schema
-    {
-        deprecationWarning('Form::schema() is deprecated. Use setSchema() and getSchema() instead.');
-        if ($schema !== null) {
-            $this->setSchema($schema);
-        }
-
-        return $this->getSchema();
-    }
-
-    /**
      * A hook method intended to be implemented by subclasses.
      *
      * You can use this method to define the schema using

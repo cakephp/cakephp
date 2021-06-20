@@ -695,29 +695,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Internally redirects one action to another. Does not perform another HTTP request unlike Controller::redirect()
-     *
-     * Examples:
-     *
-     * ```
-     * setAction('another_action');
-     * setAction('action_with_parameters', $parameter1);
-     * ```
-     *
-     * @param string $action The new action to be 'redirected' to.
-     *   Any other parameters passed to this method will be passed as parameters to the new action.
-     * @param mixed ...$args Arguments passed to the action
-     * @return mixed Returns the return value of the called action
-     * @deprecated 4.2.0 Refactor your code use `redirect()` instead of forwarding actions.
-     */
-    public function setAction(string $action, ...$args)
-    {
-        $this->setRequest($this->request->withParam('action', $action));
-
-        return $this->$action(...$args);
-    }
-
-    /**
      * Instantiates the correct view class, hands it its data, and uses it to render the view output.
      *
      * @param string|null $template Template to use for rendering

@@ -185,7 +185,6 @@ class ExceptionsTest extends TestCase
             ['Cake\Routing\Exception\DuplicateNamedRouteException', 0],
             ['Cake\Routing\Exception\MissingDispatcherFilterException', 0],
             ['Cake\Routing\Exception\MissingRouteException', 0],
-            ['Cake\Routing\Exception\RedirectException', 302],
             ['Cake\Utility\Exception\XmlException', 0],
             ['Cake\View\Exception\MissingCellException', 0],
             ['Cake\View\Exception\MissingHelperException', 0],

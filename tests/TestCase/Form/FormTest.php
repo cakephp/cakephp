@@ -29,30 +29,6 @@ use TestApp\Form\FormSchema;
 class FormTest extends TestCase
 {
     /**
-     * Test schema()
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSchema()
-    {
-        $this->deprecated(function () {
-            $form = new Form();
-            $schema = $form->schema();
-
-            $this->assertInstanceOf('Cake\Form\Schema', $schema);
-            $this->assertSame($schema, $form->schema(), 'Same instance each time');
-
-            $schema = new Schema();
-            $this->assertSame($schema, $form->schema($schema));
-            $this->assertSame($schema, $form->schema());
-
-            $form = new AppForm();
-            $this->assertInstanceOf(FormSchema::class, $form->schema());
-        });
-    }
-
-    /**
      * Test setSchema() and getSchema()
      *
      * @return void
