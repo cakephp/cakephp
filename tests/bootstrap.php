@@ -19,7 +19,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
-use Cake\TestSuite\Schema\SchemaGenerator;
+use Cake\TestSuite\Fixture\SchemaGenerator;
 use Cake\Utility\Security;
 
 if (is_file('vendor/autoload.php')) {
