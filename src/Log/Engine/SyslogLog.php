@@ -45,7 +45,6 @@ class SyslogLog extends BaseLog
      *  Log::config('error', ]
      *      'engine' => 'Syslog',
      *      'levels' => ['emergency', 'alert', 'critical', 'error'],
-     *      'format' => "%s: My-App - %s",
      *      'prefix' => 'Web Server 01'
      *  ]);
      * ```
