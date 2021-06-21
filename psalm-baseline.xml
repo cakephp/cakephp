@@ -49,9 +49,9 @@
   <file src="src/Console/CommandCollection.php">
     <DeprecatedClass occurrences="4">
       <code>Shell::class</code>
-      <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
       <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|class-string</code>
       <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|string</code>
+      <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandFactoryInterface.php">
@@ -61,9 +61,9 @@
   </file>
   <file src="src/Console/CommandRunner.php">
     <DeprecatedClass occurrences="3">
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
       <code>\Cake\Console\Shell</code>
-      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
-      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/ShellDispatcher.php">
@@ -144,6 +144,18 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$this-&gt;data</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Http/Session/CacheSession.php">
+    <ImplementedReturnTypeMismatch occurrences="2">
+      <code>int|false</code>
+      <code>string|false</code>
+    </ImplementedReturnTypeMismatch>
+  </file>
+  <file src="src/Http/Session/DatabaseSession.php">
+    <ImplementedReturnTypeMismatch occurrences="2">
+      <code>int|false</code>
+      <code>string|false</code>
+    </ImplementedReturnTypeMismatch>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
     <MissingParamType occurrences="1">
