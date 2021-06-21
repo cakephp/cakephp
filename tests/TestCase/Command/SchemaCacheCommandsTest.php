@@ -57,7 +57,6 @@ class SchemaCacheCommandsTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
-        $this->useCommandRunner();
 
         $this->cache = $this->getMockBuilder(NullEngine::class)
             ->onlyMethods(['set', 'get', 'delete'])

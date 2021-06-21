@@ -58,7 +58,6 @@ class PluginAssetsCommandsTest extends TestCase
         $this->fs->deleteDir($this->wwwRoot);
         $this->fs->copyDir(WWW_ROOT, $this->wwwRoot);
 
-        $this->useCommandRunner();
         $this->setAppNamespace();
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithDefaultRoutes', []);
     }

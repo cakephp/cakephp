@@ -115,7 +115,7 @@ class ConsoleOptionParser
     protected $_args = [];
 
     /**
-     * Subcommands for this Shell.
+     * Subcommands for this Command.
      *
      * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
      * @var \Cake\Console\ConsoleInputSubcommand[]

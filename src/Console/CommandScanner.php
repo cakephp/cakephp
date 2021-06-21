@@ -37,20 +37,12 @@ class CommandScanner
      */
     public function scanCore(): array
     {
-        $coreShells = $this->scanDir(
-            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
-            'Cake\Shell\\',
-            '',
-            ['command_list']
-        );
-        $coreCommands = $this->scanDir(
+        return $this->scanDir(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
             'Cake\Command\\',
             '',
             ['command_list']
         );
-
-        return array_merge($coreShells, $coreCommands);
     }
 
     /**
@@ -61,20 +53,13 @@ class CommandScanner
     public function scanApp(): array
     {
         $appNamespace = Configure::read('App.namespace');
-        $appShells = $this->scanDir(
-            App::classPath('Shell')[0],
-            $appNamespace . '\Shell\\',
-            '',
-            []
-        );
-        $appCommands = $this->scanDir(
+
+        return $this->scanDir(
             App::classPath('Command')[0],
             $appNamespace . '\Command\\',
             '',
             []
         );
-
-        return array_merge($appShells, $appCommands);
     }
 
     /**
@@ -92,10 +77,7 @@ class CommandScanner
         $namespace = str_replace('/', '\\', $plugin);
         $prefix = Inflector::underscore($plugin) . '.';
 
-        $commands = $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
-        $shells = $this->scanDir($path . 'Shell', $namespace . '\Shell\\', $prefix, []);
-
-        return array_merge($shells, $commands);
+        return $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
     }
 
     /**
@@ -117,7 +99,7 @@ class CommandScanner
         // This ensures `Command` class is not added to the list.
         $hide[] = '';
 
-        $classPattern = '/(Shell|Command)\.php$/';
+        $classPattern = '/Command\.php$/';
         $fs = new Filesystem();
         /** @var \SplFileInfo[] $files */
         $files = $fs->find($path, $classPattern);
@@ -132,11 +114,7 @@ class CommandScanner
             }
 
             $class = $namespace . $fileInfo->getBasename('.php');
-            /** @psalm-suppress DeprecatedClass */
-            if (
-                !is_subclass_of($class, Shell::class)
-                && !is_subclass_of($class, CommandInterface::class)
-            ) {
+            if (!is_subclass_of($class, CommandInterface::class)) {
                 continue;
             }
             if (is_subclass_of($class, BaseCommand::class)) {

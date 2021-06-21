@@ -41,7 +41,6 @@ class I18nExtractCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->useCommandRunner();
         $this->setAppNamespace();
 
         $this->path = TMP . 'tests/extract_task_test';

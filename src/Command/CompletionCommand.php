@@ -21,10 +21,7 @@ use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Shell;
-use Cake\Utility\Inflector;
 use ReflectionClass;
-use ReflectionMethod;
 
 /**
  * Provide command completion shells such as bash.
@@ -170,52 +167,11 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 $reflection = new ReflectionClass($value);
                 $value = $reflection->newInstance();
             }
-            if ($value instanceof Shell) {
-                $shellCommands = $this->shellSubcommands($value);
-                $options = array_merge($options, $shellCommands);
-            }
         }
         $options = array_unique($options);
         $io->out(implode(' ', $options));
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Reflect the subcommands names out of a shell.
-     *
-     * @param \Cake\Console\Shell $shell The shell to get commands for
-     * @return string[] A list of commands
-     */
-    protected function shellSubcommands(Shell $shell): array
-    {
-        $shell->initialize();
-        $shell->loadTasks();
-
-        $optionParser = $shell->getOptionParser();
-        $subcommands = $optionParser->subcommands();
-
-        $output = array_keys($subcommands);
-
-        // If there are no formal subcommands all methods
-        // on a shell are 'subcommands'
-        if (count($subcommands) === 0) {
-            /** @psalm-suppress DeprecatedClass */
-            $coreShellReflection = new ReflectionClass(Shell::class);
-            $reflection = new ReflectionClass($shell);
-            foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                if (
-                    $shell->hasMethod($method->getName())
-                    && !$coreShellReflection->hasMethod($method->getName())
-                ) {
-                    $output[] = $method->getName();
-                }
-            }
-        }
-        $taskNames = array_map('Cake\Utility\Inflector::underscore', $shell->taskNames);
-        $output = array_merge($output, $taskNames);
-
-        return array_unique($output);
     }
 
     /**
@@ -248,28 +204,13 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 $reflection = new ReflectionClass($value);
                 $value = $reflection->newInstance();
             }
-            $parser = null;
-            if ($value instanceof Command) {
-                $parser = $value->getOptionParser();
-            }
-            if ($value instanceof Shell) {
-                $value->initialize();
-                $value->loadTasks();
+            $parser = $value->getOptionParser();
 
-                $parser = $value->getOptionParser();
-                $subcommand = Inflector::camelize((string)$subcommand);
-                if ($subcommand && $value->hasTask($subcommand)) {
-                    $parser = $value->{$subcommand}->getOptionParser();
-                }
-            }
-
-            if ($parser) {
-                foreach ($parser->options() as $name => $option) {
-                    $options[] = "--$name";
-                    $short = $option->short();
-                    if ($short) {
-                        $options[] = "-$short";
-                    }
+            foreach ($parser->options() as $name => $option) {
+                $options[] = "--$name";
+                $short = $option->short();
+                if ($short) {
+                    $options[] = "-$short";
                 }
             }
         }

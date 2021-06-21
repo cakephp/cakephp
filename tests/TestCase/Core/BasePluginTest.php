@@ -106,8 +106,8 @@ class BasePluginTest extends TestCase
 
         $result = $plugin->console(new CommandCollection());
 
-        $this->assertTrue($result->has('widget'), 'Should have plugin command added');
-        $this->assertTrue($result->has('test_plugin.widget'), 'Should have long plugin name');
+        $this->assertTrue($result->has('sample'), 'Should have plugin command added');
+        $this->assertTrue($result->has('test_plugin.sample'), 'Should have long plugin name');
 
         $this->assertTrue($result->has('example'), 'Should have plugin shell added');
         $this->assertTrue($result->has('test_plugin.example'), 'Should have long plugin name');

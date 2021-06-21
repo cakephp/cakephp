@@ -38,7 +38,6 @@ class RoutesCommandTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
-        $this->useCommandRunner();
     }
 
     /**
