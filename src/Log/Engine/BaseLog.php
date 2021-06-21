@@ -57,13 +57,16 @@ abstract class BaseLog extends AbstractLogger
     {
         $this->setConfig($config);
 
-        if (!is_array($this->_config['scopes']) && $this->_config['scopes'] !== false) {
+        assert(
+            $this->_config['scopes'] !== false,
+            new InvalidArgumentException('Use `null` instead of `false` to disable scopes.')
+        );
+
+        if ($this->_config['scopes'] !== null) {
             $this->_config['scopes'] = (array)$this->_config['scopes'];
         }
 
-        if (!is_array($this->_config['levels'])) {
-            $this->_config['levels'] = (array)$this->_config['levels'];
-        }
+        $this->_config['levels'] = (array)$this->_config['levels'];
 
         if (!empty($this->_config['types']) && empty($this->_config['levels'])) {
             $this->_config['levels'] = (array)$this->_config['types'];
@@ -105,9 +108,9 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return array|false
+     * @return array|null
      */
-    public function scopes()
+    public function scopes(): ?array
     {
         return $this->_config['scopes'];
     }
