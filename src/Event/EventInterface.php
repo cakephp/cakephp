@@ -70,10 +70,10 @@ interface EventInterface
      * Accesses the event data/payload.
      *
      * @param string|null $key The data payload element to return, or null to return all data.
-     * @return array|mixed|null The data payload if $key is null, or the data value for the given $key.
+     * @return mixed The data payload if $key is null, or the data value for the given $key.
      *   If the $key does not exist a null value is returned.
      */
-    public function getData(?string $key = null);
+    public function getData(?string $key = null): mixed;
 
     /**
      * Assigns a value to the data/payload of this event.
@@ -82,5 +82,5 @@ interface EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setData($key, $value = null);
+    public function setData(array|string $key, $value = null);
 }
