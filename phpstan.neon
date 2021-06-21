@@ -10,9 +10,6 @@ parameters:
 		- tests/bootstrap.php
 	paths:
 		- src/
-	earlyTerminatingMethodCalls:
-		Cake\Console\Shell:
-			- abort
 
 services:
 	-
