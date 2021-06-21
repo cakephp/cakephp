@@ -712,6 +712,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function setAction(string $action, ...$args)
     {
+        deprecationWarning(
+            'Controller::setAction() is deprecated. Either refactor your code to use `redirect()`, ' .
+            'or call the other action as a method.'
+        );
         $this->setRequest($this->request->withParam('action', $action));
 
         return $this->$action(...$args);
