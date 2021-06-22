@@ -64,16 +64,14 @@ class CallbackStatement extends StatementDecorator
     }
 
     /**
-     * Fetch all rows from the statement.
+     * {@inheritDoc}
      *
      * Each row in the result will be processed by the callback when it is not `false.
-     *
-     * @param string|int $type Either 'num' or 'assoc' to indicate the result format you would like.
-     * @return array
      */
-    public function fetchAll($type = parent::FETCH_TYPE_NUM): array
+    public function fetchAll($type = parent::FETCH_TYPE_NUM)
     {
-        /** @psalm-suppress PossiblyFalseArgument  */
-        return array_map($this->_callback, $this->_statement->fetchAll($type));
+        $results = $this->_statement->fetchAll($type);
+
+        return $results !== false ? array_map($this->_callback, $results) : false;
     }
 }
