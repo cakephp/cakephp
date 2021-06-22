@@ -654,7 +654,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     {
         $name = $this->_driver->quoteIdentifier($schema->name());
         $queries = [
-            sprintf('DELETE FROM %s', $name),
+            sprintf('TRUNCATE TABLE %s', $name),
         ];
 
         // Restart identity sequences
