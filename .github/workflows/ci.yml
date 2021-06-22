@@ -14,6 +14,7 @@ on:
 
 jobs:
   testsuite:
+    if: false
     runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
@@ -181,9 +182,10 @@ jobs:
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
-          vendor/bin/phpunit --verbose
+        vendor/bin/phpunit --verbose --filter BindingKeyTest
 
   cs-stan:
+    if: false
     name: Coding Standard & Static Analysis
     runs-on: ubuntu-18.04
 
