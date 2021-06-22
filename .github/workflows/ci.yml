@@ -182,7 +182,7 @@ jobs:
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
-        vendor/bin/phpunit --verbose --filter QueryTests
+        vendor/bin/phpunit --verbose --filter QueryTest
 
   cs-stan:
     if: false
