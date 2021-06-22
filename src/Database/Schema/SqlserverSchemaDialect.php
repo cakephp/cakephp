@@ -664,7 +664,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             $column = $schema->getColumn($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
-                    "DBCC CHECKIDENT('%s', RESEED, 0)",
+                    "DBCC CHECKIDENT('%s', RESEED, 1)",
                     $schema->name()
                 );
             }
