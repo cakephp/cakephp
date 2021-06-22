@@ -182,7 +182,7 @@ jobs:
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
-        vendor/bin/phpunit --verbose --filter BindingKeyTest
+        vendor/bin/phpunit --verbose
 
   cs-stan:
     if: false
