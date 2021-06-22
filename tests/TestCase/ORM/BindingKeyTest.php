@@ -70,7 +70,8 @@ class BindingKeyTest extends TestCase
         ]);
 
         $result = $users->find()
-            ->contain(['AuthUsers']);
+            ->contain(['AuthUsers'])
+            ->order(['Users.id']);
 
         $expected = ['mariano', 'nate', 'larry', 'garrett'];
         $expected = array_combine($expected, $expected);
