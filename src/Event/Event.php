@@ -76,15 +76,15 @@ class Event implements EventInterface
      * @param string $name Name of the event
      * @param object|null $subject the object that this event applies to
      *   (usually the object that is generating the event).
-     * @param \ArrayAccess|array|null $data any value you wish to be transported
+     * @param array $data any value you wish to be transported
      *   with this event to it can be read by listeners.
      * @psalm-param TSubject|null $subject
      */
-    public function __construct(string $name, $subject = null, $data = null)
+    public function __construct(string $name, $subject = null, array $data = [])
     {
         $this->_name = $name;
         $this->_subject = $subject;
-        $this->_data = (array)$data;
+        $this->_data = $data;
     }
 
     /**
@@ -160,30 +160,21 @@ class Event implements EventInterface
     }
 
     /**
-     * Access the event data/payload.
-     *
-     * @param string|null $key The data payload element to return, or null to return all data.
-     * @return array|mixed|null The data payload if $key is null, or the data value for the given $key.
-     *   If the $key does not exist a null value is returned.
+     * @inheritDoc
      */
-    public function getData(?string $key = null)
+    public function getData(?string $key = null): mixed
     {
         if ($key !== null) {
             return $this->_data[$key] ?? null;
         }
 
-        /** @psalm-suppress RedundantCastGivenDocblockType */
-        return (array)$this->_data;
+        return $this->_data;
     }
 
     /**
-     * Assigns a value to the data/payload of this event.
-     *
-     * @param array|string $key An array will replace all payload data, and a key will set just that array item.
-     * @param mixed $value The value to set.
-     * @return $this
+     * @inheritDoc
      */
-    public function setData($key, $value = null)
+    public function setData(array|string $key, $value = null)
     {
         if (is_array($key)) {
             $this->_data = $key;
