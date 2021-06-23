@@ -13,10 +13,10 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\TestSuite\Schema;
+namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\Schema\SchemaGenerator;
+use Cake\TestSuite\Fixture\SchemaGenerator;
 use Cake\TestSuite\TestCase;
 
 /**
