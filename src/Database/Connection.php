@@ -275,7 +275,7 @@ class Connection implements ConnectionInterface
     /**
      * Prepares a SQL statement to be executed.
      *
-     * @param string|\Cake\Database\Query $query The SQL to convert into a prepared statement.
+     * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
     public function prepare($query): StatementInterface
@@ -626,7 +626,10 @@ class Connection implements ConnectionInterface
      */
     public function releaseSavePoint($name): void
     {
-        $this->execute($this->_driver->releaseSavePointSQL($name))->closeCursor();
+        $sql = $this->_driver->releaseSavePointSQL($name);
+        if ($sql) {
+            $this->execute($sql)->closeCursor();
+        }
     }
 
     /**
@@ -747,7 +750,7 @@ class Connection implements ConnectionInterface
      * Quotes value to be used safely in database query.
      *
      * @param mixed $value The value to quote.
-     * @param string|int|\Cake\Database\TypeInterface $type Type to be used for determining kind of quoting to perform
+     * @param \Cake\Database\TypeInterface|string|int $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
     public function quote($value, $type = 'string'): string
@@ -784,7 +787,7 @@ class Connection implements ConnectionInterface
      *
      * Changing this setting will not modify existing schema collections objects.
      *
-     * @param bool|string $cache Either boolean false to disable metadata caching, or
+     * @param string|bool $cache Either boolean false to disable metadata caching, or
      *   true to use `_cake_model_` or the name of the cache config to use.
      * @return void
      */

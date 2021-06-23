@@ -182,7 +182,7 @@ abstract class Association
      * The default finder name to use for fetching rows from the target table
      * With array value, finder name and default options are allowed.
      *
-     * @var string|array
+     * @var array|string
      */
     protected $_finder = 'all';
 
@@ -422,7 +422,7 @@ abstract class Association
      * Sets a list of conditions to be always included when fetching records from
      * the target association.
      *
-     * @param array|\Closure $conditions list of conditions to be used
+     * @param \Closure|array $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
      * @return \Cake\ORM\Association
      */
@@ -438,7 +438,7 @@ abstract class Association
      * the target association.
      *
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array|\Closure
+     * @return \Closure|array
      */
     public function getConditions()
     {
@@ -653,7 +653,7 @@ abstract class Association
     /**
      * Gets the default finder to use for fetching rows from the target table.
      *
-     * @return string|array
+     * @return array|string
      */
     public function getFinder()
     {
@@ -663,7 +663,7 @@ abstract class Association
     /**
      * Sets the default finder to use for fetching rows from the target table.
      *
-     * @param string|array $finder the finder name to use or array of finder name and option.
+     * @param array|string $finder the finder name to use or array of finder name and option.
      * @return $this
      */
     public function setFinder($finder)
@@ -696,8 +696,6 @@ abstract class Association
      * - conditions: array with a list of conditions to filter the join with, this
      *   will be merged with any conditions originally configured for this association
      * - fields: a list of fields in the target table to include in the result
-     * - type: The type of join to be used (e.g. INNER)
-     *   the records found on this association
      * - aliasPath: A dot separated string representing the path of association names
      *   followed from the passed query main table to this association.
      * - propertyPath: A dot separated string representing the path of association
@@ -710,24 +708,28 @@ abstract class Association
      * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
-     * @throws \RuntimeException if the query builder passed does not return a query
-     * object
+     * @throws \RuntimeException Unable to build the query or associations.
      */
     public function attachTo(Query $query, array $options = []): void
     {
         $target = $this->getTarget();
-        $joinType = empty($options['joinType']) ? $this->getJoinType() : $options['joinType'];
         $table = $target->getTable();
 
         $options += [
             'includeFields' => true,
             'foreignKey' => $this->getForeignKey(),
             'conditions' => [],
+            'joinType' => $this->getJoinType(),
             'fields' => [],
-            'type' => $joinType,
             'table' => $table,
             'finder' => $this->getFinder(),
         ];
+
+        // This is set by joinWith to disable matching results
+        if ($options['fields'] === false) {
+            $options['fields'] = [];
+            $options['includeFields'] = false;
+        }
 
         if (!empty($options['foreignKey'])) {
             $joinCondition = $this->_joinCondition($options);
@@ -764,9 +766,11 @@ abstract class Association
         $dummy->where($options['conditions']);
         $this->_dispatchBeforeFind($dummy);
 
-        $joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-        $options['conditions'] = $dummy->clause('where');
-        $query->join([$this->_name => array_intersect_key($options, $joinOptions)]);
+        $query->join([$this->_name => [
+            'table' => $options['table'],
+            'conditions' => $dummy->clause('where'),
+            'type' => $options['joinType'],
+        ]]);
 
         $this->_appendFields($query, $dummy, $options);
         $this->_formatAssociationResults($query, $dummy, $options);
@@ -846,7 +850,7 @@ abstract class Association
      * and modifies the query accordingly based of this association
      * configuration
      *
-     * @param string|array|null $type the type of query to perform, if an array is passed,
+     * @param array|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
@@ -866,7 +870,7 @@ abstract class Association
      * Proxies the operation to the target table's exists method after
      * appending the default conditions for this association
      *
-     * @param array|\Closure|\Cake\Database\ExpressionInterface $conditions The conditions to use
+     * @param \Cake\Database\ExpressionInterface|\Closure|array $conditions The conditions to use
      * for checking if any record matches.
      * @see \Cake\ORM\Table::exists()
      * @return bool
@@ -956,25 +960,17 @@ abstract class Association
             return;
         }
 
-        $fields = $surrogate->clause('select') ?: $options['fields'];
-        $target = $this->_targetTable;
-        $autoFields = $surrogate->isAutoFieldsEnabled();
+        $fields = array_merge($surrogate->clause('select'), $options['fields']);
 
-        if (empty($fields) && !$autoFields) {
-            if ($options['includeFields'] && ($fields === null || $fields !== false)) {
-                $fields = $target->getSchema()->columns();
-            }
+        if (
+            (empty($fields) && $options['includeFields']) ||
+            $surrogate->isAutoFieldsEnabled()
+        ) {
+            $fields = array_merge($fields, $this->_targetTable->getSchema()->columns());
         }
 
-        if ($autoFields === true) {
-            $fields = array_filter((array)$fields);
-            $fields = array_merge($fields, $target->getSchema()->columns());
-        }
-
-        if ($fields) {
-            $query->select($query->aliasFields($fields, $this->_name));
-        }
-        $query->addDefaultTypes($target);
+        $query->select($query->aliasFields($fields, $this->_name));
+        $query->addDefaultTypes($this->_targetTable);
     }
 
     /**
@@ -1130,7 +1126,7 @@ abstract class Association
      * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
      * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
      *
-     * @param string|array $finderData The finder name or an array having the name as key
+     * @param array|string $finderData The finder name or an array having the name as key
      * and options as value.
      * @return array
      */

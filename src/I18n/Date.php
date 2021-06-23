@@ -125,7 +125,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * timezone will always be the server local time. Normalizing the timezone allows for
      * subtraction/addition to have deterministic results.
      *
-     * @param string|int|\DateTime|\DateTimeImmutable|null $time Fixed or relative time
+     * @param \DateTime|\DateTimeImmutable|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone in which the date is taken.
      *                                  Ignored if `$time` is a DateTimeInterface instance.
      */

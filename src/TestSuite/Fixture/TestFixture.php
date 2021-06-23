@@ -165,11 +165,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     {
         [, $class] = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
-        $table = $class;
-
-        if (isset($matches[1])) {
-            $table = $matches[1];
-        }
+        $table = $matches[1] ?? $class;
 
         return Inflector::tableize($table);
     }

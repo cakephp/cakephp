@@ -143,7 +143,7 @@ class EntityContext implements ContextInterface
                 $table = Inflector::pluralize($entityClass);
             }
         }
-        if (is_string($table) && strlen($table)) {
+        if (is_string($table) && $table !== '') {
             $table = $this->getTableLocator()->get($table);
         }
 
@@ -598,8 +598,9 @@ class EntityContext implements ContextInterface
         $entity = $this->entity($parts) ?: null;
 
         if (isset($this->_validator[$key])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
-            $this->_validator[$key]->setProvider('entity', $entity);
+            if (is_object($entity)) {
+                $this->_validator[$key]->setProvider('entity', $entity);
+            }
 
             return $this->_validator[$key];
         }
@@ -618,8 +619,10 @@ class EntityContext implements ContextInterface
         }
 
         $validator = $table->getValidator($method);
-        /** @psalm-suppress PossiblyInvalidArgument */
-        $validator->setProvider('entity', $entity);
+
+        if (is_object($entity)) {
+            $validator->setProvider('entity', $entity);
+        }
 
         return $this->_validator[$key] = $validator;
     }
@@ -627,7 +630,7 @@ class EntityContext implements ContextInterface
     /**
      * Get the table instance from a property path
      *
-     * @param string[]|string|\Cake\Datasource\EntityInterface $parts Each one of the parts in a path for a field name
+     * @param \Cake\Datasource\EntityInterface|string[]|string $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether or not to fallback to the last found table
      *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null

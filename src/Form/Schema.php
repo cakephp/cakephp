@@ -59,7 +59,7 @@ class Schema
      * Adds a field to the schema.
      *
      * @param string $name The field name.
-     * @param string|array $attrs The attributes for the field, or the type
+     * @param array|string $attrs The attributes for the field, or the type
      *   as a string.
      * @return $this
      */
@@ -105,11 +105,7 @@ class Schema
      */
     public function field(string $name): ?array
     {
-        if (!isset($this->_fields[$name])) {
-            return null;
-        }
-
-        return $this->_fields[$name];
+        return $this->_fields[$name] ?? null;
     }
 
     /**

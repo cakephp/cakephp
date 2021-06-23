@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Log;
 
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Log\LoggedQuery;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 
@@ -25,6 +27,22 @@ use Cake\Utility\Text;
  */
 class LoggedQueryTest extends TestCase
 {
+    protected $driver;
+
+    protected $true = 'TRUE';
+
+    protected $false = 'FALSE';
+
+    public function setUp(): void
+    {
+        $this->driver = ConnectionManager::get('test')->getDriver();
+
+        if ($this->driver instanceof Sqlserver) {
+            $this->true = '1';
+            $this->false = '0';
+        }
+    }
+
     /**
      * Tests that LoggedQuery can be converted to string
      *
@@ -45,10 +63,11 @@ class LoggedQueryTest extends TestCase
     public function testStringInterpolation()
     {
         $query = new LoggedQuery();
+        $query->driver = $this->driver;
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
         $query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
 
-        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = $this->true AND e = $this->false AND f = 0";
         $this->assertSame($expected, (string)$query);
     }
 
@@ -60,10 +79,11 @@ class LoggedQueryTest extends TestCase
     public function testStringInterpolationNotNamed()
     {
         $query = new LoggedQuery();
+        $query->driver = $this->driver;
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
         $query->params = ['string', '3', null, true, false, 0];
 
-        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = $this->true AND e = $this->false AND f = 0";
         $this->assertSame($expected, (string)$query);
     }
 

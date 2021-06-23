@@ -733,4 +733,39 @@ class ControllerFactoryTest extends TestCase
         $this->expectExceptionMessage('Too few arguments');
         $this->factory->invoke($controller);
     }
+
+    public function testMiddleware()
+    {
+        $request = new ServerRequest([
+            'url' => 'posts',
+            'params' => [
+                'controller' => 'Posts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->factory->invoke($controller);
+
+        $request = $controller->getRequest();
+        $this->assertTrue($request->getAttribute('for-all'));
+        $this->assertTrue($request->getAttribute('index-only'));
+        $this->assertNull($request->getAttribute('all-except-index'));
+
+        $request = new ServerRequest([
+            'url' => 'posts/get',
+            'params' => [
+                'controller' => 'Posts',
+                'action' => 'get',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->factory->invoke($controller);
+
+        $request = $controller->getRequest();
+        $this->assertTrue($request->getAttribute('for-all'));
+        $this->assertNull($request->getAttribute('index-only'));
+        $this->assertTrue($request->getAttribute('all-except-index'));
+    }
 }

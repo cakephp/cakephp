@@ -25,6 +25,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectWithPivotLoader;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
@@ -251,7 +252,7 @@ class BelongsToMany extends Association
      * Sets the table instance for the junction relation. If no arguments
      * are passed, the current configured table instance is returned
      *
-     * @param string|\Cake\ORM\Table|null $table Name or instance for the join table
+     * @param \Cake\ORM\Table|string|null $table Name or instance for the join table
      * @return \Cake\ORM\Table
      * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
@@ -461,10 +462,7 @@ class BelongsToMany extends Association
         $cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);
         $cond += $this->junctionConditions();
 
-        $includeFields = null;
-        if (isset($options['includeFields'])) {
-            $includeFields = $options['includeFields'];
-        }
+        $includeFields = $options['includeFields'] ?? null;
 
         // Attach the junction table as well we need it to populate _joinData.
         $assoc = $this->_targetTable->getAssociation($junction->getAlias());
@@ -492,9 +490,7 @@ class BelongsToMany extends Association
         if (empty($options['negateMatch'])) {
             return;
         }
-        if (!isset($options['conditions'])) {
-            $options['conditions'] = [];
-        }
+        $options['conditions'] = $options['conditions'] ?? [];
         $junction = $this->junction();
         $belongsTo = $junction->getAssociation($this->getSource()->getAlias());
         $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);
@@ -969,7 +965,7 @@ class BelongsToMany extends Association
     /**
      * Sets the current join table, either the name of the Table instance or the instance itself.
      *
-     * @param string|\Cake\ORM\Table $through Name of the Table instance or the instance itself
+     * @param \Cake\ORM\Table|string $through Name of the Table instance or the instance itself
      * @return $this
      */
     public function setThrough($through)
@@ -982,7 +978,7 @@ class BelongsToMany extends Association
     /**
      * Gets the current join table, either the name of the Table instance or the instance itself.
      *
-     * @return string|\Cake\ORM\Table
+     * @return \Cake\ORM\Table|string
      */
     public function getThrough()
     {
@@ -1061,7 +1057,7 @@ class BelongsToMany extends Association
      * If your association includes conditions or a finder, the junction table will be
      * included in the query's contained associations.
      *
-     * @param string|array|null $type the type of query to perform, if an array is passed,
+     * @param array|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
@@ -1173,7 +1169,7 @@ class BelongsToMany extends Association
         $bindingKey = (array)$this->getBindingKey();
         $primaryValue = $sourceEntity->extract($bindingKey);
 
-        if (count(array_filter($primaryValue, 'strlen')) !== count($bindingKey)) {
+        if (count(Hash::filter($primaryValue)) !== count($bindingKey)) {
             $message = 'Could not find primary key value for source entity';
             throw new InvalidArgumentException($message);
         }

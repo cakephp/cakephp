@@ -233,7 +233,7 @@ class Email implements JsonSerializable, Serializable
      * When setting the transport you can either use the name
      * of a configured transport or supply a constructed transport.
      *
-     * @param string|\Cake\Mailer\AbstractTransport $name Either the name of a configured
+     * @param \Cake\Mailer\AbstractTransport|string $name Either the name of a configured
      *   transport, or a transport instance.
      * @return $this
      * @throws \LogicException When the chosen transport lacks a send method.
@@ -274,7 +274,7 @@ class Email implements JsonSerializable, Serializable
      * Get generated message (used by transport classes)
      *
      * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if type is given, array if type is null
+     * @return array|string String if type is given, array if type is null
      */
     public function message(?string $type = null)
     {
@@ -290,7 +290,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Sets the configuration profile to use for this instance.
      *
-     * @param string|array $config String with configuration name, or
+     * @param array|string $config String with configuration name, or
      *    an array with config.
      * @return $this
      */
@@ -358,7 +358,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Send an email using the specified content, template and layout
      *
-     * @param string|array|null $content String with message or array with messages
+     * @param array|string|null $content String with message or array with messages
      * @return array
      * @throws \BadMethodCallException
      * @psalm-return array{headers: string, message: string}
@@ -386,7 +386,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Render email.
      *
-     * @param string|array|null $content Content array or string
+     * @param array|string|null $content Content array or string
      * @return void
      */
     public function render($content = null): void
@@ -471,7 +471,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Converts given value to string
      *
-     * @param string|array $value The value to convert
+     * @param array|string $value The value to convert
      * @return string
      */
     protected function flatten($value): string
@@ -482,11 +482,11 @@ class Email implements JsonSerializable, Serializable
     /**
      * Static method to fast create an instance of \Cake\Mailer\Email
      *
-     * @param string|array|null $to Address to send (see Cake\Mailer\Email::to()).
+     * @param array|string|null $to Address to send (see Cake\Mailer\Email::to()).
      *   If null, will try to use 'to' from transport config
      * @param string|null $subject String of subject or null to use 'subject' from transport config
-     * @param string|array|null $message String with message or array with variables to be used in render
-     * @param string|array $config String to use Email delivery profile from app.php or array with configs
+     * @param array|string|null $message String with message or array with variables to be used in render
+     * @param array|string $config String to use Email delivery profile from app.php or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
      * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
@@ -586,6 +586,18 @@ class Email implements JsonSerializable, Serializable
      */
     public function serialize(): string
     {
+        $array = $this->__serialize();
+
+        return serialize($array);
+    }
+
+    /**
+     * Magic method used for serializing the Email object.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
@@ -593,7 +605,7 @@ class Email implements JsonSerializable, Serializable
             }
         });
 
-        return serialize($array);
+        return $array;
     }
 
     /**
@@ -605,6 +617,17 @@ class Email implements JsonSerializable, Serializable
     public function unserialize($data): void
     {
         $this->createFromArray(unserialize($data));
+    }
+
+    /**
+     * Magic method used to rebuild the Email object.
+     *
+     * @param array $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->createFromArray($data);
     }
 
     /**

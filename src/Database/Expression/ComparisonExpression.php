@@ -71,7 +71,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     /**
      * Constructor
      *
-     * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
+     * @param \Cake\Database\ExpressionInterface|string $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
      * @param string|null $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value
@@ -282,7 +282,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * and all ExpressionInterface objects that could be found in the second
      * position.
      *
-     * @param iterable|\Cake\Database\ExpressionInterface $values The rows to insert
+     * @param \Cake\Database\ExpressionInterface|iterable $values The rows to insert
      * @return array
      */
     protected function _collectExpressions($values): array

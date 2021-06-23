@@ -26,9 +26,11 @@ use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
-use Cake\TestSuite\Fixture\FixtureManager;
+use Cake\TestSuite\Fixture\StateResetStrategyInterface;
+use Cake\TestSuite\Fixture\TruncationStrategy;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
+use RuntimeException;
 use TestApp\Model\Table\SecondaryPostsTable;
 
 /**
@@ -106,44 +108,6 @@ class TestCaseTest extends TestCase
         $event = new Event('my.event');
         $manager->dispatch($event);
         $this->assertEventFired('my.event', $manager);
-    }
-
-    /**
-     * testLoadFixturesOnDemand
-     *
-     * @return void
-     */
-    public function testLoadFixturesOnDemand()
-    {
-        $test = new FixturizedTestCase('testFixtureLoadOnDemand');
-        $test->autoFixtures = false;
-        $manager = $this->getMockBuilder('Cake\TestSuite\Fixture\FixtureManager')->getMock();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-        $manager->expects($this->once())->method('loadSingle');
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-    }
-
-    /**
-     * tests loadFixtures loads all fixtures on the test
-     *
-     * @return void
-     */
-    public function testLoadAllFixtures()
-    {
-        $test = new FixturizedTestCase('testLoadAllFixtures');
-        $test->autoFixtures = false;
-        $manager = new FixtureManager();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-        $this->assertCount(1, $result->passed());
-        $this->assertFalse($test->autoFixtures);
     }
 
     /**
@@ -470,12 +434,14 @@ class TestCaseTest extends TestCase
     public function testGetMockForModelSetTable()
     {
         static::setAppNamespace();
+        ConnectionManager::alias('test', 'custom_i18n_datasource');
 
         $I18n = $this->getMockForModel('CustomI18n', ['save']);
         $this->assertSame('custom_i18n_table', $I18n->getTable());
 
         $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('tags', $Tags->getTable());
+        ConnectionManager::dropAlias('custom_i18n_datasource');
     }
 
     /**
@@ -496,5 +462,43 @@ class TestCaseTest extends TestCase
 
         $result = Router::url($url);
         $this->assertSame('/app/articles', $result);
+    }
+
+    /**
+     * Test getting the state reset manager.
+     *
+     * @return void
+     */
+    public function testGetStateResetStrategySuccess()
+    {
+        $instance = $this->getStateResetStrategy();
+        $this->assertInstanceOf(StateResetStrategyInterface::class, $instance);
+        $this->assertInstanceOf(TruncationStrategy::class, $instance);
+    }
+
+    /**
+     * Test getting the state reset manager when class is invalid
+     *
+     * @return void
+     */
+    public function testGetStateResetStrategyMissingClass()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot find class `NotThere`');
+        $this->stateResetStrategy = 'NotThere';
+        $this->getStateResetStrategy();
+    }
+
+    /**
+     * Test getting the state reset manager when class is invalid
+     *
+     * @return void
+     */
+    public function testGetStateResetInvalidClass()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('does not implement the required');
+        $this->stateResetStrategy = static::class;
+        $this->getStateResetStrategy();
     }
 }

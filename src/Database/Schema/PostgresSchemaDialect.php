@@ -85,9 +85,17 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[1]);
-        $length = null;
+        $length = $precision = $scale = null;
         if (isset($matches[2])) {
             $length = (int)$matches[2];
+        }
+
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
+        if ($type !== null) {
+            return $type;
         }
 
         if (in_array($col, ['date', 'time', 'boolean'], true)) {
@@ -379,6 +387,12 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' SMALLINT',

@@ -32,7 +32,7 @@ use UnexpectedValueException;
 /**
  * A factory class to manage the life cycle of test fixtures
  */
-class FixtureManager
+class FixtureManager extends FixtureLoader
 {
     /**
      * Was this instance already initialized?
@@ -89,10 +89,37 @@ class FixtureManager
     }
 
     /**
-     * Inspects the test to look for unloaded fixtures and loads them
+     * Implemented to satisfy the abstract base class.
      *
-     * @param \Cake\TestSuite\TestCase $test The test case to inspect.
+     * For backwards compatibility reasons fixtures are loaded
+     * via `fixturize` which is called by the TestListener.
+     * While this method could call `fixturize()` it would duplicate
+     * work and impact test suite performance.
+     *
+     * @param \Cake\TestSuite\TestCase $test The test case.
      * @return void
+     */
+    public function setupTest(TestCase $test): void
+    {
+        // Do nothing
+    }
+
+    /**
+     * Implemented to satisfy the abstract base class.
+     *
+     * For backwards compatibility reasons fixtures are reset
+     * via `shutdown` which is called by the TestListener.
+     *
+     * @param \Cake\TestSuite\TestCase $test The test case.
+     * @return void
+     */
+    public function teardownTest(TestCase $test): void
+    {
+        // Do nothing
+    }
+
+    /**
+     * @inheritDoc
      */
     public function fixturize(TestCase $test): void
     {
@@ -105,13 +132,26 @@ class FixtureManager
     }
 
     /**
-     * Get the loaded fixtures.
-     *
-     * @return \Cake\Datasource\FixtureInterface[]
+     * @inheritDoc
      */
     public function loaded(): array
     {
         return $this->_loaded;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getInserted(): array
+    {
+        $inserted = [];
+        foreach ($this->_insertionMap as $fixtures) {
+            foreach ($fixtures as $fixture) {
+                $inserted[] = $fixture->table;
+            }
+        }
+
+        return $inserted;
     }
 
     /**
@@ -269,12 +309,7 @@ class FixtureManager
     }
 
     /**
-     * Creates the fixtures tables and inserts data on them.
-     *
-     * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
-     * @return void
-     * @throws \Cake\Core\Exception\CakeException When fixture records cannot be inserted.
-     * @throws \RuntimeException
+     * @inheritDoc
      */
     public function load(TestCase $test): void
     {
@@ -288,9 +323,7 @@ class FixtureManager
                 /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
                 $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
-                if (!isset($this->_insertionMap[$configName])) {
-                    $this->_insertionMap[$configName] = [];
-                }
+                $this->_insertionMap[$configName] = $this->_insertionMap[$configName] ?? [];
 
                 foreach ($fixtures as $fixture) {
                     if (!$fixture instanceof ConstraintsInterface) {
@@ -442,14 +475,7 @@ class FixtureManager
     }
 
     /**
-     * Creates a single fixture table and loads data into it.
-     *
-     * @param string $name of the fixture
-     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance or null
-     *  to get a Connection from the fixture.
-     * @param bool $dropTables Whether or not tables should be dropped and re-created.
-     * @return void
-     * @throws \UnexpectedValueException if $name is not a previously loaded class
+     * @inheritDoc
      */
     public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
     {

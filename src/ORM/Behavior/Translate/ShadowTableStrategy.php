@@ -135,7 +135,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $fieldsAdded = $this->addFieldsToQuery($query, $config);
         $orderByTranslatedField = $this->iterateClause($query, 'order', $config);
-        $filteredByTranslatedField = $this->traverseClause($query, 'where', $config);
+        $filteredByTranslatedField =
+            $this->traverseClause($query, 'where', $config) ||
+            $config['onlyTranslated'] ||
+            ($options['filterByCurrentLocale'] ?? null);
 
         if (!$fieldsAdded && !$orderByTranslatedField && !$filteredByTranslatedField) {
             return;

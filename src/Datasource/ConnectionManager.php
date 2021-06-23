@@ -72,7 +72,7 @@ class ConnectionManager
      *
      * The connection will not be constructed until it is first used.
      *
-     * @param string|array $key The name of the connection config, or an array of multiple configs.
+     * @param array|string $key The name of the connection config, or an array of multiple configs.
      * @param array|null $config An array of name => config data for adapter.
      * @return void
      * @throws \Cake\Core\Exception\CakeException When trying to modify an existing config.
@@ -205,10 +205,8 @@ class ConnectionManager
         if (empty(static::$_registry)) {
             static::$_registry = new ConnectionRegistry();
         }
-        if (isset(static::$_registry->{$name})) {
-            return static::$_registry->{$name};
-        }
 
-        return static::$_registry->load($name, static::$_config[$name]);
+        return static::$_registry->{$name}
+            ?? static::$_registry->load($name, static::$_config[$name]);
     }
 }

@@ -510,7 +510,7 @@ class Client implements ClientInterface
      * Generate a URL based on the scoped client options.
      *
      * @param string $url Either a full URL or just the path.
-     * @param string|array $query The query data for the URL.
+     * @param array|string $query The query data for the URL.
      * @param array $options The config options stored with Client::config()
      * @return string A complete url with scheme, port, host, and path.
      */
@@ -518,11 +518,6 @@ class Client implements ClientInterface
     {
         if (empty($options) && empty($query)) {
             return $url;
-        }
-        if ($query) {
-            $q = strpos($url, '?') === false ? '?' : '&';
-            $url .= $q;
-            $url .= is_string($query) ? $query : http_build_query($query);
         }
         $defaults = [
             'host' => null,
@@ -532,6 +527,12 @@ class Client implements ClientInterface
             'protocolRelative' => false,
         ];
         $options += $defaults;
+
+        if ($query) {
+            $q = strpos($url, '?') === false ? '?' : '&';
+            $url .= $q;
+            $url .= is_string($query) ? $query : http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+        }
 
         if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
             $url = $options['scheme'] . ':' . $url;

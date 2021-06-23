@@ -20,11 +20,15 @@ use Cake\Core\App;
 use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\MiddlewareQueue;
+use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
+use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionNamedType;
@@ -34,12 +38,17 @@ use ReflectionNamedType;
  *
  * @implements \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
  */
-class ControllerFactory implements ControllerFactoryInterface
+class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInterface
 {
     /**
      * @var \Cake\Core\ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var \Cake\Controller\Controller
+     */
+    protected $controller;
 
     /**
      * Constructor
@@ -93,15 +102,64 @@ class ControllerFactory implements ControllerFactoryInterface
      */
     public function invoke($controller): ResponseInterface
     {
+        $this->controller = $controller;
+
+        $middlewares = $controller->getMiddleware();
+
+        if ($middlewares) {
+            $middlewareQueue = new MiddlewareQueue($middlewares);
+            $runner = new Runner();
+
+            return $runner->run($middlewareQueue, $controller->getRequest(), $this);
+        }
+
+        return $this->handle($controller->getRequest());
+    }
+
+    /**
+     * Invoke the action.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $controller = $this->controller;
+        /** @psalm-suppress ArgumentTypeCoercion */
+        $controller->setRequest($request);
+
         $result = $controller->startupProcess();
         if ($result instanceof ResponseInterface) {
             return $result;
         }
-        $action = $controller->getAction();
 
+        $action = $controller->getAction();
+        $args = $this->getActionArgs(
+            $action,
+            array_values((array)$controller->getRequest()->getParam('pass'))
+        );
+        $controller->invokeAction($action, $args);
+
+        $result = $controller->shutdownProcess();
+        if ($result instanceof ResponseInterface) {
+            return $result;
+        }
+
+        return $controller->getResponse();
+    }
+
+    /**
+     * Get the arguments for the controller action invocation.
+     *
+     * @param \Closure $action Controller action.
+     * @param array $passedParams Params passed by the router.
+     * @return array
+     */
+    protected function getActionArgs(Closure $action, array $passedParams): array
+    {
         $args = [];
         $reflection = new ReflectionFunction($action);
-        $passed = array_values((array)$controller->getRequest()->getParam('pass'));
+
         foreach ($reflection->getParameters() as $i => $parameter) {
             $position = $parameter->getPosition();
             $hasDefault = $parameter->isDefaultValueAvailable();
@@ -110,20 +168,21 @@ class ControllerFactory implements ControllerFactoryInterface
             // assume the parameter is a passed param
             $type = $parameter->getType();
             if (!$type) {
-                if (count($passed)) {
-                    $args[$position] = array_shift($passed);
+                if (count($passedParams)) {
+                    $args[$position] = array_shift($passedParams);
                 } elseif ($hasDefault) {
                     $args[$position] = $parameter->getDefaultValue();
                 }
                 continue;
             }
+
             $typeName = $type instanceof ReflectionNamedType ? ltrim($type->getName(), '?') : null;
 
             // Primitive types are passed args as they can't be looked up in the container.
             // We only handle strings currently.
             if ($typeName === 'string') {
-                if (count($passed)) {
-                    $args[$position] = array_shift($passed);
+                if (count($passedParams)) {
+                    $args[$position] = array_shift($passedParams);
                 } elseif ($hasDefault) {
                     $args[$position] = $parameter->getDefaultValue();
                 }
@@ -136,6 +195,7 @@ class ControllerFactory implements ControllerFactoryInterface
             } elseif ($hasDefault) {
                 $args[$position] = $parameter->getDefaultValue();
             }
+
             if (!array_key_exists($position, $args)) {
                 throw new InvalidArgumentException(
                     "Could not resolve action argument `{$parameter->getName()}`. " .
@@ -143,17 +203,12 @@ class ControllerFactory implements ControllerFactoryInterface
                 );
             }
         }
-        if (count($passed)) {
-            $args = array_merge($args, $passed);
-        }
-        $controller->invokeAction($action, $args);
 
-        $result = $controller->shutdownProcess();
-        if ($result instanceof ResponseInterface) {
-            return $result;
+        if (count($passedParams)) {
+            $args = array_merge($args, $passedParams);
         }
 
-        return $controller->getResponse();
+        return $args;
     }
 
     /**

@@ -340,6 +340,40 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     }
 
     /**
+     * Join when translations are necessary
+     *
+     * @return void
+     */
+    public function testNecessaryJoinsConfig()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+
+        $table->addBehavior('Translate', [
+            'onlyTranslated' => true,
+        ]);
+        $table->setLocale('eng');
+
+        $query = $table->find()->select(['id'])->disableAutoFields();
+        $this->assertStringContainsString(
+            'articles_translations',
+            $query->sql(),
+            'Enabling `onlyTranslated` should join the translations table'
+        );
+
+        $table
+            ->removeBehavior('Translate')
+            ->addBehavior('Translate');
+        $table->setLocale('eng');
+
+        $query = $table->find('all', ['filterByCurrentLocale' => true])->select(['id'])->disableAutoFields();
+        $this->assertStringContainsString(
+            'articles_translations',
+            $query->sql(),
+            'Enabling `filterByCurrentLocale` should join the translations table'
+        );
+    }
+
+    /**
      * testTraversingWhereClauseWithNonStringField
      *
      * @return void

@@ -68,7 +68,7 @@ interface DriverInterface
     /**
      * Prepares a sql statement to be executed.
      *
-     * @param string|\Cake\Database\Query $query The query to turn into a prepared statement.
+     * @param \Cake\Database\Query|string $query The query to turn into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
     public function prepare($query): StatementInterface;

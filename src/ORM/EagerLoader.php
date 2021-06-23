@@ -230,41 +230,37 @@ class EagerLoader
      *
      *  ### Options
      *
-     *  - 'joinType': INNER, OUTER, ...
-     *  - 'fields': Fields to contain
+     *  - `joinType`: INNER, OUTER, ...
+     *  - `fields`: Fields to contain
+     *  - `negateMatch`: Whether to add conditions negate match on target association
      *
-     * @param string $assoc A single association or a dot separated path of associations.
+     * @param string $associationPath Dot separated association path, 'Name1.Name2.Name3'
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
      * @param array $options Extra options for the association matching.
      * @return $this
      */
-    public function setMatching(string $assoc, ?callable $builder = null, array $options = [])
+    public function setMatching(string $associationPath, ?callable $builder = null, array $options = [])
     {
         if ($this->_matching === null) {
             $this->_matching = new static();
         }
 
-        if (!isset($options['joinType'])) {
-            $options['joinType'] = Query::JOIN_TYPE_INNER;
+        $options += ['joinType' => Query::JOIN_TYPE_INNER];
+        $sharedOptions = ['negateMatch' => false, 'matching' => true] + $options;
+
+        $contains = [];
+        $nested = &$contains;
+        foreach (explode('.', $associationPath) as $association) {
+            // Add contain to parent contain using association name as key
+            $nested[$association] = $sharedOptions;
+            // Set to next nested level
+            $nested = &$nested[$association];
         }
 
-        $assocs = explode('.', $assoc);
-        $last = array_pop($assocs);
-        $containments = [];
-        $pointer = &$containments;
-        $opts = ['matching' => true] + $options;
-        /** @psalm-suppress InvalidArrayOffset */
-        unset($opts['negateMatch']);
-
-        foreach ($assocs as $name) {
-            $pointer[$name] = $opts;
-            $pointer = &$pointer[$name];
-        }
-
-        $pointer[$last] = ['queryBuilder' => $builder, 'matching' => true] + $options;
-
-        $this->_matching->contain($containments);
+        // Add all options to target association contain which is the last in nested chain
+        $nested = ['matching' => true, 'queryBuilder' => $builder] + $options;
+        $this->_matching->contain($contains);
 
         return $this;
     }

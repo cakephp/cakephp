@@ -45,7 +45,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      *
      * The format to be used is stored in the static property `Time::niceFormat`.
      *
-     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
@@ -103,7 +103,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * taken from the `intl.default_locale` ini config.
      *
      * @param string|int|null $format Format string.
-     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
@@ -142,7 +142,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * can receive this datetime object and return a formatted string.
      *
      * @see \Cake\I18n\Time::i18nFormat()
-     * @param string|array|int|\Closure $format Format.
+     * @param \Closure|array|string|int $format Format.
      * @return void
      */
     public static function setJsonEncodeFormat($format): void;
@@ -192,7 +192,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * ```
      *
      * @param string $date The date string to parse.
-     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
+     * @param array|string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
     public static function parseDate(string $date, $format = null);

@@ -45,11 +45,11 @@ class ShellTest extends TestCase
      */
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.Attachments',
         'core.Comments',
         'core.Posts',
-        'core.Tags',
         'core.Users',
     ];
 

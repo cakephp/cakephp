@@ -1732,11 +1732,11 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests whereNotInArray() and its input types.
+     * Tests whereNotInList() and its input types.
      *
      * @return void
      */
-    public function testWhereNotInArray()
+    public function testWhereNotInList()
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1755,17 +1755,64 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests whereNotInArray() and empty array input.
+     * Tests whereNotInList() and empty array input.
      *
      * @return void
      */
-    public function testWhereNotInArrayEmpty()
+    public function testWhereNotInListEmpty()
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
             ->whereNotInList('id', [], ['allowEmpty' => true])
+            ->order(['id']);
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals(['id' => '1'], $result[0]);
+    }
+
+    /**
+     * Tests whereNotInListOrNull() and its input types.
+     *
+     * @return void
+     */
+    public function testWhereNotInListOrNull()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereNotInListOrNull('id', [1, 3]);
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE \\(<id> not in \\(:c0,:c1\\) OR \\(<id>\\) IS NULL\\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals(['id' => '2'], $result[0]);
+    }
+
+    /**
+     * Tests whereNotInListOrNull() and empty array input.
+     *
+     * @return void
+     */
+    public function testWhereNotInListOrNullEmpty()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereNotInListOrNull('id', [], ['allowEmpty' => true])
             ->order(['id']);
 
         $this->assertQuotedQuery(
@@ -3764,6 +3811,11 @@ class QueryTest extends TestCase
      */
     public function testTupleComparisonValuesAreBeingBoundCorrectly()
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'This test fails sporadically in SQLServer'
+        );
+
         // Load with force dropping tables to avoid identities not being reset properly
         // in SQL Server when reseeding is applied directly after table creation.
         $this->fixtureManager->loadSingle('Profiles', null, true);
@@ -3805,6 +3857,10 @@ class QueryTest extends TestCase
      */
     public function testTupleComparisonTypesCanBeOmitted()
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'This test fails sporadically in SQLServer'
+        );
         // Load with force dropping tables to avoid identities not being reset properly
         // in SQL Server when reseeding is applied directly after table creation.
         $this->fixtureManager->loadSingle('Profiles', null, true);

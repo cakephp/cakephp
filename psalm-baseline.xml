@@ -49,9 +49,9 @@
   <file src="src/Console/CommandCollection.php">
     <DeprecatedClass occurrences="4">
       <code>Shell::class</code>
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|class-string</code>
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|string</code>
       <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
-      <code>class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
-      <code>string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandFactoryInterface.php">
@@ -61,9 +61,9 @@
   </file>
   <file src="src/Console/CommandRunner.php">
     <DeprecatedClass occurrences="3">
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
       <code>\Cake\Console\Shell</code>
-      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
-      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/ShellDispatcher.php">
@@ -145,6 +145,18 @@
       <code>$this-&gt;data</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Http/Session/CacheSession.php">
+    <ImplementedReturnTypeMismatch occurrences="2">
+      <code>int|false</code>
+      <code>string|false</code>
+    </ImplementedReturnTypeMismatch>
+  </file>
+  <file src="src/Http/Session/DatabaseSession.php">
+    <ImplementedReturnTypeMismatch occurrences="2">
+      <code>int|false</code>
+      <code>string|false</code>
+    </ImplementedReturnTypeMismatch>
+  </file>
   <file src="src/I18n/DateFormatTrait.php">
     <MissingParamType occurrences="1">
       <code>$format</code>
@@ -161,6 +173,26 @@
       <code>translate</code>
       <code>translate</code>
     </InternalMethod>
+  </file>
+  <file src="src/Log/Engine/ArrayLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Log/Engine/ConsoleLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Log/Engine/FileLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Log/Engine/SyslogLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
   </file>
   <file src="src/ORM/Locator/LocatorAwareTrait.php">
     <DeprecatedClass occurrences="1">
@@ -240,19 +272,21 @@
       <code>$this</code>
     </DeprecatedClass>
   </file>
+  <file src="src/TestSuite/Fixture/FixtureDataManager.php">
+    <DeprecatedProperty occurrences="1">
+      <code>$test-&gt;autoFixtures</code>
+    </DeprecatedProperty>
+  </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
     <DeprecatedInterface occurrences="1">
       <code>FixtureInjector</code>
     </DeprecatedInterface>
   </file>
-  <file src="src/TestSuite/Fixture/TestFixture.php">
-    <ArgumentTypeCoercion occurrences="5">
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-    </ArgumentTypeCoercion>
+  <file src="src/TestSuite/Fixture/FixtureManager.php">
+    <DeprecatedProperty occurrences="2">
+      <code>$test-&gt;autoFixtures</code>
+      <code>$test-&gt;dropTables</code>
+    </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -268,6 +302,12 @@
       <code>\Cake\Console\Shell</code>
       <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
+  </file>
+  <file src="src/TestSuite/TestCase.php">
+    <DeprecatedProperty occurrences="2">
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+    </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">

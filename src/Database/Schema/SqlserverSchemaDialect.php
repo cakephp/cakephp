@@ -92,6 +92,14 @@ class SqlserverSchemaDialect extends SchemaDialect
     ): array {
         $col = strtolower($col);
 
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
+        if ($type !== null) {
+            return $type;
+        }
+
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
         }
@@ -317,7 +325,8 @@ class SqlserverSchemaDialect extends SchemaDialect
             INNER JOIN sys.schemas S ON S.schema_id = T.schema_id AND S.schema_id = RT.schema_id
             INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
             INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
-            WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?';
+            WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?
+            ORDER BY FKC.constraint_column_id';
         // phpcs:enable Generic.Files.LineLength
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
@@ -377,6 +386,12 @@ class SqlserverSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' TINYINT',

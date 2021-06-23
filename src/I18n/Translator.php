@@ -155,7 +155,7 @@ class Translator
             $message = $message[$form] ?? (string)end($message);
         }
 
-        if (strlen($message) === 0) {
+        if ($message === '') {
             $message = $key;
         }
 
@@ -170,7 +170,7 @@ class Translator
      * @param string $key The message key being handled.
      * @param array $message The message content.
      * @param array $vars The variables containing the `_context` key.
-     * @return string|array
+     * @return array|string
      */
     protected function resolveContext(string $key, array $message, array $vars)
     {

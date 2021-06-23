@@ -68,7 +68,7 @@ class ConnectionRegistry extends ObjectRegistry
      * If a callable is passed as first argument, The returned value of this
      * function will be the result of the callable.
      *
-     * @param string|\Cake\Datasource\ConnectionInterface|callable $class The classname or object to make.
+     * @param \Cake\Datasource\ConnectionInterface|callable|string $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array $config An array of settings to use for the datasource.
      * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.

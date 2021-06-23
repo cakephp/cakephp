@@ -36,7 +36,7 @@ class FactoryLocator
      * Register a callable to generate repositories of a given type.
      *
      * @param string $type The name of the repository type the factory function is for.
-     * @param callable|\Cake\Datasource\Locator\LocatorInterface $factory The factory function used to create instances.
+     * @param \Cake\Datasource\Locator\LocatorInterface|callable $factory The factory function used to create instances.
      * @return void
      */
     public static function add(string $type, $factory): void
@@ -68,7 +68,7 @@ class FactoryLocator
      *
      * @param string $type The repository type to get the factory for.
      * @throws \InvalidArgumentException If the specified repository type has no factory.
-     * @return callable|\Cake\Datasource\Locator\LocatorInterface The factory for the repository type.
+     * @return \Cake\Datasource\Locator\LocatorInterface|callable The factory for the repository type.
      */
     public static function get(string $type)
     {

@@ -41,11 +41,11 @@ class TranslateBehaviorTest extends TestCase
      */
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.Authors',
         'core.Sections',
         'core.SpecialTags',
-        'core.Tags',
         'core.Comments',
         'core.Translates',
     ];
@@ -59,7 +59,7 @@ class TranslateBehaviorTest extends TestCase
     /**
      * Returns an array with all the translations found for a set of records
      *
-     * @param array|\Traversable $data
+     * @param \Traversable|array $data
      * @return \Cake\Collection\CollectionInterface
      */
     protected function _extractTranslations($data)
@@ -83,6 +83,8 @@ class TranslateBehaviorTest extends TestCase
      */
     public function testCustomTranslationTable()
     {
+        ConnectionManager::setConfig('custom_i18n_datasource', ['url' => getenv('DB_URL')]);
+
         $table = $this->getTableLocator()->get('Articles');
 
         $table->addBehavior('Translate', [
@@ -95,8 +97,10 @@ class TranslateBehaviorTest extends TestCase
 
         $this->assertSame('CustomI18n', $i18n->getName());
         $this->assertInstanceOf(CustomI18nTable::class, $i18n->getTarget());
-        $this->assertSame('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
+        $this->assertSame('custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
         $this->assertSame('custom_i18n_table', $i18n->getTarget()->getTable());
+
+        ConnectionManager::drop('custom_i18n_datasource');
     }
 
     /**
@@ -1857,7 +1861,7 @@ class TranslateBehaviorTest extends TestCase
                 '_empty' => 'This field cannot be left empty',
             ],
         ];
-        $this->assertEquals($expected, $entity->getError('es'));
+        $this->assertEquals($expected, $entity->getError('_translations.es'));
 
         $this->assertSame('English Title', $result['en']->title);
         $this->assertNull($result['es']->title);
@@ -1946,7 +1950,7 @@ class TranslateBehaviorTest extends TestCase
                 '_empty' => 'This field cannot be left empty',
             ],
         ];
-        $this->assertEquals($expected, $entity->getError('es'));
+        $this->assertEquals($expected, $entity->getError('_translations.es'));
     }
 
     /**

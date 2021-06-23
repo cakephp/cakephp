@@ -116,7 +116,7 @@ class ServerRequest implements ServerRequestInterface
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
      * various formats and ways to define detectors.
      *
-     * @var (array|callable)[]
+     * @var (callable|array)[]
      */
     protected static $_detectors = [
         'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
@@ -499,11 +499,8 @@ class ServerRequest implements ServerRequestInterface
         if ($args) {
             return $this->_is($type, $args);
         }
-        if (!isset($this->_detectorCache[$type])) {
-            $this->_detectorCache[$type] = $this->_is($type, $args);
-        }
 
-        return $this->_detectorCache[$type];
+        return $this->_detectorCache[$type] = $this->_detectorCache[$type] ?? $this->_is($type, $args);
     }
 
     /**
@@ -848,7 +845,7 @@ class ServerRequest implements ServerRequestInterface
      * Get a modified request with the provided header.
      *
      * @param string $name The header name.
-     * @param string|array $value The header value
+     * @param array|string $value The header value
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -868,7 +865,7 @@ class ServerRequest implements ServerRequestInterface
      * will be appended into the existing values.
      *
      * @param string $name The header name.
-     * @param string|array $value The header value
+     * @param array|string $value The header value
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -1316,8 +1313,8 @@ class ServerRequest implements ServerRequestInterface
      * Read cookie data from the request's cookie data.
      *
      * @param string $key The key or dotted path you want to read.
-     * @param string|array|null $default The default value if the cookie is not set.
-     * @return string|array|null Either the cookie value, or null if the value doesn't exist.
+     * @param array|string|null $default The default value if the cookie is not set.
+     * @return array|string|null Either the cookie value, or null if the value doesn't exist.
      */
     public function getCookie(string $key, $default = null)
     {
@@ -1511,7 +1508,7 @@ class ServerRequest implements ServerRequestInterface
      * If the request would be GET, response header "Allow: POST, DELETE" will be set
      * and a 405 error will be returned.
      *
-     * @param string|array $methods Allowed HTTP request methods.
+     * @param array|string $methods Allowed HTTP request methods.
      * @return true
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */

@@ -54,9 +54,9 @@ class CaseExpression implements ExpressionInterface
     /**
      * Constructs the case expression
      *
-     * @param array|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
+     * @param \Cake\Database\ExpressionInterface|array $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the
+     * @param \Cake\Database\ExpressionInterface|array $values associative array of values to be associated with the
      * conditions passed in $conditions. If there are more $values than $conditions,
      * the last $value is used as the `ELSE` value.
      * @param array $types associative array of types to be associated with the values
@@ -80,9 +80,9 @@ class CaseExpression implements ExpressionInterface
      * Conditions must be a one dimensional array or a QueryExpression.
      * The trueValues must be a similar structure, but may contain a string value.
      *
-     * @param array|\Cake\Database\ExpressionInterface $conditions Must be a ExpressionInterface instance,
+     * @param \Cake\Database\ExpressionInterface|array $conditions Must be a ExpressionInterface instance,
      *   or an array of ExpressionInterface instances.
-     * @param array|\Cake\Database\ExpressionInterface $values associative array of values of each condition
+     * @param \Cake\Database\ExpressionInterface|array $values associative array of values of each condition
      * @param array $types associative array of types to be associated with the values
      * @return $this
      */
@@ -161,7 +161,7 @@ class CaseExpression implements ExpressionInterface
     /**
      * Sets the default value
      *
-     * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
+     * @param \Cake\Database\ExpressionInterface|array|string|null $value Value to set
      * @param string|null $type Type of value
      * @return void
      */
@@ -186,7 +186,7 @@ class CaseExpression implements ExpressionInterface
     /**
      * Compiles the relevant parts into sql
      *
-     * @param array|string|\Cake\Database\ExpressionInterface $part The part to compile
+     * @param \Cake\Database\ExpressionInterface|array|string $part The part to compile
      * @param \Cake\Database\ValueBinder $binder Sql generator
      * @return string
      */

@@ -36,10 +36,10 @@ class MarshallerTest extends TestCase
 {
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.Comments',
         'core.SpecialTags',
-        'core.Tags',
         'core.Users',
     ];
 

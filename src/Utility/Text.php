@@ -492,7 +492,7 @@ class Text
      * - `limit` A limit, optional, defaults to -1 (none)
      *
      * @param string $text Text to search the phrase in.
-     * @param string|array $phrase The phrase or phrases that will be searched.
+     * @param array|string $phrase The phrase or phrases that will be searched.
      * @param array $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#highlighting-substrings
@@ -683,7 +683,7 @@ class Text
             }
 
             // If result is empty, then we don't need to count ellipsis in the cut.
-            if (!strlen($result)) {
+            if ($result === '') {
                 $result = self::_substr($text, 0, $length, $options);
             }
         }
@@ -1177,7 +1177,7 @@ class Text
             '/[' . $regex . ']/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
-        if (is_string($options['replacement']) && strlen($options['replacement']) > 0) {
+        if (is_string($options['replacement']) && $options['replacement'] !== '') {
             $map[sprintf('/[%s]+/mu', $quotedReplacement)] = $options['replacement'];
         }
         $string = preg_replace(array_keys($map), $map, $string);

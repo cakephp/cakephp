@@ -299,6 +299,16 @@ class ResultSet implements ResultSetInterface
      */
     public function serialize(): string
     {
+        return serialize($this->__serialize());
+    }
+
+    /**
+     * Serializes a resultset.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
         if (!$this->_useBuffering) {
             $msg = 'You cannot serialize an un-buffered ResultSet. '
                 . 'Use Query::bufferResults() to get a buffered ResultSet.';
@@ -310,10 +320,10 @@ class ResultSet implements ResultSetInterface
         }
 
         if ($this->_results instanceof SplFixedArray) {
-            return serialize($this->_results->toArray());
+            return $this->_results->toArray();
         }
 
-        return serialize($this->_results);
+        return $this->_results;
     }
 
     /**
@@ -326,8 +336,18 @@ class ResultSet implements ResultSetInterface
      */
     public function unserialize($serialized)
     {
-        $results = (array)(unserialize($serialized) ?: []);
-        $this->_results = SplFixedArray::fromArray($results);
+        $this->__unserialize((array)(unserialize($serialized) ?: []));
+    }
+
+    /**
+     * Unserializes a resultset.
+     *
+     * @param array $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->_results = SplFixedArray::fromArray($data);
         $this->_useBuffering = true;
         $this->_count = $this->_results->count();
     }
@@ -435,7 +455,7 @@ class ResultSet implements ResultSetInterface
      * Correctly nests results keys including those coming from associations
      *
      * @param array $row Array containing columns and values or false if there is no results
-     * @return array|\Cake\Datasource\EntityInterface Results
+     * @return \Cake\Datasource\EntityInterface|array Results
      */
     protected function _groupResult(array $row)
     {
@@ -472,9 +492,7 @@ class ResultSet implements ResultSetInterface
         // If the default table is not in the results, set
         // it to an empty array so that any contained
         // associations hydrate correctly.
-        if (!isset($results[$defaultAlias])) {
-            $results[$defaultAlias] = [];
-        }
+        $results[$defaultAlias] = $results[$defaultAlias] ?? [];
 
         unset($presentAliases[$defaultAlias]);
 

@@ -250,7 +250,7 @@ class Session
      * If no arguments are passed it will return the currently configured handler instance
      * or null if none exists.
      *
-     * @param string|\SessionHandlerInterface|null $class The session handler to use
+     * @param \SessionHandlerInterface|string|null $class The session handler to use
      * @param array $options the options to pass to the SessionHandler constructor
      * @return \SessionHandlerInterface|null
      * @throws \InvalidArgumentException
@@ -490,7 +490,7 @@ class Session
     /**
      * Writes value to given session variable name.
      *
-     * @param string|array $name Name of variable
+     * @param array|string $name Name of variable
      * @param mixed $value Value to write
      * @return void
      */

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
 use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Formatter\JsonFormatter;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -56,8 +57,8 @@ class ConsoleLogTest extends TestCase
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertStringContainsString('Error: oh noes', $line);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: oh noes/', $line);
+        $this->assertStringContainsString('error: oh noes', $line);
+        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ error: oh noes/', $line);
     }
 
     /**
@@ -88,11 +89,57 @@ class ConsoleLogTest extends TestCase
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([
             'stream' => $filename,
-            'dateFormat' => 'c',
+            'formatter.dateFormat' => 'c',
         ]);
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Error: oh noes/', $line);
+        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} error: oh noes/', $line);
+    }
+
+    /**
+     * Test json formatter
+     *
+     * @return void
+     */
+    public function testJsonFormatter()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+        $log = new ConsoleLog([
+            'stream' => $filename,
+            'formatter' => [
+                'className' => JsonFormatter::class,
+                'flags' => JSON_HEX_QUOT,
+            ],
+        ]);
+        $log->log('error', 'oh "{p1}"', ['p1' => 'noes']);
+        $fh = fopen($filename, 'r');
+        $line = fgets($fh);
+        $this->assertStringContainsString('\u0022noes\u0022', $line);
+
+        $entry = json_decode($line, true);
+        $this->assertNotNull($entry['date']);
+        $this->assertSame('error', $entry['level']);
+        $this->assertSame('oh "noes"', $entry['message']);
+    }
+
+    /**
+     * Test deprecated dateFormat option
+     *
+     * @return void
+     */
+    public function testDeprecatedDateFormat()
+    {
+        $this->deprecated(function () {
+            $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+            $log = new ConsoleLog([
+                'stream' => $filename,
+                'dateFormat' => 'c',
+            ]);
+            $log->log('error', 'oh noes');
+            $fh = fopen($filename, 'r');
+            $line = fgets($fh);
+            $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} error: oh noes/', $line);
+        });
     }
 }

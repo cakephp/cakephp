@@ -124,9 +124,9 @@ class HtmlHelper extends Helper
      * - `block` - Set to true to append output to view block "meta" or provide
      *   custom block name.
      *
-     * @param string|array $type The title of the external resource, Or an array of attributes for a
+     * @param array|string $type The title of the external resource, Or an array of attributes for a
      *   custom meta tag.
-     * @param string|array|null $content The address of the external resource or string for content attribute
+     * @param array|string|null $content The address of the external resource or string for content attribute
      * @param array $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
      * @return string|null A completed `<link />` element, or null if the element was sent to a block.
@@ -242,9 +242,9 @@ class HtmlHelper extends Helper
      *   over value of `escape`)
      * - `confirm` JavaScript confirmation message.
      *
-     * @param string|array $title The content to be wrapped by `<a>` tags.
+     * @param array|string $title The content to be wrapped by `<a>` tags.
      *   Can be an array if $url is null. If $url is null, $title will be used as both the URL and title.
-     * @param string|array|null $url Cake-relative URL or array of URL parameters, or
+     * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array $options Array of options and HTML attributes.
      * @return string An `<a />` element.
@@ -363,6 +363,10 @@ class HtmlHelper extends Helper
      * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
      * - `fullBase` If true the URL will get a full address for the css file.
      *
+     * All other options will be treated as HTML attributes. If the request contains a
+     * `cspStyleNonce` attribute, that value will be applied as the `nonce` attribute on the
+     * generated HTML.
+     *
      * @param string|string[] $path The name of a CSS style sheet or an array containing names of
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
@@ -372,7 +376,12 @@ class HtmlHelper extends Helper
      */
     public function css($path, array $options = []): ?string
     {
-        $options += ['once' => true, 'block' => null, 'rel' => 'stylesheet'];
+        $options += [
+            'once' => true,
+            'block' => null,
+            'rel' => 'stylesheet',
+            'nonce' => $this->_View->getRequest()->getAttribute('cspStyleNonce'),
+        ];
 
         if (is_array($path)) {
             $out = '';
@@ -398,8 +407,8 @@ class HtmlHelper extends Helper
         }
         unset($options['once']);
         $this->_includedAssets[__METHOD__][$path] = true;
-        $templater = $this->templater();
 
+        $templater = $this->templater();
         if ($options['rel'] === 'import') {
             $out = $templater->format('style', [
                 'attrs' => $templater->formatAttributes($options, ['rel', 'block']),
@@ -459,6 +468,10 @@ class HtmlHelper extends Helper
      * - `plugin` False value will prevent parsing path as a plugin
      * - `fullBase` If true the url will get a full address for the script file.
      *
+     * All other options will be added as attributes to the generated script tag.
+     * If the current request has a `cspScriptNonce` attribute, that value will
+     * be inserted as a `nonce` attribute on the script tag.
+     *
      * @param string|string[] $url String or array of javascript files to include
      * @param array $options Array of options, and html attributes see above.
      * @return string|null String of `<script />` tags or null if block is specified in options
@@ -467,7 +480,11 @@ class HtmlHelper extends Helper
      */
     public function script($url, array $options = []): ?string
     {
-        $defaults = ['block' => null, 'once' => true];
+        $defaults = [
+            'block' => null,
+            'once' => true,
+            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+        ];
         $options += $defaults;
 
         if (is_array($url)) {
@@ -523,7 +540,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['block' => null];
+        $options += ['block' => null, 'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
@@ -634,7 +651,7 @@ class HtmlHelper extends Helper
      * - `fullBase` If true the src attribute will get a full address for the image file.
      * - `plugin` False value will prevent parsing path as a plugin
      *
-     * @param string|array $path Path to the image file, relative to the webroot/img/ directory.
+     * @param array|string $path Path to the image file, relative to the webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-images
@@ -968,7 +985,7 @@ class HtmlHelper extends Helper
      * - `pathPrefix` Path prefix to use for relative URLs, defaults to 'files/'
      * - `fullBase` If provided the src attribute will get a full address including domain name
      *
-     * @param string|array $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.
+     * @param array|string $path Path to the video file, relative to the webroot/{$options['pathPrefix']} directory.
      *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
      * @param array $options Array of HTML attributes, and special options above.
      * @return string Generated media element

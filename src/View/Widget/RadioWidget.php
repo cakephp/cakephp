@@ -145,7 +145,7 @@ class RadioWidget extends BasicWidget
      * Renders a single radio input and label.
      *
      * @param string|int $val The value of the radio input.
-     * @param string|array $text The label text, or complex radio type.
+     * @param array|string $text The label text, or complex radio type.
      * @param array $data Additional options for input generation.
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
@@ -160,9 +160,7 @@ class RadioWidget extends BasicWidget
         }
         $radio['name'] = $data['name'];
 
-        if (!isset($radio['templateVars'])) {
-            $radio['templateVars'] = [];
-        }
+        $radio['templateVars'] = $radio['templateVars'] ?? [];
         if (!empty($data['templateVars'])) {
             $radio['templateVars'] = array_merge($data['templateVars'], $radio['templateVars']);
         }

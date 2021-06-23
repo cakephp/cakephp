@@ -277,8 +277,8 @@ class LogTest extends TestCase
         Log::write(LOG_WARNING, 'Test warning 1');
         Log::write(LOG_WARNING, 'Test warning 2');
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1/', $result);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 2$/', $result);
+        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 1/', $result);
+        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 2$/', $result);
         unlink(LOGS . 'error.log');
     }
 
@@ -318,9 +318,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -366,9 +366,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -631,56 +631,56 @@ class LogTest extends TestCase
         $testMessage = 'emergency message';
         Log::emergency($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/(Emergency|Critical): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(emergency|critical): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'alert message';
         Log::alert($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/(Alert|Critical): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(alert|critical): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'critical message';
         Log::critical($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertStringContainsString('Critical: ' . $testMessage, $contents);
+        $this->assertStringContainsString('critical: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'error message';
         Log::error($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertStringContainsString('Error: ' . $testMessage, $contents);
+        $this->assertStringContainsString('error: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'warning message';
         Log::warning($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertStringContainsString('Warning: ' . $testMessage, $contents);
+        $this->assertStringContainsString('warning: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'notice message';
         Log::notice($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertMatchesRegularExpression('/(Notice|Debug): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(notice|debug): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
         $this->_deleteLogs();
 
         $testMessage = 'info message';
         Log::info($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertMatchesRegularExpression('/(Info|Debug): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(info|debug): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
         $this->_deleteLogs();
 
         $testMessage = 'debug message';
         Log::debug($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
         $this->_deleteLogs();
     }

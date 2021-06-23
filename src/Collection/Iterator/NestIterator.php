@@ -29,7 +29,7 @@ class NestIterator extends Collection implements RecursiveIterator
     /**
      * The name of the property that contains the nested items for each element
      *
-     * @var string|callable
+     * @var callable|string
      */
     protected $_nestKey;
 
@@ -37,7 +37,7 @@ class NestIterator extends Collection implements RecursiveIterator
      * Constructor
      *
      * @param iterable $items Collection items.
-     * @param string|callable $nestKey the property that contains the nested items
+     * @param callable|string $nestKey the property that contains the nested items
      * If a callable is passed, it should return the childrens for the passed item
      */
     public function __construct(iterable $items, $nestKey)

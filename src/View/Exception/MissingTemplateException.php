@@ -25,7 +25,7 @@ class MissingTemplateException extends CakeException
     /**
      * @var string
      */
-    protected $file;
+    protected $filename;
 
     /**
      * @var string[]
@@ -40,14 +40,14 @@ class MissingTemplateException extends CakeException
     /**
      * Constructor
      *
-     * @param string|array $file Either the file name as a string, or in an array for backwards compatibility.
+     * @param array|string $file Either the file name as a string, or in an array for backwards compatibility.
      * @param string[] $paths The path list that template could not be found in.
      * @param int|null $code The code of the error.
      * @param \Throwable|null $previous the previous exception.
      */
     public function __construct($file, array $paths = [], ?int $code = null, ?Throwable $previous = null)
     {
-        $this->file = is_array($file) ? array_pop($file) : $file;
+        $this->filename = is_array($file) ? array_pop($file) : $file;
         $this->paths = $paths;
 
         parent::__construct($this->formatMessage(), $code, $previous);
@@ -60,11 +60,11 @@ class MissingTemplateException extends CakeException
      */
     public function formatMessage(): string
     {
-        $message = "{$this->type} file `{$this->file}` could not be found.";
+        $message = "{$this->type} file `{$this->filename}` could not be found.";
         if ($this->paths) {
             $message .= "\n\nThe following paths were searched:\n\n";
             foreach ($this->paths as $path) {
-                $message .= "- `{$path}{$this->file}`\n";
+                $message .= "- `{$path}{$this->filename}`\n";
             }
         }
 
@@ -80,7 +80,7 @@ class MissingTemplateException extends CakeException
     public function getAttributes(): array
     {
         return [
-            'file' => $this->file,
+            'file' => $this->filename,
             'paths' => $this->paths,
         ];
     }

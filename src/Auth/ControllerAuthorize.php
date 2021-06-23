@@ -78,7 +78,7 @@ class ControllerAuthorize extends BaseAuthorize
     /**
      * Checks user authorization using a controller callback.
      *
-     * @param array|\ArrayAccess $user Active user data
+     * @param \ArrayAccess|array $user Active user data
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @throws \Cake\Core\Exception\CakeException If controller does not have method `isAuthorized()`.
      * @return bool

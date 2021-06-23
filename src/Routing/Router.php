@@ -195,7 +195,7 @@ class Router
      *
      * Compatibility proxy to \Cake\Routing\RouteBuilder::connect() in the `/` scope.
      *
-     * @param string|\Cake\Routing\Route\Route $route A string describing the template of the route
+     * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
      * @param array|string $defaults An array describing the default route parameters.
      *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
@@ -400,7 +400,7 @@ class Router
      * - `_name` - Name of route. If you have setup named routes you can use this key
      *   to specify it.
      *
-     * @param string|array|\Psr\Http\Message\UriInterface|null $url An array specifying any of the following:
+     * @param \Psr\Http\Message\UriInterface|array|string|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
      *   string or it can be an UriInterface instance.
@@ -414,9 +414,7 @@ class Router
         $context = static::$_requestContext;
         $request = static::getRequest();
 
-        if (!isset($context['_base'])) {
-            $context['_base'] = Configure::read('App.base') ?: '';
-        }
+        $context['_base'] = $context['_base'] ?? Configure::read('App.base') ?: '';
 
         if (empty($url)) {
             $here = $request ? $request->getRequestTarget() : '/';
@@ -552,7 +550,7 @@ class Router
      * ### Usage
      *
      * @see Router::url()
-     * @param string|array|null $url An array specifying any of the following:
+     * @param array|string|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
      *   string.
@@ -807,7 +805,7 @@ class Router
      *
      * @param string $path The path prefix for the scope. This path will be prepended
      *   to all routes connected in the scoped collection.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
+     * @param callable|array $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke with the scoped collection.
      * @throws \InvalidArgumentException When an invalid callable is provided.
@@ -842,7 +840,7 @@ class Router
      * to the `Controller\Admin\Api\` namespace.
      *
      * @param string $name The prefix name to use.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
+     * @param callable|array $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
@@ -874,7 +872,7 @@ class Router
      * prepended, and have a matching plugin routing key set.
      *
      * @param string $name The plugin name to build routes for
-     * @param array|callable $options Either the options to use, or a callback
+     * @param callable|array $options Either the options to use, or a callback
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $options is defined
      * @return void

@@ -27,6 +27,9 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
+use Cake\TestSuite\Fixture\FixtureLoader;
+use Cake\TestSuite\Fixture\StateResetStrategyInterface;
+use Cake\TestSuite\Fixture\TruncationStrategy;
 use Cake\Utility\Inflector;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
@@ -48,7 +51,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * The class responsible for managing the creation, loading and removing of fixtures
      *
-     * @var \Cake\TestSuite\Fixture\FixtureManager|null
+     * @var \Cake\TestSuite\Fixture\FixtureLoader|null
      */
     public $fixtureManager;
 
@@ -64,6 +67,8 @@ abstract class TestCase extends BaseTestCase
      * Set this to false to handle manually
      *
      * @var bool
+     * @deprecated 4.3.0 autoFixtures is only used by deprecated fixture features.
+     *   This property will be removed in 5.0
      */
     public $autoFixtures = true;
 
@@ -74,8 +79,20 @@ abstract class TestCase extends BaseTestCase
      * end of each test runner execution.
      *
      * @var bool
+     * @deprecated 4.3.0 dropTables is only used by deprecated fixture features.
+     *   This property will be removed in 5.0
      */
     public $dropTables = false;
+
+    /**
+     * The classname for the fixture state reset strategy.
+     *
+     * If null the TruncationStrategy will be used.
+     *
+     * @var string|null
+     * @psalm-var class-string|null
+     */
+    protected $stateResetStrategy;
 
     /**
      * Configure values to restore at end of test.
@@ -211,6 +228,10 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->fixtureManager = FixtureLoader::getInstance();
+        if ($this->fixtureManager) {
+            $this->fixtureManager->setupTest($this);
+        }
 
         if (!$this->_configure) {
             $this->_configure = Configure::read();
@@ -237,7 +258,11 @@ abstract class TestCase extends BaseTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
-        $this->fixtureManager = null;
+
+        if ($this->fixtureManager) {
+            $this->fixtureManager->teardownTest($this);
+            $this->fixtureManager = null;
+        }
     }
 
     /**
@@ -1013,12 +1038,40 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Gets fixtures.
+     * Get the fixtures this test should use.
      *
      * @return string[]
      */
     public function getFixtures(): array
     {
         return $this->fixtures;
+    }
+
+    /**
+     * Get the strategy used to reset fixture state.
+     *
+     * Offers basic class construction, if you need more complex
+     * state manager configuration, or multiple state managers,
+     * override this method.
+     *
+     * @return \Cake\TestSuite\Fixture\StateResetStrategyInterface
+     */
+    public function getStateResetStrategy(): StateResetStrategyInterface
+    {
+        $strategyClass = $this->stateResetStrategy ?? TruncationStrategy::class;
+        try {
+            $reflect = new ReflectionClass($strategyClass);
+        } catch (ReflectionException $e) {
+            throw new RuntimeException("Cannot find class `{$strategyClass}`");
+        }
+        $interface = StateResetStrategyInterface::class;
+        if (!$reflect->implementsInterface($interface)) {
+            throw new RuntimeException(
+                "The `{$strategyClass}` does not implement the required `{$interface}` interface."
+            );
+        }
+
+        /** @var \Cake\TestSuite\Fixture\StateResetStrategyInterface */
+        return $reflect->newInstance($this->fixtureManager);
     }
 }

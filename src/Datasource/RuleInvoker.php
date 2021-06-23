@@ -119,10 +119,7 @@ class RuleInvoker
             return $pass === true;
         }
 
-        $message = 'invalid';
-        if (isset($this->options['message'])) {
-            $message = $this->options['message'];
-        }
+        $message = $this->options['message'] ?? 'invalid';
         if (is_string($pass)) {
             $message = $pass;
         }

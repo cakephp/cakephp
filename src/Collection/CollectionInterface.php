@@ -226,7 +226,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * [1, 2, 3, 4]
      * ```
      *
-     * @param string|callable $path A dot separated path of column to follow
+     * @param callable|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
      * @return self
@@ -308,7 +308,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * The average of an empty set or 0 rows is `null`. Collections with `null`
      * values are not considered empty.
      *
-     * @param string|callable|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int|null
@@ -341,7 +341,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * The median of an empty set or 0 rows is `null`. Collections with `null`
      * values are not considered empty.
      *
-     * @param string|callable|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int|null
@@ -526,7 +526,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 6
      * ```
      *
-     * @param string|callable|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int
@@ -891,7 +891,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param string|int $order The order in which to return the elements
-     * @param string|callable $nestingKey The key name under which children are nested
+     * @param callable|string $nestingKey The key name under which children are nested
      * or a callable function that will return the children list
      * @return self
      */

@@ -54,6 +54,7 @@ class FixtureInjector implements TestListener
         if (isset($_SERVER['argv'])) {
             $manager->setDebug(in_array('--debug', $_SERVER['argv'], true));
         }
+        FixtureLoader::setInstance($manager);
         $this->_fixtureManager = $manager;
         $this->_fixtureManager->shutDown();
     }
@@ -94,8 +95,6 @@ class FixtureInjector implements TestListener
      */
     public function startTest(Test $test): void
     {
-        /** @psalm-suppress NoInterfaceProperties */
-        $test->fixtureManager = $this->_fixtureManager;
         if ($test instanceof TestCase) {
             $this->_fixtureManager->fixturize($test);
             $this->_fixtureManager->load($test);

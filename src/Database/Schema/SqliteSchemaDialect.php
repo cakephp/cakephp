@@ -67,7 +67,7 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[2]);
-        $length = $precision = null;
+        $length = $precision = $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
             if (strpos($length, ',') !== false) {
@@ -75,6 +75,14 @@ class SqliteSchemaDialect extends SchemaDialect
             }
             $length = (int)$length;
             $precision = (int)$precision;
+        }
+
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
+        if ($type !== null) {
+            return $type;
         }
 
         if ($col === 'bigint') {
@@ -327,6 +335,12 @@ class SqliteSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $typeMap = [
             TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchema::TYPE_UUID => ' CHAR(36)',

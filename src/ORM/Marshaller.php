@@ -23,6 +23,7 @@ use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association\BelongsToMany;
+use Cake\Utility\Hash;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -82,9 +83,7 @@ class Marshaller
         }
 
         // Map associations
-        if (!isset($options['associated'])) {
-            $options['associated'] = [];
-        }
+        $options['associated'] = $options['associated'] ?? [];
         $include = $this->_normalizeAssociations($options['associated']);
         foreach ($include as $key => $nested) {
             if (is_int($key) && is_scalar($nested)) {
@@ -700,7 +699,7 @@ class Marshaller
                 return explode(';', (string)$key);
             })
             ->filter(function ($keys) use ($primary) {
-                return count(array_filter($keys, 'strlen')) === count($primary);
+                return count(Hash::filter($keys)) === count($primary);
             })
             ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map([$this->_table, 'aliasField'], $primary);

@@ -482,7 +482,7 @@ class FormHelper extends Helper
      *
      * @param \Cake\View\Form\ContextInterface $context The context object to use.
      * @param array $options An array of options from create()
-     * @return string|array The action attribute for the form.
+     * @return array|string The action attribute for the form.
      */
     protected function _formUrl(ContextInterface $context, array $options)
     {
@@ -514,7 +514,7 @@ class FormHelper extends Helper
     /**
      * Correctly store the last created form action URL.
      *
-     * @param string|array|null $url The URL of the last form.
+     * @param array|string|null $url The URL of the last form.
      * @return void
      */
     protected function _lastAction($url = null): void
@@ -710,7 +710,7 @@ class FormHelper extends Helper
      * - `escape` boolean - Whether or not to html escape the contents of the error.
      *
      * @param string $field A field name, like "modelname.fieldname"
-     * @param string|array|null $text Error message as string or array of messages. If an array,
+     * @param array|string|null $text Error message as string or array of messages. If an array,
      *   it should be a hash of key names => messages.
      * @param array $options See above.
      * @return string Formatted errors or ''.
@@ -964,16 +964,10 @@ class FormHelper extends Helper
      */
     public function fieldset(string $fields = '', array $options = []): string
     {
-        $fieldset = $legend = true;
+        $legend = $options['legend'] ?? true;
+        $fieldset = $options['fieldset'] ?? true;
         $context = $this->_getContext();
         $out = $fields;
-
-        if (isset($options['legend'])) {
-            $legend = $options['legend'];
-        }
-        if (isset($options['fieldset'])) {
-            $fieldset = $options['fieldset'];
-        }
 
         if ($legend === true) {
             $isCreate = $context->isCreate();
@@ -1171,7 +1165,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName the field name
      * @param array $options The options for the input element
-     * @return string|array The generated input element string
+     * @return array|string The generated input element string
      *  or array if checkbox() is called with option 'hiddenField' set to '_split'.
      */
     protected function _getInput(string $fieldName, array $options)
@@ -1382,10 +1376,7 @@ class FormHelper extends Helper
             return false;
         }
 
-        $label = null;
-        if (isset($options['label'])) {
-            $label = $options['label'];
-        }
+        $label = $options['label'] ?? null;
 
         if ($label === false && $options['type'] === 'checkbox') {
             return $options['input'];
@@ -1421,7 +1412,7 @@ class FormHelper extends Helper
      * used instead of the generated values if present.
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param string|array|null $label Label text or array with label attributes.
+     * @param array|string|null $label Label text or array with label attributes.
      * @param array $options Options for the label element.
      * @return string Generated label element
      */
@@ -1579,16 +1570,11 @@ class FormHelper extends Helper
      */
     public function __call(string $method, array $params)
     {
-        $options = [];
         if (empty($params)) {
             throw new CakeException(sprintf('Missing field name for FormHelper::%s', $method));
         }
-        if (isset($params[1])) {
-            $options = $params[1];
-        }
-        if (!isset($options['type'])) {
-            $options['type'] = $method;
-        }
+        $options = $params[1] ?? [];
+        $options['type'] = $options['type'] ?? $method;
         $options = $this->_initInputField($params[0], $options);
 
         return $this->widget($options['type'], $options);
@@ -1721,7 +1707,7 @@ class FormHelper extends Helper
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
-     * @param string|array $url URL as string or array
+     * @param array|string $url URL as string or array
      * @param array $options Array of options and HTML attributes.
      * @return string A HTML button tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
@@ -1773,7 +1759,7 @@ class FormHelper extends Helper
      * - The option `onclick` will be replaced.
      *
      * @param string $title The content to be wrapped by <a> tags.
-     * @param string|array|null $url Cake-relative URL or array of URL parameters, or
+     * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array $options Array of HTML attributes.
      * @return string An `<a />` element.
@@ -2421,7 +2407,7 @@ class FormHelper extends Helper
      * Allows you to add or replace widget instances with custom code.
      *
      * @param string $name The name of the widget. e.g. 'text'.
-     * @param array|\Cake\View\Widget\WidgetInterface $spec Either a string class
+     * @param \Cake\View\Widget\WidgetInterface|array $spec Either a string class
      *   name or an object implementing the WidgetInterface.
      * @return void
      */

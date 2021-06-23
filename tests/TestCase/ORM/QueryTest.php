@@ -31,6 +31,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
@@ -49,13 +50,13 @@ class QueryTest extends TestCase
      */
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.ArticlesTranslations',
         'core.Authors',
         'core.Comments',
         'core.Datatypes',
         'core.Posts',
-        'core.Tags',
     ];
 
     /**
@@ -2808,8 +2809,8 @@ class QueryTest extends TestCase
             'contain' => [],
             'matching' => [
                 'articles' => [
-                    'queryBuilder' => null,
                     'matching' => true,
+                    'queryBuilder' => null,
                     'joinType' => 'INNER',
                 ],
             ],
@@ -4261,5 +4262,56 @@ class QueryTest extends TestCase
         $results = $query->all()->toList();
         $this->assertEquals(1, $results[0]->id);
         $this->assertEquals(2, $results[0]->total_articles);
+    }
+
+    /**
+     * Tests that queries that fetch associated data in separate queries do properly
+     * inherit the hydration and results casting mode of the parent query.
+     *
+     * @return void
+     */
+    public function testSelectLoaderAssociationsInheritHydrationAndResultsCastingMode()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $tags = $articles->belongsToMany('Tags');
+        $tags->belongsToMany('Articles');
+
+        $comments = $articles->hasMany('Comments');
+        $comments
+            ->belongsTo('Articles')
+            ->setStrategy(BelongsTo::STRATEGY_SELECT);
+
+        $articles
+            ->find()
+            ->contain('Comments', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
+
+                return $query;
+            })
+            ->contain('Comments.Articles', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
+
+                return $query;
+            })
+            ->contain('Comments.Articles.Tags', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
+
+                return $query
+                    ->enableHydration()
+                    ->enableResultsCasting();
+            })
+            ->contain('Comments.Articles.Tags.Articles', function (Query $query) {
+                $this->assertTrue($query->isHydrationEnabled());
+                $this->assertTrue($query->isResultsCastingEnabled());
+
+                return $query;
+            })
+            ->disableHydration()
+            ->disableResultsCasting()
+            ->firstOrFail();
     }
 }

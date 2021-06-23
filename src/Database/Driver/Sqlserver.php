@@ -191,7 +191,7 @@ class Sqlserver extends Driver
     /**
      * Prepares a sql statement to be executed
      *
-     * @param string|\Cake\Database\Query $query The query to prepare.
+     * @param \Cake\Database\Query|string $query The query to prepare.
      * @return \Cake\Database\StatementInterface
      */
     public function prepare($query): StatementInterface
@@ -238,7 +238,8 @@ class Sqlserver extends Driver
      */
     public function releaseSavePointSQL($name): string
     {
-        return 'COMMIT TRANSACTION t' . $name;
+        // SQLServer has no release save point operation.
+        return '';
     }
 
     /**

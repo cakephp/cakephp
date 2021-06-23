@@ -35,7 +35,7 @@ class RouteCollection
     /**
      * The routes connected to this collection.
      *
-     * @var array
+     * @var array<string, array<\Cake\Routing\Route\Route>>
      */
     protected $_routeTable = [];
 
@@ -99,9 +99,7 @@ class RouteCollection
 
         // Generated names.
         $name = $route->getName();
-        if (!isset($this->_routeTable[$name])) {
-            $this->_routeTable[$name] = [];
-        }
+        $this->_routeTable[$name] = $this->_routeTable[$name] ?? [];
         $this->_routeTable[$name][] = $route;
 
         // Index path prefixes (for parsing)
@@ -318,11 +316,10 @@ class RouteCollection
             if (empty($this->_routeTable[$name])) {
                 continue;
             }
-            /** @var \Cake\Routing\Route\Route $route */
             foreach ($this->_routeTable[$name] as $route) {
                 $match = $route->match($url, $context);
                 if ($match) {
-                    return strlen($match) > 1 ? trim($match, '/') : $match;
+                    return $match === '/' ? $match : trim($match, '/');
                 }
             }
         }
@@ -393,7 +390,7 @@ class RouteCollection
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to register.
+     * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
      * @throws \RuntimeException
      */

@@ -17,13 +17,9 @@
         </testsuite>
     </testsuites>
 
-    <listeners>
-        <listener class="Cake\TestSuite\Fixture\FixtureInjector">
-            <arguments>
-                <object class="Cake\TestSuite\Fixture\FixtureManager"/>
-            </arguments>
-        </listener>
-    </listeners>
+    <extensions>
+        <extension class="Cake\TestSuite\FixtureSchemaExtension" />
+    </extensions>
 
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
     <filter>
@@ -46,6 +42,7 @@
         <!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
         <!-- E_ALL (32767) -->
         <ini name="error_reporting" value="32767"/>
+        <env name="FIXTURE_SCHEMA_METADATA" value="./tests/schema.php"/>
 
         <!-- SQLite
         <env name="DB_URL" value="sqlite:///:memory:"/>

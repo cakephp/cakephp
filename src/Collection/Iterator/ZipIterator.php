@@ -111,6 +111,16 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
     }
 
     /**
+     * Magic method used for serializing the iterator instance.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return $this->_iterators;
+    }
+
+    /**
      * Unserializes the passed string and rebuilds the ZipIterator instance
      *
      * @param string $iterators The serialized iterators
@@ -120,6 +130,22 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
     {
         parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
         $this->_iterators = unserialize($iterators);
+        foreach ($this->_iterators as $it) {
+            $this->attachIterator($it);
+        }
+    }
+
+    /**
+     * Magic method used to rebuild the iterator instance.
+     *
+     * @param array $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
+
+        $this->_iterators = $data;
         foreach ($this->_iterators as $it) {
             $this->attachIterator($it);
         }

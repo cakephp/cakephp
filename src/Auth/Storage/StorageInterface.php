@@ -51,7 +51,7 @@ interface StorageInterface
      *
      * @param mixed $url Redirect URL. If `null` returns current URL. If `false`
      *   deletes currently set URL.
-     * @return string|array|null
+     * @return array|string|null
      */
     public function redirectUrl($url = null);
 }

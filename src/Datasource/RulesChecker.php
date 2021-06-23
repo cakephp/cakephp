@@ -129,7 +129,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string|array|null $name The alias for a rule, or an array of options.
+     * @param array|string|null $name The alias for a rule, or an array of options.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -154,7 +154,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string|array|null $name The alias for a rule or an array of options.
+     * @param array|string|null $name The alias for a rule or an array of options.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -179,7 +179,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string|array|null $name The alias for a rule, or an array of options.
+     * @param array|string|null $name The alias for a rule, or an array of options.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -204,7 +204,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string|array|null $name The alias for a rule, or an array of options.
+     * @param array|string|null $name The alias for a rule, or an array of options.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -308,7 +308,7 @@ class RulesChecker
      * property in the entity is marked as invalid.
      *
      * @param callable $rule The rule to decorate
-     * @param string|array|null $name The alias for a rule or an array of options
+     * @param array|string|null $name The alias for a rule or an array of options
      * @param array $options The options containing the error message and field.
      * @return \Cake\Datasource\RuleInvoker
      */

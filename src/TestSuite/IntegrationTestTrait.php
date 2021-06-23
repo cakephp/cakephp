@@ -324,11 +324,7 @@ trait IntegrationTestTrait
      */
     protected function _getCookieEncryptionKey(): string
     {
-        if (isset($this->_cookieEncryptionKey)) {
-            return $this->_cookieEncryptionKey;
-        }
-
-        return Security::getSalt();
+        return $this->_cookieEncryptionKey ?? Security::getSalt();
     }
 
     /**
@@ -358,7 +354,7 @@ trait IntegrationTestTrait
      * a property. You can use various assert methods to check the
      * response.
      *
-     * @param string|array $url The URL to request.
+     * @param array|string $url The URL to request.
      * @return void
      */
     public function get($url): void
@@ -373,8 +369,8 @@ trait IntegrationTestTrait
      * a property. You can use various assert methods to check the
      * response.
      *
-     * @param string|array $url The URL to request.
-     * @param string|array $data The data for the request.
+     * @param array|string $url The URL to request.
+     * @param array|string $data The data for the request.
      * @return void
      */
     public function post($url, $data = []): void
@@ -389,8 +385,8 @@ trait IntegrationTestTrait
      * a property. You can use various assert methods to check the
      * response.
      *
-     * @param string|array $url The URL to request.
-     * @param string|array $data The data for the request.
+     * @param array|string $url The URL to request.
+     * @param array|string $data The data for the request.
      * @return void
      */
     public function patch($url, $data = []): void
@@ -405,8 +401,8 @@ trait IntegrationTestTrait
      * a property. You can use various assert methods to check the
      * response.
      *
-     * @param string|array $url The URL to request.
-     * @param string|array $data The data for the request.
+     * @param array|string $url The URL to request.
+     * @param array|string $data The data for the request.
      * @return void
      */
     public function put($url, $data = []): void
@@ -421,7 +417,7 @@ trait IntegrationTestTrait
      * a property. You can use various assert methods to check the
      * response.
      *
-     * @param string|array $url The URL to request.
+     * @param array|string $url The URL to request.
      * @return void
      */
     public function delete($url): void
@@ -436,7 +432,7 @@ trait IntegrationTestTrait
      * a property. You can use various assert methods to check the
      * response.
      *
-     * @param string|array $url The URL to request.
+     * @param array|string $url The URL to request.
      * @return void
      */
     public function head($url): void
@@ -451,7 +447,7 @@ trait IntegrationTestTrait
      * a property. You can use various assert methods to check the
      * response.
      *
-     * @param string|array $url The URL to request.
+     * @param array|string $url The URL to request.
      * @return void
      */
     public function options($url): void
@@ -464,9 +460,9 @@ trait IntegrationTestTrait
      *
      * Receives and stores the response for future inspection.
      *
-     * @param string|array $url The URL
+     * @param array|string $url The URL
      * @param string $method The HTTP method
-     * @param string|array $data The request data.
+     * @param array|string $data The request data.
      * @return void
      * @throws \PHPUnit\Exception|\Throwable
      */
@@ -568,7 +564,7 @@ trait IntegrationTestTrait
      *
      * @param string $url The URL
      * @param string $method The HTTP method
-     * @param string|array $data The request data.
+     * @param array|string $data The request data.
      * @return array The request context
      */
     protected function _buildRequest(string $url, $method, $data = []): array
@@ -826,7 +822,7 @@ trait IntegrationTestTrait
     /**
      * Asserts that the Location header is correct. Comparison is made against a full URL.
      *
-     * @param string|array|null $url The URL you expected the client to go to. This
+     * @param array|string|null $url The URL you expected the client to go to. This
      *   can either be a string URL or an array compatible with Router::url(). Use null to
      *   simply check for the existence of this header.
      * @param string $message The failure message that will be appended to the generated message.
@@ -853,7 +849,7 @@ trait IntegrationTestTrait
     /**
      * Asserts that the Location header is correct. Comparison is made against exactly the URL provided.
      *
-     * @param string|array|null $url The URL you expected the client to go to. This
+     * @param array|string|null $url The URL you expected the client to go to. This
      *   can either be a string URL or an array compatible with Router::url(). Use null to
      *   simply check for the existence of this header.
      * @param string $message The failure message that will be appended to the generated message.

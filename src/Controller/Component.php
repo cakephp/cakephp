@@ -147,11 +147,8 @@ class Component implements EventListenerInterface
             $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
             $this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
         }
-        if (!isset($this->{$name})) {
-            return null;
-        }
 
-        return $this->{$name};
+        return $this->{$name} ?? null;
     }
 
     /**

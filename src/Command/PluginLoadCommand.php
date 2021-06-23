@@ -104,12 +104,12 @@ class PluginLoadCommand extends Command
         $append = "\n        \$this->addPlugin('%s');\n";
         $insert = str_replace(', []', '', sprintf($append, $plugin));
 
-        if (!preg_match('/function bootstrap\(\)(?:\s*)\:(?:\s*)void/m', $contents)) {
+        if (!preg_match('/function bootstrap(?:\s*)\(\)(?:\s*)\:(?:\s*)void/m', $contents)) {
             $this->io->err('Your Application class does not have a bootstrap() method. Please add one.');
             $this->abort();
         } else {
             $contents = preg_replace(
-                '/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m',
+                '/(function bootstrap(?:\s*)\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m',
                 '$1' . $insert,
                 $contents
             );

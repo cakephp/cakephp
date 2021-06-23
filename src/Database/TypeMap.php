@@ -145,14 +145,7 @@ class TypeMap
      */
     public function type($column): ?string
     {
-        if (isset($this->_types[$column])) {
-            return $this->_types[$column];
-        }
-        if (isset($this->_defaults[$column])) {
-            return $this->_defaults[$column];
-        }
-
-        return null;
+        return $this->_types[$column] ?? $this->_defaults[$column] ?? null;
     }
 
     /**
