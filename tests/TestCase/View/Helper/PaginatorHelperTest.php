@@ -3497,7 +3497,7 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
-     * Test that generated URLs work without sort defined within the request
+     * Test that generates a URL that keeps the passed parameters
      *
      * @return void
      */
@@ -3507,7 +3507,7 @@ class PaginatorHelperTest extends TestCase
             'url' => '/articles/index/whatever/3',
             'params' => [
                 'plugin' => null,
-                'controller' => 'articles',
+                'controller' => 'Articles',
                 'action' => 'index',
                 'pass' => ['whatever', '3'],
             ],
@@ -3523,7 +3523,7 @@ class PaginatorHelperTest extends TestCase
         ]));
         $this->Paginator = new PaginatorHelper($this->View);
         $result = $this->Paginator->generateUrl(['page' => 2]);
-        $expected = '/articles/index/whatever/3?article%5Bpage%5D=2';
-        static::assertSame($expected, $result);
+        $expected = '/Articles/index/whatever/3?article%5Bpage%5D=2';
+        $this->assertSame($expected, $result);
     }
 }

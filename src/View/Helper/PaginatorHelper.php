@@ -577,7 +577,7 @@ class PaginatorHelper extends Helper
             $options = [$scope => $options];
         }
 
-        if (!empty($this->_config['options']['url'])) {
+        if (!empty($baseUrl)) {
             $url = Hash::merge($url, $baseUrl);
         }
 
