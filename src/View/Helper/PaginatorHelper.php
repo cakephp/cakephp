@@ -567,20 +567,18 @@ class PaginatorHelper extends Helper
         ) {
             $options['sort'] = $options['direction'] = null;
         }
-
+        $baseUrl = $this->_config['options']['url'] ?? [];
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
-            $currentParams = $this->_config['options']['url'];
-
-            if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
-                $options += $currentParams['?'][$scope];
+            if (isset($baseUrl['?'][$scope]) && is_array($baseUrl['?'][$scope])) {
+                $options += $baseUrl['?'][$scope];
+                unset($baseUrl['?'][$scope]);
             }
             $options = [$scope => $options];
         }
 
-        if (!empty($this->_config['options']['url'])) {
-            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
-            $url = Hash::merge($url, Hash::get($this->_config, $key, []));
+        if (!empty($baseUrl)) {
+            $url = Hash::merge($url, $baseUrl);
         }
 
         if (!isset($url['?'])) {
