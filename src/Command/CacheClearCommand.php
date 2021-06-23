@@ -18,7 +18,6 @@ namespace Cake\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcuEngine;
-use Cake\Cache\Engine\WincacheEngine;
 use Cake\Cache\InvalidArgumentException;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -76,9 +75,6 @@ class CacheClearCommand extends Command
             Cache::clear($name);
             if ($engine instanceof ApcuEngine) {
                 $io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
-                    "but {$name} web cache must be cleared separately.");
-            } elseif ($engine instanceof WincacheEngine) {
-                $io->warning("WincacheEngine detected: Cleared {$name} CLI cache successfully " .
                     "but {$name} web cache must be cleared separately.");
             } else {
                 $io->out("<success>Cleared {$name} cache</success>");
