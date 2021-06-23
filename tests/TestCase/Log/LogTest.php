@@ -471,7 +471,7 @@ class LogTest extends TestCase
             'path' => LOGS,
             'levels' => ['notice', 'info', 'debug'],
             'file' => 'debug',
-            'scopes' => false,
+            'scopes' => null,
         ]);
         Log::setConfig('shops', [
             'engine' => 'File',
