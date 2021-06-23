@@ -55,8 +55,6 @@ use RuntimeException;
  * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
  *    Fast reads/writes, and benefits from memcache being distributed.
  * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
- * - `WincacheEngine` - Uses Windows Cache Extension for PHP. Supports wincache 1.1.0 and higher.
- *    This engine is recommended to people deploying on windows with IIS.
  * - `XcacheEngine` - Uses the Xcache extension, an alternative to APCu.
  *
  * See Cache engine documentation for expected configuration keys.
@@ -81,7 +79,6 @@ class Cache
         'memcached' => Engine\MemcachedEngine::class,
         'null' => Engine\NullEngine::class,
         'redis' => Engine\RedisEngine::class,
-        'wincache' => Engine\WincacheEngine::class,
     ];
 
     /**

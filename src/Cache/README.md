@@ -9,7 +9,6 @@ The caching backends supported are:
 * APC
 * Memcached
 * Redis
-* Wincache
 * Xcache
 
 ## Usage
