@@ -122,7 +122,7 @@ jobs:
     name: Windows - PHP 7.4 & SQL Server
 
     env:
-      EXTENSIONS: mbstring, intl, apcu, pdo_sqlsrv
+      EXTENSIONS: mbstring, intl, apcu, wincache, pdo_sqlsrv
       PHP_VERSION: '7.4'
 
     steps:
