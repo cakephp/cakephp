@@ -437,7 +437,7 @@ class ControllerTest extends TestCase
             'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index'],
         ]);
         $Controller = new Controller($request);
-        $result = $Controller->referer(['controller' => 'posts', 'action' => 'index'], true);
+        $result = $Controller->referer(['controller' => 'Posts', 'action' => 'index'], true);
         $this->assertSame('/posts/index', $result);
 
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
@@ -810,7 +810,7 @@ class ControllerTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'admin/posts',
-            'params' => ['prefix' => 'admin'],
+            'params' => ['prefix' => 'Admin'],
         ]);
         $response = new Response();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);

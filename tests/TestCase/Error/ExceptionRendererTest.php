@@ -541,7 +541,7 @@ class ExceptionRendererTest extends TestCase
         return [
             [
                 new MissingActionException([
-                    'controller' => 'postsController',
+                    'controller' => 'PostsController',
                     'action' => 'index',
                     'prefix' => '',
                     'plugin' => '',

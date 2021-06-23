@@ -93,6 +93,19 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * tests that exec with a format specifier
+     *
+     * @return void
+     */
+    public function testExecCommandWithFormatSpecifier()
+    {
+        $this->useCommandRunner();
+        $this->exec('format_specifier_command');
+        $this->assertOutputContains('format specifier');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+    }
+
+    /**
      * tests a valid core command
      *
      * @return void

@@ -108,11 +108,11 @@ class InflectedRouteTest extends TestCase
         $this->assertNull($result);
 
         $route = new InflectedRoute('/admin/subscriptions/:action/*', [
-            'controller' => 'Subscribe', 'prefix' => 'admin',
+            'controller' => 'Subscribe', 'prefix' => 'Admin',
         ]);
         $result = $route->match([
             'controller' => 'Subscribe',
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'action' => 'edit_admin_e',
             1,
         ]);
@@ -168,7 +168,7 @@ class InflectedRouteTest extends TestCase
 
         $route = new InflectedRoute(
             '/admin/:controller',
-            ['prefix' => 'admin', 'action' => 'index']
+            ['prefix' => 'Admin', 'action' => 'index']
         );
         $route->compile();
         $result = $route->parse('/admin/', 'GET');

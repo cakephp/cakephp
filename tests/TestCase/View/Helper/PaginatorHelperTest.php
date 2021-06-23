@@ -161,7 +161,7 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/accounts/',
             'params' => [
-                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [],
+                'plugin' => null, 'controller' => 'Accounts', 'action' => 'index', 'pass' => [],
             ],
             'base' => '',
             'webroot' => '/',
@@ -184,7 +184,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc'],
             'Title',
             '/a',
         ];
@@ -198,7 +198,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('date');
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=date&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=date&amp;direction=desc', 'class' => 'asc'],
             'Date',
             '/a',
         ];
@@ -206,7 +206,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title', 'TestTitle');
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc'],
             'TestTitle',
             '/a',
         ];
@@ -214,7 +214,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title', ['asc' => 'ascending', 'desc' => 'descending']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc'],
             'ascending',
             '/a',
         ];
@@ -227,7 +227,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title', ['asc' => 'ascending', 'desc' => 'descending']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
             'descending',
             '/a',
         ];
@@ -241,7 +241,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
             'Title',
             '/a',
         ];
@@ -255,7 +255,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
             'Title',
             '/a',
         ];
@@ -269,7 +269,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'desc']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
             'Title',
             '/a',
         ];
@@ -283,7 +283,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'ASC']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
             'Title',
             '/a',
         ];
@@ -297,7 +297,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'asc']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
             'Title',
             '/a',
         ];
@@ -311,7 +311,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'desc']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
             'Title',
             '/a',
         ];
@@ -353,7 +353,7 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/accounts/',
             'params' => [
-                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [],
+                'plugin' => null, 'controller' => 'Accounts', 'action' => 'index', 'pass' => [],
             ],
             'base' => '',
             'webroot' => '/',
@@ -369,7 +369,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('Article.full_name');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=Article.full_name&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index?sort=Article.full_name&amp;direction=desc', 'class' => 'asc'],
             'Article Full Name',
             '/a',
         ];
@@ -377,7 +377,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('full_name');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=full_name&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index?sort=full_name&amp;direction=desc', 'class' => 'asc'],
             'Full Name',
             '/a',
         ];
@@ -391,7 +391,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('Article.full_name');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=Article.full_name&amp;direction=asc', 'class' => 'desc'],
+            'a' => ['href' => '/Accounts/index?sort=Article.full_name&amp;direction=asc', 'class' => 'desc'],
             'Article Full Name',
             '/a',
         ];
@@ -399,7 +399,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('full_name');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=full_name&amp;direction=asc', 'class' => 'desc'],
+            'a' => ['href' => '/Accounts/index?sort=full_name&amp;direction=asc', 'class' => 'desc'],
             'Full Name',
             '/a',
         ];
@@ -416,7 +416,7 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/accounts/',
             'params' => [
-                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [],
+                'plugin' => null, 'controller' => 'Accounts', 'action' => 'index', 'pass' => [],
             ],
             'base' => '',
             'webroot' => '/',
@@ -427,7 +427,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title', 'TestTitle', ['direction' => 'desc']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc'],
             'TestTitle',
             '/a',
         ];
@@ -435,7 +435,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title', ['asc' => 'ascending', 'desc' => 'descending'], ['direction' => 'desc']);
         $expected = [
-            'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc'],
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc'],
             'descending',
             '/a',
         ];
@@ -452,7 +452,7 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/accounts/',
             'params' => [
-                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [],
+                'plugin' => null, 'controller' => 'Accounts', 'action' => 'index', 'pass' => [],
             ],
             'base' => '',
             'webroot' => '/',
@@ -467,7 +467,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('Article.title');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
+            'a' => ['href' => '/Accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
             'Article Title',
             '/a',
         ];
@@ -481,7 +481,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('Article.title', 'Title');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
+            'a' => ['href' => '/Accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
             'Title',
             '/a',
         ];
@@ -495,7 +495,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('Article.title', 'Title');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=desc', 'class' => 'asc'],
+            'a' => ['href' => '/Accounts/index?sort=Article.title&amp;direction=desc', 'class' => 'asc'],
             'Title',
             '/a',
         ];
@@ -509,7 +509,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/accounts/index?sort=title&amp;direction=asc'],
+            'a' => ['href' => '/Accounts/index?sort=title&amp;direction=asc'],
             'Title',
             '/a',
         ];
@@ -526,7 +526,7 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/accounts/',
             'params' => [
-                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [],
+                'plugin' => null, 'controller' => 'Accounts', 'action' => 'index', 'pass' => [],
             ],
             'base' => '',
             'webroot' => '/',
@@ -561,7 +561,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title', 'Title', ['model' => 'Articles']);
         $expected = [
-            'a' => ['href' => '/accounts/index?article%5Bsort%5D=title&amp;article%5Bdirection%5D=asc'],
+            'a' => ['href' => '/Accounts/index?article%5Bsort%5D=title&amp;article%5Bdirection%5D=asc'],
             'Title',
             '/a',
         ];
@@ -569,7 +569,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('tag', 'Tag', ['model' => 'Tags']);
         $expected = [
-            'a' => ['class' => 'asc', 'href' => '/accounts/index?tags%5Bsort%5D=tag&amp;tags%5Bdirection%5D=desc'],
+            'a' => ['class' => 'asc', 'href' => '/Accounts/index?tags%5Bsort%5D=tag&amp;tags%5Bdirection%5D=desc'],
             'Tag',
             '/a',
         ];
@@ -763,12 +763,12 @@ class PaginatorHelperTest extends TestCase
     public function testSortAdminLinks()
     {
         Router::reload();
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
+        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'url' => '/admin/users',
             'params' => [
-                'plugin' => null, 'controller' => 'users', 'action' => 'index', 'prefix' => 'admin',
+                'plugin' => null, 'controller' => 'Users', 'action' => 'index', 'prefix' => 'Admin',
             ],
             'base' => '',
             'webroot' => '/',
@@ -783,7 +783,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
-            'a' => ['href' => '/admin/users/index?page=2', 'rel' => 'next'],
+            'a' => ['href' => '/admin/Users/index?page=2', 'rel' => 'next'],
             'Next',
             '/a',
             '/li',
@@ -793,7 +793,7 @@ class PaginatorHelperTest extends TestCase
         $this->Paginator->options(['url' => ['param']]);
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/admin/users/index/param?sort=title&amp;direction=asc'],
+            'a' => ['href' => '/admin/Users/index/param?sort=title&amp;direction=asc'],
             'Title',
             '/a',
         ];
@@ -802,7 +802,7 @@ class PaginatorHelperTest extends TestCase
         $this->Paginator->options(['url' => ['param']]);
         $result = $this->Paginator->sort('Article.title', 'Title');
         $expected = [
-            'a' => ['href' => '/admin/users/index/param?sort=Article.title&amp;direction=asc'],
+            'a' => ['href' => '/admin/Users/index/param?sort=Article.title&amp;direction=asc'],
             'Title',
             '/a',
         ];
@@ -819,7 +819,7 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/articles/index',
             'params' => [
-                'plugin' => null, 'controller' => 'articles', 'action' => 'index',
+                'plugin' => null, 'controller' => 'Articles', 'action' => 'index',
             ],
             'base' => '',
             'webroot' => '/',
@@ -837,7 +837,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
-            'a' => ['rel' => 'next', 'href' => '/articles/index?page=2'],
+            'a' => ['rel' => 'next', 'href' => '/?page=2'],
             'Next',
             '/a',
             '/li',
@@ -967,7 +967,7 @@ class PaginatorHelperTest extends TestCase
     public function testGenerateUrlWithPrefixes()
     {
         Router::reload();
-        Router::connect('/members/:controller/:action/*', ['prefix' => 'members']);
+        Router::connect('/members/:controller/:action/*', ['prefix' => 'Members']);
         Router::connect('/:controller/:action/*');
 
         $request = new ServerRequest([
@@ -986,7 +986,7 @@ class PaginatorHelperTest extends TestCase
                 'prevPage' => true,
             ],
         ]);
-        $url = ['prefix' => 'members'];
+        $url = ['prefix' => 'Members'];
 
         $result = $this->Paginator->generateUrl([], null, $url);
         $expected = '/members/Posts/index?page=2';
@@ -1022,7 +1022,7 @@ class PaginatorHelperTest extends TestCase
 
         $options = ['sort' => 'name', 'direction' => 'desc'];
         $url = [
-            'prefix' => 'members',
+            'prefix' => 'Members',
             'controller' => 'Posts',
         ];
         $result = $this->Paginator->generateUrl($options, null, $url);
@@ -1044,13 +1044,13 @@ class PaginatorHelperTest extends TestCase
     public function testGenerateUrlWithPrefixesLeavePrefix()
     {
         Router::reload();
-        Router::connect('/members/:controller/:action/*', ['prefix' => 'members']);
+        Router::connect('/members/:controller/:action/*', ['prefix' => 'Members']);
         Router::connect('/:controller/:action/*');
 
         $request = new ServerRequest([
             'params' => [
-                'prefix' => 'members',
-                'controller' => 'posts',
+                'prefix' => 'Members',
+                'controller' => 'Posts',
                 'action' => 'index',
                 'plugin' => null,
             ],
@@ -1061,15 +1061,15 @@ class PaginatorHelperTest extends TestCase
         $this->View->setRequest($request);
 
         $result = $this->Paginator->generateUrl();
-        $expected = '/members/posts/index?page=2';
+        $expected = '/members/Posts/index?page=2';
         $this->assertSame($expected, $result);
 
-        $result = $this->Paginator->generateUrl([], null, ['prefix' => 'members']);
-        $expected = '/members/posts/index?page=2';
+        $result = $this->Paginator->generateUrl([], null, ['prefix' => 'Members']);
+        $expected = '/members/Posts/index?page=2';
         $this->assertSame($expected, $result);
 
         $result = $this->Paginator->generateUrl([], null, ['prefix' => false]);
-        $expected = '/posts/index?page=2';
+        $expected = '/Posts/index?page=2';
         $this->assertSame($expected, $result);
 
         $this->Paginator->options(['url' => ['prefix' => false]]);
@@ -1239,7 +1239,7 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/articles/',
             'params' => [
-                'plugin' => null, 'controller' => 'articles', 'action' => 'index', 'pass' => [],
+                'plugin' => null, 'controller' => 'Articles', 'action' => 'index', 'pass' => [],
             ],
         ]);
         Router::setRequest($request);
@@ -1259,7 +1259,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;sort=title&amp;direction=asc'],
+            'a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;sort=title&amp;direction=asc'],
             'Title',
             '/a',
         ];
@@ -1268,19 +1268,19 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->numbers();
         $expected = [
             ['li' => ['class' => 'active']], '<a href=""', '1', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=2']], '2', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=3']], '3', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=4']], '4', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=5']], '5', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=6']], '6', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=7']], '7', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=2']], '2', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=3']], '3', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=7']], '7', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
-            'a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=2', 'rel' => 'next'],
+            'a' => ['href' => '/Articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=2', 'rel' => 'next'],
             'Next',
             '/a',
             '/li',
@@ -1296,9 +1296,9 @@ class PaginatorHelperTest extends TestCase
     public function testDefaultSortRemovedFromUrl()
     {
         $request = new ServerRequest([
-            'url' => '/articles/',
+            'url' => '/Articles/',
             'params' => [
-                'plugin' => null, 'controller' => 'articles', 'action' => 'index',
+                'plugin' => null, 'controller' => 'Articles', 'action' => 'index',
             ],
         ]);
         Router::setRequest($request);
@@ -1314,7 +1314,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
-            'a' => ['rel' => 'next', 'href' => '/articles/index?page=2'],
+            'a' => ['rel' => 'next', 'href' => '/?page=2'],
             'Next',
             '/a',
             '/li',
@@ -1330,8 +1330,8 @@ class PaginatorHelperTest extends TestCase
     public function testDefaultSortRemovedFromUrlWithAliases()
     {
         $request = new ServerRequest([
-            'params' => ['controller' => 'articles', 'action' => 'index', 'plugin' => null],
-            'url' => '/articles?sort=title&direction=asc',
+            'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
+            'url' => '/Articles?sort=title&direction=asc',
         ]);
         Router::setRequest($request);
 
@@ -1348,7 +1348,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['class' => 'asc', 'href' => '/articles/index'],
+            'a' => ['class' => 'asc', 'href' => '/'],
             'Title',
             '/a',
         ];
@@ -1888,7 +1888,7 @@ class PaginatorHelperTest extends TestCase
             ->getRequest()
             ->withAttribute('params', [
                 'plugin' => null,
-                'controller' => 'clients',
+                'controller' => 'Clients',
                 'action' => 'index',
             ])
             ->withAttribute('paging', [
@@ -1908,15 +1908,15 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->numbers();
         $expected = [
-            ['li' => []], ['a' => ['href' => '/clients/index/4']], '4', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/clients/index/5']], '5', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/clients/index/6']], '6', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/clients/index/7']], '7', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/7']], '7', '/a', '/li',
             ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/clients/index/9']], '9', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/clients/index/10']], '10', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/clients/index/11']], '11', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/clients/index/12']], '12', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/9']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/10']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/11']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/Clients/index/12']], '12', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1927,7 +1927,7 @@ class PaginatorHelperTest extends TestCase
         $this->Paginator->options(['routePlaceholders' => ['sort', 'direction']]);
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/clients/index/title/asc'],
+            'a' => ['href' => '/Clients/index/title/asc'],
             'Title',
             '/a',
         ];
