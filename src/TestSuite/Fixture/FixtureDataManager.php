@@ -237,7 +237,7 @@ class FixtureDataManager extends FixtureLoader
      */
     public function setupTest(TestCase $test): void
     {
-        $stateReset = $test->getStateResetStrategy();
+        $stateReset = $test->getResetStrategy();
         $stateReset->setupTest();
 
         $this->inserted = [];
@@ -257,7 +257,7 @@ class FixtureDataManager extends FixtureLoader
             return;
         }
 
-        $stateReset = $test->getStateResetStrategy();
+        $stateReset = $test->getResetStrategy();
         $stateReset->teardownTest();
     }
 

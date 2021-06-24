@@ -34,7 +34,7 @@ use Cake\Datasource\ConnectionManager;
  * with the schema + data fixture system. Only tables that have
  * fixture data 'loaded' will be truncated.
  */
-class TruncationStrategy implements StateResetStrategyInterface
+class TruncationStrategy implements ResetStrategyInterface
 {
     /**
      * A map of connections to the tables they contain.

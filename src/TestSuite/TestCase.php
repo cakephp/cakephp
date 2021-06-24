@@ -28,7 +28,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureLoader;
-use Cake\TestSuite\Fixture\StateResetStrategyInterface;
+use Cake\TestSuite\Fixture\ResetStrategyInterface;
 use Cake\TestSuite\Fixture\TruncationStrategy;
 use Cake\Utility\Inflector;
 use LogicException;
@@ -1054,9 +1054,9 @@ abstract class TestCase extends BaseTestCase
      * state manager configuration, or multiple state managers,
      * override this method.
      *
-     * @return \Cake\TestSuite\Fixture\StateResetStrategyInterface
+     * @return \Cake\TestSuite\Fixture\ResetStrategyInterface
      */
-    public function getStateResetStrategy(): StateResetStrategyInterface
+    public function getResetStrategy(): ResetStrategyInterface
     {
         $strategyClass = $this->stateResetStrategy ?? TruncationStrategy::class;
         try {
@@ -1064,14 +1064,14 @@ abstract class TestCase extends BaseTestCase
         } catch (ReflectionException $e) {
             throw new RuntimeException("Cannot find class `{$strategyClass}`");
         }
-        $interface = StateResetStrategyInterface::class;
+        $interface = ResetStrategyInterface::class;
         if (!$reflect->implementsInterface($interface)) {
             throw new RuntimeException(
                 "The `{$strategyClass}` does not implement the required `{$interface}` interface."
             );
         }
 
-        /** @var \Cake\TestSuite\Fixture\StateResetStrategyInterface */
+        /** @var \Cake\TestSuite\Fixture\ResetStrategyInterface */
         return $reflect->newInstance($this->fixtureManager);
     }
 }

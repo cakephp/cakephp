@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\TestSuite\Fixture\StateResetCollection;
-use Cake\TestSuite\Fixture\StateResetStrategyInterface;
+use Cake\TestSuite\Fixture\ResetCollection;
+use Cake\TestSuite\Fixture\ResetStrategyInterface;
 use Cake\TestSuite\TestCase;
 
-class StateResetCollectionTest extends TestCase
+class ResetCollectionTest extends TestCase
 {
     /**
      * Test that setupTest calls items.
@@ -29,15 +29,15 @@ class StateResetCollectionTest extends TestCase
      */
     public function testSetupTest()
     {
-        $one = $this->getMockBuilder(StateResetStrategyInterface::class)->getMock();
-        $two = $this->getMockBuilder(StateResetStrategyInterface::class)->getMock();
+        $one = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();
+        $two = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();
 
         $one->expects($this->once())->method('setupTest');
         $two->expects($this->once())->method('setupTest');
 
         $one->expects($this->never())->method('teardownTest');
 
-        $strategy = new StateResetCollection([$one, $two]);
+        $strategy = new ResetCollection([$one, $two]);
         $strategy->setupTest();
     }
 
@@ -48,15 +48,15 @@ class StateResetCollectionTest extends TestCase
      */
     public function testTeardownTest()
     {
-        $one = $this->getMockBuilder(StateResetStrategyInterface::class)->getMock();
-        $two = $this->getMockBuilder(StateResetStrategyInterface::class)->getMock();
+        $one = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();
+        $two = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();
 
         $one->expects($this->once())->method('teardownTest');
         $two->expects($this->once())->method('teardownTest');
 
         $one->expects($this->never())->method('setupTest');
 
-        $strategy = new StateResetCollection([$one, $two]);
+        $strategy = new ResetCollection([$one, $two]);
         $strategy->teardownTest();
     }
 }
