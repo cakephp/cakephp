@@ -578,39 +578,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get config value.
-     *
-     * Currently if config is not set it fallbacks to checking corresponding
-     * view var with underscore prefix. Using underscore prefixed special view
-     * vars is deprecated and this fallback will be removed in CakePHP 4.1.0.
-     *
-     * @param string|null $key The key to get or null for the whole config.
-     * @param mixed $default The return value when the key does not exist.
-     * @return mixed Config value being read.
-     * @psalm-suppress PossiblyNullArgument
-     */
-    public function getConfig(?string $key = null, $default = null)
-    {
-        $value = $this->_getConfig($key);
-
-        if ($value !== null) {
-            return $value;
-        }
-
-        if (isset($this->viewVars["_{$key}"])) {
-            deprecationWarning(sprintf(
-                'Setting special view var "_%s" is deprecated. Use ViewBuilder::setOption(\'%s\', $value) instead.',
-                $key,
-                $key
-            ));
-
-            return $this->viewVars["_{$key}"];
-        }
-
-        return $default;
-    }
-
-    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
