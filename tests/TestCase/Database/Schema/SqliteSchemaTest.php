@@ -1058,6 +1058,8 @@ SQL;
      */
     public function testTruncateSql()
     {
+        $this->skipIf(version_compare('8.1.0', PHP_VERSION, '>'), 'PDOStatement::fetchAll() return type changed in php 8.1');
+
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
@@ -1091,6 +1093,8 @@ SQL;
      */
     public function testTruncateSqlNoSequences()
     {
+        $this->skipIf(version_compare('8.1.0', PHP_VERSION, '>'), 'PDOStatement::fetchAll() return type changed in php 8.1');
+
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
