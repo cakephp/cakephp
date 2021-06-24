@@ -289,11 +289,11 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function quote($value, $type = PDO::PARAM_STR): string
+    public function quote(string $value, int $type = PDO::PARAM_STR): string
     {
         $this->connect();
 
-        return $this->_connection->quote((string)$value, $type);
+        return $this->_connection->quote($value, $type);
     }
 
     /**
