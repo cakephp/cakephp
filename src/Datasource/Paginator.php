@@ -407,27 +407,6 @@ class Paginator implements PaginatorInterface
     }
 
     /**
-     * Shim method for reading the deprecated whitelist or allowedParameters options
-     *
-     * @return string[]
-     */
-    protected function getAllowedParameters(): array
-    {
-        $allowed = $this->getConfig('allowedParameters');
-        if (!$allowed) {
-            $allowed = [];
-        }
-        $whitelist = $this->getConfig('whitelist');
-        if ($whitelist) {
-            deprecationWarning('The `whitelist` option is deprecated. Use the `allowedParameters` option instead.');
-
-            return array_merge($allowed, $whitelist);
-        }
-
-        return $allowed;
-    }
-
-    /**
      * Shim method for reading the deprecated sortWhitelist or sortableFields options.
      *
      * @param array $config The configuration data to coalesce and emit warnings on.
@@ -469,9 +448,7 @@ class Paginator implements PaginatorInterface
             $scope = $settings['scope'];
             $params = !empty($params[$scope]) ? (array)$params[$scope] : [];
         }
-
-        $allowed = $this->getAllowedParameters();
-        $params = array_intersect_key($params, array_flip($allowed));
+        $params = array_intersect_key($params, array_flip($this->getConfig('allowedParameters')));
 
         return array_merge($settings, $params);
     }
@@ -492,7 +469,6 @@ class Paginator implements PaginatorInterface
         }
 
         $defaults = $this->getConfig();
-        $defaults['whitelist'] = $defaults['allowedParameters'] = $this->getAllowedParameters();
 
         $maxLimit = $settings['maxLimit'] ?? $defaults['maxLimit'];
         $limit = $settings['limit'] ?? $defaults['limit'];
