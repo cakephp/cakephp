@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\TestSuite\Fixture\ResetCollection;
+use Cake\TestSuite\Fixture\CollectionResetStrategy;
 use Cake\TestSuite\Fixture\ResetStrategyInterface;
 use Cake\TestSuite\TestCase;
 
@@ -37,7 +37,7 @@ class ResetCollectionTest extends TestCase
 
         $one->expects($this->never())->method('teardownTest');
 
-        $strategy = new ResetCollection([$one, $two]);
+        $strategy = new CollectionResetStrategy([$one, $two]);
         $strategy->setupTest();
     }
 
@@ -56,7 +56,7 @@ class ResetCollectionTest extends TestCase
 
         $one->expects($this->never())->method('setupTest');
 
-        $strategy = new ResetCollection([$one, $two]);
+        $strategy = new CollectionResetStrategy([$one, $two]);
         $strategy->teardownTest();
     }
 }

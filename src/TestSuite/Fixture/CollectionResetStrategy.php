@@ -23,17 +23,17 @@ namespace Cake\TestSuite\Fixture;
  * systems that require their own state resetting. For example,
  * a relational database and elasticsearch.
  */
-class ResetCollection implements ResetStrategyInterface
+class CollectionResetStrategy implements ResetStrategyInterface
 {
     /**
-     * @var \Cake\TestSuite\Fixture\StateResetStrategyInterface[]
+     * @var \Cake\TestSuite\Fixture\ResetStrategyInterface[]
      */
     protected $items = [];
 
     /**
      * Constructor
      *
-     * @param \Cake\TestSuite\Fixture\StateResetStrategyInterface[] $items The strategies to aggregate.
+     * @param \Cake\TestSuite\Fixture\ResetStrategyInterface[] $items The strategies to aggregate.
      */
     public function __construct(array $items)
     {
