@@ -1051,6 +1051,57 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Integration test for session based CSRF token protection success with specified cookie name
+     *
+     * @return void
+     */
+    public function testPostSessionCsrfSuccessWithSetCookieName()
+    {
+        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes) {
+            $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
+                [
+                    'cookieName' => 'customCsrfToken',
+                ]
+            ));
+            $routes->applyMiddleware('cookieCsrf');
+            $routes->connect('/posts/:action', ['controller' => 'Posts']);
+        });
+        $this->enableCsrfToken('customCsrfToken');
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text',
+        ];
+        $this->post('/custom-cookie-csrf/posts/header', $data);
+        $this->assertResponseSuccess();
+    }
+
+    /**
+     * Integration test for session based CSRF token protection fail with specified cookie name
+     *
+     * @return void
+     */
+    public function testPostSessionCsrfFailureWithSetCookieName()
+    {
+        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes) {
+            $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
+                [
+                    'cookieName' => 'customCsrfToken',
+                ]
+            ));
+            $routes->applyMiddleware('cookieCsrf');
+            $routes->connect('/posts/:action', ['controller' => 'Posts']);
+        });
+        $this->enableCsrfToken('customCsrfToken');
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text',
+            '_csrfToken' => 'failure',
+        ];
+        $this->post('/custom-cookie-csrf/posts/header', $data);
+        $this->assertResponseCode(403);
+    }
+
+    /**
      * Test that exceptions being thrown are handled correctly.
      *
      * @return void

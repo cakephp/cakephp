@@ -185,6 +185,13 @@ trait IntegrationTestTrait
     protected $_unlockedFields = [];
 
     /**
+     * The name that will be used when retrieving the csrf token.
+     *
+     * @var string
+     */
+    protected $_csrfKeyName = 'csrfToken';
+
+    /**
      * Clears the state used for requests.
      *
      * @after
@@ -237,11 +244,13 @@ trait IntegrationTestTrait
      * Both the POST data and cookie will be populated when this option
      * is enabled. The default parameter names will be used.
      *
+     * @param string $cookieName The name of the csrf token cookie.
      * @return void
      */
-    public function enableCsrfToken(): void
+    public function enableCsrfToken(string $cookieName = 'csrfToken'): void
     {
         $this->_csrfToken = true;
+        $this->_csrfKeyName = $cookieName;
     }
 
     /**
@@ -651,20 +660,20 @@ trait IntegrationTestTrait
         if ($this->_csrfToken === true) {
             $middleware = new CsrfProtectionMiddleware();
             $token = null;
-            if (!isset($this->_cookie['csrfToken']) && !isset($this->_session['csrfToken'])) {
+            if (!isset($this->_cookie[$this->_csrfKeyName]) && !isset($this->_session[$this->_csrfKeyName])) {
                 $token = $middleware->createToken();
-            } elseif (isset($this->_cookie['csrfToken'])) {
-                $token = $this->_cookie['csrfToken'];
+            } elseif (isset($this->_cookie[$this->_csrfKeyName])) {
+                $token = $this->_cookie[$this->_csrfKeyName];
             } else {
-                $token = $this->_session['csrfToken'];
+                $token = $this->_session[$this->_csrfKeyName];
             }
 
             // Add the token to both the session and cookie to cover
             // both types of CSRF tokens. We generate the token with the cookie
             // middleware as cookie tokens will be accepted by session csrf, but not
             // the inverse.
-            $this->_session['csrfToken'] = $token;
-            $this->_cookie['csrfToken'] = $token;
+            $this->_session[$this->_csrfKeyName] = $token;
+            $this->_cookie[$this->_csrfKeyName] = $token;
             if (!isset($data['_csrfToken'])) {
                 $data['_csrfToken'] = $token;
             }

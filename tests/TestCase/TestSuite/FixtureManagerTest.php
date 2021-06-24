@@ -32,6 +32,11 @@ use PDOException;
 class FixtureManagerTest extends TestCase
 {
     /**
+     * @var string[]
+     */
+    protected $cleanup = [];
+
+    /**
      * @var \Cake\TestSuite\Fixture\FixtureManager
      */
     protected $manager;
@@ -52,6 +57,11 @@ class FixtureManagerTest extends TestCase
         parent::tearDown();
         Log::reset();
         $this->clearPlugins();
+
+        foreach ($this->cleanup as $name) {
+            $table = $this->getTableLocator()->get($name);
+            $table->deleteAll('1=1');
+        }
     }
 
     /**
@@ -61,6 +71,8 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizeCore()
     {
+        $this->cleanup = ['articles'];
+
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -136,6 +148,7 @@ class FixtureManagerTest extends TestCase
             $db->execute($stmt);
         }
 
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -157,6 +170,7 @@ class FixtureManagerTest extends TestCase
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf($driver instanceof Sqlserver, 'This fails in SQLServer');
 
+        $this->cleanup = ['authors', 'authors_tags'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -187,6 +201,7 @@ class FixtureManagerTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
 
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -210,6 +225,7 @@ class FixtureManagerTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
 
+        $this->cleanup = ['comments'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -231,6 +247,8 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizeVendorPlugin()
     {
+        $this->cleanup = ['articles'];
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -252,6 +270,7 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizeClassName()
     {
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -323,6 +342,7 @@ class FixtureManagerTest extends TestCase
         // Connect the alias making test_other an alias of other.
         ConnectionManager::alias('test_other', 'other');
 
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -341,6 +361,7 @@ class FixtureManagerTest extends TestCase
      */
     public function testLoadSingle()
     {
+        $this->cleanup = ['comments', 'users'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')
             ->onlyMethods(['getFixtures'])
             ->getMock();
@@ -380,6 +401,7 @@ class FixtureManagerTest extends TestCase
      */
     public function testExceptionOnLoad()
     {
+        $this->cleanup = ['products'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')

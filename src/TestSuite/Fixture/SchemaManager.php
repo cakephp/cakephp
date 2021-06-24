@@ -13,7 +13,7 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Schema;
+namespace Cake\TestSuite\Fixture;
 
 use Cake\Console\ConsoleIo;
 use Cake\Datasource\ConnectionManager;
