@@ -224,19 +224,6 @@ class JsonViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
-        $this->deprecated(function () use ($Controller, $data, $serialize, $jsonOptions, $expected) {
-            $Controller->set($data);
-            $Controller->set('_serialize', $serialize);
-            $Controller->set('_jsonOptions', $jsonOptions);
-            $Controller->viewBuilder()->setClassName('Json');
-            $View = $Controller->createView();
-            $output = $View->render();
-
-            $this->assertSame($expected, $output);
-        });
-
-        $Controller = new Controller($Request, $Response);
-
         $Controller->set($data);
         $Controller->viewBuilder()
             ->setOptions(compact('serialize', 'jsonOptions'))
