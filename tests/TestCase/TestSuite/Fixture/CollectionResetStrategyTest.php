@@ -20,7 +20,7 @@ use Cake\TestSuite\Fixture\CollectionResetStrategy;
 use Cake\TestSuite\Fixture\ResetStrategyInterface;
 use Cake\TestSuite\TestCase;
 
-class ResetCollectionTest extends TestCase
+class CollectionResetStrategyTest extends TestCase
 {
     /**
      * Test that setupTest calls items.
