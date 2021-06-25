@@ -23,7 +23,7 @@ namespace Cake\TestSuite\Fixture;
  * after tests. This allows test database state to be 'prepared'
  * and 'cleaned up'.
  */
-interface StateResetStrategyInterface
+interface ResetStrategyInterface
 {
     /**
      * Before test hook
