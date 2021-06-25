@@ -1108,7 +1108,7 @@ SQL;
             ->will($this->returnValue($statement));
         $statement->expects($this->once())
             ->method('fetchAll')
-            ->will($this->returnValue(false));
+            ->will($this->returnValue([]));
         $statement->method('execute')->will($this->returnValue(true));
 
         $table = new TableSchema('articles');
