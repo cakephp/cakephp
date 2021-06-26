@@ -108,16 +108,16 @@ class TreeBehaviorTest extends TestCase
     public function testFindPath(): void
     {
         $nodes = $this->table->find('path', ['for' => 9]);
-        $this->assertEquals([1, 6, 9], $nodes->extract('id')->toArray());
+        $this->assertEquals([1, 6, 9], $nodes->all()->extract('id')->toArray());
 
         $nodes = $this->table->find('path', ['for' => 10]);
-        $this->assertSame([1, 6, 10], $nodes->extract('id')->toArray());
+        $this->assertSame([1, 6, 10], $nodes->all()->extract('id')->toArray());
 
         $nodes = $this->table->find('path', ['for' => 5]);
-        $this->assertSame([1, 2, 5], $nodes->extract('id')->toArray());
+        $this->assertSame([1, 2, 5], $nodes->all()->extract('id')->toArray());
 
         $nodes = $this->table->find('path', ['for' => 1]);
-        $this->assertSame([1], $nodes->extract('id')->toArray());
+        $this->assertSame([1], $nodes->all()->extract('id')->toArray());
 
         $entity = $this->table->newEntity(['name' => 'odd one', 'parent_id' => 1]);
         $entity = $this->table->save($entity);
@@ -128,13 +128,13 @@ class TreeBehaviorTest extends TestCase
         $this->table->save($entity);
 
         $nodes = $this->table->find('path', ['for' => 4]);
-        $this->assertSame([1, $newId, 2, 4], $nodes->extract('id')->toArray());
+        $this->assertSame([1, $newId, 2, 4], $nodes->all()->extract('id')->toArray());
 
         // find path with scope
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $nodes = $table->find('path', ['for' => 5]);
-        $this->assertSame([1, 3, 4, 5], $nodes->extract('id')->toArray());
+        $this->assertSame([1, 3, 4, 5], $nodes->all()->extract('id')->toArray());
     }
 
     /**

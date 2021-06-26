@@ -6282,7 +6282,7 @@ class TableTest extends TestCase
         $articles = $table->hasMany('Articles');
         $articles->belongsToMany('Tags');
 
-        $entities = $table->find()->compile();
+        $entities = $table->find()->all()->compile();
         $contain = ['SiteArticles', 'Articles.Tags'];
         $result = $table->loadInto($entities, $contain);
 
@@ -6290,7 +6290,7 @@ class TableTest extends TestCase
             $this->assertSame($v, $result[$k]);
         }
 
-        $expected = $table->find()->contain($contain)->toList();
+        $expected = $table->find()->contain($contain)->toArray();
         $this->assertEquals($expected, $result);
     }
 
