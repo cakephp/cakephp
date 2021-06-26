@@ -28,7 +28,7 @@ use RuntimeException;
  * of not being able to query data in fixtures from another
  * process.
  */
-class TransactionStrategy implements StateResetStrategyInterface
+class TransactionStrategy implements ResetStrategyInterface
 {
     /**
      * Constructor.

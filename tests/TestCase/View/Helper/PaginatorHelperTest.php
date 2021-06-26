@@ -3495,4 +3495,35 @@ class PaginatorHelperTest extends TestCase
         }
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', $params));
     }
+
+    /**
+     * Test that generates a URL that keeps the passed parameters
+     *
+     * @return void
+     */
+    public function testPaginationWithPassedParams()
+    {
+        $request = new ServerRequest([
+            'url' => '/articles/index/whatever/3',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Articles',
+                'action' => 'index',
+                'pass' => ['whatever', '3'],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        $this->View->setRequest($request->withAttribute('paging', [
+            'Article' => [
+                'scope' => 'article',
+            ],
+        ]));
+        $this->Paginator = new PaginatorHelper($this->View);
+        $result = $this->Paginator->generateUrl(['page' => 2]);
+        $expected = '/Articles/index/whatever/3?article%5Bpage%5D=2';
+        $this->assertSame($expected, $result);
+    }
 }

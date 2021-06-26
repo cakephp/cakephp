@@ -25,6 +25,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PDOStatement;
 
 /**
  * Tests Driver class
@@ -194,7 +195,7 @@ class DriverTest extends TestCase
         $connection
             ->expects($this->once())
             ->method('query')
-            ->willReturn(true);
+            ->willReturn(new PDOStatement());
 
         $this->driver->setConnection($connection);
         $this->assertTrue($this->driver->isConnected());
