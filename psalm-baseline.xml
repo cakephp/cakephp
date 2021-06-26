@@ -145,18 +145,6 @@
       <code>$this-&gt;data</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Http/Session/CacheSession.php">
-    <ImplementedReturnTypeMismatch occurrences="2">
-      <code>int|false</code>
-      <code>string|false</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="src/Http/Session/DatabaseSession.php">
-    <ImplementedReturnTypeMismatch occurrences="2">
-      <code>int|false</code>
-      <code>string|false</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="src/I18n/DateFormatTrait.php">
     <MissingParamType occurrences="1">
       <code>$format</code>
@@ -222,9 +210,11 @@
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
+    <InternalMethod occurrences="1"/>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
     <InternalClass occurrences="2"/>
+    <InternalMethod occurrences="2"/>
   </file>
   <file src="src/TestSuite/Constraint/Response/ContentType.php">
     <NonInvariantDocblockPropertyType occurrences="1">
@@ -260,11 +250,17 @@
     <InternalClass occurrences="1">
       <code>new AssertionFailedError('No response set, cannot assert content.')</code>
     </InternalClass>
+    <InternalMethod occurrences="1">
+      <code>new AssertionFailedError('No response set, cannot assert content.')</code>
+    </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
     <InternalClass occurrences="1">
       <code>new AssertionFailedError($message)</code>
     </InternalClass>
+    <InternalMethod occurrences="1">
+      <code>new AssertionFailedError($message)</code>
+    </InternalMethod>
   </file>
   <file src="src/TestSuite/ContainerStubTrait.php">
     <DeprecatedClass occurrences="2">

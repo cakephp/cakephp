@@ -141,7 +141,7 @@ class Number
     {
         $options += ['multiply' => false, 'type' => NumberFormatter::PERCENT];
         if (!$options['multiply']) {
-            $value /= 100;
+            $value = (float)$value / 100;
         }
 
         return static::precision($value, $precision, $options);
