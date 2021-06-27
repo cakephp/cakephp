@@ -23,7 +23,7 @@ use Throwable;
 class MissingTemplateException extends CakeException
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $templateName;
 
@@ -57,6 +57,7 @@ class MissingTemplateException extends CakeException
             $this->templateName = array_pop($file);
         } else {
             $this->file = $file;
+            $this->templateName = null;
         }
         $this->paths = $paths;
 
