@@ -675,7 +675,6 @@ trait PaginatorTestTrait
                 'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'sort' => 'id',
                 'scope' => null,
-                'sortWhitelist' => ['id'],
                 'sortableFields' => ['id'],
             ]);
 
@@ -760,7 +759,6 @@ trait PaginatorTestTrait
                 'order' => ['PaginatorPosts.id' => 'asc'],
                 'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
-                'sortWhitelist' => ['id'],
                 'sortableFields' => ['id'],
                 'sort' => 'id',
             ]);
@@ -842,25 +840,6 @@ trait PaginatorTestTrait
         $result = $this->Paginator->validateSort($model, $options);
 
         $this->assertEquals([], $result['order']);
-    }
-
-    /**
-     * test that fields not in whitelist won't be part of order conditions.
-     *
-     * @return void
-     */
-    public function testValidateSortWhitelistFailure()
-    {
-        $this->deprecated(function () {
-            $model = $this->mockAliasHasFieldModel();
-            $options = [
-                'sort' => 'body',
-                'direction' => 'asc',
-                'sortWhitelist' => ['title', 'id'],
-            ];
-            $result = $this->Paginator->validateSort($model, $options);
-            $this->assertEquals([], $result['order']);
-        });
     }
 
     /**

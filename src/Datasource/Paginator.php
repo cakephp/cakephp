@@ -407,26 +407,6 @@ class Paginator implements PaginatorInterface
     }
 
     /**
-     * Shim method for reading the deprecated sortWhitelist or sortableFields options.
-     *
-     * @param array $config The configuration data to coalesce and emit warnings on.
-     * @return string[]|null
-     */
-    protected function getSortableFields(array $config): ?array
-    {
-        $allowed = $config['sortableFields'] ?? null;
-        if ($allowed !== null) {
-            return $allowed;
-        }
-        $deprecated = $config['sortWhitelist'] ?? null;
-        if ($deprecated !== null) {
-            deprecationWarning('The `sortWhitelist` option is deprecated. Use `sortableFields` instead.');
-        }
-
-        return $deprecated;
-    }
-
-    /**
      * Merges the various options that Paginator uses.
      * Pulls settings together from the following places:
      *
@@ -539,12 +519,9 @@ class Paginator implements PaginatorInterface
         }
 
         $sortAllowed = false;
-        $allowed = $this->getSortableFields($options);
-        if ($allowed !== null) {
-            $options['sortableFields'] = $options['sortWhitelist'] = $allowed;
-
+        if (isset($options['sortableFields'])) {
             $field = key($options['order']);
-            $sortAllowed = in_array($field, $allowed, true);
+            $sortAllowed = in_array($field, $options['sortableFields'], true);
             if (!$sortAllowed) {
                 $options['order'] = [];
                 $options['sort'] = null;
