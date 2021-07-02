@@ -151,31 +151,6 @@ class CompletionCommandTest extends TestCase
      *
      * @return void
      */
-    public function testOptionsShellTask()
-    {
-        //details: https://github.com/cakephp/cakephp/pull/13533
-        $this->markTestIncomplete(
-            'This test does not work correctly with shells.'
-        );
-        $this->exec('completion options sample sample');
-        $this->assertExitCode(Command::CODE_SUCCESS);
-
-        $expected = [
-            '--help -h',
-            '--quiet -q',
-            '--sample -s',
-            '--verbose -v',
-        ];
-        foreach ($expected as $value) {
-            $this->assertOutputContains($value);
-        }
-    }
-
-    /**
-     * test that options with an existing command / subcommand pair returns the proper options
-     *
-     * @return void
-     */
     public function testOptionsSubCommand()
     {
         $this->exec('completion options cache list');
@@ -256,7 +231,7 @@ class CompletionCommandTest extends TestCase
 
     /**
      * test that subCommands with an existing plugin command returns the proper sub commands
-     * when the Shell name is unique and the dot notation not mandatory
+     * when the command name is unique and the dot notation not mandatory
      *
      * @return void
      */
@@ -284,7 +259,7 @@ class CompletionCommandTest extends TestCase
     }
 
     /**
-     * test that subCommands with an app shell that is also defined in a plugin and without the prefix "app."
+     * test that subCommands with an app command that is also defined in a plugin and without the prefix "app."
      * returns proper sub commands
      *
      * @return void
@@ -297,7 +272,7 @@ class CompletionCommandTest extends TestCase
     }
 
     /**
-     * test that subCommands with a plugin shell that is also defined in the returns proper sub commands
+     * test that subCommands with a plugin command that is also defined in the returns proper sub commands
      *
      * @return void
      */
