@@ -236,16 +236,6 @@ parameters:
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Call to function unset\\(\\) contains undefined variable \\$directory\\.$#"
-			count: 2
-			path: src/Filesystem/Folder.php
-
-		-
-			message: "#^Call to function unset\\(\\) contains undefined variable \\$iterator\\.$#"
-			count: 2
-			path: src/Filesystem/Folder.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Http/BaseApplication.php
