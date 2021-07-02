@@ -106,14 +106,6 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         }
 
         $this->getEventManager()->on($this);
-
-        if (method_exists($this, '_buildValidator')) {
-            deprecationWarning(
-                static::class . ' implements `_buildValidator` which is no longer used. ' .
-                'You should implement `buildValidator(Validator $validator, string $name): void` ' .
-                'or `validationDefault(Validator $validator): Validator` instead.'
-            );
-        }
     }
 
     /**
