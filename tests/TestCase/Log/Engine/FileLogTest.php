@@ -215,22 +215,4 @@ class FileLogTest extends TestCase
         $result = file_get_contents(LOGS . 'error.log');
         $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} warning: Test warning/', $result);
     }
-
-    /**
-     * Test deprecated dateFormat option
-     *
-     * @return void
-     */
-    public function testDeprecatedDateFormat()
-    {
-        $this->deprecated(function () {
-            $this->_deleteLogs(LOGS);
-
-            $log = new FileLog(['path' => LOGS, 'dateFormat' => 'c']);
-            $log->log('warning', 'Test warning');
-
-            $result = file_get_contents(LOGS . 'error.log');
-            $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} warning: Test warning/', $result);
-        });
-    }
 }

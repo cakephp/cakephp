@@ -78,11 +78,6 @@ class ConsoleLog extends BaseLog
         if (isset($config['outputAs'])) {
             $this->_output->setOutputAs($config['outputAs']);
         }
-
-        if (isset($this->_config['dateFormat'])) {
-            deprecationWarning('`dateFormat` option should now be set in the formatter options.');
-            $this->formatter->setConfig('dateFormat', $this->_config['dateFormat']);
-        }
     }
 
     /**

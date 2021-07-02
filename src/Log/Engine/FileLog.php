@@ -41,7 +41,6 @@ class FileLog extends BaseLog
      *   If value is 0, old versions are removed rather then rotated.
      * - `mask` A mask is applied when log files are created. Left empty no chmod
      *   is made.
-     * - `dateFormat` PHP date() format.
      *
      * @var array
      */
@@ -107,11 +106,6 @@ class FileLog extends BaseLog
             } else {
                 $this->_size = Text::parseFileSize($this->_config['size']);
             }
-        }
-
-        if (isset($this->_config['dateFormat'])) {
-            deprecationWarning('`dateFormat` option should now be set in the formatter options.');
-            $this->formatter->setConfig('dateFormat', $this->_config['dateFormat']);
         }
     }
 
