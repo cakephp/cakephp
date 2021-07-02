@@ -21,7 +21,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 
 /**
  * Tests FunctionsBuilder class
@@ -193,17 +192,6 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('CAST(NOW() AS varchar)', $function->sql(new ValueBinder()));
         $this->assertSame('string', $function->getReturnType());
-    }
-
-    /**
-     * Tests missing type in new CAST() wrapper throws exception.
-     *
-     * @return void
-     */
-    public function testInvalidCast()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->functions->cast('field');
     }
 
     /**

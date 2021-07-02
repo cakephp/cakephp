@@ -133,26 +133,13 @@ class FunctionsBuilder
      * is the default type name. Use `setReturnType()` to update it.
      *
      * @param \Cake\Database\ExpressionInterface|string $field Field or expression to cast.
-     * @param string $type The SQL data type
+     * @param string $dataType The SQL data type
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function cast($field, string $type = ''): FunctionExpression
+    public function cast($field, string $dataType): FunctionExpression
     {
-        if (is_array($field)) {
-            deprecationWarning(
-                'Build cast function by FunctionsBuilder::cast(array $args) is deprecated. ' .
-                'Use FunctionsBuilder::cast($field, string $type) instead.'
-            );
-
-            return new FunctionExpression('CAST', $field);
-        }
-
-        if (empty($type)) {
-            throw new InvalidArgumentException('The `$type` in a cast cannot be empty.');
-        }
-
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
-        $expression->setConjunction(' AS')->add([$type => 'literal']);
+        $expression->setConjunction(' AS')->add([$dataType => 'literal']);
 
         return $expression;
     }
