@@ -202,22 +202,6 @@ class Text
             return $options['clean'] ? static::cleanInsert($str, $options) : $str;
         }
 
-        if (strpos($str, '?') !== false && is_numeric(key($data))) {
-            deprecationWarning(
-                'Using Text::insert() with `?` placeholders is deprecated. ' .
-                'Use sprintf() with `%s` placeholders instead.'
-            );
-
-            $offset = 0;
-            while (($pos = strpos($str, '?', $offset)) !== false) {
-                $val = array_shift($data);
-                $offset = $pos + strlen($val);
-                $str = substr_replace($str, $val, $pos, 1);
-            }
-
-            return $options['clean'] ? static::cleanInsert($str, $options) : $str;
-        }
-
         $format = $options['format'];
         if ($format === null) {
             $format = sprintf(

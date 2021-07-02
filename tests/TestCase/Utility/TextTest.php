@@ -186,16 +186,6 @@ class TextTest extends TestCase
         $result = Text::insert($string, ['src' => 'foo', 'extra' => 'bar'], ['clean' => 'html']);
         $this->assertSame($expected, $result);
 
-        $this->deprecated(function () {
-            $result = Text::insert('this is a ? string', ['test']);
-            $expected = 'this is a test string';
-            $this->assertSame($expected, $result);
-
-            $result = Text::insert('this is a ? string with a ? ? ?', ['long', 'few?', 'params', 'you know']);
-            $expected = 'this is a long string with a few? params you know';
-            $this->assertSame($expected, $result);
-        });
-
         $result = Text::insert('update saved_urls set url = :url where id = :id', ['url' => 'http://www.testurl.com/param1:url/param2:id', 'id' => 1]);
         $expected = 'update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1';
         $this->assertSame($expected, $result);
@@ -219,12 +209,6 @@ class TextTest extends TestCase
         );
         $expected = 'We are passing.';
         $this->assertSame($expected, $result);
-
-        $this->deprecated(function () {
-            $result = Text::insert('?-pended result', ['Pre']);
-            $expected = 'Pre-pended result';
-            $this->assertSame($expected, $result);
-        });
 
         $string = 'switching :timeout / :timeout_count';
         $expected = 'switching 5 / 10';
