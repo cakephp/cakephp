@@ -109,7 +109,7 @@ class AssetTest extends TestCase
      */
     public function testAssetUrl()
     {
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
 
         $result = Asset::url('js/post.js', ['fullBase' => true]);
         $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
@@ -273,7 +273,7 @@ class AssetTest extends TestCase
      */
     public function testScript()
     {
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
 
         $result = Asset::scriptUrl('post.js', ['fullBase' => true]);
         $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);

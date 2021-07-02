@@ -129,8 +129,8 @@ class FormHelperTest extends TestCase
         ];
 
         Security::setSalt('foo!');
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}', ['action' => 'index']);
+        Router::connect('/{controller}/{action}/*');
     }
 
     /**

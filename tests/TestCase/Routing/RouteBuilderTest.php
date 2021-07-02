@@ -68,13 +68,13 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/some/path');
         $this->assertSame('/some/path', $routes->path());
 
-        $routes = new RouteBuilder($this->collection, '/:book_id');
+        $routes = new RouteBuilder($this->collection, '/{book_id}');
         $this->assertSame('/', $routes->path());
 
-        $routes = new RouteBuilder($this->collection, '/path/:book_id');
+        $routes = new RouteBuilder($this->collection, '/path/{book_id}');
         $this->assertSame('/path/', $routes->path());
 
-        $routes = new RouteBuilder($this->collection, '/path/book:book_id');
+        $routes = new RouteBuilder($this->collection, '/path/book{book_id}');
         $this->assertSame('/path/book', $routes->path());
     }
 
@@ -97,8 +97,8 @@ class RouteBuilderTest extends TestCase
     public function testRoutes()
     {
         $routes = new RouteBuilder($this->collection, '/l');
-        $routes->connect('/:controller', ['action' => 'index']);
-        $routes->connect('/:controller/:action/*');
+        $routes->connect('/{controller}', ['action' => 'index']);
+        $routes->connect('/{controller}/{action}/*');
 
         $all = $this->collection->routes();
         $this->assertCount(2, $all);
@@ -119,8 +119,8 @@ class RouteBuilderTest extends TestCase
             [],
             ['routeClass' => 'InflectedRoute']
         );
-        $routes->connect('/:controller', ['action' => 'index']);
-        $routes->connect('/:controller/:action/*');
+        $routes->connect('/{controller}', ['action' => 'index']);
+        $routes->connect('/{controller}/{action}/*');
 
         $all = $this->collection->routes();
         $this->assertInstanceOf(InflectedRoute::class, $all[0]);
@@ -131,7 +131,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame($routes, $routes->setRouteClass('TestApp\Routing\Route\DashedRoute'));
         $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
 
-        $routes->connect('/:controller', ['action' => 'index']);
+        $routes->connect('/{controller}', ['action' => 'index']);
         $all = $this->collection->routes();
         $this->assertInstanceOf('TestApp\Routing\Route\DashedRoute', $all[0]);
     }
@@ -145,7 +145,7 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'Api']);
 
-        $route = new Route('/:controller');
+        $route = new Route('/{controller}');
         $this->assertSame($route, $routes->connect($route));
 
         $result = $this->collection->routes()[0];
@@ -161,11 +161,11 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'Api']);
 
-        $route = $routes->connect('/:controller');
+        $route = $routes->connect('/{controller}');
         $this->assertInstanceOf(Route::class, $route);
 
         $this->assertSame($route, $this->collection->routes()[0]);
-        $this->assertSame('/l/:controller', $route->template);
+        $this->assertSame('/l/{controller}', $route->template);
         $expected = ['prefix' => 'Api', 'action' => 'index', 'plugin' => null];
         $this->assertEquals($expected, $route->defaults);
     }
@@ -338,13 +338,13 @@ class RouteBuilderTest extends TestCase
         );
         $this->assertEquals(['json'], $routes->getExtensions());
 
-        $routes->connect('/:controller');
+        $routes->connect('/{controller}');
         $route = $this->collection->routes()[0];
 
         $this->assertEquals(['json'], $route->options['_ext']);
         $routes->setExtensions(['xml', 'json']);
 
-        $routes->connect('/:controller/:action');
+        $routes->connect('/{controller}/{action}');
         $new = $this->collection->routes()[1];
         $this->assertEquals(['json'], $route->options['_ext']);
         $this->assertEquals(['xml', 'json'], $new->options['_ext']);
@@ -400,7 +400,7 @@ class RouteBuilderTest extends TestCase
             [],
             ['extensions' => ['json']]
         );
-        $routes->connect('/:controller', [], ['routeClass' => '\stdClass']);
+        $routes->connect('/{controller}', [], ['routeClass' => '\stdClass']);
     }
 
     /**
@@ -424,7 +424,7 @@ class RouteBuilderTest extends TestCase
     public function testRedirect()
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->redirect('/p/:id', ['controller' => 'Posts', 'action' => 'view'], ['status' => 301]);
+        $routes->redirect('/p/{id}', ['controller' => 'Posts', 'action' => 'view'], ['status' => 301]);
         $route = $this->collection->routes()[0];
 
         $this->assertInstanceOf(RedirectRoute::class, $route);
@@ -538,7 +538,7 @@ class RouteBuilderTest extends TestCase
             $this->assertSame('/b/contacts', $r->path());
             $this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
 
-            $r->connect('/:controller');
+            $r->connect('/{controller}');
             $route = $this->collection->routes()[0];
             $this->assertEquals(
                 ['key' => 'value', 'plugin' => 'Contacts', 'action' => 'index'],
@@ -1207,14 +1207,14 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);
         $route = $routes->{strtolower($method)}(
-            '/bookmarks/:id',
+            '/bookmarks/{id}',
             ['controller' => 'Bookmarks', 'action' => 'view'],
             'route-name'
         );
         $this->assertInstanceOf(Route::class, $route, 'Should return a route');
         $this->assertSame($method, $route->defaults['_method']);
         $this->assertSame('app:route-name', $route->options['_name']);
-        $this->assertSame('/bookmarks/:id', $route->template);
+        $this->assertSame('/bookmarks/{id}', $route->template);
         $this->assertEquals(
             ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
             $route->defaults
@@ -1231,14 +1231,14 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);
         $route = $routes->{strtolower($method)}(
-            '/bookmarks/:id',
+            '/bookmarks/{id}',
             'Bookmarks::view',
             'route-name'
         );
         $this->assertInstanceOf(Route::class, $route, 'Should return a route');
         $this->assertSame($method, $route->defaults['_method']);
         $this->assertSame('app:route-name', $route->options['_name']);
-        $this->assertSame('/bookmarks/:id', $route->template);
+        $this->assertSame('/bookmarks/{id}', $route->template);
         $this->assertEquals(
             ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
             $route->defaults
@@ -1254,11 +1254,11 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/');
         $routes->scope('/', function (RouteBuilder $routes) {
-            $routes->get('/faq/:page', ['controller' => 'Pages', 'action' => 'faq'], 'faq')
+            $routes->get('/faq/{page}', ['controller' => 'Pages', 'action' => 'faq'], 'faq')
                 ->setPatterns(['page' => '[a-z0-9_]+'])
                 ->setHost('docs.example.com');
 
-            $routes->post('/articles/:id', ['controller' => 'Articles', 'action' => 'update'], 'article:update')
+            $routes->post('/articles/{id}', ['controller' => 'Articles', 'action' => 'update'], 'article:update')
                 ->setPatterns(['id' => '[0-9]+'])
                 ->setPass(['id']);
         });

@@ -67,20 +67,20 @@ class IntegrationTestTraitTest extends TestCase
             $routes->applyMiddleware('cookie');
 
             $routes->setRouteClass(InflectedRoute::class);
-            $routes->get('/get/:controller/:action', []);
-            $routes->head('/head/:controller/:action', []);
-            $routes->options('/options/:controller/:action', []);
-            $routes->connect('/:controller/:action/*', []);
+            $routes->get('/get/{controller}/{action}', []);
+            $routes->head('/head/{controller}/{action}', []);
+            $routes->options('/options/{controller}/{action}', []);
+            $routes->connect('/{controller}/{action}/*', []);
         });
         Router::scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes) {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
             $routes->applyMiddleware('cookieCsrf');
-            $routes->connect('/posts/:action', ['controller' => 'Posts']);
+            $routes->connect('/posts/{action}', ['controller' => 'Posts']);
         });
         Router::scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes) {
             $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
             $routes->applyMiddleware('sessionCsrf');
-            $routes->connect('/posts/:action/', ['controller' => 'Posts']);
+            $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
         });
 
         $this->configApplication(Configure::read('App.namespace') . '\Application', null);
@@ -1065,7 +1065,7 @@ class IntegrationTestTraitTest extends TestCase
                 ]
             ));
             $routes->applyMiddleware('cookieCsrf');
-            $routes->connect('/posts/:action', ['controller' => 'Posts']);
+            $routes->connect('/posts/{action}', ['controller' => 'Posts']);
         });
         $this->enableCsrfToken('customCsrfToken');
         $data = [
@@ -1090,7 +1090,7 @@ class IntegrationTestTraitTest extends TestCase
                 ]
             ));
             $routes->applyMiddleware('cookieCsrf');
-            $routes->connect('/posts/:action', ['controller' => 'Posts']);
+            $routes->connect('/posts/{action}', ['controller' => 'Posts']);
         });
         $this->enableCsrfToken('customCsrfToken');
         $data = [
