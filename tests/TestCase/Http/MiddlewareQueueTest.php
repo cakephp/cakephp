@@ -175,8 +175,8 @@ class MiddlewareQueueTest extends TestCase
         $queue->add('Sample');
         $queue->prepend('TestApp\Middleware\SampleMiddleware');
 
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current()->getCallable());
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current()->getCallable());
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
     }
 
     /**
@@ -193,7 +193,7 @@ class MiddlewareQueueTest extends TestCase
         $queue->add([$one]);
         $queue->prepend(['TestApp\Middleware\SampleMiddleware']);
 
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current()->getCallable());
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
     }
@@ -219,7 +219,7 @@ class MiddlewareQueueTest extends TestCase
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
         $queue->next();
-        $this->assertSame($four, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($two, $queue->current()->getCallable());
 
@@ -272,7 +272,7 @@ class MiddlewareQueueTest extends TestCase
         $this->assertCount(3, $queue);
         $this->assertSame($two, $queue->current()->getCallable());
         $queue->next();
-        $this->assertSame($three, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
     }
@@ -299,9 +299,9 @@ class MiddlewareQueueTest extends TestCase
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
-        $this->assertSame($four, $queue->current()->getCallable());
+        $this->assertInstanceOf(DumbMiddleware::class, $queue->current());
         $queue->next();
-        $this->assertSame($two, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
 
         $two = SampleMiddleware::class;
         $queue = new MiddlewareQueue();
@@ -315,7 +315,7 @@ class MiddlewareQueueTest extends TestCase
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
-        $this->assertInstanceOf(SampleMiddleware::class, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
     }
 
     /**
@@ -357,9 +357,9 @@ class MiddlewareQueueTest extends TestCase
             ->insertAfter(SampleMiddleware::class, $four);
 
         $this->assertCount(4, $queue);
-        $this->assertSame($one, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
-        $this->assertSame($four, $queue->current()->getCallable());
+        $this->assertInstanceOf(DumbMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
@@ -373,7 +373,7 @@ class MiddlewareQueueTest extends TestCase
             ->insertAfter('Sample', $three);
 
         $this->assertCount(3, $queue);
-        $this->assertInstanceOf(SampleMiddleware::class, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
@@ -396,10 +396,25 @@ class MiddlewareQueueTest extends TestCase
         $queue->add($one)->add($two)->insertAfter('InvalidClass', $three);
 
         $this->assertCount(3, $queue);
-        $this->assertSame($one, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($two, $queue->current()->getCallable());
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
+    }
+
+    /**
+     * @deprecated
+     */
+    public function testAddingDeprecatedDoublePassMiddleware()
+    {
+        $queue = new MiddlewareQueue();
+        $cb = function ($request, $response, $next) {
+            return $next($request, $response);
+        };
+        $queue->add($cb);
+        $this->deprecated(function () use ($queue, $cb) {
+            $this->assertSame($cb, $queue->current()->getCallable());
+        });
     }
 }

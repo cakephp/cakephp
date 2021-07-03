@@ -16,12 +16,18 @@ declare(strict_types=1);
  */
 namespace TestApp\Middleware;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
 /**
  * Testing stub for middleware tests.
  */
-class SampleMiddleware
+class SampleMiddleware implements MiddlewareInterface
 {
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, callable $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        return $handler->handle($request);
     }
 }
