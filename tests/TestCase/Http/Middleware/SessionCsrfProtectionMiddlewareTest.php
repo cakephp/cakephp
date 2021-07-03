@@ -107,7 +107,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider safeHttpMethodProvider
      * @return void
      */
-    public function testSafeMethodNoCsrfRequired($method)
+    public function testSafeMethodNoCsrfRequired(string $method)
     {
         $request = new ServerRequest([
             'environment' => [
@@ -131,7 +131,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInHeaderBackwardsCompat($method)
+    public function testValidTokenInHeaderBackwardsCompat(string $method)
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -156,7 +156,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInHeader($method)
+    public function testValidTokenInHeader(string $method)
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -182,7 +182,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvalidTokenInHeader($method)
+    public function testInvalidTokenInHeader(string $method)
     {
         $request = new ServerRequest([
             'environment' => [
@@ -213,7 +213,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInRequestDataBackwardsCompat($method)
+    public function testValidTokenInRequestDataBackwardsCompat(string $method)
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -244,7 +244,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInRequestData($method)
+    public function testValidTokenInRequestData(string $method)
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -274,7 +274,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvalidTokenRequestData($method)
+    public function testInvalidTokenRequestData(string $method)
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -318,7 +318,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvalidTokenMissingSession($method)
+    public function testInvalidTokenMissingSession(string $method)
     {
         $request = new ServerRequest([
             'environment' => [

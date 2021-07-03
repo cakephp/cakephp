@@ -210,7 +210,7 @@ class ClientTest extends TestCase
     /**
      * @dataProvider urlProvider
      */
-    public function testBuildUrl($expected, $url, $query, $opts)
+    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts)
     {
         $http = new Client();
 
@@ -488,7 +488,7 @@ class ClientTest extends TestCase
      * @dataProvider methodProvider
      * @return void
      */
-    public function testMethodsSimple($method)
+    public function testMethodsSimple(string $method)
     {
         $response = new Response();
 
@@ -535,7 +535,7 @@ class ClientTest extends TestCase
      * @dataProvider typeProvider
      * @return void
      */
-    public function testPostWithTypeKey($type, $mime)
+    public function testPostWithTypeKey(string $type, string $mime)
     {
         $response = new Response();
         $data = 'some data';

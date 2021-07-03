@@ -166,7 +166,7 @@ class CorsBuilderTest extends TestCase
      *
      * @param string $expected The expected value
      * @param \Cake\Http\Response $response The Response object.
-     * @params string $header The header key to check
+     * @param string $header The header key to check
      */
     protected function assertHeader($expected, Response $response, $header)
     {
@@ -178,7 +178,7 @@ class CorsBuilderTest extends TestCase
      * Helper for checking header values.
      *
      * @param \Cake\Http\Response $response The Response object.
-     * @params string $header The header key to check
+     * @param string $header The header key to check
      */
     protected function assertNoHeader(Response $response, $header)
     {
