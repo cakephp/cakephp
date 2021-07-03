@@ -92,7 +92,7 @@ class InflectorTest extends TestCase
      * @dataProvider singularizeProvider
      * @return void
      */
-    public function testInflectingSingulars($singular, $plural)
+    public function testInflectingSingulars(string $singular, string $plural)
     {
         $this->assertSame($singular, Inflector::singularize($plural));
     }
@@ -223,7 +223,7 @@ class InflectorTest extends TestCase
      * @dataProvider pluralizeProvider
      * @return void
      */
-    public function testInflectingPlurals($plural, $singular)
+    public function testInflectingPlurals(string $plural, string $singular)
     {
         $this->assertSame($plural, Inflector::pluralize($singular));
     }

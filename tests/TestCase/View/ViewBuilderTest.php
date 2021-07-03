@@ -122,7 +122,7 @@ class ViewBuilderTest extends TestCase
      * @dataProvider stringPropertyProvider
      * @return void
      */
-    public function testStringProperties($property, $value)
+    public function testStringProperties(string $property, string $value)
     {
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
@@ -139,7 +139,7 @@ class ViewBuilderTest extends TestCase
      * @dataProvider boolPropertyProvider
      * @return void
      */
-    public function testBoolProperties($property, $default, $value)
+    public function testBoolProperties(string $property, bool $default, bool $value)
     {
         $set = 'enable' . ucfirst($property);
         $get = 'is' . ucfirst($property) . 'Enabled';
@@ -156,7 +156,7 @@ class ViewBuilderTest extends TestCase
      * @dataProvider arrayPropertyProvider
      * @return void
      */
-    public function testArrayProperties($property, $value)
+    public function testArrayProperties(string $property, array $value)
     {
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
@@ -173,7 +173,7 @@ class ViewBuilderTest extends TestCase
      * @dataProvider arrayPropertyProvider
      * @return void
      */
-    public function testArrayPropertyMerge($property, $value)
+    public function testArrayPropertyMerge(string $property, array $value)
     {
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);

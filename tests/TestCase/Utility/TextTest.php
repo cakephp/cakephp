@@ -368,7 +368,7 @@ class TextTest extends TestCase
      * @dataProvider wordWrapProvider
      * @return void
      */
-    public function testWordWrap($text, $width, $break = "\n", $cut = false)
+    public function testWordWrap(string $text, int $width, string $break = "\n", bool $cut = false)
     {
         $result = Text::wordWrap($text, $width, $break, $cut);
         $expected = wordwrap($text, $width, $break, $cut);
@@ -1609,9 +1609,10 @@ HTML;
      * testparseFileSize
      *
      * @dataProvider filesizes
+     * @param mixed $expected
      * @return void
      */
-    public function testParseFileSize($params, $expected)
+    public function testParseFileSize(array $params, $expected)
     {
         $result = Text::parseFileSize($params['size'], $params['default']);
         $this->assertSame($expected, $result);
