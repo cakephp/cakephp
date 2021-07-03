@@ -534,6 +534,7 @@ trait QueryTrait
      * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
      * @return array
+     * @see applyOptions()
      */
     public function getOptions(): array
     {

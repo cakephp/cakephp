@@ -766,7 +766,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
     /**
      * Populates or adds parts to current query clauses using an array.
-     * This is handy for passing all query clauses at once. The option array accepts:
+     * This is handy for passing all query clauses at once.
+     *
+     * The method accepts the following query clause related options:
      *
      * - fields: Maps to the select method
      * - conditions: Maps to the where method
@@ -779,6 +781,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * - join: Maps to the join method
      * - page: Maps to the page method
      *
+     * All other options will not affect the query, but will be stored
+     * as custom options that can be read via `getOptions()`. Furthermore
+     * they are automatically passed to `Model.beforeFind`.
+     *
      * ### Example:
      *
      * ```
@@ -787,7 +793,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *   'conditions' => [
      *     'created >=' => '2013-01-01'
      *   ],
-     *   'limit' => 10
+     *   'limit' => 10,
      * ]);
      * ```
      *
@@ -800,8 +806,26 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *   ->limit(10)
      * ```
      *
-     * @param array $options the options to be applied
+     * Custom options can be read via `getOptions()`:
+     *
+     * ```
+     * $query->applyOptions([
+     *   'fields' => ['id', 'name'],
+     *   'custom' => 'value',
+     * ]);
+     * ```
+     *
+     * Here `$options` will hold `['custom' => 'value']` (the `fields`
+     * option will be applied to the query instead of being stored, as
+     * it's a query clause related option):
+     *
+     * ```
+     * $options = $query->getOptions();
+     * ```
+     *
+     * @param array $options The options to be applied
      * @return $this
+     * @see getOptions()
      */
     public function applyOptions(array $options)
     {
