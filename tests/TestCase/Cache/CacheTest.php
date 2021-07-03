@@ -402,6 +402,7 @@ class CacheTest extends TestCase
      * testConfig method
      *
      * @dataProvider configProvider
+     * @param \Cake\Cache\CacheEngine|array $config
      * @return void
      */
     public function testConfigVariants($config)

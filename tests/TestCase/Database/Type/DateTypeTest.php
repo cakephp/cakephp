@@ -200,6 +200,8 @@ class DateTypeTest extends TestCase
      * test marshaling data.
      *
      * @dataProvider marshalProvider
+     * @param mixed $value
+     * @param mixed $expected
      * @return void
      */
     public function testMarshal($value, $expected)

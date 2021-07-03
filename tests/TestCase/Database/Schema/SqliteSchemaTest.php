@@ -157,7 +157,7 @@ class SqliteSchemaTest extends TestCase
      * @dataProvider convertColumnProvider
      * @return void
      */
-    public function testConvertColumn($type, $expected)
+    public function testConvertColumn(string $type, array $expected)
     {
         $field = [
             'pk' => false,
@@ -719,7 +719,7 @@ SQL;
      * @dataProvider columnSqlProvider
      * @return void
      */
-    public function testColumnSql($name, $data, $expected)
+    public function testColumnSql(string $name, array $data, string $expected)
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);
@@ -838,7 +838,7 @@ SQL;
      *
      * @dataProvider constraintSqlProvider
      */
-    public function testConstraintSql($name, $data, $expected)
+    public function testConstraintSql(string $name, array $data, string $expected)
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);
@@ -874,7 +874,7 @@ SQL;
      *
      * @dataProvider indexSqlProvider
      */
-    public function testIndexSql($name, $data, $expected)
+    public function testIndexSql(string $name, array $data, string $expected)
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);

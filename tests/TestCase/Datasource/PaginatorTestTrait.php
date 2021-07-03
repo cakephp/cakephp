@@ -1209,7 +1209,7 @@ trait PaginatorTestTrait
      * @dataProvider checkLimitProvider
      * @return void
      */
-    public function testCheckLimit($input, $expected)
+    public function testCheckLimit(array $input, int $expected)
     {
         $result = $this->Paginator->checkLimit($input);
         $this->assertSame($expected, $result['limit']);

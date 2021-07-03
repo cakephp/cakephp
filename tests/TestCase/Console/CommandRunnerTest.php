@@ -550,7 +550,7 @@ class CommandRunnerTest extends TestCase
         $this->assertGreaterThan(2, count(Router::getRouteCollection()->routes()));
     }
 
-    protected function makeAppWithCommands($commands)
+    protected function makeAppWithCommands(array $commands)
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'console', 'routes'])
@@ -562,7 +562,7 @@ class CommandRunnerTest extends TestCase
         return $app;
     }
 
-    protected function getMockIo($output)
+    protected function getMockIo(ConsoleOutput $output)
     {
         $io = $this->getMockBuilder(ConsoleIo::class)
             ->setConstructorArgs([$output, $output, null, null])

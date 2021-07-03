@@ -167,7 +167,7 @@ class PluginUnloadCommandTest extends TestCase
      * @dataProvider variantProvider
      * @return void
      */
-    public function testRegularExpressionsApplication($content)
+    public function testRegularExpressionsApplication(string $content)
     {
         $this->addPluginToApp($content);
 

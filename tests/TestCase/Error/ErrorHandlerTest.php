@@ -190,7 +190,7 @@ class ErrorHandlerTest extends TestCase
      * @dataProvider errorProvider
      * @return void
      */
-    public function testErrorMapping($error, $expected)
+    public function testErrorMapping(int $error, string $expected)
     {
         $errorHandler = new ErrorHandler();
         $errorHandler->register();

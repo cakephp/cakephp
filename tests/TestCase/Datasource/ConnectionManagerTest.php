@@ -56,6 +56,7 @@ class ConnectionManagerTest extends TestCase
      * Test the various valid config() calls.
      *
      * @dataProvider configProvider
+     * @param \Cake\Datasource\ConnectionInterface|array $settings
      * @return void
      */
     public function testConfigVariants($settings)
@@ -400,7 +401,7 @@ class ConnectionManagerTest extends TestCase
      * @dataProvider dsnProvider
      * @return void
      */
-    public function testParseDsn($dsn, $expected)
+    public function testParseDsn(string $dsn, array $expected)
     {
         $result = ConnectionManager::parseDsn($dsn);
         $this->assertEquals($expected, $result);

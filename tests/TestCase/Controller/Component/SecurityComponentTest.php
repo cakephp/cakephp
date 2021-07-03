@@ -97,7 +97,7 @@ class SecurityComponentTest extends TestCase
         unset($this->Controller);
     }
 
-    public function validatePost($expectedException = 'SecurityException', $expectedExceptionMessage = null)
+    public function validatePost(string $expectedException = 'SecurityException', ?string $expectedExceptionMessage = null)
     {
         try {
             return $this->Controller->Security->validatePost($this->Controller);

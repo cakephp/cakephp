@@ -1308,8 +1308,9 @@ TEXT;
      * Test reading params
      *
      * @dataProvider paramReadingDataProvider
+     * @param mixed $expected
      */
-    public function testParamReading($toRead, $expected)
+    public function testParamReading(string $toRead, $expected)
     {
         $this->Shell->params = [
             'key' => 'value',
