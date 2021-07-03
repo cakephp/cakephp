@@ -39,11 +39,7 @@ class SecurityTestController extends Controller
     }
 
     /**
-     * redirect method
-     *
-     * @param array|string $url
-     * @param int $status
-     * @return \Cake\Http\Response|null
+     * @inheritDoc
      */
     public function redirect($url, ?int $status = null): ?Response
     {
@@ -53,7 +49,6 @@ class SecurityTestController extends Controller
     /**
      * Convenience method for header()
      *
-     * @param string $status
      * @return void
      */
     public function header(string $status): void

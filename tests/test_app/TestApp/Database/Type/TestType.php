@@ -10,6 +10,9 @@ use Cake\Database\Type\StringType;
 
 class TestType extends StringType implements ExpressionTypeInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function toExpression($value): ExpressionInterface
     {
         return new FunctionExpression('CONCAT', [$value, ' - foo']);

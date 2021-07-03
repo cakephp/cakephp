@@ -5,6 +5,9 @@ namespace TestApp\Collection;
 
 class CountableIterator extends \IteratorIterator implements \Countable
 {
+    /**
+     * @param mixed $items
+     */
     public function __construct($items)
     {
         $f = function () use ($items) {

@@ -21,7 +21,7 @@ namespace TestApp\Middleware;
  */
 class SampleMiddleware
 {
-    public function __invoke($req, $res, $next)
+    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, callable $next)
     {
     }
 }

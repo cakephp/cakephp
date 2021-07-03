@@ -52,7 +52,6 @@ class DatabaseSuite extends TestSuite
     /**
      * Runs the tests and collects their result in a TestResult.
      *
-     * @param \PHPUnit\Framework\TestResult $result
      * @return \PHPUnit\Framework\TestResult
      */
     public function run(?TestResult $result = null): TestResult

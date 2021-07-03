@@ -15,21 +15,33 @@ use TestApp\Database\ColumnSchemaAwareTypeValueObject;
 
 class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface, ColumnSchemaAwareInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function toPHP($value, DriverInterface $driver)
     {
         return $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function marshal($value)
     {
         return $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toDatabase($value, DriverInterface $driver)
     {
         return $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toExpression($value): ExpressionInterface
     {
         if ($value instanceof ColumnSchemaAwareTypeValueObject) {
@@ -54,6 +66,9 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
         ));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnSql(TableSchemaInterface $schema, string $column, DriverInterface $driver): ?string
     {
         $data = $schema->getColumn($column);
@@ -79,6 +94,9 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
         return $sql;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function convertColumnDefinition(array $definition, DriverInterface $driver): ?array
     {
         return [

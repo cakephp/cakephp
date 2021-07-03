@@ -30,7 +30,6 @@ class TestAuthComponent extends AuthComponent
     public $authCheckCalledFrom;
 
     /**
-     * @param \Cake\Event\EventInterface $event
      * @return \Cake\Http\Response|null
      */
     public function authCheck(EventInterface $event): ?Response
