@@ -492,8 +492,6 @@ class FormAuthenticateTest extends TestCase
     /**
      * Tests that password hasher function is called exactly once in all cases.
      *
-     * @param string $username
-     * @param string|null $password
      * @return void
      * @dataProvider userList
      */

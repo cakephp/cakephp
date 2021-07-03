@@ -2270,7 +2270,6 @@ class RouterTest extends TestCase
     /**
      * Test parseRoutePath() with invalid strings
      *
-     * @param string $value
      * @return void
      * @dataProvider invalidRoutePathProvider
      */

@@ -21,7 +21,6 @@ class TestTable extends Table
     }
 
     /**
-     * @param \Cake\Datasource\QueryInterface $query
      * @return \Cake\Datasource\QueryInterface
      */
     public function findPublished(QueryInterface $query)

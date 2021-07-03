@@ -15,7 +15,7 @@ class TestMessage extends Message
      *
      * @return array
      */
-    public function fmtAddress($address)
+    public function fmtAddress(array $address)
     {
         return parent::formatAddress($address);
     }
@@ -35,7 +35,7 @@ class TestMessage extends Message
      *
      * @return string
      */
-    public function encode($text)
+    public function encode(string $text)
     {
         return parent::encodeForHeader($text);
     }
@@ -45,7 +45,7 @@ class TestMessage extends Message
      *
      * @return string
      */
-    public function decode($text)
+    public function decode(string $text)
     {
         return parent::decodeForHeader($text);
     }
@@ -53,11 +53,9 @@ class TestMessage extends Message
     /**
      * Wrap to protected method
      *
-     * @param string $text
-     * @param int $length
      * @return array
      */
-    public function doWrap($text, $length = Message::LINE_LENGTH_MUST)
+    public function doWrap(string $text, int $length = Message::LINE_LENGTH_MUST)
     {
         return $this->wrap($text, $length);
     }

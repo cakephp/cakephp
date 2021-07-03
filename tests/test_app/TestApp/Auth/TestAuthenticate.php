@@ -41,8 +41,6 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @param \Cake\Http\ServerRequest $request
-     * @param \Cake\Http\Response $response
      * @return array
      */
     public function authenticate(ServerRequest $request, Response $response)
@@ -51,7 +49,6 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @param \Cake\Event\EventInterface $event
      * @param array $user
      * @return array
      */
@@ -66,7 +63,6 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @param \Cake\Event\EventInterface $event
      * @param array $user
      */
     public function logout(EventInterface $event, array $user)

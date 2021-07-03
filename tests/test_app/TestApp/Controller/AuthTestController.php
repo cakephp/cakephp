@@ -102,7 +102,6 @@ class AuthTestController extends Controller
      * redirect method
      *
      * @param array|string $url
-     * @param int $status
      * @return \Cake\Http\Response|null
      */
     public function redirect($url, int $status = 302): ?Response

@@ -27,21 +27,21 @@ use Cake\Utility\Text;
 
 class SluggableBehavior extends Behavior
 {
-    public function beforeFind(EventInterface $event, Query $query, $options = [])
+    public function beforeFind(EventInterface $event, Query $query, array $options = [])
     {
         $query->where(['slug' => 'test']);
 
         return $query;
     }
 
-    public function findNoSlug(Query $query, $options = [])
+    public function findNoSlug(Query $query, array $options = [])
     {
         $query->where(['slug IS' => null]);
 
         return $query;
     }
 
-    public function slugify($value)
+    public function slugify(string $value)
     {
         return Text::slug($value);
     }

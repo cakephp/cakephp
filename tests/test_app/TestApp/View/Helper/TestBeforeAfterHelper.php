@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\View\Helper;
 
+use Cake\Event\EventInterface;
 use Cake\View\Helper;
 
 class TestBeforeAfterHelper extends Helper
@@ -20,7 +21,7 @@ class TestBeforeAfterHelper extends Helper
      * @param string $viewFile View file name.
      * @return void
      */
-    public function beforeLayout($viewFile)
+    public function beforeLayout(EventInterface $event, string $viewFile)
     {
         $this->property = 'Valuation';
     }
@@ -31,7 +32,7 @@ class TestBeforeAfterHelper extends Helper
      * @param string $layoutFile Layout file name.
      * @return void
      */
-    public function afterLayout($layoutFile)
+    public function afterLayout(EventInterface $event, string $layoutFile)
     {
         $this->_View->append('content', 'modified in the afterlife');
     }

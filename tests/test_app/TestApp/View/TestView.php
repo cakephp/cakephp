@@ -50,7 +50,7 @@ class TestView extends AppView
      * @param string $ext The extension
      * @return void
      */
-    public function ext($ext)
+    public function ext(string $ext)
     {
         $this->_ext = $ext;
     }

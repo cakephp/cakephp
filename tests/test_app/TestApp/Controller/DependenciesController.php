@@ -37,11 +37,17 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(compact('str')));
     }
 
+    /**
+     * @param mixed $any
+     */
     public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }
 
+    /**
+     * @param mixed $any
+     */
     public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
@@ -57,6 +63,9 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(['args' => $args]));
     }
 
+    /**
+     * @param mixed $one
+     */
     public function requiredParam($one)
     {
         return $this->response->withStringBody(json_encode(compact('one')));

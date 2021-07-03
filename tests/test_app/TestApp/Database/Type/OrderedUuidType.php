@@ -14,11 +14,17 @@ use Cake\Database\Type\ExpressionTypeInterface;
  */
 class OrderedUuidType extends BaseType implements ExpressionTypeInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function toPHP($value, DriverInterface $d)
     {
         return new UuidValue($value);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toExpression($value): ExpressionInterface
     {
         if ($value instanceof UuidValue) {
@@ -38,11 +44,17 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function marshal($value)
     {
         return $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toDatabase($value, DriverInterface $d)
     {
         return $value;

@@ -31,6 +31,9 @@ class TestingDispatchShell extends Shell
         $this->out('<info>Welcome to CakePHP Console</info>');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         echo $message . "\n";

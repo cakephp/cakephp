@@ -55,10 +55,7 @@ class ShellTestShell extends Shell
     public $testMessage = 'all your base are belong to us';
 
     /**
-     * stop method
-     *
-     * @param int $status
-     * @return void
+     * @inheritDoc
      */
     protected function _stop(int $status = Shell::CODE_SUCCESS): void
     {

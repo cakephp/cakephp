@@ -530,8 +530,6 @@ class EventManagerTest extends TestCase
 
     /**
      * test callback
-     *
-     * @param \Cake\Event\EventInterface $event
      */
     public function onMyEvent(EventInterface $event)
     {

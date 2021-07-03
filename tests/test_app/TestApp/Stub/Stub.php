@@ -13,7 +13,6 @@ class Stub
     use ModelAwareTrait;
 
     /**
-     * @param string $name
      * @return void
      */
     public function setProps(string $name): void

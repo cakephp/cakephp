@@ -16,13 +16,16 @@ declare(strict_types=1);
  */
 namespace TestApp\Middleware;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
  * Testing stub for middleware tests.
  */
 class DumbMiddleware
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, callable $next)
     {
-        return $next($request, $response);
+        return $next($req, $res);
     }
 }
