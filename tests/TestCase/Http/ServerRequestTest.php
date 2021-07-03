@@ -1398,8 +1398,9 @@ class ServerRequestTest extends TestCase
      * Test reading params
      *
      * @dataProvider paramReadingDataProvider
+     * @param mixed $expected
      */
-    public function testGetParam($toRead, $expected)
+    public function testGetParam(string $toRead, $expected)
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -2145,7 +2146,7 @@ XML;
      * @dataProvider emulatedPropertyProvider
      * @return void
      */
-    public function testWithoutAttributesDenyEmulatedProperties($prop)
+    public function testWithoutAttributesDenyEmulatedProperties(string $prop)
     {
         $this->expectException(\InvalidArgumentException::class);
         $request = new ServerRequest([]);

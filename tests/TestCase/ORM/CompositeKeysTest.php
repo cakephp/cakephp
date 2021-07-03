@@ -141,7 +141,7 @@ class CompositeKeysTest extends TestCase
      * @dataProvider strategiesProviderHasMany
      * @return void
      */
-    public function testHasManyEager($strategy)
+    public function testHasManyEager(string $strategy)
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
@@ -217,7 +217,7 @@ class CompositeKeysTest extends TestCase
      * @dataProvider strategiesProviderBelongsToMany
      * @return void
      */
-    public function testBelongsToManyEager($strategy)
+    public function testBelongsToManyEager(string $strategy)
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
         $tags = $this->getTableLocator()->get('SiteTags');
@@ -305,7 +305,7 @@ class CompositeKeysTest extends TestCase
      * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
-    public function testBelongsToEager($strategy)
+    public function testBelongsToEager(string $strategy)
     {
         $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors', [
@@ -354,7 +354,7 @@ class CompositeKeysTest extends TestCase
      * @dataProvider strategiesProviderHasOne
      * @return void
      */
-    public function testHasOneEager($strategy)
+    public function testHasOneEager(string $strategy)
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasOne('SiteArticles', [

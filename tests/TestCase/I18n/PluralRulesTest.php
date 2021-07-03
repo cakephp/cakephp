@@ -130,7 +130,7 @@ class PluralRulesTest extends TestCase
      * @dataProvider localesProvider
      * @return void
      */
-    public function testCalculate($locale, $number, $expected)
+    public function testCalculate(string $locale, int $number, int $expected)
     {
         $this->assertEquals($expected, PluralRules::calculate($locale, $number));
     }

@@ -242,6 +242,7 @@ class EmailTest extends TestCase
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
+     * @param array|string $value
      * @return void
      */
     public function testInvalidEmail($value)
@@ -254,6 +255,7 @@ class EmailTest extends TestCase
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
+     * @param array|string $value
      * @return void
      */
     public function testInvalidEmailAdd($value)

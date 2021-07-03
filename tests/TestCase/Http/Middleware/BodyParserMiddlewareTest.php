@@ -176,7 +176,7 @@ class BodyParserMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvokeMismatchedType($method)
+    public function testInvokeMismatchedType(string $method)
     {
         $parser = new BodyParserMiddleware();
 
@@ -201,7 +201,7 @@ class BodyParserMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvokeCaseInsensitiveContentType($method)
+    public function testInvokeCaseInsensitiveContentType(string $method)
     {
         $parser = new BodyParserMiddleware();
 
@@ -226,7 +226,7 @@ class BodyParserMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvokeParse($method)
+    public function testInvokeParse(string $method)
     {
         $parser = new BodyParserMiddleware();
 
@@ -275,7 +275,7 @@ class BodyParserMiddlewareTest extends TestCase
      * @dataProvider safeHttpMethodProvider
      * @return void
      */
-    public function testInvokeNoParseOnSafe($method)
+    public function testInvokeNoParseOnSafe(string $method)
     {
         $parser = new BodyParserMiddleware();
 
@@ -408,9 +408,10 @@ XML;
      * test parsing non array/object values on JSON
      *
      * @dataProvider jsonScalarValues
+     * @param mixed $expected
      * @return void
      */
-    public function testInvokeParseNoArray($body, $expected)
+    public function testInvokeParseNoArray(string $body, $expected)
     {
         $parser = new BodyParserMiddleware();
 

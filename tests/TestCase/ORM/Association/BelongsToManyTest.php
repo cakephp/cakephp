@@ -1063,6 +1063,7 @@ class BelongsToManyTest extends TestCase
      * Test that saving an empty set on create works.
      *
      * @dataProvider emptyProvider
+     * @param mixed $value
      * @return void
      */
     public function testSaveAssociatedEmptySetSuccess($value)
@@ -1094,6 +1095,7 @@ class BelongsToManyTest extends TestCase
      * Test that saving an empty set on update works.
      *
      * @dataProvider emptyProvider
+     * @param mixed $value
      * @return void
      */
     public function testSaveAssociatedEmptySetUpdateSuccess($value)

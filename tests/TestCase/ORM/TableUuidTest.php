@@ -62,7 +62,7 @@ class TableUuidTest extends TestCase
      * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testSaveNew($tableName)
+    public function testSaveNew(string $tableName)
     {
         $entity = new Entity([
             'name' => 'shiny new',
@@ -83,7 +83,7 @@ class TableUuidTest extends TestCase
      * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testSaveNewSpecificId($tableName)
+    public function testSaveNewSpecificId(string $tableName)
     {
         $id = Text::uuid();
         $entity = new Entity([
@@ -107,7 +107,7 @@ class TableUuidTest extends TestCase
      * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testSaveUpdate($tableName)
+    public function testSaveUpdate(string $tableName)
     {
         $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
         $entity = new Entity([
@@ -131,7 +131,7 @@ class TableUuidTest extends TestCase
      * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testGetById($tableName)
+    public function testGetById(string $tableName)
     {
         $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')->firstOrFail();
@@ -146,7 +146,7 @@ class TableUuidTest extends TestCase
      * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testDelete($tableName)
+    public function testDelete(string $tableName)
     {
         $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')->firstOrFail();
@@ -162,7 +162,7 @@ class TableUuidTest extends TestCase
      * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testEmptyUuid($tableName)
+    public function testEmptyUuid(string $tableName)
     {
         $id = '';
         $table = $this->getTableLocator()->get($tableName);

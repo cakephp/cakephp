@@ -670,7 +670,7 @@ class ExceptionRendererTest extends TestCase
      * @dataProvider exceptionProvider
      * @return void
      */
-    public function testCakeExceptionHandling($exception, $patterns, $code)
+    public function testCakeExceptionHandling(Exception $exception, array $patterns, int $code)
     {
         $exceptionRenderer = new ExceptionRenderer($exception);
         $response = $exceptionRenderer->render();

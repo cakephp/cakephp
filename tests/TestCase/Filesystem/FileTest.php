@@ -144,7 +144,7 @@ class FileTest extends TestCase
      * @dataProvider baseNameValueProvider
      * @return void
      */
-    public function testBasename($path, $suffix, $isRoot)
+    public function testBasename(string $path, ?string $suffix, bool $isRoot)
     {
         if (!$isRoot) {
             $path = TMP . 'tests/permissions' . $path;

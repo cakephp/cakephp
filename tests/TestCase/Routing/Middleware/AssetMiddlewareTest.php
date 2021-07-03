@@ -123,7 +123,7 @@ class AssetMiddlewareTest extends TestCase
      *
      * @dataProvider assetProvider
      */
-    public function testPluginAsset($url, $expectedFile)
+    public function testPluginAsset(string $url, string $expectedFile)
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => $url]);
         $handler = new TestRequestHandler();

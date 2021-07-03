@@ -631,7 +631,7 @@ class CounterCacheBehaviorTest extends TestCase
      *
      * @return Entity
      */
-    protected function _getUser($id = 1)
+    protected function _getUser(int $id = 1)
     {
         return $this->user->get($id);
     }
@@ -641,7 +641,7 @@ class CounterCacheBehaviorTest extends TestCase
      *
      * @return Entity
      */
-    protected function _getCategory($id = 1)
+    protected function _getCategory(int $id = 1)
     {
         return $this->category->find('all')->where(['id' => $id])->first();
     }

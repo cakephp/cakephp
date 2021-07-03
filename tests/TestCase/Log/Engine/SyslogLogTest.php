@@ -58,7 +58,7 @@ class SyslogLogTest extends TestCase
      * @dataProvider typesProvider
      * @return void
      */
-    public function testWriteOneLine($type, $expected)
+    public function testWriteOneLine(string $type, int $expected)
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)

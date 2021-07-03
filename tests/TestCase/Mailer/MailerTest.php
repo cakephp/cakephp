@@ -1427,10 +1427,9 @@ class MailerTest extends TestCase
     }
 
     /**
-     * @param string $message
      * @return void
      */
-    protected function assertLineLengths($message)
+    protected function assertLineLengths(string $message)
     {
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
@@ -1441,7 +1440,10 @@ class MailerTest extends TestCase
         }
     }
 
-    protected function _checkContentTransferEncoding($message, $charset)
+    /**
+     * @param array|string $message
+     */
+    protected function _checkContentTransferEncoding($message, string $charset)
     {
         $boundary = '--' . $this->mailer->getBoundary();
         $result['text'] = false;

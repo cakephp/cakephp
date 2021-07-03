@@ -398,7 +398,7 @@ class RoutingMiddlewareTest extends TestCase
      * @dataProvider scopedMiddlewareUrlProvider
      * @return void
      */
-    public function testInvokeScopedMiddlewareIsolatedScopes($url, $expected)
+    public function testInvokeScopedMiddlewareIsolatedScopes(string $url, array $expected)
     {
         Router::scope('/', function (RouteBuilder $routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {

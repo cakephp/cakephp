@@ -47,7 +47,7 @@ class BaseLogTest extends TestCase
         $this->logger = new TestBaseLog();
     }
 
-    private function assertUnescapedUnicode(array $needles, $haystack)
+    private function assertUnescapedUnicode(array $needles, string $haystack)
     {
         foreach ($needles as $needle) {
             $this->assertStringContainsString(

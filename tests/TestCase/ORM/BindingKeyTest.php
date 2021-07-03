@@ -60,7 +60,7 @@ class BindingKeyTest extends TestCase
      * @dataProvider strategiesProviderJoinable
      * @return void
      */
-    public function testBelongsto($strategy)
+    public function testBelongsto(string $strategy)
     {
         $users = $this->getTableLocator()->get('Users');
         $users->belongsTo('AuthUsers', [
@@ -92,7 +92,7 @@ class BindingKeyTest extends TestCase
      * @dataProvider strategiesProviderJoinable
      * @return void
      */
-    public function testHasOne($strategy)
+    public function testHasOne(string $strategy)
     {
         $users = $this->getTableLocator()->get('Users');
         $users->hasOne('SiteAuthors', [
@@ -116,7 +116,7 @@ class BindingKeyTest extends TestCase
      * @dataProvider strategiesProviderExternal
      * @return void
      */
-    public function testHasMany($strategy)
+    public function testHasMany(string $strategy)
     {
         $users = $this->getTableLocator()->get('Users');
         $authors = $users->hasMany('SiteAuthors', [

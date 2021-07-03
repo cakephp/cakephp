@@ -79,7 +79,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testConstructFromAnotherInstance($class)
+    public function testConstructFromAnotherInstance(string $class)
     {
         $time = '2015-01-22 10:33:44.123456';
         $frozen = new FrozenTime($time, 'America/Chicago');
@@ -129,7 +129,7 @@ class TimeTest extends TestCase
      * @dataProvider timeAgoProvider
      * @return void
      */
-    public function testTimeAgoInWords($input, $expected)
+    public function testTimeAgoInWords(string $input, string $expected)
     {
         $time = new Time($input);
         $result = $time->timeAgoInWords();
@@ -142,7 +142,7 @@ class TimeTest extends TestCase
      * @dataProvider timeAgoProvider
      * @return void
      */
-    public function testTimeAgoInWordsFrozenTime($input, $expected)
+    public function testTimeAgoInWordsFrozenTime(string $input, string $expected)
     {
         $time = new FrozenTime($input);
         $result = $time->timeAgoInWords();
@@ -201,7 +201,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testTimeAgoInWordsTimezone($class)
+    public function testTimeAgoInWordsTimezone(string $class)
     {
         $time = new FrozenTime('1990-07-31 20:33:00 UTC');
         $result = $time->timeAgoInWords(
@@ -220,7 +220,7 @@ class TimeTest extends TestCase
      * @dataProvider timeAgoEndProvider
      * @return void
      */
-    public function testTimeAgoInWordsEnd($input, $expected, $end)
+    public function testTimeAgoInWordsEnd(string $input, string $expected, string $end)
     {
         $time = new Time($input);
         $result = $time->timeAgoInWords(['end' => $end]);
@@ -233,7 +233,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testTimeAgoInWordsCustomStrings($class)
+    public function testTimeAgoInWordsCustomStrings(string $class)
     {
         $time = new $class('-8 years -4 months -2 weeks -3 days');
         $result = $time->timeAgoInWords([
@@ -260,7 +260,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testTimeAgoInWordsAccuracy($class)
+    public function testTimeAgoInWordsAccuracy(string $class)
     {
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
@@ -327,7 +327,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testTimeAgoInWordsWithFormat($class)
+    public function testTimeAgoInWordsWithFormat(string $class)
     {
         $time = new $class('2007-9-25');
         $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
@@ -348,7 +348,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testTimeAgoInWordsNegativeValues($class)
+    public function testTimeAgoInWordsNegativeValues(string $class)
     {
         $time = new $class('-2 months -2 days');
         $result = $time->timeAgoInWords(['end' => '3 month']);
@@ -411,7 +411,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testNice($class)
+    public function testNice(string $class)
     {
         $time = new $class('2014-04-20 20:00', 'UTC');
         $this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $time->nice());
@@ -434,7 +434,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testI18nFormat($class)
+    public function testI18nFormat(string $class)
     {
         $time = new $class('Thu Jan 14 13:59:28 2010');
 
@@ -499,7 +499,7 @@ class TimeTest extends TestCase
      * @see https://github.com/facebook/hhvm/issues/3637
      * @return void
      */
-    public function testI18nFormatWithOffsetTimezone($class)
+    public function testI18nFormatWithOffsetTimezone(string $class)
     {
         $time = new $class('2014-01-01T00:00:00+00');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
@@ -528,7 +528,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testListTimezones($class)
+    public function testListTimezones(string $class)
     {
         $return = $class::listTimezones();
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
@@ -575,7 +575,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testToString($class)
+    public function testToString(string $class)
     {
         $time = new $class('2014-04-20 22:10');
         $class::setDefaultLocale('fr-FR');
@@ -600,6 +600,7 @@ class TimeTest extends TestCase
      * Test that invalid datetime values do not trigger errors.
      *
      * @dataProvider invalidDataProvider
+     * @param mixed $value
      * @return void
      */
     public function testToStringInvalid($value)
@@ -613,6 +614,7 @@ class TimeTest extends TestCase
      * Test that invalid datetime values do not trigger errors.
      *
      * @dataProvider invalidDataProvider
+     * @param mixed $value
      * @return void
      */
     public function testToStringInvalidFrozen($value)
@@ -628,7 +630,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testToStringInvalidZeros($class)
+    public function testToStringInvalidZeros(string $class)
     {
         $this->skipIf(DS === '\\', 'All zeros are valid on windows.');
         $this->skipIf(PHP_INT_SIZE === 4, 'IntlDateFormatter throws exceptions on 32-bit systems');
@@ -647,7 +649,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testDiffForHumans($class)
+    public function testDiffForHumans(string $class)
     {
         $time = new $class('2014-04-20 10:10:10');
 
@@ -688,7 +690,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testDiffForHumansAbsolute($class)
+    public function testDiffForHumansAbsolute(string $class)
     {
         Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
@@ -707,7 +709,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testDiffForHumansNow($class)
+    public function testDiffForHumansNow(string $class)
     {
         Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
@@ -723,7 +725,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testJsonEncode($class)
+    public function testJsonEncode(string $class)
     {
         if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
             $this->markTestSkipped('ICU 5x is needed');
@@ -745,7 +747,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testJsonEncodeSideEffectFree($class)
+    public function testJsonEncodeSideEffectFree(string $class)
     {
         if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
             $this->markTestSkipped('ICU 5x is needed');
@@ -764,7 +766,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testSetJsonEncodeFormat($class)
+    public function testSetJsonEncodeFormat(string $class)
     {
         $time = new $class('2014-04-20 10:10:10');
 
@@ -783,7 +785,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testDebugInfo($class)
+    public function testDebugInfo(string $class)
     {
         $time = new $class('2014-04-20 10:10:10');
         $expected = [
@@ -800,7 +802,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testParseDateTime($class)
+    public function testParseDateTime(string $class)
     {
         $time = $class::parseDateTime('01/01/1970 00:00am');
         $this->assertNotNull($time);
@@ -846,7 +848,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testParseDate($class)
+    public function testParseDate(string $class)
     {
         $time = $class::parseDate('10/13/2013 12:54am');
         $this->assertNotNull($time);
@@ -875,7 +877,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testParseTime($class)
+    public function testParseTime(string $class)
     {
         $time = $class::parseTime('12:54am');
         $this->assertNotNull($time);
@@ -896,7 +898,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testLenientParseDate($class)
+    public function testLenientParseDate(string $class)
     {
         $class::setDefaultLocale('pt_BR');
 
@@ -915,7 +917,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testRussianTimeAgoInWords($class)
+    public function testRussianTimeAgoInWords(string $class)
     {
         I18n::setLocale('ru_RU');
         $time = new $class('5 days ago');
@@ -929,7 +931,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testParseDateDifferentTimezone($class)
+    public function testParseDateDifferentTimezone(string $class)
     {
         date_default_timezone_set('Europe/Paris');
         $class::setDefaultLocale('fr-FR');
@@ -944,7 +946,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testGetSetDefaultLocale($class)
+    public function testGetSetDefaultLocale(string $class)
     {
         $class::setDefaultLocale('fr-FR');
         $this->assertSame('fr-FR', $class::getDefaultLocale());
@@ -954,11 +956,9 @@ class TimeTest extends TestCase
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *
-     * @param string $expected
-     * @param string $result
      * @return void
      */
-    public function assertTimeFormat($expected, $result, $message = '')
+    public function assertTimeFormat(string $expected, string $result, string $message = '')
     {
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);

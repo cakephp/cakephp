@@ -169,7 +169,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
-    public function testContainResultFetchingOneLevel($strategy)
+    public function testContainResultFetchingOneLevel(string $strategy)
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $table->belongsTo('authors', ['strategy' => $strategy]);
@@ -227,7 +227,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderHasMany
      * @return void
      */
-    public function testHasManyEagerLoadingNoHydration($strategy)
+    public function testHasManyEagerLoadingNoHydration(string $strategy)
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
@@ -306,7 +306,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderHasMany
      * @return void
      */
-    public function testHasManyEagerLoadingCount($strategy)
+    public function testHasManyEagerLoadingCount(string $strategy)
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
@@ -337,7 +337,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderHasMany
      * @return void
      */
-    public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy)
+    public function testHasManyEagerLoadingFieldsAndOrderNoHydration(string $strategy)
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
@@ -389,7 +389,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderHasMany
      * @return void
      */
-    public function testHasManyEagerLoadingDeep($strategy)
+    public function testHasManyEagerLoadingDeep(string $strategy)
     {
         $table = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
@@ -463,7 +463,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderHasMany
      * @return void
      */
-    public function testHasManyEagerLoadingFromSecondaryTable($strategy)
+    public function testHasManyEagerLoadingFromSecondaryTable(string $strategy)
     {
         $author = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
@@ -569,7 +569,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderBelongsToMany
      * @return void
      */
-    public function testBelongsToManyEagerLoadingNoHydration($strategy)
+    public function testBelongsToManyEagerLoadingNoHydration(string $strategy)
     {
         $table = $this->getTableLocator()->get('Articles');
         $this->getTableLocator()->get('Tags');
@@ -1444,7 +1444,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
-    public function testHydrateBelongsTo($strategy)
+    public function testHydrateBelongsTo(string $strategy)
     {
         $table = $this->getTableLocator()->get('articles');
         $this->getTableLocator()->get('authors');
@@ -1469,7 +1469,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
-    public function testHydrateDeep($strategy)
+    public function testHydrateDeep(string $strategy)
     {
         $table = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
@@ -1928,9 +1928,11 @@ class QueryTest extends TestCase
      * Tests that query can proxy collection methods
      *
      * @dataProvider collectionMethodsProvider
+     * @param mixed $arg
+     * @param mixed $return
      * @return void
      */
-    public function testCollectionProxy($method, $arg, $return)
+    public function testCollectionProxy(string $method, $arg, $return)
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all'])
@@ -2915,7 +2917,7 @@ class QueryTest extends TestCase
      * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
-    public function testRepeatedAssociationAliases($strategy)
+    public function testRepeatedAssociationAliases(string $strategy)
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles', ['strategy' => $strategy]);
