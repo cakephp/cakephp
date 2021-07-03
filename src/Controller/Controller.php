@@ -191,9 +191,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     ) {
         if ($name !== null) {
             $this->name = $name;
-        }
-
-        if ($this->name === null && $request && $request->getParam('controller')) {
+        } elseif ($this->name === null && $request) {
             $this->name = $request->getParam('controller');
         }
 
