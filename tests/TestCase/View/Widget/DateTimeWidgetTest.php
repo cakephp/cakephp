@@ -62,6 +62,7 @@ class DateTimeWidgetTest extends TestCase
      * test rendering selected values.
      *
      * @dataProvider invalidSelectedValuesProvider
+     * @param mixed $selected
      * @return void
      */
     public function testRenderInvalid($selected)
@@ -95,6 +96,7 @@ class DateTimeWidgetTest extends TestCase
      * test rendering selected values.
      *
      * @dataProvider selectedValuesProvider
+     * @param mixed $selected
      * @return void
      */
     public function testRenderValid($selected)

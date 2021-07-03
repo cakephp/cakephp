@@ -172,6 +172,7 @@ class CheckboxWidgetTest extends TestCase
      * Test rendering checked checkboxes with value.
      *
      * @dataProvider checkedProvider
+     * @param mixed $checked
      * @return void
      */
     public function testRenderCheckedValue($checked)
@@ -214,6 +215,7 @@ class CheckboxWidgetTest extends TestCase
      * Test rendering unchecked checkboxes
      *
      * @dataProvider uncheckedProvider
+     * @param mixed $checked
      * @return void
      */
     public function testRenderUnCheckedValue($checked)

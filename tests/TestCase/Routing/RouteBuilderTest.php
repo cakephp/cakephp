@@ -1203,7 +1203,7 @@ class RouteBuilderTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testHttpMethods($method)
+    public function testHttpMethods(string $method)
     {
         $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);
         $route = $routes->{strtolower($method)}(
@@ -1227,7 +1227,7 @@ class RouteBuilderTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testHttpMethodsStringTarget($method)
+    public function testHttpMethodsStringTarget(string $method)
     {
         $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);
         $route = $routes->{strtolower($method)}(

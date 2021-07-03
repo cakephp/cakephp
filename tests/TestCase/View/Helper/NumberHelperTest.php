@@ -90,7 +90,7 @@ class NumberHelperTest extends TestCase
      * @dataProvider methodProvider
      * @return void
      */
-    public function testNumberHelperProxyMethodCalls($method)
+    public function testNumberHelperProxyMethodCalls(string $method)
     {
         $number = $this->getMockBuilder(NumberMock::class)
             ->addMethods([$method])
@@ -111,7 +111,7 @@ class NumberHelperTest extends TestCase
      * @dataProvider methodProvider
      * @return void
      */
-    public function testParameterCountMatch($method)
+    public function testParameterCountMatch(string $method)
     {
         $numberMethod = new ReflectionMethod(Number::class, $method);
         $helperMethod = new ReflectionMethod(NumberHelper::class, $method);

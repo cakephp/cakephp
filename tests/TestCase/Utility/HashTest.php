@@ -952,6 +952,7 @@ class HashTest extends TestCase
      * Test the extraction of a single value filtered by another field.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractSingleValueWithFilteringByAnotherField($data)
@@ -967,6 +968,7 @@ class HashTest extends TestCase
      * Test simple paths.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractBasic($data)
@@ -988,6 +990,7 @@ class HashTest extends TestCase
      * Test the {n} selector
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractNumericKey($data)
@@ -1125,6 +1128,7 @@ class HashTest extends TestCase
      * Test the {s} selector.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractStringKey($data)
@@ -1193,6 +1197,7 @@ class HashTest extends TestCase
      * Test the attribute presence selector.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractAttributePresence($data)
@@ -1210,6 +1215,7 @@ class HashTest extends TestCase
      * Test = and != operators.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractAttributeEquality($data)
@@ -1327,6 +1333,7 @@ class HashTest extends TestCase
      * Test comparison operators.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractAttributeComparison($data)
@@ -1356,6 +1363,7 @@ class HashTest extends TestCase
      * Test multiple attributes with conditions.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractAttributeMultiple($data)
@@ -1373,6 +1381,7 @@ class HashTest extends TestCase
      * Test attribute pattern matching.
      *
      * @dataProvider articleDataSets
+     * @param \ArrayAccess|array $data
      * @return void
      */
     public function testExtractAttributePattern($data)

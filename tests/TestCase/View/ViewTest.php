@@ -1979,7 +1979,7 @@ TEXT;
         $this->assertSame('TestPlugin', $this->View->getPlugin());
     }
 
-    protected function checkException($message)
+    protected function checkException(string $message)
     {
         if (version_compare(PHP_VERSION, '7.4', '>=')) {
             $this->expectException(\Error::class);

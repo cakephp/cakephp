@@ -218,6 +218,7 @@ class XmlTest extends TestCase
      * testBuildInvalidData
      *
      * @dataProvider invalidDataProvider
+     * @param mixed $value
      * @return void
      */
     public function testBuildInvalidData($value)
@@ -659,6 +660,7 @@ XML;
      * testFromArrayFail method
      *
      * @dataProvider invalidArrayDataProvider
+     * @param mixed $value
      * @return void
      */
     public function testFromArrayFail($value)
@@ -1236,6 +1238,7 @@ XML;
      * testToArrayFail method
      *
      * @dataProvider invalidToArrayDataProvider
+     * @param mixed $value
      * @return void
      */
     public function testToArrayFail($value)
