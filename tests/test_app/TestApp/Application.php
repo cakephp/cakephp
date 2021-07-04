@@ -81,10 +81,10 @@ class Application extends BaseApplication
     {
         $routes->scope('/app', function (RouteBuilder $routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
-            $routes->connect('/articles/:action/*', ['controller' => 'Articles']);
+            $routes->connect('/articles/{action}/*', ['controller' => 'Articles']);
 
             try {
-                $routes->connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
+                $routes->connect('/tests/{action}/*', ['controller' => 'Tests'], ['_name' => 'testName']);
             } catch (DuplicateNamedRouteException $e) {
                 // do nothing. This happens when one test does multiple requests.
             }
@@ -92,7 +92,7 @@ class Application extends BaseApplication
             $routes->fallbacks();
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
-        $routes->connect('/bake/:controller/:action', ['plugin' => 'Bake']);
+        $routes->connect('/bake/{controller}/{action}', ['plugin' => 'Bake']);
     }
 
     /**

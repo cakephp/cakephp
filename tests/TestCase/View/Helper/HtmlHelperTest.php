@@ -111,8 +111,8 @@ class HtmlHelperTest extends TestCase
     public function testLink()
     {
         Router::reload();
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}', ['action' => 'index']);
+        Router::connect('/{controller}/{action}/*');
         Router::setRequest(new ServerRequest());
 
         $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', ''));

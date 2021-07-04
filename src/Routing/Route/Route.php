@@ -108,6 +108,11 @@ class Route
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
+     * Regex for matching braced placholders in route template.
+     */
+    protected const PLACEHOLDER_REGEX = '#\{([a-z][a-z0-9-_]*)\}#i';
+
+    /**
      * Constructor for a Route
      *
      * ### Options
@@ -317,10 +322,16 @@ class Route
         $parsed = preg_quote($this->template, '#');
 
         if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
-            preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $route, $namedElements);
+            preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements);
         } else {
-            preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+            $hasMatches = preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
             $this->braceKeys = false;
+            if ($hasMatches) {
+                deprecationWarning(
+                    'Colon prefixed route placeholders like `:foo` are deprecated.'
+                    . ' Use braced placeholders like `{foo}` instead.'
+                );
+            }
         }
         foreach ($namedElements[1] as $i => $name) {
             $search = preg_quote($namedElements[0][$i]);
@@ -850,14 +861,22 @@ class Route
      */
     public function staticPath(): string
     {
-        $routeKey = strpos($this->template, '{');
-        if ($routeKey !== false && strpos($this->template, '}') !== false) {
-            return substr($this->template, 0, $routeKey);
+        $matched = preg_match(
+            static::PLACEHOLDER_REGEX,
+            $this->template,
+            $namedElements,
+            PREG_OFFSET_CAPTURE
+        );
+
+        if ($matched) {
+            return substr($this->template, 0, $namedElements[0][1]);
         }
+
         $routeKey = strpos($this->template, ':');
         if ($routeKey !== false) {
             return substr($this->template, 0, $routeKey);
         }
+
         $star = strpos($this->template, '*');
         if ($star !== false) {
             $path = rtrim(substr($this->template, 0, $star), '/');

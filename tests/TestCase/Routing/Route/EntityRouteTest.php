@@ -39,7 +39,7 @@ class EntityRouteTest extends TestCase
         ]);
 
         $route = new EntityRoute(
-            '/articles/:category_id/:slug',
+            '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
             ]
@@ -67,7 +67,7 @@ class EntityRouteTest extends TestCase
         ]);
 
         $route = new EntityRoute(
-            '/articles/:category_id/:slug',
+            '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
             ]
@@ -94,7 +94,7 @@ class EntityRouteTest extends TestCase
         ]);
 
         $route = new EntityRoute(
-            '/articles/:category_id_:slug',
+            '/articles/{category_id}_{slug}',
             [
                 '_name' => 'articlesView',
             ]
@@ -121,7 +121,7 @@ class EntityRouteTest extends TestCase
         ];
 
         $route = new EntityRoute(
-            '/articles/:category_id/:slug',
+            '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
                 '_entity' => $entity,

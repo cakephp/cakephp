@@ -113,7 +113,7 @@ class RouterTest extends TestCase
         Configure::write('App.base', '/cakephp');
         Router::fullBaseUrl('http://example.com');
         Router::scope('/', function (RouteBuilder $routes) {
-            $routes->get('/:controller', ['action' => 'index']);
+            $routes->get('/{controller}', ['action' => 'index']);
         });
 
         $out = Router::url([
@@ -180,7 +180,7 @@ class RouterTest extends TestCase
      */
     public function testRouteExists()
     {
-        Router::connect('/posts/:action', ['controller' => 'Posts']);
+        Router::connect('/posts/{action}', ['controller' => 'Posts']);
         $this->assertTrue(Router::routeExists(['controller' => 'Posts', 'action' => 'view']));
 
         $this->assertFalse(Router::routeExists(['action' => 'view', 'controller' => 'Users', 'plugin' => 'test']));
@@ -193,7 +193,7 @@ class RouterTest extends TestCase
      */
     public function testMultipleResourceRoute()
     {
-        Router::connect('/:controller', ['action' => 'index', '_method' => ['GET', 'POST']]);
+        Router::connect('/{controller}', ['action' => 'index', '_method' => ['GET', 'POST']]);
 
         $result = Router::parseRequest($this->makeRequest('/Posts', 'GET'));
         $expected = [
@@ -202,7 +202,7 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'index',
             '_method' => ['GET', 'POST'],
-            '_matchedRoute' => '/:controller',
+            '_matchedRoute' => '/{controller}',
         ];
         $this->assertEquals($expected, $result);
 
@@ -213,7 +213,7 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'index',
             '_method' => ['GET', 'POST'],
-            '_matchedRoute' => '/:controller',
+            '_matchedRoute' => '/{controller}',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -280,7 +280,7 @@ class RouterTest extends TestCase
      */
     public function testUrlNormalization()
     {
-        Router::connect('/:controller/:action');
+        Router::connect('/{controller}/{action}');
 
         $expected = '/users/logout';
 
@@ -351,7 +351,7 @@ class RouterTest extends TestCase
      */
     public function testUrlGenerationWithBasePath()
     {
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         $request = new ServerRequest([
             'params' => [
                 'action' => 'index',
@@ -465,7 +465,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/:plugin/:id/*', ['controller' => 'Posts', 'action' => 'view'], ['id' => $ID]);
+        Router::connect('/{plugin}/{id}/*', ['controller' => 'Posts', 'action' => 'view'], ['id' => $ID]);
 
         $result = Router::url([
             'plugin' => 'CakePlugin',
@@ -487,14 +487,14 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/:controller/:action/:id', [], ['id' => $ID]);
+        Router::connect('/{controller}/{action}/{id}', [], ['id' => $ID]);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'view', 'id' => '1']);
         $expected = '/Posts/view/1';
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/:controller/:id', ['action' => 'view']);
+        Router::connect('/{controller}/{id}', ['action' => 'view']);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'view', 'id' => '1']);
         $expected = '/Posts/1';
@@ -506,7 +506,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/:controller/:action');
+        Router::connect('/{controller}/{action}');
         $request = new ServerRequest([
             'params' => [
                 'action' => 'index',
@@ -521,7 +521,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/contact/:action', ['plugin' => 'Contact', 'controller' => 'Contact']);
+        Router::connect('/contact/{action}', ['plugin' => 'Contact', 'controller' => 'Contact']);
 
         $result = Router::url([
             'plugin' => 'Contact',
@@ -533,7 +533,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/:controller', ['action' => 'index']);
+        Router::connect('/{controller}', ['action' => 'index']);
         $request = new ServerRequest([
             'params' => [
                 'action' => 'index',
@@ -555,8 +555,8 @@ class RouterTest extends TestCase
      */
     public function testRouteNameCasing()
     {
-        Router::connect('/articles/:id', ['controller' => 'Articles', 'action' => 'view']);
-        Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
+        Router::connect('/articles/{id}', ['controller' => 'Articles', 'action' => 'view']);
+        Router::connect('/{controller}/{action}/*', [], ['routeClass' => 'InflectedRoute']);
         $result = Router::url(['controller' => 'Articles', 'action' => 'view', 'id' => 10]);
         $expected = '/articles/10';
         $this->assertSame($expected, $result);
@@ -569,7 +569,7 @@ class RouterTest extends TestCase
      */
     public function testUrlGenerationWithQueryStrings()
     {
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
 
         $result = Router::url([
             'controller' => 'Posts',
@@ -603,19 +603,19 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithRegexQualifiedParams()
     {
         Router::connect(
-            ':language/galleries',
+            '{language}/galleries',
             ['controller' => 'Galleries', 'action' => 'index'],
             ['language' => '[a-z]{3}']
         );
 
         Router::connect(
-            '/:language/:admin/:controller/:action/*',
+            '/{language}/{admin}/{controller}/{action}/*',
             ['admin' => 'admin'],
             ['language' => '[a-z]{3}', 'admin' => 'admin']
         );
 
         Router::connect(
-            '/:language/:controller/:action/*',
+            '/{language}/{controller}/{action}/*',
             [],
             ['language' => '[a-z]{3}']
         );
@@ -630,11 +630,11 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect(
-            '/:language/pages',
+            '/{language}/pages',
             ['controller' => 'Pages', 'action' => 'index'],
             ['language' => '[a-z]{3}']
         );
-        Router::connect('/:language/:controller/:action/*', [], ['language' => '[a-z]{3}']);
+        Router::connect('/{language}/{controller}/{action}/*', [], ['language' => '[a-z]{3}']);
 
         $result = Router::url(['language' => 'eng', 'action' => 'index', 'controller' => 'Pages']);
         $expected = '/eng/pages';
@@ -649,7 +649,7 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect(
-            '/forestillinger/:month/:year/*',
+            '/forestillinger/{month}/{year}/*',
             ['plugin' => 'Shows', 'controller' => 'Shows', 'action' => 'calendar'],
             ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}']
         );
@@ -667,7 +667,7 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect(
-            '/kalender/:month/:year/*',
+            '/kalender/{month}/{year}/*',
             ['plugin' => 'Shows', 'controller' => 'Shows', 'action' => 'calendar'],
             ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}']
         );
@@ -701,7 +701,7 @@ class RouterTest extends TestCase
         Router::connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
         Router::connect('/reset/*', ['admin' => true, 'controller' => 'Users', 'action' => 'reset']);
         Router::connect('/tests', ['controller' => 'Tests', 'action' => 'index']);
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
         Router::extensions('rss', false);
 
         $request = new ServerRequest([
@@ -721,8 +721,8 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/admin/subscriptions/:action/*', ['controller' => 'Subscribe', 'prefix' => 'Admin']);
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/subscriptions/{action}/*', ['controller' => 'Subscribe', 'prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'params' => [
@@ -765,7 +765,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'params' => [
@@ -784,7 +784,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
@@ -802,7 +802,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/admin/:controller/:action/:id', ['prefix' => 'Admin'], ['id' => '[0-9]+']);
+        Router::connect('/admin/{controller}/{action}/{id}', ['prefix' => 'Admin'], ['id' => '[0-9]+']);
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
@@ -820,7 +820,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'params' => [
@@ -835,7 +835,7 @@ class RouterTest extends TestCase
         $this->assertSame($expected, $result);
 
         Router::reload();
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'params' => [
@@ -916,8 +916,8 @@ class RouterTest extends TestCase
      */
     public function testUrlGenerationWithExtensions()
     {
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action');
+        Router::connect('/{controller}', ['action' => 'index']);
+        Router::connect('/{controller}/{action}');
 
         $result = Router::url([
             'plugin' => null,
@@ -1004,7 +1004,7 @@ class RouterTest extends TestCase
             ['_name' => 'users-index']
         );
         Router::connect(
-            '/users/:name',
+            '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
             ['_name' => 'test']
         );
@@ -1045,7 +1045,7 @@ class RouterTest extends TestCase
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect(
-            '/users/:name',
+            '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
             ['_name' => 'test']
         );
@@ -1061,17 +1061,17 @@ class RouterTest extends TestCase
     {
         $this->expectException(\Cake\Routing\Exception\DuplicateNamedRouteException::class);
         Router::connect(
-            '/users/:name',
+            '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
             ['_name' => 'test']
         );
         Router::connect(
-            '/users/:name',
+            '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
             ['_name' => 'otherName']
         );
         Router::connect(
-            '/users/:name',
+            '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
             ['_name' => 'test']
         );
@@ -1084,7 +1084,7 @@ class RouterTest extends TestCase
      */
     public function testUrlGenerationWithUrlFilter()
     {
-        Router::connect('/:lang/:controller/:action/*');
+        Router::connect('/{lang}/{controller}/{action}/*');
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
@@ -1125,7 +1125,7 @@ class RouterTest extends TestCase
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: nope/'
         );
-        Router::connect('/:lang/:controller/:action/*');
+        Router::connect('/{lang}/{controller}/{action}/*');
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
@@ -1154,7 +1154,7 @@ class RouterTest extends TestCase
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: /'
         );
-        Router::connect('/:lang/:controller/:action/*');
+        Router::connect('/{lang}/{controller}/{action}/*');
         $request = new ServerRequest([
             'params' => [
                 'plugin' => null,
@@ -1186,7 +1186,7 @@ class RouterTest extends TestCase
      */
     public function testUrlParamPersistence()
     {
-        Router::connect('/:lang/:controller/:action/*', [], ['persist' => ['lang']]);
+        Router::connect('/{lang}/{controller}/{action}/*', [], ['persist' => ['lang']]);
         $request = new ServerRequest([
             'url' => '/en/posts/index',
             'params' => [
@@ -1229,8 +1229,8 @@ class RouterTest extends TestCase
      */
     public function testCanLeavePlugin()
     {
-        Router::connect('/admin/:controller', ['action' => 'index', 'prefix' => 'Admin']);
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/{controller}', ['action' => 'index', 'prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
         $request = new ServerRequest([
             'url' => '/admin/this/interesting/index',
             'params' => [
@@ -1263,7 +1263,7 @@ class RouterTest extends TestCase
         extract(Router::getNamedExpressions());
 
         Router::connect(
-            '/posts/:value/:somevalue/:othervalue/*',
+            '/posts/{value}/{somevalue}/{othervalue}/*',
             ['controller' => 'Posts', 'action' => 'view'],
             ['value', 'somevalue', 'othervalue']
         );
@@ -1276,13 +1276,13 @@ class RouterTest extends TestCase
             'action' => 'view',
             'plugin' => null,
             'pass' => ['0' => 'title-of-post-here'],
-            '_matchedRoute' => '/posts/:value/:somevalue/:othervalue/*',
+            '_matchedRoute' => '/posts/{value}/{somevalue}/{othervalue}/*',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/posts/:year/:month/:day/*',
+            '/posts/{year}/{month}/{day}/*',
             ['controller' => 'Posts', 'action' => 'view'],
             ['year' => $Year, 'month' => $Month, 'day' => $Day]
         );
@@ -1295,13 +1295,13 @@ class RouterTest extends TestCase
             'action' => 'view',
             'plugin' => null,
             'pass' => ['0' => 'title-of-post-here'],
-            '_matchedRoute' => '/posts/:year/:month/:day/*',
+            '_matchedRoute' => '/posts/{year}/{month}/{day}/*',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/posts/:day/:year/:month/*',
+            '/posts/{day}/{year}/{month}/*',
             ['controller' => 'Posts', 'action' => 'view'],
             ['year' => $Year, 'month' => $Month, 'day' => $Day]
         );
@@ -1314,13 +1314,13 @@ class RouterTest extends TestCase
             'action' => 'view',
             'plugin' => null,
             'pass' => ['0' => 'title-of-post-here'],
-            '_matchedRoute' => '/posts/:day/:year/:month/*',
+            '_matchedRoute' => '/posts/{day}/{year}/{month}/*',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/posts/:month/:day/:year/*',
+            '/posts/{month}/{day}/{year}/*',
             ['controller' => 'Posts', 'action' => 'view'],
             ['year' => $Year, 'month' => $Month, 'day' => $Day]
         );
@@ -1333,13 +1333,13 @@ class RouterTest extends TestCase
             'action' => 'view',
             'plugin' => null,
             'pass' => ['0' => 'title-of-post-here'],
-            '_matchedRoute' => '/posts/:month/:day/:year/*',
+            '_matchedRoute' => '/posts/{month}/{day}/{year}/*',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/posts/:year/:month/:day/*',
+            '/posts/{year}/{month}/{day}/*',
             ['controller' => 'Posts', 'action' => 'view']
         );
         $result = Router::parseRequest($this->makeRequest('/posts/2007/08/01/title-of-post-here', 'GET'));
@@ -1351,7 +1351,7 @@ class RouterTest extends TestCase
             'action' => 'view',
             'plugin' => null,
             'pass' => ['0' => 'title-of-post-here'],
-            '_matchedRoute' => '/posts/:year/:month/:day/*',
+            '_matchedRoute' => '/posts/{year}/{month}/{day}/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -1387,7 +1387,7 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect(
-            '/:language/contact',
+            '/{language}/contact',
             ['language' => 'eng', 'plugin' => 'Contact', 'controller' => 'Contact', 'action' => 'index'],
             ['language' => '[a-z]{3}']
         );
@@ -1398,13 +1398,13 @@ class RouterTest extends TestCase
             'plugin' => 'Contact',
             'controller' => 'Contact',
             'action' => 'index',
-            '_matchedRoute' => '/:language/contact',
+            '_matchedRoute' => '/{language}/contact',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/forestillinger/:month/:year/*',
+            '/forestillinger/{month}/{year}/*',
             ['plugin' => 'Shows', 'controller' => 'Shows', 'action' => 'calendar'],
             ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}']
         );
@@ -1417,12 +1417,12 @@ class RouterTest extends TestCase
             'action' => 'calendar',
             'year' => 2007,
             'month' => 10,
-            '_matchedRoute' => '/forestillinger/:month/:year/*',
+            '_matchedRoute' => '/forestillinger/{month}/{year}/*',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         Router::connect('/', ['plugin' => 'pages', 'controller' => 'Pages', 'action' => 'display']);
         $result = Router::parseRequest($this->makeRequest('/', 'GET'));
         $expected = [
@@ -1440,13 +1440,13 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'edit',
             'plugin' => null,
-            '_matchedRoute' => '/:controller/:action/*',
+            '_matchedRoute' => '/{controller}/{action}/*',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/Posts/:id::url_title',
+            '/Posts/{id}:{url_title}',
             ['controller' => 'Posts', 'action' => 'view'],
             ['pass' => ['id', 'url_title'], 'id' => '[\d]+']
         );
@@ -1458,13 +1458,13 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'Posts',
             'action' => 'view',
-            '_matchedRoute' => '/Posts/:id::url_title',
+            '_matchedRoute' => '/Posts/{id}:{url_title}',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/Posts/:id::url_title/*',
+            '/Posts/{id}:{url_title}/*',
             ['controller' => 'Posts', 'action' => 'view'],
             ['pass' => ['id', 'url_title'], 'id' => '[\d]+']
         );
@@ -1476,7 +1476,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'Posts',
             'action' => 'view',
-            '_matchedRoute' => '/Posts/:id::url_title/*',
+            '_matchedRoute' => '/Posts/{id}:{url_title}/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -1495,7 +1495,7 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect(
-            '/posts/:url_title-(uuid::id)',
+            '/posts/{url_title}-(uuid:{id})',
             ['controller' => 'Posts', 'action' => 'view'],
             ['pass' => ['id', 'url_title'], 'id' => $UUID]
         );
@@ -1507,7 +1507,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'Posts',
             'action' => 'view',
-            '_matchedRoute' => '/posts/:url_title-(uuid::id)',
+            '_matchedRoute' => '/posts/{url_title}-(uuid:{id})',
         ];
         $this->assertEquals($expected, $result);
 
@@ -1531,7 +1531,7 @@ class RouterTest extends TestCase
      */
     public function testParseRequest()
     {
-        Router::connect('/articles/:action/*', ['controller' => 'Articles']);
+        Router::connect('/articles/{action}/*', ['controller' => 'Articles']);
         $request = new ServerRequest(['url' => '/articles/view/1']);
         $result = Router::parseRequest($request);
         $expected = [
@@ -1539,7 +1539,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'Articles',
             'action' => 'view',
-            '_matchedRoute' => '/articles/:action/*',
+            '_matchedRoute' => '/articles/{action}/*',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1552,7 +1552,7 @@ class RouterTest extends TestCase
     public function testUuidRoutes()
     {
         Router::connect(
-            '/subjects/add/:category_id',
+            '/subjects/add/{category_id}',
             ['controller' => 'Subjects', 'action' => 'add'],
             ['category_id' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}']
         );
@@ -1563,7 +1563,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'Subjects',
             'action' => 'add',
-            '_matchedRoute' => '/subjects/add/:category_id',
+            '_matchedRoute' => '/subjects/add/{category_id}',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1576,7 +1576,7 @@ class RouterTest extends TestCase
     public function testRouteSymmetry()
     {
         Router::connect(
-            '/:extra/page/:slug/*',
+            '/{extra}/page/{slug}/*',
             ['controller' => 'Pages', 'action' => 'view', 'extra' => null],
             ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view']
         );
@@ -1589,7 +1589,7 @@ class RouterTest extends TestCase
             'action' => 'view',
             'slug' => 'this_is_the_slug',
             'extra' => 'some_extra',
-            '_matchedRoute' => '/:extra/page/:slug/*',
+            '_matchedRoute' => '/{extra}/page/{slug}/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -1601,13 +1601,13 @@ class RouterTest extends TestCase
             'action' => 'view',
             'slug' => 'this_is_the_slug',
             'extra' => null,
-            '_matchedRoute' => '/:extra/page/:slug/*',
+            '_matchedRoute' => '/{extra}/page/{slug}/*',
         ];
         $this->assertEquals($expected, $result);
 
         Router::reload();
         Router::connect(
-            '/:extra/page/:slug/*',
+            '/{extra}/page/{slug}/*',
             ['controller' => 'Pages', 'action' => 'view', 'extra' => null],
             ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+']
         );
@@ -1856,9 +1856,9 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithAutoPrefixes()
     {
         Router::reload();
-        Router::connect('/protected/:controller/:action/*', ['prefix' => 'Protected']);
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
-        Router::connect('/:controller/:action/*');
+        Router::connect('/protected/{controller}/{action}/*', ['prefix' => 'Protected']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
+        Router::connect('/{controller}/{action}/*');
 
         $request = new ServerRequest([
             'url' => '/images/index',
@@ -1914,7 +1914,7 @@ class RouterTest extends TestCase
     public function testGenerationWithSslOption()
     {
         Router::fullBaseUrl('http://app.test');
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         $request = new ServerRequest([
             'url' => '/images/index',
             'params' => [
@@ -1942,7 +1942,7 @@ class RouterTest extends TestCase
      */
     public function testGenerateWithSslInSsl()
     {
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         $request = new ServerRequest([
             'url' => '/images/index',
             'environment' => ['HTTP_HOST' => 'app.test', 'HTTPS' => 'on'],
@@ -1973,8 +1973,8 @@ class RouterTest extends TestCase
     public function testPrefixRoutePersistence()
     {
         Router::reload();
-        Router::connect('/protected/:controller/:action', ['prefix' => 'Protected']);
-        Router::connect('/:controller/:action');
+        Router::connect('/protected/{controller}/{action}', ['prefix' => 'Protected']);
+        Router::connect('/{controller}/{action}');
 
         $request = new ServerRequest([
             'url' => '/protected/images/index',
@@ -2007,8 +2007,8 @@ class RouterTest extends TestCase
      */
     public function testPrefixOverride()
     {
-        Router::connect('/admin/:controller/:action', ['prefix' => 'Admin']);
-        Router::connect('/protected/:controller/:action', ['prefix' => 'Protected']);
+        Router::connect('/admin/{controller}/{action}', ['prefix' => 'Admin']);
+        Router::connect('/protected/{controller}/{action}', ['prefix' => 'Protected']);
 
         $request = new ServerRequest([
             'url' => '/protected/images/index',
@@ -2069,7 +2069,7 @@ class RouterTest extends TestCase
      */
     public function testRemoveBase()
     {
-        Router::connect('/:controller/:action');
+        Router::connect('/{controller}/{action}');
         $request = new ServerRequest([
             'url' => '/',
             'base' => '/base',
@@ -2154,7 +2154,7 @@ class RouterTest extends TestCase
     public function testParsingWithTrailingPeriod()
     {
         Router::reload();
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         $result = Router::parseRequest($this->makeRequest('/posts/view/something.', 'GET'));
         $this->assertSame('something.', $result['pass'][0], 'Period was chopped off');
 
@@ -2170,7 +2170,7 @@ class RouterTest extends TestCase
     public function testParsingWithTrailingPeriodAndParseExtensions()
     {
         Router::reload();
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
 
         $result = Router::parseRequest($this->makeRequest('/posts/view/something.', 'GET'));
         $this->assertSame('something.', $result['pass'][0], 'Period was chopped off');
@@ -2180,7 +2180,7 @@ class RouterTest extends TestCase
     }
 
     /**
-     * test that patterns work for :action
+     * test that patterns work for {action}
      *
      * @return void
      */
@@ -2188,7 +2188,7 @@ class RouterTest extends TestCase
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect(
-            '/blog/:action/*',
+            '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
             ['action' => 'other|actions']
         );
@@ -2199,7 +2199,7 @@ class RouterTest extends TestCase
             'controller' => 'BlogPosts',
             'action' => 'other',
             'pass' => [],
-            '_matchedRoute' => '/blog/:action/*',
+            '_matchedRoute' => '/blog/{action}/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -2318,7 +2318,7 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test url() works with patterns on :action
+     * Test url() works with patterns on {action}
      *
      * @return void
      */
@@ -2326,7 +2326,7 @@ class RouterTest extends TestCase
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect(
-            '/blog/:action/*',
+            '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
             ['action' => 'other|actions']
         );
@@ -2347,8 +2347,8 @@ class RouterTest extends TestCase
     {
         Router::reload();
         $adminParams = ['prefix' => 'Admin'];
-        Router::connect('/admin/:controller', $adminParams);
-        Router::connect('/admin/:controller/:action/*', $adminParams);
+        Router::connect('/admin/{controller}', $adminParams);
+        Router::connect('/admin/{controller}/{action}/*', $adminParams);
 
         $request = new ServerRequest([
             'url' => '/',
@@ -2364,7 +2364,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'Posts',
             'action' => 'index',
-            '_matchedRoute' => '/admin/:controller',
+            '_matchedRoute' => '/admin/{controller}',
         ];
         $this->assertEquals($expected, $result);
 
@@ -2378,9 +2378,9 @@ class RouterTest extends TestCase
         Router::reload();
 
         $prefixParams = ['prefix' => 'Members'];
-        Router::connect('/members/:controller', $prefixParams);
-        Router::connect('/members/:controller/:action', $prefixParams);
-        Router::connect('/members/:controller/:action/*', $prefixParams);
+        Router::connect('/members/{controller}', $prefixParams);
+        Router::connect('/members/{controller}/{action}', $prefixParams);
+        Router::connect('/members/{controller}/{action}/*', $prefixParams);
 
         $request = new ServerRequest([
             'url' => '/',
@@ -2396,7 +2396,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'Posts',
             'action' => 'index',
-            '_matchedRoute' => '/members/:controller/:action',
+            '_matchedRoute' => '/members/{controller}/{action}',
         ];
         $this->assertEquals($expected, $result);
 
@@ -2412,8 +2412,8 @@ class RouterTest extends TestCase
      */
     public function testUrlWritingWithPrefixes()
     {
-        Router::connect('/company/:controller/:action/*', ['prefix' => 'Company']);
-        Router::connect('/:action', ['controller' => 'Users']);
+        Router::connect('/company/{controller}/{action}/*', ['prefix' => 'Company']);
+        Router::connect('/{action}', ['controller' => 'Users']);
 
         $result = Router::url(['controller' => 'Users', 'action' => 'login', 'prefix' => 'Company']);
         $expected = '/company/Users/login';
@@ -2495,7 +2495,7 @@ class RouterTest extends TestCase
      */
     public function testRegexRouteMatching()
     {
-        Router::connect('/:locale/:controller/:action/*', [], ['locale' => 'dan|eng']);
+        Router::connect('/{locale}/{controller}/{action}/*', [], ['locale' => 'dan|eng']);
 
         $result = Router::parseRequest($this->makeRequest('/eng/Test/testAction', 'GET'));
         $expected = [
@@ -2504,7 +2504,7 @@ class RouterTest extends TestCase
             'controller' => 'Test',
             'action' => 'testAction',
             'plugin' => null,
-            '_matchedRoute' => '/:locale/:controller/:action/*',
+            '_matchedRoute' => '/{locale}/{controller}/{action}/*',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2517,7 +2517,7 @@ class RouterTest extends TestCase
     public function testRegexRouteMatchUrl()
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
-        Router::connect('/:locale/:controller/:action/*', [], ['locale' => 'dan|eng']);
+        Router::connect('/{locale}/{controller}/{action}/*', [], ['locale' => 'dan|eng']);
 
         $request = new ServerRequest([
             'url' => '/test/test_action',
@@ -2548,7 +2548,7 @@ class RouterTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
         Router::connect(
-            '/:slug',
+            '/{slug}',
             ['plugin' => 'TestPlugin', 'action' => 'index'],
             ['routeClass' => 'PluginShortRoute', 'slug' => '[a-z_-]+']
         );
@@ -2559,7 +2559,7 @@ class RouterTest extends TestCase
             'action' => 'index',
             'slug' => 'the-best',
             'pass' => [],
-            '_matchedRoute' => '/:slug',
+            '_matchedRoute' => '/{slug}',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2573,7 +2573,7 @@ class RouterTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
         Router::connect(
-            '/:slug',
+            '/{slug}',
             ['controller' => 'Posts', 'action' => 'view'],
             ['routeClass' => 'TestPlugin.TestRoute', 'slug' => '[a-z_-]+']
         );
@@ -2589,13 +2589,13 @@ class RouterTest extends TestCase
     public function testCustomRouteException()
     {
         $this->expectException(\InvalidArgumentException::class);
-        Router::connect('/:controller', [], ['routeClass' => 'Object']);
+        Router::connect('/{controller}', [], ['routeClass' => 'Object']);
     }
 
     public function testReverseLocalized()
     {
         Router::reload();
-        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
+        Router::connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
         $params = [
             'lang' => 'eng',
             'controller' => 'Posts',
@@ -2609,7 +2609,7 @@ class RouterTest extends TestCase
 
     public function testReverseArrayQuery()
     {
-        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
+        Router::connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
         $params = [
             'lang' => 'eng',
             'controller' => 'Posts',
@@ -2634,7 +2634,7 @@ class RouterTest extends TestCase
 
     public function testReverseCakeRequestQuery()
     {
-        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
+        Router::connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
         $request = new ServerRequest([
             'url' => '/eng/posts/view/1',
             'params' => [
@@ -2673,7 +2673,7 @@ class RouterTest extends TestCase
      */
     public function testReverseWithExtension()
     {
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         Router::extensions('json', false);
 
         $request = new ServerRequest([
@@ -2692,7 +2692,7 @@ class RouterTest extends TestCase
 
     public function testReverseToArrayQuery()
     {
-        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
+        Router::connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
         $params = [
             'lang' => 'eng',
             'controller' => 'Posts',
@@ -2713,7 +2713,7 @@ class RouterTest extends TestCase
 
     public function testReverseToArrayRequestQuery()
     {
-        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
+        Router::connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
         $request = new ServerRequest([
             'url' => '/eng/posts/view/1',
             'params' => [
@@ -2764,7 +2764,7 @@ class RouterTest extends TestCase
 
         $route = $this->getMockBuilder('Cake\Routing\Route\Route')
             ->onlyMethods(['match'])
-            ->setConstructorArgs(['/:controller/:action/*'])
+            ->setConstructorArgs(['/{controller}/{action}/*'])
             ->getMock();
         $route->expects($this->any())
             ->method('match')
@@ -2818,14 +2818,14 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Testing that patterns on the :action param work properly.
+     * Testing that patterns on the {action} param work properly.
      *
      * @return void
      */
     public function testPatternOnAction()
     {
         $route = new Route(
-            '/blog/:action/*',
+            '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
             ['action' => 'other|actions']
         );
@@ -2840,7 +2840,7 @@ class RouterTest extends TestCase
             'controller' => 'BlogPosts',
             'action' => 'other',
             'pass' => [],
-            '_matchedRoute' => '/blog/:action/*',
+            '_matchedRoute' => '/blog/{action}/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -3017,7 +3017,7 @@ class RouterTest extends TestCase
      */
     public function testDefaultRouteClass()
     {
-        Router::connect('/:controller', ['action' => 'index']);
+        Router::connect('/{controller}', ['action' => 'index']);
         $result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
         $this->assertSame('/FooBar', $result);
 
@@ -3025,7 +3025,7 @@ class RouterTest extends TestCase
         static::setAppNamespace();
 
         Router::defaultRouteClass('DashedRoute');
-        Router::connect('/cake/:controller', ['action' => 'cake']);
+        Router::connect('/cake/{controller}', ['action' => 'cake']);
         $result = Router::url(['controller' => 'FooBar', 'action' => 'cake']);
         $this->assertSame('/cake/foo-bar', $result);
 
@@ -3049,7 +3049,7 @@ class RouterTest extends TestCase
      */
     public function testSetRequestContextCakePHP()
     {
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         $request = new ServerRequest([
             'base' => '/subdir',
             'url' => 'articles/view/1',
@@ -3081,7 +3081,7 @@ class RouterTest extends TestCase
             'SERVER_PORT' => 80,
         ];
 
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
         $request = ServerRequestFactory::fromGlobals($server);
         Router::setRequest($request);
 

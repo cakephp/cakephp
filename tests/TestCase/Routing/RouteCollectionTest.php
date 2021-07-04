@@ -52,7 +52,7 @@ class RouteCollectionTest extends TestCase
         $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
         $result = $this->collection->parse('/');
         $this->assertEquals([], $result, 'Should not match, missing /b');
@@ -85,7 +85,7 @@ class RouteCollectionTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
 
         $result = $this->collection->parse('/b/');
@@ -108,7 +108,7 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'key' => 'value',
             '?' => ['one' => 'two'],
-            '_matchedRoute' => '/b/:id',
+            '_matchedRoute' => '/b/{id}',
         ];
         $this->assertEquals($expected, $result);
 
@@ -144,7 +144,7 @@ class RouteCollectionTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
 
         $result = $this->collection->parse('/b/');
@@ -167,7 +167,7 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'key' => 'value',
             '?' => ['one' => 'two'],
-            '_matchedRoute' => '/b/:id',
+            '_matchedRoute' => '/b/{id}',
         ];
         $this->assertEquals($expected, $result);
 
@@ -205,7 +205,7 @@ class RouteCollectionTest extends TestCase
     public function testParseEncodedBytesInFixedSegment()
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/ден/:day-:month', ['controller' => 'Events', 'action' => 'index']);
+        $routes->connect('/ден/{day}-{month}', ['controller' => 'Events', 'action' => 'index']);
         $url = '/%D0%B4%D0%B5%D0%BD/15-%D0%BE%D0%BA%D1%82%D0%BE%D0%BC%D0%B2%D1%80%D0%B8?test=foo';
         $result = $this->collection->parse($url);
         $expected = [
@@ -216,7 +216,7 @@ class RouteCollectionTest extends TestCase
             'day' => '15',
             'month' => 'октомври',
             '?' => ['test' => 'foo'],
-            '_matchedRoute' => '/ден/:day-:month',
+            '_matchedRoute' => '/ден/{day}-{month}',
         ];
         $this->assertEquals($expected, $result);
 
@@ -235,8 +235,8 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/', []);
 
         $routes->resources('Articles');
-        $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
-        $routes->connect('/:controller/:action', [], ['routeClass' => 'InflectedRoute']);
+        $routes->connect('/{controller}', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
+        $routes->connect('/{controller}/{action}', [], ['routeClass' => 'InflectedRoute']);
 
         $result = $this->collection->parse('/articles/add');
         $expected = [
@@ -244,7 +244,7 @@ class RouteCollectionTest extends TestCase
             'action' => 'add',
             'plugin' => null,
             'pass' => [],
-            '_matchedRoute' => '/:controller/:action',
+            '_matchedRoute' => '/{controller}/{action}',
 
         ];
         $this->assertEquals($expected, $result);
@@ -261,7 +261,7 @@ class RouteCollectionTest extends TestCase
         $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
         $request = new ServerRequest(['url' => '/']);
         $result = $this->collection->parseRequest($request);
@@ -369,7 +369,7 @@ class RouteCollectionTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
 
         $request = new ServerRequest(['url' => '/b/']);
@@ -418,7 +418,7 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'key' => 'value',
             '?' => ['one' => 'two'],
-            '_matchedRoute' => '/b/:id',
+            '_matchedRoute' => '/b/{id}',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -483,7 +483,7 @@ class RouteCollectionTest extends TestCase
         ];
         $routes = new RouteBuilder($this->collection, '/b');
         $routes->connect('/', ['controller' => 'Articles']);
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
         $result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'index'], $context);
         $this->assertSame('b', $result);
@@ -509,7 +509,7 @@ class RouteCollectionTest extends TestCase
         ];
         $routes = new RouteBuilder($this->collection, '/b');
         $routes->connect('/', ['controller' => 'Articles']);
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view'], ['_name' => 'article:view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view'], ['_name' => 'article:view']);
 
         $result = $this->collection->match(['_name' => 'article:view', 'id' => '2'], $context);
         $this->assertSame('/b/2', $result);
@@ -533,7 +533,7 @@ class RouteCollectionTest extends TestCase
             '_host' => 'example.org',
         ];
         $routes = new RouteBuilder($this->collection, '/b');
-        $routes->connect('/:lang/articles', ['controller' => 'Articles'], ['_name' => 'fail']);
+        $routes->connect('/{lang}/articles', ['controller' => 'Articles'], ['_name' => 'fail']);
 
         $this->collection->match(['_name' => 'fail'], $context);
     }
@@ -552,7 +552,7 @@ class RouteCollectionTest extends TestCase
             '_host' => 'example.org',
         ];
         $routes = new RouteBuilder($this->collection, '/b');
-        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view'], ['_name' => 'article:view']);
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view'], ['_name' => 'article:view']);
 
         $this->collection->match(['_name' => 'derp'], $context);
     }
@@ -592,7 +592,7 @@ class RouteCollectionTest extends TestCase
             '_host' => 'example.org',
         ];
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/:action/*', ['controller' => 'Users']);
+        $routes->connect('/{action}/*', ['controller' => 'Users']);
         $routes->connect('/admin/{controller}', ['prefix' => 'Admin', 'action' => 'index']);
 
         $url = [
@@ -621,13 +621,13 @@ class RouteCollectionTest extends TestCase
     public function testNamed()
     {
         $routes = new RouteBuilder($this->collection, '/l');
-        $routes->connect('/:controller', ['action' => 'index'], ['_name' => 'cntrl']);
-        $routes->connect('/:controller/:action/*');
+        $routes->connect('/{controller}', ['action' => 'index'], ['_name' => 'cntrl']);
+        $routes->connect('/{controller}/{action}/*');
 
         $all = $this->collection->named();
         $this->assertCount(1, $all);
         $this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
-        $this->assertSame('/l/:controller', $all['cntrl']->template);
+        $this->assertSame('/l/{controller}', $all['cntrl']->template);
     }
 
     /**

@@ -32,7 +32,7 @@ class DashedRouteTest extends TestCase
      */
     public function testMatchBasic()
     {
-        $route = new DashedRoute('/:controller/:action/:id', ['plugin' => null]);
+        $route = new DashedRoute('/{controller}/{action}/{id}', ['plugin' => null]);
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView', 'plugin' => null]);
         $this->assertNull($result);
 
@@ -59,7 +59,7 @@ class DashedRouteTest extends TestCase
         $result = $route->match(['controller' => 'Pages', 'action' => 'display', 'about']);
         $this->assertNull($result);
 
-        $route = new DashedRoute('/blog/:action', ['controller' => 'Posts']);
+        $route = new DashedRoute('/blog/{action}', ['controller' => 'Posts']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView']);
         $this->assertSame('/blog/my-view', $result);
 
@@ -69,11 +69,11 @@ class DashedRouteTest extends TestCase
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView', 1]);
         $this->assertNull($result);
 
-        $route = new DashedRoute('/foo/:controller/:action', ['action' => 'index']);
+        $route = new DashedRoute('/foo/{controller}/{action}', ['action' => 'index']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView']);
         $this->assertSame('/foo/posts/my-view', $result);
 
-        $route = new DashedRoute('/:plugin/:id/*', ['controller' => 'Posts', 'action' => 'myView']);
+        $route = new DashedRoute('/{plugin}/{id}/*', ['controller' => 'Posts', 'action' => 'myView']);
         $result = $route->match([
             'plugin' => 'TestPlugin',
             'controller' => 'Posts',
@@ -107,7 +107,7 @@ class DashedRouteTest extends TestCase
         ]);
         $this->assertNull($result);
 
-        $route = new DashedRoute('/admin/subscriptions/:action/*', [
+        $route = new DashedRoute('/admin/subscriptions/{action}/*', [
             'controller' => 'Subscribe', 'prefix' => 'Admin',
         ]);
         $result = $route->match([
@@ -119,7 +119,7 @@ class DashedRouteTest extends TestCase
         $expected = '/admin/subscriptions/edit-admin-e/1';
         $this->assertSame($expected, $result);
 
-        $route = new DashedRoute('/:controller/:action-:id');
+        $route = new DashedRoute('/{controller}/{action}-{id}');
         $result = $route->match([
             'controller' => 'MyPosts',
             'action' => 'myView',
@@ -127,7 +127,7 @@ class DashedRouteTest extends TestCase
         ]);
         $this->assertSame('/my-posts/my-view-1', $result);
 
-        $route = new DashedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
+        $route = new DashedRoute('/{controller}/{action}/{slug}-{id}', [], ['id' => Router::ID]);
         $result = $route->match([
             'controller' => 'MyPosts',
             'action' => 'myView',
@@ -144,21 +144,21 @@ class DashedRouteTest extends TestCase
      */
     public function testParse()
     {
-        $route = new DashedRoute('/:controller/:action/:id', [], ['id' => Router::ID]);
+        $route = new DashedRoute('/{controller}/{action}/{id}', [], ['id' => Router::ID]);
         $route->compile();
         $result = $route->parse('/my-posts/my-view/1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('myView', $result['action']);
         $this->assertSame('1', $result['id']);
 
-        $route = new DashedRoute('/:controller/:action-:id');
+        $route = new DashedRoute('/{controller}/{action}-{id}');
         $route->compile();
         $result = $route->parse('/my-posts/my-view-1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('myView', $result['action']);
         $this->assertSame('1', $result['id']);
 
-        $route = new DashedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
+        $route = new DashedRoute('/{controller}/{action}/{slug}-{id}', [], ['id' => Router::ID]);
         $route->compile();
         $result = $route->parse('/my-posts/my-view/the-slug-1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
@@ -167,7 +167,7 @@ class DashedRouteTest extends TestCase
         $this->assertSame('the-slug', $result['slug']);
 
         $route = new DashedRoute(
-            '/admin/:controller',
+            '/admin/{controller}',
             ['prefix' => 'Admin', 'action' => 'index']
         );
         $route->compile();
@@ -198,7 +198,7 @@ class DashedRouteTest extends TestCase
      */
     public function testMatchThenParse()
     {
-        $route = new DashedRoute('/plugin/:controller/:action', [
+        $route = new DashedRoute('/plugin/{controller}/{action}', [
             'plugin' => 'Vendor/PluginName',
         ]);
         $url = $route->match([
