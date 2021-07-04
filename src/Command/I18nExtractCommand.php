@@ -371,6 +371,7 @@ class I18nExtractCommand extends Command
         ])->addOption('plugin', [
             'help' => 'Extracts tokens only from the plugin specified and '
                 . 'puts the result in the plugin\'s Locale directory.',
+            'short' => 'p',
         ])->addOption('exclude', [
             'help' => 'Comma separated list of directories to exclude.' .
                 ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
