@@ -54,7 +54,7 @@ class SampleShell extends Shell
         $this->abort('Bad things');
     }
 
-    public function returnValue()
+    public function returnValue(): int
     {
         return 99;
     }

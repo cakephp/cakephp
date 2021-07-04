@@ -16,6 +16,9 @@ class NumberHelperTestObject extends NumberHelper
         $this->_engine = $cakeNumber;
     }
 
+    /**
+     * @return mixed
+     */
     public function engine()
     {
         return $this->_engine;

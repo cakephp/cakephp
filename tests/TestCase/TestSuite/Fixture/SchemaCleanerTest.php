@@ -87,7 +87,7 @@ class SchemaCleanerTest extends TestCase
         );
     }
 
-    private function createSchemas()
+    private function createSchemas(): array
     {
         $table1 = 'test_table_' . rand();
         $table2 = 'test_table_' . rand();

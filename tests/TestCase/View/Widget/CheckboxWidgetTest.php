@@ -158,7 +158,7 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function checkedProvider()
+    public static function checkedProvider(): array
     {
         return [
             ['checked'],
@@ -200,7 +200,7 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function uncheckedProvider()
+    public static function uncheckedProvider(): array
     {
         return [
             [''],

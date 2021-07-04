@@ -106,7 +106,7 @@ class SqliteTest extends TestCase
      *
      * @return array
      */
-    public static function schemaValueProvider()
+    public static function schemaValueProvider(): array
     {
         return [
             [null, 'NULL'],

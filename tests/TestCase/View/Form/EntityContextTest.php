@@ -269,7 +269,7 @@ class EntityContextTest extends TestCase
      *
      * @return array
      */
-    public static function collectionProvider()
+    public static function collectionProvider(): array
     {
         $one = new Article([
             'title' => 'First post',

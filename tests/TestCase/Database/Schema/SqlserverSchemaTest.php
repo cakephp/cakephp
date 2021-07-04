@@ -92,7 +92,7 @@ SQL;
      *
      * @return array
      */
-    public static function convertColumnProvider()
+    public static function convertColumnProvider(): array
     {
         return [
             [
@@ -588,7 +588,7 @@ SQL;
      *
      * @return array
      */
-    public static function columnSqlProvider()
+    public static function columnSqlProvider(): array
     {
         return [
             // strings
@@ -839,7 +839,7 @@ SQL;
      *
      * @return array
      */
-    public static function constraintSqlProvider()
+    public static function constraintSqlProvider(): array
     {
         return [
             [

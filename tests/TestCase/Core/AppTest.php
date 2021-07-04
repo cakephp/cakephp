@@ -136,7 +136,7 @@ class AppTest extends TestCase
      *
      * @return array
      */
-    public function classNameProvider()
+    public function classNameProvider(): array
     {
         return [
             ['Does', 'Not', 'Exist'],
@@ -191,7 +191,7 @@ class AppTest extends TestCase
      *
      * @return array
      */
-    public function shortNameProvider()
+    public function shortNameProvider(): array
     {
         return [
             ['TestApp\In\ExistsApp', 'In', 'App', 'Exists'],

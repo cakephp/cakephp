@@ -18,7 +18,7 @@ class CountableIterator extends \IteratorIterator implements \Countable
         parent::__construct($f());
     }
 
-    public function count()
+    public function count(): int
     {
         return 6;
     }

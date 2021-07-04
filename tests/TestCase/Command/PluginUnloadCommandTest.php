@@ -110,7 +110,7 @@ class PluginUnloadCommandTest extends TestCase
      *
      * @return array
      */
-    public function variantProvider()
+    public function variantProvider(): array
     {
         return [
             //  $this->addPlugin('TestPlugin', [

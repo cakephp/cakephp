@@ -22,7 +22,7 @@ use TestApp\Command\DemoCommand;
 
 class EventApplication extends BaseApplication
 {
-    public function events(EventManagerInterface $eventManager)
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
         $eventManager->on('My.event', function () {
         });

@@ -201,7 +201,7 @@ class AssociationCollectionTest extends TestCase
     /**
      *  Data provider for AssociationCollection::getByType
      */
-    public function associationCollectionType()
+    public function associationCollectionType(): array
     {
         return [
             ['BelongsTo', 'BelongsToMany'],

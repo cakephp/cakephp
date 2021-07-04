@@ -372,7 +372,7 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function addConstraintErrorProvider()
+    public static function addConstraintErrorProvider(): array
     {
         return [
             // No properties
@@ -426,7 +426,7 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function addIndexErrorProvider()
+    public static function addIndexErrorProvider(): array
     {
         return [
             // Empty
@@ -609,7 +609,7 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function badForeignKeyProvider()
+    public static function badForeignKeyProvider(): array
     {
         return [
             'references is bad' => [[

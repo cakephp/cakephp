@@ -523,7 +523,7 @@ class FormAuthenticateTest extends TestCase
         $this->assertSame(1, $passwordHasher->callCount);
     }
 
-    public function userList()
+    public function userList(): array
     {
         return [
             ['notexist', ''],

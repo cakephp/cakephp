@@ -326,7 +326,7 @@ class RouteCollectionTest extends TestCase
      *
      * @return array
      */
-    public static function hostProvider()
+    public static function hostProvider(): array
     {
         return [
             ['wrong.example'],

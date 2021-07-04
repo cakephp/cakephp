@@ -1184,7 +1184,7 @@ class RouteBuilderTest extends TestCase
     /**
      * @return array
      */
-    public static function httpMethodProvider()
+    public static function httpMethodProvider(): array
     {
         return [
             ['GET'],

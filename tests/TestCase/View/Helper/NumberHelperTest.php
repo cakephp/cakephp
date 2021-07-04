@@ -71,7 +71,7 @@ class NumberHelperTest extends TestCase
      *
      * @return array
      */
-    public function methodProvider()
+    public function methodProvider(): array
     {
         return [
             ['precision'],

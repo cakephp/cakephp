@@ -1652,7 +1652,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public function assertionFailureMessagesProvider()
+    public function assertionFailureMessagesProvider(): array
     {
         $templateDir = TEST_APP . 'templates' . DS;
 
@@ -1717,7 +1717,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public function methodsProvider()
+    public function methodsProvider(): array
     {
         return [
             'GET' => ['get'],
@@ -1818,7 +1818,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public function assertionFailureSessionVerboseProvider()
+    public function assertionFailureSessionVerboseProvider(): array
     {
         return [
             'assertFlashMessageVerbose' => ['assertFlashMessage', 'notfound'],

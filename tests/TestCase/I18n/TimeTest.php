@@ -68,7 +68,7 @@ class TimeTest extends TestCase
      *
      * @return array
      */
-    public static function classNameProvider()
+    public static function classNameProvider(): array
     {
         return ['mutable' => ['Cake\I18n\Time'], 'immutable' => ['Cake\I18n\FrozenTime']];
     }
@@ -104,7 +104,7 @@ class TimeTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoProvider()
+    public static function timeAgoProvider(): array
     {
         return [
             ['-12 seconds', '12 seconds ago'],
@@ -154,7 +154,7 @@ class TimeTest extends TestCase
      *
      * @return array
      */
-    public function timeAgoEndProvider()
+    public function timeAgoEndProvider(): array
     {
         return [
             [
@@ -588,7 +588,7 @@ class TimeTest extends TestCase
      *
      * @return array
      */
-    public function invalidDataProvider()
+    public function invalidDataProvider(): array
     {
         return [
             [null],

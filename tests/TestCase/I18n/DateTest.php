@@ -62,7 +62,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function classNameProvider()
+    public static function classNameProvider(): array
     {
         return ['mutable' => ['Cake\I18n\Date'], 'immutable' => ['Cake\I18n\FrozenDate']];
     }
@@ -240,7 +240,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoProvider()
+    public static function timeAgoProvider(): array
     {
         return [
             ['-1 day', '1 day ago'],
@@ -307,7 +307,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public function timeAgoEndProvider()
+    public function timeAgoEndProvider(): array
     {
         return [
             [

@@ -102,7 +102,7 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public function singularizeProvider()
+    public function singularizeProvider(): array
     {
         return [
             ['categoria', 'categorias'],
@@ -233,7 +233,7 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public function pluralizeProvider()
+    public function pluralizeProvider(): array
     {
         return [
             ['axmen', 'axman'],

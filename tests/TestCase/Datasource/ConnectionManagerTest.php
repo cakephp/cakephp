@@ -40,7 +40,7 @@ class ConnectionManagerTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider()
+    public static function configProvider(): array
     {
         return [
             'Array of data using classname key.' => [[
@@ -229,7 +229,7 @@ class ConnectionManagerTest extends TestCase
      *
      * @return array
      */
-    public function dsnProvider()
+    public function dsnProvider(): array
     {
         return [
             'no user' => [

@@ -179,7 +179,7 @@ class FileTest extends TestCase
      *
      * @return array
      */
-    public function baseNameValueProvider()
+    public function baseNameValueProvider(): array
     {
         return [
             ['folder/نام.txt', null, false],

@@ -76,7 +76,7 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public function stringPropertyProvider()
+    public function stringPropertyProvider(): array
     {
         return [
             ['layoutPath', 'Admin/'],
@@ -96,7 +96,7 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public function boolPropertyProvider()
+    public function boolPropertyProvider(): array
     {
         return [
             ['autoLayout', true, false],
@@ -108,7 +108,7 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public function arrayPropertyProvider()
+    public function arrayPropertyProvider(): array
     {
         return [
             ['helpers', ['Html', 'Form']],
