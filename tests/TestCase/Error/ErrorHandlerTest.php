@@ -517,7 +517,7 @@ class ErrorHandlerTest extends TestCase
      * @dataProvider memoryLimitProvider
      * @return void
      */
-    public function testIncreaseMemoryLimit($start, $adjust, $expected)
+    public function testIncreaseMemoryLimit(string $start, int $adjust, string $expected)
     {
         $initial = ini_get('memory_limit');
         $this->skipIf(strlen($initial) === 0, 'Cannot read memory limit, and cannot test increasing it.');
