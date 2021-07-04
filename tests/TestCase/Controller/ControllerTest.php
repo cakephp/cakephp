@@ -354,7 +354,7 @@ class ControllerTest extends TestCase
      * @dataProvider statusCodeProvider
      * @return void
      */
-    public function testRedirectByCode($code, $msg): void
+    public function testRedirectByCode(int $code, string $msg): void
     {
         $Controller = new Controller(null, new Response());
 

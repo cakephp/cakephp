@@ -332,6 +332,8 @@ class DateTimeTimezoneTypeTest extends TestCase
      * test marshalling data.
      *
      * @dataProvider marshalProvider
+     * @param mixed $value
+     * @param mixed $expected
      * @return void
      */
     public function testMarshal($value, $expected)
@@ -441,6 +443,8 @@ class DateTimeTimezoneTypeTest extends TestCase
      * test marshalling data.
      *
      * @dataProvider marshalProviderWithoutMicroseconds
+     * @param mixed $value
+     * @param mixed $expected
      * @return void
      */
     public function testMarshalWithoutMicroseconds($value, $expected)

@@ -1131,7 +1131,7 @@ class PaginatorComponentTest extends TestCase
      * @dataProvider checkLimitProvider
      * @return void
      */
-    public function testCheckLimit($input, $expected): void
+    public function testCheckLimit(array $input, int $expected): void
     {
         $result = $this->Paginator->checkLimit($input);
         $this->assertSame($expected, $result['limit']);

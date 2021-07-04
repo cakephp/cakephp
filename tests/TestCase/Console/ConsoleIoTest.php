@@ -102,6 +102,7 @@ class ConsoleIoTest extends TestCase
      * test ask choices method
      *
      * @dataProvider choiceProvider
+     * @param array|string $choices
      * @return void
      */
     public function testAskChoices($choices)
@@ -118,6 +119,7 @@ class ConsoleIoTest extends TestCase
      * test ask choices method
      *
      * @dataProvider choiceProvider
+     * @param array|string $choices
      * @return void
      */
     public function testAskChoicesInsensitive($choices)
@@ -589,7 +591,7 @@ class ConsoleIoTest extends TestCase
      * @dataProvider outHelperProvider
      * @return void
      */
-    public function testOutHelpers($method)
+    public function testOutHelpers(string $method)
     {
         $this->out->expects($this->exactly(2))
             ->method('write')
@@ -608,7 +610,7 @@ class ConsoleIoTest extends TestCase
      * @dataProvider errHelperProvider
      * @return void
      */
-    public function testErrHelpers($method)
+    public function testErrHelpers(string $method)
     {
         $this->err->expects($this->exactly(2))
             ->method('write')

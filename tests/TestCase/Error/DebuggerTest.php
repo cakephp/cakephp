@@ -293,7 +293,7 @@ class DebuggerTest extends TestCase
      *
      * @return void
      */
-    public function customFormat($error, $strings)
+    public function customFormat(array $error, array $strings)
     {
         echo $error['error'] . ': I eated an error ' . $error['file'];
     }

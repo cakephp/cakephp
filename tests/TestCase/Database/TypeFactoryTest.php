@@ -64,7 +64,7 @@ class TypeFactoryTest extends TestCase
      * @dataProvider basicTypesProvider
      * @return void
      */
-    public function testBuildBasicTypes($name)
+    public function testBuildBasicTypes(string $name)
     {
         $type = TypeFactory::build($name);
         $this->assertInstanceOf(TypeInterface::class, $type);
