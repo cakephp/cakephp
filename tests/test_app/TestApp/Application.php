@@ -63,11 +63,8 @@ class Application extends BaseApplication
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(function ($req, $res, $next) {
-            /** @var \Cake\Http\ServerRequest $res */
-            $res = $next($req, $res);
-
-            return $res->withHeader('X-Middleware', 'true');
+        $middlewareQueue->add(function ($request, $handler) {
+            return $handler->handle($request)->withHeader('X-Middleware', 'true');
         });
         $middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error', [])));
         $middlewareQueue->add(new RoutingMiddleware($this));
