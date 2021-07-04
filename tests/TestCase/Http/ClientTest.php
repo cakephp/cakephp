@@ -82,7 +82,7 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function urlProvider()
+    public static function urlProvider(): array
     {
         return [
             [
@@ -469,7 +469,7 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function methodProvider()
+    public static function methodProvider(): array
     {
         return [
             [Request::METHOD_GET],
@@ -519,7 +519,7 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function typeProvider()
+    public static function typeProvider(): array
     {
         return [
             ['application/json', 'application/json'],

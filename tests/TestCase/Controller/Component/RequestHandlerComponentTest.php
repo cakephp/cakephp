@@ -402,7 +402,7 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * @return array
      */
-    public function defaultExtensionsProvider()
+    public function defaultExtensionsProvider(): array
     {
         return [['html'], ['htm']];
     }

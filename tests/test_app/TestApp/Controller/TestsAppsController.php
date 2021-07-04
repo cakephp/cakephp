@@ -33,6 +33,9 @@ class TestsAppsController extends AppController
         $this->set('var', $var);
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function some_method()
     {
         return $this->response->withStringBody('5');
@@ -44,16 +47,25 @@ class TestsAppsController extends AppController
         $this->render('index');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function redirect_to()
     {
         return $this->redirect('http://cakephp.org');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function redirect_to_permanent()
     {
         return $this->redirect('http://cakephp.org', 301);
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function set_type()
     {
         return $this->response->withType('json');

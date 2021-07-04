@@ -51,7 +51,7 @@ class TableUuidTest extends TestCase
      *
      * @return array
      */
-    public function uuidTableProvider()
+    public function uuidTableProvider(): array
     {
         return [['uuid_items'], ['binary_uuid_items']];
     }

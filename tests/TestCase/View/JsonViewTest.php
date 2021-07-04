@@ -43,7 +43,7 @@ class JsonViewTest extends TestCase
      *
      * @return array
      */
-    public static function renderWithoutViewProvider()
+    public static function renderWithoutViewProvider(): array
     {
         return [
             // Test render with a valid string in _serialize.

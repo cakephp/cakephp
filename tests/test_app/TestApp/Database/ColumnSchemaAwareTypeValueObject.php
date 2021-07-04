@@ -12,7 +12,7 @@ class ColumnSchemaAwareTypeValueObject
         $this->_value = $value;
     }
 
-    public function value()
+    public function value(): string
     {
         return $this->_value;
     }

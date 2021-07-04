@@ -15,7 +15,7 @@ class CakeStreamWrapper implements \ArrayAccess
         ],
     ];
 
-    public function stream_open(string $path, string $mode, int $options, ?string &$openedPath)
+    public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
         if ($path === 'http://throw_exception/') {
             throw new \Exception();
@@ -33,12 +33,12 @@ class CakeStreamWrapper implements \ArrayAccess
         return true;
     }
 
-    public function stream_close()
+    public function stream_close(): bool
     {
         return fclose($this->_stream);
     }
 
-    public function stream_read(int $count)
+    public function stream_read(int $count): string
     {
         if (isset($this->_query['sleep'])) {
             sleep(1);
@@ -47,12 +47,12 @@ class CakeStreamWrapper implements \ArrayAccess
         return fread($this->_stream, $count);
     }
 
-    public function stream_eof()
+    public function stream_eof(): bool
     {
         return feof($this->_stream);
     }
 
-    public function stream_set_option(int $option, int $arg1, int $arg2)
+    public function stream_set_option(int $option, int $arg1, int $arg2): bool
     {
         return false;
     }

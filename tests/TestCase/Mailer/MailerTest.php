@@ -1443,7 +1443,7 @@ class MailerTest extends TestCase
     /**
      * @param array|string $message
      */
-    protected function _checkContentTransferEncoding($message, string $charset)
+    protected function _checkContentTransferEncoding($message, string $charset): bool
     {
         $boundary = '--' . $this->mailer->getBoundary();
         $result['text'] = false;

@@ -271,7 +271,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public function assertionFailureMessagesProvider()
+    public function assertionFailureMessagesProvider(): array
     {
         return [
             'assertExitCode' => ['assertExitCode', 'Failed asserting that 1 matches exit code 0', 'routes', Command::CODE_ERROR],

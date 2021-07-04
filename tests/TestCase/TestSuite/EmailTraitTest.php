@@ -214,7 +214,7 @@ class EmailTraitTest extends TestCase
      *
      * @return array
      */
-    public function failureMessageDataProvider()
+    public function failureMessageDataProvider(): array
     {
         return [
             'assertMailCount' => ['assertMailCount', 'Failed asserting that 2 emails were sent.', [2]],

@@ -536,7 +536,7 @@ class ExceptionRendererTest extends TestCase
      *
      * @return array
      */
-    public static function exceptionProvider()
+    public static function exceptionProvider(): array
     {
         return [
             [

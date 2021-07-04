@@ -176,7 +176,7 @@ class ErrorHandlerTest extends TestCase
      *
      * @return array
      */
-    public static function errorProvider()
+    public static function errorProvider(): array
     {
         return [
             [E_USER_NOTICE, 'Notice'],
@@ -501,7 +501,7 @@ class ErrorHandlerTest extends TestCase
      *
      * @return array
      */
-    public function memoryLimitProvider()
+    public function memoryLimitProvider(): array
     {
         return [
             // start, adjust, expected

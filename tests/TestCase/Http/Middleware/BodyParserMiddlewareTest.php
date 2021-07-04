@@ -35,7 +35,7 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function safeHttpMethodProvider()
+    public static function safeHttpMethodProvider(): array
     {
         return [
             ['GET'],
@@ -48,7 +48,7 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function httpMethodProvider()
+    public static function httpMethodProvider(): array
     {
         return [
             ['PATCH'], ['PUT'], ['POST'], ['DELETE'],

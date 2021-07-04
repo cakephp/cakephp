@@ -46,7 +46,7 @@ class DateTimeWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function invalidSelectedValuesProvider()
+    public static function invalidSelectedValuesProvider(): array
     {
         return [
             'false' => [false],
@@ -80,7 +80,7 @@ class DateTimeWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function selectedValuesProvider()
+    public static function selectedValuesProvider(): array
     {
         $date = new \DateTime('2014-01-20 12:30:45');
 

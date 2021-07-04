@@ -276,7 +276,7 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public static function autoLinkProvider()
+    public static function autoLinkProvider(): array
     {
         return [
             [
@@ -487,7 +487,7 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public function autoLinkEmailProvider()
+    public function autoLinkEmailProvider(): array
     {
         return [
             [

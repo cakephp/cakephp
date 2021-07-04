@@ -50,7 +50,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function safeHttpMethodProvider()
+    public static function safeHttpMethodProvider(): array
     {
         return [
             ['GET'],
@@ -63,7 +63,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function httpMethodProvider()
+    public static function httpMethodProvider(): array
     {
         return [
             ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD'],

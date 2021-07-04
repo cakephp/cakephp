@@ -77,7 +77,7 @@ class TypeFactoryTest extends TestCase
      *
      * @return array
      */
-    public function basicTypesProvider()
+    public function basicTypesProvider(): array
     {
         return [
             ['string'],

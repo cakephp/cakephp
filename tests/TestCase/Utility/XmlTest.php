@@ -204,7 +204,7 @@ class XmlTest extends TestCase
      *
      * @return array
      */
-    public static function invalidDataProvider()
+    public static function invalidDataProvider(): array
     {
         return [
             [null],
@@ -617,7 +617,7 @@ XML;
      *
      * @return array
      */
-    public static function invalidArrayDataProvider()
+    public static function invalidArrayDataProvider(): array
     {
         return [
             [''],
@@ -1226,7 +1226,7 @@ XML;
      *
      * @return array
      */
-    public static function invalidToArrayDataProvider()
+    public static function invalidToArrayDataProvider(): array
     {
         return [
             [new \DateTime()],

@@ -1444,7 +1444,7 @@ class ServerRequestTest extends TestCase
      *
      * @return array
      */
-    public function paramReadingDataProvider()
+    public function paramReadingDataProvider(): array
     {
         return [
             [
@@ -2223,7 +2223,7 @@ XML;
      *
      * @return array
      */
-    public function emulatedPropertyProvider()
+    public function emulatedPropertyProvider(): array
     {
         return [
             ['here'],

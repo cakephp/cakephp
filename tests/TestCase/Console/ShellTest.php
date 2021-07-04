@@ -1326,7 +1326,7 @@ TEXT;
      *
      * @return array
      */
-    public function paramReadingDataProvider()
+    public function paramReadingDataProvider(): array
     {
         return [
             [

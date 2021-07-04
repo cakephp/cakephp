@@ -52,7 +52,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function avgProvider()
+    public function avgProvider(): array
     {
         $items = [1, 2, 3];
 
@@ -97,7 +97,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function avgWithMatcherProvider()
+    public function avgWithMatcherProvider(): array
     {
         $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
 
@@ -124,7 +124,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function medianProvider()
+    public function medianProvider(): array
     {
         $items = [5, 2, 4];
 
@@ -177,7 +177,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function medianWithMatcherProvider()
+    public function medianWithMatcherProvider(): array
     {
         $items = [
             ['invoice' => ['total' => 400]],
@@ -233,7 +233,7 @@ class CollectionTest extends TestCase
         $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
-    public function filterProvider()
+    public function filterProvider(): array
     {
         $items = [1, 2, 0, 3, false, 4, null, 5, ''];
 
@@ -408,7 +408,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function simpleProvider()
+    public function simpleProvider(): array
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
 
@@ -469,7 +469,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function extractProvider()
+    public function extractProvider(): array
     {
         $items = [['a' => ['b' => ['c' => 1]]], 2];
 
@@ -498,7 +498,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function sortProvider()
+    public function sortProvider(): array
     {
         $items = [
             ['a' => ['b' => ['c' => 4]]],
@@ -629,7 +629,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function groupByProvider()
+    public function groupByProvider(): array
     {
         $items = [
             ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -740,7 +740,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function indexByProvider()
+    public function indexByProvider(): array
     {
         $items = [
             ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -1673,7 +1673,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function nestedListProvider()
+    public function nestedListProvider(): array
     {
         return [
             ['desc', [1, 2, 3, 5, 7, 4, 8, 6, 9, 10]],
@@ -1770,7 +1770,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function sumOfProvider()
+    public function sumOfProvider(): array
     {
         $items = [
             ['invoice' => ['total' => 100]],
@@ -2424,7 +2424,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function chunkProvider()
+    public function chunkProvider(): array
     {
         $items = range(1, 10);
 

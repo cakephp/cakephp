@@ -1430,7 +1430,7 @@ class ViewTest extends TestCase
      *
      * @return array
      */
-    public static function blockValueProvider()
+    public static function blockValueProvider(): array
     {
         return [
             'string' => ['A string value'],

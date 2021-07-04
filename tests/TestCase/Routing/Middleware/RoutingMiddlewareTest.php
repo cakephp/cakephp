@@ -442,7 +442,7 @@ class RoutingMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public function scopedMiddlewareUrlProvider()
+    public function scopedMiddlewareUrlProvider(): array
     {
         return [
             ['/api/ping', ['first', 'last']],

@@ -2252,7 +2252,7 @@ class RouterTest extends TestCase
     /**
      * @return array
      */
-    public function invalidRoutePathProvider()
+    public function invalidRoutePathProvider(): array
     {
         return [
             ['view'],
@@ -3245,7 +3245,7 @@ class RouterTest extends TestCase
     /**
      * @return array
      */
-    public function invalidRoutePathParametersArrayProvider()
+    public function invalidRoutePathParametersArrayProvider(): array
     {
         return [
             [['plugin' => false]],

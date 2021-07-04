@@ -88,7 +88,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return array
      */
-    public function choiceProvider()
+    public function choiceProvider(): array
     {
         return [
             [['y', 'n']],
@@ -570,7 +570,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return array
      */
-    public function outHelperProvider()
+    public function outHelperProvider(): array
     {
         return [['info'], ['success'], ['comment']];
     }
@@ -580,7 +580,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return array
      */
-    public function errHelperProvider()
+    public function errHelperProvider(): array
     {
         return [['warning'], ['error']];
     }

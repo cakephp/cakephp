@@ -71,11 +71,17 @@ class TestController extends ControllerTestAppController
     {
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function returner()
     {
         return $this->response->withStringBody('I am from the controller.');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function willCauseException()
     {
         return '';
