@@ -1132,7 +1132,7 @@ class ResponseTest extends TestCase
      * @dataProvider invalidFileProvider
      * @return void
      */
-    public function testWithFileInvalidPath($path, $expectedMessage)
+    public function testWithFileInvalidPath(string $path, string $expectedMessage)
     {
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -1301,7 +1301,7 @@ class ResponseTest extends TestCase
      * @dataProvider rangeProvider
      * @return void
      */
-    public function testWithFileRangeOffsets($range, $length, $offsetResponse)
+    public function testWithFileRangeOffsets(string $range, int $length, string $offsetResponse)
     {
         $_SERVER['HTTP_RANGE'] = $range;
         $response = new Response();
@@ -1370,7 +1370,7 @@ class ResponseTest extends TestCase
      * @dataProvider invalidFileRangeProvider
      * @return void
      */
-    public function testWithFileInvalidRange($range)
+    public function testWithFileInvalidRange(string $range)
     {
         $_SERVER['HTTP_RANGE'] = $range;
         $response = new Response();

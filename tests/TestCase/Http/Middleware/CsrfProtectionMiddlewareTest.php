@@ -154,7 +154,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider safeHttpMethodProvider
      * @return void
      */
-    public function testSafeMethodNoCsrfRequired($method)
+    public function testSafeMethodNoCsrfRequired(string $method)
     {
         $request = new ServerRequest([
             'environment' => [
@@ -234,7 +234,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInHeaderCompat($method)
+    public function testValidTokenInHeaderCompat(string $method)
     {
         $middleware = new CsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -259,7 +259,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInHeader($method)
+    public function testValidTokenInHeader(string $method)
     {
         $middleware = new CsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -285,7 +285,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvalidTokenInHeader($method)
+    public function testInvalidTokenInHeader(string $method)
     {
         $request = new ServerRequest([
             'environment' => [
@@ -319,7 +319,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenRequestDataCompat($method)
+    public function testValidTokenRequestDataCompat(string $method)
     {
         $middleware = new CsrfProtectionMiddleware();
         $token = $this->createOldToken();
@@ -348,7 +348,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenRequestDataSalted($method)
+    public function testValidTokenRequestDataSalted(string $method)
     {
         $middleware = new CsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -397,7 +397,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvalidTokenRequestData($method)
+    public function testInvalidTokenRequestData(string $method)
     {
         $request = new ServerRequest([
             'environment' => [
@@ -470,7 +470,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testInvalidTokenMissingCookie($method)
+    public function testInvalidTokenMissingCookie(string $method)
     {
         $request = new ServerRequest([
             'environment' => [

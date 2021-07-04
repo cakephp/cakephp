@@ -14,7 +14,7 @@ class RequestHandlerExtComponent extends RequestHandlerComponent
         return $this->ext;
     }
 
-    public function setExt($ext)
+    public function setExt(?string $ext)
     {
         $this->ext = $ext;
     }

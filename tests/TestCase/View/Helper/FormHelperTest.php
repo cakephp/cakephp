@@ -398,9 +398,10 @@ class FormHelperTest extends TestCase
      * Test default context selection in create()
      *
      * @dataProvider contextSelectionProvider
+     * @param mixed $data
      * @return void
      */
-    public function testCreateContextSelectionBuiltIn($data, $class)
+    public function testCreateContextSelectionBuiltIn($data, string $class)
     {
         $this->loadFixtures('Articles');
         $this->Form->create($data);
@@ -629,7 +630,7 @@ class FormHelperTest extends TestCase
      * @dataProvider requestTypeProvider
      * @return void
      */
-    public function testCreateTypeOptions($type, $method, $override)
+    public function testCreateTypeOptions(string $type, string $method, string $override)
     {
         $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create(null, ['type' => $type]);

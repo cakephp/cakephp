@@ -177,6 +177,7 @@ class LogTest extends TestCase
      * Test the various config call signatures.
      *
      * @dataProvider configProvider
+     * @param mixed $settings
      * @return void
      */
     public function testConfigVariants($settings)
@@ -191,6 +192,7 @@ class LogTest extends TestCase
      * Test the various setConfig call signatures.
      *
      * @dataProvider configProvider
+     * @param mixed $settings
      * @return void
      */
     public function testSetConfigVariants($settings)

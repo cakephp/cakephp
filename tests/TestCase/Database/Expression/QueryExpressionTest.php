@@ -172,7 +172,7 @@ class QueryExpressionTest extends TestCase
      * @dataProvider methodsProvider
      * @return void
      */
-    public function testTypeMapUsage($method)
+    public function testTypeMapUsage(string $method)
     {
         $expr = new QueryExpression([], ['created' => 'date']);
         $expr->{$method}('created', 'foo');

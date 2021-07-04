@@ -465,7 +465,7 @@ EXPECTED;
      * @depends testEventManagerReset1
      * @return void
      */
-    public function testEventManagerReset2($prevEventManager)
+    public function testEventManagerReset2(EventManager $prevEventManager)
     {
         $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());

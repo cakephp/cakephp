@@ -55,6 +55,8 @@ class FunctionsTest extends TestCase
      *
      * @return void
      * @dataProvider hInputProvider
+     * @param mixed $value
+     * @param mixed $expected
      */
     public function testH($value, $expected)
     {

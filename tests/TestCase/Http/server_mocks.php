@@ -6,12 +6,12 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-function headers_sent(&$file = null, &$line = null)
+function headers_sent(?string &$file = null, ?int &$line = null)
 {
     return $GLOBALS['mockedHeadersSent'] ?? true;
 }
 
-function header($header)
+function header(string $header, bool $replace = true, int $response_code = 0)
 {
     $GLOBALS['mockedHeaders'][] = $header;
 }

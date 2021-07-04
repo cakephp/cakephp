@@ -20,6 +20,7 @@ use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\Schema\TableSchema;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -45,7 +46,7 @@ class SqlserverSchemaTest extends TestCase
      *
      * @return void
      */
-    protected function _createTables($connection)
+    protected function _createTables(ConnectionInterface $connection)
     {
         $this->_needsConnection();
 
@@ -301,7 +302,7 @@ SQL;
      * @dataProvider convertColumnProvider
      * @return void
      */
-    public function testConvertColumn($type, $length, $precision, $scale, $expected)
+    public function testConvertColumn(string $type, ?int $length, ?int $precision, ?int $scale, array $expected)
     {
         $field = [
             'name' => 'field',
@@ -824,7 +825,7 @@ SQL;
      * @dataProvider columnSqlProvider
      * @return void
      */
-    public function testColumnSql($name, $data, $expected)
+    public function testColumnSql(string $name, array $data, string $expected)
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchemaDialect($driver);
@@ -889,7 +890,7 @@ SQL;
      *
      * @dataProvider constraintSqlProvider
      */
-    public function testConstraintSql($name, $data, $expected)
+    public function testConstraintSql(string $name, array $data, string $expected)
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchemaDialect($driver);

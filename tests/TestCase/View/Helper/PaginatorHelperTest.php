@@ -3488,6 +3488,9 @@ class PaginatorHelperTest extends TestCase
         $this->assertSame(0, $result);
     }
 
+    /**
+     * @param mixed $params
+     */
     protected function setPagingParams($params, bool $merge = true)
     {
         if ($merge) {

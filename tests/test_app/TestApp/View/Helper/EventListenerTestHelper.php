@@ -28,7 +28,7 @@ class EventListenerTestHelper extends Helper
      * @param string $viewFile The view file being rendered.
      * @return void
      */
-    public function beforeRender(EventInterface $event, $viewFile)
+    public function beforeRender(EventInterface $event, string $viewFile)
     {
         $this->config('options.foo', 'bar');
     }

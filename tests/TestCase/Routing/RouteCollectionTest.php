@@ -340,7 +340,7 @@ class RouteCollectionTest extends TestCase
      *
      * @dataProvider hostProvider
      */
-    public function testParseRequestCheckHostConditionFail($host)
+    public function testParseRequestCheckHostConditionFail(string $host)
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "/fallback" could not be found');

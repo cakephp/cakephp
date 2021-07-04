@@ -48,7 +48,6 @@ class Application extends BaseApplication
     }
 
     /**
-     * @param \Cake\Console\CommandCollection $commands
      * @return \Cake\Console\CommandCollection
      */
     public function console(CommandCollection $commands): CommandCollection
@@ -60,7 +59,6 @@ class Application extends BaseApplication
     }
 
     /**
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueue
      * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
@@ -80,7 +78,6 @@ class Application extends BaseApplication
     /**
      * Routes hook, used for testing with RoutingMiddleware.
      *
-     * @param \Cake\Routing\RouteBuilder $routes
      * @return void
      */
     public function routes(RouteBuilder $routes): void

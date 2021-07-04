@@ -124,9 +124,10 @@ class DriverTest extends TestCase
      * Uses a provider for all the different values we can pass to the method.
      *
      * @dataProvider schemaValueProvider
+     * @param mixed $input
      * @return void
      */
-    public function testSchemaValue($input, $expected)
+    public function testSchemaValue($input, string $expected)
     {
         $result = $this->driver->schemaValue($input);
         $this->assertSame($expected, $result);

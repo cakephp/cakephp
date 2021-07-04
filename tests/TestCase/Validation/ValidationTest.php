@@ -2866,7 +2866,7 @@ class ValidationTest extends TestCase
      * @dataProvider uploadedFileProvider
      * @return void
      */
-    public function testUploadedFileArray($expected, $options)
+    public function testUploadedFileArray(bool $expected, array $options)
     {
         $file = [
             'name' => 'cake.power.gif',
@@ -2948,7 +2948,7 @@ class ValidationTest extends TestCase
      * @dataProvider uploadedFileProvider
      * @return void
      */
-    public function testUploadedFilePsr7($expected, $options)
+    public function testUploadedFilePsr7(bool $expected, array $options)
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');

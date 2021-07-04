@@ -68,7 +68,7 @@ class CollectionTest extends TestCase
      * @dataProvider avgProvider
      * @return void
      */
-    public function testAvg($items)
+    public function testAvg(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertSame(2, $collection->avg());
@@ -113,7 +113,7 @@ class CollectionTest extends TestCase
      * @dataProvider avgWithMatcherProvider
      * @return void
      */
-    public function testAvgWithMatcher($items)
+    public function testAvgWithMatcher(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertSame(2, $collection->avg('foo'));
@@ -140,7 +140,7 @@ class CollectionTest extends TestCase
      * @dataProvider medianProvider
      * @return void
      */
-    public function testMedian($items)
+    public function testMedian(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertSame(4, $collection->median());
@@ -166,7 +166,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testMedianEven($items)
+    public function testMedianEven(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertSame(2.5, $collection->median());
@@ -199,7 +199,7 @@ class CollectionTest extends TestCase
      * @dataProvider medianWithMatcherProvider
      * @return void
      */
-    public function testMedianWithMatcher($items)
+    public function testMedianWithMatcher(iterable $items)
     {
         $this->assertSame(333, (new Collection($items))->median('invoice.total'));
     }
@@ -249,7 +249,7 @@ class CollectionTest extends TestCase
      * @dataProvider filterProvider
      * @return void
      */
-    public function testFilterNoCallback($items)
+    public function testFilterNoCallback(iterable $items)
     {
         $collection = new Collection($items);
         $result = $collection->filter()->toArray();
@@ -424,7 +424,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testMap($items)
+    public function testMap(iterable $items)
     {
         $collection = new Collection($items);
         $map = $collection->map(function ($v, $k, $it) use ($collection) {
@@ -442,7 +442,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testReduceWithInitialValue($items)
+    public function testReduceWithInitialValue(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertSame(20, $collection->reduce(function ($reduction, $value, $key) {
@@ -456,7 +456,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testReduceWithoutInitialValue($items)
+    public function testReduceWithoutInitialValue(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertSame(10, $collection->reduce(function ($reduction, $value, $key) {
@@ -485,7 +485,7 @@ class CollectionTest extends TestCase
      * @dataProvider extractProvider
      * @return void
      */
-    public function testExtract($items)
+    public function testExtract(iterable $items)
     {
         $collection = new Collection($items);
         $map = $collection->extract('a.b.c');
@@ -518,7 +518,7 @@ class CollectionTest extends TestCase
      * @dataProvider sortProvider
      * @return void
      */
-    public function testSortString($items)
+    public function testSortString(iterable $items)
     {
         $collection = new Collection($items);
         $map = $collection->sortBy('a.b.c');
@@ -537,7 +537,7 @@ class CollectionTest extends TestCase
      * @dataProvider sortProvider
      * @return void
      */
-    public function testMax($items)
+    public function testMax(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertEquals(['a' => ['b' => ['c' => 10]]], $collection->max('a.b.c'));
@@ -549,7 +549,7 @@ class CollectionTest extends TestCase
      * @dataProvider sortProvider
      * @return void
      */
-    public function testMaxCallback($items)
+    public function testMaxCallback(iterable $items)
     {
         $collection = new Collection($items);
         $callback = function ($e) {
@@ -564,7 +564,7 @@ class CollectionTest extends TestCase
      * @dataProvider sortProvider
      * @return void
      */
-    public function testMaxCallable($items)
+    public function testMaxCallable(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
@@ -598,7 +598,7 @@ class CollectionTest extends TestCase
      * @dataProvider sortProvider
      * @return void
      */
-    public function testMin($items)
+    public function testMin(iterable $items)
     {
         $collection = new Collection($items);
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->min('a.b.c'));
@@ -649,7 +649,7 @@ class CollectionTest extends TestCase
      * @dataProvider groupByProvider
      * @return void
      */
-    public function testGroupBy($items)
+    public function testGroupBy(iterable $items)
     {
         $collection = new Collection($items);
         $grouped = $collection->groupBy('parent_id');
@@ -672,7 +672,7 @@ class CollectionTest extends TestCase
      * @dataProvider groupByProvider
      * @return void
      */
-    public function testGroupByCallback($items)
+    public function testGroupByCallback(iterable $items)
     {
         $collection = new Collection($items);
         $expected = [
@@ -760,7 +760,7 @@ class CollectionTest extends TestCase
      * @dataProvider indexByProvider
      * @return void
      */
-    public function testIndexBy($items)
+    public function testIndexBy(iterable $items)
     {
         $collection = new Collection($items);
         $grouped = $collection->indexBy('id');
@@ -779,7 +779,7 @@ class CollectionTest extends TestCase
      * @dataProvider indexByProvider
      * @return void
      */
-    public function testIndexByCallback($items)
+    public function testIndexByCallback(iterable $items)
     {
         $collection = new Collection($items);
         $grouped = $collection->indexBy(function ($element) {
@@ -860,7 +860,7 @@ class CollectionTest extends TestCase
      * @dataProvider groupByProvider
      * @return void
      */
-    public function testCountBy($items)
+    public function testCountBy(iterable $items)
     {
         $collection = new Collection($items);
         $grouped = $collection->countBy('parent_id');
@@ -879,7 +879,7 @@ class CollectionTest extends TestCase
      * @dataProvider groupByProvider
      * @return void
      */
-    public function testCountByCallback($items)
+    public function testCountByCallback(iterable $items)
     {
         $expected = [
             10 => 2,
@@ -898,7 +898,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testShuffle($data)
+    public function testShuffle(iterable $data)
     {
         $collection = (new Collection($data))->shuffle();
         $result = $collection->toArray();
@@ -930,7 +930,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testSample($data)
+    public function testSample(iterable $data)
     {
         $result = (new Collection($data))->sample(2)->toArray();
         $this->assertCount(2, $result);
@@ -980,7 +980,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testToList($data)
+    public function testToList(iterable $data)
     {
         $collection = new Collection($data);
         $this->assertEquals([1, 2, 3, 4], $collection->toList());
@@ -1004,7 +1004,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testCollectionCount($list)
+    public function testCollectionCount(iterable $list)
     {
         $list = (new Collection($list))->buffered();
         $collection = new Collection($list);
@@ -1017,7 +1017,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testCollectionCountKeys($list)
+    public function testCollectionCountKeys(iterable $list)
     {
         $list = (new Collection($list))->buffered();
         $collection = new Collection($list);
@@ -1688,7 +1688,7 @@ class CollectionTest extends TestCase
      * @dataProvider nestedListProvider
      * @return void
      */
-    public function testListNested($dir, $expected)
+    public function testListNested(string $dir, array $expected)
     {
         $items = [
             ['id' => 1, 'parent_id' => null],
@@ -1794,9 +1794,10 @@ class CollectionTest extends TestCase
      * Tests the sumOf method
      *
      * @dataProvider sumOfProvider
+     * @param float|int $expected
      * @return void
      */
-    public function testSumOf($items, $expected)
+    public function testSumOf(iterable $items, $expected)
     {
         $this->assertEquals($expected, (new Collection($items))->sumOf('invoice.total'));
     }
@@ -1805,9 +1806,10 @@ class CollectionTest extends TestCase
      * Tests the sumOf method
      *
      * @dataProvider sumOfProvider
+     * @param float|int $expected
      * @return void
      */
-    public function testSumOfCallable($items, $expected)
+    public function testSumOfCallable(iterable $items, $expected)
     {
         $sum = (new Collection($items))->sumOf(function ($v) {
             return $v['invoice']['total'];
@@ -1821,7 +1823,7 @@ class CollectionTest extends TestCase
      * @dataProvider simpleProvider
      * @return void
      */
-    public function testStopWhenCallable($items)
+    public function testStopWhenCallable(iterable $items)
     {
         $collection = (new Collection($items))->stopWhen(function ($v) {
             return $v > 3;
@@ -2206,7 +2208,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() method
      *
      * @dataProvider simpleProvider
-     * @param array $data The data to test with.
+     * @param iterable $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
@@ -2222,7 +2224,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() method with overflow
      *
      * @dataProvider simpleProvider
-     * @param array $data The data to test with.
+     * @param iterable $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
@@ -2238,7 +2240,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() with an odd numbers collection
      *
      * @dataProvider simpleProvider
-     * @param array $data The data to test with.
+     * @param iterable $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
@@ -2273,7 +2275,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() with countable collection
      *
      * @dataProvider simpleProvider
-     * @param array $data The data to test with.
+     * @param iterable $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
@@ -2438,7 +2440,7 @@ class CollectionTest extends TestCase
      * @dataProvider chunkProvider
      * @return void
      */
-    public function testChunk($items)
+    public function testChunk(iterable $items)
     {
         $collection = new Collection($items);
         $chunked = $collection->chunk(2)->toList();
@@ -2720,10 +2722,10 @@ class CollectionTest extends TestCase
     /**
      * Yields all the elements as passed
      *
-     * @param array $items the elements to be yielded
+     * @param iterable $items the elements to be yielded
      * @return \Generator<array>
      */
-    protected function yieldItems(array $items)
+    protected function yieldItems(iterable $items)
     {
         foreach ($items as $k => $v) {
             yield $k => $v;

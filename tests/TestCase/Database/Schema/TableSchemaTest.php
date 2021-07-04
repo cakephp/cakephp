@@ -394,7 +394,7 @@ class TableSchemaTest extends TestCase
      * @dataProvider addConstraintErrorProvider
      * @return void
      */
-    public function testAddConstraintError($props)
+    public function testAddConstraintError(array $props)
     {
         $this->expectException(\Cake\Database\Exception\DatabaseException::class);
         $table = new TableSchema('articles');
@@ -448,7 +448,7 @@ class TableSchemaTest extends TestCase
      * @dataProvider addIndexErrorProvider
      * @return void
      */
-    public function testAddIndexError($props)
+    public function testAddIndexError(array $props)
     {
         $this->expectException(\Cake\Database\Exception\DatabaseException::class);
         $table = new TableSchema('articles');
@@ -639,7 +639,7 @@ class TableSchemaTest extends TestCase
      * @dataProvider badForeignKeyProvider
      * @return void
      */
-    public function testAddConstraintForeignKeyBadData($data)
+    public function testAddConstraintForeignKeyBadData(array $data)
     {
         $this->expectException(\Cake\Database\Exception\DatabaseException::class);
         $table = new TableSchema('articles');

@@ -250,7 +250,7 @@ SQL;
      * @dataProvider convertColumnProvider
      * @return void
      */
-    public function testConvertColumn($field, $expected)
+    public function testConvertColumn(array $field, array $expected)
     {
         $field += [
             'name' => 'field',
@@ -966,7 +966,7 @@ SQL;
      * @dataProvider columnSqlProvider
      * @return void
      */
-    public function testColumnSql($name, $data, $expected)
+    public function testColumnSql(string $name, array $data, string $expected)
     {
         $driver = $this->_getMockedDriver();
         $schema = new PostgresSchemaDialect($driver);
@@ -1055,7 +1055,7 @@ SQL;
      *
      * @dataProvider constraintSqlProvider
      */
-    public function testConstraintSql($name, $data, $expected)
+    public function testConstraintSql(string $name, array $data, string $expected)
     {
         $driver = $this->_getMockedDriver();
         $schema = new PostgresSchemaDialect($driver);

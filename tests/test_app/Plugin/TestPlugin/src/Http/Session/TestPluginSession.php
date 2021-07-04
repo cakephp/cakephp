@@ -10,30 +10,48 @@ use SessionHandlerInterface;
  */
 class TestPluginSession implements SessionHandlerInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function open($path, $name): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function close(): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function read($id): string|false
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function write($id, $data): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function destroy($id): bool
     {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function gc($maxlifetime): int|false
     {
         return 0;

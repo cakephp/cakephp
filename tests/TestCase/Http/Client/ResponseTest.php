@@ -298,7 +298,7 @@ XML;
      * @dataProvider isSuccessProvider
      * @return void
      */
-    public function testIsSuccess($expected, Response $response)
+    public function testIsSuccess(bool $expected, Response $response)
     {
         $this->assertEquals($expected, $response->isSuccess());
     }

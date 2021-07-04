@@ -1486,7 +1486,7 @@ class IntegrationTestTraitTest extends TestCase
      * @depends testEventManagerReset1
      * @return void
      */
-    public function testEventManagerReset2($prevEventManager)
+    public function testEventManagerReset2(EventManager $prevEventManager)
     {
         $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
@@ -1559,7 +1559,7 @@ class IntegrationTestTraitTest extends TestCase
      * @return void
      * @dataProvider methodsProvider
      */
-    public function testSecureWithQueryString($method)
+    public function testSecureWithQueryString(string $method)
     {
         $this->enableSecurityToken();
         $this->{$method}('/posts/securePost/?ids[]=1&ids[]=2');
@@ -1786,9 +1786,10 @@ class IntegrationTestTraitTest extends TestCase
      * Test the assertion generates a verbose message for session related checks.
      *
      * @dataProvider assertionFailureSessionVerboseProvider
+     * @param mixed ...$rest
      * @return void
      */
-    public function testAssertSessionRelatedVerboseMessages($assertMethod, ...$rest)
+    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest)
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to OutOfBoundsException: "oh no!"');

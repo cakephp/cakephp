@@ -60,8 +60,6 @@ class PaginatorPostsTable extends Table
     /**
      * Custom finder, used with fixture data to ensure Paginator is sending options
      *
-     * @param \Cake\ORM\Query $query
-     * @param array $options
      * @return \Cake\ORM\Query
      */
     public function findAuthor(Query $query, array $options = [])

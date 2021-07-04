@@ -506,6 +506,7 @@ HTML;
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
+     * @param array|string $value
      * @return void
      */
     public function testInvalidEmail($value)
@@ -518,6 +519,7 @@ HTML;
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
+     * @param array|string $value
      * @return void
      */
     public function testInvalidEmailAdd($value)

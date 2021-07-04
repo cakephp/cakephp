@@ -84,11 +84,9 @@ class ArticlesCell extends \Cake\View\Cell
     /**
      * Simple echo.
      *
-     * @param string $msg1
-     * @param string $msg2
      * @return void
      */
-    public function doEcho($msg1, $msg2)
+    public function doEcho(string $msg1, string $msg2)
     {
         $this->set('msg', $msg1 . $msg2);
     }

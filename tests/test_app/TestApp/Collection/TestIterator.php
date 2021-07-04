@@ -15,6 +15,9 @@ class TestIterator extends ArrayIterator
 
     public $data = [];
 
+    /**
+     * @param mixed $data
+     */
     public function __construct($data)
     {
         $this->data = $data;

@@ -145,6 +145,7 @@ class EntityContextTest extends TestCase
      * Test isCreate on a collection.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      * @return void
      */
     public function testIsCreateCollection($collection)
@@ -247,6 +248,7 @@ class EntityContextTest extends TestCase
      * Test collection operations that lack a table argument.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      * @return void
      */
     public function testCollectionOperationsNoTableArg($collection)
@@ -295,6 +297,7 @@ class EntityContextTest extends TestCase
      * Test operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      * @return void
      */
     public function testValOnCollections($collection)
@@ -325,6 +328,7 @@ class EntityContextTest extends TestCase
      * table name
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      * @return void
      */
     public function testValOnCollectionsWithRootName($collection)
@@ -353,6 +357,7 @@ class EntityContextTest extends TestCase
      * Test error operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      * @return void
      */
     public function testErrorsOnCollections($collection)
@@ -378,6 +383,7 @@ class EntityContextTest extends TestCase
      * Test schema operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      * @return void
      */
     public function testSchemaOnCollections($collection)
@@ -406,6 +412,7 @@ class EntityContextTest extends TestCase
      * Test validation operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      * @return void
      */
     public function testValidatorsOnCollections($collection)

@@ -435,7 +435,7 @@ class FixtureManagerTest extends TestCase
      * @dataProvider loadErrorMessageProvider
      * @return void
      */
-    public function testExceptionOnLoadFixture($method, $expectedMessage)
+    public function testExceptionOnLoadFixture(string $method, string $expectedMessage)
     {
         $fixture = $this->getMockBuilder('Cake\Test\Fixture\ProductsFixture')
             ->onlyMethods(['drop', 'create', $method])

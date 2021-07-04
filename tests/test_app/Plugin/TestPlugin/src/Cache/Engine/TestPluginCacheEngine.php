@@ -26,30 +26,51 @@ use Cake\Cache\CacheEngine;
 
 class TestPluginCacheEngine extends CacheEngine
 {
+    /**
+     * @inheritDoc
+     */
     public function set($key, $value, $ttl = null): bool
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get($key, $default = null)
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function increment(string $key, int $offset = 1)
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function decrement(string $key, int $offset = 1)
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delete($key): bool
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function clear(): bool
     {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function clearGroup(string $group): bool
     {
     }

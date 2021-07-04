@@ -1649,7 +1649,7 @@ class RouterTest extends TestCase
      * @return void
      * @dataProvider parseReverseSymmetryData
      */
-    public function testParseReverseSymmetry($url)
+    public function testParseReverseSymmetry(string $url)
     {
         $this->_connectDefaultRoutes();
         $this->assertSame($url, Router::reverse(Router::parseRequest($this->makeRequest($url, 'GET')) + ['url' => []]));
@@ -2270,7 +2270,6 @@ class RouterTest extends TestCase
     /**
      * Test parseRoutePath() with invalid strings
      *
-     * @param string $value
      * @return void
      * @dataProvider invalidRoutePathProvider
      */

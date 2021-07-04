@@ -1634,7 +1634,7 @@ class EntityTest extends TestCase
      * @dataProvider emptyNamesProvider
      * @return void
      */
-    public function testSetEmptyPropertyName($property)
+    public function testSetEmptyPropertyName(?string $property)
     {
         $this->expectException(\InvalidArgumentException::class);
         $entity = new Entity();

@@ -47,7 +47,7 @@ class CookieTest extends TestCase
      *
      * @dataProvider invalidNameProvider
      */
-    public function testValidateNameInvalidChars($name)
+    public function testValidateNameInvalidChars(string $name)
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('contains invalid characters.');

@@ -392,7 +392,7 @@ class TextHelperTest extends TestCase
      * @dataProvider autoLinkProvider
      * @return void
      */
-    public function testAutoLinkUrls($text, $expected)
+    public function testAutoLinkUrls(string $text, string $expected)
     {
         $result = $this->Text->autoLinkUrls($text);
         $this->assertEquals($expected, $result);
@@ -558,7 +558,7 @@ class TextHelperTest extends TestCase
      * @dataProvider autoLinkEmailProvider
      * @return void
      */
-    public function testAutoLinkEmails($text, $expected, $attrs = [])
+    public function testAutoLinkEmails(string $text, string $expected, array $attrs = [])
     {
         $result = $this->Text->autoLinkEmails($text, $attrs);
         $this->assertSame($expected, $result);

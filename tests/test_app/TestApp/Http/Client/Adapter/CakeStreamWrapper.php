@@ -15,7 +15,7 @@ class CakeStreamWrapper implements \ArrayAccess
         ],
     ];
 
-    public function stream_open($path, $mode, $options, &$openedPath)
+    public function stream_open(string $path, string $mode, int $options, ?string &$openedPath)
     {
         if ($path === 'http://throw_exception/') {
             throw new \Exception();
@@ -38,7 +38,7 @@ class CakeStreamWrapper implements \ArrayAccess
         return fclose($this->_stream);
     }
 
-    public function stream_read($count)
+    public function stream_read(int $count)
     {
         if (isset($this->_query['sleep'])) {
             sleep(1);
@@ -52,26 +52,38 @@ class CakeStreamWrapper implements \ArrayAccess
         return feof($this->_stream);
     }
 
-    public function stream_set_option($option, $arg1, $arg2)
+    public function stream_set_option(int $option, int $arg1, int $arg2)
     {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function offsetExists($offset)
     {
         return isset($this->_data[$offset]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function offsetGet($offset)
     {
         return $this->_data[$offset];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function offsetSet($offset, $value)
     {
         $this->_data[$offset] = $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function offsetUnset($offset)
     {
         unset($this->_data[$offset]);

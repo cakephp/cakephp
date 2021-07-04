@@ -1111,7 +1111,7 @@ class PaginatorComponentTest extends TestCase
      * @dataProvider checkLimitProvider
      * @return void
      */
-    public function testCheckLimit($input, $expected): void
+    public function testCheckLimit(array $input, int $expected): void
     {
         $result = $this->Paginator->checkLimit($input);
         $this->assertSame($expected, $result['limit']);
@@ -1404,7 +1404,6 @@ class PaginatorComponentTest extends TestCase
     /**
      * Helper method for mocking queries.
      *
-     * @param RepositoryInterface|null $table
      * @return \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockFindQuery(?RepositoryInterface $table = null)
