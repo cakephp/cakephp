@@ -18,8 +18,6 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
-use Cake\Console\ConsoleIo;
-use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -79,22 +77,6 @@ class SchemaCacheCommandsTest extends TestCase
         $this->connection->cacheMetadata('_cake_model_');
         unset($this->connection);
         Cache::drop('orm_cache');
-    }
-
-    protected function getShell()
-    {
-        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
-        $shell = $this->getMockBuilder(SchemaCacheShell::class)
-            ->setConstructorArgs([$io])
-            ->onlyMethods(['_getSchemaCache'])
-            ->getMock();
-
-        $schemaCache = new SchemaCache($this->connection);
-        $shell->expects($this->once())
-            ->method('_getSchemaCache')
-            ->willReturn($schemaCache);
-
-        return $shell;
     }
 
     /**

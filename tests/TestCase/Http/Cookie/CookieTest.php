@@ -30,7 +30,7 @@ class CookieTest extends TestCase
      *
      * @return array
      */
-    public function invalidNameProvider()
+    public function invalidNameProvider(): array
     {
         return [
             ['no='],

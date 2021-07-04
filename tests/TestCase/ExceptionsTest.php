@@ -134,7 +134,7 @@ class ExceptionsTest extends TestCase
      *
      * @return array
      */
-    public function exceptionProvider()
+    public function exceptionProvider(): array
     {
         return [
             ['Cake\Console\Exception\ConsoleException', 1],

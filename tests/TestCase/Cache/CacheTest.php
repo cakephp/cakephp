@@ -381,7 +381,7 @@ class CacheTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider()
+    public static function configProvider(): array
     {
         return [
             'Array of data using engine key.' => [[

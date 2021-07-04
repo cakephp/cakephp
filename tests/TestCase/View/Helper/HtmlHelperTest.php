@@ -111,8 +111,8 @@ class HtmlHelperTest extends TestCase
     public function testLink()
     {
         Router::reload();
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}', ['action' => 'index']);
+        Router::connect('/{controller}/{action}/*');
         Router::setRequest(new ServerRequest());
 
         $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', ''));
@@ -1624,7 +1624,7 @@ class HtmlHelperTest extends TestCase
     /**
      * @return array
      */
-    public function dataMetaLinksProvider()
+    public function dataMetaLinksProvider(): array
     {
         return [
             ['canonical', ['controller' => 'Posts', 'action' => 'show'], '/posts/show'],

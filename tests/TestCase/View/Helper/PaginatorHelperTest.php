@@ -80,8 +80,8 @@ class PaginatorHelperTest extends TestCase
 
         Router::reload();
         Router::connect('/', ['controller' => 'Articles', 'action' => 'index']);
-        Router::connect('/:controller/:action/*');
-        Router::connect('/:plugin/:controller/:action/*');
+        Router::connect('/{controller}/{action}/*');
+        Router::connect('/{plugin}/{controller}/{action}/*');
         Router::setRequest($request);
 
         $this->locale = I18n::getLocale();
@@ -763,7 +763,7 @@ class PaginatorHelperTest extends TestCase
     public function testSortAdminLinks()
     {
         Router::reload();
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
+        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'url' => '/admin/users',
@@ -933,7 +933,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public function urlGenerationResetsToPage1Provider()
+    public function urlGenerationResetsToPage1Provider(): array
     {
         return [
             'Sorting the field currently sorted asc, asc' => [
@@ -967,8 +967,8 @@ class PaginatorHelperTest extends TestCase
     public function testGenerateUrlWithPrefixes()
     {
         Router::reload();
-        Router::connect('/members/:controller/:action/*', ['prefix' => 'Members']);
-        Router::connect('/:controller/:action/*');
+        Router::connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
+        Router::connect('/{controller}/{action}/*');
 
         $request = new ServerRequest([
             'url' => '/Posts/index',
@@ -1044,8 +1044,8 @@ class PaginatorHelperTest extends TestCase
     public function testGenerateUrlWithPrefixesLeavePrefix()
     {
         Router::reload();
-        Router::connect('/members/:controller/:action/*', ['prefix' => 'Members']);
-        Router::connect('/:controller/:action/*');
+        Router::connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
+        Router::connect('/{controller}/{action}/*');
 
         $request = new ServerRequest([
             'params' => [
@@ -1883,7 +1883,7 @@ class PaginatorHelperTest extends TestCase
     public function testRoutePlaceholder()
     {
         Router::reload();
-        Router::connect('/:controller/:action/:page');
+        Router::connect('/{controller}/{action}/{page}');
         $request = $this->View
             ->getRequest()
             ->withAttribute('params', [
@@ -1921,7 +1921,7 @@ class PaginatorHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         Router::reload();
-        Router::connect('/:controller/:action/:sort/:direction');
+        Router::connect('/{controller}/{action}/{sort}/{direction}');
         Router::setRequest($request);
 
         $this->Paginator->options(['routePlaceholders' => ['sort', 'direction']]);
@@ -3216,7 +3216,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public function dataMetaProvider()
+    public function dataMetaProvider(): array
     {
         return [
             // Verifies that no next and prev links are created for single page results.

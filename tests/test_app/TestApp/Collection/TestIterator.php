@@ -25,7 +25,7 @@ class TestIterator extends ArrayIterator
         parent::__construct($data);
     }
 
-    public function checkValues()
+    public function checkValues(): bool
     {
         return true;
     }

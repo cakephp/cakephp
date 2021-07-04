@@ -129,8 +129,8 @@ class FormHelperTest extends TestCase
         ];
 
         Security::setSalt('foo!');
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
+        Router::connect('/{controller}', ['action' => 'index']);
+        Router::connect('/{controller}/{action}/*');
     }
 
     /**
@@ -413,7 +413,7 @@ class FormHelperTest extends TestCase
      *
      * @return array
      */
-    public static function requestTypeProvider()
+    public static function requestTypeProvider(): array
     {
         return [
             // type, method, override
@@ -7458,7 +7458,7 @@ class FormHelperTest extends TestCase
      *
      * @return array
      */
-    public function fractionalTypeProvider()
+    public function fractionalTypeProvider(): array
     {
         return [
             ['datetimefractional'],

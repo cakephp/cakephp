@@ -5592,7 +5592,7 @@ class TableTest extends TestCase
         $table->find();
     }
 
-    public function providerForTestGet()
+    public function providerForTestGet(): array
     {
         return [
             [['fields' => ['id']]],
@@ -5644,7 +5644,7 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
     }
 
-    public function providerForTestGetWithCustomFinder()
+    public function providerForTestGetWithCustomFinder(): array
     {
         return [
             [['fields' => ['id'], 'finder' => 'custom']],
@@ -5694,7 +5694,7 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
     }
 
-    public function providerForTestGetWithCache()
+    public function providerForTestGetWithCache(): array
     {
         return [
             [

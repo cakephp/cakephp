@@ -64,7 +64,7 @@ class FunctionsTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function hInputProvider()
+    public function hInputProvider(): array
     {
         return [
             ['i am clean', 'i am clean'],

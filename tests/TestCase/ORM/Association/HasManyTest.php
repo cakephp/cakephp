@@ -864,7 +864,7 @@ class HasManyTest extends TestCase
      *
      * @return array
      */
-    public function emptySetDataProvider()
+    public function emptySetDataProvider(): array
     {
         return [
             [''],

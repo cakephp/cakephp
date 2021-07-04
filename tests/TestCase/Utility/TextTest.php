@@ -364,7 +364,7 @@ class TextTest extends TestCase
      *
      * @return array
      */
-    public function wordWrapProvider()
+    public function wordWrapProvider(): array
     {
         return [
             [
@@ -1685,7 +1685,7 @@ HTML;
      *
      * @return array
      */
-    public function transliterateInputProvider()
+    public function transliterateInputProvider(): array
     {
         return [
             [

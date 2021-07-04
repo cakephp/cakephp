@@ -5,6 +5,9 @@ namespace TestApp\Error\Thing;
 
 class DebuggableThing
 {
+    /**
+     * @inheritDoc
+     */
     public function __debugInfo()
     {
         return ['foo' => 'bar', 'inner' => new self()];

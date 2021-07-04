@@ -1866,7 +1866,7 @@ class QueryTest extends TestCase
      *
      * @return array
      */
-    public function collectionMethodsProvider()
+    public function collectionMethodsProvider(): array
     {
         $identity = function ($a) {
             return $a;

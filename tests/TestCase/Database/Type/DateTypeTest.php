@@ -126,7 +126,7 @@ class DateTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProvider()
+    public function marshalProvider(): array
     {
         $date = new Date('@1392387900');
 

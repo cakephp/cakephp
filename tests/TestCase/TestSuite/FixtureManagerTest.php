@@ -482,7 +482,7 @@ class FixtureManagerTest extends TestCase
      *
      * @return array
      */
-    public function loadErrorMessageProvider()
+    public function loadErrorMessageProvider(): array
     {
         return [
             [

@@ -27,7 +27,7 @@ class TestMailer extends Mailer
 
     public $boundary = null;
 
-    public function deliver(string $content = '')
+    public function deliver(string $content = ''): array
     {
         $result = parent::deliver($content);
         $this->boundary = $this->message->getBoundary();

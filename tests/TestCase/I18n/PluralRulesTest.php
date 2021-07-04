@@ -30,7 +30,7 @@ class PluralRulesTest extends TestCase
      *
      * @return array
      */
-    public function localesProvider()
+    public function localesProvider(): array
     {
         return [
             ['jp', 0, 0],

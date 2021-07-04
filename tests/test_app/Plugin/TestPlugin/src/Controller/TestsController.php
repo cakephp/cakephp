@@ -27,6 +27,9 @@ class TestsController extends TestPluginAppController
         $this->set('test_value', 'It is a variable');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function some_method()
     {
         $this->response->body(25);

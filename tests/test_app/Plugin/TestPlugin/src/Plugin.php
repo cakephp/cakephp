@@ -21,7 +21,7 @@ use Cake\Http\MiddlewareQueue;
 
 class Plugin extends BasePlugin
 {
-    public function events(EventManagerInterface $events)
+    public function events(EventManagerInterface $events): EventManagerInterface
     {
         $events->on('TestPlugin.load', function () {
         });
@@ -31,8 +31,8 @@ class Plugin extends BasePlugin
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(function ($req, $res, $next) {
-            return $next($req, $res);
+        $middlewareQueue->add(function ($request, $handler) {
+            return $handler->handle($request);
         });
 
         return $middlewareQueue;

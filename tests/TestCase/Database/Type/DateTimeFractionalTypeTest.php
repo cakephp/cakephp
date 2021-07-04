@@ -223,7 +223,7 @@ class DateTimeFractionalTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProvider()
+    public function marshalProvider(): array
     {
         return [
             // invalid types.

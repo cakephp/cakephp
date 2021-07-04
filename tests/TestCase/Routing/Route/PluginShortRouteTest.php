@@ -45,7 +45,7 @@ class PluginShortRouteTest extends TestCase
      */
     public function testParsing()
     {
-        $route = new PluginShortRoute('/:plugin', ['action' => 'index'], ['plugin' => 'foo|bar']);
+        $route = new PluginShortRoute('/{plugin}', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
         $result = $route->parse('/foo', 'GET');
         $this->assertSame('Foo', $result['plugin']);
@@ -63,7 +63,7 @@ class PluginShortRouteTest extends TestCase
      */
     public function testMatch()
     {
-        $route = new PluginShortRoute('/:plugin', ['action' => 'index'], ['plugin' => 'foo|bar']);
+        $route = new PluginShortRoute('/{plugin}', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
         $result = $route->match(['plugin' => 'Foo', 'controller' => 'Posts', 'action' => 'index']);
         $this->assertNull($result, 'plugin controller mismatch was converted. %s');

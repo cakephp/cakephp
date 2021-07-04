@@ -272,15 +272,15 @@ class RoutingMiddlewareTest extends TestCase
     public function testInvokeScopedMiddleware()
     {
         Router::scope('/api', function (RouteBuilder $routes) {
-            $routes->registerMiddleware('first', function ($req, $res, $next) {
+            $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
-            $routes->registerMiddleware('second', function ($req, $res, $next) {
+            $routes->registerMiddleware('second', function ($request, $handler) {
                 $this->log[] = 'second';
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
             $routes->registerMiddleware('dumb', DumbMiddleware::class);
 
@@ -315,15 +315,15 @@ class RoutingMiddlewareTest extends TestCase
     public function testInvokeScopedMiddlewareReturnResponse()
     {
         Router::scope('/', function (RouteBuilder $routes) {
-            $routes->registerMiddleware('first', function ($req, $res, $next) {
+            $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
-            $routes->registerMiddleware('second', function ($req, $res, $next) {
+            $routes->registerMiddleware('second', function ($request, $handler) {
                 $this->log[] = 'second';
 
-                return $res;
+                return new Response();
             });
 
             $routes->applyMiddleware('first');
@@ -356,15 +356,15 @@ class RoutingMiddlewareTest extends TestCase
     public function testInvokeScopedMiddlewareReturnResponseMainScope()
     {
         Router::scope('/', function (RouteBuilder $routes) {
-            $routes->registerMiddleware('first', function ($req, $res, $next) {
+            $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
-                return $res;
+                return new Response();
             });
-            $routes->registerMiddleware('second', function ($req, $res, $next) {
+            $routes->registerMiddleware('second', function ($request, $handler) {
                 $this->log[] = 'second';
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
 
             $routes->applyMiddleware('first');
@@ -401,15 +401,15 @@ class RoutingMiddlewareTest extends TestCase
     public function testInvokeScopedMiddlewareIsolatedScopes(string $url, array $expected)
     {
         Router::scope('/', function (RouteBuilder $routes) {
-            $routes->registerMiddleware('first', function ($req, $res, $next) {
+            $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
-            $routes->registerMiddleware('second', function ($req, $res, $next) {
+            $routes->registerMiddleware('second', function ($request, $handler) {
                 $this->log[] = 'second';
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
 
             $routes->scope('/api', function (RouteBuilder $routes) {
@@ -442,7 +442,7 @@ class RoutingMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public function scopedMiddlewareUrlProvider()
+    public function scopedMiddlewareUrlProvider(): array
     {
         return [
             ['/api/ping', ['first', 'last']],

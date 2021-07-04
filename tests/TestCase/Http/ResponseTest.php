@@ -229,7 +229,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function charsetTypeProvider()
+    public static function charsetTypeProvider(): array
     {
         return [
             ['mp3', 'audio/mpeg'],
@@ -1116,7 +1116,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public function invalidFileProvider()
+    public function invalidFileProvider(): array
     {
         return [
             ['my/../cat.gif', 'The requested file contains `..` and will not be read.'],
@@ -1268,7 +1268,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function rangeProvider()
+    public static function rangeProvider(): array
     {
         return [
             // suffix-byte-range
@@ -1349,7 +1349,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public function invalidFileRangeProvider()
+    public function invalidFileRangeProvider(): array
     {
         return [
             // malformed range

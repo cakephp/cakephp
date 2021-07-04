@@ -157,7 +157,7 @@ class QueryExpressionTest extends TestCase
      *
      * @return void
      */
-    public function methodsProvider()
+    public function methodsProvider(): array
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],

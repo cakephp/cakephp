@@ -127,7 +127,7 @@ class CommandCollectionTest extends TestCase
      *
      * @return array
      */
-    public function invalidNameProvider()
+    public function invalidNameProvider(): array
     {
         return [
             // Empty

@@ -27,11 +27,17 @@ class DependenciesController extends Controller
         $this->inject = $inject;
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function requiredString(string $str)
     {
         return $this->response->withStringBody(json_encode(compact('str')));
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function optionalString(string $str = 'default val')
     {
         return $this->response->withStringBody(json_encode(compact('str')));
@@ -39,6 +45,7 @@ class DependenciesController extends Controller
 
     /**
      * @param mixed $any
+     * @return \Cake\Http\Response
      */
     public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
     {
@@ -47,17 +54,24 @@ class DependenciesController extends Controller
 
     /**
      * @param mixed $any
+     * @return \Cake\Http\Response
      */
     public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function variadic()
     {
         return $this->response->withStringBody(json_encode(['args' => func_get_args()]));
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function spread(string ...$args)
     {
         return $this->response->withStringBody(json_encode(['args' => $args]));
@@ -65,6 +79,7 @@ class DependenciesController extends Controller
 
     /**
      * @param mixed $one
+     * @return \Cake\Http\Response
      */
     public function requiredParam($one)
     {

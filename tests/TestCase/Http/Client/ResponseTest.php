@@ -237,7 +237,7 @@ XML;
      *
      * @return array
      */
-    public static function isSuccessProvider()
+    public static function isSuccessProvider(): array
     {
         return [
             [

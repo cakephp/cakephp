@@ -1117,7 +1117,7 @@ trait PaginatorTestTrait
     /**
      * @return array
      */
-    public function checkLimitProvider()
+    public function checkLimitProvider(): array
     {
         return [
             'out of bounds' => [

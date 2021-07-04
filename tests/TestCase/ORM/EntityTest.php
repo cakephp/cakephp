@@ -1611,7 +1611,7 @@ class EntityTest extends TestCase
      *
      * @return array
      */
-    public function emptyNamesProvider()
+    public function emptyNamesProvider(): array
     {
         return [[''], [null]];
     }

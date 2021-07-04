@@ -84,7 +84,7 @@ class RoutesCommandTest extends TestCase
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
-            '/app/articles/:action/*',
+            '/app/articles/{action}/*',
             '',
             '',
             'Articles',
@@ -93,7 +93,7 @@ class RoutesCommandTest extends TestCase
         ]);
         $this->assertOutputContainsRow([
             'bake._controller:_action',
-            '/bake/:controller/:action',
+            '/bake/{controller}/{action}',
             'Bake',
             '',
             '',
@@ -102,7 +102,7 @@ class RoutesCommandTest extends TestCase
         ]);
         $this->assertOutputContainsRow([
             'testName',
-            '/app/tests/:action/*',
+            '/app/tests/{action}/*',
             '',
             '',
             'Tests',
@@ -132,7 +132,7 @@ class RoutesCommandTest extends TestCase
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
-            '/app/articles/:action/*',
+            '/app/articles/{action}/*',
             '',
             '',
             'Articles',

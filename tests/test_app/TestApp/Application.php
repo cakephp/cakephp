@@ -63,11 +63,8 @@ class Application extends BaseApplication
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(function ($req, $res, $next) {
-            /** @var \Cake\Http\ServerRequest $res */
-            $res = $next($req, $res);
-
-            return $res->withHeader('X-Middleware', 'true');
+        $middlewareQueue->add(function ($request, $handler) {
+            return $handler->handle($request)->withHeader('X-Middleware', 'true');
         });
         $middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error', [])));
         $middlewareQueue->add(new RoutingMiddleware($this));
@@ -84,10 +81,10 @@ class Application extends BaseApplication
     {
         $routes->scope('/app', function (RouteBuilder $routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
-            $routes->connect('/articles/:action/*', ['controller' => 'Articles']);
+            $routes->connect('/articles/{action}/*', ['controller' => 'Articles']);
 
             try {
-                $routes->connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
+                $routes->connect('/tests/{action}/*', ['controller' => 'Tests'], ['_name' => 'testName']);
             } catch (DuplicateNamedRouteException $e) {
                 // do nothing. This happens when one test does multiple requests.
             }
@@ -95,7 +92,7 @@ class Application extends BaseApplication
             $routes->fallbacks();
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
-        $routes->connect('/bake/:controller/:action', ['plugin' => 'Bake']);
+        $routes->connect('/bake/{controller}/{action}', ['plugin' => 'Bake']);
     }
 
     /**

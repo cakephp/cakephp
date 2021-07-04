@@ -39,13 +39,13 @@ class RunnerTest extends TestCase
 
         $this->queue = new MiddlewareQueue();
 
-        $this->ok = function ($req, $res, $next) {
-            return $next($req, $res);
+        $this->ok = function ($request, $handler) {
+            return $handler->handle($request);
         };
-        $this->pass = function ($req, $res, $next) {
-            return $next($req, $res);
+        $this->pass = function ($request, $handler) {
+            return $handler->handle($request);
         };
-        $this->fail = function ($req, $res, $next) {
+        $this->fail = function ($request, $handler) {
             throw new RuntimeException('A bad thing');
         };
     }
@@ -73,20 +73,20 @@ class RunnerTest extends TestCase
     public function testRunSequencing()
     {
         $log = [];
-        $one = function ($req, $handler) use (&$log) {
+        $one = function ($request, $handler) use (&$log) {
             $log[] = 'one';
 
-            return $handler->handle($req);
+            return $handler->handle($request);
         };
-        $two = function ($req, $res, $next) use (&$log) {
+        $two = function ($request, $handler) use (&$log) {
             $log[] = 'two';
 
-            return $next($req, $res);
+            return $handler->handle($request);
         };
-        $three = function ($req, $res, $next) use (&$log) {
+        $three = function ($request, $handler) use (&$log) {
             $log[] = 'three';
 
-            return $next($req, $res);
+            return $handler->handle($request);
         };
         $this->queue->add($one)->add($two)->add($three);
         $runner = new Runner();

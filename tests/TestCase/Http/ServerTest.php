@@ -304,10 +304,10 @@ class ServerTest extends TestCase
         $called = false;
 
         $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) use (&$called) {
-            $middlewareQueue->add(function ($req, $res, $next) use (&$called) {
+            $middlewareQueue->add(function ($request, $handler) use (&$called) {
                 $called = true;
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
             $this->middlewareQueue = $middlewareQueue;
         });
