@@ -55,7 +55,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "^4.0",
+        "cakephp/cakephp-codesniffer": "dev-exlude-cleanup",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "^8.5 || ^9.3"
