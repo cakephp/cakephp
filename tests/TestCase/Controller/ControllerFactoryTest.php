@@ -39,8 +39,6 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -52,10 +50,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test building an application controller
-     *
-     * @return void
      */
-    public function testApplicationController()
+    public function testApplicationController(): void
     {
         $request = new ServerRequest([
             'url' => 'cakes/index',
@@ -71,12 +67,10 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test building a prefixed app controller.
-     *
-     * @return void
      */
-    public function testPrefixedAppControllerDeprecated()
+    public function testPrefixedAppControllerDeprecated(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $request = new ServerRequest([
                 'url' => 'admin/posts/index',
                 'params' => [
@@ -96,10 +90,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test building a nested prefix app controller
-     *
-     * @return void
      */
-    public function testNestedPrefixedAppController()
+    public function testNestedPrefixedAppController(): void
     {
         $request = new ServerRequest([
             'url' => 'admin/sub/posts/index',
@@ -119,10 +111,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test building a plugin controller
-     *
-     * @return void
      */
-    public function testPluginController()
+    public function testPluginController(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin/test_plugin/index',
@@ -142,10 +132,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test building a vendored plugin controller.
-     *
-     * @return void
      */
-    public function testVendorPluginController()
+    public function testVendorPluginController(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/ovens/index',
@@ -165,10 +153,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test building a prefixed plugin controller
-     *
-     * @return void
      */
-    public function testPrefixedPluginController()
+    public function testPrefixedPluginController(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin/admin/comments',
@@ -187,10 +173,7 @@ class ControllerFactoryTest extends TestCase
         $this->assertSame($request, $result->getRequest());
     }
 
-    /**
-     * @return void
-     */
-    public function testAbstractClassFailure()
+    public function testAbstractClassFailure(): void
     {
         $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Abstract could not be found.');
@@ -204,10 +187,7 @@ class ControllerFactoryTest extends TestCase
         $this->factory->create($request);
     }
 
-    /**
-     * @return void
-     */
-    public function testInterfaceFailure()
+    public function testInterfaceFailure(): void
     {
         $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Interface could not be found.');
@@ -221,10 +201,7 @@ class ControllerFactoryTest extends TestCase
         $this->factory->create($request);
     }
 
-    /**
-     * @return void
-     */
-    public function testMissingClassFailure()
+    public function testMissingClassFailure(): void
     {
         $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Invisible could not be found.');
@@ -238,10 +215,7 @@ class ControllerFactoryTest extends TestCase
         $this->factory->create($request);
     }
 
-    /**
-     * @return void
-     */
-    public function testSlashedControllerFailure()
+    public function testSlashedControllerFailure(): void
     {
         $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Admin/Posts could not be found.');
@@ -255,10 +229,7 @@ class ControllerFactoryTest extends TestCase
         $this->factory->create($request);
     }
 
-    /**
-     * @return void
-     */
-    public function testAbsoluteReferenceFailure()
+    public function testAbsoluteReferenceFailure(): void
     {
         $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class TestApp\Controller\CakesController could not be found.');
@@ -274,10 +245,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test create() injecting dependcies on defined controllers.
-     *
-     * @return void
      */
-    public function testCreateWithContainerDependenciesNoController()
+    public function testCreateWithContainerDependenciesNoController(): void
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
 
@@ -295,10 +264,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test create() injecting dependcies on defined controllers.
-     *
-     * @return void
      */
-    public function testCreateWithContainerDependenciesWithController()
+    public function testCreateWithContainerDependenciesWithController(): void
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $this->container->add(DependenciesController::class)
@@ -324,10 +291,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test building controller name when passing no controller name
-     *
-     * @return void
      */
-    public function testGetControllerClassNoControllerName()
+    public function testGetControllerClassNoControllerName(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/ovens/index',
@@ -343,10 +308,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test invoke with autorender
-     *
-     * @return void
      */
-    public function testInvokeAutoRender()
+    public function testInvokeAutoRender(): void
     {
         $request = new ServerRequest([
             'url' => 'posts',
@@ -365,10 +328,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test dispatch with autorender=false
-     *
-     * @return void
      */
-    public function testInvokeAutoRenderFalse()
+    public function testInvokeAutoRenderFalse(): void
     {
         $request = new ServerRequest([
             'url' => 'posts',
@@ -387,10 +348,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Ensure that a controller's startup event can stop the request.
-     *
-     * @return void
      */
-    public function testStartupProcessAbort()
+    public function testStartupProcessAbort(): void
     {
         $request = new ServerRequest([
             'url' => 'cakes/index',
@@ -410,10 +369,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Ensure that a controllers startup process can emit a response
-     *
-     * @return void
      */
-    public function testShutdownProcessResponse()
+    public function testShutdownProcessResponse(): void
     {
         $request = new ServerRequest([
             'url' => 'cakes/index',
@@ -433,10 +390,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Ensure that a controllers startup process can emit a response
-     *
-     * @return void
      */
-    public function testInvokeInjectOptionalParameterDefined()
+    public function testInvokeInjectOptionalParameterDefined(): void
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $request = new ServerRequest([
@@ -459,10 +414,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Ensure that a controllers startup process can emit a response
-     *
-     * @return void
      */
-    public function testInvokeInjectParametersOptionalNotDefined()
+    public function testInvokeInjectParametersOptionalNotDefined(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/index',
@@ -485,10 +438,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Ensure that a controllers startup process can emit a response
-     *
-     * @return void
      */
-    public function testInvokeInjectParametersOptionalWithPassedParameters()
+    public function testInvokeInjectParametersOptionalWithPassedParameters(): void
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $request = new ServerRequest([
@@ -512,10 +463,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Ensure that a controllers startup process can emit a response
-     *
-     * @return void
      */
-    public function testInvokeInjectParametersRequiredDefined()
+    public function testInvokeInjectParametersRequiredDefined(): void
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $request = new ServerRequest([
@@ -538,10 +487,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Ensure that a controllers startup process can emit a response
-     *
-     * @return void
      */
-    public function testInvokeInjectParametersRequiredNotDefined()
+    public function testInvokeInjectParametersRequiredNotDefined(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/index',
@@ -558,7 +505,7 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
-    public function testInvokeInjectParametersRequiredMissingUntyped()
+    public function testInvokeInjectParametersRequiredMissingUntyped(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/requiredParam',
@@ -575,7 +522,7 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
-    public function testInvokeInjectParametersRequiredUntyped()
+    public function testInvokeInjectParametersRequiredUntyped(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/requiredParam',
@@ -594,7 +541,7 @@ class ControllerFactoryTest extends TestCase
         $this->assertSame($data->one, 'one');
     }
 
-    public function testInvokeInjectParametersRequiredWithPassedParameters()
+    public function testInvokeInjectParametersRequiredWithPassedParameters(): void
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $request = new ServerRequest([
@@ -618,10 +565,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test that routing parameters are passed into variadic controller functions
-     *
-     * @return void
      */
-    public function testInvokeInjectPassedParametersVariadic()
+    public function testInvokeInjectPassedParametersVariadic(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/variadic',
@@ -642,10 +587,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test that routing parameters are passed into controller action using spread operator
-     *
-     * @return void
      */
-    public function testInvokeInjectPassedParametersSpread()
+    public function testInvokeInjectPassedParametersSpread(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/spread',
@@ -666,10 +609,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test that routing parameters are passed into controller action using spread operator
-     *
-     * @return void
      */
-    public function testInvokeInjectPassedParametersSpreadNoParams()
+    public function testInvokeInjectPassedParametersSpreadNoParams(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/spread',
@@ -690,10 +631,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test that default parameters work for controller methods
-     *
-     * @return void
      */
-    public function testInvokeOptionalStringParam()
+    public function testInvokeOptionalStringParam(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/optionalString',
@@ -714,10 +653,8 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * Test that required strings a default value.
-     *
-     * @return void
      */
-    public function testInvokeRequiredStringParam()
+    public function testInvokeRequiredStringParam(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/requiredString',
@@ -734,7 +671,7 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
-    public function testMiddleware()
+    public function testMiddleware(): void
     {
         $request = new ServerRequest([
             'url' => 'posts',

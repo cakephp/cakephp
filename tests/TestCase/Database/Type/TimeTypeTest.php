@@ -44,8 +44,6 @@ class TimeTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -57,8 +55,6 @@ class TimeTypeTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -68,10 +64,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -90,10 +84,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Test converting string times to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -111,10 +103,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $value = '16:30:15';
         $result = $this->type->toDatabase($value, $this->driver);
@@ -211,9 +201,8 @@ class TimeTypeTest extends TestCase
      * @dataProvider marshalProvider
      * @param mixed $value
      * @param mixed $expected
-     * @return void
      */
-    public function testMarshal($value, $expected)
+    public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -226,10 +215,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Tests marshalling times using the locale aware parser
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsing()
+    public function testMarshalWithLocaleParsing(): void
     {
         $this->type->useLocaleParser();
 
@@ -243,10 +230,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Tests marshalling times in denmark.
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsingDanishLocale()
+    public function testMarshalWithLocaleParsingDanishLocale(): void
     {
         $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
         $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
@@ -263,10 +248,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Test that toImmutable changes all the methods to create frozen time instances.
-     *
-     * @return void
      */
-    public function testToImmutableAndToMutable()
+    public function testToImmutableAndToMutable(): void
     {
         $this->type->useImmutable();
         $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('11:23:12'));

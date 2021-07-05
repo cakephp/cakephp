@@ -33,8 +33,6 @@ class FixtureDataManagerTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -73,9 +71,8 @@ class FixtureDataManagerTest extends TestCase
      *
      * @dataProvider invalidProvider
      * @param string $name Fixture name
-     * @return void
      */
-    public function testSetupTestErrorOnUnknown($name)
+    public function testSetupTestErrorOnUnknown($name): void
     {
         $manager = new FixtureDataManager();
         $this->fixtures = [$name];
@@ -104,9 +101,8 @@ class FixtureDataManagerTest extends TestCase
      *
      * @dataProvider validProvider
      * @param string $name The fixture name
-     * @return void
      */
-    public function testSetupTestLoads($name)
+    public function testSetupTestLoads($name): void
     {
         $this->setAppNamespace();
         // Also loads TestPlugin
@@ -123,10 +119,8 @@ class FixtureDataManagerTest extends TestCase
 
     /**
      * Test that setupTest() loads fixtures.
-     *
-     * @return void
      */
-    public function testSetupTestLoadsMultipleFixtures()
+    public function testSetupTestLoadsMultipleFixtures(): void
     {
         $manager = new FixtureDataManager();
         $this->autoFixtures = false;
@@ -140,10 +134,8 @@ class FixtureDataManagerTest extends TestCase
 
     /**
      * loadSingle on a known fixture.
-     *
-     * @return void
      */
-    public function testLoadSingleValid()
+    public function testLoadSingleValid(): void
     {
         $manager = new FixtureDataManager();
         $this->autoFixtures = false;
@@ -160,10 +152,8 @@ class FixtureDataManagerTest extends TestCase
 
     /**
      * loadSingle on a unknown fixture.
-     *
-     * @return void
      */
-    public function testLoadSingleInvalid()
+    public function testLoadSingleInvalid(): void
     {
         $manager = new FixtureDataManager();
         $this->autoFixtures = false;
@@ -175,10 +165,8 @@ class FixtureDataManagerTest extends TestCase
 
     /**
      * Test load() via setupTest()
-     *
-     * @return void
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $manager = new FixtureDataManager();
         $manager->setupTest($this);
@@ -197,10 +185,8 @@ class FixtureDataManagerTest extends TestCase
 
     /**
      * Test getInserted()
-     *
-     * @return void
      */
-    public function testGetInserted()
+    public function testGetInserted(): void
     {
         $manager = new FixtureDataManager();
         $manager->setupTest($this);
@@ -211,10 +197,8 @@ class FixtureDataManagerTest extends TestCase
 
     /**
      * Test getInserted() with autoFixtures
-     *
-     * @return void
      */
-    public function testGetInsertedAutofixtures()
+    public function testGetInsertedAutofixtures(): void
     {
         $manager = new FixtureDataManager();
         $this->autoFixtures = false;

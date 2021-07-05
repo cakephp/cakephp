@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 
 class SchemaManagerTest extends TestCase
 {
-    public function testCreateFromOneFile()
+    public function testCreateFromOneFile(): void
     {
         $connection = ConnectionManager::get('test');
 
@@ -44,7 +44,7 @@ class SchemaManagerTest extends TestCase
         (new SchemaCleaner())->dropTables('test', [$tableName]);
     }
 
-    public function testCreateFromMultipleFiles()
+    public function testCreateFromMultipleFiles(): void
     {
         $connection = ConnectionManager::get('test');
         $tables = [
@@ -74,13 +74,13 @@ class SchemaManagerTest extends TestCase
         (new SchemaCleaner())->dropTables('test', $tables);
     }
 
-    public function testCreateFromNonExistentFile()
+    public function testCreateFromNonExistentFile(): void
     {
         $this->expectException(\RuntimeException::class);
         SchemaManager::create('test', 'foo');
     }
 
-    public function testCreateFromCorruptedFile()
+    public function testCreateFromCorruptedFile(): void
     {
         $query = 'This is no valid SQL';
         $tmpFile = tempnam(sys_get_temp_dir(), 'SchemaManagerTest');

@@ -32,8 +32,6 @@ class ConsoleInputTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -44,10 +42,8 @@ class ConsoleInputTest extends TestCase
 
     /**
      * Test dataAvailable method
-     *
-     * @return void
      */
-    public function testDataAvailable()
+    public function testDataAvailable(): void
     {
         $this->skipIf(
             (bool)env('GITHUB_ACTIONS'),

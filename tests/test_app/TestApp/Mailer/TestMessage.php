@@ -15,37 +15,31 @@ class TestMessage extends Message
      *
      * @return array
      */
-    public function fmtAddress(array $address)
+    public function fmtAddress(array $address): array
     {
         return parent::formatAddress($address);
     }
 
     /**
      * Get the boundary attribute
-     *
-     * @return string
      */
-    public function getBoundary()
+    public function getBoundary(): ?string
     {
         return $this->boundary;
     }
 
     /**
      * Encode to protected method
-     *
-     * @return string
      */
-    public function encode(string $text)
+    public function encode(string $text): string
     {
         return parent::encodeForHeader($text);
     }
 
     /**
      * Decode to protected method
-     *
-     * @return string
      */
-    public function decode(string $text)
+    public function decode(string $text): string
     {
         return parent::decodeForHeader($text);
     }
@@ -55,7 +49,7 @@ class TestMessage extends Message
      *
      * @return array
      */
-    public function doWrap(string $text, int $length = Message::LINE_LENGTH_MUST)
+    public function doWrap(string $text, int $length = Message::LINE_LENGTH_MUST): array
     {
         return $this->wrap($text, $length);
     }

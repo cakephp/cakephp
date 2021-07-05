@@ -51,8 +51,6 @@ class IniConfigTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -62,10 +60,8 @@ class IniConfigTest extends TestCase
 
     /**
      * test construct
-     *
-     * @return void
      */
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('acl');
@@ -77,10 +73,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test reading files.
-     *
-     * @return void
      */
-    public function testRead()
+    public function testRead(): void
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('nested');
@@ -92,10 +86,8 @@ class IniConfigTest extends TestCase
 
     /**
      * No other sections should exist.
-     *
-     * @return void
      */
-    public function testReadOnlyOneSection()
+    public function testReadOnlyOneSection(): void
     {
         $engine = new IniConfig($this->path, 'admin');
         $config = $engine->read('acl');
@@ -106,10 +98,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test without section.
-     *
-     * @return void
      */
-    public function testReadWithoutSection()
+    public function testReadWithoutSection(): void
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('no_section');
@@ -123,10 +113,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test that names with .'s get exploded into arrays.
-     *
-     * @return void
      */
-    public function testReadValuesWithDots()
+    public function testReadValuesWithDots(): void
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('nested');
@@ -140,10 +128,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test boolean reading.
-     *
-     * @return void
      */
-    public function testBooleanReading()
+    public function testBooleanReading(): void
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('nested');
@@ -162,10 +148,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test an exception is thrown by reading files that exist without .ini extension.
-     *
-     * @return void
      */
-    public function testReadWithExistentFileWithoutExtension()
+    public function testReadWithExistentFileWithoutExtension(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new IniConfig($this->path);
@@ -174,10 +158,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test an exception is thrown by reading files that don't exist.
-     *
-     * @return void
      */
-    public function testReadWithNonExistentFile()
+    public function testReadWithNonExistentFile(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new IniConfig($this->path);
@@ -186,10 +168,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test reading an empty file.
-     *
-     * @return void
      */
-    public function testReadEmptyFile()
+    public function testReadEmptyFile(): void
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('empty');
@@ -198,10 +178,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test reading keys with ../ doesn't work.
-     *
-     * @return void
      */
-    public function testReadWithDots()
+    public function testReadWithDots(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new IniConfig($this->path);
@@ -210,10 +188,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test reading from plugins.
-     *
-     * @return void
      */
-    public function testReadPluginValue()
+    public function testReadPluginValue(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $engine = new IniConfig($this->path);
@@ -231,10 +207,8 @@ class IniConfigTest extends TestCase
 
     /**
      * Test dump method.
-     *
-     * @return void
      */
-    public function testDump()
+    public function testDump(): void
     {
         $engine = new IniConfig(TMP);
         $result = $engine->dump('test', $this->testData);
@@ -267,10 +241,8 @@ INI;
 
     /**
      * Test that dump() makes files read() can read.
-     *
-     * @return void
      */
-    public function testDumpRead()
+    public function testDumpRead(): void
     {
         $engine = new IniConfig(TMP);
         $engine->dump('test', $this->testData);

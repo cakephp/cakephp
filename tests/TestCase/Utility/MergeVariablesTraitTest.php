@@ -27,10 +27,8 @@ class MergeVariablesTraitTest extends TestCase
 {
     /**
      * Test merging vars as a list.
-     *
-     * @return void
      */
-    public function testMergeVarsAsList()
+    public function testMergeVarsAsList(): void
     {
         $object = new Grandchild();
         $object->mergeVars(['listProperty']);
@@ -41,10 +39,8 @@ class MergeVariablesTraitTest extends TestCase
 
     /**
      * Test merging vars as an associative list.
-     *
-     * @return void
      */
-    public function testMergeVarsAsAssoc()
+    public function testMergeVarsAsAssoc(): void
     {
         $object = new Grandchild();
         $object->mergeVars(['assocProperty'], ['associative' => ['assocProperty']]);
@@ -60,10 +56,8 @@ class MergeVariablesTraitTest extends TestCase
     /**
      * Test merging variable in associated properties that contain
      * additional keys.
-     *
-     * @return void
      */
-    public function testMergeVarsAsAssocWithKeyValues()
+    public function testMergeVarsAsAssocWithKeyValues(): void
     {
         $object = new Grandchild();
         $object->mergeVars(['nestedProperty'], ['associative' => ['nestedProperty']]);
@@ -81,10 +75,8 @@ class MergeVariablesTraitTest extends TestCase
 
     /**
      * Test merging vars with mixed modes.
-     *
-     * @return void
      */
-    public function testMergeVarsMixedModes()
+    public function testMergeVarsMixedModes(): void
     {
         $object = new Grandchild();
         $object->mergeVars(['assocProperty', 'listProperty'], ['associative' => ['assocProperty']]);
@@ -103,10 +95,8 @@ class MergeVariablesTraitTest extends TestCase
     /**
      * Test that merging variables with booleans in the class hierarchy
      * doesn't cause issues.
-     *
-     * @return void
      */
-    public function testMergeVarsWithBoolean()
+    public function testMergeVarsWithBoolean(): void
     {
         $object = new Child();
         $object->mergeVars(['hasBoolean']);

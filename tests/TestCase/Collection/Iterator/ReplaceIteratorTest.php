@@ -26,10 +26,8 @@ class ReplaceIteratorTest extends TestCase
 {
     /**
      * Tests that the iterator works correctly
-     *
-     * @return void
      */
-    public function testReplace()
+    public function testReplace(): void
     {
         $items = new \ArrayIterator([1, 2, 3]);
         $callable = function ($value, $key, $itemsArg) use ($items) {

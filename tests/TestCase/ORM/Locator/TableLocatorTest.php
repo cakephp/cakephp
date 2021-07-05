@@ -41,8 +41,6 @@ class TableLocatorTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -54,8 +52,6 @@ class TableLocatorTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -65,10 +61,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test getConfig() method.
-     *
-     * @return void
      */
-    public function testGetConfig()
+    public function testGetConfig(): void
     {
         $this->assertEquals([], $this->_locator->getConfig('Tests'));
 
@@ -86,10 +80,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test getConfig() method with plugin syntax aliases
-     *
-     * @return void
      */
-    public function testConfigPlugin()
+    public function testConfigPlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -104,10 +96,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test calling getConfig() on existing instances throws an error.
-     *
-     * @return void
      */
-    public function testConfigOnDefinedInstance()
+    public function testConfigOnDefinedInstance(): void
     {
         $users = $this->_locator->get('Users');
         $this->assertNotEmpty($users);
@@ -120,10 +110,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test the exists() method.
-     *
-     * @return void
      */
-    public function testExists()
+    public function testExists(): void
     {
         $this->assertFalse($this->_locator->exists('Articles'));
 
@@ -137,10 +125,8 @@ class TableLocatorTest extends TestCase
     /**
      * Tests the casing and locator. Using table name directly is not
      * the same as using conventional aliases anymore.
-     *
-     * @return void
      */
-    public function testCasing()
+    public function testCasing(): void
     {
         $this->assertFalse($this->_locator->exists('Articles'));
 
@@ -157,10 +143,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test the exists() method with plugin-prefixed models.
-     *
-     * @return void
      */
-    public function testExistsPlugin()
+    public function testExistsPlugin(): void
     {
         $this->assertFalse($this->_locator->exists('Comments'));
         $this->assertFalse($this->_locator->exists('TestPlugin.Comments'));
@@ -176,10 +160,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test getting instances from the registry.
-     *
-     * @return void
      */
-    public function testGet()
+    public function testGet(): void
     {
         $result = $this->_locator->get('Articles', [
             'table' => 'my_articles',
@@ -199,10 +181,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Are auto-models instantiated correctly? How about when they have an alias?
-     *
-     * @return void
      */
-    public function testGetFallbacks()
+    public function testGetFallbacks(): void
     {
         $result = $this->_locator->get('Droids');
         $this->assertInstanceOf(Table::class, $result);
@@ -235,7 +215,7 @@ class TableLocatorTest extends TestCase
         $this->assertSame('Stuff', $result->getAlias());
     }
 
-    public function testExceptionForAliasWhenFallbackTurnedOff()
+    public function testExceptionForAliasWhenFallbackTurnedOff(): void
     {
         $this->expectException(MissingTableClassException::class);
         $this->expectExceptionMessage('Table class for alias `Droids` could not be found.');
@@ -243,7 +223,7 @@ class TableLocatorTest extends TestCase
         $this->_locator->get('Droids', ['allowFallbackClass' => false]);
     }
 
-    public function testExceptionForFQCNWhenFallbackTurnedOff()
+    public function testExceptionForFQCNWhenFallbackTurnedOff(): void
     {
         $this->expectException(MissingTableClassException::class);
         $this->expectExceptionMessage('Table class `App\Model\DroidsTable` could not be found.');
@@ -253,10 +233,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test that get() uses config data set with getConfig()
-     *
-     * @return void
      */
-    public function testGetWithgetConfig()
+    public function testGetWithgetConfig(): void
     {
         $this->_locator->setConfig('Articles', [
             'table' => 'my_articles',
@@ -267,10 +245,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test that get() uses config data set with getConfig()
-     *
-     * @return void
      */
-    public function testGetWithConnectionName()
+    public function testGetWithConnectionName(): void
     {
         ConnectionManager::alias('test', 'testing');
         $result = $this->_locator->get('Articles', [
@@ -282,10 +258,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test that get() uses config data `className` set with getConfig()
-     *
-     * @return void
      */
-    public function testGetWithConfigClassName()
+    public function testGetWithConfigClassName(): void
     {
         $this->_locator->setConfig('MyUsersTableAlias', [
             'className' => MyUsersTable::class,
@@ -296,10 +270,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test get with config throws an exception if the alias exists already.
-     *
-     * @return void
      */
-    public function testGetExistingWithConfigData()
+    public function testGetExistingWithConfigData(): void
     {
         $users = $this->_locator->get('Users');
         $this->assertNotEmpty($users);
@@ -313,10 +285,8 @@ class TableLocatorTest extends TestCase
     /**
      * Test get() can be called several times with the same option without
      * throwing an exception.
-     *
-     * @return void
      */
-    public function testGetWithSameOption()
+    public function testGetWithSameOption(): void
     {
         $result = $this->_locator->get('Users', ['className' => MyUsersTable::class]);
         $result2 = $this->_locator->get('Users', ['className' => MyUsersTable::class]);
@@ -326,10 +296,8 @@ class TableLocatorTest extends TestCase
     /**
      * Tests that tables can be instantiated based on conventions
      * and using plugin notation
-     *
-     * @return void
      */
-    public function testGetWithConventions()
+    public function testGetWithConventions(): void
     {
         $table = $this->_locator->get('articles');
         $this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
@@ -344,10 +312,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test get() with plugin syntax aliases
-     *
-     * @return void
      */
-    public function testGetPlugin()
+    public function testGetPlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('TestPlugin.TestPluginComments');
@@ -370,10 +336,8 @@ class TableLocatorTest extends TestCase
      * Test get() with same-alias models in different plugins
      *
      * There should be no internal cache-confusion
-     *
-     * @return void
      */
-    public function testGetMultiplePlugins()
+    public function testGetMultiplePlugins(): void
     {
         $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
@@ -396,10 +360,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test get() with plugin aliases + className option.
-     *
-     * @return void
      */
-    public function testGetPluginWithClassNameOption()
+    public function testGetPluginWithClassNameOption(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('Comments', [
@@ -417,10 +379,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test get() with full namespaced classname
-     *
-     * @return void
      */
-    public function testGetPluginWithFullNamespaceName()
+    public function testGetPluginWithFullNamespaceName(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
@@ -435,10 +395,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Tests that table options can be pre-configured for the factory method
-     *
-     * @return void
      */
-    public function testConfigAndBuild()
+    public function testConfigAndBuild(): void
     {
         $this->_locator->clear();
         $map = $this->_locator->getConfig();
@@ -478,10 +436,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Tests that table options can be pre-configured with a single validator
-     *
-     * @return void
      */
-    public function testConfigWithSingleValidator()
+    public function testConfigWithSingleValidator(): void
     {
         $validator = new Validator();
 
@@ -493,10 +449,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Tests that table options can be pre-configured with multiple validators
-     *
-     * @return void
      */
-    public function testConfigWithMultipleValidators()
+    public function testConfigWithMultipleValidators(): void
     {
         $validator1 = new Validator();
         $validator2 = new Validator();
@@ -518,10 +472,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test setting an instance.
-     *
-     * @return void
      */
-    public function testSet()
+    public function testSet(): void
     {
         $mock = $this->getMockBuilder(Table::class)->getMock();
         $this->assertSame($mock, $this->_locator->set('Articles', $mock));
@@ -530,10 +482,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Test setting an instance with plugin syntax aliases
-     *
-     * @return void
      */
-    public function testSetPlugin()
+    public function testSetPlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -545,10 +495,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Tests genericInstances
-     *
-     * @return void
      */
-    public function testGenericInstances()
+    public function testGenericInstances(): void
     {
         $foos = $this->_locator->get('Foos');
         $bars = $this->_locator->get('Bars');
@@ -559,10 +507,8 @@ class TableLocatorTest extends TestCase
 
     /**
      * Tests remove an instance
-     *
-     * @return void
      */
-    public function testRemove()
+    public function testRemove(): void
     {
         $first = $this->_locator->get('Comments');
 
@@ -584,10 +530,8 @@ class TableLocatorTest extends TestCase
      * plugin-prefixed model, or app model.
      * Removing an app model should not affect any other
      * plugin-prefixed model.
-     *
-     * @return void
      */
-    public function testRemovePlugin()
+    public function testRemovePlugin(): void
     {
         $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
@@ -626,10 +570,8 @@ class TableLocatorTest extends TestCase
      * testCustomLocation
      *
      * Tests that the correct table is returned when non-standard namespace is defined.
-     *
-     * @return void
      */
-    public function testCustomLocation()
+    public function testCustomLocation(): void
     {
         $locator = new TableLocator(['Infrastructure/Table']);
 
@@ -641,10 +583,8 @@ class TableLocatorTest extends TestCase
      * testCustomLocationPlugin
      *
      * Tests that the correct plugin table is returned when non-standard namespace is defined.
-     *
-     * @return void
      */
-    public function testCustomLocationPlugin()
+    public function testCustomLocationPlugin(): void
     {
         $locator = new TableLocator(['Infrastructure/Table']);
 
@@ -656,10 +596,8 @@ class TableLocatorTest extends TestCase
      * testCustomLocationDefaultWhenNone
      *
      * Tests that the default table is returned when no namespace is defined.
-     *
-     * @return void
      */
-    public function testCustomLocationDefaultWhenNone()
+    public function testCustomLocationDefaultWhenNone(): void
     {
         $locator = new TableLocator([]);
 
@@ -671,10 +609,8 @@ class TableLocatorTest extends TestCase
      * testCustomLocationDefaultWhenMissing
      *
      * Tests that the default table is returned when the class cannot be found in a non-standard namespace.
-     *
-     * @return void
      */
-    public function testCustomLocationDefaultWhenMissing()
+    public function testCustomLocationDefaultWhenMissing(): void
     {
         $locator = new TableLocator(['Infrastructure/Table']);
 
@@ -686,10 +622,8 @@ class TableLocatorTest extends TestCase
      * testCustomLocationMultiple
      *
      * Tests that the correct table is returned when multiple namespaces are defined.
-     *
-     * @return void
      */
-    public function testCustomLocationMultiple()
+    public function testCustomLocationMultiple(): void
     {
         $locator = new TableLocator([
             'Infrastructure/Table',
@@ -704,10 +638,8 @@ class TableLocatorTest extends TestCase
      * testAddLocation
      *
      * Tests that adding a namespace takes effect.
-     *
-     * @return void
      */
-    public function testAddLocation()
+    public function testAddLocation(): void
     {
         $locator = new TableLocator([]);
 
@@ -721,7 +653,7 @@ class TableLocatorTest extends TestCase
         $this->assertInstanceOf(AddressesTable::class, $table);
     }
 
-    public function testSetFallbackClassName()
+    public function testSetFallbackClassName(): void
     {
         $this->_locator->setFallbackClassName(ArticlesTable::class);
 

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Routing\Middleware;
 use Cake\Cache\Cache;
 use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Configure;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
@@ -39,8 +40,6 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -54,12 +53,10 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test redirect responses from redirect routes
-     *
-     * @return void
      */
-    public function testRedirectResponse()
+    public function testRedirectResponse(): void
     {
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->redirect('/testpath', '/pages');
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
@@ -75,12 +72,10 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test redirects with additional headers
-     *
-     * @return void
      */
-    public function testRedirectResponseWithHeaders()
+    public function testRedirectResponseWithHeaders(): void
     {
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->redirect('/testpath', '/pages');
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
@@ -96,10 +91,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test that Router sets parameters
-     *
-     * @return void
      */
-    public function testRouterSetParams()
+    public function testRouterSetParams(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $handler = new TestRequestHandler(function ($req) {
@@ -121,10 +114,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test routing middleware does wipe off existing params keys.
-     *
-     * @return void
      */
-    public function testPreservingExistingParams()
+    public function testPreservingExistingParams(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $request = $request->withAttribute('params', ['_csrfToken' => 'i-am-groot']);
@@ -147,10 +138,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test middleware invoking hook method
-     *
-     * @return void
      */
-    public function testRoutesHookInvokedOnApp()
+    public function testRoutesHookInvokedOnApp(): void
     {
         Router::reload();
 
@@ -177,10 +166,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test that pluginRoutes hook is called
-     *
-     * @return void
      */
-    public function testRoutesHookCallsPluginHook()
+    public function testRoutesHookCallsPluginHook(): void
     {
         Router::reload();
 
@@ -198,10 +185,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test that routing is not applied if a controller exists already
-     *
-     * @return void
      */
-    public function testRouterNoopOnController()
+    public function testRouterNoopOnController(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $request = $request->withAttribute('params', ['controller' => 'Articles']);
@@ -217,7 +202,7 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Test missing routes not being caught.
      */
-    public function testMissingRouteNotCaught()
+    public function testMissingRouteNotCaught(): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
@@ -227,10 +212,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test route with _method being parsed correctly.
-     *
-     * @return void
      */
-    public function testFakedRequestMethodParsed()
+    public function testFakedRequestMethodParsed(): void
     {
         Router::connect('/articles-patch', [
             'controller' => 'Articles',
@@ -266,12 +249,10 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test invoking simple scoped middleware
-     *
-     * @return void
      */
-    public function testInvokeScopedMiddleware()
+    public function testInvokeScopedMiddleware(): void
     {
-        Router::scope('/api', function (RouteBuilder $routes) {
+        Router::scope('/api', function (RouteBuilder $routes): void {
             $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
@@ -309,12 +290,10 @@ class RoutingMiddlewareTest extends TestCase
      *
      * Scoped middleware should be able to generate a response
      * and abort lower layers.
-     *
-     * @return void
      */
-    public function testInvokeScopedMiddlewareReturnResponse()
+    public function testInvokeScopedMiddlewareReturnResponse(): void
     {
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
@@ -329,7 +308,7 @@ class RoutingMiddlewareTest extends TestCase
             $routes->applyMiddleware('first');
             $routes->connect('/', ['controller' => 'Home']);
 
-            $routes->scope('/api', function (RouteBuilder $routes) {
+            $routes->scope('/api', function (RouteBuilder $routes): void {
                 $routes->applyMiddleware('second');
                 $routes->connect('/articles', ['controller' => 'Articles']);
             });
@@ -339,7 +318,7 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/api/articles',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): void {
             $this->fail('Should not be invoked as first should be ignored.');
         });
         $middleware = new RoutingMiddleware($this->app());
@@ -350,12 +329,10 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test control flow in scoped middleware.
-     *
-     * @return void
      */
-    public function testInvokeScopedMiddlewareReturnResponseMainScope()
+    public function testInvokeScopedMiddlewareReturnResponseMainScope(): void
     {
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
@@ -370,7 +347,7 @@ class RoutingMiddlewareTest extends TestCase
             $routes->applyMiddleware('first');
             $routes->connect('/', ['controller' => 'Home']);
 
-            $routes->scope('/api', function (RouteBuilder $routes) {
+            $routes->scope('/api', function (RouteBuilder $routes): void {
                 $routes->applyMiddleware('second');
                 $routes->connect('/articles', ['controller' => 'Articles']);
             });
@@ -380,7 +357,7 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): void {
             $this->fail('Should not be invoked as first should be ignored.');
         });
         $middleware = new RoutingMiddleware($this->app());
@@ -396,11 +373,10 @@ class RoutingMiddlewareTest extends TestCase
      * in the first context.
      *
      * @dataProvider scopedMiddlewareUrlProvider
-     * @return void
      */
-    public function testInvokeScopedMiddlewareIsolatedScopes(string $url, array $expected)
+    public function testInvokeScopedMiddlewareIsolatedScopes(string $url, array $expected): void
     {
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
@@ -412,12 +388,12 @@ class RoutingMiddlewareTest extends TestCase
                 return $handler->handle($request);
             });
 
-            $routes->scope('/api', function (RouteBuilder $routes) {
+            $routes->scope('/api', function (RouteBuilder $routes): void {
                 $routes->applyMiddleware('first');
                 $routes->connect('/ping', ['controller' => 'Pings']);
             });
 
-            $routes->scope('/api', function (RouteBuilder $routes) {
+            $routes->scope('/api', function (RouteBuilder $routes): void {
                 $routes->applyMiddleware('second');
                 $routes->connect('/version', ['controller' => 'Version']);
             });
@@ -452,10 +428,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test we store route collection in cache.
-     *
-     * @return void
      */
-    public function testCacheRoutes()
+    public function testCacheRoutes(): void
     {
         $cacheConfigName = '_cake_router_';
         Cache::setConfig($cacheConfigName, [
@@ -479,10 +453,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test we don't cache routes if cache is disabled.
-     *
-     * @return void
      */
-    public function testCacheNotUsedIfCacheDisabled()
+    public function testCacheNotUsedIfCacheDisabled(): void
     {
         $cacheConfigName = '_cake_router_';
         Cache::drop($cacheConfigName);
@@ -509,10 +481,8 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test cache name is used
-     *
-     * @return void
      */
-    public function testCacheConfigNotFound()
+    public function testCacheConfigNotFound(): void
     {
         $this->expectException(CacheInvalidArgumentException::class);
         $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
@@ -533,9 +503,8 @@ class RoutingMiddlewareTest extends TestCase
      * Create a stub application for testing.
      *
      * @param callable|null $handleCallback Callback for "handle" method.
-     * @return \Cake\Core\HttpApplicationInterface
      */
-    protected function app($handleCallback = null)
+    protected function app($handleCallback = null): HttpApplicationInterface
     {
         $mock = $this->createMock(Application::class);
         $mock->method('routes')

@@ -32,8 +32,6 @@ class EventDispatcherTraitTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -44,20 +42,16 @@ class EventDispatcherTraitTest extends TestCase
 
     /**
      * testGetEventManager
-     *
-     * @return void
      */
-    public function testGetEventManager()
+    public function testGetEventManager(): void
     {
         $this->assertInstanceOf(EventManager::class, $this->subject->getEventManager());
     }
 
     /**
      * testDispatchEvent
-     *
-     * @return void
      */
-    public function testDispatchEvent()
+    public function testDispatchEvent(): void
     {
         $event = $this->subject->dispatchEvent('some.event', ['foo' => 'bar']);
 

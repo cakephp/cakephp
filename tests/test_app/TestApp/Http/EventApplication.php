@@ -24,7 +24,7 @@ class EventApplication extends BaseApplication
 {
     public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
-        $eventManager->on('My.event', function () {
+        $eventManager->on('My.event', function (): void {
         });
 
         return $eventManager;

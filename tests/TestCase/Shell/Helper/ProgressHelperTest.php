@@ -43,8 +43,6 @@ class ProgressHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -57,10 +55,8 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test using the helper manually.
-     *
-     * @return void
      */
-    public function testInit()
+    public function testInit(): void
     {
         $helper = $this->helper->init([
             'total' => 200,
@@ -72,7 +68,7 @@ class ProgressHelperTest extends TestCase
     /**
      * Test that a callback is required.
      */
-    public function testOutputFailure()
+    public function testOutputFailure(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->helper->output(['not a callback']);
@@ -80,12 +76,10 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test that the callback is invoked until 100 is reached.
-     *
-     * @return void
      */
-    public function testOutputSuccess()
+    public function testOutputSuccess(): void
     {
-        $this->helper->output([function (ProgressHelper $progress) {
+        $this->helper->output([function (ProgressHelper $progress): void {
             $progress->increment(20);
         }]);
         $expected = [
@@ -107,15 +101,13 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test output with options
-     *
-     * @return void
      */
-    public function testOutputSuccessOptions()
+    public function testOutputSuccessOptions(): void
     {
         $this->helper->output([
             'total' => 10,
             'width' => 20,
-            'callback' => function (ProgressHelper $progress) {
+            'callback' => function (ProgressHelper $progress): void {
                 $progress->increment(2);
             },
         ]);
@@ -138,10 +130,8 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test using the helper manually.
-     *
-     * @return void
      */
-    public function testIncrementAndRender()
+    public function testIncrementAndRender(): void
     {
         $this->helper->init();
 
@@ -167,10 +157,8 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test using the helper chained.
-     *
-     * @return void
      */
-    public function testIncrementAndRenderChained()
+    public function testIncrementAndRenderChained(): void
     {
         $this->helper->init()
             ->increment(20)
@@ -193,10 +181,8 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test negative numbers
-     *
-     * @return void
      */
-    public function testIncrementWithNegatives()
+    public function testIncrementWithNegatives(): void
     {
         $this->helper->init();
 
@@ -222,10 +208,8 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test increment and draw with options
-     *
-     * @return void
      */
-    public function testIncrementWithOptions()
+    public function testIncrementWithOptions(): void
     {
         $this->helper->init([
             'total' => 10,
@@ -252,10 +236,8 @@ class ProgressHelperTest extends TestCase
     /**
      * Test increment and draw with value that makes the pad
      * be a float
-     *
-     * @return void
      */
-    public function testIncrementFloatPad()
+    public function testIncrementFloatPad(): void
     {
         $this->helper->init([
             'total' => 50,

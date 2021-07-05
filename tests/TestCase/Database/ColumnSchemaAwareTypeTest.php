@@ -26,7 +26,7 @@ class ColumnSchemaAwareTypeTest extends TestCase
         TypeFactory::map('columnSchemaAwareType', ColumnSchemaAwareType::class);
     }
 
-    public function testColumnSql()
+    public function testColumnSql(): void
     {
         $dialect = $this->connection->getDriver()->schemaDialect();
 
@@ -46,7 +46,7 @@ class ColumnSchemaAwareTypeTest extends TestCase
         }
     }
 
-    public function testColumnSqlForUnmappedType()
+    public function testColumnSqlForUnmappedType(): void
     {
         $map = TypeFactory::getMap();
         TypeFactory::clear();

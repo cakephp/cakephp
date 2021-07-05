@@ -32,8 +32,6 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,10 +41,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parse() throws an error on unknown routes.
-     *
-     * @return void
      */
-    public function testParseMissingRoute()
+    public function testParseMissingRoute(): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "/" could not be found');
@@ -60,10 +56,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parse() throws an error on known routes called with unknown methods.
-     *
-     * @return void
      */
-    public function testParseMissingRouteMethod()
+    public function testParseMissingRouteMethod(): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->expectExceptionMessage('A "POST" route matching "/b" could not be found');
@@ -78,10 +72,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parsing routes.
-     *
-     * @return void
      */
-    public function testParse()
+    public function testParse(): void
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
@@ -137,10 +129,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parsing routes with and without _name.
-     *
-     * @return void
      */
-    public function testParseWithNameParameter()
+    public function testParseWithNameParameter(): void
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
@@ -199,10 +189,8 @@ class RouteCollectionTest extends TestCase
     /**
      * Test that parse decodes URL data before matching.
      * This is important for multibyte URLs that pass through URL rewriting.
-     *
-     * @return void
      */
-    public function testParseEncodedBytesInFixedSegment()
+    public function testParseEncodedBytesInFixedSegment(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect('/ден/{day}-{month}', ['controller' => 'Events', 'action' => 'index']);
@@ -227,10 +215,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test that parsing checks all the related path scopes.
-     *
-     * @return void
      */
-    public function testParseFallback()
+    public function testParseFallback(): void
     {
         $routes = new RouteBuilder($this->collection, '/', []);
 
@@ -252,10 +238,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parseRequest() throws an error on unknown routes.
-     *
-     * @return void
      */
-    public function testParseRequestMissingRoute()
+    public function testParseRequestMissingRoute(): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "/" could not be found');
@@ -270,10 +254,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parseRequest() checks host conditions
-     *
-     * @return void
      */
-    public function testParseRequestCheckHostCondition()
+    public function testParseRequestCheckHostCondition(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect(
@@ -340,7 +322,7 @@ class RouteCollectionTest extends TestCase
      *
      * @dataProvider hostProvider
      */
-    public function testParseRequestCheckHostConditionFail(string $host)
+    public function testParseRequestCheckHostConditionFail(string $host): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "/fallback" could not be found');
@@ -362,10 +344,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parsing routes.
-     *
-     * @return void
      */
-    public function testParseRequest()
+    public function testParseRequest(): void
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
@@ -425,10 +405,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parsing routes that match non-ascii urls
-     *
-     * @return void
      */
-    public function testParseRequestUnicode()
+    public function testParseRequestUnicode(): void
     {
         $routes = new RouteBuilder($this->collection, '/b', []);
         $routes->connect('/alta/confirmación', ['controller' => 'Media', 'action' => 'confirm']);
@@ -451,10 +429,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test match() throws an error on unknown routes.
-     *
-     * @return void
      */
-    public function testMatchError()
+    public function testMatchError(): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "array (');
@@ -471,10 +447,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test matching routes.
-     *
-     * @return void
      */
-    public function testMatch()
+    public function testMatch(): void
     {
         $context = [
             '_base' => '/',
@@ -497,10 +471,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test matching routes with names
-     *
-     * @return void
      */
-    public function testMatchNamed()
+    public function testMatchNamed(): void
     {
         $context = [
             '_base' => '/',
@@ -520,10 +492,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test match() throws an error on named routes that fail to match
-     *
-     * @return void
      */
-    public function testMatchNamedError()
+    public function testMatchNamedError(): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->expectExceptionMessage('A named route was found for `fail`, but matching failed');
@@ -540,10 +510,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test matching routes with names and failing
-     *
-     * @return void
      */
-    public function testMatchNamedMissingError()
+    public function testMatchNamedMissingError(): void
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $context = [
@@ -559,10 +527,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test matching plugin routes.
-     *
-     * @return void
      */
-    public function testMatchPlugin()
+    public function testMatchPlugin(): void
     {
         $context = [
             '_base' => '/',
@@ -581,10 +547,8 @@ class RouteCollectionTest extends TestCase
      *
      * Connect the admin route after the non prefixed version, this means
      * the non-prefix route would have a more specific name (users:index)
-     *
-     * @return void
      */
-    public function testMatchPrefixSpecificity()
+    public function testMatchPrefixSpecificity(): void
     {
         $context = [
             '_base' => '/',
@@ -615,10 +579,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test getting named routes.
-     *
-     * @return void
      */
-    public function testNamed()
+    public function testNamed(): void
     {
         $routes = new RouteBuilder($this->collection, '/l');
         $routes->connect('/{controller}', ['action' => 'index'], ['_name' => 'cntrl']);
@@ -632,10 +594,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test the add() and routes() method.
-     *
-     * @return void
      */
-    public function testAddingRoutes()
+    public function testAddingRoutes(): void
     {
         $one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
         $two = new Route('/', ['controller' => 'Dashboards', 'action' => 'display']);
@@ -650,10 +610,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test the add() with some _name.
-     *
-     * @return void
      */
-    public function testAddingDuplicateNamedRoutes()
+    public function testAddingDuplicateNamedRoutes(): void
     {
         $this->expectException(\Cake\Routing\Exception\DuplicateNamedRouteException::class);
         $one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
@@ -664,10 +622,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test basic setExtension and its getter.
-     *
-     * @return void
      */
-    public function testSetExtensions()
+    public function testSetExtensions(): void
     {
         $this->assertEquals([], $this->collection->getExtensions());
 
@@ -683,12 +639,10 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test adding middleware to the collection.
-     *
-     * @return void
      */
-    public function testRegisterMiddleware()
+    public function testRegisterMiddleware(): void
     {
-        $result = $this->collection->registerMiddleware('closure', function () {
+        $result = $this->collection->registerMiddleware('closure', function (): void {
         });
         $this->assertSame($result, $this->collection);
 
@@ -706,12 +660,10 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test adding a middleware group to the collection.
-     *
-     * @return void
      */
-    public function testMiddlewareGroup()
+    public function testMiddlewareGroup(): void
     {
-        $this->collection->registerMiddleware('closure', function () {
+        $this->collection->registerMiddleware('closure', function (): void {
         });
 
         $mock = $this->getMockBuilder('\stdClass')
@@ -727,12 +679,10 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test adding a middleware group with the same name overwrites the original list
-     *
-     * @return void
      */
-    public function testMiddlewareGroupOverwrite()
+    public function testMiddlewareGroupOverwrite(): void
     {
-        $stub = function () {
+        $stub = function (): void {
         };
         $this->collection->registerMiddleware('closure', $stub);
         $result = $this->collection->registerMiddleware('callable', $stub);
@@ -745,10 +695,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test adding ab unregistered middleware to a middleware group fails.
-     *
-     * @return void
      */
-    public function testMiddlewareGroupUnregisteredMiddleware()
+    public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');

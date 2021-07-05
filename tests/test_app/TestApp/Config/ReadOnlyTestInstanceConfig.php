@@ -30,7 +30,6 @@ class ReadOnlyTestInstanceConfig
      * @throws \Exception
      * @param array|string $key
      * @param mixed $value
-     * @return void
      */
     protected function _configWrite($key, $value): void
     {

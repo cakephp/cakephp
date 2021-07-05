@@ -27,10 +27,8 @@ class QueryExpressionTest extends TestCase
 {
     /**
      * Test setConjunction()/getConjunction() works.
-     *
-     * @return void
      */
-    public function testConjunction()
+    public function testConjunction(): void
     {
         $expr = new QueryExpression(['1', '2']);
         $binder = new ValueBinder();
@@ -44,10 +42,8 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Test and() and or() calls work transparently
-     *
-     * @return void
      */
-    public function testAndOrCalls()
+    public function testAndOrCalls(): void
     {
         $expr = new QueryExpression();
         $expected = 'Cake\Database\Expression\QueryExpression';
@@ -57,10 +53,8 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Test SQL generation with one element
-     *
-     * @return void
      */
-    public function testSqlGenerationOneClause()
+    public function testSqlGenerationOneClause(): void
     {
         $expr = new QueryExpression();
         $binder = new ValueBinder();
@@ -72,10 +66,8 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Test SQL generation with many elements
-     *
-     * @return void
      */
-    public function testSqlGenerationMultipleClauses()
+    public function testSqlGenerationMultipleClauses(): void
     {
         $expr = new QueryExpression();
         $binder = new ValueBinder();
@@ -96,10 +88,8 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Test that empty expressions don't emit invalid SQL.
-     *
-     * @return void
      */
-    public function testSqlWhenEmpty()
+    public function testSqlWhenEmpty(): void
     {
         $expr = new QueryExpression();
         $binder = new ValueBinder();
@@ -109,10 +99,8 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Test deep cloning of expression trees.
-     *
-     * @return void
      */
-    public function testDeepCloning()
+    public function testDeepCloning(): void
     {
         $expr = new QueryExpression();
         $expr = $expr->add(new QueryExpression('1 + 1'))
@@ -123,20 +111,18 @@ class QueryExpressionTest extends TestCase
         $this->assertEquals($dupe, $expr);
         $this->assertNotSame($dupe, $expr);
         $originalParts = [];
-        $expr->iterateParts(function ($part) use (&$originalParts) {
+        $expr->iterateParts(function ($part) use (&$originalParts): void {
             $originalParts[] = $part;
         });
-        $dupe->iterateParts(function ($part, $i) use ($originalParts) {
+        $dupe->iterateParts(function ($part, $i) use ($originalParts): void {
             $this->assertNotSame($originalParts[$i], $part);
         });
     }
 
     /**
      * Tests the hasNestedExpression() function
-     *
-     * @return void
      */
-    public function testHasNestedExpression()
+    public function testHasNestedExpression(): void
     {
         $expr = new QueryExpression();
         $this->assertFalse($expr->hasNestedExpression());
@@ -170,9 +156,8 @@ class QueryExpressionTest extends TestCase
      * specific comparison functions are used.
      *
      * @dataProvider methodsProvider
-     * @return void
      */
-    public function testTypeMapUsage(string $method)
+    public function testTypeMapUsage(string $method): void
     {
         $expr = new QueryExpression([], ['created' => 'date']);
         $expr->{$method}('created', 'foo');
@@ -191,9 +176,8 @@ class QueryExpressionTest extends TestCase
      * zero-count expression object.
      *
      * @see https://github.com/cakephp/cakephp/issues/12081
-     * @return void
      */
-    public function testEmptyOr()
+    public function testEmptyOr(): void
     {
         $expr = new QueryExpression();
         $expr = $expr->or([]);
@@ -206,10 +190,8 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Tests that both conditions are generated for notInOrNull().
-     *
-     * @return void
      */
-    public function testNotInOrNull()
+    public function testNotInOrNull(): void
     {
         $expr = new QueryExpression();
         $expr->notInOrNull('test', ['one', 'two']);

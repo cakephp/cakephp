@@ -26,10 +26,8 @@ class ArgumentsTest extends TestCase
 {
     /**
      * Get all arguments
-     *
-     * @return void
      */
-    public function testGetArguments()
+    public function testGetArguments(): void
     {
         $values = ['big', 'brown', 'bear'];
         $args = new Arguments($values, [], []);
@@ -38,10 +36,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * Get arguments by index
-     *
-     * @return void
      */
-    public function testGetArgumentAt()
+    public function testGetArgumentAt(): void
     {
         $values = ['big', 'brown', 'bear'];
         $args = new Arguments($values, [], []);
@@ -52,10 +48,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * check arguments by index
-     *
-     * @return void
      */
-    public function testHasArgumentAt()
+    public function testHasArgumentAt(): void
     {
         $values = ['big', 'brown', 'bear'];
         $args = new Arguments($values, [], []);
@@ -67,10 +61,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * check arguments by name
-     *
-     * @return void
      */
-    public function testHasArgument()
+    public function testHasArgument(): void
     {
         $values = ['big', 'brown', 'bear'];
         $names = ['size', 'color', 'species', 'odd'];
@@ -84,10 +76,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * get arguments by name
-     *
-     * @return void
      */
-    public function testGetArgument()
+    public function testGetArgument(): void
     {
         $values = ['big', 'brown', 'bear'];
         $names = ['size', 'color', 'species', 'odd'];
@@ -100,10 +90,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * get arguments missing value
-     *
-     * @return void
      */
-    public function testGetArgumentMissing()
+    public function testGetArgumentMissing(): void
     {
         $values = [];
         $names = ['size', 'color'];
@@ -114,10 +102,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * test getOptions()
-     *
-     * @return void
      */
-    public function testGetOptions()
+    public function testGetOptions(): void
     {
         $options = [
             'verbose' => true,
@@ -130,10 +116,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * test hasOption()
-     *
-     * @return void
      */
-    public function testHasOption()
+    public function testHasOption(): void
     {
         $options = [
             'verbose' => true,
@@ -151,10 +135,8 @@ class ArgumentsTest extends TestCase
 
     /**
      * test getOption()
-     *
-     * @return void
      */
-    public function testGetOption()
+    public function testGetOption(): void
     {
         $options = [
             'verbose' => true,

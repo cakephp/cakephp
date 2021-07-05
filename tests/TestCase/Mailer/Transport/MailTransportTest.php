@@ -34,8 +34,6 @@ class MailTransportTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -48,10 +46,8 @@ class MailTransportTest extends TestCase
 
     /**
      * testSendWithoutRecipient method
-     *
-     * @return void
      */
-    public function testSendWithoutRecipient()
+    public function testSendWithoutRecipient(): void
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.');
@@ -62,10 +58,8 @@ class MailTransportTest extends TestCase
 
     /**
      * testSend method
-     *
-     * @return void
      */
-    public function testSendData()
+    public function testSendData(): void
     {
         $message = new Message();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');

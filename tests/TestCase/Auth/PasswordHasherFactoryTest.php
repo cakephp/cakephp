@@ -26,8 +26,6 @@ class PasswordHasherFactoryTest extends TestCase
 {
     /**
      * test passwordhasher instance building
-     *
-     * @return void
      */
     public function testBuild(): void
     {
@@ -49,8 +47,6 @@ class PasswordHasherFactoryTest extends TestCase
 
     /**
      * test build() throws exception for nonexistent hasher
-     *
-     * @return void
      */
     public function testBuildException(): void
     {

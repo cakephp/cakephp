@@ -40,9 +40,8 @@ class BehaviorRegressionTest extends TestCase
      * Tests that the tree behavior and the translations behavior play together
      *
      * @see https://github.com/cakephp/cakephp/issues/5982
-     * @return void
      */
-    public function testTreeAndTranslateIntegration()
+    public function testTreeAndTranslateIntegration(): void
     {
         $connection = ConnectionManager::get('test');
         $this->skipIf(

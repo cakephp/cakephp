@@ -52,8 +52,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -75,8 +73,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test applying settings in the constructor
-     *
-     * @return void
      */
     public function testConstructor(): void
     {
@@ -93,8 +89,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoData(): void
     {
@@ -105,8 +99,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateWrongUsername(): void
     {
@@ -133,8 +125,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test that challenge headers are sent when no credentials are found.
-     *
-     * @return void
      */
     public function testAuthenticateChallenge(): void
     {
@@ -159,8 +149,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test that challenge headers include stale when the nonce is stale
-     *
-     * @return void
      */
     public function testAuthenticateChallengeIncludesStaleAttributeOnStaleNonce(): void
     {
@@ -190,8 +178,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * Test that authentication fails when a nonce is stale
-     *
-     * @return void
      */
     public function testAuthenticateFailsOnStaleNonce(): void
     {
@@ -215,8 +201,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * Test that nonces are required.
-     *
-     * @return void
      */
     public function testAuthenticateValidUsernamePasswordNoNonce(): void
     {
@@ -242,8 +226,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test authenticate success
-     *
-     * @return void
      */
     public function testAuthenticateSuccess(): void
     {
@@ -274,8 +256,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test authenticate success even when digest 'password' is a hidden field.
-     *
-     * @return void
      */
     public function testAuthenticateSuccessHiddenPasswordField(): void
     {
@@ -309,8 +289,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * test authenticate success
-     *
-     * @return void
      */
     public function testAuthenticateSuccessSimulatedRequestMethod(): void
     {
@@ -343,8 +321,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * testLoginHeaders method
-     *
-     * @return void
      */
     public function testLoginHeaders(): void
     {
@@ -364,8 +340,6 @@ class DigestAuthenticateTest extends TestCase
 
     /**
      * testParseDigestAuthData method
-     *
-     * @return void
      */
     public function testParseAuthData(): void
     {
@@ -400,8 +374,6 @@ DIGEST;
 
     /**
      * Test parsing a full URI. While not part of the spec some mobile clients will do it wrong.
-     *
-     * @return void
      */
     public function testParseAuthDataFullUri(): void
     {
@@ -424,8 +396,6 @@ DIGEST;
 
     /**
      * test parsing digest information with email addresses
-     *
-     * @return void
      */
     public function testParseAuthEmailAddress(): void
     {
@@ -457,8 +427,6 @@ DIGEST;
 
     /**
      * test password hashing
-     *
-     * @return void
      */
     public function testPassword(): void
     {
@@ -473,7 +441,6 @@ DIGEST;
      * @param string $secret The secret to use.
      * @param int $expires Time to live
      * @param int $time Current time in microseconds
-     * @return string
      */
     protected function generateNonce(?string $secret = null, ?int $expires = 300, ?int $time = null): string
     {
@@ -490,7 +457,6 @@ DIGEST;
      * Create a digest header string from an array of data.
      *
      * @param array $data the data to convert into a header.
-     * @return string
      */
     protected function digestHeader(array $data): string
     {

@@ -26,10 +26,8 @@ class FixtureSchemaExtensionTest extends TestCase
 {
     /**
      * Test connection aliasing during construction.
-     *
-     * @return void
      */
-    public function testConnectionAliasing()
+    public function testConnectionAliasing(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Requires SQLite extension');
         ConnectionManager::setConfig('test_fixture_schema', [

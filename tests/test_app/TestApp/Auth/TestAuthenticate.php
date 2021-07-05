@@ -43,14 +43,14 @@ class TestAuthenticate extends BaseAuthenticate
     /**
      * @return array
      */
-    public function authenticate(ServerRequest $request, Response $response)
+    public function authenticate(ServerRequest $request, Response $response): array
     {
         return ['id' => 1, 'username' => 'admad'];
     }
 
     /**
      * @param array $user
-     * @return array
+     * @return array|void
      */
     public function afterIdentify(EventInterface $event, array $user)
     {
@@ -65,7 +65,7 @@ class TestAuthenticate extends BaseAuthenticate
     /**
      * @param array $user
      */
-    public function logout(EventInterface $event, array $user)
+    public function logout(EventInterface $event, array $user): void
     {
         $this->callStack[] = __FUNCTION__;
     }

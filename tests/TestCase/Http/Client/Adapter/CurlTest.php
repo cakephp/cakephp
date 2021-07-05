@@ -37,9 +37,6 @@ class CurlTest extends TestCase
      */
     protected $caFile;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -51,10 +48,8 @@ class CurlTest extends TestCase
 
     /**
      * Test the send method
-     *
-     * @return void
      */
-    public function testSendLive()
+    public function testSendLive(): void
     {
         $request = new Request('http://localhost', 'GET', [
             'User-Agent' => 'CakePHP TestSuite',
@@ -75,10 +70,8 @@ class CurlTest extends TestCase
 
     /**
      * Test the send method
-     *
-     * @return void
      */
-    public function testSendLiveResponseCheck()
+    public function testSendLiveResponseCheck(): void
     {
         $request = new Request('https://api.cakephp.org/3.0/', 'GET', [
             'User-Agent' => 'CakePHP TestSuite',
@@ -100,10 +93,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsGet()
+    public function testBuildOptionsGet(): void
     {
         $options = [
             'timeout' => 5,
@@ -133,10 +124,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsGetWithBody()
+    public function testBuildOptionsGetWithBody(): void
     {
         $options = [
             'timeout' => 5,
@@ -169,10 +158,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsPost()
+    public function testBuildOptionsPost(): void
     {
         $options = [];
         $request = new Request(
@@ -202,10 +189,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsPut()
+    public function testBuildOptionsPut(): void
     {
         $options = [];
         $request = new Request(
@@ -233,10 +218,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsJsonPost()
+    public function testBuildOptionsJsonPost(): void
     {
         $options = [];
         $content = json_encode(['a' => 1, 'b' => 2]);
@@ -266,10 +249,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsSsl()
+    public function testBuildOptionsSsl(): void
     {
         $options = [
             'ssl_verify_host' => true,
@@ -300,10 +281,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsProxy()
+    public function testBuildOptionsProxy(): void
     {
         $options = [
             'proxy' => [
@@ -333,10 +312,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsHead()
+    public function testBuildOptionsHead(): void
     {
         $options = [];
         $request = new Request(
@@ -363,10 +340,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsCurlOptions()
+    public function testBuildOptionsCurlOptions(): void
     {
         $options = [
             'curl' => [
@@ -395,10 +370,8 @@ class CurlTest extends TestCase
 
     /**
      * Test that an exception is raised when timed out.
-     *
-     * @return void
      */
-    public function testNetworkException()
+    public function testNetworkException(): void
     {
         $this->expectException(NetworkException::class);
         $this->expectExceptionMessageMatches('/(Could not resolve|Resolving timed out)/');
@@ -413,10 +386,8 @@ class CurlTest extends TestCase
 
     /**
      * Test converting client options into curl ones.
-     *
-     * @return void
      */
-    public function testBuildOptionsProtocolVersion()
+    public function testBuildOptionsProtocolVersion(): void
     {
         $this->skipIf(!defined('CURL_HTTP_VERSION_2TLS'), 'Requires libcurl 7.42');
         $options = [];

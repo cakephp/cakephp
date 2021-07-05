@@ -36,8 +36,6 @@ class ControllerAuthorizeTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -51,9 +49,6 @@ class ControllerAuthorizeTest extends TestCase
         $this->auth = new ControllerAuthorize($this->components);
     }
 
-    /**
-     * @return void
-     */
     public function testControllerErrorOnMissingMethod(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
@@ -63,8 +58,6 @@ class ControllerAuthorizeTest extends TestCase
 
     /**
      * test failure
-     *
-     * @return void
      */
     public function testAuthorizeFailure(): void
     {
@@ -75,8 +68,6 @@ class ControllerAuthorizeTest extends TestCase
 
     /**
      * test isAuthorized working.
-     *
-     * @return void
      */
     public function testAuthorizeSuccess(): void
     {

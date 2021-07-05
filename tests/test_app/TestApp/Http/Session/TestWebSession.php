@@ -10,9 +10,6 @@ use Cake\Http\Session;
  */
 class TestWebSession extends Session
 {
-    /**
-     * @return bool
-     */
     protected function _hasSession(): bool
     {
         $isCLI = $this->_isCLI;

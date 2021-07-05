@@ -104,7 +104,7 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testDefaultParamsOverriding()
+    public function testDefaultParamsOverriding(): void
     {
         $this->Flash = new FlashMessage(
             $this->Session,

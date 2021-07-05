@@ -30,8 +30,6 @@ class FileEngineTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,8 +41,6 @@ class FileEngineTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -59,9 +55,8 @@ class FileEngineTest extends TestCase
      * Helper method for testing.
      *
      * @param array $config
-     * @return void
      */
-    protected function _configCache($config = [])
+    protected function _configCache($config = []): void
     {
         $defaults = [
             'className' => 'File',
@@ -73,10 +68,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test get with default value
-     *
-     * @return void
      */
-    public function testGetDefaultValue()
+    public function testGetDefaultValue(): void
     {
         $file = Cache::pool('file_test');
         $this->assertFalse($file->get('nope', false));
@@ -90,10 +83,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testReadAndWriteCache method
-     *
-     * @return void
      */
-    public function testReadAndWriteCacheExpired()
+    public function testReadAndWriteCacheExpired(): void
     {
         $this->_configCache(['duration' => 1]);
 
@@ -103,10 +94,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test reading and writing to the cache.
-     *
-     * @return void
      */
-    public function testReadAndWrite()
+    public function testReadAndWrite(): void
     {
         $result = Cache::read('test', 'file_test');
         $this->assertNull($result);
@@ -124,10 +113,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test read/write on the same cache key. Ensures file handles are re-wound.
-     *
-     * @return void
      */
-    public function testConsecutiveReadWrite()
+    public function testConsecutiveReadWrite(): void
     {
         Cache::write('rw', 'first write', 'file_test');
         $result = Cache::read('rw', 'file_test');
@@ -142,10 +129,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testExpiry method
-     *
-     * @return void
      */
-    public function testExpiry()
+    public function testExpiry(): void
     {
         $this->_configCache(['duration' => 1]);
 
@@ -174,10 +159,8 @@ class FileEngineTest extends TestCase
 
     /**
      * test set ttl parameter
-     *
-     * @return void
      */
-    public function testSetWithTtl()
+    public function testSetWithTtl(): void
     {
         $this->_configCache(['duration' => 99]);
         $engine = Cache::pool('file_test');
@@ -198,10 +181,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test has() method
-     *
-     * @return void
      */
-    public function testHas()
+    public function testHas(): void
     {
         $engine = Cache::pool('file_test');
         $this->assertFalse($engine->has('test'));
@@ -212,10 +193,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testDeleteCache method
-     *
-     * @return void
      */
-    public function testDeleteCache()
+    public function testDeleteCache(): void
     {
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('delete_test', $data, 'file_test');
@@ -231,10 +210,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testSerialize method
-     *
-     * @return void
      */
-    public function testSerialize()
+    public function testSerialize(): void
     {
         $this->_configCache(['serialize' => true]);
         $data = 'this is a test of the emergency broadcasting system';
@@ -251,10 +228,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testClear method
-     *
-     * @return void
      */
-    public function testClear()
+    public function testClear(): void
     {
         $this->_configCache(['duration' => 0]);
 
@@ -275,10 +250,8 @@ class FileEngineTest extends TestCase
 
     /**
      * test that clear() doesn't wipe files not in the current engine's prefix.
-     *
-     * @return void
      */
-    public function testClearWithPrefixes()
+    public function testClearWithPrefixes(): void
     {
         $FileOne = new FileEngine();
         $FileOne->init([
@@ -305,10 +278,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test that clear() also removes files with group tags.
-     *
-     * @return void
      */
-    public function testClearWithGroups()
+    public function testClearWithGroups(): void
     {
         $engine = new FileEngine();
         $engine->init([
@@ -324,10 +295,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test that clear() also removes files with group tags.
-     *
-     * @return void
      */
-    public function testClearWithNoKeys()
+    public function testClearWithNoKeys(): void
     {
         $engine = new FileEngine();
         $engine->init([
@@ -342,10 +311,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testKeyPath method
-     *
-     * @return void
      */
-    public function testKeyPath()
+    public function testKeyPath(): void
     {
         $result = Cache::write('views.countries.something', 'here', 'file_test');
         $this->assertTrue($result);
@@ -360,10 +327,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test invalid key() containing :
-     *
-     * @return void
      */
-    public function testInvalidKeyColon()
+    public function testInvalidKeyColon(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('contains invalid characters');
@@ -372,10 +337,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test invalid key() containing >
-     *
-     * @return void
      */
-    public function testInvalidKeyAngleBracket()
+    public function testInvalidKeyAngleBracket(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('contains invalid characters');
@@ -384,10 +347,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testRemoveWindowsSlashesFromCache method
-     *
-     * @return void
      */
-    public function testRemoveWindowsSlashesFromCache()
+    public function testRemoveWindowsSlashesFromCache(): void
     {
         Cache::setConfig('windows_test', [
             'engine' => 'File',
@@ -434,10 +395,8 @@ class FileEngineTest extends TestCase
 
     /**
      * testWriteQuotedString method
-     *
-     * @return void
      */
-    public function testWriteQuotedString()
+    public function testWriteQuotedString(): void
     {
         Cache::write('App.doubleQuoteTest', '"this is a quoted string"', 'file_test');
         $this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
@@ -460,10 +419,8 @@ class FileEngineTest extends TestCase
 
     /**
      * check that FileEngine does not generate an error when a configured Path does not exist in debug mode.
-     *
-     * @return void
      */
-    public function testPathDoesNotExist()
+    public function testPathDoesNotExist(): void
     {
         Configure::write('debug', true);
         $dir = TMP . 'tests/autocreate-' . microtime(true);
@@ -483,10 +440,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test that under debug 0 directories do get made.
-     *
-     * @return void
      */
-    public function testPathDoesNotExistDebugOff()
+    public function testPathDoesNotExistDebugOff(): void
     {
         Configure::write('debug', false);
         $dir = TMP . 'tests/autocreate-' . microtime(true);
@@ -506,10 +461,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Testing the mask setting in FileEngine
-     *
-     * @return void
      */
-    public function testMaskSetting()
+    public function testMaskSetting(): void
     {
         if (DS === '\\') {
             $this->markTestSkipped('File permission testing does not work on Windows.');
@@ -550,10 +503,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Tests that configuring groups for stored keys return the correct values when read/written
-     *
-     * @return void
      */
-    public function testGroupsReadWrite()
+    public function testGroupsReadWrite(): void
     {
         Cache::setConfig('file_groups', [
             'engine' => 'File',
@@ -569,10 +520,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test that clearing with repeat writes works properly
-     *
-     * @return void
      */
-    public function testClearingWithRepeatWrites()
+    public function testClearingWithRepeatWrites(): void
     {
         Cache::setConfig('repeat', [
             'engine' => 'File',
@@ -599,10 +548,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Tests that deleting from a groups-enabled config is possible
-     *
-     * @return void
      */
-    public function testGroupDelete()
+    public function testGroupDelete(): void
     {
         Cache::setConfig('file_groups', [
             'engine' => 'File',
@@ -618,10 +565,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test clearing a cache group
-     *
-     * @return void
      */
-    public function testGroupClear()
+    public function testGroupClear(): void
     {
         Cache::setConfig('file_groups', [
             'engine' => 'File',
@@ -661,10 +606,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test that clearGroup works with no prefix.
-     *
-     * @return void
      */
-    public function testGroupClearNoPrefix()
+    public function testGroupClearNoPrefix(): void
     {
         Cache::setConfig('file_groups', [
             'className' => 'File',
@@ -681,10 +624,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Test that failed add write return false.
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         Cache::delete('test_add_key', 'file_test');
 
@@ -701,10 +642,8 @@ class FileEngineTest extends TestCase
 
     /**
      * Tests that only files inside of the configured path are being deleted.
-     *
-     * @return void
      */
-    public function testClearIsRestrictedToConfiguredPath()
+    public function testClearIsRestrictedToConfiguredPath(): void
     {
         $this->_configCache([
             'prefix' => '',

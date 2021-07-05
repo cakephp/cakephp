@@ -36,8 +36,6 @@ class HelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,8 +47,6 @@ class HelperTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -63,10 +59,8 @@ class HelperTest extends TestCase
 
     /**
      * Test settings merging
-     *
-     * @return void
      */
-    public function testSettingsMerging()
+    public function testSettingsMerging(): void
     {
         $Helper = new TestHelper($this->View, [
             'key3' => 'val3',
@@ -82,10 +76,8 @@ class HelperTest extends TestCase
 
     /**
      * test lazy loading helpers is seamless
-     *
-     * @return void
      */
-    public function testLazyLoadingHelpers()
+    public function testLazyLoadingHelpers(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -96,10 +88,8 @@ class HelperTest extends TestCase
 
     /**
      * test that a helpers Helper is not 'attached' to the collection
-     *
-     * @return void
      */
-    public function testThatHelperHelpersAreNotAttached()
+    public function testThatHelperHelpersAreNotAttached(): void
     {
         $events = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $this->View->setEventManager($events);
@@ -113,10 +103,8 @@ class HelperTest extends TestCase
 
     /**
      * test that the lazy loader doesn't duplicate objects on each access.
-     *
-     * @return void
      */
-    public function testLazyLoadingUsesReferences()
+    public function testLazyLoadingUsesReferences(): void
     {
         $Helper = new TestHelper($this->View);
         $resultA = $Helper->Html;
@@ -128,10 +116,8 @@ class HelperTest extends TestCase
 
     /**
      * test getting view instance
-     *
-     * @return void
      */
-    public function testGetView()
+    public function testGetView(): void
     {
         $Helper = new TestHelper($this->View);
         $this->assertSame($this->View, $Helper->getView());
@@ -139,10 +125,8 @@ class HelperTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $Helper = new TestHelper($this->View);
 
@@ -164,10 +148,8 @@ class HelperTest extends TestCase
 
     /**
      * Test addClass() with 'class' => array
-     *
-     * @return void
      */
-    public function testAddClassArray()
+    public function testAddClassArray(): void
     {
         $helper = new TestHelper($this->View);
         $input = ['class' => ['element1', 'element2']];
@@ -182,10 +164,8 @@ class HelperTest extends TestCase
 
     /**
      * Test addClass() with 'class' => string
-     *
-     * @return void
      */
-    public function testAddClassString()
+    public function testAddClassString(): void
     {
         $helper = new TestHelper($this->View);
 
@@ -197,10 +177,8 @@ class HelperTest extends TestCase
 
     /**
      * Test addClass() with no class element
-     *
-     * @return void
      */
-    public function testAddClassEmpty()
+    public function testAddClassEmpty(): void
     {
         $helper = new TestHelper($this->View);
 

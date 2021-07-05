@@ -30,8 +30,6 @@ class AssetTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -45,15 +43,13 @@ class AssetTest extends TestCase
 
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->fallbacks();
         });
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -64,10 +60,8 @@ class AssetTest extends TestCase
 
     /**
      * test assetTimestamp application
-     *
-     * @return void
      */
-    public function testAssetTimestamp()
+    public function testAssetTimestamp(): void
     {
         Configure::write('Foo.bar', 'test');
         Configure::write('Asset.timestamp', false);
@@ -104,10 +98,8 @@ class AssetTest extends TestCase
 
     /**
      * test assetUrl application
-     *
-     * @return void
      */
-    public function testAssetUrl()
+    public function testAssetUrl(): void
     {
         Router::connect('/{controller}/{action}/*');
 
@@ -143,10 +135,8 @@ class AssetTest extends TestCase
 
     /**
      * Test assetUrl and data uris
-     *
-     * @return void
      */
-    public function testAssetUrlDataUri()
+    public function testAssetUrlDataUri(): void
     {
         $request = Router::getRequest()
             ->withAttribute('base', 'subdir')
@@ -165,10 +155,8 @@ class AssetTest extends TestCase
 
     /**
      * Test assetUrl with no rewriting.
-     *
-     * @return void
      */
-    public function testAssetUrlNoRewrite()
+    public function testAssetUrlNoRewrite(): void
     {
         $request = Router::getRequest()
             ->withAttribute('base', '/cake_dev/index.php')
@@ -183,10 +171,8 @@ class AssetTest extends TestCase
 
     /**
      * Test assetUrl with plugins.
-     *
-     * @return void
      */
-    public function testAssetUrlPlugin()
+    public function testAssetUrlPlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -201,10 +187,8 @@ class AssetTest extends TestCase
 
     /**
      * Tests assetUrl() with full base URL.
-     *
-     * @return void
      */
-    public function testAssetUrlFullBase()
+    public function testAssetUrlFullBase(): void
     {
         $result = Asset::url('img/foo.jpg', ['fullBase' => true]);
         $this->assertSame(Router::fullBaseUrl() . '/img/foo.jpg', $result);
@@ -215,10 +199,8 @@ class AssetTest extends TestCase
 
     /**
      * test assetUrl and Asset.timestamp = force
-     *
-     * @return void
      */
-    public function testAssetUrlTimestampForce()
+    public function testAssetUrlTimestampForce(): void
     {
         Configure::write('Asset.timestamp', 'force');
 
@@ -228,10 +210,8 @@ class AssetTest extends TestCase
 
     /**
      * Test assetTimestamp with timestamp option overriding `Asset.timestamp` in Configure.
-     *
-     * @return void
      */
-    public function testAssetTimestampConfigureOverride()
+    public function testAssetTimestampConfigureOverride(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
@@ -242,10 +222,8 @@ class AssetTest extends TestCase
 
     /**
      * test assetTimestamp with plugins and themes
-     *
-     * @return void
      */
-    public function testAssetTimestampPluginsAndThemes()
+    public function testAssetTimestampPluginsAndThemes(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -268,10 +246,8 @@ class AssetTest extends TestCase
 
     /**
      * test script()
-     *
-     * @return void
      */
-    public function testScript()
+    public function testScript(): void
     {
         Router::connect('/{controller}/{action}/*');
 
@@ -281,10 +257,8 @@ class AssetTest extends TestCase
 
     /**
      * Test script and Asset.timestamp = force
-     *
-     * @return void
      */
-    public function testScriptTimestampForce()
+    public function testScriptTimestampForce(): void
     {
         Configure::write('Asset.timestamp', 'force');
 
@@ -294,10 +268,8 @@ class AssetTest extends TestCase
 
     /**
      * Test script with timestamp option overriding `Asset.timestamp` in Configure
-     *
-     * @return void
      */
-    public function testScriptTimestampConfigureOverride()
+    public function testScriptTimestampConfigureOverride(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
@@ -308,10 +280,8 @@ class AssetTest extends TestCase
 
     /**
      * test image()
-     *
-     * @return void
      */
-    public function testImage()
+    public function testImage(): void
     {
         $result = Asset::imageUrl('foo.jpg');
         $this->assertSame('/img/foo.jpg', $result);
@@ -337,10 +307,8 @@ class AssetTest extends TestCase
 
     /**
      * Test image with `Asset.timestamp` = force
-     *
-     * @return void
      */
-    public function testImageTimestampForce()
+    public function testImageTimestampForce(): void
     {
         Configure::write('Asset.timestamp', 'force');
 
@@ -350,10 +318,8 @@ class AssetTest extends TestCase
 
     /**
      * Test image with timestamp option overriding `Asset.timestamp` in Configure
-     *
-     * @return void
      */
-    public function testImageTimestampConfigureOverride()
+    public function testImageTimestampConfigureOverride(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
@@ -364,10 +330,8 @@ class AssetTest extends TestCase
 
     /**
      * test css
-     *
-     * @return void
      */
-    public function testCss()
+    public function testCss(): void
     {
         $result = Asset::cssUrl('style');
         $this->assertSame('/css/style.css', $result);
@@ -375,10 +339,8 @@ class AssetTest extends TestCase
 
     /**
      * Test css with `Asset.timestamp` = force
-     *
-     * @return void
      */
-    public function testCssTimestampForce()
+    public function testCssTimestampForce(): void
     {
         Configure::write('Asset.timestamp', 'force');
 
@@ -388,10 +350,8 @@ class AssetTest extends TestCase
 
     /**
      * Test image with timestamp option overriding `Asset.timestamp` in Configure
-     *
-     * @return void
      */
-    public function testCssTimestampConfigureOverride()
+    public function testCssTimestampConfigureOverride(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
@@ -402,10 +362,8 @@ class AssetTest extends TestCase
 
     /**
      * Test generating paths with webroot().
-     *
-     * @return void
      */
-    public function testWebrootPaths()
+    public function testWebrootPaths(): void
     {
         $result = Asset::webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
@@ -445,10 +403,8 @@ class AssetTest extends TestCase
 
     /**
      * Test plugin based assets will NOT use the plugin name
-     *
-     * @return void
      */
-    public function testPluginAssetsPrependImageBaseUrl()
+    public function testPluginAssetsPrependImageBaseUrl(): void
     {
         $cdnPrefix = 'https://cdn.example.com/';
         $imageBaseUrl = Configure::read('App.imageBaseUrl');

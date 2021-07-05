@@ -30,8 +30,6 @@ class RunnerTest extends TestCase
 {
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -45,17 +43,15 @@ class RunnerTest extends TestCase
         $this->pass = function ($request, $handler) {
             return $handler->handle($request);
         };
-        $this->fail = function ($request, $handler) {
+        $this->fail = function ($request, $handler): void {
             throw new RuntimeException('A bad thing');
         };
     }
 
     /**
      * Test running a single middleware object.
-     *
-     * @return void
      */
-    public function testRunSingle()
+    public function testRunSingle(): void
     {
         $this->queue->add($this->ok);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
@@ -67,10 +63,8 @@ class RunnerTest extends TestCase
 
     /**
      * Test that middleware is run in sequence
-     *
-     * @return void
      */
-    public function testRunSequencing()
+    public function testRunSequencing(): void
     {
         $log = [];
         $one = function ($request, $handler) use (&$log) {
@@ -102,7 +96,7 @@ class RunnerTest extends TestCase
     /**
      * Test that exceptions bubble up.
      */
-    public function testRunExceptionInMiddleware()
+    public function testRunExceptionInMiddleware(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('A bad thing');

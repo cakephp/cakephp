@@ -49,8 +49,6 @@ class ControllerTest extends TestCase
 
     /**
      * reset environment.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -62,8 +60,6 @@ class ControllerTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -73,8 +69,6 @@ class ControllerTest extends TestCase
 
     /**
      * test autoload modelClass
-     *
-     * @return void
      */
     public function testTableAutoload(): void
     {
@@ -100,10 +94,8 @@ class ControllerTest extends TestCase
 
     /**
      * testUndefinedPropertyError
-     *
-     * @return void
      */
-    public function testUndefinedPropertyError()
+    public function testUndefinedPropertyError(): void
     {
         $controller = new Controller();
 
@@ -121,8 +113,6 @@ class ControllerTest extends TestCase
 
     /**
      * testLoadModel method
-     *
-     * @return void
      */
     public function testLoadModel(): void
     {
@@ -144,7 +134,6 @@ class ControllerTest extends TestCase
 
     /**
      * @link https://github.com/cakephp/cakephp/issues/14804
-     * @return void
      */
     public function testAutoLoadModelUsingFqcn(): void
     {
@@ -158,8 +147,6 @@ class ControllerTest extends TestCase
 
     /**
      * testLoadModel method from a plugin controller
-     *
-     * @return void
      */
     public function testLoadModelInPlugins(): void
     {
@@ -183,8 +170,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test that the constructor sets modelClass properly.
-     *
-     * @return void
      */
     public function testConstructSetModelClass(): void
     {
@@ -208,8 +193,6 @@ class ControllerTest extends TestCase
 
     /**
      * testConstructClassesWithComponents method
-     *
-     * @return void
      */
     public function testConstructClassesWithComponents(): void
     {
@@ -223,8 +206,6 @@ class ControllerTest extends TestCase
 
     /**
      * testRender method
-     *
-     * @return void
      */
     public function testRender(): void
     {
@@ -253,8 +234,6 @@ class ControllerTest extends TestCase
 
     /**
      * test view rendering changing response
-     *
-     * @return void
      */
     public function testRenderViewChangesResponse(): void
     {
@@ -276,8 +255,6 @@ class ControllerTest extends TestCase
 
     /**
      * test that a component beforeRender can change the controller view class.
-     *
-     * @return void
      */
     public function testBeforeRenderCallbackChangingViewClass(): void
     {
@@ -301,8 +278,6 @@ class ControllerTest extends TestCase
 
     /**
      * test that a component beforeRender can change the controller view class.
-     *
-     * @return void
      */
     public function testBeforeRenderEventCancelsRender(): void
     {
@@ -316,7 +291,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $result);
     }
 
-    public function testControllerRedirect()
+    public function testControllerRedirect(): void
     {
         $Controller = new Controller();
         $uri = new Uri('/foo/bar');
@@ -352,7 +327,6 @@ class ControllerTest extends TestCase
      * testRedirect method
      *
      * @dataProvider statusCodeProvider
-     * @return void
      */
     public function testRedirectByCode(int $code, string $msg): void
     {
@@ -367,8 +341,6 @@ class ControllerTest extends TestCase
 
     /**
      * test that beforeRedirect callbacks can set the URL that is being redirected to.
-     *
-     * @return void
      */
     public function testRedirectBeforeRedirectModifyingUrl(): void
     {
@@ -386,8 +358,6 @@ class ControllerTest extends TestCase
 
     /**
      * test that beforeRedirect callback returning null doesn't affect things.
-     *
-     * @return void
      */
     public function testRedirectBeforeRedirectModifyingStatusCode(): void
     {
@@ -421,8 +391,6 @@ class ControllerTest extends TestCase
 
     /**
      * testReferer method
-     *
-     * @return void
      */
     public function testReferer(): void
     {
@@ -460,8 +428,6 @@ class ControllerTest extends TestCase
      * Test that the referer is not absolute if it is '/'.
      *
      * This avoids the base path being applied twice on string urls.
-     *
-     * @return void
      */
     public function testRefererSlash(): void
     {
@@ -481,12 +447,11 @@ class ControllerTest extends TestCase
     /**
      * testSetAction method
      *
-     * @return void
      * @group deprecated
      */
     public function testSetAction(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $request = new ServerRequest(['url' => 'controller/posts/index']);
 
             $TestController = new TestController($request);
@@ -499,8 +464,6 @@ class ControllerTest extends TestCase
 
     /**
      * Tests that the startup process calls the correct functions
-     *
-     * @return void
      */
     public function testStartupProcess(): void
     {
@@ -525,8 +488,6 @@ class ControllerTest extends TestCase
 
     /**
      * Tests that the shutdown process calls the correct functions
-     *
-     * @return void
      */
     public function testShutdownProcess(): void
     {
@@ -545,8 +506,6 @@ class ControllerTest extends TestCase
 
     /**
      * test using Controller::paginate()
-     *
-     * @return void
      */
     public function testPaginate(): void
     {
@@ -595,8 +554,6 @@ class ControllerTest extends TestCase
 
     /**
      * test that paginate uses modelClass property.
-     *
-     * @return void
      */
     public function testPaginateUsesModelClass(): void
     {
@@ -614,8 +571,6 @@ class ControllerTest extends TestCase
 
     /**
      * testMissingAction method
-     *
-     * @return void
      */
     public function testGetActionMissingAction(): void
     {
@@ -633,8 +588,6 @@ class ControllerTest extends TestCase
 
     /**
      * test invoking private methods.
-     *
-     * @return void
      */
     public function testGetActionPrivate(): void
     {
@@ -652,8 +605,6 @@ class ControllerTest extends TestCase
 
     /**
      * test invoking protected methods.
-     *
-     * @return void
      */
     public function testGetActionProtected(): void
     {
@@ -671,8 +622,6 @@ class ControllerTest extends TestCase
 
     /**
      * test invoking controller methods.
-     *
-     * @return void
      */
     public function testGetActionBaseMethods(): void
     {
@@ -690,8 +639,6 @@ class ControllerTest extends TestCase
 
     /**
      * test invoking action method with mismatched casing.
-     *
-     * @return void
      */
     public function testGetActionMethodCasing(): void
     {
@@ -728,8 +675,6 @@ class ControllerTest extends TestCase
 
     /**
      * test invoking controller methods.
-     *
-     * @return void
      */
     public function testInvokeActionReturnValue(): void
     {
@@ -751,8 +696,6 @@ class ControllerTest extends TestCase
 
     /**
      * test invoking controller methods with passed params
-     *
-     * @return void
      */
     public function testInvokeActionWithPassedParams(): void
     {
@@ -776,10 +719,8 @@ class ControllerTest extends TestCase
 
     /**
      * test invalid return value from action method.
-     *
-     * @return void
      */
-    public function testInvokeActionException()
+    public function testInvokeActionException(): void
     {
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage(
@@ -803,8 +744,6 @@ class ControllerTest extends TestCase
 
     /**
      * test that a classes namespace is used in the viewPath.
-     *
-     * @return void
      */
     public function testViewPathConventions(): void
     {
@@ -845,8 +784,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test the components() method.
-     *
-     * @return void
      */
     public function testComponents(): void
     {
@@ -862,8 +799,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test the components property errors
-     *
-     * @return void
      */
     public function testComponentsPropertyError(): void
     {
@@ -877,8 +812,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test the helpers property errors
-     *
-     * @return void
      */
     public function testHelpersPropertyError(): void
     {
@@ -892,8 +825,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test the components() method with the custom ObjectRegistry.
-     *
-     * @return void
      */
     public function testComponentsWithCustomRegistry(): void
     {
@@ -912,8 +843,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test adding a component
-     *
-     * @return void
      */
     public function testLoadComponent(): void
     {
@@ -931,8 +860,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test adding a component that is a duplicate.
-     *
-     * @return void
      */
     public function testLoadComponentDuplicate(): void
     {
@@ -952,8 +879,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test the isAction method.
-     *
-     * @return void
      */
     public function testIsAction(): void
     {
@@ -968,8 +893,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test that view variables are being set after the beforeRender event gets dispatched
-     *
-     * @return void
      */
     public function testBeforeRenderViewVariables(): void
     {
@@ -990,13 +913,11 @@ class ControllerTest extends TestCase
 
     /**
      * Test that render()'s arguments are available in beforeRender() through view builder.
-     *
-     * @return void
      */
-    public function testBeforeRenderTemplateAndLayout()
+    public function testBeforeRenderTemplateAndLayout(): void
     {
         $Controller = new Controller(new ServerRequest(), new Response());
-        $Controller->getEventManager()->on('Controller.beforeRender', function ($event) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function ($event): void {
             $this->assertSame(
                 '/Element/test_element',
                 $event->getSubject()->viewBuilder()->getTemplate()
@@ -1017,8 +938,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test name getter and setter.
-     *
-     * @return void
      */
     public function testName(): void
     {
@@ -1031,8 +950,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test plugin getter and setter.
-     *
-     * @return void
      */
     public function testPlugin(): void
     {
@@ -1045,8 +962,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test request getter and setter.
-     *
-     * @return void
      */
     public function testRequest(): void
     {
@@ -1071,8 +986,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test response getter and setter.
-     *
-     * @return void
      */
     public function testResponse(): void
     {
@@ -1086,8 +999,6 @@ class ControllerTest extends TestCase
 
     /**
      * Test autoRender getter and setter.
-     *
-     * @return void
      */
     public function testAutoRender(): void
     {

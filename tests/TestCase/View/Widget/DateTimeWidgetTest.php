@@ -28,7 +28,6 @@ class DateTimeWidgetTest extends TestCase
 {
     /**
      * @setUp
-     * @return void
      */
     public function setUp(): void
     {
@@ -63,9 +62,8 @@ class DateTimeWidgetTest extends TestCase
      *
      * @dataProvider invalidSelectedValuesProvider
      * @param mixed $selected
-     * @return void
      */
-    public function testRenderInvalid($selected)
+    public function testRenderInvalid($selected): void
     {
         $result = $this->DateTime->render(['val' => $selected, 'type' => 'month'], $this->context);
         $now = new \DateTime();
@@ -97,9 +95,8 @@ class DateTimeWidgetTest extends TestCase
      *
      * @dataProvider selectedValuesProvider
      * @param mixed $selected
-     * @return void
      */
-    public function testRenderValid($selected)
+    public function testRenderValid($selected): void
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $expected = [
@@ -115,10 +112,8 @@ class DateTimeWidgetTest extends TestCase
 
     /**
      * testTimezoneOption
-     *
-     * @return void
      */
-    public function testTimezoneOption()
+    public function testTimezoneOption(): void
     {
         $result = $this->DateTime->render([
             'val' => '2019-02-03 10:00:00',
@@ -135,7 +130,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-    public function testUnsettingStep()
+    public function testUnsettingStep(): void
     {
         $result = $this->DateTime->render([
             'val' => '2019-02-03 10:11:12',
@@ -164,7 +159,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-    public function testDatetimeFormat()
+    public function testDatetimeFormat(): void
     {
         $result = $this->DateTime->render([
             'val' => '2019-02-03 10:11:12',
@@ -227,10 +222,8 @@ class DateTimeWidgetTest extends TestCase
 
     /**
      * Test rendering with templateVars
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $templates = [
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}><span>{{help}}</span>',
@@ -246,10 +239,8 @@ class DateTimeWidgetTest extends TestCase
 
     /**
      * testRenderInvalidTypeException
-     *
-     * @return void
      */
-    public function testRenderInvalidTypeException()
+    public function testRenderInvalidTypeException(): void
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Invalid type `foo` for input tag, expected datetime-local, date, time, month or week');
@@ -258,10 +249,8 @@ class DateTimeWidgetTest extends TestCase
 
     /**
      * Test that secureFields omits removed selects
-     *
-     * @return void
      */
-    public function testSecureFields()
+    public function testSecureFields(): void
     {
         $data = [
             'name' => 'date',

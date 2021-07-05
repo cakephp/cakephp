@@ -7,6 +7,9 @@ use Exception;
 
 class ThrowsDebugInfo
 {
+    /**
+     * @inheritDoc
+     */
     public function __debugInfo()
     {
         throw new Exception('from __debugInfo');

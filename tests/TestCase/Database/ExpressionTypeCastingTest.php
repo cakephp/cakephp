@@ -34,8 +34,6 @@ class ExpressionTypeCastingTest extends TestCase
 {
     /**
      * Setups a mock for FunctionsBuilder
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,10 +44,8 @@ class ExpressionTypeCastingTest extends TestCase
     /**
      * Tests that the Comparison expression can handle values convertible to
      * expressions
-     *
-     * @return void
      */
-    public function testComparisonSimple()
+    public function testComparisonSimple(): void
     {
         $comparison = new ComparisonExpression('field', 'the thing', 'test', '=');
         $binder = new ValueBinder();
@@ -58,7 +54,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('the thing', $binder->bindings()[':param0']['value']);
 
         $found = false;
-        $comparison->traverse(function ($exp) use (&$found) {
+        $comparison->traverse(function ($exp) use (&$found): void {
             $found = $exp instanceof FunctionExpression;
         });
         $this->assertTrue($found, 'The expression is not included in the tree');
@@ -67,10 +63,8 @@ class ExpressionTypeCastingTest extends TestCase
     /**
      * Tests that the Comparison expression can handle values convertible to
      * expressions
-     *
-     * @return void
      */
-    public function testComparisonMultiple()
+    public function testComparisonMultiple(): void
     {
         $comparison = new ComparisonExpression('field', ['2', '3'], 'test[]', 'IN');
         $binder = new ValueBinder();
@@ -80,7 +74,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('3', $binder->bindings()[':param2']['value']);
 
         $found = false;
-        $comparison->traverse(function ($exp) use (&$found) {
+        $comparison->traverse(function ($exp) use (&$found): void {
             $found = $exp instanceof FunctionExpression;
         });
         $this->assertTrue($found, 'The expression is not included in the tree');
@@ -88,10 +82,8 @@ class ExpressionTypeCastingTest extends TestCase
 
     /**
      * Tests that the Between expression casts values to expressions correctly
-     *
-     * @return void
      */
-    public function testBetween()
+    public function testBetween(): void
     {
         $between = new BetweenExpression('field', 'from', 'to', 'test');
         $binder = new ValueBinder();
@@ -101,7 +93,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('to', $binder->bindings()[':param2']['value']);
 
         $expressions = [];
-        $between->traverse(function ($exp) use (&$expressions) {
+        $between->traverse(function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 
@@ -111,10 +103,8 @@ class ExpressionTypeCastingTest extends TestCase
 
     /**
      * Tests that the Case expressions converts values to expressions correctly
-     *
-     * @return void
      */
-    public function testCaseExpression()
+    public function testCaseExpression(): void
     {
         $case = new CaseExpression(
             [new ComparisonExpression('foo', '1', 'string', '=')],
@@ -131,7 +121,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('value2', $binder->bindings()[':param3']['value']);
 
         $expressions = [];
-        $case->traverse(function ($exp) use (&$expressions) {
+        $case->traverse(function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 
@@ -141,10 +131,8 @@ class ExpressionTypeCastingTest extends TestCase
 
     /**
      * Tests that values in FunctionExpressions are converted to expressions correctly
-     *
-     * @return void
      */
-    public function testFunctionExpression()
+    public function testFunctionExpression(): void
     {
         $function = new FunctionExpression('DATE', ['2016-01'], ['test']);
         $binder = new ValueBinder();
@@ -153,7 +141,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('2016-01', $binder->bindings()[':param0']['value']);
 
         $expressions = [];
-        $function->traverse(function ($exp) use (&$expressions) {
+        $function->traverse(function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 
@@ -163,10 +151,8 @@ class ExpressionTypeCastingTest extends TestCase
 
     /**
      * Tests that values in ValuesExpression are converted to expressions correctly
-     *
-     * @return void
      */
-    public function testValuesExpression()
+    public function testValuesExpression(): void
     {
         $values = new ValuesExpression(['title'], new TypeMap(['title' => 'test']));
         $values->add(['title' => 'foo']);
@@ -182,7 +168,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('bar', $binder->bindings()[':param2']['value']);
 
         $expressions = [];
-        $values->traverse(function ($exp) use (&$expressions) {
+        $values->traverse(function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 

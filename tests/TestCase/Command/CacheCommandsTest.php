@@ -30,8 +30,6 @@ class CacheCommandsTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,8 +41,6 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -54,10 +50,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test help output
-     *
-     * @return void
      */
-    public function testClearHelp()
+    public function testClearHelp(): void
     {
         $this->exec('cache clear -h');
 
@@ -67,10 +61,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test help output
-     *
-     * @return void
      */
-    public function testClearAllHelp()
+    public function testClearAllHelp(): void
     {
         $this->exec('cache clear_all -h');
 
@@ -80,10 +72,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test list output
-     *
-     * @return void
      */
-    public function testList()
+    public function testList(): void
     {
         $this->exec('cache list');
 
@@ -95,10 +85,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test help output
-     *
-     * @return void
      */
-    public function testListHelp()
+    public function testListHelp(): void
     {
         $this->exec('cache list -h');
 
@@ -108,10 +96,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test that clear() throws \Cake\Console\Exception\StopException if cache prefix is invalid
-     *
-     * @return void
      */
-    public function testClearInvalidPrefix()
+    public function testClearInvalidPrefix(): void
     {
         $this->exec('cache clear foo');
         $this->assertExitCode(Shell::CODE_ERROR);
@@ -120,10 +106,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test that clear() clears the specified cache when a valid prefix is used
-     *
-     * @return void
      */
-    public function testClearValidPrefix()
+    public function testClearValidPrefix(): void
     {
         Cache::add('key', 'value', 'test');
         $this->exec('cache clear test');
@@ -134,10 +118,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test that clear() only clears the specified cache
-     *
-     * @return void
      */
-    public function testClearIgnoresOtherCaches()
+    public function testClearIgnoresOtherCaches(): void
     {
         Cache::add('key', 'value', 'test');
         $this->exec('cache clear _cake_core_');
@@ -148,10 +130,8 @@ class CacheCommandsTest extends TestCase
 
     /**
      * Test that clearAll() clears values from all defined caches
-     *
-     * @return void
      */
-    public function testClearAll()
+    public function testClearAll(): void
     {
         Cache::add('key', 'value1', 'test');
         Cache::add('key', 'value3', '_cake_core_');

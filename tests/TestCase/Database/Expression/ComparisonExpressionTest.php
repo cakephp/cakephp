@@ -27,10 +27,8 @@ class ComparisonExpressionTest extends TestCase
 {
     /**
      * Tests that cloning Comparion instance clones it's value and field expressions.
-     *
-     * @return void
      */
-    public function testClone()
+    public function testClone(): void
     {
         $exp = new ComparisonExpression(new QueryExpression('field1'), 1, 'integer', '<');
         $exp2 = clone $exp;

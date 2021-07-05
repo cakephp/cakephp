@@ -24,10 +24,8 @@ class CollectionResetStrategyTest extends TestCase
 {
     /**
      * Test that setupTest calls items.
-     *
-     * @return void
      */
-    public function testSetupTest()
+    public function testSetupTest(): void
     {
         $one = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();
         $two = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();
@@ -43,10 +41,8 @@ class CollectionResetStrategyTest extends TestCase
 
     /**
      * Test that teardownTest calls items.
-     *
-     * @return void
      */
-    public function testTeardownTest()
+    public function testTeardownTest(): void
     {
         $one = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();
         $two = $this->getMockBuilder(ResetStrategyInterface::class)->getMock();

@@ -56,8 +56,6 @@ class ApcuEngineTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -75,8 +73,6 @@ class ApcuEngineTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -89,9 +85,8 @@ class ApcuEngineTest extends TestCase
      * Helper method for testing.
      *
      * @param array $config
-     * @return void
      */
-    protected function _configCache(array $config = [])
+    protected function _configCache(array $config = []): void
     {
         $defaults = [
             'className' => 'Apcu',
@@ -104,10 +99,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * testReadAndWriteCache method
-     *
-     * @return void
      */
-    public function testReadAndWriteCache()
+    public function testReadAndWriteCache(): void
     {
         $this->_configCache(['duration' => 1]);
 
@@ -127,10 +120,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * Writing cache entries with duration = 0 (forever) should work.
-     *
-     * @return void
      */
-    public function testReadWriteDurationZero()
+    public function testReadWriteDurationZero(): void
     {
         Cache::drop('apcu');
         Cache::setConfig('apcu', ['engine' => 'Apcu', 'duration' => 0, 'prefix' => 'cake_']);
@@ -143,10 +134,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * Test get with default value
-     *
-     * @return void
      */
-    public function testGetDefaultValue()
+    public function testGetDefaultValue(): void
     {
         $apcu = Cache::pool('apcu');
         $this->assertFalse($apcu->get('nope', false));
@@ -160,10 +149,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * testExpiry method
-     *
-     * @return void
      */
-    public function testExpiry()
+    public function testExpiry(): void
     {
         $this->_configCache(['duration' => 1]);
 
@@ -182,10 +169,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * test set ttl parameter
-     *
-     * @return void
      */
-    public function testSetWithTtl()
+    public function testSetWithTtl(): void
     {
         $this->_configCache(['duration' => 99]);
         $engine = Cache::pool('apcu');
@@ -204,10 +189,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * testDeleteCache method
-     *
-     * @return void
      */
-    public function testDeleteCache()
+    public function testDeleteCache(): void
     {
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('delete_test', $data, 'apcu');
@@ -219,10 +202,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * testDecrement method
-     *
-     * @return void
      */
-    public function testDecrement()
+    public function testDecrement(): void
     {
         $result = Cache::write('test_decrement', 5, 'apcu');
         $this->assertTrue($result);
@@ -242,10 +223,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * testIncrement method
-     *
-     * @return void
      */
-    public function testIncrement()
+    public function testIncrement(): void
     {
         $result = Cache::write('test_increment', 5, 'apcu');
         $this->assertTrue($result);
@@ -265,10 +244,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * test the clearing of cache keys
-     *
-     * @return void
      */
-    public function testClear()
+    public function testClear(): void
     {
         apcu_store('not_cake', 'survive');
         Cache::write('some_value', 'value', 'apcu');
@@ -284,10 +261,8 @@ class ApcuEngineTest extends TestCase
      * Tests that configuring groups for stored keys return the correct values when read/written
      * Shows that altering the group value is equivalent to deleting all keys under the same
      * group
-     *
-     * @return void
      */
-    public function testGroupsReadWrite()
+    public function testGroupsReadWrite(): void
     {
         Cache::setConfig('apcu_groups', [
             'engine' => 'Apcu',
@@ -312,10 +287,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * Tests that deleting from a groups-enabled config is possible
-     *
-     * @return void
      */
-    public function testGroupDelete()
+    public function testGroupDelete(): void
     {
         Cache::setConfig('apcu_groups', [
             'engine' => 'Apcu',
@@ -333,10 +306,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * Test clearing a cache group
-     *
-     * @return void
      */
-    public function testGroupClear()
+    public function testGroupClear(): void
     {
         Cache::setConfig('apcu_groups', [
             'engine' => 'Apcu',
@@ -357,10 +328,8 @@ class ApcuEngineTest extends TestCase
 
     /**
      * Test add
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         Cache::delete('test_add_key', 'apcu');
 

@@ -31,8 +31,6 @@ class TaskRegistryTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -45,8 +43,6 @@ class TaskRegistryTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -56,10 +52,8 @@ class TaskRegistryTest extends TestCase
 
     /**
      * test triggering callbacks on loaded tasks
-     *
-     * @return void
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $result = $this->Tasks->load('Command');
         $this->assertInstanceOf('Cake\Shell\Task\CommandTask', $result);
@@ -71,10 +65,8 @@ class TaskRegistryTest extends TestCase
 
     /**
      * test missingtask exception
-     *
-     * @return void
      */
-    public function testLoadMissingTask()
+    public function testLoadMissingTask(): void
     {
         $this->expectException(\Cake\Console\Exception\MissingTaskException::class);
         $this->Tasks->load('ThisTaskShouldAlwaysBeMissing');
@@ -82,10 +74,8 @@ class TaskRegistryTest extends TestCase
 
     /**
      * test loading a plugin helper.
-     *
-     * @return void
      */
-    public function testLoadPluginTask()
+    public function testLoadPluginTask(): void
     {
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -101,10 +91,8 @@ class TaskRegistryTest extends TestCase
 
     /**
      * Tests loading as an alias
-     *
-     * @return void
      */
-    public function testLoadWithAlias()
+    public function testLoadWithAlias(): void
     {
         $this->loadPlugins(['TestPlugin']);
 

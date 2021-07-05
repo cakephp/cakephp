@@ -49,8 +49,6 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * setup create a request object to get out of router later.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -74,8 +72,6 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -91,8 +87,6 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * setUpBeforeClass
-     *
-     * @return void
      */
     public static function setUpBeforeClass(): void
     {
@@ -102,10 +96,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * Test an invalid rendering class.
-     *
-     * @return void
      */
-    public function testInvalidRenderer()
+    public function testInvalidRenderer(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
@@ -116,10 +108,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test error handling when debug is on, an error should be printed from Debugger.
-     *
-     * @return void
      */
-    public function testHandleErrorDebugOn()
+    public function testHandleErrorDebugOn(): void
     {
         $errorHandler = new ErrorHandler();
         $errorHandler->register();
@@ -146,12 +136,10 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test error handling with the _trace_offset context variable
-     *
-     * @return void
      */
-    public function testHandleErrorTraceOffset()
+    public function testHandleErrorTraceOffset(): void
     {
-        set_error_handler(function ($code, $message, $file, $line, $context = null) {
+        set_error_handler(function ($code, $message, $file, $line, $context = null): void {
             $errorHandler = new ErrorHandler();
             $context['_trace_frame_offset'] = 3;
             $errorHandler->handleError($code, $message, $file, $line, $context);
@@ -188,9 +176,8 @@ class ErrorHandlerTest extends TestCase
      * test error mappings
      *
      * @dataProvider errorProvider
-     * @return void
      */
-    public function testErrorMapping(int $error, string $expected)
+    public function testErrorMapping(int $error, string $expected): void
     {
         $errorHandler = new ErrorHandler();
         $errorHandler->register();
@@ -205,10 +192,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test error prepended by @
-     *
-     * @return void
      */
-    public function testErrorSuppressed()
+    public function testErrorSuppressed(): void
     {
         $this->skipIf(version_compare(PHP_VERSION, '8.0.0-dev', '>='));
 
@@ -226,10 +211,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * Test that errors go into Cake Log when debug = 0.
-     *
-     * @return void
      */
-    public function testHandleErrorDebugOff()
+    public function testHandleErrorDebugOff(): void
     {
         Configure::write('debug', false);
         $errorHandler = new ErrorHandler();
@@ -256,10 +239,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * Test that errors going into Cake Log include traces.
-     *
-     * @return void
      */
-    public function testHandleErrorLoggingTrace()
+    public function testHandleErrorLoggingTrace(): void
     {
         Configure::write('debug', false);
         $errorHandler = new ErrorHandler(['trace' => true]);
@@ -289,10 +270,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test handleException generating a page.
-     *
-     * @return void
      */
-    public function testHandleException()
+    public function testHandleException(): void
     {
         $error = new NotFoundException('Kaboom!');
         $errorHandler = new TestErrorHandler();
@@ -303,10 +282,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test handleException generating log.
-     *
-     * @return void
      */
-    public function testHandleExceptionLog()
+    public function testHandleExceptionLog(): void
     {
         $errorHandler = new TestErrorHandler([
             'log' => true,
@@ -342,10 +319,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test logging attributes with/without debug
-     *
-     * @return void
      */
-    public function testHandleExceptionLogAttributes()
+    public function testHandleExceptionLogAttributes(): void
     {
         $errorHandler = new TestErrorHandler([
             'log' => true,
@@ -377,10 +352,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test logging attributes with previous exception
-     *
-     * @return void
      */
-    public function testHandleExceptionLogPrevious()
+    public function testHandleExceptionLogPrevious(): void
     {
         $errorHandler = new TestErrorHandler([
             'log' => true,
@@ -405,10 +378,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test handleException generating log.
-     *
-     * @return void
      */
-    public function testHandleExceptionLogSkipping()
+    public function testHandleExceptionLogSkipping(): void
     {
         $notFound = new NotFoundException('Kaboom!');
         $forbidden = new ForbiddenException('Fooled you!');
@@ -434,10 +405,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * tests it is possible to load a plugin exception renderer
-     *
-     * @return void
      */
-    public function testLoadPluginHandler()
+    public function testLoadPluginHandler(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $errorHandler = new TestErrorHandler([
@@ -455,10 +424,8 @@ class ErrorHandlerTest extends TestCase
      * test handleFatalError generating a page.
      *
      * These tests start two buffers as handleFatalError blows the outer one up.
-     *
-     * @return void
      */
-    public function testHandleFatalErrorPage()
+    public function testHandleFatalErrorPage(): void
     {
         $line = __LINE__;
         $errorHandler = new TestErrorHandler();
@@ -480,10 +447,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * test handleFatalError generating log.
-     *
-     * @return void
      */
-    public function testHandleFatalErrorLog()
+    public function testHandleFatalErrorLog(): void
     {
         $errorHandler = new TestErrorHandler(['log' => true]);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
@@ -515,9 +480,8 @@ class ErrorHandlerTest extends TestCase
      * Test increasing the memory limit.
      *
      * @dataProvider memoryLimitProvider
-     * @return void
      */
-    public function testIncreaseMemoryLimit(string $start, int $adjust, string $expected)
+    public function testIncreaseMemoryLimit(string $start, int $adjust, string $expected): void
     {
         $initial = ini_get('memory_limit');
         $this->skipIf(strlen($initial) === 0, 'Cannot read memory limit, and cannot test increasing it.');
@@ -535,10 +499,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * Test getting a logger
-     *
-     * @return void
      */
-    public function testGetLogger()
+    public function testGetLogger(): void
     {
         $errorHandler = new TestErrorHandler(['key' => 'value', 'log' => true]);
         $logger = $errorHandler->getLogger();
@@ -550,10 +512,8 @@ class ErrorHandlerTest extends TestCase
 
     /**
      * Test getting a logger
-     *
-     * @return void
      */
-    public function testGetLoggerInvalid()
+    public function testGetLoggerInvalid(): void
     {
         $errorHandler = new TestErrorHandler(['errorLogger' => \stdClass::class]);
         $this->expectException(RuntimeException::class);

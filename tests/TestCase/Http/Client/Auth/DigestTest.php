@@ -38,8 +38,6 @@ class DigestTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -61,10 +59,8 @@ class DigestTest extends TestCase
 
     /**
      * test getting data from additional request method
-     *
-     * @return void
      */
-    public function testRealmAndNonceFromExtraRequest()
+    public function testRealmAndNonceFromExtraRequest(): void
     {
         $headers = [
             'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51"',
@@ -91,10 +87,8 @@ class DigestTest extends TestCase
 
     /**
      * testQop method
-     *
-     * @return void
      */
-    public function testQop()
+    public function testQop(): void
     {
         $headers = [
             'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51",qop="auth"',
@@ -117,10 +111,8 @@ class DigestTest extends TestCase
 
     /**
      * testOpaque method
-     *
-     * @return void
      */
-    public function testOpaque()
+    public function testOpaque(): void
     {
         $headers = [
             'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51",opaque="d8ea7aa61a1693024c4cc3a516f49b3c"',

@@ -31,8 +31,6 @@ class HelpCommandTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -50,8 +48,6 @@ class HelpCommandTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -61,10 +57,8 @@ class HelpCommandTest extends TestCase
 
     /**
      * Test the command listing fallback when no commands are set
-     *
-     * @return void
      */
-    public function testMainNoCommandsFallback()
+    public function testMainNoCommandsFallback(): void
     {
         $this->exec('help');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -74,10 +68,8 @@ class HelpCommandTest extends TestCase
 
     /**
      * Test the command listing
-     *
-     * @return void
      */
-    public function testMain()
+    public function testMain(): void
     {
         $this->exec('help');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -86,10 +78,8 @@ class HelpCommandTest extends TestCase
 
     /**
      * Assert the help output.
-     *
-     * @return void
      */
-    protected function assertCommandList()
+    protected function assertCommandList(): void
     {
         $this->assertOutputContains('<info>TestPlugin</info>', 'plugin header should appear');
         $this->assertOutputContains('- widget', 'plugin command should appear');
@@ -109,10 +99,8 @@ class HelpCommandTest extends TestCase
 
     /**
      * Test help --xml
-     *
-     * @return void
      */
-    public function testMainAsXml()
+    public function testMainAsXml(): void
     {
         $this->exec('help --xml');
         $this->assertExitCode(Command::CODE_SUCCESS);

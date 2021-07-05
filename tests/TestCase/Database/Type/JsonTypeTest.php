@@ -37,8 +37,6 @@ class JsonTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,10 +47,8 @@ class JsonTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertSame('word', $this->type->toPHP(json_encode('word'), $this->driver));
@@ -61,10 +57,8 @@ class JsonTypeTest extends TestCase
 
     /**
      * Test converting JSON strings to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -86,10 +80,8 @@ class JsonTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $this->assertNull($this->type->toDatabase(null, $this->driver));
         $this->assertSame(json_encode('word'), $this->type->toDatabase('word', $this->driver));
@@ -99,10 +91,8 @@ class JsonTypeTest extends TestCase
 
     /**
      * Tests that passing an invalid value will throw an exception
-     *
-     * @return void
      */
-    public function testToDatabaseInvalid()
+    public function testToDatabaseInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $value = fopen(__FILE__, 'r');
@@ -111,10 +101,8 @@ class JsonTypeTest extends TestCase
 
     /**
      * Test marshalling
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $this->assertNull($this->type->marshal(null));
         $this->assertSame('', $this->type->marshal(''));
@@ -126,10 +114,8 @@ class JsonTypeTest extends TestCase
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }

@@ -53,8 +53,6 @@ class CommandRunnerTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -65,10 +63,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * test event manager proxies to the application.
-     *
-     * @return void
      */
-    public function testEventManagerProxies()
+    public function testEventManagerProxies(): void
     {
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,
@@ -81,10 +77,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * test event manager cannot be set on applications without events.
-     *
-     * @return void
      */
-    public function testGetEventManagerNonEventedApplication()
+    public function testGetEventManagerNonEventedApplication(): void
     {
         $app = $this->createMock(ConsoleApplicationInterface::class);
 
@@ -94,10 +88,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * test event manager cannot be set on applications without events.
-     *
-     * @return void
      */
-    public function testSetEventManagerNonEventedApplication()
+    public function testSetEventManagerNonEventedApplication(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $app = $this->createMock(ConsoleApplicationInterface::class);
@@ -109,10 +101,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test that running with empty argv fails
-     *
-     * @return void
      */
-    public function testRunMissingRootCommand()
+    public function testRunMissingRootCommand(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot run any commands. No arguments received.');
@@ -127,10 +117,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test that running an unknown command raises an error.
-     *
-     * @return void
      */
-    public function testRunInvalidCommand()
+    public function testRunInvalidCommand(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -150,10 +138,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test that running an unknown command gives suggestions.
-     *
-     * @return void
      */
-    public function testRunInvalidCommandSuggestion()
+    public function testRunInvalidCommandSuggestion(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -177,10 +163,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test using `cake --help` invokes the help command
-     *
-     * @return void
      */
-    public function testRunHelpLongOption()
+    public function testRunHelpLongOption(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -199,10 +183,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test using `cake -h` invokes the help command
-     *
-     * @return void
      */
-    public function testRunHelpShortOption()
+    public function testRunHelpShortOption(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -220,10 +202,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test that no command outputs the command list
-     *
-     * @return void
      */
-    public function testRunNoCommand()
+    public function testRunNoCommand(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -243,10 +223,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test using `cake --version` invokes the version command
-     *
-     * @return void
      */
-    public function testRunVersionAlias()
+    public function testRunVersionAlias(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -261,10 +239,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test running a valid command
-     *
-     * @return void
      */
-    public function testRunValidCommand()
+    public function testRunValidCommand(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -284,10 +260,8 @@ class CommandRunnerTest extends TestCase
     /**
      * Test running a valid command and that backwards compatible
      * inflection is hooked up.
-     *
-     * @return void
      */
-    public function testRunValidCommandInflection()
+    public function testRunValidCommandInflection(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -306,10 +280,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test running a valid raising an error
-     *
-     * @return void
      */
-    public function testRunValidCommandWithAbort()
+    public function testRunValidCommandWithAbort(): void
     {
         $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
         $output = new ConsoleOutput();
@@ -321,10 +293,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test returning a non-zero value
-     *
-     * @return void
      */
-    public function testRunValidCommandReturnInteger()
+    public function testRunValidCommandReturnInteger(): void
     {
         $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
         $output = new ConsoleOutput();
@@ -336,10 +306,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Ensure that the root command name propagates to shell help
-     *
-     * @return void
      */
-    public function testRunRootNamePropagates()
+    public function testRunRootNamePropagates(): void
     {
         $app = $this->makeAppWithCommands(['sample' => SampleShell::class]);
         $output = new ConsoleOutput();
@@ -353,10 +321,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test running a valid command
-     *
-     * @return void
      */
-    public function testRunValidCommandClass()
+    public function testRunValidCommandClass(): void
     {
         $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
         $output = new ConsoleOutput();
@@ -371,10 +337,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test running a valid command with spaces in the name
-     *
-     * @return void
      */
-    public function testRunValidCommandSubcommandName()
+    public function testRunValidCommandSubcommandName(): void
     {
         $app = $this->makeAppWithCommands([
             'tool build' => DemoCommand::class,
@@ -392,10 +356,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test running a valid command with spaces in the name
-     *
-     * @return void
      */
-    public function testRunValidCommandNestedName()
+    public function testRunValidCommandNestedName(): void
     {
         $app = $this->makeAppWithCommands([
             'tool build assets' => DemoCommand::class,
@@ -413,10 +375,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test using a custom factory
-     *
-     * @return void
      */
-    public function testRunWithCustomFactory()
+    public function testRunWithCustomFactory(): void
     {
         $output = new ConsoleOutput();
         $io = $this->getMockIo($output);
@@ -436,7 +396,7 @@ class CommandRunnerTest extends TestCase
         $this->assertStringContainsString('Demo Command!', $messages);
     }
 
-    public function testRunWithContainerDependencies()
+    public function testRunWithContainerDependencies(): void
     {
         $app = $this->makeAppWithCommands([
             'dependency' => DependencyCommand::class,
@@ -459,10 +419,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test running a command class' help
-     *
-     * @return void
      */
-    public function testRunValidCommandClassHelp()
+    public function testRunValidCommandClassHelp(): void
     {
         $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
         $output = new ConsoleOutput();
@@ -478,10 +436,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test that run() fires off the buildCommands event.
-     *
-     * @return void
      */
-    public function testRunTriggersBuildCommandsEvent()
+    public function testRunTriggersBuildCommandsEvent(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])
@@ -490,7 +446,7 @@ class CommandRunnerTest extends TestCase
 
         $output = new ConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
-        $runner->getEventManager()->on('Console.buildCommands', function ($event, $commands) {
+        $runner->getEventManager()->on('Console.buildCommands', function ($event, $commands): void {
             $this->assertInstanceOf(CommandCollection::class, $commands);
             $this->eventTriggered = true;
         });
@@ -500,10 +456,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test that run calls plugin hook methods
-     *
-     * @return void
      */
-    public function testRunCallsPluginHookMethods()
+    public function testRunCallsPluginHookMethods(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods([
@@ -534,10 +488,8 @@ class CommandRunnerTest extends TestCase
 
     /**
      * Test that run() loads routing.
-     *
-     * @return void
      */
-    public function testRunLoadsRoutes()
+    public function testRunLoadsRoutes(): void
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap'])

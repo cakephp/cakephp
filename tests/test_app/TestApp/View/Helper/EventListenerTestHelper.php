@@ -26,9 +26,8 @@ class EventListenerTestHelper extends Helper
      *
      * @param \Cake\Event\EventInterface $event The event instance.
      * @param string $viewFile The view file being rendered.
-     * @return void
      */
-    public function beforeRender(EventInterface $event, string $viewFile)
+    public function beforeRender(EventInterface $event, string $viewFile): void
     {
         $this->config('options.foo', 'bar');
     }

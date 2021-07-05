@@ -49,8 +49,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -73,8 +71,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test applying settings in the constructor
-     *
-     * @return void
      */
     public function testConstructor(): void
     {
@@ -88,10 +84,8 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
-    public function testAuthenticateNoData()
+    public function testAuthenticateNoData(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -102,8 +96,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoUsername(): void
     {
@@ -116,8 +108,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoPassword(): void
     {
@@ -130,8 +120,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test authenticate password is false method
-     *
-     * @return void
      */
     public function testAuthenticatePasswordIsFalse(): void
     {
@@ -148,8 +136,6 @@ class FormAuthenticateTest extends TestCase
     /**
      * Test for password as empty string with _checkFields() call skipped
      * Refs https://github.com/cakephp/cakephp/pull/2441
-     *
-     * @return void
      */
     public function testAuthenticatePasswordIsEmptyString(): void
     {
@@ -179,8 +165,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test authenticate field is not string
-     *
-     * @return void
      */
     public function testAuthenticateFieldsAreNotString(): void
     {
@@ -205,8 +189,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateInjection(): void
     {
@@ -222,8 +204,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test authenticate success
-     *
-     * @return void
      */
     public function testAuthenticateSuccess(): void
     {
@@ -246,8 +226,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * Test that authenticate() includes virtual fields.
-     *
-     * @return void
      */
     public function testAuthenticateIncludesVirtualFields(): void
     {
@@ -274,8 +252,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test a model in a plugin.
-     *
-     * @return void
      */
     public function testPluginModel(): void
     {
@@ -310,8 +286,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * Test using custom finder
-     *
-     * @return void
      */
     public function testFinder(): void
     {
@@ -350,8 +324,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * Test using custom finder
-     *
-     * @return void
      */
     public function testFinderOptions(): void
     {
@@ -389,8 +361,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * test password hasher settings
-     *
-     * @return void
      */
     public function testPasswordHasherSettings(): void
     {
@@ -445,8 +415,6 @@ class FormAuthenticateTest extends TestCase
 
     /**
      * Tests that using default means password don't need to be rehashed
-     *
-     * @return void
      */
     public function testAuthenticateNoRehash(): void
     {
@@ -465,8 +433,6 @@ class FormAuthenticateTest extends TestCase
     /**
      * Tests that not using the Default password hasher means that the password
      * needs to be rehashed
-     *
-     * @return void
      */
     public function testAuthenticateRehash(): void
     {
@@ -492,7 +458,6 @@ class FormAuthenticateTest extends TestCase
     /**
      * Tests that password hasher function is called exactly once in all cases.
      *
-     * @return void
      * @dataProvider userList
      */
     public function testAuthenticateSingleHash(string $username, ?string $password): void

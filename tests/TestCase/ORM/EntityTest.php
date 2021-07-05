@@ -28,10 +28,8 @@ class EntityTest extends TestCase
 {
     /**
      * Tests setting a single property in an entity without custom setters
-     *
-     * @return void
      */
-    public function testSetOneParamNoSetters()
+    public function testSetOneParamNoSetters(): void
     {
         $entity = new Entity();
         $this->assertNull($entity->getOriginal('foo'));
@@ -51,10 +49,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests setting multiple properties without custom setters
-     *
-     * @return void
      */
-    public function testSetMultiplePropertiesNoSetters()
+    public function testSetMultiplePropertiesNoSetters(): void
     {
         $entity = new Entity();
         $entity->setAccess('*', true);
@@ -80,10 +76,8 @@ class EntityTest extends TestCase
 
     /**
      * Test that getOriginal() retains falsey values.
-     *
-     * @return void
      */
-    public function testGetOriginal()
+    public function testGetOriginal(): void
     {
         $entity = new Entity(
             ['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''],
@@ -103,10 +97,8 @@ class EntityTest extends TestCase
 
     /**
      * Test extractOriginal()
-     *
-     * @return void
      */
-    public function testExtractOriginal()
+    public function testExtractOriginal(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -141,10 +133,8 @@ class EntityTest extends TestCase
 
     /**
      * Test that all original values are returned properly
-     *
-     * @return void
      */
-    public function testExtractOriginalValues()
+    public function testExtractOriginalValues(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -165,10 +155,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests setting a single property using a setter function
-     *
-     * @return void
      */
-    public function testSetOneParamWithSetter()
+    public function testSetOneParamWithSetter(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_setName'])
@@ -186,10 +174,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests setting multiple properties using a setter function
-     *
-     * @return void
      */
-    public function testMultipleWithSetter()
+    public function testMultipleWithSetter(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_setName', '_setStuff'])
@@ -216,10 +202,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that it is possible to bypass the setters
-     *
-     * @return void
      */
-    public function testBypassSetters()
+    public function testBypassSetters(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_setName', '_setStuff'])
@@ -241,10 +225,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that the constructor will set initial properties
-     *
-     * @return void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['set'])
@@ -266,10 +248,8 @@ class EntityTest extends TestCase
     /**
      * Tests that the constructor will set initial properties and pass the guard
      * option along
-     *
-     * @return void
      */
-    public function testConstructorWithGuard()
+    public function testConstructorWithGuard(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['set'])
@@ -283,10 +263,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests getting properties with no custom getters
-     *
-     * @return void
      */
-    public function testGetNoGetters()
+    public function testGetNoGetters(): void
     {
         $entity = new Entity(['id' => 1, 'foo' => 'bar']);
         $this->assertSame(1, $entity->get('id'));
@@ -295,10 +273,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests get with custom getter
-     *
-     * @return void
      */
-    public function testGetCustomGetters()
+    public function testGetCustomGetters(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_getName'])
@@ -316,10 +292,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests get with custom getter
-     *
-     * @return void
      */
-    public function testGetCustomGettersAfterSet()
+    public function testGetCustomGettersAfterSet(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_getName'])
@@ -340,10 +314,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that the get cache is cleared by unsetProperty.
-     *
-     * @return void
      */
-    public function testGetCacheClearedByUnset()
+    public function testGetCacheClearedByUnset(): void
     {
         /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder(Entity::class)
@@ -362,10 +334,8 @@ class EntityTest extends TestCase
 
     /**
      * Test getting camelcased virtual fields.
-     *
-     * @return void
      */
-    public function testGetCamelCasedProperties()
+    public function testGetCamelCasedProperties(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_getListIdName'])
@@ -381,10 +351,8 @@ class EntityTest extends TestCase
 
     /**
      * Test magic property setting with no custom setter
-     *
-     * @return void
      */
-    public function testMagicSet()
+    public function testMagicSet(): void
     {
         $entity = new Entity();
         $entity->name = 'Jones';
@@ -395,10 +363,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests magic set with custom setter function
-     *
-     * @return void
      */
-    public function testMagicSetWithSetter()
+    public function testMagicSetWithSetter(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_setName'])
@@ -416,10 +382,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests magic set with custom setter function using a Title cased property
-     *
-     * @return void
      */
-    public function testMagicSetWithSetterTitleCase()
+    public function testMagicSetWithSetterTitleCase(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_setName'])
@@ -438,10 +402,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the magic getter with a custom getter function
-     *
-     * @return void
      */
-    public function testMagicGetWithGetter()
+    public function testMagicGetWithGetter(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_getName'])
@@ -459,10 +421,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests magic get with custom getter function using a Title cased property
-     *
-     * @return void
      */
-    public function testMagicGetWithGetterTitleCase()
+    public function testMagicGetWithGetterTitleCase(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_getName'])
@@ -481,10 +441,8 @@ class EntityTest extends TestCase
 
     /**
      * Test indirectly modifying internal properties
-     *
-     * @return void
      */
-    public function testIndirectModification()
+    public function testIndirectModification(): void
     {
         $entity = new Entity();
         $entity->things = ['a', 'b'];
@@ -494,10 +452,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests has() method
-     *
-     * @return void
      */
-    public function testHas()
+    public function testHas(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
         $this->assertTrue($entity->has('id'));
@@ -520,10 +476,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests unsetProperty one property at a time
-     *
-     * @return void
      */
-    public function testUnset()
+    public function testUnset(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
         $entity->unset('id');
@@ -535,10 +489,8 @@ class EntityTest extends TestCase
 
     /**
      * Unsetting a property should not mark it as dirty.
-     *
-     * @return void
      */
-    public function testUnsetMakesClean()
+    public function testUnsetMakesClean(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
         $this->assertTrue($entity->isDirty('name'));
@@ -548,10 +500,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests unsetProperty with multiple properties
-     *
-     * @return void
      */
-    public function testUnsetMultiple()
+    public function testUnsetMultiple(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar', 'thing' => 2]);
         $entity->unset(['id', 'thing']);
@@ -562,10 +512,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the magic __isset() method
-     *
-     * @return void
      */
-    public function testMagicIsset()
+    public function testMagicIsset(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
         $this->assertTrue(isset($entity->id));
@@ -576,10 +524,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the magic __unset() method
-     *
-     * @return void
      */
-    public function testMagicUnset()
+    public function testMagicUnset(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['unset'])
@@ -592,12 +538,10 @@ class EntityTest extends TestCase
 
     /**
      * Tests the deprecated unsetProperty() method
-     *
-     * @return void
      */
-    public function testUnsetDeprecated()
+    public function testUnsetDeprecated(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $entity = new Entity();
             $entity->foo = 'foo';
 
@@ -608,10 +552,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests isset with array access
-     *
-     * @return void
      */
-    public function testIssetArrayAccess()
+    public function testIssetArrayAccess(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
         $this->assertArrayHasKey('id', $entity);
@@ -622,10 +564,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests get property with array access
-     *
-     * @return void
      */
-    public function testGetArrayAccess()
+    public function testGetArrayAccess(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['get'])
@@ -644,10 +584,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests set with array access
-     *
-     * @return void
      */
-    public function testSetArrayAccess()
+    public function testSetArrayAccess(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['set'])
@@ -668,10 +606,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests unset with array access
-     *
-     * @return void
      */
-    public function testUnsetArrayAccess()
+    public function testUnsetArrayAccess(): void
     {
         /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder(Entity::class)
@@ -687,10 +623,8 @@ class EntityTest extends TestCase
      * Tests that the method cache will only report the methods for the called class,
      * this is, calling methods defined in another entity will not cause a fatal error
      * when trying to call directly an inexistent method in another class
-     *
-     * @return void
      */
-    public function testMethodCache()
+    public function testMethodCache(): void
     {
         /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder(Entity::class)
@@ -711,10 +645,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that long properties in the entity are inflected correctly
-     *
-     * @return void
      */
-    public function testSetGetLongPropertyNames()
+    public function testSetGetLongPropertyNames(): void
     {
         /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder(Entity::class)
@@ -728,10 +660,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests serializing an entity as JSON
-     *
-     * @return void
      */
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
         $entity = new Entity($data);
@@ -740,10 +670,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests serializing an entity as PHP
-     *
-     * @return void
      */
-    public function testPhpSerialize()
+    public function testPhpSerialize(): void
     {
         $data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
         $entity = new Entity($data);
@@ -754,10 +682,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that jsonSerialize is called recursively for contained entities
-     *
-     * @return void
      */
-    public function testJsonSerializeRecursive()
+    public function testJsonSerializeRecursive(): void
     {
         $phone = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['jsonSerialize'])
@@ -771,10 +697,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the extract method
-     *
-     * @return void
      */
-    public function testExtract()
+    public function testExtract(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -796,10 +720,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests isDirty() method on a newly created object
-     *
-     * @return void
      */
-    public function testIsDirty()
+    public function testIsDirty(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -826,10 +748,8 @@ class EntityTest extends TestCase
 
     /**
      * Test setDirty().
-     *
-     * @return void
      */
-    public function testSetDirty()
+    public function testSetDirty(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -848,10 +768,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests dirty() when altering properties values and adding new ones
-     *
-     * @return void
      */
-    public function testDirtyChangingProperties()
+    public function testDirtyChangingProperties(): void
     {
         $entity = new Entity([
             'title' => 'Foo',
@@ -872,10 +790,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests extract only dirty properties
-     *
-     * @return void
      */
-    public function testExtractDirty()
+    public function testExtractDirty(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -891,10 +807,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the getDirty method
-     *
-     * @return void
      */
-    public function testGetDirty()
+    public function testGetDirty(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -913,10 +827,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the clean method
-     *
-     * @return void
      */
-    public function testClean()
+    public function testClean(): void
     {
         $entity = new Entity([
             'id' => 1,
@@ -935,10 +847,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the isNew method
-     *
-     * @return void
      */
-    public function testIsNew()
+    public function testIsNew(): void
     {
         $data = [
             'id' => 1,
@@ -957,10 +867,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the constructor when passing the markClean option
-     *
-     * @return void
      */
-    public function testConstructorWithClean()
+    public function testConstructorWithClean(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['clean'])
@@ -979,10 +887,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the constructor when passing the markClean option
-     *
-     * @return void
      */
-    public function testConstructorWithMarkNew()
+    public function testConstructorWithMarkNew(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['setNew', 'clean'])
@@ -1001,10 +907,8 @@ class EntityTest extends TestCase
 
     /**
      * Test toArray method.
-     *
-     * @return void
      */
-    public function testToArray()
+    public function testToArray(): void
     {
         $data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
         $entity = new Entity($data);
@@ -1014,10 +918,8 @@ class EntityTest extends TestCase
 
     /**
      * Test toArray recursive.
-     *
-     * @return void
      */
-    public function testToArrayRecursive()
+    public function testToArrayRecursive(): void
     {
         $data = ['id' => 1, 'name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
         $user = new Extending($data);
@@ -1044,10 +946,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that an entity with entities and other misc types can be properly toArray'd
-     *
-     * @return void
      */
-    public function testToArrayMixed()
+    public function testToArrayMixed(): void
     {
         $test = new Entity([
             'id' => 1,
@@ -1068,10 +968,8 @@ class EntityTest extends TestCase
 
     /**
      * Test that get accessors are called when converting to arrays.
-     *
-     * @return void
      */
-    public function testToArrayWithAccessor()
+    public function testToArrayWithAccessor(): void
     {
         /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder(Entity::class)
@@ -1089,10 +987,8 @@ class EntityTest extends TestCase
 
     /**
      * Test that toArray respects hidden properties.
-     *
-     * @return void
      */
-    public function testToArrayHiddenProperties()
+    public function testToArrayHiddenProperties(): void
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
@@ -1102,10 +998,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests setting hidden properties.
-     *
-     * @return void
      */
-    public function testSetHidden()
+    public function testSetHidden(): void
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
@@ -1122,10 +1016,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests setting hidden properties with merging.
-     *
-     * @return void
      */
-    public function testSetHiddenWithMerge()
+    public function testSetHiddenWithMerge(): void
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
@@ -1146,10 +1038,8 @@ class EntityTest extends TestCase
 
     /**
      * Test toArray includes 'virtual' properties.
-     *
-     * @return void
      */
-    public function testToArrayVirtualProperties()
+    public function testToArrayVirtualProperties(): void
     {
         /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder(Entity::class)
@@ -1176,10 +1066,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the getVisible() method
-     *
-     * @return void
      */
-    public function testGetVisible()
+    public function testGetVisible(): void
     {
         $entity = new Entity();
         $entity->foo = 'foo';
@@ -1191,10 +1079,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests setting virtual properties with merging.
-     *
-     * @return void
      */
-    public function testSetVirtualWithMerge()
+    public function testSetVirtualWithMerge(): void
     {
         $data = ['virtual' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
@@ -1215,10 +1101,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests error getters and setters
-     *
-     * @return void
      */
-    public function testGetErrorAndSetError()
+    public function testGetErrorAndSetError(): void
     {
         $entity = new Entity();
         $this->assertEmpty($entity->getErrors());
@@ -1245,10 +1129,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests reading errors from nested validator
-     *
-     * @return void
      */
-    public function testGetErrorNested()
+    public function testGetErrorNested(): void
     {
         $entity = new Entity();
         $entity->setError('options', ['subpages' => ['_empty' => 'required']]);
@@ -1264,10 +1146,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that it is possible to get errors for nested entities
-     *
-     * @return void
      */
-    public function testErrorsDeep()
+    public function testErrorsDeep(): void
     {
         $user = new Entity();
         $owner = new NonExtending();
@@ -1305,10 +1185,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that check if hasErrors() works
-     *
-     * @return void
      */
-    public function testHasErrors()
+    public function testHasErrors(): void
     {
         $entity = new Entity();
         $hasErrors = $entity->hasErrors();
@@ -1344,10 +1222,8 @@ class EntityTest extends TestCase
 
     /**
      * Test that errors can be read with a path.
-     *
-     * @return void
      */
-    public function testErrorPathReading()
+    public function testErrorPathReading(): void
     {
         $assoc = new Entity();
         $assoc2 = new NonExtending();
@@ -1376,10 +1252,8 @@ class EntityTest extends TestCase
     /**
      * Tests that changing the value of a property will remove errors
      * stored for it
-     *
-     * @return void
      */
-    public function testDirtyRemovesError()
+    public function testDirtyRemovesError(): void
     {
         $entity = new Entity(['a' => 'b']);
         $entity->setError('a', 'is not good');
@@ -1393,10 +1267,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that marking an entity as clean will remove errors too
-     *
-     * @return void
      */
-    public function testCleanRemovesErrors()
+    public function testCleanRemovesErrors(): void
     {
         $entity = new Entity(['a' => 'b']);
         $entity->setError('a', 'is not good');
@@ -1406,10 +1278,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests getAccessible() method
-     *
-     * @return void
      */
-    public function testGetAccessible()
+    public function testGetAccessible(): void
     {
         $entity = new Entity();
         $entity->setAccess('*', false);
@@ -1425,10 +1295,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests isAccessible() and setAccess() methods
-     *
-     * @return void
      */
-    public function testIsAccessible()
+    public function testIsAccessible(): void
     {
         $entity = new Entity();
         $entity->setAccess('*', false);
@@ -1454,10 +1322,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that an array can be used to set
-     *
-     * @return void
      */
-    public function testAccessibleAsArray()
+    public function testAccessibleAsArray(): void
     {
         $entity = new Entity();
         $entity->setAccess(['foo', 'bar', 'baz'], true);
@@ -1478,10 +1344,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that a wildcard can be used for setting accessible properties
-     *
-     * @return void
      */
-    public function testAccessibleWildcard()
+    public function testAccessibleWildcard(): void
     {
         $entity = new Entity();
         $entity->setAccess(['foo', 'bar', 'baz'], true);
@@ -1504,10 +1368,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that only accessible properties can be set
-     *
-     * @return void
      */
-    public function testSetWithAccessible()
+    public function testSetWithAccessible(): void
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $options = ['guard' => true];
@@ -1525,10 +1387,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that only accessible properties can be set
-     *
-     * @return void
      */
-    public function testSetWithAccessibleWithArray()
+    public function testSetWithAccessibleWithArray(): void
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $options = ['guard' => true];
@@ -1546,10 +1406,8 @@ class EntityTest extends TestCase
 
     /**
      * Test that accessible() and single property setting works.
-     *
-     * @return void
      */
-    public function testSetWithAccessibleSingleProperty()
+    public function testSetWithAccessibleSingleProperty(): void
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $entity->setAccess('*', false);
@@ -1568,10 +1426,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests the entity's __toString method
-     *
-     * @return void
      */
-    public function testToString()
+    public function testToString(): void
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
@@ -1579,10 +1435,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
         $entity->somethingElse = 'value';
@@ -1614,7 +1468,7 @@ class EntityTest extends TestCase
     /**
      * Test the source getter
      */
-    public function testGetAndSetSource()
+    public function testGetAndSetSource(): void
     {
         $entity = new Entity();
         $this->assertSame('', $entity->getSource());
@@ -1634,10 +1488,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests that trying to get an empty property name throws exception
-     *
-     * @return void
      */
-    public function testEmptyProperties()
+    public function testEmptyProperties(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $entity = new Entity();
@@ -1648,9 +1500,8 @@ class EntityTest extends TestCase
      * Tests that setting an empty property name does nothing
      *
      * @dataProvider emptyNamesProvider
-     * @return void
      */
-    public function testSetEmptyPropertyName(?string $property)
+    public function testSetEmptyPropertyName(?string $property): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $entity = new Entity();
@@ -1659,10 +1510,8 @@ class EntityTest extends TestCase
 
     /**
      * Provides empty values
-     *
-     * @return void
      */
-    public function testIsDirtyFromClone()
+    public function testIsDirtyFromClone(): void
     {
         $entity = new Entity(
             ['a' => 1, 'b' => 2],
@@ -1682,10 +1531,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests getInvalid and setInvalid
-     *
-     * @return void
      */
-    public function testGetSetInvalid()
+    public function testGetSetInvalid(): void
     {
         $entity = new Entity();
         $return = $entity->setInvalid([
@@ -1720,10 +1567,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests getInvalidField
-     *
-     * @return void
      */
-    public function testGetSetInvalidField()
+    public function testGetSetInvalidField(): void
     {
         $entity = new Entity();
         $return = $entity->setInvalidField('title', 'albert');
@@ -1737,10 +1582,8 @@ class EntityTest extends TestCase
 
     /**
      * Tests getInvalidFieldNull
-     *
-     * @return void
      */
-    public function testGetInvalidFieldNull()
+    public function testGetInvalidFieldNull(): void
     {
         $entity = new Entity();
         $this->assertNull($entity->getInvalidField('foo'));
@@ -1748,10 +1591,8 @@ class EntityTest extends TestCase
 
     /**
      * Test the isEmpty() check
-     *
-     * @return void
      */
-    public function testIsEmpty()
+    public function testIsEmpty(): void
     {
         $entity = new Entity([
             'array' => ['foo' => 'bar'],
@@ -1782,10 +1623,8 @@ class EntityTest extends TestCase
 
     /**
      * Test hasValue()
-     *
-     * @return void
      */
-    public function testHasValue()
+    public function testHasValue(): void
     {
         $entity = new Entity([
             'array' => ['foo' => 'bar'],

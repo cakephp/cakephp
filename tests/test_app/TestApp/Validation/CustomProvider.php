@@ -21,9 +21,8 @@ class CustomProvider
     /**
      * @param mixed $value
      * @param mixed $context
-     * @return bool
      */
-    public function validate($value, $context)
+    public function validate($value, $context): bool
     {
         return is_bool($value);
     }

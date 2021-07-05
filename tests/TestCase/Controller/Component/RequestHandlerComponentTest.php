@@ -62,8 +62,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -75,8 +73,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * init method
-     *
-     * @return void
      */
     protected function _init(): void
     {
@@ -94,8 +90,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -107,8 +101,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that the constructor sets the config.
-     *
-     * @return void
      */
     public function testConstructorConfig(): void
     {
@@ -126,8 +118,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * testInitializeCallback method
-     *
-     * @return void
      */
     public function testInitializeCallback(): void
     {
@@ -139,8 +129,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test that a mapped Accept-type header will set $this->ext correctly.
-     *
-     * @return void
      */
     public function testInitializeContentTypeSettingExt(): void
     {
@@ -154,8 +142,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers.
-     *
-     * @return void
      */
     public function testInitializeContentTypeWithjQueryAccept(): void
     {
@@ -172,8 +158,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that RequestHandler does not set extension to csv for text/plain mimetype
-     *
-     * @return void
      */
     public function testInitializeContentTypeWithjQueryTextPlainAccept(): void
     {
@@ -187,8 +171,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers
      * and the application is configured to handle multiple extensions
-     *
-     * @return void
      */
     public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions(): void
     {
@@ -203,8 +185,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that RequestHandler does not set $this->ext when multiple accepts are sent.
-     *
-     * @return void
      */
     public function testInitializeNoContentTypeWithSingleAccept(): void
     {
@@ -221,8 +201,6 @@ class RequestHandlerComponentTest extends TestCase
      * content types.
      * Having multiple types accepted with same weight, means the client lets the
      * server choose the returned content type.
-     *
-     * @return void
      */
     public function testInitializeNoContentTypeWithMultipleAcceptedTypes(): void
     {
@@ -245,8 +223,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that ext is set to type with highest weight
-     *
-     * @return void
      */
     public function testInitializeContentTypeWithMultipleAcceptedTypes(): void
     {
@@ -263,8 +239,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that ext is not set with confusing android accepts headers.
-     *
-     * @return void
      */
     public function testInitializeAmbiguousAndroidAccepts(): void
     {
@@ -281,8 +255,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that the headers sent by firefox are not treated as XML requests.
-     *
-     * @return void
      */
     public function testInititalizeFirefoxHeaderNotXml(): void
     {
@@ -295,8 +267,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that a type mismatch doesn't incorrectly set the ext
-     *
-     * @return void
      */
     public function testInitializeContentTypeAndExtensionMismatch(): void
     {
@@ -317,10 +287,8 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test that startup() throws deprecation warning if input data is available and request data is not populated.
-     *
-     * @return void
      */
-    public function testInitializeInputNoWarningEmptyJsonObject()
+    public function testInitializeInputNoWarningEmptyJsonObject(): void
     {
         $request = new ServerRequest([
             'input' => json_encode([]),
@@ -332,8 +300,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * testViewClassMap
-     *
-     * @return void
      */
     public function testViewClassMap(): void
     {
@@ -362,7 +328,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * Verify that isAjax is set on the request params for AJAX requests
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testIsAjaxParams(): void
@@ -377,7 +342,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * testAutoAjaxLayout method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAutoAjaxLayout(): void
@@ -412,9 +376,8 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @param string $extension Extension to test.
      * @dataProvider defaultExtensionsProvider
-     * @return void
      */
-    public function testDefaultExtensions($extension)
+    public function testDefaultExtensions($extension): void
     {
         Router::extensions([$extension], false);
 
@@ -436,9 +399,8 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @param string $extension Extension to test.
      * @dataProvider defaultExtensionsProvider
-     * @return void
      */
-    public function testDefaultExtensionsOverwrittenByAcceptHeader($extension)
+    public function testDefaultExtensionsOverwrittenByAcceptHeader($extension): void
     {
         Router::extensions([$extension], false);
 
@@ -462,7 +424,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * test custom JsonView class is loaded and correct.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testJsonViewLoaded(): void
@@ -482,7 +443,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * test custom XmlView class is loaded and correct.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testXmlViewLoaded(): void
@@ -502,7 +462,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * test custom AjaxView class is loaded and correct.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAjaxViewLoaded(): void
@@ -521,7 +480,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * test configured extension but no view class set.
      *
-     * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
     public function testNoViewClassExtension(): void
@@ -540,10 +498,8 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Tests that configured extensions that have no configured mimetype do not silently fallback to HTML.
-     *
-     * @return void
      */
-    public function testUnrecognizedExtensionFailure()
+    public function testUnrecognizedExtensionFailure(): void
     {
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('Invoked extension not recognized/configured: foo');
@@ -561,8 +517,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * testRenderAs method
-     *
-     * @return void
      */
     public function testRenderAs(): void
     {
@@ -575,8 +529,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test that attachment headers work with renderAs
-     *
-     * @return void
      */
     public function testRenderAsWithAttachment(): void
     {
@@ -591,8 +543,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test that respondAs works as expected.
-     *
-     * @return void
      */
     public function testRespondAs(): void
     {
@@ -607,8 +557,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test that attachment headers work with respondAs
-     *
-     * @return void
      */
     public function testRespondAsWithAttachment(): void
     {
@@ -623,7 +571,6 @@ class RequestHandlerComponentTest extends TestCase
      * test that calling renderAs() more than once continues to work.
      *
      * @link #6466
-     * @return void
      */
     public function testRenderAsCalledTwice(): void
     {
@@ -643,8 +590,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * testRequestContentTypes method
-     *
-     * @return void
      */
     public function testRequestContentTypes(): void
     {
@@ -705,8 +650,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test that map alias converts aliases to content types.
-     *
-     * @return void
      */
     public function testMapAlias(): void
     {
@@ -726,8 +669,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test accepts() on the component
-     *
-     * @return void
      */
     public function testAccepts(): void
     {
@@ -744,8 +685,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test accepts and prefers methods.
-     *
-     * @return void
      */
     public function testPrefers(): void
     {
@@ -783,7 +722,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * Test checkNotModified method
      *
-     * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
     public function testCheckNotModifiedByEtagStar(): void
@@ -807,7 +745,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * Test checkNotModified method
      *
-     * @return void
      * @triggers Controller.beforeRender
      */
     public function testCheckNotModifiedByEtagExact(): void
@@ -832,7 +769,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * Test checkNotModified method
      *
-     * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
     public function testCheckNotModifiedByEtagAndTime(): void
@@ -861,7 +797,6 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * Test checkNotModified method
      *
-     * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
     public function testCheckNotModifiedNoInfo(): void
@@ -877,8 +812,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test default options in construction
-     *
-     * @return void
      */
     public function testConstructDefaultOptions(): void
     {
@@ -894,8 +827,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * Test options in constructor replace defaults
-     *
-     * @return void
      */
     public function testConstructReplaceOptions(): void
     {
@@ -919,8 +850,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * test beforeRender() doesn't override response type set in controller action
-     *
-     * @return void
      */
     public function testBeforeRender(): void
     {
@@ -932,8 +861,6 @@ class RequestHandlerComponentTest extends TestCase
 
     /**
      * tests beforeRender automatically uses renderAs when a supported extension is found
-     *
-     * @return void
      */
     public function testBeforeRenderAutoRenderAs(): void
     {

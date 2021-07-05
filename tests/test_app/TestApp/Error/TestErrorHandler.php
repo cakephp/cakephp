@@ -21,7 +21,6 @@ class TestErrorHandler extends ErrorHandler
      * Stub sending responses
      *
      * @param \Cake\Http\Response $response
-     * @return void
      */
     protected function _sendResponse($response): void
     {

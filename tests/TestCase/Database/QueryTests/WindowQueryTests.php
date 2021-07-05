@@ -72,10 +72,8 @@ class WindowQueryTests extends TestCase
 
     /**
      * Tests window sql generation.
-     *
-     * @return void
      */
-    public function testWindowSql()
+    public function testWindowSql(): void
     {
         $query = new Query($this->connection);
         $sql = $query
@@ -97,7 +95,7 @@ class WindowQueryTests extends TestCase
         $this->assertEqualsSql('SELECT * WINDOW name AS (name3)', $sql);
     }
 
-    public function testMissingWindow()
+    public function testMissingWindow(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
@@ -106,7 +104,7 @@ class WindowQueryTests extends TestCase
         });
     }
 
-    public function testPartitions()
+    public function testPartitions(): void
     {
         $this->skipIf($this->skipTests);
         $this->loadFixtures('Comments');
@@ -142,10 +140,8 @@ class WindowQueryTests extends TestCase
 
     /**
      * Tests adding named windows to the query.
-     *
-     * @return void
      */
-    public function testNamedWindow()
+    public function testNamedWindow(): void
     {
         $skip = $this->skipTests;
         if (!$skip) {
@@ -166,7 +162,7 @@ class WindowQueryTests extends TestCase
         $this->assertEquals(4, $result[0]['num_rows']);
     }
 
-    public function testWindowChaining()
+    public function testWindowChaining(): void
     {
         $skip = $this->skipTests;
         if (!$skip) {

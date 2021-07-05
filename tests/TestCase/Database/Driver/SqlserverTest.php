@@ -37,8 +37,6 @@ class SqlserverTest extends TestCase
 
     /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -98,9 +96,8 @@ class SqlserverTest extends TestCase
      * @dataProvider dnsStringDataProvider
      * @param array $constructorArgs
      * @param string $dnsString
-     * @return void
      */
-    public function testDnsString($constructorArgs, $dnsString)
+    public function testDnsString($constructorArgs, $dnsString): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -123,10 +120,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test connecting to Sqlserver with custom configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigCustom()
+    public function testConnectionConfigCustom(): void
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $config = [
@@ -190,10 +185,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test connecting to Sqlserver with persistent set to false
-     *
-     * @return void
      */
-    public function testConnectionPersistentFalse()
+    public function testConnectionPersistentFalse(): void
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $config = [
@@ -235,10 +228,8 @@ class SqlserverTest extends TestCase
     /**
      * Test if attempting to connect with the driver throws an exception when
      * using an invalid config setting.
-     *
-     * @return void
      */
-    public function testConnectionPersistentTrueException()
+    public function testConnectionPersistentTrueException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
@@ -259,10 +250,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test select with limit only and SQLServer2012+
-     *
-     * @return void
      */
-    public function testSelectLimitVersion12()
+    public function testSelectLimitVersion12(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection', 'version'])
@@ -308,10 +297,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test select with limit on lte SQLServer2008
-     *
-     * @return void
      */
-    public function testSelectLimitOldServer()
+    public function testSelectLimitOldServer(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection', 'version'])
@@ -437,10 +424,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test that insert queries have results available to them.
-     *
-     * @return void
      */
-    public function testInsertUsesOutput()
+    public function testInsertUsesOutput(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -463,10 +448,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test that having queries replace the aggregated alias field.
-     *
-     * @return void
      */
-    public function testHavingReplacesAlias()
+    public function testHavingReplacesAlias(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['connect', 'getConnection', 'version'])
@@ -500,10 +483,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test that having queries replaces nothing is no alias is used.
-     *
-     * @return void
      */
-    public function testHavingWhenNoAliasIsUsed()
+    public function testHavingWhenNoAliasIsUsed(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['connect', 'getConnection', 'version'])
@@ -535,7 +516,7 @@ class SqlserverTest extends TestCase
         $this->assertSame($expected, $query->sql());
     }
 
-    public function testExceedingMaxParameters()
+    public function testExceedingMaxParameters(): void
     {
         $connection = ConnectionManager::get('test');
         $this->skipIf(!$connection->getDriver() instanceof Sqlserver);

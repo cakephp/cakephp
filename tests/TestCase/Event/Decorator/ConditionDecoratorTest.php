@@ -29,10 +29,8 @@ class ConditionDecoratorTest extends TestCase
 {
     /**
      * testCanTriggerIf
-     *
-     * @return void
      */
-    public function testCanTriggerIf()
+    public function testCanTriggerIf(): void
     {
         $callable = function (EventInterface $event) {
             return 'success';
@@ -59,10 +57,8 @@ class ConditionDecoratorTest extends TestCase
 
     /**
      * testCascadingEvents
-     *
-     * @return void
      */
-    public function testCascadingEvents()
+    public function testCascadingEvents(): void
     {
         $callable = function (EventInterface $event) {
             $event->setData('counter', $event->getData('counter') + 1);
@@ -96,7 +92,7 @@ class ConditionDecoratorTest extends TestCase
     /**
      * testCallableRuntimeException
      */
-    public function testCallableRuntimeException()
+    public function testCallableRuntimeException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cake\Event\Decorator\ConditionDecorator the `if` condition is not a callable!');

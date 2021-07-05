@@ -10,21 +10,21 @@ class Test3Behavior extends Behavior
     /**
      * Test for event bindings.
      */
-    public function beforeFind()
+    public function beforeFind(): void
     {
     }
 
     /**
      * Test finder
      */
-    public function findFoo()
+    public function findFoo(): void
     {
     }
 
     /**
      * Test method
      */
-    public function doSomething()
+    public function doSomething(): void
     {
     }
 
@@ -69,7 +69,7 @@ class Test3Behavior extends Behavior
      *
      * @return array
      */
-    public function testReflectionCache()
+    public function testReflectionCache(): array
     {
         return $this->_reflectionCache();
     }

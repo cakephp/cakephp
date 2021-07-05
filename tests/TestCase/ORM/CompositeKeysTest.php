@@ -52,8 +52,6 @@ class CompositeKeysTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -66,7 +64,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderHasOne()
+    public function strategiesProviderHasOne(): array
     {
         return [['join'], ['select']];
     }
@@ -76,7 +74,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderHasMany()
+    public function strategiesProviderHasMany(): array
     {
         return [['subquery'], ['select']];
     }
@@ -86,7 +84,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsTo()
+    public function strategiesProviderBelongsTo(): array
     {
         return [['join'], ['select']];
     }
@@ -96,7 +94,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsToMany()
+    public function strategiesProviderBelongsToMany(): array
     {
         return [['subquery'], ['select']];
     }
@@ -105,9 +103,8 @@ class CompositeKeysTest extends TestCase
      * Test that you cannot save rows with composite keys if some columns are missing.
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewErrorCompositeKeyNoIncrement()
+    public function testSaveNewErrorCompositeKeyNoIncrement(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing');
@@ -122,9 +119,8 @@ class CompositeKeysTest extends TestCase
      * SQLite is skipped because it doesn't support autoincrement composite keys.
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewCompositeKeyIncrement()
+    public function testSaveNewCompositeKeyIncrement(): void
     {
         $this->skipIfSqlite();
         $table = $this->getTableLocator()->get('CompositeIncrements');
@@ -139,9 +135,8 @@ class CompositeKeysTest extends TestCase
      * correctly nested when multiple foreignKeys are used
      *
      * @dataProvider strategiesProviderHasMany
-     * @return void
      */
-    public function testHasManyEager(string $strategy)
+    public function testHasManyEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
@@ -215,9 +210,8 @@ class CompositeKeysTest extends TestCase
      * foreignKeys are used
      *
      * @dataProvider strategiesProviderBelongsToMany
-     * @return void
      */
-    public function testBelongsToManyEager(string $strategy)
+    public function testBelongsToManyEager(string $strategy): void
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
         $tags = $this->getTableLocator()->get('SiteTags');
@@ -303,9 +297,8 @@ class CompositeKeysTest extends TestCase
      * Tests loading belongsTo with composite keys
      *
      * @dataProvider strategiesProviderBelongsTo
-     * @return void
      */
-    public function testBelongsToEager(string $strategy)
+    public function testBelongsToEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors', [
@@ -352,9 +345,8 @@ class CompositeKeysTest extends TestCase
      * Tests loading hasOne with composite keys
      *
      * @dataProvider strategiesProviderHasOne
-     * @return void
      */
-    public function testHasOneEager(string $strategy)
+    public function testHasOneEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasOne('SiteArticles', [
@@ -403,9 +395,8 @@ class CompositeKeysTest extends TestCase
      * if the entity has composite primary key
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewEntity()
+    public function testSaveNewEntity(): void
     {
         $entity = new Entity([
             'id' => 5,
@@ -427,9 +418,8 @@ class CompositeKeysTest extends TestCase
      * if the entity has composite primary key
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewEntityMissingKey()
+    public function testSaveNewEntityMissingKey(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)');
@@ -445,10 +435,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Test simple delete with composite primary key
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->save(new Entity(['id' => 1, 'site_id' => 2]));
@@ -462,10 +450,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Test delete with dependent records having composite keys
-     *
-     * @return void
      */
-    public function testDeleteDependent()
+    public function testDeleteDependent(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
@@ -487,10 +473,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Test generating a list of entities from a list of composite ids
-     *
-     * @return void
      */
-    public function testOneGenerateBelongsToManyEntitiesFromIds()
+    public function testOneGenerateBelongsToManyEntitiesFromIds(): void
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
         $articles->setEntityClass(OpenArticleEntity::class);
@@ -529,10 +513,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests find('list') with composite keys
-     *
-     * @return void
      */
-    public function testFindListCompositeKeys()
+    public function testFindListCompositeKeys(): void
     {
         $table = new Table([
             'table' => 'site_authors',
@@ -580,10 +562,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests find('threaded') with composite keys
-     *
-     * @return void
      */
-    public function testFindThreadedCompositeKeys()
+    public function testFindThreadedCompositeKeys(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $query = $this->getMockBuilder('Cake\ORM\Query')
@@ -671,10 +651,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests that loadInto() is capable of handling composite primary keys
-     *
-     * @return void
      */
-    public function testLoadInto()
+    public function testLoadInto(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $tags = $this->getTableLocator()->get('SiteTags');
@@ -694,10 +672,8 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that loadInto() is capable of handling composite primary keys
      * when loading belongsTo associations
-     *
-     * @return void
      */
-    public function testLoadIntoWithBelongsTo()
+    public function testLoadIntoWithBelongsTo(): void
     {
         $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors', [
@@ -716,10 +692,8 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that loadInto() is capable of handling composite primary keys
      * when loading into multiple entities
-     *
-     * @return void
      */
-    public function testLoadIntoMany()
+    public function testLoadIntoMany(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
@@ -741,10 +715,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests notMatching() with a belongsToMany association
-     *
-     * @return void
      */
-    public function testNotMatchingBelongsToMany()
+    public function testNotMatchingBelongsToMany(): void
     {
         $driver = $this->connection->getDriver();
 
@@ -784,10 +756,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Helper method to skip tests when connection is SQLite.
-     *
-     * @return void
      */
-    public function skipIfSqlite()
+    public function skipIfSqlite(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlite,

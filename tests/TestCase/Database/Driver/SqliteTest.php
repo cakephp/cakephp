@@ -27,10 +27,8 @@ class SqliteTest extends TestCase
 {
     /**
      * Test connecting to Sqlite with default configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigDefault()
+    public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
             ->onlyMethods(['_connect'])
@@ -59,10 +57,8 @@ class SqliteTest extends TestCase
 
     /**
      * Test connecting to Sqlite with custom configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigCustom()
+    public function testConnectionConfigCustom(): void
     {
         $config = [
             'persistent' => true,
@@ -127,9 +123,8 @@ class SqliteTest extends TestCase
      * @dataProvider schemaValueProvider
      * @param mixed $input
      * @param mixed $expected
-     * @return void
      */
-    public function testSchemaValue($input, $expected)
+    public function testSchemaValue($input, $expected): void
     {
         $driver = new Sqlite();
         $mock = $this->getMockBuilder(PDO::class)

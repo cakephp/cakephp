@@ -22,17 +22,15 @@ class FakeConnection
      *
      * @return array
      */
-    public function config()
+    public function config(): array
     {
         return $this->_config;
     }
 
     /**
      * Returns the set name
-     *
-     * @return string
      */
-    public function configName()
+    public function configName(): string
     {
         if (empty($this->_config['name'])) {
             return '';

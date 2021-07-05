@@ -33,10 +33,8 @@ class FunctionExpressionTest extends TestCase
 
     /**
      * Tests generating a function with no arguments
-     *
-     * @return void
      */
-    public function testArityZero()
+    public function testArityZero(): void
     {
         $f = new $this->expressionClass('MyFunction');
         $this->assertSame('MyFunction()', $f->sql(new ValueBinder()));
@@ -45,10 +43,8 @@ class FunctionExpressionTest extends TestCase
     /**
      * Tests generating a function one or multiple arguments and make sure
      * they are correctly replaced by placeholders
-     *
-     * @return void
      */
-    public function testArityMultiplePlainValues()
+    public function testArityMultiplePlainValues(): void
     {
         $f = new $this->expressionClass('MyFunction', ['foo', 'bar']);
         $binder = new ValueBinder();
@@ -65,10 +61,8 @@ class FunctionExpressionTest extends TestCase
 
     /**
      * Tests that it is possible to use literal strings as arguments
-     *
-     * @return void
      */
-    public function testLiteralParams()
+    public function testLiteralParams(): void
     {
         $binder = new ValueBinder();
         $f = new $this->expressionClass('MyFunction', ['foo' => 'literal', 'bar']);
@@ -78,10 +72,8 @@ class FunctionExpressionTest extends TestCase
     /**
      * Tests that it is possible to nest expression objects and pass them as arguments
      * In particular nesting multiple FunctionExpression
-     *
-     * @return void
      */
-    public function testFunctionNesting()
+    public function testFunctionNesting(): void
     {
         $binder = new ValueBinder();
         $f = new $this->expressionClass('MyFunction', ['foo', 'bar']);
@@ -92,10 +84,8 @@ class FunctionExpressionTest extends TestCase
     /**
      * Tests to avoid regression, prevents double parenthesis
      * In particular nesting with QueryExpression
-     *
-     * @return void
      */
-    public function testFunctionNestingQueryExpression()
+    public function testFunctionNestingQueryExpression(): void
     {
         $binder = new ValueBinder();
         $q = new QueryExpression('a');
@@ -105,10 +95,8 @@ class FunctionExpressionTest extends TestCase
 
     /**
      * Tests that passing a database query as an argument wraps the query SQL into parentheses.
-     *
-     * @return void
      */
-    public function testFunctionWithDatabaseQuery()
+    public function testFunctionWithDatabaseQuery(): void
     {
         $query = ConnectionManager::get('test')
             ->newQuery()
@@ -124,10 +112,8 @@ class FunctionExpressionTest extends TestCase
 
     /**
      * Tests that passing a ORM query as an argument wraps the query SQL into parentheses.
-     *
-     * @return void
      */
-    public function testFunctionWithOrmQuery()
+    public function testFunctionWithOrmQuery(): void
     {
         $query = $this->getTableLocator()->get('Articles')
             ->setSchema(['column' => 'integer'])
@@ -144,10 +130,8 @@ class FunctionExpressionTest extends TestCase
 
     /**
      * Tests that it is possible to use a number as a literal in a function.
-     *
-     * @return void
      */
-    public function testNumericLiteral()
+    public function testNumericLiteral(): void
     {
         $binder = new ValueBinder();
         $f = new $this->expressionClass('MyFunction', ['a_field' => 'literal', '32' => 'literal']);
@@ -159,10 +143,8 @@ class FunctionExpressionTest extends TestCase
 
     /**
      * Tests setReturnType() and getReturnType()
-     *
-     * @return void
      */
-    public function testGetSetReturnType()
+    public function testGetSetReturnType(): void
     {
         $f = new $this->expressionClass('MyFunction');
         $f = $f->setReturnType('foo');

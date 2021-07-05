@@ -45,7 +45,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
         TypeFactory::map('ordered_uuid', OrderedUuidType::class);
     }
 
-    protected function _insert()
+    protected function _insert(): void
     {
         $query = $this->connection->newQuery();
         $query
@@ -61,10 +61,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     /**
      * Tests inserting a value that is to be converted to an expression
      * automatically
-     *
-     * @return void
      */
-    public function testInsert()
+    public function testInsert(): void
     {
         $this->_insert();
         $query = $this->connection->newQuery()
@@ -83,10 +81,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
 
     /**
      * Test selecting with a custom expression type using conditions
-     *
-     * @return void
      */
-    public function testSelectWithConditions()
+    public function testSelectWithConditions(): void
     {
         $this->_insert();
         $result = $this->connection->newQuery()
@@ -102,10 +98,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
 
     /**
      * Tests Select using value object in conditions
-     *
-     * @return void
      */
-    public function testSelectWithConditionsValueObject()
+    public function testSelectWithConditionsValueObject(): void
     {
         $this->_insert();
         $result = $this->connection->newQuery()
@@ -124,7 +118,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
      *
      * @var string
      */
-    public function testSelectWithInCondition()
+    public function testSelectWithInCondition(): void
     {
         $this->_insert();
         $result = $this->connection->newQuery()
@@ -145,10 +139,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
 
     /**
      * Tests using an expression type in a between condition
-     *
-     * @return void
      */
-    public function testSelectWithBetween()
+    public function testSelectWithBetween(): void
     {
         $this->_insert();
         $result = $this->connection->newQuery()
@@ -170,10 +162,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
 
     /**
      * Tests using an expression type inside a function expression
-     *
-     * @return void
      */
-    public function testSelectWithFunction()
+    public function testSelectWithFunction(): void
     {
         $this->_insert();
         $result = $this->connection->newQuery()

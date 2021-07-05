@@ -28,8 +28,6 @@ class FormContextTest extends TestCase
 {
     /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -38,10 +36,8 @@ class FormContextTest extends TestCase
 
     /**
      * tests getRequiredMessage
-     *
-     * @return void
      */
-    public function testGetRequiredMessage()
+    public function testGetRequiredMessage(): void
     {
         $validator = new Validator();
         $validator->notEmptyString('title', 'Don\'t forget a title!');
@@ -59,10 +55,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test getting the primary key.
-     *
-     * @return void
      */
-    public function testPrimaryKey()
+    public function testPrimaryKey(): void
     {
         $context = new FormContext(['entity' => new Form()]);
         $this->assertEquals([], $context->getPrimaryKey());
@@ -70,10 +64,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test isPrimaryKey.
-     *
-     * @return void
      */
-    public function testIsPrimaryKey()
+    public function testIsPrimaryKey(): void
     {
         $context = new FormContext(['entity' => new Form()]);
         $this->assertFalse($context->isPrimaryKey('id'));
@@ -81,10 +73,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test the isCreate method.
-     *
-     * @return void
      */
-    public function testIsCreate()
+    public function testIsCreate(): void
     {
         $context = new FormContext(['entity' => new Form()]);
         $this->assertTrue($context->isCreate());
@@ -93,7 +83,7 @@ class FormContextTest extends TestCase
     /**
      * Test reading values from form data.
      */
-    public function testValPresent()
+    public function testValPresent(): void
     {
         $form = new Form();
         $form->setData(['title' => 'set title']);
@@ -105,10 +95,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test getting values when data and defaults are missing.
-     *
-     * @return void
      */
-    public function testValMissing()
+    public function testValMissing(): void
     {
         $context = new FormContext(['entity' => new Form()]);
         $this->assertNull($context->val('Comments.field'));
@@ -116,10 +104,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test getting default value
-     *
-     * @return void
      */
-    public function testValDefault()
+    public function testValDefault(): void
     {
         $form = new Form();
         $form->getSchema()->addField('name', ['default' => 'schema default']);
@@ -143,10 +129,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test isRequired
-     *
-     * @return void
      */
-    public function testIsRequired()
+    public function testIsRequired(): void
     {
         $form = new Form();
         $form->getValidator()
@@ -164,10 +148,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test the type method.
-     *
-     * @return void
      */
-    public function testType()
+    public function testType(): void
     {
         $form = new Form();
         $form->getSchema()
@@ -185,10 +167,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test the fieldNames method.
-     *
-     * @return void
      */
-    public function testFieldNames()
+    public function testFieldNames(): void
     {
         $form = new Form();
         $context = new FormContext([
@@ -212,10 +192,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test fetching attributes.
-     *
-     * @return void
      */
-    public function testAttributes()
+    public function testAttributes(): void
     {
         $form = new Form();
         $form->getSchema()
@@ -244,10 +222,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test fetching errors.
-     *
-     * @return void
      */
-    public function testError()
+    public function testError(): void
     {
         $nestedValidator = new Validator();
         $nestedValidator
@@ -289,10 +265,8 @@ class FormContextTest extends TestCase
 
     /**
      * Test checking errors.
-     *
-     * @return void
      */
-    public function testHasError()
+    public function testHasError(): void
     {
         $nestedValidator = new Validator();
         $nestedValidator

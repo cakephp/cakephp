@@ -33,10 +33,9 @@ class EventTest extends TestCase
     /**
      * Tests the name() method
      *
-     * @return void
      * @triggers fake.event
      */
-    public function testName()
+    public function testName(): void
     {
         $event = new Event('fake.event');
         $this->assertSame('fake.event', $event->getName());
@@ -45,11 +44,10 @@ class EventTest extends TestCase
     /**
      * Tests the subject() method
      *
-     * @return void
      * @triggers fake.event $this
      * @triggers fake.event
      */
-    public function testSubject()
+    public function testSubject(): void
     {
         $event = new Event('fake.event', $this);
         $this->assertSame($this, $event->getSubject());
@@ -64,10 +62,9 @@ class EventTest extends TestCase
     /**
      * Tests the event propagation stopping property
      *
-     * @return void
      * @triggers fake.event
      */
-    public function testPropagation()
+    public function testPropagation(): void
     {
         $event = new Event('fake.event');
         $this->assertFalse($event->isStopped());
@@ -78,10 +75,9 @@ class EventTest extends TestCase
     /**
      * Tests that it is possible to get/set custom data in a event
      *
-     * @return void
      * @triggers fake.event $this, array('some' => 'data')
      */
-    public function testEventData()
+    public function testEventData(): void
     {
         $event = new Event('fake.event', $this, ['some' => 'data']);
         $this->assertEquals(['some' => 'data'], $event->getData());
@@ -93,10 +89,9 @@ class EventTest extends TestCase
     /**
      * Tests that it is possible to get/set custom data in a event
      *
-     * @return void
      * @triggers fake.event $this, array('some' => 'data')
      */
-    public function testEventDataObject()
+    public function testEventDataObject(): void
     {
         $data = new ArrayObject(['some' => 'data']);
         $event = new Event('fake.event', $this, $data);
@@ -109,10 +104,9 @@ class EventTest extends TestCase
     /**
      * Tests that it is possible to get the name and subject directly
      *
-     * @return void
      * @triggers fake.event $this
      */
-    public function testEventDirectPropertyAccess()
+    public function testEventDirectPropertyAccess(): void
     {
         $event = new Event('fake.event', $this);
         $this->assertEquals($this, $event->getSubject());

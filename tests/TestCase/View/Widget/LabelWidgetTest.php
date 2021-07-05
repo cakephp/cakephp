@@ -28,8 +28,6 @@ class LabelWidgetTest extends TestCase
 {
     /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,10 +41,8 @@ class LabelWidgetTest extends TestCase
 
     /**
      * test render
-     *
-     * @return void
      */
-    public function testRender()
+    public function testRender(): void
     {
         $label = new LabelWidget($this->templates);
         $data = [
@@ -63,10 +59,8 @@ class LabelWidgetTest extends TestCase
 
     /**
      * test render escape
-     *
-     * @return void
      */
-    public function testRenderEscape()
+    public function testRenderEscape(): void
     {
         $label = new LabelWidget($this->templates);
         $data = [
@@ -85,10 +79,8 @@ class LabelWidgetTest extends TestCase
 
     /**
      * test render escape
-     *
-     * @return void
      */
-    public function testRenderAttributes()
+    public function testRenderAttributes(): void
     {
         $label = new LabelWidget($this->templates);
         $data = [
@@ -108,10 +100,8 @@ class LabelWidgetTest extends TestCase
 
     /**
      * Ensure templateVars option is hooked up.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'label' => '<label custom="{{custom}}" {{attrs}}>{{text}}</label>',

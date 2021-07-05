@@ -26,10 +26,8 @@ class AssertHtmlTest extends TestCase
 {
     /**
      * Test whitespace after HTML tags
-     *
-     * @return void
      */
-    public function testAssertHtmlWhitespaceAfter()
+    public function testAssertHtmlWhitespaceAfter(): void
     {
         $input = <<<HTML
 <div class="wrapper">
@@ -50,10 +48,8 @@ HTML;
 
     /**
      * Test whitespace inside HTML tags
-     *
-     * @return void
      */
-    public function testAssertHtmlInnerWhitespace()
+    public function testAssertHtmlInnerWhitespace(): void
     {
         $input = <<<HTML
 <div class="widget">
@@ -74,10 +70,8 @@ HTML;
 
     /**
      * test assertHtml works with single and double quotes
-     *
-     * @return void
      */
-    public function testAssertHtmlQuoting()
+    public function testAssertHtmlQuoting(): void
     {
         $input = '<a href="/test.html" class="active">My link</a>';
         $pattern = [
@@ -126,10 +120,8 @@ HTML;
 
     /**
      * Test that assertHtml runs quickly.
-     *
-     * @return void
      */
-    public function testAssertHtmlRuntimeComplexity()
+    public function testAssertHtmlRuntimeComplexity(): void
     {
         $pattern = [
             'div' => [
@@ -154,10 +146,8 @@ HTML;
 
     /**
      * test that assertHtml knows how to handle correct quoting.
-     *
-     * @return void
      */
-    public function testAssertHtmlQuotes()
+    public function testAssertHtmlQuotes(): void
     {
         $input = '<a href="/test.html" class="active">My link</a>';
         $pattern = [
@@ -186,10 +176,8 @@ HTML;
 
     /**
      * testNumericValuesInExpectationForAssertHtml
-     *
-     * @return void
      */
-    public function testNumericValuesInExpectationForAssertHtml()
+    public function testNumericValuesInExpectationForAssertHtml(): void
     {
         $value = 220985;
 
@@ -236,10 +224,8 @@ HTML;
 
     /**
      * test assertions fail when attributes are wrong.
-     *
-     * @return void
      */
-    public function testBadAssertHtmlInvalidAttribute()
+    public function testBadAssertHtmlInvalidAttribute(): void
     {
         $input = '<a href="/test.html" class="active">My link</a>';
         $pattern = [
@@ -260,10 +246,8 @@ HTML;
 
     /**
      * test assertion failure on incomplete HTML
-     *
-     * @return void
      */
-    public function testBadAssertHtmlMissingTags()
+    public function testBadAssertHtmlMissingTags(): void
     {
         $input = '<a href="/test.html" class="active">My link</a>';
         $pattern = [

@@ -35,8 +35,6 @@ class FileTest extends TestCase
 
     /**
      * setup the test case
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -47,8 +45,6 @@ class FileTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -62,10 +58,8 @@ class FileTest extends TestCase
 
     /**
      * testBasic method
-     *
-     * @return void
      */
-    public function testBasic()
+    public function testBasic(): void
     {
         $file = CORE_PATH . DS . 'LICENSE';
 
@@ -128,9 +122,8 @@ class FileTest extends TestCase
      * testUtf8Filenames
      *
      * @link https://github.com/cakephp/cakephp/issues/11749
-     * @return void
      */
-    public function testUtf8Filenames()
+    public function testUtf8Filenames(): void
     {
         $File = new File(TMP . 'tests/permissions/نام فارسی.php', true);
         $this->assertSame('نام فارسی', $File->name());
@@ -142,9 +135,8 @@ class FileTest extends TestCase
      * Test _basename method
      *
      * @dataProvider baseNameValueProvider
-     * @return void
      */
-    public function testBasename(string $path, ?string $suffix, bool $isRoot)
+    public function testBasename(string $path, ?string $suffix, bool $isRoot): void
     {
         if (!$isRoot) {
             $path = TMP . 'tests/permissions' . $path;
@@ -207,10 +199,8 @@ class FileTest extends TestCase
 
     /**
      * testPermission method
-     *
-     * @return void
      */
-    public function testPermission()
+    public function testPermission(): void
     {
         $this->skipIf(DS === '\\', 'File permissions tests not supported on Windows.');
 
@@ -254,10 +244,8 @@ class FileTest extends TestCase
 
     /**
      * testRead method
-     *
-     * @return void
      */
-    public function testRead()
+    public function testRead(): void
     {
         $file = __FILE__;
         $this->File = new File($file);
@@ -286,10 +274,8 @@ class FileTest extends TestCase
 
     /**
      * testOffset method
-     *
-     * @return void
      */
-    public function testOffset()
+    public function testOffset(): void
     {
         $this->File->close();
 
@@ -319,10 +305,8 @@ class FileTest extends TestCase
 
     /**
      * testOpen method
-     *
-     * @return void
      */
-    public function testOpen()
+    public function testOpen(): void
     {
         $this->File->handle = null;
 
@@ -344,10 +328,8 @@ class FileTest extends TestCase
 
     /**
      * testClose method
-     *
-     * @return void
      */
-    public function testClose()
+    public function testClose(): void
     {
         $this->File->handle = null;
         $this->assertNull($this->File->handle);
@@ -362,10 +344,8 @@ class FileTest extends TestCase
 
     /**
      * testCreate method
-     *
-     * @return void
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $tmpFile = TMP . 'tests/cakephp.file.test.tmp';
         $File = new File($tmpFile, true, 0777);
@@ -374,10 +354,8 @@ class FileTest extends TestCase
 
     /**
      * Tests the exists() method.
-     *
-     * @return void
      */
-    public function testExists()
+    public function testExists(): void
     {
         $tmpFile = TMP . 'tests/cakephp.file.test.tmp';
         $file = new File($tmpFile, true, 0777);
@@ -392,10 +370,8 @@ class FileTest extends TestCase
 
     /**
      * testOpeningNonExistentFileCreatesIt method
-     *
-     * @return void
      */
-    public function testOpeningNonExistentFileCreatesIt()
+    public function testOpeningNonExistentFileCreatesIt(): void
     {
         $someFile = new File(TMP . 'some_file.txt', false);
         $this->assertTrue($someFile->open());
@@ -406,10 +382,8 @@ class FileTest extends TestCase
 
     /**
      * testPrepare method
-     *
-     * @return void
      */
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $string = "some\nvery\ncool\r\nteststring here\n\n\nfor\r\r\n\n\r\n\nhere";
         if (DS === '\\') {
@@ -427,10 +401,8 @@ class FileTest extends TestCase
 
     /**
      * testReadable method
-     *
-     * @return void
      */
-    public function testReadable()
+    public function testReadable(): void
     {
         $someFile = new File(TMP . 'some_file.txt', false);
         $this->assertTrue($someFile->open());
@@ -441,10 +413,8 @@ class FileTest extends TestCase
 
     /**
      * testWritable method
-     *
-     * @return void
      */
-    public function testWritable()
+    public function testWritable(): void
     {
         $someFile = new File(TMP . 'some_file.txt', false);
         $this->assertTrue($someFile->open());
@@ -455,10 +425,8 @@ class FileTest extends TestCase
 
     /**
      * testExecutable method
-     *
-     * @return void
      */
-    public function testExecutable()
+    public function testExecutable(): void
     {
         $someFile = new File(TMP . 'some_file.txt', false);
         $this->assertTrue($someFile->open());
@@ -469,10 +437,8 @@ class FileTest extends TestCase
 
     /**
      * testLastAccess method
-     *
-     * @return void
      */
-    public function testLastAccess()
+    public function testLastAccess(): void
     {
         $someFile = new File(TMP . 'some_file.txt', false);
         $this->assertFalse($someFile->lastAccess());
@@ -484,10 +450,8 @@ class FileTest extends TestCase
 
     /**
      * testLastChange method
-     *
-     * @return void
      */
-    public function testLastChange()
+    public function testLastChange(): void
     {
         $someFile = new File(TMP . 'some_file.txt', false);
         $this->assertFalse($someFile->lastChange());
@@ -503,10 +467,8 @@ class FileTest extends TestCase
 
     /**
      * testWrite method
-     *
-     * @return void
      */
-    public function testWrite()
+    public function testWrite(): void
     {
         $tmpFile = $this->_getTmpFile();
         if (file_exists($tmpFile)) {
@@ -531,10 +493,8 @@ class FileTest extends TestCase
 
     /**
      * testAppend method
-     *
-     * @return void
      */
-    public function testAppend()
+    public function testAppend(): void
     {
         $tmpFile = $this->_getTmpFile();
         if (file_exists($tmpFile)) {
@@ -566,10 +526,8 @@ class FileTest extends TestCase
 
     /**
      * testDelete method
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $tmpFile = $this->_getTmpFile();
         if (!file_exists($tmpFile)) {
@@ -591,10 +549,8 @@ class FileTest extends TestCase
     /**
      * Windows has issues unlinking files if there are
      * active filehandles open.
-     *
-     * @return void
      */
-    public function testDeleteAfterRead()
+    public function testDeleteAfterRead(): void
     {
         $tmpFile = $this->_getTmpFile();
         if (!file_exists($tmpFile)) {
@@ -607,10 +563,8 @@ class FileTest extends TestCase
 
     /**
      * testCopy method
-     *
-     * @return void
      */
-    public function testCopy()
+    public function testCopy(): void
     {
         $dest = TMP . 'tests/cakephp.file.test.tmp';
         $file = __FILE__;
@@ -636,10 +590,8 @@ class FileTest extends TestCase
 
     /**
      * Test mime()
-     *
-     * @return void
      */
-    public function testMime()
+    public function testMime(): void
     {
         $this->skipIf(!function_exists('finfo_open') && !function_exists('mime_content_type'), 'Not able to read mime type');
         $path = TEST_APP . 'webroot/img/cake.power.gif';
@@ -653,10 +605,8 @@ class FileTest extends TestCase
 
     /**
      * getTmpFile method
-     *
-     * @return string
      */
-    protected function _getTmpFile()
+    protected function _getTmpFile(): string
     {
         $tmpFile = TMP . 'tests/cakephp.file.test.tmp';
         if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
@@ -673,10 +623,8 @@ class FileTest extends TestCase
 
     /**
      * testReplaceText method
-     *
-     * @return void
      */
-    public function testReplaceText()
+    public function testReplaceText(): void
     {
         $TestFile = new File(TEST_APP . 'vendor/welcome.php');
         $TmpFile = new File(TMP . 'tests' . DS . 'cakephp.file.test.tmp');
@@ -711,10 +659,8 @@ class FileTest extends TestCase
     /**
      * Tests that no path is being set for passed file paths that
      * do not exist.
-     *
-     * @return void
      */
-    public function testNoPartialPathBeingSetForNonExistentPath()
+    public function testNoPartialPathBeingSetForNonExistentPath(): void
     {
         $TmpFile = new File('/non/existent/file');
         $this->assertNull($TmpFile->pwd());

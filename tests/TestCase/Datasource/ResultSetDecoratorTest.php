@@ -26,10 +26,8 @@ class ResultSetDecoratorTest extends TestCase
 {
     /**
      * Tests the decorator can wrap a simple iterator
-     *
-     * @return void
      */
-    public function testDecorateSimpleIterator()
+    public function testDecorateSimpleIterator(): void
     {
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
@@ -38,10 +36,8 @@ class ResultSetDecoratorTest extends TestCase
 
     /**
      * Tests it toArray() method
-     *
-     * @return void
      */
-    public function testToArray()
+    public function testToArray(): void
     {
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
@@ -50,10 +46,8 @@ class ResultSetDecoratorTest extends TestCase
 
     /**
      * Tests JSON encoding method
-     *
-     * @return void
      */
-    public function testToJson()
+    public function testToJson(): void
     {
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
@@ -62,10 +56,8 @@ class ResultSetDecoratorTest extends TestCase
 
     /**
      * Tests serializing and unserializing the decorator
-     *
-     * @return void
      */
-    public function testSerialization()
+    public function testSerialization(): void
     {
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
@@ -75,10 +67,8 @@ class ResultSetDecoratorTest extends TestCase
 
     /**
      * Test the first() method which is part of the ResultSet duck type.
-     *
-     * @return void
      */
-    public function testFirst()
+    public function testFirst(): void
     {
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
@@ -89,10 +79,8 @@ class ResultSetDecoratorTest extends TestCase
 
     /**
      * Test the count() method which is part of the ResultSet duck type.
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);

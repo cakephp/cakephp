@@ -41,35 +41,35 @@ class TestingDispatchShell extends Shell
         return 1;
     }
 
-    public function testTask()
+    public function testTask(): void
     {
         $this->out('I am a test task, I dispatch another Shell');
         TestCase::setAppNamespace();
         $this->dispatchShell('testing_dispatch dispatch_test_task');
     }
 
-    public function testTaskDispatchArray()
+    public function testTaskDispatchArray(): void
     {
         $this->out('I am a test task, I dispatch another Shell');
         TestCase::setAppNamespace();
         $this->dispatchShell('testing_dispatch', 'dispatch_test_task');
     }
 
-    public function testTaskDispatchCommandString()
+    public function testTaskDispatchCommandString(): void
     {
         $this->out('I am a test task, I dispatch another Shell');
         TestCase::setAppNamespace();
         $this->dispatchShell(['command' => 'testing_dispatch dispatch_test_task']);
     }
 
-    public function testTaskDispatchCommandArray()
+    public function testTaskDispatchCommandArray(): void
     {
         $this->out('I am a test task, I dispatch another Shell');
         TestCase::setAppNamespace();
         $this->dispatchShell(['command' => ['testing_dispatch', 'dispatch_test_task']]);
     }
 
-    public function testTaskDispatchWithParam()
+    public function testTaskDispatchWithParam(): void
     {
         $this->out('I am a test task, I dispatch another Shell');
         TestCase::setAppNamespace();
@@ -81,7 +81,7 @@ class TestingDispatchShell extends Shell
         ]);
     }
 
-    public function testTaskDispatchWithMultipleParams()
+    public function testTaskDispatchWithMultipleParams(): void
     {
         $this->out('I am a test task, I dispatch another Shell');
         TestCase::setAppNamespace();
@@ -94,7 +94,7 @@ class TestingDispatchShell extends Shell
         ]);
     }
 
-    public function testTaskDispatchWithRequestedOff()
+    public function testTaskDispatchWithRequestedOff(): void
     {
         $this->out('I am a test task, I dispatch another Shell');
         TestCase::setAppNamespace();
@@ -106,17 +106,17 @@ class TestingDispatchShell extends Shell
         ]);
     }
 
-    public function dispatchTestTask()
+    public function dispatchTestTask(): void
     {
         $this->out('I am a dispatched Shell');
     }
 
-    public function dispatchTestTaskParam()
+    public function dispatchTestTaskParam(): void
     {
         $this->out('I am a dispatched Shell. My param `foo` has the value `' . $this->param('foo') . '`');
     }
 
-    public function dispatchTestTaskParams()
+    public function dispatchTestTaskParams(): void
     {
         $this->out('I am a dispatched Shell. My param `foo` has the value `' . $this->param('foo') . '`');
         $this->out('My param `fooz` has the value `' . $this->param('fooz') . '`');

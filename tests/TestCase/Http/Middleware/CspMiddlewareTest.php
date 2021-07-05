@@ -22,6 +22,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use ParagonIE\CSPBuilder\CSPBuilder;
+use Psr\Http\Server\RequestHandlerInterface;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -31,10 +32,8 @@ class CspMiddlewareTest extends TestCase
 {
     /**
      * Provides the request handler
-     *
-     * @return \Psr\Http\Server\RequestHandlerInterface
      */
-    protected function _getRequestHandler()
+    protected function _getRequestHandler(): RequestHandlerInterface
     {
         return new TestRequestHandler(function ($request) {
             return new Response();
@@ -43,10 +42,8 @@ class CspMiddlewareTest extends TestCase
 
     /**
      * test process adding headers
-     *
-     * @return void
      */
-    public function testProcessAddHeaders()
+    public function testProcessAddHeaders(): void
     {
         $request = new ServerRequest();
 
@@ -75,10 +72,8 @@ class CspMiddlewareTest extends TestCase
 
     /**
      * test process adding request attributes for nonces
-     *
-     * @return void
      */
-    public function testProcessAddNonceAttributes()
+    public function testProcessAddNonceAttributes(): void
     {
         $request = new ServerRequest();
 
@@ -117,10 +112,8 @@ class CspMiddlewareTest extends TestCase
 
     /**
      * testPassingACSPBuilderInstance
-     *
-     * @return void
      */
-    public function testPassingACSPBuilderInstance()
+    public function testPassingACSPBuilderInstance(): void
     {
         $request = new ServerRequest();
 

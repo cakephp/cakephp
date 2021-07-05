@@ -51,8 +51,6 @@ class PhpConfigTest extends TestCase
 
     /**
      * Setup.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -62,10 +60,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test reading files.
-     *
-     * @return void
      */
-    public function testRead()
+    public function testRead(): void
     {
         $engine = new PhpConfig($this->path);
         $values = $engine->read('var_test');
@@ -75,10 +71,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test an exception is thrown by reading files that exist without .php extension.
-     *
-     * @return void
      */
-    public function testReadWithExistentFileWithoutExtension()
+    public function testReadWithExistentFileWithoutExtension(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new PhpConfig($this->path);
@@ -87,10 +81,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test an exception is thrown by reading files that don't exist.
-     *
-     * @return void
      */
-    public function testReadWithNonExistentFile()
+    public function testReadWithNonExistentFile(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new PhpConfig($this->path);
@@ -99,10 +91,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test reading an empty file.
-     *
-     * @return void
      */
-    public function testReadEmptyFile()
+    public function testReadEmptyFile(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new PhpConfig($this->path);
@@ -111,10 +101,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test reading keys with ../ doesn't work.
-     *
-     * @return void
      */
-    public function testReadWithDots()
+    public function testReadWithDots(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new PhpConfig($this->path);
@@ -123,10 +111,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test reading from plugins.
-     *
-     * @return void
      */
-    public function testReadPluginValue()
+    public function testReadPluginValue(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $engine = new PhpConfig($this->path);
@@ -138,10 +124,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test dumping data to PHP format.
-     *
-     * @return void
      */
-    public function testDump()
+    public function testDump(): void
     {
         $engine = new PhpConfig(TMP);
         $result = $engine->dump('test', $this->testData);
@@ -164,10 +148,8 @@ class PhpConfigTest extends TestCase
 
     /**
      * Test that dump() makes files read() can read.
-     *
-     * @return void
      */
-    public function testDumpRead()
+    public function testDumpRead(): void
     {
         $engine = new PhpConfig(TMP);
         $engine->dump('test', $this->testData);

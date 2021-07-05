@@ -43,8 +43,6 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -62,10 +60,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testAssociatedChecks
-     *
-     * @return void
      */
-    public function testAssociatedChecks()
+    public function testAssociatedChecks(): void
     {
         $expected = [
             'associated' => [
@@ -149,10 +145,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testBuilder
-     *
-     * @return void
      */
-    public function testBuilder()
+    public function testBuilder(): void
     {
         $expected = [
             'associated' => [
@@ -191,10 +185,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testParseOptionsArray
-     *
-     * @return void
      */
-    public function testParseOptionsArray()
+    public function testParseOptionsArray(): void
     {
         $options = [
             'associated' => [
@@ -218,10 +210,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testSettingCustomOptions
-     *
-     * @return void
      */
-    public function testSettingCustomOptions()
+    public function testSettingCustomOptions(): void
     {
         $expected = [
             'myOption' => true,

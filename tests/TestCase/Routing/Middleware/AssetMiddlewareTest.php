@@ -28,8 +28,6 @@ class AssetMiddlewareTest extends TestCase
 {
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -39,8 +37,6 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -50,10 +46,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * test that the if modified since header generates 304 responses
-     *
-     * @return void
      */
-    public function testCheckIfModifiedHeader()
+    public function testCheckIfModifiedHeader(): void
     {
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $request = ServerRequestFactory::fromGlobals([
@@ -72,10 +66,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * test missing plugin assets.
-     *
-     * @return void
      */
-    public function testMissingPluginAsset()
+    public function testMissingPluginAsset(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/not_found.js']);
         $handler = new TestRequestHandler();
@@ -123,7 +115,7 @@ class AssetMiddlewareTest extends TestCase
      *
      * @dataProvider assetProvider
      */
-    public function testPluginAsset(string $url, string $expectedFile)
+    public function testPluginAsset(string $url, string $expectedFile): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => $url]);
         $handler = new TestRequestHandler();
@@ -137,10 +129,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * Test headers with plugin assets
-     *
-     * @return void
      */
-    public function testPluginAssetHeaders()
+    public function testPluginAssetHeaders(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/root.js']);
         $handler = new TestRequestHandler();
@@ -176,10 +166,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * Test that // results in a 404
-     *
-     * @return void
      */
-    public function test404OnDoubleSlash()
+    public function test404OnDoubleSlash(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '//index.php']);
         $handler = new TestRequestHandler();
@@ -191,10 +179,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * Test that .. results in a 404
-     *
-     * @return void
      */
-    public function test404OnDoubleDot()
+    public function test404OnDoubleDot(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/../webroot/root.js']);
         $handler = new TestRequestHandler();
@@ -206,10 +192,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * Test that hidden filenames result in a 404
-     *
-     * @return void
      */
-    public function test404OnHiddenFile()
+    public function test404OnHiddenFile(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfile']);
         $handler = new TestRequestHandler();
@@ -221,10 +205,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * Test that hidden filenames result in a 404
-     *
-     * @return void
      */
-    public function test404OnHiddenFolder()
+    public function test404OnHiddenFolder(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfolder/some.js']);
         $handler = new TestRequestHandler();

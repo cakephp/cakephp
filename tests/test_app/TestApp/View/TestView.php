@@ -48,9 +48,8 @@ class TestView extends AppView
      * Setter for extension.
      *
      * @param string $ext The extension
-     * @return void
      */
-    public function ext(string $ext)
+    public function ext(string $ext): void
     {
         $this->_ext = $ext;
     }

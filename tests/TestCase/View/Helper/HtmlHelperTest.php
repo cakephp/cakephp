@@ -63,8 +63,6 @@ class HtmlHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -86,15 +84,13 @@ class HtmlHelperTest extends TestCase
         static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
 
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->fallbacks(DashedRoute::class);
         });
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -105,10 +101,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testLink method
-     *
-     * @return void
      */
-    public function testLink()
+    public function testLink(): void
     {
         Router::reload();
         Router::connect('/{controller}', ['action' => 'index']);
@@ -337,9 +331,6 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-    /**
-     * @return void
-     */
     public function testLinkFromPath(): void
     {
         $result = $this->Html->linkFromPath('Index', 'Articles::index');
@@ -353,10 +344,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testImageTag method
-     *
-     * @return void
      */
-    public function testImageTag()
+    public function testImageTag(): void
     {
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
@@ -405,10 +394,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Ensure that data URIs don't get base paths set.
-     *
-     * @return void
      */
-    public function testImageDataUriBaseDir()
+    public function testImageDataUriBaseDir(): void
     {
         $request = $this->View->getRequest()
             ->withAttribute('base', 'subdir')
@@ -430,10 +417,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test image() with query strings.
-     *
-     * @return void
      */
-    public function testImageQueryString()
+    public function testImageQueryString(): void
     {
         $result = $this->Html->image('test.gif?one=two&three=four');
         $expected = ['img' => ['src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '']];
@@ -442,10 +427,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test that image works with pathPrefix.
-     *
-     * @return void
      */
-    public function testImagePathPrefix()
+    public function testImagePathPrefix(): void
     {
         $result = $this->Html->image('test.gif', ['pathPrefix' => '/my/custom/path/']);
         $expected = ['img' => ['src' => '/my/custom/path/test.gif', 'alt' => '']];
@@ -469,10 +452,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test that image() works with fullBase and a webroot not equal to /
-     *
-     * @return void
      */
-    public function testImageWithFullBase()
+    public function testImageWithFullBase(): void
     {
         $result = $this->Html->image('test.gif', ['fullBase' => true]);
         $here = $this->Html->Url->build('/', ['fullBase' => true]);
@@ -496,10 +477,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test image() with Asset.timestamp
-     *
-     * @return void
      */
-    public function testImageWithTimestampping()
+    public function testImageWithTimestampping(): void
     {
         Configure::write('Asset.timestamp', 'force');
 
@@ -527,10 +506,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Tests creation of an image tag using a theme and asset timestamping
-     *
-     * @return void
      */
-    public function testImageTagWithTheme()
+    public function testImageTagWithTheme(): void
     {
         $this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
@@ -570,10 +547,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test theme assets in main webroot path
-     *
-     * @return void
      */
-    public function testThemeAssetsInMainWebrootPath()
+    public function testThemeAssetsInMainWebrootPath(): void
     {
         Configure::write('App.wwwRoot', TEST_APP . 'webroot/');
 
@@ -594,10 +569,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testStyle method
-     *
-     * @return void
      */
-    public function testStyle()
+    public function testStyle(): void
     {
         $result = $this->Html->style(['display' => 'none', 'margin' => '10px']);
         $this->assertSame('display:none; margin:10px;', $result);
@@ -608,10 +581,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testCssLink method
-     *
-     * @return void
      */
-    public function testCssLink()
+    public function testCssLink(): void
     {
         $result = $this->Html->css('screen');
         $expected = [
@@ -688,10 +659,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test that css() includes CSP nonces if available.
-     *
-     * @return void
      */
-    public function testCssWithCspNonce()
+    public function testCssWithCspNonce(): void
     {
         $nonce = 'r@nd0mV4lue';
         $request = $this->View->getRequest()->withAttribute('cspStyleNonce', $nonce);
@@ -706,10 +675,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test css() with once option.
-     *
-     * @return void
      */
-    public function testCssLinkOnce()
+    public function testCssLinkOnce(): void
     {
         $result = $this->Html->css('screen', ['once' => true]);
         $expected = [
@@ -730,10 +697,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testCssWithFullBase method
-     *
-     * @return void
      */
-    public function testCssWithFullBase()
+    public function testCssWithFullBase(): void
     {
         Configure::write('Asset.filter.css', false);
         $here = $this->Html->Url->build('/', ['fullBase' => true]);
@@ -747,10 +712,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testPluginCssLink method
-     *
-     * @return void
      */
-    public function testPluginCssLink()
+    public function testPluginCssLink(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -786,10 +749,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test use of css() and timestamping
-     *
-     * @return void
      */
-    public function testCssTimestamping()
+    public function testCssTimestamping(): void
     {
         Configure::write('debug', true);
         Configure::write('Asset.timestamp', true);
@@ -829,10 +790,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test use of css() and timestamping with plugin syntax
-     *
-     * @return void
      */
-    public function testPluginCssTimestamping()
+    public function testPluginCssTimestamping(): void
     {
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
@@ -880,10 +839,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Resource names must be treated differently for css() and script()
-     *
-     * @return void
      */
-    public function testBufferedCssAndScriptWithIdenticalResourceName()
+    public function testBufferedCssAndScriptWithIdenticalResourceName(): void
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
@@ -897,10 +854,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test timestamp enforcement for script tags.
-     *
-     * @return void
      */
-    public function testScriptTimestamping()
+    public function testScriptTimestamping(): void
     {
         $this->skipIf(!is_writable(WWW_ROOT . 'js'), 'webroot/js is not Writable, timestamp testing has been skipped.');
         Configure::write('debug', true);
@@ -922,10 +877,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test timestamp enforcement for script tags with plugin syntax.
-     *
-     * @return void
      */
-    public function testPluginScriptTimestamping()
+    public function testPluginScriptTimestamping(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -955,10 +908,8 @@ class HtmlHelperTest extends TestCase
     /**
      * test that scripts added with uses() are only ever included once.
      * test script tag generation
-     *
-     * @return void
      */
-    public function testScript()
+    public function testScript(): void
     {
         $result = $this->Html->script('foo');
         $expected = [
@@ -1057,10 +1008,8 @@ class HtmlHelperTest extends TestCase
     /**
      * Test that content-security-policy nonces are applied if the request attribute
      * is present.
-     *
-     * @return void
      */
-    public function testScriptCspNonce()
+    public function testScriptCspNonce(): void
     {
         $nonce = 'r@ndomV4lue';
         $request = $this->View->getRequest()
@@ -1077,10 +1026,8 @@ class HtmlHelperTest extends TestCase
     /**
      * test that plugin scripts added with uses() are only ever included once.
      * test script tag generation with plugin syntax
-     *
-     * @return void
      */
-    public function testPluginScript()
+    public function testPluginScript(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -1143,10 +1090,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test that script() works with blocks.
-     *
-     * @return void
      */
-    public function testScriptWithBlocks()
+    public function testScriptWithBlocks(): void
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
@@ -1164,10 +1109,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testScriptWithFullBase method
-     *
-     * @return void
      */
-    public function testScriptWithFullBase()
+    public function testScriptWithFullBase(): void
     {
         $here = $this->Html->Url->build('/', ['fullBase' => true]);
 
@@ -1189,10 +1132,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test a script file in the webroot/theme dir.
-     *
-     * @return void
      */
-    public function testScriptInTheme()
+    public function testScriptInTheme(): void
     {
         $this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
@@ -1215,10 +1156,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test Script block generation
-     *
-     * @return void
      */
-    public function testScriptBlock()
+    public function testScriptBlock(): void
     {
         $result = $this->Html->scriptBlock('window.foo = 2;');
         $expected = [
@@ -1268,10 +1207,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Ensure that scriptBlock() uses CSP nonces.
-     *
-     * @return void
      */
-    public function testScriptBlockCspNonce()
+    public function testScriptBlockCspNonce(): void
     {
         $nonce = 'r@ndomV4lue';
         $request = $this->View->getRequest()
@@ -1289,10 +1226,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * test script tag output buffering when using scriptStart() and scriptEnd();
-     *
-     * @return void
      */
-    public function testScriptStartAndScriptEnd()
+    public function testScriptStartAndScriptEnd(): void
     {
         $this->Html->scriptStart();
         echo 'this is some javascript';
@@ -1319,10 +1254,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testCharsetTag method
-     *
-     * @return void
      */
-    public function testCharsetTag()
+    public function testCharsetTag(): void
     {
         Configure::write('App.encoding', null);
         $result = $this->Html->charset();
@@ -1341,10 +1274,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testNestedList method
-     *
-     * @return void
      */
-    public function testNestedList()
+    public function testNestedList(): void
     {
         $list = [
             'Item 1',
@@ -1555,10 +1486,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testMeta method
-     *
-     * @return void
      */
-    public function testMeta()
+    public function testMeta(): void
     {
         Router::connect('/:controller', ['action' => 'index']);
 
@@ -1643,7 +1572,7 @@ class HtmlHelperTest extends TestCase
      * @param string $expectedUrl
      * @dataProvider dataMetaLinksProvider
      */
-    public function testMetaLinks($type, array $url, $expectedUrl)
+    public function testMetaLinks($type, array $url, $expectedUrl): void
     {
         $result = $this->Html->meta($type, $url);
         $expected = ['link' => ['href' => $expectedUrl, 'rel' => $type]];
@@ -1652,10 +1581,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test generating favicon's with meta()
-     *
-     * @return void
      */
-    public function testMetaIcon()
+    public function testMetaIcon(): void
     {
         $result = $this->Html->meta('icon', 'favicon.ico');
         $expected = [
@@ -1719,10 +1646,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test generating favicon's with meta() with theme
-     *
-     * @return void
      */
-    public function testMetaIconWithTheme()
+    public function testMetaIconWithTheme(): void
     {
         $this->Html->Url->getView()->setTheme('TestTheme');
 
@@ -1752,10 +1677,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Test the inline and block options for meta()
-     *
-     * @return void
      */
-    public function testMetaWithBlocks()
+    public function testMetaWithBlocks(): void
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
@@ -1774,7 +1697,7 @@ class HtmlHelperTest extends TestCase
     /**
      * Test meta() with custom tag and block argument
      */
-    public function testMetaCustomWithBlock()
+    public function testMetaCustomWithBlock(): void
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
@@ -1791,10 +1714,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testTableHeaders method
-     *
-     * @return void
      */
-    public function testTableHeaders()
+    public function testTableHeaders(): void
     {
         $result = $this->Html->tableHeaders(['ID', 'Name', 'Date']);
         $expected = ['<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
@@ -1833,10 +1754,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testTableCells method
-     *
-     * @return void
      */
-    public function testTableCells()
+    public function testTableCells(): void
     {
         $tr = [
             'td content 1',
@@ -1942,10 +1861,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testTag method
-     *
-     * @return void
      */
-    public function testTag()
+    public function testTag(): void
     {
         $result = $this->Html->tag('div', 'text');
         $this->assertHtml(['<div', 'text', '/div'], $result);
@@ -1957,10 +1874,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testDiv method
-     *
-     * @return void
      */
-    public function testDiv()
+    public function testDiv(): void
     {
         $result = $this->Html->div('class-name');
         $expected = ['div' => ['class' => 'class-name']];
@@ -1983,10 +1898,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testPara method
-     *
-     * @return void
      */
-    public function testPara()
+    public function testPara(): void
     {
         $result = $this->Html->para('class-name', null);
         $expected = ['p' => ['class' => 'class-name']];
@@ -2019,10 +1932,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * testMedia method
-     *
-     * @return void
      */
-    public function testMedia()
+    public function testMedia(): void
     {
         $result = $this->Html->media('video.webm');
         $expected = ['video' => ['src' => 'files/video.webm'], '/video'];
@@ -2087,10 +1998,8 @@ class HtmlHelperTest extends TestCase
 
     /**
      * Tests that CSS and Javascript files of the same name don't conflict with the 'once' test
-     *
-     * @return void
      */
-    public function testCssAndScriptWithSameName()
+    public function testCssAndScriptWithSameName(): void
     {
         $result = $this->Html->css('foo');
         $expected = [

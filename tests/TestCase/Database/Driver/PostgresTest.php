@@ -27,10 +27,8 @@ class PostgresTest extends TestCase
 {
     /**
      * Test connecting to Postgres with default configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigDefault()
+    public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -84,10 +82,8 @@ class PostgresTest extends TestCase
 
     /**
      * Test connecting to Postgres with custom configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigCustom()
+    public function testConnectionConfigCustom(): void
     {
         $config = [
             'persistent' => false,
@@ -148,10 +144,8 @@ class PostgresTest extends TestCase
 
     /**
      * Tests that insert queries get a "RETURNING *" string at the end
-     *
-     * @return void
      */
-    public function testInsertReturning()
+    public function testInsertReturning(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -182,10 +176,8 @@ class PostgresTest extends TestCase
 
     /**
      * Test that having queries replace the aggregated alias field.
-     *
-     * @return void
      */
-    public function testHavingReplacesAlias()
+    public function testHavingReplacesAlias(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
             ->onlyMethods(['connect', 'getConnection', 'version'])
@@ -216,10 +208,8 @@ class PostgresTest extends TestCase
 
     /**
      * Test that having queries replaces nothing if no alias is used.
-     *
-     * @return void
      */
-    public function testHavingWhenNoAliasIsUsed()
+    public function testHavingWhenNoAliasIsUsed(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
             ->onlyMethods(['connect', 'getConnection', 'version'])

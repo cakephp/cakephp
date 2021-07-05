@@ -31,9 +31,6 @@ class TestSessionTest extends TestCase
      */
     protected $session;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -50,8 +47,6 @@ class TestSessionTest extends TestCase
 
     /**
      * Tests read()
-     *
-     * @return void
      */
     public function testRead(): void
     {
@@ -64,8 +59,6 @@ class TestSessionTest extends TestCase
 
     /**
      * Tests check()
-     *
-     * @return void
      */
     public function testCheck(): void
     {

@@ -52,8 +52,6 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -62,7 +60,7 @@ class IntegrationTestTraitTest extends TestCase
 
         Router::reload();
         Router::extensions(['json']);
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
             $routes->applyMiddleware('cookie');
 
@@ -72,12 +70,12 @@ class IntegrationTestTraitTest extends TestCase
             $routes->options('/options/{controller}/{action}', []);
             $routes->connect('/{controller}/{action}/*', []);
         });
-        Router::scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes) {
+        Router::scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
             $routes->applyMiddleware('cookieCsrf');
             $routes->connect('/posts/{action}', ['controller' => 'Posts']);
         });
-        Router::scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes) {
+        Router::scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
             $routes->applyMiddleware('sessionCsrf');
             $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
@@ -88,10 +86,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Tests that all data that used by the request is cast to strings
-     *
-     * @return void
      */
-    public function testDataCastToString()
+    public function testDataCastToString(): void
     {
         $data = [
             'title' => 'Blog Post',
@@ -151,10 +147,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test building a request.
-     *
-     * @return void
      */
-    public function testRequestBuilding()
+    public function testRequestBuilding(): void
     {
         $this->configRequest([
             'headers' => [
@@ -185,10 +179,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test request building adds csrf tokens
-     *
-     * @return void
      */
-    public function testRequestBuildingCsrfTokens()
+    public function testRequestBuildingCsrfTokens(): void
     {
         $this->enableCsrfToken();
         $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
@@ -210,10 +202,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test multiple actions using CSRF tokens don't fail
-     *
-     * @return void
      */
-    public function testEnableCsrfMultipleRequests()
+    public function testEnableCsrfMultipleRequests(): void
     {
         $this->enableCsrfToken();
         $first = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
@@ -237,10 +227,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test building a request, with query parameters
-     *
-     * @return void
      */
-    public function testRequestBuildingQueryParameters()
+    public function testRequestBuildingQueryParameters(): void
     {
         $request = $this->_buildRequest('/tasks/view?archived=yes', 'GET', []);
 
@@ -254,7 +242,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @see CookieComponentControllerTest
      */
-    public function testCookieEncrypted()
+    public function testCookieEncrypted(): void
     {
         Security::setSalt($this->key);
         $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
@@ -264,10 +252,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending get request and using default `test_app/config/routes.php`.
-     *
-     * @return void
      */
-    public function testGetUsingApplicationWithPluginRoutes()
+    public function testGetUsingApplicationWithPluginRoutes(): void
     {
         // first clean routes to have Router::$initailized === false
         Router::reload();
@@ -281,10 +267,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending get request and using default `test_app/config/routes.php`.
-     *
-     * @return void
      */
-    public function testGetUsingApplicationWithDefaultRoutes()
+    public function testGetUsingApplicationWithDefaultRoutes(): void
     {
         // first clean routes to have Router::$initialized === false
         Router::reload();
@@ -296,7 +280,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertSame('5', $this->_getBodyAsString());
     }
 
-    public function testExceptionsInMiddlewareJsonView()
+    public function testExceptionsInMiddlewareJsonView(): void
     {
         Router::reload();
         Router::connect('/json_response/api_get_data', [
@@ -316,10 +300,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending head requests.
-     *
-     * @return void
      */
-    public function testHead()
+    public function testHead(): void
     {
         $this->assertNull($this->_response);
 
@@ -331,10 +313,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending head requests.
-     *
-     * @return void
      */
-    public function testHeadMethodRoute()
+    public function testHeadMethodRoute(): void
     {
         $this->head('/head/request_action/test_request_action');
         $this->assertResponseSuccess();
@@ -342,10 +322,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending options requests.
-     *
-     * @return void
      */
-    public function testOptions()
+    public function testOptions(): void
     {
         $this->assertNull($this->_response);
 
@@ -357,10 +335,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending options requests.
-     *
-     * @return void
      */
-    public function testOptionsMethodRoute()
+    public function testOptionsMethodRoute(): void
     {
         $this->options('/options/request_action/test_request_action');
         $this->assertResponseSuccess();
@@ -368,10 +344,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending get requests sets the request method
-     *
-     * @return void
      */
-    public function testGetSpecificRouteHttpServer()
+    public function testGetSpecificRouteHttpServer(): void
     {
         $this->get('/get/request_action/test_request_action');
         $this->assertResponseOk();
@@ -380,10 +354,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test customizing the app class.
-     *
-     * @return void
      */
-    public function testConfigApplication()
+    public function testConfigApplication(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Cannot load `TestApp\MissingApp` for use in integration');
@@ -393,10 +365,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending get requests with Http\Server
-     *
-     * @return void
      */
-    public function testGetHttpServer()
+    public function testGetHttpServer(): void
     {
         $this->assertNull($this->_response);
 
@@ -409,10 +379,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests get query string data
-     *
-     * @return void
      */
-    public function testGetQueryStringHttpServer()
+    public function testGetQueryStringHttpServer(): void
     {
         $this->configRequest(['headers' => ['Content-Type' => 'text/plain']]);
         $this->get('/request_action/params_pass?q=query');
@@ -427,10 +395,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests get query string data
-     *
-     * @return void
      */
-    public function testGetQueryStringSetsHere()
+    public function testGetQueryStringSetsHere(): void
     {
         $this->configRequest(['headers' => ['Content-Type' => 'text/plain']]);
         $this->get('/request_action/params_pass?q=query');
@@ -446,10 +412,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests get cookies
-     *
-     * @return void
      */
-    public function testGetCookiesHttpServer()
+    public function testGetCookiesHttpServer(): void
     {
         $this->configRequest(['cookies' => ['split_test' => 'abc']]);
         $this->get('/request_action/cookie_pass');
@@ -460,10 +424,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests receive post data
-     *
-     * @return void
      */
-    public function testPostDataHttpServer()
+    public function testPostDataHttpServer(): void
     {
         $this->post('/request_action/post_pass', ['title' => 'value']);
         $data = json_decode('' . $this->_response->getBody());
@@ -473,10 +435,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests receive put data
-     *
-     * @return void
      */
-    public function testPutDataFormUrlEncoded()
+    public function testPutDataFormUrlEncoded(): void
     {
         $this->configRequest([
             'headers' => [
@@ -491,10 +451,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the uploaded files are passed correctly to the request
-     *
-     * @return void
      */
-    public function testUploadedFiles()
+    public function testUploadedFiles(): void
     {
         $this->configRequest([
             'files' => [
@@ -544,10 +502,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests receive encoded data.
-     *
-     * @return void
      */
-    public function testInputDataHttpServer()
+    public function testInputDataHttpServer(): void
     {
         $this->post('/request_action/input_test', '{"hello":"world"}');
         if ($this->_response->getBody()->isSeekable()) {
@@ -559,10 +515,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests receive encoded data.
-     *
-     * @return void
      */
-    public function testInputDataSecurityToken()
+    public function testInputDataSecurityToken(): void
     {
         $this->enableSecurityToken();
 
@@ -573,10 +527,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that the PSR7 requests get cookies
-     *
-     * @return void
      */
-    public function testSessionHttpServer()
+    public function testSessionHttpServer(): void
     {
         $this->session(['foo' => 'session data']);
         $this->get('/request_action/session_test');
@@ -587,10 +539,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending requests stores references to controller/view/layout.
-     *
-     * @return void
      */
-    public function testRequestSetsProperties()
+    public function testRequestSetsProperties(): void
     {
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
@@ -606,10 +556,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test PSR7 requests store references to controller/view/layout
-     *
-     * @return void
      */
-    public function testRequestSetsPropertiesHttpServer()
+    public function testRequestSetsPropertiesHttpServer(): void
     {
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
@@ -625,10 +573,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Tests URLs containing extensions.
-     *
-     * @return void
      */
-    public function testRequestWithExt()
+    public function testRequestWithExt(): void
     {
         $this->get(['controller' => 'Posts', 'action' => 'ajax', '_ext' => 'json']);
 
@@ -637,10 +583,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Assert that the stored template doesn't change when cells are rendered.
-     *
-     * @return void
      */
-    public function testAssertTemplateAfterCellRender()
+    public function testAssertTemplateAfterCellRender(): void
     {
         $this->get('/posts/get');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'get.php', $this->_viewName);
@@ -650,10 +594,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test array URLs
-     *
-     * @return void
      */
-    public function testArrayUrls()
+    public function testArrayUrls(): void
     {
         $this->post(['controller' => 'Posts', 'action' => 'index', '_method' => 'POST']);
         $this->assertResponseOk();
@@ -662,10 +604,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test array URL with host
-     *
-     * @return void
      */
-    public function testArrayUrlWithHost()
+    public function testArrayUrlWithHost(): void
     {
         $this->get([
             'controller' => 'Posts',
@@ -680,10 +620,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test array URLs with an empty router.
-     *
-     * @return void
      */
-    public function testArrayUrlsEmptyRouter()
+    public function testArrayUrlsEmptyRouter(): void
     {
         Router::reload();
         $this->assertEmpty(Router::getRouteCollection()->routes());
@@ -695,10 +633,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test flash and cookie assertions
-     *
-     * @return void
      */
-    public function testFlashSessionAndCookieAsserts()
+    public function testFlashSessionAndCookieAsserts(): void
     {
         $this->post('/posts/index');
 
@@ -709,10 +645,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test flash and cookie assertions
-     *
-     * @return void
      */
-    public function testFlashSessionAndCookieAssertsHttpServer()
+    public function testFlashSessionAndCookieAssertsHttpServer(): void
     {
         $this->post('/posts/index');
 
@@ -724,10 +658,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test flash assertions stored with enableRememberFlashMessages() after a
      * redirect.
-     *
-     * @return void
      */
-    public function testFlashAssertionsAfterRedirect()
+    public function testFlashAssertionsAfterRedirect(): void
     {
         $this->get('/posts/someRedirect');
 
@@ -739,10 +671,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test flash assertions stored with enableRememberFlashMessages() after they
      * are rendered
-     *
-     * @return void
      */
-    public function testFlashAssertionsAfterRender()
+    public function testFlashAssertionsAfterRender(): void
     {
         $this->enableRetainFlashMessages();
         $this->get('/posts/index/with_flash');
@@ -755,10 +685,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test flash assertions stored with enableRememberFlashMessages() even if
      * no view is rendered
-     *
-     * @return void
      */
-    public function testFlashAssertionsWithNoRender()
+    public function testFlashAssertionsWithNoRender(): void
     {
         $this->enableRetainFlashMessages();
         $this->get('/posts/flashNoRender');
@@ -771,10 +699,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * If multiple requests occur in the same test method
      * flash messages should be retained.
-     *
-     * @return void
      */
-    public function testFlashAssertionMultipleRequests()
+    public function testFlashAssertionMultipleRequests(): void
     {
         $this->enableRetainFlashMessages();
         $this->disableErrorHandlerMiddleware();
@@ -791,10 +717,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test flash assertions stored with enableRememberFlashMessages() even if
      * the controller clears flash data in `beforeRender`
-     *
-     * @return void
      */
-    public function testFlashAssertionsRemoveInBeforeRender()
+    public function testFlashAssertionsRemoveInBeforeRender(): void
     {
         $this->enableRetainFlashMessages();
         $this->get('/posts/index/with_flash/?clear=true');
@@ -806,10 +730,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Tests assertCookieNotSet assertion
-     *
-     * @return void
      */
-    public function testAssertCookieNotSet()
+    public function testAssertCookieNotSet(): void
     {
         $this->cookie('test', 'value');
         $this->get('/cookie_component_test/remove_cookie/test');
@@ -818,10 +740,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Tests the failure message for assertCookieNotSet
-     *
-     * @return void
      */
-    public function testCookieNotSetFailure()
+    public function testCookieNotSetFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Failed asserting that \'remember_me\' cookie is not set');
@@ -832,10 +752,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Tests the failure message for assertCookieNotSet when no
      * response whas generated
-     *
-     * @return void
      */
-    public function testCookieNotSetFailureNoResponse()
+    public function testCookieNotSetFailureNoResponse(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set, cannot assert content.');
@@ -844,10 +762,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test error handling and error page rendering.
-     *
-     * @return void
      */
-    public function testPostAndErrorHandling()
+    public function testPostAndErrorHandling(): void
     {
         $this->post('/request_action/error_method');
         $this->assertResponseNotEmpty();
@@ -857,10 +773,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test posting to a secured form action.
-     *
-     * @return void
      */
-    public function testPostSecuredForm()
+    public function testPostSecuredForm(): void
     {
         $this->enableSecurityToken();
         $data = [
@@ -874,10 +788,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test posting to a secured form action with nested data.
-     *
-     * @return void
      */
-    public function testPostSecuredFormNestedData()
+    public function testPostSecuredFormNestedData(): void
     {
         $this->enableSecurityToken();
         $data = [
@@ -894,10 +806,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test posting to a secured form action with unlocked fields
-     *
-     * @return void
      */
-    public function testPostSecuredFormUnlockedFieldsFails()
+    public function testPostSecuredFormUnlockedFieldsFails(): void
     {
         $this->enableSecurityToken();
         $data = [
@@ -915,10 +825,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test posting to a secured form action with unlocked fields
-     *
-     * @return void
      */
-    public function testPostSecuredFormUnlockedFieldsWithSet()
+    public function testPostSecuredFormUnlockedFieldsWithSet(): void
     {
         $this->enableSecurityToken();
         $data = [
@@ -937,10 +845,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test posting to a secured form action.
-     *
-     * @return void
      */
-    public function testPostSecuredFormWithQuery()
+    public function testPostSecuredFormWithQuery(): void
     {
         $this->enableSecurityToken();
         $data = [
@@ -955,10 +861,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test posting to a secured form action with a query that has a part that
      * will be encoded by the security component
-     *
-     * @return void
      */
-    public function testPostSecuredFormWithUnencodedQuery()
+    public function testPostSecuredFormWithUnencodedQuery(): void
     {
         $this->enableSecurityToken();
         $data = [
@@ -972,10 +876,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test posting to a secured form action action.
-     *
-     * @return void
      */
-    public function testPostSecuredFormFailure()
+    public function testPostSecuredFormFailure(): void
     {
         $data = [
             'title' => 'Some title',
@@ -987,10 +889,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Integration test for cookie based CSRF token protection success
-     *
-     * @return void
      */
-    public function testPostCookieCsrfSuccess()
+    public function testPostCookieCsrfSuccess(): void
     {
         $this->enableCsrfToken();
         $data = [
@@ -1003,10 +903,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Integration test for cookie based CSRF token protection fail
-     *
-     * @return void
      */
-    public function testPostCookieCsrfFailure()
+    public function testPostCookieCsrfFailure(): void
     {
         $this->enableCsrfToken();
         $data = [
@@ -1020,10 +918,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Integration test for session based CSRF token protection success
-     *
-     * @return void
      */
-    public function testPostSessionCsrfSuccess()
+    public function testPostSessionCsrfSuccess(): void
     {
         $this->enableCsrfToken();
         $data = [
@@ -1036,10 +932,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Integration test for session based CSRF token protection fail
-     *
-     * @return void
      */
-    public function testPostSessionCsrfFailure()
+    public function testPostSessionCsrfFailure(): void
     {
         $this->enableCsrfToken();
         $data = [
@@ -1053,12 +947,10 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Integration test for session based CSRF token protection success with specified cookie name
-     *
-     * @return void
      */
-    public function testPostSessionCsrfSuccessWithSetCookieName()
+    public function testPostSessionCsrfSuccessWithSetCookieName(): void
     {
-        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes) {
+        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                 [
                     'cookieName' => 'customCsrfToken',
@@ -1078,12 +970,10 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Integration test for session based CSRF token protection fail with specified cookie name
-     *
-     * @return void
      */
-    public function testPostSessionCsrfFailureWithSetCookieName()
+    public function testPostSessionCsrfFailureWithSetCookieName(): void
     {
-        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes) {
+        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                 [
                     'cookieName' => 'customCsrfToken',
@@ -1104,10 +994,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that exceptions being thrown are handled correctly.
-     *
-     * @return void
      */
-    public function testWithExpectedException()
+    public function testWithExpectedException(): void
     {
         $this->get('/tests_apps/throw_exception');
         $this->assertResponseCode(500);
@@ -1115,10 +1003,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that exceptions being thrown are handled correctly by the psr7 stack.
-     *
-     * @return void
      */
-    public function testWithExpectedExceptionHttpServer()
+    public function testWithExpectedExceptionHttpServer(): void
     {
         $this->get('/tests_apps/throw_exception');
         $this->assertResponseCode(500);
@@ -1126,10 +1012,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that exceptions being thrown are handled correctly.
-     *
-     * @return void
      */
-    public function testWithUnexpectedException()
+    public function testWithUnexpectedException(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->get('/tests_apps/throw_exception');
@@ -1138,10 +1022,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test redirecting and integration tests.
-     *
-     * @return void
      */
-    public function testRedirect()
+    public function testRedirect(): void
     {
         $this->post('/tests_apps/redirect_to');
         $this->assertResponseSuccess();
@@ -1150,10 +1032,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test redirecting and psr7 stack
-     *
-     * @return void
      */
-    public function testRedirectHttpServer()
+    public function testRedirectHttpServer(): void
     {
         $this->post('/tests_apps/redirect_to');
         $this->assertResponseCode(302);
@@ -1162,10 +1042,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test redirecting and integration tests.
-     *
-     * @return void
      */
-    public function testRedirectPermanent()
+    public function testRedirectPermanent(): void
     {
         $this->post('/tests_apps/redirect_to_permanent');
         $this->assertResponseSuccess();
@@ -1174,10 +1052,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the responseOk status assertion
-     *
-     * @return void
      */
-    public function testAssertResponseStatusCodes()
+    public function testAssertResponseStatusCodes(): void
     {
         $this->_response = new Response();
 
@@ -1214,10 +1090,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the location header assertion.
-     *
-     * @return void
      */
-    public function testAssertRedirect()
+    public function testAssertRedirect(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withHeader('Location', 'http://localhost/get/tasks/index');
@@ -1231,10 +1105,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the location header assertion.
-     *
-     * @return void
      */
-    public function testAssertRedirectEquals()
+    public function testAssertRedirectEquals(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withHeader('Location', '/get/tasks/index');
@@ -1248,10 +1120,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the location header assertion string not contains
-     *
-     * @return void
      */
-    public function testAssertRedirectNotContains()
+    public function testAssertRedirectNotContains(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
@@ -1260,10 +1130,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the location header assertion.
-     *
-     * @return void
      */
-    public function testAssertNoRedirect()
+    public function testAssertNoRedirect(): void
     {
         $this->_response = new Response();
 
@@ -1272,10 +1140,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the location header assertion.
-     *
-     * @return void
      */
-    public function testAssertNoRedirectFail()
+    public function testAssertNoRedirectFail(): void
     {
         $test = new AssertIntegrationTestCase('testBadAssertNoRedirect');
         $result = $test->run();
@@ -1286,10 +1152,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the location header assertion string contains
-     *
-     * @return void
      */
-    public function testAssertRedirectContains()
+    public function testAssertRedirectContains(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
@@ -1299,10 +1163,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the header assertion.
-     *
-     * @return void
      */
-    public function testAssertHeader()
+    public function testAssertHeader(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withHeader('Etag', 'abc123');
@@ -1312,10 +1174,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the header contains assertion.
-     *
-     * @return void
      */
-    public function testAssertHeaderContains()
+    public function testAssertHeaderContains(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withHeader('Etag', 'abc123');
@@ -1325,10 +1185,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the header not contains assertion.
-     *
-     * @return void
      */
-    public function testAssertHeaderNotContains()
+    public function testAssertHeaderNotContains(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withHeader('Etag', 'abc123');
@@ -1338,10 +1196,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the content type assertion.
-     *
-     * @return void
      */
-    public function testAssertContentType()
+    public function testAssertContentType(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withType('json');
@@ -1352,10 +1208,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that type() in an action sets the content-type header.
-     *
-     * @return void
      */
-    public function testContentTypeInAction()
+    public function testContentTypeInAction(): void
     {
         $this->get('/tests_apps/set_type');
         $this->assertHeader('Content-Type', 'application/json');
@@ -1365,10 +1219,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the content assertion.
-     *
-     * @return void
      */
-    public function testAssertResponseEquals()
+    public function testAssertResponseEquals(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withStringBody('Some content');
@@ -1378,10 +1230,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the negated content assertion.
-     *
-     * @return void
      */
-    public function testAssertResponseNotEquals()
+    public function testAssertResponseNotEquals(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withStringBody('Some content');
@@ -1391,10 +1241,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the content assertion.
-     *
-     * @return void
      */
-    public function testAssertResponseContains()
+    public function testAssertResponseContains(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withStringBody('Some content');
@@ -1404,10 +1252,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the content assertion with no case sensitivity.
-     *
-     * @return void
      */
-    public function testAssertResponseContainsWithIgnoreCaseFlag()
+    public function testAssertResponseContainsWithIgnoreCaseFlag(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withStringBody('Some content');
@@ -1417,10 +1263,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the negated content assertion.
-     *
-     * @return void
      */
-    public function testAssertResponseNotContains()
+    public function testAssertResponseNotContains(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withStringBody('Some content');
@@ -1430,10 +1274,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the content regexp assertion.
-     *
-     * @return void
      */
-    public function testAssertResponseRegExp()
+    public function testAssertResponseRegExp(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withStringBody('Some content');
@@ -1443,10 +1285,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the content regexp assertion failing
-     *
-     * @return void
      */
-    public function testAssertResponseRegExpNoResponse()
+    public function testAssertResponseRegExpNoResponse(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set');
@@ -1455,10 +1295,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the negated content regexp assertion.
-     *
-     * @return void
      */
-    public function testAssertResponseNotRegExp()
+    public function testAssertResponseNotRegExp(): void
     {
         $this->_response = new Response();
         $this->_response = $this->_response->withStringBody('Some content');
@@ -1468,10 +1306,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test negated content regexp assertion failing
-     *
-     * @return void
      */
-    public function testAssertResponseNotRegExpNoResponse()
+    public function testAssertResponseNotRegExpNoResponse(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set');
@@ -1484,10 +1320,8 @@ class IntegrationTestTraitTest extends TestCase
      *
      * The return value is passed to testEventManagerReset2 as
      * an arguments.
-     *
-     * @return \Cake\Event\EventManager
      */
-    public function testEventManagerReset1()
+    public function testEventManagerReset1(): EventManager
     {
         $eventManager = EventManager::instance();
         $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
@@ -1499,9 +1333,8 @@ class IntegrationTestTraitTest extends TestCase
      * Test if the EventManager is reset between tests.
      *
      * @depends testEventManagerReset1
-     * @return void
      */
-    public function testEventManagerReset2(EventManager $prevEventManager)
+    public function testEventManagerReset2(EventManager $prevEventManager): void
     {
         $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
@@ -1509,10 +1342,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending file in requests.
-     *
-     * @return void
      */
-    public function testSendFile()
+    public function testSendFile(): void
     {
         $this->get('/posts/file');
         $this->assertFileResponse(TEST_APP . 'TestApp' . DS . 'Controller' . DS . 'PostsController.php');
@@ -1520,10 +1351,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test sending file with psr7 stack
-     *
-     * @return void
      */
-    public function testSendFileHttpServer()
+    public function testSendFileHttpServer(): void
     {
         $this->get('/posts/file');
         $this->assertFileResponse(TEST_APP . 'TestApp' . DS . 'Controller' . DS . 'PostsController.php');
@@ -1531,10 +1360,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that assertFile requires a response
-     *
-     * @return void
      */
-    public function testAssertFileNoResponse()
+    public function testAssertFileNoResponse(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set, cannot assert content');
@@ -1543,10 +1370,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that assertFile requires a file
-     *
-     * @return void
      */
-    public function testAssertFileNoFile()
+    public function testAssertFileNoFile(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Failed asserting that file was sent.');
@@ -1557,10 +1382,8 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test disabling the error handler middleware with exceptions
      * in controllers.
-     *
-     * @return void
      */
-    public function testDisableErrorHandlerMiddleware()
+    public function testDisableErrorHandlerMiddleware(): void
     {
         $this->expectException(\OutOfBoundsException::class);
         $this->expectExceptionMessage('oh no!');
@@ -1571,10 +1394,9 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * tests getting a secure action while passing a query string
      *
-     * @return void
      * @dataProvider methodsProvider
      */
-    public function testSecureWithQueryString(string $method)
+    public function testSecureWithQueryString(string $method): void
     {
         $this->enableSecurityToken();
         $this->{$method}('/posts/securePost/?ids[]=1&ids[]=2');
@@ -1584,10 +1406,9 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Tests flash assertions
      *
-     * @return void
      * @throws \PHPUnit\Exception
      */
-    public function testAssertFlashMessage()
+    public function testAssertFlashMessage(): void
     {
         $this->get('/posts/stacked_flash');
 
@@ -1613,10 +1434,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Tests asserting flash messages without first sending a request
-     *
-     * @return void
      */
-    public function testAssertFlashMessageWithoutSendingRequest()
+    public function testAssertFlashMessageWithoutSendingRequest(): void
     {
         $this->expectException(AssertionFailedError::class);
         $message = 'There is no stored session data. Perhaps you need to run a request?';
@@ -1635,7 +1454,7 @@ class IntegrationTestTraitTest extends TestCase
      * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $url, ...$rest)
+    public function testAssertionFailureMessages($assertion, $message, $url, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($message);
@@ -1730,10 +1549,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test assertCookieNotSet is creating a verbose message
-     *
-     * @return void
      */
-    public function testAssertCookieNotSetVerbose()
+    public function testAssertCookieNotSetVerbose(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."');
@@ -1744,10 +1561,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test assertNoRedirect is creating a verbose message
-     *
-     * @return void
      */
-    public function testAssertNoRedirectVerbose()
+    public function testAssertNoRedirectVerbose(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."');
@@ -1758,10 +1573,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the header assertion generating a verbose message.
-     *
-     * @return void
      */
-    public function testAssertHeaderVerbose()
+    public function testAssertHeaderVerbose(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."');
@@ -1771,10 +1584,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the assertResponseNotEquals generates a verbose message.
-     *
-     * @return void
      */
-    public function testAssertResponseNotEqualsVerbose()
+    public function testAssertResponseNotEqualsVerbose(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."');
@@ -1785,10 +1596,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test the assertResponseRegExp generates a verbose message.
-     *
-     * @return void
      */
-    public function testAssertResponseRegExpVerbose()
+    public function testAssertResponseRegExpVerbose(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."');
@@ -1802,9 +1611,8 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @dataProvider assertionFailureSessionVerboseProvider
      * @param mixed ...$rest
-     * @return void
      */
-    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest)
+    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to OutOfBoundsException: "oh no!"');
@@ -1830,10 +1638,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test viewVariable not found
-     *
-     * @return void
      */
-    public function testViewVariableNotFoundShouldReturnNull()
+    public function testViewVariableNotFoundShouldReturnNull(): void
     {
         $this->_controller = new Controller();
         $this->assertNull($this->viewVariable('notFound'));
@@ -1841,10 +1647,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Integration test for a controller with action dependencies.
-     *
-     * @return void
      */
-    public function testHandleWithContainerDependencies()
+    public function testHandleWithContainerDependencies(): void
     {
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
@@ -1853,10 +1657,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that mockService() injects into controllers.
-     *
-     * @return void
      */
-    public function testHandleWithMockServices()
+    public function testHandleWithMockServices(): void
     {
         $this->mockService(stdClass::class, function () {
             return json_decode('{"mock":true}');
@@ -1868,10 +1670,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that mockService() injects into controllers.
-     *
-     * @return void
      */
-    public function testHandleWithMockServicesOverwrite()
+    public function testHandleWithMockServicesOverwrite(): void
     {
         $this->mockService(stdClass::class, function () {
             return json_decode('{"first":true}');
@@ -1886,10 +1686,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test that removeMock() unsets mocks
-     *
-     * @return void
      */
-    public function testHandleWithMockServicesUnset()
+    public function testHandleWithMockServicesUnset(): void
     {
         $this->mockService(stdClass::class, function () {
             return json_decode('{"first":true}');

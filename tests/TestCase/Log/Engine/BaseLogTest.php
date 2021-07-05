@@ -47,7 +47,7 @@ class BaseLogTest extends TestCase
         $this->logger = new TestBaseLog();
     }
 
-    private function assertUnescapedUnicode(array $needles, string $haystack)
+    private function assertUnescapedUnicode(array $needles, string $haystack): void
     {
         foreach ($needles as $needle) {
             $this->assertStringContainsString(
@@ -61,14 +61,14 @@ class BaseLogTest extends TestCase
     /**
      * Tests the logging output of a single string containing unicode characters.
      */
-    public function testLogUnicodeString()
+    public function testLogUnicodeString(): void
     {
         $this->logger->log(LogLevel::INFO, implode($this->testData));
 
         $this->assertUnescapedUnicode($this->testData, $this->logger->getMessage());
     }
 
-    public function testPlaceHoldersInMessage()
+    public function testPlaceHoldersInMessage(): void
     {
         $context = [
             'no-placholder' => 'no-placholder',
@@ -78,7 +78,7 @@ class BaseLogTest extends TestCase
             'array' => ['arr'],
             'array-obj' => new ArrayObject(['x' => 'y']),
             'debug-info' => ConnectionManager::get('test'),
-            'obj' => function () {
+            'obj' => function (): void {
             },
             'to-string' => new Response(['body' => 'response body']),
             'to-array' => new TypeMap(['my-type']),
@@ -150,10 +150,8 @@ class BaseLogTest extends TestCase
 
     /**
      * Test setting custom formatter option.
-     *
-     * @return void
      */
-    public function testCustomFormatter()
+    public function testCustomFormatter(): void
     {
         $log = new TestBaseLog(['formatter' => ValidFormatter::class]);
         $this->assertNotNull($log);
@@ -164,10 +162,8 @@ class BaseLogTest extends TestCase
 
     /**
      * Test creating log engine with invalid formatter.
-     *
-     * @return void
      */
-    public function testInvalidFormatter()
+    public function testInvalidFormatter(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new TestBaseLog(['formatter' => InvalidFormatter::class]);

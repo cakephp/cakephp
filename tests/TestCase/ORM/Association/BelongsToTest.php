@@ -41,8 +41,6 @@ class BelongsToTest extends TestCase
 
     /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -78,10 +76,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Test that foreignKey generation
-     *
-     * @return void
      */
-    public function testSetForeignKey()
+    public function testSetForeignKey(): void
     {
         $assoc = new BelongsTo('Companies', [
             'sourceTable' => $this->client,
@@ -94,10 +90,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Test that foreignKey generation ignores database names in target table.
-     *
-     * @return void
      */
-    public function testForeignKeyIgnoreDatabaseName()
+    public function testForeignKeyIgnoreDatabaseName(): void
     {
         $this->company->setTable('schema.companies');
         $this->client->setTable('schema.clients');
@@ -110,10 +104,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Tests that the association reports it can be joined
-     *
-     * @return void
      */
-    public function testCanBeJoined()
+    public function testCanBeJoined(): void
     {
         $assoc = new BelongsTo('Test');
         $this->assertTrue($assoc->canBeJoined());
@@ -121,10 +113,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Tests that the alias set on associations is actually on the Entity
-     *
-     * @return void
      */
-    public function testCustomAlias()
+    public function testCustomAlias(): void
     {
         $table = $this->getTableLocator()->get('Articles', [
             'className' => 'TestPlugin.Articles',
@@ -144,10 +134,8 @@ class BelongsToTest extends TestCase
     /**
      * Tests that the correct join and fields are attached to a query depending on
      * the association config
-     *
-     * @return void
      */
-    public function testAttachTo()
+    public function testAttachTo(): void
     {
         $config = [
             'foreignKey' => 'company_id',
@@ -186,10 +174,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Tests that it is possible to avoid fields inclusion for the associated table
-     *
-     * @return void
      */
-    public function testAttachToNoFields()
+    public function testAttachToNoFields(): void
     {
         $config = [
             'sourceTable' => $this->client,
@@ -206,10 +192,8 @@ class BelongsToTest extends TestCase
     /**
      * Tests that using belongsto with a table having a multi column primary
      * key will work if the foreign key is passed
-     *
-     * @return void
      */
-    public function testAttachToMultiPrimaryKey()
+    public function testAttachToMultiPrimaryKey(): void
     {
         $this->company->setPrimaryKey(['id', 'tenant_id']);
         $config = [
@@ -247,10 +231,8 @@ class BelongsToTest extends TestCase
     /**
      * Tests that using belongsto with a table having a multi column primary
      * key will work if the foreign key is passed
-     *
-     * @return void
      */
-    public function testAttachToMultiPrimaryKeyMismatch()
+    public function testAttachToMultiPrimaryKeyMismatch(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
@@ -268,10 +250,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Test the cascading delete of BelongsTo.
-     *
-     * @return void
      */
-    public function testCascadeDelete()
+    public function testCascadeDelete(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
             ->disableOriginalConstructor()
@@ -292,10 +272,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Test that saveAssociated() ignores non entity values.
-     *
-     * @return void
      */
-    public function testSaveAssociatedOnlyEntities()
+    public function testSaveAssociatedOnlyEntities(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
             ->addMethods(['saveAssociated'])
@@ -322,10 +300,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Tests that property is being set using the constructor options.
-     *
-     * @return void
      */
-    public function testPropertyOption()
+    public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new BelongsTo('Thing', $config);
@@ -334,10 +310,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Test that plugin names are omitted from property()
-     *
-     * @return void
      */
-    public function testPropertyNoPlugin()
+    public function testPropertyNoPlugin(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
             ->disableOriginalConstructor()
@@ -353,10 +327,8 @@ class BelongsToTest extends TestCase
     /**
      * Tests that attaching an association to a query will trigger beforeFind
      * for the target table
-     *
-     * @return void
      */
-    public function testAttachToBeforeFind()
+    public function testAttachToBeforeFind(): void
     {
         $config = [
             'foreignKey' => 'company_id',
@@ -364,7 +336,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
         ];
         $called = false;
-        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called) {
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
             $this->assertInstanceOf(Event::class, $event);
             $this->assertInstanceOf(Query::class, $query);
             $this->assertInstanceOf(ArrayObject::class, $options);
@@ -378,10 +350,8 @@ class BelongsToTest extends TestCase
     /**
      * Tests that attaching an association to a query will trigger beforeFind
      * for the target table
-     *
-     * @return void
      */
-    public function testAttachToBeforeFindExtraOptions()
+    public function testAttachToBeforeFindExtraOptions(): void
     {
         $config = [
             'foreignKey' => 'company_id',
@@ -389,7 +359,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
         ];
         $called = false;
-        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called) {
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
             $this->assertSame('more', $options['something']);
             $called = true;
         });
@@ -404,10 +374,8 @@ class BelongsToTest extends TestCase
     /**
      * Test that failing to add the foreignKey to the list of fields will
      * still attach associated data.
-     *
-     * @return void
      */
-    public function testAttachToNoFieldsSelected()
+    public function testAttachToNoFieldsSelected(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
@@ -425,10 +393,8 @@ class BelongsToTest extends TestCase
 
     /**
      * Test that not selecting join keys with strategy=select fails
-     *
-     * @return void
      */
-    public function testAttachToNoForeignKeySelect()
+    public function testAttachToNoForeignKeySelect(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors')->setStrategy('select');
@@ -454,10 +420,8 @@ class BelongsToTest extends TestCase
     /**
      * Test that formatResults in a joined association finder doesn't dirty
      * the root entity.
-     *
-     * @return void
      */
-    public function testAttachToFormatResultsNoDirtyResults()
+    public function testAttachToFormatResultsNoDirtyResults(): void
     {
         $this->setAppNamespace('TestApp');
         $articles = $this->getTableLocator()->get('Articles');
