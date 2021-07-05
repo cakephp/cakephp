@@ -40,8 +40,6 @@ class AssociationTest extends TestCase
 
     /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -67,10 +65,8 @@ class AssociationTest extends TestCase
     /**
      * Tests that _options acts as a callback where subclasses can add their own
      * initialization code based on the passed configuration array
-     *
-     * @return void
      */
-    public function testOptionsIsCalled()
+    public function testOptionsIsCalled(): void
     {
         $options = ['foo' => 'bar'];
         $this->association->expects($this->once())->method('_options')->with($options);
@@ -79,10 +75,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setName()
-     *
-     * @return void
      */
-    public function testSetName()
+    public function testSetName(): void
     {
         $this->assertSame('Foo', $this->association->getName());
         $this->assertSame($this->association, $this->association->setName('Bar'));
@@ -91,10 +85,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setName() succeeds before the target table is resolved.
-     *
-     * @return void
      */
-    public function testSetNameBeforeTarget()
+    public function testSetNameBeforeTarget(): void
     {
         $this->association->setName('Bar');
         $this->assertSame('Bar', $this->association->getName());
@@ -102,10 +94,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setName() fails after the target table is resolved.
-     *
-     * @return void
      */
-    public function testSetNameAfterTarget()
+    public function testSetNameAfterTarget(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Association name "Bar" does not match target table alias');
@@ -115,10 +105,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setName() succeeds if name equals target table alias.
-     *
-     * @return void
      */
-    public function testSetNameToTargetAlias()
+    public function testSetNameToTargetAlias(): void
     {
         $alias = $this->association->getTarget()->getAlias();
         $this->association->setName($alias);
@@ -128,10 +116,8 @@ class AssociationTest extends TestCase
     /**
      * Test that _className property is set to alias when "className" config
      * if not explicitly set.
-     *
-     * @return void
      */
-    public function testSetttingClassNameFromAlias()
+    public function testSetttingClassNameFromAlias(): void
     {
         $association = $this->getMockBuilder(Association::class)
             ->onlyMethods(['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'])
@@ -143,10 +129,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setClassName() succeeds before the target table is resolved.
-     *
-     * @return void
      */
-    public function testSetClassNameBeforeTarget()
+    public function testSetClassNameBeforeTarget(): void
     {
         $this->assertSame(TestTable::class, $this->association->getClassName());
         $this->assertSame($this->association, $this->association->setClassName(AuthorsTable::class));
@@ -155,10 +139,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setClassName() fails after the target table is resolved.
-     *
-     * @return void
      */
-    public function testSetClassNameAfterTarget()
+    public function testSetClassNameAfterTarget(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The class name "' . AuthorsTable::class . '" doesn\'t match the target table class name of');
@@ -168,10 +150,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setClassName() fails after the target table is resolved.
-     *
-     * @return void
      */
-    public function testSetClassNameWithShortSyntaxAfterTarget()
+    public function testSetClassNameWithShortSyntaxAfterTarget(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The class name "Authors" doesn\'t match the target table class name of');
@@ -181,10 +161,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setClassName() succeeds if name equals target table's class name.
-     *
-     * @return void
      */
-    public function testSetClassNameToTargetClassName()
+    public function testSetClassNameToTargetClassName(): void
     {
         $className = get_class($this->association->getTarget());
         $this->association->setClassName($className);
@@ -193,10 +171,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setClassName() succeeds if the short name resolves to the target table's class name.
-     *
-     * @return void
      */
-    public function testSetClassNameWithShortSyntaxToTargetClassName()
+    public function testSetClassNameWithShortSyntaxToTargetClassName(): void
     {
         Configure::write('App.namespace', 'TestApp');
 
@@ -209,10 +185,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that className() returns the correct (unnormalized) className
-     *
-     * @return void
      */
-    public function testClassNameUnnormalized()
+    public function testClassNameUnnormalized(): void
     {
         $config = [
             'className' => 'Test',
@@ -231,10 +205,8 @@ class AssociationTest extends TestCase
     /**
      * Tests that an exception is thrown when invalid target table is fetched
      * from a registry.
-     *
-     * @return void
      */
-    public function testInvalidTableFetchedFromRegistry()
+    public function testInvalidTableFetchedFromRegistry(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->getTableLocator()->get('Test');
@@ -255,10 +227,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that a descendant table could be fetched from a registry.
-     *
-     * @return void
      */
-    public function testTargetTableDescendant()
+    public function testTargetTableDescendant(): void
     {
         $this->getTableLocator()->get('Test', [
             'className' => TestTable::class,
@@ -282,10 +252,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that cascadeCallbacks() returns the correct configured value
-     *
-     * @return void
      */
-    public function testSetCascadeCallbacks()
+    public function testSetCascadeCallbacks(): void
     {
         $this->assertFalse($this->association->getCascadeCallbacks());
         $this->assertSame($this->association, $this->association->setCascadeCallbacks(true));
@@ -294,10 +262,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests the bindingKey method as a setter/getter
-     *
-     * @return void
      */
-    public function testSetBindingKey()
+    public function testSetBindingKey(): void
     {
         $this->assertSame($this->association, $this->association->setBindingKey('foo_id'));
         $this->assertSame('foo_id', $this->association->getBindingKey());
@@ -305,10 +271,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests the bindingKey() method when called with its defaults
-     *
-     * @return void
      */
-    public function testBindingKeyDefault()
+    public function testBindingKeyDefault(): void
     {
         $this->source->setPrimaryKey(['id', 'site_id']);
         $this->association
@@ -322,10 +286,8 @@ class AssociationTest extends TestCase
     /**
      * Tests the bindingKey() method when the association source is not the
      * owning side
-     *
-     * @return void
      */
-    public function testBindingDefaultNoOwningSide()
+    public function testBindingDefaultNoOwningSide(): void
     {
         $target = new Table();
         $target->setPrimaryKey(['foo', 'site_id']);
@@ -341,10 +303,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests setForeignKey()
-     *
-     * @return void
      */
-    public function testSetForeignKey()
+    public function testSetForeignKey(): void
     {
         $this->assertSame('a_key', $this->association->getForeignKey());
         $this->assertSame($this->association, $this->association->setForeignKey('another_key'));
@@ -353,10 +313,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests setConditions()
-     *
-     * @return void
      */
-    public function testSetConditions()
+    public function testSetConditions(): void
     {
         $this->assertEquals(['field' => 'value'], $this->association->getConditions());
         $conds = ['another_key' => 'another value'];
@@ -366,20 +324,16 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that canBeJoined() returns the correct configured value
-     *
-     * @return void
      */
-    public function testCanBeJoined()
+    public function testCanBeJoined(): void
     {
         $this->assertTrue($this->association->canBeJoined());
     }
 
     /**
      * Tests that setTarget()
-     *
-     * @return void
      */
-    public function testSetTarget()
+    public function testSetTarget(): void
     {
         $table = $this->association->getTarget();
         $this->assertInstanceOf(TestTable::class, $table);
@@ -391,10 +345,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that target() returns the correct Table object for plugins
-     *
-     * @return void
      */
-    public function testTargetPlugin()
+    public function testTargetPlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $config = [
@@ -435,10 +387,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that source() returns the correct Table object
-     *
-     * @return void
      */
-    public function testSetSource()
+    public function testSetSource(): void
     {
         $table = $this->association->getSource();
         $this->assertSame($this->source, $table);
@@ -450,10 +400,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests setJoinType method
-     *
-     * @return void
      */
-    public function testSetJoinType()
+    public function testSetJoinType(): void
     {
         $this->assertSame('INNER', $this->association->getJoinType());
         $this->assertSame($this->association, $this->association->setJoinType('LEFT'));
@@ -462,10 +410,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests property method
-     *
-     * @return void
      */
-    public function testSetProperty()
+    public function testSetProperty(): void
     {
         $this->assertSame('foo', $this->association->getProperty());
         $this->assertSame($this->association, $this->association->setProperty('thing'));
@@ -474,10 +420,8 @@ class AssociationTest extends TestCase
 
     /**
      * Test that warning is shown if property name clashes with table field.
-     *
-     * @return void
      */
-    public function testPropertyNameClash()
+    public function testPropertyNameClash(): void
     {
         $this->expectWarning();
         $this->expectWarningMessageMatches('/^Association property name "foo" clashes with field of same name of table "test"/');
@@ -487,10 +431,8 @@ class AssociationTest extends TestCase
 
     /**
      * Test that warning is not shown if "propertyName" option is explicitly specified.
-     *
-     * @return void
      */
-    public function testPropertyNameExplicitySet()
+    public function testPropertyNameExplicitySet(): void
     {
         $this->source->setSchema(['foo' => ['type' => 'string']]);
 
@@ -516,10 +458,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests strategy method
-     *
-     * @return void
      */
-    public function testSetStrategy()
+    public function testSetStrategy(): void
     {
         $this->assertSame('join', $this->association->getStrategy());
 
@@ -532,10 +472,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that providing an invalid strategy throws an exception
-     *
-     * @return void
      */
-    public function testInvalidStrategy()
+    public function testInvalidStrategy(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->association->setStrategy('anotherThing');
@@ -543,10 +481,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests test setFinder() method
-     *
-     * @return void
      */
-    public function testSetFinderMethod()
+    public function testSetFinderMethod(): void
     {
         $this->assertSame('all', $this->association->getFinder());
         $this->assertSame($this->association, $this->association->setFinder('published'));
@@ -555,10 +491,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that `finder` is a valid option for the association constructor
-     *
-     * @return void
      */
-    public function testFinderInConstructor()
+    public function testFinderInConstructor(): void
     {
         $config = [
             'className' => TestTable::class,
@@ -582,10 +516,8 @@ class AssociationTest extends TestCase
     /**
      * Tests that the defined custom finder is used when calling find
      * in the association
-     *
-     * @return void
      */
-    public function testCustomFinderIsUsed()
+    public function testCustomFinderIsUsed(): void
     {
         $this->association->setFinder('published');
         $this->assertEquals(
@@ -596,10 +528,8 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that `locator` is a valid option for the association constructor
-     *
-     * @return void
      */
-    public function testLocatorInConstructor()
+    public function testLocatorInConstructor(): void
     {
         $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $config = [

@@ -28,8 +28,6 @@ class AppTest extends TestCase
 {
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -47,10 +45,9 @@ class AppTest extends TestCase
      * @param string $suffix Class suffix
      * @param bool $existsInBase Whether class exists in base.
      * @param mixed $expected Expected value.
-     * @return void
      * @dataProvider classNameProvider
      */
-    public function testClassName($class, $type, $suffix = '', $existsInBase = false, $expected = false)
+    public function testClassName($class, $type, $suffix = '', $existsInBase = false, $expected = false): void
     {
         static::setAppNamespace();
         $i = 0;
@@ -69,7 +66,7 @@ class AppTest extends TestCase
         $this->assertSame($expected === false ? null : $expected, $return);
     }
 
-    public function testClassNameWithFqcn()
+    public function testClassNameWithFqcn(): void
     {
         $this->assertSame(TestCase::class, App::className(TestCase::class));
         $this->assertNull(App::className('\Foo'));
@@ -82,10 +79,9 @@ class AppTest extends TestCase
      * @param string $type Class type
      * @param string $suffix Class suffix
      * @param mixed $expected Expected value.
-     * @return void
      * @dataProvider shortNameProvider
      */
-    public function testShortName($class, $type, $suffix = '', $expected = false)
+    public function testShortName($class, $type, $suffix = '', $expected = false): void
     {
         static::setAppNamespace();
 
@@ -95,10 +91,8 @@ class AppTest extends TestCase
 
     /**
      * testShortNameWithNestedAppNamespace
-     *
-     * @return void
      */
-    public function testShortNameWithNestedAppNamespace()
+    public function testShortNameWithNestedAppNamespace(): void
     {
         static::setAppNamespace('TestApp/Nested');
 
@@ -114,9 +108,8 @@ class AppTest extends TestCase
 
     /**
      * @link https://github.com/cakephp/cakephp/issues/15415
-     * @return void
      */
-    public function testShortNameWithAppNamespaceUnset()
+    public function testShortNameWithAppNamespaceUnset(): void
     {
         Configure::delete('App.namespace');
 
@@ -232,10 +225,8 @@ class AppTest extends TestCase
 
     /**
      * test classPath() with a plugin.
-     *
-     * @return void
      */
-    public function testClassPathWithPlugins()
+    public function testClassPathWithPlugins(): void
     {
         $basepath = TEST_APP . 'Plugin' . DS;
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -251,10 +242,9 @@ class AppTest extends TestCase
     /**
      * test path() with a plugin.
      *
-     * @return void
      * @deprecated
      */
-    public function testPathWithPlugins()
+    public function testPathWithPlugins(): void
     {
         $basepath = TEST_APP . 'Plugin' . DS;
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -266,7 +256,7 @@ class AppTest extends TestCase
         $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS;
         $this->assertPathEquals($expected, $result[0]);
 
-        $this->deprecated(function () use ($basepath) {
+        $this->deprecated(function () use ($basepath): void {
             $result = App::path('Controller', 'TestPlugin');
             $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
 
@@ -278,10 +268,8 @@ class AppTest extends TestCase
 
     /**
      * testCore method
-     *
-     * @return void
      */
-    public function testCore()
+    public function testCore(): void
     {
         $model = App::core('Model');
         $this->assertEquals([CAKE . 'Model' . DS], $model);

@@ -73,8 +73,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -92,8 +90,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * testPaginatorSetting
-     *
-     * @return void
      */
     public function testPaginatorSetting(): void
     {
@@ -113,8 +109,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that an exception is thrown when paginator option is invalid.
-     *
-     * @return void
      */
     public function testInvalidPaginatorOption(): void
     {
@@ -127,8 +121,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that non-numeric values are rejected for page, and limit
-     *
-     * @return void
      */
     public function testPageParamCasting(): void
     {
@@ -151,8 +143,6 @@ class PaginatorComponentTest extends TestCase
     /**
      * test that unknown keys in the default settings are
      * passed to the find operations.
-     *
-     * @return void
      */
     public function testPaginateExtraParams(): void
     {
@@ -189,8 +179,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test to make sure options get sent to custom finder methods via paginate
-     *
-     * @return void
      */
     public function testPaginateCustomFinderOptions(): void
     {
@@ -217,7 +205,6 @@ class PaginatorComponentTest extends TestCase
     /**
      * testRequestParamsSetting
      *
-     * @return void
      * @see https://github.com/cakephp/cakephp/issues/11655
      */
     public function testRequestParamsSetting(): void
@@ -240,8 +227,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
-     *
-     * @return void
      */
     public function testPaginateCustomFinder(): void
     {
@@ -267,8 +252,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that nested eager loaders don't trigger invalid SQL errors.
-     *
-     * @return void
      */
     public function testPaginateNestedEagerLoader(): void
     {
@@ -295,8 +278,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that flat default pagination parameters work.
-     *
-     * @return void
      */
     public function testDefaultPaginateParams(): void
     {
@@ -328,8 +309,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that default sort and default direction are injected into request
-     *
-     * @return void
      */
     public function testDefaultPaginateParamsIntoRequest(): void
     {
@@ -364,8 +343,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that option merging prefers specific models
-     *
-     * @return void
      */
     public function testMergeOptionsModelSpecific(): void
     {
@@ -395,8 +372,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test mergeOptions with custom scope
-     *
-     * @return void
      */
     public function testMergeOptionsCustomScope(): void
     {
@@ -464,8 +439,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test mergeOptions with customFind key
-     *
-     * @return void
      */
     public function testMergeOptionsCustomFindKey(): void
     {
@@ -492,8 +465,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test merging options from the querystring.
-     *
-     * @return void
      */
     public function testMergeOptionsQueryString(): void
     {
@@ -518,8 +489,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that the default allowed parameters doesn't let people screw with things they should not be allowed to.
-     *
-     * @return void
      */
     public function testMergeOptionsDefaultAllowedParameters(): void
     {
@@ -547,9 +516,7 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * test that modifying allowed parameters works.
-     *
-     * @return void
+     * test that modifying the whitelist works.
      */
     public function testMergeOptionsExtraAllowedParameters(): void
     {
@@ -580,8 +547,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test mergeOptions with limit > maxLimit in code.
-     *
-     * @return void
      */
     public function testMergeOptionsMaxLimit(): void
     {
@@ -616,8 +581,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test getDefaults with limit > maxLimit in code.
-     *
-     * @return void
      */
     public function testGetDefaultMaxLimit(): void
     {
@@ -664,8 +627,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Integration test to ensure that validateSort is being used by paginate()
-     *
-     * @return void
      */
     public function testValidateSortInvalid(): void
     {
@@ -699,8 +660,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that invalid directions are ignored.
-     *
-     * @return void
      */
     public function testValidateSortInvalidDirection(): void
     {
@@ -720,8 +679,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test empty pagination result.
-     *
-     * @return void
      */
     public function testEmptyPaginationResult(): void
     {
@@ -752,8 +709,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that a really large page number gets clamped to the max page size.
-     *
-     * @return void
      */
     public function testOutOfRangePageNumberGetsClamped(): void
     {
@@ -781,8 +736,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that a out of bounds request still knows about the page size
-     *
-     * @return void
      */
     public function testOutOfRangePageNumberStillProvidesPageCount(): void
     {
@@ -813,8 +766,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that a really REALLY large page number gets clamped to the max page size.
-     *
-     * @return void
      */
     public function testOutOfVeryBigPageNumberGetsClamped(): void
     {
@@ -830,8 +781,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that fields not in sortableFields won't be part of order conditions.
-     *
-     * @return void
      */
     public function testValidateAllowedSortFailure(): void
     {
@@ -853,8 +802,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that fields in the sortableFields are not validated
-     *
-     * @return void
      */
     public function testValidateAllowedSortTrusted(): void
     {
@@ -883,8 +830,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that sortableFields as empty array does not allow any sorting
-     *
-     * @return void
      */
     public function testValidateAllowedSortEmpty(): void
     {
@@ -911,8 +856,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that fields in the sortableFields are not validated
-     *
-     * @return void
      */
     public function testValidateSortNotInSchema(): void
     {
@@ -940,8 +883,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that multiple fields in the sortableFields are not validated and properly aliased.
-     *
-     * @return void
      */
     public function testValidateSortAllowMultiple(): void
     {
@@ -971,8 +912,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test that multiple sort works.
-     *
-     * @return void
      */
     public function testValidateSortMultiple(): void
     {
@@ -1000,8 +939,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Tests that order strings can used by Paginator
-     *
-     * @return void
      */
     public function testValidateSortWithString(): void
     {
@@ -1022,8 +959,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test that no sort doesn't trigger an error.
-     *
-     * @return void
      */
     public function testValidateSortNoSort(): void
     {
@@ -1044,8 +979,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Test sorting with incorrect aliases on valid fields.
-     *
-     * @return void
      */
     public function testValidateSortInvalidAlias(): void
     {
@@ -1109,7 +1042,6 @@ class PaginatorComponentTest extends TestCase
      * test that maxLimit is respected
      *
      * @dataProvider checkLimitProvider
-     * @return void
      */
     public function testCheckLimit(array $input, int $expected): void
     {
@@ -1119,8 +1051,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * Integration test for checkLimit() being applied inside paginate()
-     *
-     * @return void
      */
     public function testPaginateMaxLimit(): void
     {
@@ -1149,8 +1079,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test paginate() and custom find, to make sure the correct count is returned.
-     *
-     * @return void
      */
     public function testPaginateCustomFind(): void
     {
@@ -1213,8 +1141,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test paginate() and custom find with fields array, to make sure the correct count is returned.
-     *
-     * @return void
      */
     public function testPaginateCustomFindFieldsArray(): void
     {
@@ -1248,8 +1174,6 @@ class PaginatorComponentTest extends TestCase
     /**
      * test paginate() and custom finders to ensure the count + find
      * use the custom type.
-     *
-     * @return void
      */
     public function testPaginateCustomFindCount(): void
     {
@@ -1279,8 +1203,6 @@ class PaginatorComponentTest extends TestCase
     /**
      * Tests that it is possible to pass an already made query object to
      * paginate()
-     *
-     * @return void
      */
     public function testPaginateQuery(): void
     {
@@ -1315,8 +1237,6 @@ class PaginatorComponentTest extends TestCase
 
     /**
      * test paginate() with bind()
-     *
-     * @return void
      */
     public function testPaginateQueryWithBindValue(): void
     {
@@ -1340,8 +1260,6 @@ class PaginatorComponentTest extends TestCase
     /**
      * Tests that passing a query object with a limit clause set will
      * overwrite it with the passed defaults.
-     *
-     * @return void
      */
     public function testPaginateQueryWithLimit(): void
     {

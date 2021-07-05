@@ -55,8 +55,6 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -87,10 +85,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests setForeignKey()
-     *
-     * @return void
      */
-    public function testSetForeignKey()
+    public function testSetForeignKey(): void
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
@@ -103,10 +99,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that the association reports it can be joined
-     *
-     * @return void
      */
-    public function testCanBeJoined()
+    public function testCanBeJoined(): void
     {
         $assoc = new BelongsToMany('Test');
         $this->assertFalse($assoc->canBeJoined());
@@ -114,10 +108,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests setSort() method
-     *
-     * @return void
      */
-    public function testSetSort()
+    public function testSetSort(): void
     {
         $assoc = new BelongsToMany('Test');
         $this->assertNull($assoc->getSort());
@@ -127,10 +119,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests requiresKeys() method
-     *
-     * @return void
      */
-    public function testRequiresKeys()
+    public function testRequiresKeys(): void
     {
         $assoc = new BelongsToMany('Test');
         $this->assertTrue($assoc->requiresKeys());
@@ -144,10 +134,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that BelongsToMany can't use the join strategy
-     *
-     * @return void
      */
-    public function testStrategyFailure()
+    public function testStrategyFailure(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid strategy "join" was provided');
@@ -157,10 +145,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests the junction method
-     *
-     * @return void
      */
-    public function testJunction()
+    public function testJunction(): void
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
@@ -201,10 +187,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests the junction passes the source connection name on.
-     *
-     * @return void
      */
-    public function testJunctionConnection()
+    public function testJunctionConnection(): void
     {
         $mock = $this->getMockBuilder(Connection::class)
             ->onlyMethods(['setDriver'])
@@ -224,10 +208,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests the junction method custom keys
-     *
-     * @return void
      */
-    public function testJunctionCustomKeys()
+    public function testJunctionCustomKeys(): void
     {
         $this->article->belongsToMany('Tags', [
             'targetTable' => $this->tag,
@@ -252,10 +234,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests it is possible to set the table name for the join table
-     *
-     * @return void
      */
-    public function testJunctionWithDefaultTableName()
+    public function testJunctionWithDefaultTableName(): void
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
@@ -269,10 +249,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test multiple associations with differerent keys fails
-     *
-     * @return void
      */
-    public function testMultipleAssociationsSameJunction()
+    public function testMultipleAssociationsSameJunction(): void
     {
         $assoc = new BelongsToMany('This', [
             'sourceTable' => $this->article,
@@ -293,10 +271,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests same source and target table failure.
-     *
-     * @return void
      */
-    public function testSameSourceTargetJunction()
+    public function testSameSourceTargetJunction(): void
     {
         $assoc = new BelongsToMany('This', [
             'sourceTable' => $this->article,
@@ -310,10 +286,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests saveStrategy
-     *
-     * @return void
      */
-    public function testSetSaveStrategy()
+    public function testSetSaveStrategy(): void
     {
         $assoc = new BelongsToMany('Test');
         $this->assertSame(BelongsToMany::SAVE_REPLACE, $assoc->getSaveStrategy());
@@ -327,10 +301,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that it is possible to pass the saveAssociated strategy in the constructor
-     *
-     * @return void
      */
-    public function testSaveStrategyInOptions()
+    public function testSaveStrategyInOptions(): void
     {
         $assoc = new BelongsToMany('Test', ['saveStrategy' => BelongsToMany::SAVE_APPEND]);
         $this->assertSame(BelongsToMany::SAVE_APPEND, $assoc->getSaveStrategy());
@@ -338,10 +310,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that passing an invalid strategy will throw an exception
-     *
-     * @return void
      */
-    public function testSaveStrategyInvalid()
+    public function testSaveStrategyInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid save strategy "depsert"');
@@ -351,10 +321,8 @@ class BelongsToManyTest extends TestCase
     /**
      * Ensure that the `finder` option is applied to the target
      * table.
-     *
-     * @return void
      */
-    public function testFinderOption()
+    public function testFinderOption(): void
     {
         $this->setAppNamespace('TestApp');
 
@@ -374,10 +342,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test cascading deletes.
-     *
-     * @return void
      */
-    public function testCascadeDelete()
+    public function testCascadeDelete(): void
     {
         $articleTag = $this->getMockBuilder(Table::class)
             ->onlyMethods(['deleteAll'])
@@ -406,10 +372,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test cascading deletes with dependent=false
-     *
-     * @return void
      */
-    public function testCascadeDeleteDependent()
+    public function testCascadeDeleteDependent(): void
     {
         $articleTag = $this->getMockBuilder(Table::class)
             ->onlyMethods(['delete', 'deleteAll'])
@@ -437,10 +401,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test cascading deletes with callbacks.
-     *
-     * @return void
      */
-    public function testCascadeDeleteWithCallbacks()
+    public function testCascadeDeleteWithCallbacks(): void
     {
         $articleTag = $this->getTableLocator()->get('ArticlesTags');
         $config = [
@@ -453,7 +415,7 @@ class BelongsToManyTest extends TestCase
         $this->article->getAssociation($articleTag->getAlias());
 
         $counter = 0;
-        $articleTag->getEventManager()->on('Model.beforeDelete', function () use (&$counter) {
+        $articleTag->getEventManager()->on('Model.beforeDelete', function () use (&$counter): void {
             $counter++;
         });
 
@@ -467,10 +429,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test cascading delete with a rule preventing deletion
-     *
-     * @return void
      */
-    public function testCascadeDeleteCallbacksRuleFailure()
+    public function testCascadeDeleteCallbacksRuleFailure(): void
     {
         $articleTag = $this->getTableLocator()->get('ArticlesTags');
         $config = [
@@ -482,7 +442,7 @@ class BelongsToManyTest extends TestCase
         $association->junction($articleTag);
         $this->article->getAssociation($articleTag->getAlias());
 
-        $articleTag->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+        $articleTag->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function () {
                 return false;
             });
@@ -498,10 +458,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test linking entities having a non persisted source entity
-     *
-     * @return void
      */
-    public function testLinkWithNotPersistedSource()
+    public function testLinkWithNotPersistedSource(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
@@ -518,10 +476,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test liking entities having a non persisted target entity
-     *
-     * @return void
      */
-    public function testLinkWithNotPersistedTarget()
+    public function testLinkWithNotPersistedTarget(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted yet');
@@ -538,10 +494,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that linking entities will persist correctly with append strategy
-     *
-     * @return void
      */
-    public function testLinkSuccessSaveAppend()
+    public function testLinkSuccessSaveAppend(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
@@ -573,10 +527,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that linking the same tag to multiple articles works
-     *
-     * @return void
      */
-    public function testLinkSaveAppendSharedTarget()
+    public function testLinkSaveAppendSharedTarget(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
@@ -611,10 +563,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that liking entities will validate data and pass on to _saveLinks
-     *
-     * @return void
      */
-    public function testLinkSuccessWithMocks()
+    public function testLinkSuccessWithMocks(): void
     {
         $connection = ConnectionManager::get('test');
         $joint = $this->getMockBuilder(Table::class)
@@ -667,10 +617,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that linking entities will set the junction table registry alias
-     *
-     * @return void
      */
-    public function testLinkSetSourceToJunctionEntities()
+    public function testLinkSetSourceToJunctionEntities(): void
     {
         $connection = ConnectionManager::get('test');
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $joint */
@@ -709,10 +657,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test liking entities having a non persisted source entity
-     *
-     * @return void
      */
-    public function testUnlinkWithNotPersistedSource()
+    public function testUnlinkWithNotPersistedSource(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
@@ -729,10 +675,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test liking entities having a non persisted target entity
-     *
-     * @return void
      */
-    public function testUnlinkWithNotPersistedTarget()
+    public function testUnlinkWithNotPersistedTarget(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted');
@@ -749,10 +693,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that unlinking calls the right methods
-     *
-     * @return void
      */
-    public function testUnlinkSuccess()
+    public function testUnlinkSuccess(): void
     {
         $joint = $this->getTableLocator()->get('SpecialTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -779,10 +721,8 @@ class BelongsToManyTest extends TestCase
     /**
      * Tests that unlinking with last parameter set to false
      * will not remove entities from the association property
-     *
-     * @return void
      */
-    public function testUnlinkWithoutPropertyClean()
+    public function testUnlinkWithoutPropertyClean(): void
     {
         $joint = $this->getTableLocator()->get('SpecialTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -810,10 +750,8 @@ class BelongsToManyTest extends TestCase
     /**
      * Tests that replaceLink requires the sourceEntity to have primaryKey values
      * for the source entity
-     *
-     * @return void
      */
-    public function testReplaceWithMissingPrimaryKey()
+    public function testReplaceWithMissingPrimaryKey(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find primary key value for source entity');
@@ -830,10 +768,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that replaceLinks() can saveAssociated an empty set, removing all rows.
-     *
-     * @return void
      */
-    public function testReplaceLinksUpdateToEmptySet()
+    public function testReplaceLinksUpdateToEmptySet(): void
     {
         $joint = $this->getTableLocator()->get('ArticlesTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -861,10 +797,8 @@ class BelongsToManyTest extends TestCase
      * Tests that replaceLinks will delete entities not present in the passed,
      * array, maintain those are already persisted and were passed and also
      * insert the rest.
-     *
-     * @return void
      */
-    public function testReplaceLinkSuccess()
+    public function testReplaceLinkSuccess(): void
     {
         $joint = $this->getTableLocator()->get('ArticlesTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -902,10 +836,8 @@ class BelongsToManyTest extends TestCase
      *
      * In this case the replacement will fail because the association conditions
      * hide the fixture data.
-     *
-     * @return void
      */
-    public function testReplaceLinkWithConditions()
+    public function testReplaceLinkWithConditions(): void
     {
         $joint = $this->getTableLocator()->get('SpecialTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -935,10 +867,8 @@ class BelongsToManyTest extends TestCase
     /**
      * Test that replaceLinks() will apply finder conditions
      * defined in the junction table associations if they exist.
-     *
-     * @return void
      */
-    public function testReplaceLinkWithFinderInJunctionAssociations()
+    public function testReplaceLinkWithFinderInJunctionAssociations(): void
     {
         $this->setAppNamespace('TestApp');
 
@@ -972,14 +902,12 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests replaceLinks with failing domain rules and new link targets.
-     *
-     * @return void
      */
-    public function testReplaceLinkFailingDomainRules()
+    public function testReplaceLinkFailingDomainRules(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
-        $tags->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules) {
+        $tags->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules): void {
             $rules->add(function () {
                 return false;
             }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
@@ -1010,10 +938,8 @@ class BelongsToManyTest extends TestCase
      * Tests that replaceLinks will delete entities not present in the passed,
      * array, maintain those are already persisted and were passed and also
      * insert the rest.
-     *
-     * @return void
      */
-    public function testReplaceLinkBinaryUuid()
+    public function testReplaceLinkBinaryUuid(): void
     {
         $items = $this->getTableLocator()->get('BinaryUuidItems');
         $tags = $this->getTableLocator()->get('BinaryUuidTags');
@@ -1064,9 +990,8 @@ class BelongsToManyTest extends TestCase
      *
      * @dataProvider emptyProvider
      * @param mixed $value
-     * @return void
      */
-    public function testSaveAssociatedEmptySetSuccess($value)
+    public function testSaveAssociatedEmptySetSuccess($value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
@@ -1096,9 +1021,8 @@ class BelongsToManyTest extends TestCase
      *
      * @dataProvider emptyProvider
      * @param mixed $value
-     * @return void
      */
-    public function testSaveAssociatedEmptySetUpdateSuccess($value)
+    public function testSaveAssociatedEmptySetUpdateSuccess($value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
@@ -1129,10 +1053,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests saving with replace strategy returning true
-     *
-     * @return void
      */
-    public function testSaveAssociatedWithReplace()
+    public function testSaveAssociatedWithReplace(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -1160,10 +1082,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests saving with replace strategy returning true
-     *
-     * @return void
      */
-    public function testSaveAssociatedWithReplaceReturnFalse()
+    public function testSaveAssociatedWithReplaceReturnFalse(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -1191,10 +1111,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that saveAssociated() ignores non entity values.
-     *
-     * @return void
      */
-    public function testSaveAssociatedOnlyEntitiesAppend()
+    public function testSaveAssociatedOnlyEntitiesAppend(): void
     {
         $connection = ConnectionManager::get('test');
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
@@ -1228,10 +1146,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that setTargetForeignKey() returns the correct configured value
-     *
-     * @return void
      */
-    public function testSetTargetForeignKey()
+    public function testSetTargetForeignKey(): void
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
@@ -1252,10 +1168,8 @@ class BelongsToManyTest extends TestCase
     /**
      * Tests that custom foreignKeys are properly transmitted to involved associations
      * when they are customized
-     *
-     * @return void
      */
-    public function testJunctionWithCustomForeignKeys()
+    public function testJunctionWithCustomForeignKeys(): void
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
@@ -1275,10 +1189,8 @@ class BelongsToManyTest extends TestCase
     /**
      * Test that fallback class is used for join table even when fallback
      * class usage is turned off for table locator.
-     *
-     * @return void
      */
-    public function testFallbackClassForJunction()
+    public function testFallbackClassForJunction(): void
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
@@ -1292,10 +1204,8 @@ class BelongsToManyTest extends TestCase
     /**
      * Test that fallback class is used for join table even when fallback
      * class usage is turned off for table locator.
-     *
-     * @return void
      */
-    public function testNoFallbackClassForThrough()
+    public function testNoFallbackClassForThrough(): void
     {
         $this->expectException(MissingTableClassException::class);
         $this->expectExceptionMessage('Table class for alias `ArticlesTags` could not be found.');
@@ -1313,10 +1223,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that property is being set using the constructor options.
-     *
-     * @return void
      */
-    public function testPropertyOption()
+    public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new BelongsToMany('Thing', $config);
@@ -1325,10 +1233,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that plugin names are omitted from property()
-     *
-     * @return void
      */
-    public function testPropertyNoPlugin()
+    public function testPropertyNoPlugin(): void
     {
         $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
@@ -1343,10 +1249,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that the generated associations are correct.
-     *
-     * @return void
      */
-    public function testGeneratedAssociations()
+    public function testGeneratedAssociations(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
@@ -1388,10 +1292,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that eager loading requires association keys
-     *
-     * @return void
      */
-    public function testEagerLoadingRequiresPrimaryKey()
+    public function testEagerLoadingRequiresPrimaryKey(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('The "tags" table does not define a primary key');
@@ -1408,9 +1310,8 @@ class BelongsToManyTest extends TestCase
      * all fields being returned, but instead will honor the select() clause
      *
      * @see https://github.com/cakephp/cakephp/issues/7916
-     * @return void
      */
-    public function testEagerLoadingBelongsToManyLimitedFields()
+    public function testEagerLoadingBelongsToManyLimitedFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -1442,9 +1343,8 @@ class BelongsToManyTest extends TestCase
      * Tests that fetching belongsToMany association will retain autoFields(true) if it was used.
      *
      * @see https://github.com/cakephp/cakephp/issues/8052
-     * @return void
      */
-    public function testEagerLoadingBelongsToManyLimitedFieldsWithAutoFields()
+    public function testEagerLoadingBelongsToManyLimitedFieldsWithAutoFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -1461,10 +1361,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that association proxy find() works with no join records
-     *
-     * @return void
      */
-    public function testAssociationProxyFindNoJoinRecords()
+    public function testAssociationProxyFindNoJoinRecords(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -1481,10 +1379,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that association proxy find() applies joins when conditions are involved.
-     *
-     * @return void
      */
-    public function testAssociationProxyFindWithConditions()
+    public function testAssociationProxyFindWithConditions(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -1501,10 +1397,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that association proxy find() applies complex conditions
-     *
-     * @return void
      */
-    public function testAssociationProxyFindWithComplexConditions()
+    public function testAssociationProxyFindWithComplexConditions(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -1525,10 +1419,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that matching() works on belongsToMany associations.
-     *
-     * @return void
      */
-    public function testBelongsToManyAssociationWithArrayConditions()
+    public function testBelongsToManyAssociationWithArrayConditions(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -1547,10 +1439,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that matching() works on belongsToMany associations.
-     *
-     * @return void
      */
-    public function testBelongsToManyAssociationWithExpressionConditions()
+    public function testBelongsToManyAssociationWithExpressionConditions(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -1569,10 +1459,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test that association proxy find() with matching resolves joins correctly
-     *
-     * @return void
      */
-    public function testAssociationProxyFindWithConditionsMatching()
+    public function testAssociationProxyFindWithConditionsMatching(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -1590,10 +1478,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test custom binding key for target table association
-     *
-     * @return void
      */
-    public function testCustomTargetBindingKeyContain()
+    public function testCustomTargetBindingKeyContain(): void
     {
         $this->getTableLocator()->get('ArticlesTags')
             ->belongsTo('SpecialTags', [
@@ -1626,10 +1512,8 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Test custom binding key for target table association
-     *
-     * @return void
      */
-    public function testCustomTargetBindingKeyLink()
+    public function testCustomTargetBindingKeyLink(): void
     {
         $this->getTableLocator()->get('ArticlesTags')
             ->belongsTo('SpecialTags', [

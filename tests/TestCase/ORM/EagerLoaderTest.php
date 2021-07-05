@@ -32,8 +32,6 @@ class EagerLoaderTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -130,10 +128,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests that fully defined belongsTo and hasOne relationships are joined correctly
-     *
-     * @return void
      */
-    public function testContainToJoinsOneLevel()
+    public function testContainToJoinsOneLevel(): void
     {
         $contains = [
             'clients' => [
@@ -232,10 +228,8 @@ class EagerLoaderTest extends TestCase
     /**
      * Tests setting containments using dot notation, additionally proves that options
      * are not overwritten when combining dot notation and array notation
-     *
-     * @return void
      */
-    public function testContainDotNotation()
+    public function testContainDotNotation(): void
     {
         $loader = new EagerLoader();
         $loader->contain([
@@ -267,10 +261,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests setting containments using direct key value pairs works just as with key array.
-     *
-     * @return void
      */
-    public function testContainKeyValueNotation()
+    public function testContainKeyValueNotation(): void
     {
         $loader = new EagerLoader();
         $loader->contain([
@@ -288,12 +280,10 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests that it is possible to pass a function as the array value for contain
-     *
-     * @return void
      */
-    public function testContainClosure()
+    public function testContainClosure(): void
     {
-        $builder = function ($query) {
+        $builder = function ($query): void {
         };
         $loader = new EagerLoader();
         $loader->contain([
@@ -321,12 +311,10 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests using the same signature as matching with contain
-     *
-     * @return void
      */
-    public function testContainSecondSignature()
+    public function testContainSecondSignature(): void
     {
-        $builder = function ($query) {
+        $builder = function ($query): void {
         };
         $loader = new EagerLoader();
         $loader->contain('clients', $builder);
@@ -341,14 +329,12 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests passing an array of associations with a query builder
-     *
-     * @return void
      */
-    public function testContainSecondSignatureInvalid()
+    public function testContainSecondSignatureInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $builder = function ($query) {
+        $builder = function ($query): void {
         };
         $loader = new EagerLoader();
         $loader->contain(['clients'], $builder);
@@ -363,10 +349,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests that query builders are stacked
-     *
-     * @return void
      */
-    public function testContainMergeBuilders()
+    public function testContainMergeBuilders(): void
     {
         $loader = new EagerLoader();
         $loader->contain([
@@ -388,10 +372,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Test that fields for contained models are aliased and added to the select clause
-     *
-     * @return void
      */
-    public function testContainToFieldsPredefined()
+    public function testContainToFieldsPredefined(): void
     {
         $contains = [
             'clients' => [
@@ -422,10 +404,8 @@ class EagerLoaderTest extends TestCase
     /**
      * Tests that default fields for associations are added to the select clause when
      * none is specified
-     *
-     * @return void
      */
-    public function testContainToFieldsDefault()
+    public function testContainToFieldsDefault(): void
     {
         $contains = ['clients' => ['orders']];
 
@@ -467,10 +447,8 @@ class EagerLoaderTest extends TestCase
     /**
      * Tests that the path for getting to a deep association is materialized in an
      * array key
-     *
-     * @return void
      */
-    public function testNormalizedPath()
+    public function testNormalizedPath(): void
     {
         $contains = [
             'clients' => [
@@ -518,10 +496,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests that the paths for matching containments point to _matchingData.
-     *
-     * @return void
      */
-    public function testNormalizedMatchingPath()
+    public function testNormalizedMatchingPath(): void
     {
         $loader = new EagerLoader();
         $loader->setMatching('clients');
@@ -533,10 +509,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Tests that the paths for deep matching containments point to _matchingData.
-     *
-     * @return void
      */
-    public function testNormalizedDeepMatchingPath()
+    public function testNormalizedDeepMatchingPath(): void
     {
         $loader = new EagerLoader();
         $loader->setMatching('clients.orders');
@@ -552,10 +526,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Test clearing containments but not matching joins.
-     *
-     * @return void
      */
-    public function testClearContain()
+    public function testClearContain(): void
     {
         $contains = [
             'clients' => [
@@ -581,10 +553,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Test for enableAutoFields()
-     *
-     * @return void
      */
-    public function testEnableAutoFields()
+    public function testEnableAutoFields(): void
     {
         $loader = new EagerLoader();
         $this->assertTrue($loader->isAutoFieldsEnabled());
@@ -599,7 +569,7 @@ class EagerLoaderTest extends TestCase
      * @param array $elements
      * @return array
      */
-    protected function _quoteArray($elements)
+    protected function _quoteArray($elements): array
     {
         if ($this->connection->getDriver()->isAutoQuotingEnabled()) {
             $quoter = function ($e) {
@@ -617,10 +587,8 @@ class EagerLoaderTest extends TestCase
 
     /**
      * Asserts that matching('something') and setMatching('something') return consistent type.
-     *
-     * @return void
      */
-    public function testSetMatchingReturnType()
+    public function testSetMatchingReturnType(): void
     {
         $loader = new EagerLoader();
         $result = $loader->setMatching('clients');

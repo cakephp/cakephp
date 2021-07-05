@@ -27,10 +27,8 @@ class InflectedRouteTest extends TestCase
 {
     /**
      * test that routes match their pattern.
-     *
-     * @return void
      */
-    public function testMatchBasic()
+    public function testMatchBasic(): void
     {
         $route = new InflectedRoute('/{controller}/{action}/{id}', ['plugin' => null]);
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', 'plugin' => null]);
@@ -139,10 +137,8 @@ class InflectedRouteTest extends TestCase
 
     /**
      * test the parse method of InflectedRoute.
-     *
-     * @return void
      */
-    public function testParse()
+    public function testParse(): void
     {
         $route = new InflectedRoute('/{controller}/{action}/{id}', [], ['id' => Router::ID]);
         $route->compile();
@@ -195,10 +191,8 @@ class InflectedRouteTest extends TestCase
 
     /**
      * Test that parse() checks methods.
-     *
-     * @return void
      */
-    public function testParseMethodMatch()
+    public function testParseMethodMatch(): void
     {
         $route = new InflectedRoute('/{controller}/{action}', ['_method' => 'POST']);
         $this->assertNull($route->parse('/blog_posts/add_new', 'GET'));
@@ -208,10 +202,7 @@ class InflectedRouteTest extends TestCase
         $this->assertSame('add_new', $result['action']);
     }
 
-    /**
-     * @return void
-     */
-    public function testMatchThenParse()
+    public function testMatchThenParse(): void
     {
         $route = new InflectedRoute('/plugin/{controller}/{action}', [
             'plugin' => 'Vendor/PluginName',

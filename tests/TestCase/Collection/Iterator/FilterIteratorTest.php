@@ -26,10 +26,8 @@ class FilterIteratorTest extends TestCase
 {
     /**
      * Tests that the iterator works correctly
-     *
-     * @return void
      */
-    public function testFilter()
+    public function testFilter(): void
     {
         $items = new \ArrayIterator([1, 2, 3]);
         $callable = function ($value, $key, $itemArg) use ($items) {

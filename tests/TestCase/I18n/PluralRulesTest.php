@@ -128,9 +128,8 @@ class PluralRulesTest extends TestCase
      * Tests that the correct plural form is selected for the locale, number combination
      *
      * @dataProvider localesProvider
-     * @return void
      */
-    public function testCalculate(string $locale, int $number, int $expected)
+    public function testCalculate(string $locale, int $number, int $expected): void
     {
         $this->assertEquals($expected, PluralRules::calculate($locale, $number));
     }

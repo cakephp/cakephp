@@ -26,10 +26,8 @@ class TransactionStrategyTest extends TestCase
 
     /**
      * Test that beforeTest starts a transaction that afterTest closes.
-     *
-     * @return void
      */
-    public function testTransactionWrapping()
+    public function testTransactionWrapping(): void
     {
         $users = TableRegistry::getTableLocator()->get('Users');
 

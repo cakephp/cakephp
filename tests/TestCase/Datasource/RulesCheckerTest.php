@@ -27,10 +27,8 @@ class RulesCheckerTest extends TestCase
 {
     /**
      * Test adding rule for update mode
-     *
-     * @return void
      */
-    public function testAddingRuleDeleteMode()
+    public function testAddingRuleDeleteMode(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -56,10 +54,8 @@ class RulesCheckerTest extends TestCase
 
     /**
      * Test adding rule for update mode
-     *
-     * @return void
      */
-    public function testAddingRuleUpdateMode()
+    public function testAddingRuleUpdateMode(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -85,10 +81,8 @@ class RulesCheckerTest extends TestCase
 
     /**
      * Test adding rule for create mode
-     *
-     * @return void
      */
-    public function testAddingRuleCreateMode()
+    public function testAddingRuleCreateMode(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -114,10 +108,8 @@ class RulesCheckerTest extends TestCase
 
     /**
      * Test adding rule with name
-     *
-     * @return void
      */
-    public function testAddingRuleWithName()
+    public function testAddingRuleWithName(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -138,10 +130,8 @@ class RulesCheckerTest extends TestCase
 
     /**
      * Test that returned error messages work.
-     *
-     * @return void
      */
-    public function testAddWithErrorMessage()
+    public function testAddWithErrorMessage(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -161,10 +151,8 @@ class RulesCheckerTest extends TestCase
 
     /**
      * Test that returned error messages work.
-     *
-     * @return void
      */
-    public function testAddWithMessageOption()
+    public function testAddWithMessageOption(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -184,10 +172,8 @@ class RulesCheckerTest extends TestCase
 
     /**
      * Test that returned error messages work.
-     *
-     * @return void
      */
-    public function testAddWithoutFields()
+    public function testAddWithoutFields(): void
     {
         $entity = new Entity([
             'name' => 'larry',

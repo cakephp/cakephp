@@ -32,8 +32,6 @@ class LocatorAwareTraitTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -44,10 +42,8 @@ class LocatorAwareTraitTest extends TestCase
 
     /**
      * Tests testGetTableLocator method
-     *
-     * @return void
      */
-    public function testGetTableLocator()
+    public function testGetTableLocator(): void
     {
         $tableLocator = $this->subject->getTableLocator();
         $this->assertSame($this->getTableLocator(), $tableLocator);
@@ -55,10 +51,8 @@ class LocatorAwareTraitTest extends TestCase
 
     /**
      * Tests testSetTableLocator method
-     *
-     * @return void
      */
-    public function testSetTableLocator()
+    public function testSetTableLocator(): void
     {
         $newLocator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         $this->subject->setTableLocator($newLocator);

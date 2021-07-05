@@ -26,10 +26,8 @@ class SyslogLogTest extends TestCase
 {
     /**
      * Tests that the connection to the logger is open with the right arguments
-     *
-     * @return void
      */
-    public function testOpenLog()
+    public function testOpenLog(): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
@@ -55,9 +53,8 @@ class SyslogLogTest extends TestCase
      * Tests that single lines are written to syslog
      *
      * @dataProvider typesProvider
-     * @return void
      */
-    public function testWriteOneLine(string $type, int $expected)
+    public function testWriteOneLine(string $type, int $expected): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
@@ -69,10 +66,8 @@ class SyslogLogTest extends TestCase
 
     /**
      * Tests that multiple lines are split and logged separately
-     *
-     * @return void
      */
-    public function testWriteMultiLine()
+    public function testWriteMultiLine(): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)

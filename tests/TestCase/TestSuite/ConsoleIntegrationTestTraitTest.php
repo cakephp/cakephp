@@ -28,8 +28,6 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -40,10 +38,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests exec when using the command runner
-     *
-     * @return void
      */
-    public function testExecWithCommandRunner()
+    public function testExecWithCommandRunner(): void
     {
         $this->exec('');
 
@@ -54,10 +50,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests exec
-     *
-     * @return void
      */
-    public function testExec()
+    public function testExec(): void
     {
         $this->exec('sample');
 
@@ -67,10 +61,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests that exec catches a StopException
-     *
-     * @return void
      */
-    public function testExecCommandWithStopException()
+    public function testExecCommandWithStopException(): void
     {
         $this->exec('abort_command');
         $this->assertExitCode(127);
@@ -79,10 +71,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests that exec with a format specifier
-     *
-     * @return void
      */
-    public function testExecCommandWithFormatSpecifier()
+    public function testExecCommandWithFormatSpecifier(): void
     {
         $this->exec('format_specifier_command');
         $this->assertOutputContains('format specifier');
@@ -91,10 +81,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests a valid core command
-     *
-     * @return void
      */
-    public function testExecCoreCommand()
+    public function testExecCoreCommand(): void
     {
         $this->exec('routes');
 
@@ -103,10 +91,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests exec with an arg and an option
-     *
-     * @return void
      */
-    public function testExecWithArgsAndOption()
+    public function testExecWithArgsAndOption(): void
     {
         $this->exec('integration arg --opt="some string"');
 
@@ -118,10 +104,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests exec with input
-     *
-     * @return void
      */
-    public function testExecWithInput()
+    public function testExecWithInput(): void
     {
         $this->exec('bridge', ['javascript']);
 
@@ -131,10 +115,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests exec with fewer inputs than questions
-     *
-     * @return void
      */
-    public function testExecWithMissingInput()
+    public function testExecWithMissingInput(): void
     {
         $this->expectException(MissingConsoleInputException::class);
         $this->expectExceptionMessage('no more input');
@@ -143,10 +125,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests exec with multiple inputs
-     *
-     * @return void
      */
-    public function testExecWithMultipleInput()
+    public function testExecWithMultipleInput(): void
     {
         $this->exec('bridge', ['cake', 'blue']);
 
@@ -154,7 +134,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->assertExitCode(Command::CODE_SUCCESS);
     }
 
-    public function testExecWithMockServiceDependencies()
+    public function testExecWithMockServiceDependencies(): void
     {
         $this->mockService(stdClass::class, function () {
             return json_decode('{"console-mock":true}');
@@ -167,10 +147,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests assertOutputRegExp assertion
-     *
-     * @return void
      */
-    public function testAssertOutputRegExp()
+    public function testAssertOutputRegExp(): void
     {
         $this->exec('sample');
 
@@ -179,10 +157,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     /**
      * tests commandStringToArgs
-     *
-     * @return void
      */
-    public function testCommandStringToArgs()
+    public function testCommandStringToArgs(): void
     {
         $result = $this->commandStringToArgs('command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'');
         $expected = [
@@ -210,7 +186,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $command, ...$rest)
+    public function testAssertionFailureMessages($assertion, $message, $command, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessageMatches('#' . preg_quote($message, '#') . '.?#');

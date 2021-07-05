@@ -26,40 +26,32 @@ class ValidationRuleTest extends TestCase
 {
     /**
      * Auxiliary method to test custom validators
-     *
-     * @return bool
      */
-    public function willFail()
+    public function willFail(): bool
     {
         return false;
     }
 
     /**
      * Auxiliary method to test custom validators
-     *
-     * @return bool
      */
-    public function willPass()
+    public function willPass(): bool
     {
         return true;
     }
 
     /**
      * Auxiliary method to test custom validators
-     *
-     * @return string
      */
-    public function willFail3()
+    public function willFail3(): string
     {
         return 'string';
     }
 
     /**
      * tests that passing custom validation methods work
-     *
-     * @return void
      */
-    public function testCustomMethods()
+    public function testCustomMethods(): void
     {
         $data = 'some data';
         $providers = ['default' => $this];
@@ -80,10 +72,8 @@ class ValidationRuleTest extends TestCase
 
     /**
      * Test using a custom validation method with no provider declared.
-     *
-     * @return void
      */
-    public function testCustomMethodNoProvider()
+    public function testCustomMethodNoProvider(): void
     {
         $data = 'some data';
         $context = ['field' => 'custom', 'newRecord' => true];
@@ -97,10 +87,8 @@ class ValidationRuleTest extends TestCase
 
     /**
      * Make sure errors are triggered when validation is missing.
-     *
-     * @return void
      */
-    public function testCustomMethodMissingError()
+    public function testCustomMethodMissingError(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to call method "totallyMissing" in "default" provider for field "test"');
@@ -114,10 +102,8 @@ class ValidationRuleTest extends TestCase
 
     /**
      * Tests that a rule can be skipped
-     *
-     * @return void
      */
-    public function testSkip()
+    public function testSkip(): void
     {
         $data = 'some data';
         $providers = ['default' => $this];
@@ -143,10 +129,8 @@ class ValidationRuleTest extends TestCase
 
     /**
      * Tests that the 'on' key can be a callable function
-     *
-     * @return void
      */
-    public function testCallableOn()
+    public function testCallableOn(): void
     {
         $data = 'some data';
         $providers = ['default' => $this];
@@ -176,10 +160,8 @@ class ValidationRuleTest extends TestCase
 
     /**
      * testGet
-     *
-     * @return void
      */
-    public function testGet()
+    public function testGet(): void
     {
         $Rule = new ValidationRule(['rule' => 'willFail', 'message' => 'foo']);
 

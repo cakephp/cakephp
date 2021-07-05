@@ -33,10 +33,8 @@ class ConsoleFormatterTest extends TestCase
 {
     /**
      * Test dumping a graph that contains all possible nodes.
-     *
-     * @return void
      */
-    public function testDump()
+    public function testDump(): void
     {
         $node = new ClassNode('MyObject', 1);
         $node->addProperty(new PropertyNode('stringProp', 'public', new ScalarNode('string', 'value')));

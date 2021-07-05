@@ -26,10 +26,8 @@ class SchemaTest extends TestCase
 {
     /**
      * Test adding multiple fields.
-     *
-     * @return void
      */
-    public function testAddingMultipleFields()
+    public function testAddingMultipleFields(): void
     {
         $schema = new Schema();
         $schema->addFields([
@@ -43,10 +41,8 @@ class SchemaTest extends TestCase
 
     /**
      * test adding fields.
-     *
-     * @return void
      */
-    public function testAddingFields()
+    public function testAddingFields(): void
     {
         $schema = new Schema();
 
@@ -69,10 +65,8 @@ class SchemaTest extends TestCase
 
     /**
      * test adding field whitelist attrs
-     *
-     * @return void
      */
-    public function testAddingFieldsWhitelist()
+    public function testAddingFieldsWhitelist(): void
     {
         $schema = new Schema();
 
@@ -83,10 +77,8 @@ class SchemaTest extends TestCase
 
     /**
      * Test removing fields.
-     *
-     * @return void
      */
-    public function testRemovingFields()
+    public function testRemovingFields(): void
     {
         $schema = new Schema();
 
@@ -101,10 +93,8 @@ class SchemaTest extends TestCase
 
     /**
      * test fieldType
-     *
-     * @return void
      */
-    public function testFieldType()
+    public function testFieldType(): void
     {
         $schema = new Schema();
 
@@ -120,10 +110,8 @@ class SchemaTest extends TestCase
 
     /**
      * test __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $schema = new Schema();
 

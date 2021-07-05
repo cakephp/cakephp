@@ -60,7 +60,7 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function jsonScalarValues()
+    public static function jsonScalarValues(): array
     {
         return [
             ['', []], // Requests without body
@@ -75,10 +75,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test constructor options
-     *
-     * @return void
      */
-    public function testConstructorMethodsOption()
+    public function testConstructorMethodsOption(): void
     {
         $parser = new BodyParserMiddleware(['methods' => ['PUT']]);
         $this->assertEquals(['PUT'], $parser->getMethods());
@@ -86,10 +84,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test constructor options
-     *
-     * @return void
      */
-    public function testConstructorXmlOption()
+    public function testConstructorXmlOption(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
         $this->assertEquals([], $parser->getParsers(), 'Xml off by default');
@@ -107,10 +103,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test constructor options
-     *
-     * @return void
      */
-    public function testConstructorJsonOption()
+    public function testConstructorJsonOption(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
         $this->assertEquals([], $parser->getParsers(), 'No JSON types set.');
@@ -125,10 +119,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test setMethods()
-     *
-     * @return void
      */
-    public function testSetMethodsReturn()
+    public function testSetMethodsReturn(): void
     {
         $parser = new BodyParserMiddleware();
         $this->assertSame($parser, $parser->setMethods(['PUT']));
@@ -137,10 +129,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test addParser()
-     *
-     * @return void
      */
-    public function testAddParserReturn()
+    public function testAddParserReturn(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
         $f1 = function (string $body) {
@@ -151,10 +141,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test last parser defined wins
-     *
-     * @return void
      */
-    public function testAddParserOverwrite()
+    public function testAddParserOverwrite(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
 
@@ -174,9 +162,8 @@ class BodyParserMiddlewareTest extends TestCase
      * test skipping parsing on unknown type
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testInvokeMismatchedType(string $method)
+    public function testInvokeMismatchedType(string $method): void
     {
         $parser = new BodyParserMiddleware();
 
@@ -199,9 +186,8 @@ class BodyParserMiddlewareTest extends TestCase
      * test parsing on valid http method
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testInvokeCaseInsensitiveContentType(string $method)
+    public function testInvokeCaseInsensitiveContentType(string $method): void
     {
         $parser = new BodyParserMiddleware();
 
@@ -224,9 +210,8 @@ class BodyParserMiddlewareTest extends TestCase
      * test parsing on valid http method
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testInvokeParse(string $method)
+    public function testInvokeParse(string $method): void
     {
         $parser = new BodyParserMiddleware();
 
@@ -247,10 +232,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test parsing on valid http method with charset
-     *
-     * @return void
      */
-    public function testInvokeParseStripCharset()
+    public function testInvokeParseStripCharset(): void
     {
         $parser = new BodyParserMiddleware();
 
@@ -273,9 +256,8 @@ class BodyParserMiddlewareTest extends TestCase
      * test parsing on ignored http method
      *
      * @dataProvider safeHttpMethodProvider
-     * @return void
      */
-    public function testInvokeNoParseOnSafe(string $method)
+    public function testInvokeNoParseOnSafe(string $method): void
     {
         $parser = new BodyParserMiddleware();
 
@@ -296,10 +278,8 @@ class BodyParserMiddlewareTest extends TestCase
 
     /**
      * test parsing XML bodies.
-     *
-     * @return void
      */
-    public function testInvokeXml()
+    public function testInvokeXml(): void
     {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -329,10 +309,8 @@ XML;
 
     /**
      * Test that CDATA is removed in XML data.
-     *
-     * @return void
      */
-    public function testInvokeXmlCdata()
+    public function testInvokeXmlCdata(): void
     {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -365,10 +343,8 @@ XML;
 
     /**
      * Test that internal entity recursion is ignored.
-     *
-     * @return void
      */
-    public function testInvokeXmlInternalEntities()
+    public function testInvokeXmlInternalEntities(): void
     {
         $xml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -409,9 +385,8 @@ XML;
      *
      * @dataProvider jsonScalarValues
      * @param mixed $expected
-     * @return void
      */
-    public function testInvokeParseNoArray(string $body, $expected)
+    public function testInvokeParseNoArray(string $body, $expected): void
     {
         $parser = new BodyParserMiddleware();
 
@@ -432,10 +407,8 @@ XML;
 
     /**
      * test parsing fails will raise a bad request.
-     *
-     * @return void
      */
-    public function testInvokeParseInvalidJson()
+    public function testInvokeParseInvalidJson(): void
     {
         $request = new ServerRequest([
             'environment' => [

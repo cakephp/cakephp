@@ -37,8 +37,6 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Backup original Type class state
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -48,8 +46,6 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Restores Type class state
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -62,9 +58,8 @@ class TypeFactoryTest extends TestCase
      * Tests Type class is able to instantiate basic types
      *
      * @dataProvider basicTypesProvider
-     * @return void
      */
-    public function testBuildBasicTypes(string $name)
+    public function testBuildBasicTypes(string $name): void
     {
         $type = TypeFactory::build($name);
         $this->assertInstanceOf(TypeInterface::class, $type);
@@ -91,10 +86,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests trying to build an unknown type throws exception
-     *
-     * @return void
      */
-    public function testBuildUnknownType()
+    public function testBuildUnknownType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         TypeFactory::build('foo');
@@ -103,10 +96,8 @@ class TypeFactoryTest extends TestCase
     /**
      * Tests that once a type with a name is instantiated, the reference is kept
      * for future use
-     *
-     * @return void
      */
-    public function testInstanceRecycling()
+    public function testInstanceRecycling(): void
     {
         $type = TypeFactory::build('integer');
         $this->assertSame($type, TypeFactory::build('integer'));
@@ -114,10 +105,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests new types can be registered and built
-     *
-     * @return void
      */
-    public function testMapAndBuild()
+    public function testMapAndBuild(): void
     {
         $map = TypeFactory::getMap();
         $this->assertNotEmpty($map);
@@ -140,10 +129,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests new types set with set() are returned by buildAll()
-     *
-     * @return void
      */
-    public function testSetAndBuild()
+    public function testSetAndBuild(): void
     {
         $types = TypeFactory::buildAll();
         $this->assertFalse(isset($types['foo']));
@@ -155,10 +142,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests overwriting type map works for building
-     *
-     * @return void
      */
-    public function testReMapAndBuild()
+    public function testReMapAndBuild(): void
     {
         $fooType = FooType::class;
         TypeFactory::map('foo', $fooType);
@@ -173,10 +158,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests clear function in conjunction with map
-     *
-     * @return void
      */
-    public function testClear()
+    public function testClear(): void
     {
         $map = TypeFactory::getMap();
         $this->assertNotEmpty($map);
@@ -195,10 +178,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests bigintegers from database are converted correctly to PHP
-     *
-     * @return void
      */
-    public function testBigintegerToPHP()
+    public function testBigintegerToPHP(): void
     {
         $this->skipIf(
             PHP_INT_SIZE === 4,
@@ -214,10 +195,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests bigintegers from PHP are converted correctly to statement value
-     *
-     * @return void
      */
-    public function testBigintegerToStatement()
+    public function testBigintegerToStatement(): void
     {
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
@@ -227,10 +206,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests decimal from database are converted correctly to PHP
-     *
-     * @return void
      */
-    public function testDecimalToPHP()
+    public function testDecimalToPHP(): void
     {
         $type = TypeFactory::build('decimal');
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
@@ -242,10 +219,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
      */
-    public function testDecimalToStatement()
+    public function testDecimalToStatement(): void
     {
         $type = TypeFactory::build('decimal');
         $string = '12.55';
@@ -255,10 +230,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Test setting instances into the factory/registry.
-     *
-     * @return void
      */
-    public function testSet()
+    public function testSet(): void
     {
         $instance = $this->getMockBuilder(TypeInterface::class)->getMock();
         TypeFactory::set('random', $instance);

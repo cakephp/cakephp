@@ -25,7 +25,7 @@ use Cake\View\Form\ContextFactory;
  */
 class ContextFactoryTest extends TestCase
 {
-    public function testGetException()
+    public function testGetException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(

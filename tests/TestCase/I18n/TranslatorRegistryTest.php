@@ -30,7 +30,7 @@ class TranslatorRegistryTest extends TestCase
     /**
      * Test Package null initialization from cache
      */
-    public function testGetNullPackageInitializationFromCache()
+    public function testGetNullPackageInitializationFromCache(): void
     {
         $packageLocator = $this->getMockBuilder(PackageLocator::class)->getMock();
         $package = $this->getMockBuilder(Package::class)->getMock();

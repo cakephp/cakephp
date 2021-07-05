@@ -39,8 +39,6 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -51,10 +49,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test adding new widgets.
-     *
-     * @return void
      */
-    public function testAddInConstructor()
+    public function testAddInConstructor(): void
     {
         $widgets = [
             'text' => ['Cake\View\Widget\BasicWidget'],
@@ -70,10 +66,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test that view instance is properly passed to widget constructor.
-     *
-     * @return void
      */
-    public function testGeneratingWidgetUsingViewInstance()
+    public function testGeneratingWidgetUsingViewInstance(): void
     {
         $inputs = new WidgetLocator(
             $this->templates,
@@ -88,10 +82,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test loading widgets files in the app.
-     *
-     * @return void
      */
-    public function testAddWidgetsFromConfigInConstructor()
+    public function testAddWidgetsFromConfigInConstructor(): void
     {
         $widgets = [
             'text' => ['Cake\View\Widget\BasicWidget'],
@@ -103,10 +95,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test loading templates files from a plugin
-     *
-     * @return void
      */
-    public function testAddPluginWidgetsFromConfigInConstructor()
+    public function testAddPluginWidgetsFromConfigInConstructor(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $widgets = [
@@ -120,10 +110,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test adding new widgets.
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
@@ -142,10 +130,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test adding an instance of an invalid type.
-     *
-     * @return void
      */
-    public function testAddInvalidType()
+    public function testAddInvalidType(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
@@ -159,10 +145,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test getting registered widgets.
-     *
-     * @return void
      */
-    public function testGet()
+    public function testGet(): void
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
@@ -175,10 +159,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test getting fallback widgets.
-     *
-     * @return void
      */
-    public function testGetFallback()
+    public function testGetFallback(): void
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
@@ -193,10 +175,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test getting errors
-     *
-     * @return void
      */
-    public function testGetNoFallbackError()
+    public function testGetNoFallbackError(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unknown widget `foo`');
@@ -207,10 +187,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test getting resolve dependency
-     *
-     * @return void
      */
-    public function testGetResolveDependency()
+    public function testGetResolveDependency(): void
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
@@ -224,10 +202,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test getting resolve dependency missing class
-     *
-     * @return void
      */
-    public function testGetResolveDependencyMissingClass()
+    public function testGetResolveDependencyMissingClass(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to locate widget class "TestApp\View\DerpWidget"');
@@ -238,10 +214,8 @@ class WidgetLocatorTest extends TestCase
 
     /**
      * Test getting resolve dependency missing dependency
-     *
-     * @return void
      */
-    public function testGetResolveDependencyMissingDependency()
+    public function testGetResolveDependencyMissingDependency(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unknown widget `label`');

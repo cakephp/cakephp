@@ -28,10 +28,8 @@ class SubjectFilterDecoratorTest extends TestCase
 {
     /**
      * testCanTrigger
-     *
-     * @return void
      */
-    public function testCanTrigger()
+    public function testCanTrigger(): void
     {
         $event = new Event('decorator.test', $this);
         $callable = function (EventInterface $event) {

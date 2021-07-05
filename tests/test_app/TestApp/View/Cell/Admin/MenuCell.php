@@ -22,10 +22,8 @@ class MenuCell extends \Cake\View\Cell
 {
     /**
      * Default cell action.
-     *
-     * @return void
      */
-    public function display()
+    public function display(): void
     {
     }
 }

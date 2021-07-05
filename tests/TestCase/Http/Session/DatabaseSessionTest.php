@@ -42,8 +42,6 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -57,8 +55,6 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -68,10 +64,8 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * test that constructor sets the right things up.
-     *
-     * @return void
      */
-    public function testConstructionSettings()
+    public function testConstructionSettings(): void
     {
         $this->getTableLocator()->clear();
         new DatabaseSession();
@@ -85,20 +79,16 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * test opening the session
-     *
-     * @return void
      */
-    public function testOpen()
+    public function testOpen(): void
     {
         $this->assertTrue($this->storage->open(null, null));
     }
 
     /**
      * test write()
-     *
-     * @return void
      */
-    public function testWrite()
+    public function testWrite(): void
     {
         $result = $this->storage->write('foo', 'Some value');
         $this->assertTrue($result);
@@ -110,10 +100,8 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * testReadAndWriteWithDatabaseStorage method
-     *
-     * @return void
      */
-    public function testWriteEmptySessionId()
+    public function testWriteEmptySessionId(): void
     {
         $result = $this->storage->write('', 'This is a Test');
         $this->assertFalse($result);
@@ -121,10 +109,8 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * test read()
-     *
-     * @return void
      */
-    public function testRead()
+    public function testRead(): void
     {
         $this->storage->write('foo', 'Some value');
 
@@ -138,10 +124,8 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * test blowing up the session.
-     *
-     * @return void
      */
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $this->assertTrue($this->storage->write('foo', 'Some value'));
 
@@ -152,10 +136,8 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * test the garbage collector
-     *
-     * @return void
      */
-    public function testGc()
+    public function testGc(): void
     {
         $this->getTableLocator()->clear();
 
@@ -170,10 +152,8 @@ class DatabaseSessionTest extends TestCase
 
     /**
      * Tests serializing an entity
-     *
-     * @return void
      */
-    public function testSerializeEntity()
+    public function testSerializeEntity(): void
     {
         $entity = new Entity();
         $entity->value = 'something';

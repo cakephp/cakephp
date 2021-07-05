@@ -29,10 +29,8 @@ class TruncationStrategyTest extends TestCase
 
     /**
      * Test that beforeTest truncates tables from the previous test
-     *
-     * @return void
      */
-    public function testSetupSimple()
+    public function testSetupSimple(): void
     {
         $articles = TableRegistry::getTableLocator()->get('Articles');
         $articlesTags = TableRegistry::getTableLocator()->get('ArticlesTags');

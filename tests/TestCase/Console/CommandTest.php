@@ -37,10 +37,8 @@ class CommandTest extends TestCase
 {
     /**
      * test orm locator is setup
-     *
-     * @return void
      */
-    public function testConstructorSetsLocator()
+    public function testConstructorSetsLocator(): void
     {
         $command = new Command();
         $result = $command->getTableLocator();
@@ -49,10 +47,8 @@ class CommandTest extends TestCase
 
     /**
      * test loadModel is configured properly
-     *
-     * @return void
      */
-    public function testConstructorLoadModel()
+    public function testConstructorLoadModel(): void
     {
         $command = new Command();
         $command->loadModel('Comments');
@@ -61,10 +57,8 @@ class CommandTest extends TestCase
 
     /**
      * test loadModel is configured properly
-     *
-     * @return void
      */
-    public function testConstructorAutoLoadModel()
+    public function testConstructorAutoLoadModel(): void
     {
         $command = new AutoLoadModelCommand();
         $this->assertInstanceOf(Table::class, $command->Posts);
@@ -72,10 +66,8 @@ class CommandTest extends TestCase
 
     /**
      * Test name
-     *
-     * @return void
      */
-    public function testSetName()
+    public function testSetName(): void
     {
         $command = new Command();
         $this->assertSame($command, $command->setName('routes show'));
@@ -85,10 +77,8 @@ class CommandTest extends TestCase
 
     /**
      * Test invalid name
-     *
-     * @return void
      */
-    public function testSetNameInvalid()
+    public function testSetNameInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
@@ -99,10 +89,8 @@ class CommandTest extends TestCase
 
     /**
      * Test invalid name
-     *
-     * @return void
      */
-    public function testSetNameInvalidLeadingSpace()
+    public function testSetNameInvalidLeadingSpace(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -112,10 +100,8 @@ class CommandTest extends TestCase
 
     /**
      * Test option parser fetching
-     *
-     * @return void
      */
-    public function testGetOptionParser()
+    public function testGetOptionParser(): void
     {
         $command = new Command();
         $command->setName('cake routes show');
@@ -126,10 +112,8 @@ class CommandTest extends TestCase
 
     /**
      * Test that initialize is called.
-     *
-     * @return void
      */
-    public function testRunCallsInitialize()
+    public function testRunCallsInitialize(): void
     {
         /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
@@ -142,10 +126,8 @@ class CommandTest extends TestCase
 
     /**
      * Test run() outputs help
-     *
-     * @return void
      */
-    public function testRunOutputHelp()
+    public function testRunOutputHelp(): void
     {
         $command = new Command();
         $command->setName('cake demo');
@@ -162,10 +144,8 @@ class CommandTest extends TestCase
 
     /**
      * Test run() outputs help
-     *
-     * @return void
      */
-    public function testRunOutputHelpLongOption()
+    public function testRunOutputHelpLongOption(): void
     {
         $command = new Command();
         $command->setName('cake demo');
@@ -182,10 +162,8 @@ class CommandTest extends TestCase
 
     /**
      * Test run() sets output level
-     *
-     * @return void
      */
-    public function testRunVerboseOption()
+    public function testRunVerboseOption(): void
     {
         $command = new DemoCommand();
         $command->setName('cake demo');
@@ -201,10 +179,8 @@ class CommandTest extends TestCase
 
     /**
      * Test run() sets output level
-     *
-     * @return void
      */
-    public function testRunQuietOption()
+    public function testRunQuietOption(): void
     {
         $command = new DemoCommand();
         $command->setName('cake demo');
@@ -219,10 +195,8 @@ class CommandTest extends TestCase
 
     /**
      * Test run() sets option parser failure
-     *
-     * @return void
      */
-    public function testRunOptionParserFailure()
+    public function testRunOptionParserFailure(): void
     {
         /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
@@ -246,10 +220,8 @@ class CommandTest extends TestCase
 
     /**
      * Test abort()
-     *
-     * @return void
      */
-    public function testAbort()
+    public function testAbort(): void
     {
         $this->expectException(StopException::class);
         $this->expectExceptionCode(1);
@@ -260,10 +232,8 @@ class CommandTest extends TestCase
 
     /**
      * Test abort()
-     *
-     * @return void
      */
-    public function testAbortCustomCode()
+    public function testAbortCustomCode(): void
     {
         $this->expectException(StopException::class);
         $this->expectExceptionCode(99);
@@ -274,10 +244,8 @@ class CommandTest extends TestCase
 
     /**
      * test executeCommand with a string class
-     *
-     * @return void
      */
-    public function testExecuteCommandString()
+    public function testExecuteCommandString(): void
     {
         $output = new ConsoleOutput();
         $command = new Command();
@@ -288,10 +256,8 @@ class CommandTest extends TestCase
 
     /**
      * test executeCommand with an invalid string class
-     *
-     * @return void
      */
-    public function testExecuteCommandStringInvalid()
+    public function testExecuteCommandStringInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Command class 'Nope' does not exist");
@@ -302,10 +268,8 @@ class CommandTest extends TestCase
 
     /**
      * test executeCommand with arguments
-     *
-     * @return void
      */
-    public function testExecuteCommandArguments()
+    public function testExecuteCommandArguments(): void
     {
         $output = new ConsoleOutput();
         $command = new Command();
@@ -315,10 +279,8 @@ class CommandTest extends TestCase
 
     /**
      * test executeCommand with arguments
-     *
-     * @return void
      */
-    public function testExecuteCommandArgumentsOptions()
+    public function testExecuteCommandArgumentsOptions(): void
     {
         $output = new ConsoleOutput();
         $command = new Command();
@@ -328,10 +290,8 @@ class CommandTest extends TestCase
 
     /**
      * test executeCommand with an instance
-     *
-     * @return void
      */
-    public function testExecuteCommandInstance()
+    public function testExecuteCommandInstance(): void
     {
         $output = new ConsoleOutput();
         $command = new Command();
@@ -342,10 +302,8 @@ class CommandTest extends TestCase
 
     /**
      * test executeCommand with an abort
-     *
-     * @return void
      */
-    public function testExecuteCommandAbort()
+    public function testExecuteCommandAbort(): void
     {
         $output = new ConsoleOutput();
         $command = new Command();
@@ -356,10 +314,8 @@ class CommandTest extends TestCase
 
     /**
      * test executeCommand with an invalid instance
-     *
-     * @return void
      */
-    public function testExecuteCommandInstanceInvalid()
+    public function testExecuteCommandInstanceInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Command 'stdClass' is not a subclass");
@@ -370,10 +326,8 @@ class CommandTest extends TestCase
 
     /**
      * Test that noninteractive commands use defaults where applicable.
-     *
-     * @return void
      */
-    public function testExecuteCommandNonInteractive()
+    public function testExecuteCommandNonInteractive(): void
     {
         $output = new ConsoleOutput();
         $command = new Command();

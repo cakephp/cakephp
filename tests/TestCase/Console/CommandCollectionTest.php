@@ -39,10 +39,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Test constructor with valid classnames
-     *
-     * @return void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $collection = new CommandCollection([
             'sample' => SampleCommand::class,
@@ -55,10 +53,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Constructor with invalid class names should blow up
-     *
-     * @return void
      */
-    public function testConstructorInvalidClass()
+    public function testConstructorInvalidClass(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\'. It is not a subclass of Cake\Console\CommandInterface');
@@ -69,10 +65,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Test basic add/get
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $collection = new CommandCollection();
         $this->assertSame($collection, $collection->add('routes', RoutesCommand::class));
@@ -82,10 +76,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test adding a command instance.
-     *
-     * @return void
      */
-    public function testAddCommand()
+    public function testAddCommand(): void
     {
         $collection = new CommandCollection();
         $this->assertSame($collection, $collection->add('ex', DemoCommand::class));
@@ -95,10 +87,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Test that add() replaces.
-     *
-     * @return void
      */
-    public function testAddReplace()
+    public function testAddReplace(): void
     {
         $collection = new CommandCollection();
         $this->assertSame($collection, $collection->add('routes', RoutesCommand::class));
@@ -109,10 +99,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Test adding with instances
-     *
-     * @return void
      */
-    public function testAddInstance()
+    public function testAddInstance(): void
     {
         $collection = new CommandCollection();
         $command = new RoutesCommand();
@@ -145,9 +133,8 @@ class CommandCollectionTest extends TestCase
      * test adding a command instance.
      *
      * @dataProvider invalidNameProvider
-     * @return void
      */
-    public function testAddCommandInvalidName(string $name)
+    public function testAddCommandInvalidName(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("The command name `$name` is invalid.");
@@ -158,7 +145,7 @@ class CommandCollectionTest extends TestCase
     /**
      * Class names that are not commands should fail
      */
-    public function testInvalidCommandClassName()
+    public function testInvalidCommandClassName(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot use \'Cake\TestSuite\TestCase\' for command \'routes\'. It is not a subclass of Cake\Console\CommandInterface');
@@ -168,10 +155,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Test removing a command
-     *
-     * @return void
      */
-    public function testRemove()
+    public function testRemove(): void
     {
         $collection = new CommandCollection();
         $collection->add('routes', RoutesCommand::class);
@@ -181,10 +166,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Removing an unknown command does not fail
-     *
-     * @return void
      */
-    public function testRemoveUnknown()
+    public function testRemoveUnknown(): void
     {
         $collection = new CommandCollection();
         $this->assertSame($collection, $collection->remove('nope'));
@@ -193,10 +176,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test getIterator
-     *
-     * @return void
      */
-    public function testGetIterator()
+    public function testGetIterator(): void
     {
         $in = [
             'sample' => SampleCommand::class,
@@ -212,10 +193,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test autodiscovering app shells
-     *
-     * @return void
      */
-    public function testAutoDiscoverApp()
+    public function testAutoDiscoverApp(): void
     {
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
@@ -229,10 +208,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test autodiscovering core shells
-     *
-     * @return void
      */
-    public function testAutoDiscoverCore()
+    public function testAutoDiscoverCore(): void
     {
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
@@ -254,10 +231,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test missing plugin discovery
-     *
-     * @return void
      */
-    public function testDiscoverPluginUnknown()
+    public function testDiscoverPluginUnknown(): void
     {
         $collection = new CommandCollection();
         $this->assertSame([], $collection->discoverPlugin('Nope'));
@@ -265,10 +240,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test autodiscovering plugin shells
-     *
-     * @return void
      */
-    public function testDiscoverPlugin()
+    public function testDiscoverPlugin(): void
     {
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
@@ -315,10 +288,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Test keys
-     *
-     * @return void
      */
-    public function testKeys()
+    public function testKeys(): void
     {
         $collection = new CommandCollection();
         $collection->add('demo', DemoCommand::class);

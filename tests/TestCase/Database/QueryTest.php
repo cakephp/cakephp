@@ -87,10 +87,8 @@ class QueryTest extends TestCase
     /**
      * Queries need a default type to prevent fatal errors
      * when an uninitialized query has its sql() method called.
-     *
-     * @return void
      */
-    public function testDefaultType()
+    public function testDefaultType(): void
     {
         $query = new Query($this->connection);
         $this->assertSame('', $query->sql());
@@ -99,10 +97,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to obtain expression results from a query
-     *
-     * @return void
      */
-    public function testSelectFieldsOnly()
+    public function testSelectFieldsOnly(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new Query($this->connection);
@@ -125,10 +121,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to pass a closure as fields in select()
-     *
-     * @return void
      */
-    public function testSelectClosure()
+    public function testSelectClosure(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new Query($this->connection);
@@ -143,10 +137,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests it is possible to select fields from tables with no conditions
-     *
-     * @return void
      */
-    public function testSelectFieldsFromTable()
+    public function testSelectFieldsFromTable(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -172,10 +164,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests it is possible to select aliased fields
-     *
-     * @return void
      */
-    public function testSelectAliasedFieldsFromTable()
+    public function testSelectAliasedFieldsFromTable(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -210,10 +200,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that tables can also be aliased and referenced in the select clause using such alias
-     *
-     * @return void
      */
-    public function testSelectAliasedTables()
+    public function testSelectAliasedTables(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -240,10 +228,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests it is possible to add joins to a select query
-     *
-     * @return void
      */
-    public function testSelectWithJoins()
+    public function testSelectWithJoins(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -274,10 +260,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests it is possible to add joins to a select query using array or expression as conditions
-     *
-     * @return void
      */
-    public function testSelectWithJoinsConditions()
+    public function testSelectWithJoinsConditions(): void
     {
         $this->loadFixtures('Authors', 'Articles', 'Comments');
         $query = new Query($this->connection);
@@ -317,10 +301,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that joins can be aliased using array keys
-     *
-     * @return void
      */
-    public function testSelectAliasedJoins()
+    public function testSelectAliasedJoins(): void
     {
         $this->loadFixtures('Authors', 'Articles', 'Comments');
         $query = new Query($this->connection);
@@ -360,10 +342,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests the leftJoin method
-     *
-     * @return void
      */
-    public function testSelectLeftJoin()
+    public function testSelectLeftJoin(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
@@ -393,10 +373,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests the innerJoin method
-     *
-     * @return void
      */
-    public function testSelectInnerJoin()
+    public function testSelectInnerJoin(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
@@ -413,10 +391,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests the rightJoin method
-     *
-     * @return void
      */
-    public function testSelectRightJoin()
+    public function testSelectRightJoin(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
@@ -441,10 +417,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to pass a callable as conditions for a join
-     *
-     * @return void
      */
-    public function testSelectJoinWithCallback()
+    public function testSelectJoinWithCallback(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
@@ -465,10 +439,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to pass a callable as conditions for a join
-     *
-     * @return void
      */
-    public function testSelectJoinWithCallback2()
+    public function testSelectJoinWithCallback2(): void
     {
         $this->loadFixtures('Authors', 'Comments');
         $query = new Query($this->connection);
@@ -492,10 +464,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests it is possible to filter a query by using simple AND joined conditions
-     *
-     * @return void
      */
-    public function testSelectSimpleWhere()
+    public function testSelectSimpleWhere(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -519,10 +489,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorMoreThan()
+    public function testSelectWhereOperatorMoreThan(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -538,10 +506,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorLessThan()
+    public function testSelectWhereOperatorLessThan(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -557,10 +523,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorLessThanEqual()
+    public function testSelectWhereOperatorLessThanEqual(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -575,10 +539,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorMoreThanEqual()
+    public function testSelectWhereOperatorMoreThanEqual(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -593,10 +555,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorNotEqual()
+    public function testSelectWhereOperatorNotEqual(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -612,10 +572,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorLike()
+    public function testSelectWhereOperatorLike(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -631,10 +589,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorLikeExpansion()
+    public function testSelectWhereOperatorLikeExpansion(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -649,10 +605,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operators and scalar values works
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorNotLike()
+    public function testSelectWhereOperatorNotLike(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -667,10 +621,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that unary expressions in selects are built correctly.
-     *
-     * @return void
      */
-    public function testSelectWhereUnary()
+    public function testSelectWhereUnary(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -691,10 +643,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests selecting with conditions and specifying types for those
-     *
-     * @return void
      */
-    public function testSelectWhereTypes()
+    public function testSelectWhereTypes(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -769,10 +719,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests Query::whereNull()
-     *
-     * @return void
      */
-    public function testSelectWhereNull()
+    public function testSelectWhereNull(): void
     {
         $this->loadFixtures('MenuLinkTrees');
 
@@ -806,10 +754,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests Query::whereNotNull()
-     *
-     * @return void
      */
-    public function testSelectWhereNotNull()
+    public function testSelectWhereNotNull(): void
     {
         $this->loadFixtures('MenuLinkTrees');
 
@@ -844,10 +790,8 @@ class QueryTest extends TestCase
     /**
      * Tests that passing an array type to any where condition will replace
      * the passed array accordingly as a proper IN condition
-     *
-     * @return void
      */
-    public function testSelectWhereArrayType()
+    public function testSelectWhereArrayType(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -865,10 +809,8 @@ class QueryTest extends TestCase
     /**
      * Tests that passing an empty array type to any where condition will not
      * result in a SQL error, but an internal exception
-     *
-     * @return void
      */
-    public function testSelectWhereArrayTypeEmpty()
+    public function testSelectWhereArrayTypeEmpty(): void
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Impossible to generate condition with empty list of values for field');
@@ -883,10 +825,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests exception message for impossible condition when using an expression
-     *
-     * @return void
      */
-    public function testSelectWhereArrayTypeEmptyWithExpression()
+    public function testSelectWhereArrayTypeEmptyWithExpression(): void
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('with empty list of values for field (SELECT 1)');
@@ -903,10 +843,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that Query::andWhere() can be used to concatenate conditions with AND
-     *
-     * @return void
      */
-    public function testSelectAndWhere()
+    public function testSelectAndWhere(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -933,10 +871,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that Query::andWhere() can be used without calling where() before
-     *
-     * @return void
      */
-    public function testSelectAndWhereNoPreviousCondition()
+    public function testSelectAndWhereNoPreviousCondition(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -954,10 +890,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to pass a closure to where() to build a set of
      * conditions and return the expression to be used
-     *
-     * @return void
      */
-    public function testSelectWhereUsingClosure()
+    public function testSelectWhereUsingClosure(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1002,10 +936,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests generating tuples in the values side containing closure expressions
-     *
-     * @return void
      */
-    public function testTupleWithClosureExpression()
+    public function testTupleWithClosureExpression(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1031,10 +963,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to pass a closure to andWhere() to build a set of
      * conditions and return the expression to be used
-     *
-     * @return void
      */
-    public function testSelectAndWhereUsingClosure()
+    public function testSelectAndWhereUsingClosure(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1066,10 +996,8 @@ class QueryTest extends TestCase
     /**
      * Tests that expression objects can be used as the field in a comparison
      * and the values will be bound correctly to the query
-     *
-     * @return void
      */
-    public function testSelectWhereUsingExpressionInField()
+    public function testSelectWhereUsingExpressionInField(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1090,10 +1018,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests using where conditions with operator methods
-     *
-     * @return void
      */
-    public function testSelectWhereOperatorMethods()
+    public function testSelectWhereOperatorMethods(): void
     {
         $this->loadFixtures('Articles', 'Comments', 'Authors');
         $query = new Query($this->connection);
@@ -1266,10 +1192,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that calling "in" and "notIn" will cast the passed values to an array
-     *
-     * @return void
      */
-    public function testInValueCast()
+    public function testInValueCast(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1333,10 +1257,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that calling "in" and "notIn" will cast the passed values to an array
-     *
-     * @return void
      */
-    public function testInValueCast2()
+    public function testInValueCast2(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1361,10 +1283,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that IN clauses generate correct placeholders
-     *
-     * @return void
      */
-    public function testInClausePlaceholderGeneration()
+    public function testInClausePlaceholderGeneration(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1381,10 +1301,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests where() with callable types.
-     *
-     * @return void
      */
-    public function testWhereCallables()
+    public function testWhereCallables(): void
     {
         $query = new Query($this->connection);
         $query->select(['id'])
@@ -1405,10 +1323,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that empty values don't set where clauses.
-     *
-     * @return void
      */
-    public function testWhereEmptyValues()
+    public function testWhereEmptyValues(): void
     {
         $query = new Query($this->connection);
         $query->from('comments')
@@ -1423,10 +1339,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to use a between expression
      * in a where condition
-     *
-     * @return void
      */
-    public function testWhereWithBetween()
+    public function testWhereWithBetween(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1450,10 +1364,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to use a between expression
      * in a where condition with a complex data type
-     *
-     * @return void
      */
-    public function testWhereWithBetweenComplex()
+    public function testWhereWithBetweenComplex(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1480,10 +1392,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to use an expression object
      * as the field for a between expression
-     *
-     * @return void
      */
-    public function testWhereWithBetweenWithExpressionField()
+    public function testWhereWithBetweenWithExpressionField(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1509,10 +1419,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to use an expression object
      * as any of the parts of the between expression
-     *
-     * @return void
      */
-    public function testWhereWithBetweenWithExpressionParts()
+    public function testWhereWithBetweenWithExpressionParts(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1538,10 +1446,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests nesting query expressions both using arrays and closures
-     *
-     * @return void
      */
-    public function testSelectExpressionComposition()
+    public function testSelectExpressionComposition(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1624,10 +1530,8 @@ class QueryTest extends TestCase
     /**
      * Tests that conditions can be nested with an unary operator using the array notation
      * and the not() method
-     *
-     * @return void
      */
-    public function testSelectWhereNot()
+    public function testSelectWhereNot(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
@@ -1662,10 +1566,8 @@ class QueryTest extends TestCase
     /**
      * Tests that conditions can be nested with an unary operator using the array notation
      * and the not() method
-     *
-     * @return void
      */
-    public function testSelectWhereNot2()
+    public function testSelectWhereNot2(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1684,10 +1586,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests whereInArray() and its input types.
-     *
-     * @return void
      */
-    public function testWhereInArray()
+    public function testWhereInArray(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1709,10 +1609,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests whereInArray() and empty array input.
-     *
-     * @return void
      */
-    public function testWhereInArrayEmpty()
+    public function testWhereInArrayEmpty(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1733,10 +1631,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests whereNotInList() and its input types.
-     *
-     * @return void
      */
-    public function testWhereNotInList()
+    public function testWhereNotInList(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1756,10 +1652,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests whereNotInList() and empty array input.
-     *
-     * @return void
      */
-    public function testWhereNotInListEmpty()
+    public function testWhereNotInListEmpty(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1780,10 +1674,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests whereNotInListOrNull() and its input types.
-     *
-     * @return void
      */
-    public function testWhereNotInListOrNull()
+    public function testWhereNotInListOrNull(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1803,10 +1695,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests whereNotInListOrNull() and empty array input.
-     *
-     * @return void
      */
-    public function testWhereNotInListOrNullEmpty()
+    public function testWhereNotInListOrNullEmpty(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1827,10 +1717,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests order() method both with simple fields and expressions
-     *
-     * @return void
      */
-    public function testSelectOrderBy()
+    public function testSelectOrderBy(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -1892,10 +1780,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that order() being a string works.
-     *
-     * @return void
      */
-    public function testSelectOrderByString()
+    public function testSelectOrderByString(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -1911,10 +1797,8 @@ class QueryTest extends TestCase
 
     /**
      * Test exception for order() with an associative array which contains extra values.
-     *
-     * @return void
      */
-    public function testSelectOrderByAssociativeArrayContainingExtraExpressions()
+    public function testSelectOrderByAssociativeArrayContainingExtraExpressions(): void
     {
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage(
@@ -1934,10 +1818,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that order() works with closures.
-     *
-     * @return void
      */
-    public function testSelectOrderByClosure()
+    public function testSelectOrderByClosure(): void
     {
         $query = new Query($this->connection);
         $query
@@ -2001,10 +1883,8 @@ class QueryTest extends TestCase
 
     /**
      * Test orderAsc() and its input types.
-     *
-     * @return void
      */
-    public function testSelectOrderAsc()
+    public function testSelectOrderAsc(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -2067,10 +1947,8 @@ class QueryTest extends TestCase
 
     /**
      * Test orderDesc() and its input types.
-     *
-     * @return void
      */
-    public function testSelectOrderDesc()
+    public function testSelectOrderDesc(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -2133,10 +2011,8 @@ class QueryTest extends TestCase
     /**
      * Tests that group by fields can be passed similar to select fields
      * and that it sends the correct query to the database
-     *
-     * @return void
      */
-    public function testSelectGroup()
+    public function testSelectGroup(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -2165,10 +2041,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to select distinct rows
-     *
-     * @return void
      */
-    public function testSelectDistinct()
+    public function testSelectDistinct(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -2187,10 +2061,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests distinct on a specific column reduces rows based on that column.
-     *
-     * @return void
      */
-    public function testSelectDistinctON()
+    public function testSelectDistinctON(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -2226,10 +2098,8 @@ class QueryTest extends TestCase
      * Test use of modifiers in the query
      *
      * Testing the generated SQL since the modifiers are usually different per driver
-     *
-     * @return void
      */
-    public function testSelectModifiers()
+    public function testSelectModifiers(): void
     {
         $query = new Query($this->connection);
         $result = $query
@@ -2279,10 +2149,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that having() behaves pretty much the same as the where() method
-     *
-     * @return void
      */
-    public function testSelectHaving()
+    public function testSelectHaving(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -2312,10 +2180,8 @@ class QueryTest extends TestCase
     /**
      * Tests that Query::andHaving() can be used to concatenate conditions with AND
      * in the having clause
-     *
-     * @return void
      */
-    public function testSelectAndHaving()
+    public function testSelectAndHaving(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
@@ -2357,10 +2223,8 @@ class QueryTest extends TestCase
 
     /**
      * Test having casing with string expressions
-     *
-     * @return void
      */
-    public function testHavingAliasCasingStringExpression()
+    public function testHavingAliasCasingStringExpression(): void
     {
         $this->skipIf($this->autoQuote, 'Does not work when autoquoting is enabled.');
         $query = new Query($this->connection);
@@ -2383,10 +2247,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests selecting rows using a limit clause
-     *
-     * @return void
      */
-    public function testSelectLimit()
+    public function testSelectLimit(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -2400,10 +2262,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests selecting rows combining a limit and offset clause
-     *
-     * @return void
      */
-    public function testSelectOffset()
+    public function testSelectOffset(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
@@ -2462,10 +2322,8 @@ class QueryTest extends TestCase
 
     /**
      * Test Pages number.
-     *
-     * @return void
      */
-    public function testPageShouldStartAtOne()
+    public function testPageShouldStartAtOne(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Pages must start at 1.');
@@ -2477,10 +2335,8 @@ class QueryTest extends TestCase
 
     /**
      * Test selecting rows using the page() method.
-     *
-     * @return void
      */
-    public function testSelectPage()
+    public function testSelectPage(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -2519,10 +2375,8 @@ class QueryTest extends TestCase
     /**
      * Test selecting rows using the page() method and ordering the results
      * by a calculated column.
-     *
-     * @return void
      */
-    public function testSelectPageWithOrder()
+    public function testSelectPageWithOrder(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -2549,10 +2403,8 @@ class QueryTest extends TestCase
     /**
      * Tests that Query objects can be included inside the select clause
      * and be used as a normal field, including binding any passed parameter
-     *
-     * @return void
      */
-    public function testSubqueryInSelect()
+    public function testSubqueryInSelect(): void
     {
         $this->loadFixtures('Authors', 'Articles', 'Comments');
         $query = new Query($this->connection);
@@ -2594,10 +2446,8 @@ class QueryTest extends TestCase
     /**
      * Tests that Query objects can be included inside the from clause
      * and be used as a normal table, including binding any passed parameter
-     *
-     * @return void
      */
-    public function testSuqueryInFrom()
+    public function testSuqueryInFrom(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -2623,10 +2473,8 @@ class QueryTest extends TestCase
     /**
      * Tests that Query objects can be included inside the where clause
      * and be used as a normal condition, including binding any passed parameter
-     *
-     * @return void
      */
-    public function testSubqueryInWhere()
+    public function testSubqueryInWhere(): void
     {
         $this->loadFixtures('Authors', 'Comments');
         $query = new Query($this->connection);
@@ -2669,10 +2517,8 @@ class QueryTest extends TestCase
     /**
      * Tests that Query objects can be included inside the where clause
      * and be used as a EXISTS and NOT EXISTS conditions
-     *
-     * @return void
      */
-    public function testSubqueryExistsWhere()
+    public function testSubqueryExistsWhere(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $query = new Query($this->connection);
@@ -2714,10 +2560,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to use a subquery in a join clause
-     *
-     * @return void
      */
-    public function testSubqueryInJoin()
+    public function testSubqueryInJoin(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $subquery = (new Query($this->connection))->select('*')->from('authors');
@@ -2744,10 +2588,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to one or multiple UNION statements in a query
-     *
-     * @return void
      */
-    public function testUnion()
+    public function testUnion(): void
     {
         $this->loadFixtures('Authors', 'Articles', 'Comments');
         $union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
@@ -2785,10 +2627,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to run unions with order statements
-     *
-     * @return void
      */
-    public function testUnionOrderBy()
+    public function testUnionOrderBy(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
@@ -2815,10 +2655,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that UNION ALL can be built by setting the second param of union() to true
-     *
-     * @return void
      */
-    public function testUnionAll()
+    public function testUnionAll(): void
     {
         $this->loadFixtures('Authors', 'Articles', 'Comments');
         $union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
@@ -2847,10 +2685,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests stacking decorators for results and resetting the list of decorators
-     *
-     * @return void
      */
-    public function testDecorateResults()
+    public function testDecorateResults(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -2903,10 +2739,8 @@ class QueryTest extends TestCase
 
     /**
      * Test a basic delete using from()
-     *
-     * @return void
      */
-    public function testDeleteWithFrom()
+    public function testDeleteWithFrom(): void
     {
         $this->loadFixtures('Authors');
         $query = new Query($this->connection);
@@ -2926,10 +2760,8 @@ class QueryTest extends TestCase
 
     /**
      * Test delete with from and alias.
-     *
-     * @return void
      */
-    public function testDeleteWithAliasedFrom()
+    public function testDeleteWithAliasedFrom(): void
     {
         $this->loadFixtures('Authors');
         $query = new Query($this->connection);
@@ -2949,10 +2781,8 @@ class QueryTest extends TestCase
 
     /**
      * Test a basic delete with no from() call.
-     *
-     * @return void
      */
-    public function testDeleteNoFrom()
+    public function testDeleteNoFrom(): void
     {
         $this->loadFixtures('Authors');
         $query = new Query($this->connection);
@@ -2973,10 +2803,8 @@ class QueryTest extends TestCase
      * Tests that delete queries that contain joins do trigger a notice,
      * warning about possible incompatibilities with aliases being removed
      * from the conditions.
-     *
-     * @return void
      */
-    public function testDeleteRemovingAliasesCanBreakJoins()
+    public function testDeleteRemovingAliasesCanBreakJoins(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
@@ -2994,10 +2822,8 @@ class QueryTest extends TestCase
     /**
      * Tests that aliases are stripped from delete query conditions
      * where possible.
-     *
-     * @return void
      */
-    public function testDeleteStripAliasesFromConditions()
+    public function testDeleteStripAliasesFromConditions(): void
     {
         $query = new Query($this->connection);
 
@@ -3035,10 +2861,8 @@ class QueryTest extends TestCase
 
     /**
      * Test setting select() & delete() modes.
-     *
-     * @return void
      */
-    public function testSelectAndDeleteOnSameQuery()
+    public function testSelectAndDeleteOnSameQuery(): void
     {
         $this->loadFixtures('Authors');
         $query = new Query($this->connection);
@@ -3053,10 +2877,8 @@ class QueryTest extends TestCase
 
     /**
      * Test a simple update.
-     *
-     * @return void
      */
-    public function testUpdateSimple()
+    public function testUpdateSimple(): void
     {
         $this->loadFixtures('Authors');
         $query = new Query($this->connection);
@@ -3074,10 +2896,8 @@ class QueryTest extends TestCase
     /**
      * Test update with type checking
      * by passing an array as table arg
-     *
-     * @return void
      */
-    public function testUpdateArgTypeChecking()
+    public function testUpdateArgTypeChecking(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $query = new Query($this->connection);
@@ -3086,10 +2906,8 @@ class QueryTest extends TestCase
 
     /**
      * Test update with multiple fields.
-     *
-     * @return void
      */
-    public function testUpdateMultipleFields()
+    public function testUpdateMultipleFields(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3113,10 +2931,8 @@ class QueryTest extends TestCase
 
     /**
      * Test updating multiple fields with an array.
-     *
-     * @return void
      */
-    public function testUpdateMultipleFieldsArray()
+    public function testUpdateMultipleFieldsArray(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3142,10 +2958,8 @@ class QueryTest extends TestCase
 
     /**
      * Test updates with an expression.
-     *
-     * @return void
      */
-    public function testUpdateWithExpression()
+    public function testUpdateWithExpression(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -3170,10 +2984,8 @@ class QueryTest extends TestCase
 
     /**
      * Test update with array fields and types.
-     *
-     * @return void
      */
-    public function testUpdateArrayFields()
+    public function testUpdateArrayFields(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -3201,10 +3013,8 @@ class QueryTest extends TestCase
 
     /**
      * Test update with callable in set
-     *
-     * @return void
      */
-    public function testUpdateSetCallable()
+    public function testUpdateSetCallable(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -3232,10 +3042,8 @@ class QueryTest extends TestCase
     /**
      * Tests that aliases are stripped from update query conditions
      * where possible.
-     *
-     * @return void
      */
-    public function testUpdateStripAliasesFromConditions()
+    public function testUpdateStripAliasesFromConditions(): void
     {
         $query = new Query($this->connection);
 
@@ -3275,10 +3083,8 @@ class QueryTest extends TestCase
      * Tests that update queries that contain joins do trigger a notice,
      * warning about possible incompatibilities with aliases being removed
      * from the conditions.
-     *
-     * @return void
      */
-    public function testUpdateRemovingAliasesCanBreakJoins()
+    public function testUpdateRemovingAliasesCanBreakJoins(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
@@ -3295,10 +3101,8 @@ class QueryTest extends TestCase
 
     /**
      * You cannot call values() before insert() it causes all sorts of pain.
-     *
-     * @return void
      */
-    public function testInsertValuesBeforeInsertFailure()
+    public function testInsertValuesBeforeInsertFailure(): void
     {
         $this->expectException(DatabaseException::class);
         $query = new Query($this->connection);
@@ -3311,10 +3115,8 @@ class QueryTest extends TestCase
 
     /**
      * Inserting nothing should not generate an error.
-     *
-     * @return void
      */
-    public function testInsertNothing()
+    public function testInsertNothing(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('At least 1 column is required to perform an insert.');
@@ -3324,10 +3126,8 @@ class QueryTest extends TestCase
 
     /**
      * Test insert() with no into()
-     *
-     * @return void
      */
-    public function testInsertNoInto()
+    public function testInsertNoInto(): void
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Could not compile insert query. No table was specified');
@@ -3337,10 +3137,8 @@ class QueryTest extends TestCase
 
     /**
      * Test insert overwrites values
-     *
-     * @return void
      */
-    public function testInsertOverwritesValues()
+    public function testInsertOverwritesValues(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3362,10 +3160,8 @@ class QueryTest extends TestCase
 
     /**
      * Test inserting a single row.
-     *
-     * @return void
      */
-    public function testInsertSimple()
+    public function testInsertSimple(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3405,10 +3201,8 @@ class QueryTest extends TestCase
 
     /**
      * Test insert queries quote integer column names
-     *
-     * @return void
      */
-    public function testInsertQuoteColumns()
+    public function testInsertQuoteColumns(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3429,10 +3223,8 @@ class QueryTest extends TestCase
     /**
      * Test an insert when not all the listed fields are provided.
      * Columns should be matched up where possible.
-     *
-     * @return void
      */
-    public function testInsertSparseRow()
+    public function testInsertSparseRow(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3471,10 +3263,8 @@ class QueryTest extends TestCase
 
     /**
      * Test inserting multiple rows with sparse data.
-     *
-     * @return void
      */
-    public function testInsertMultipleRowsSparse()
+    public function testInsertMultipleRowsSparse(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3516,10 +3306,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that INSERT INTO ... SELECT works.
-     *
-     * @return void
      */
-    public function testInsertFromSelect()
+    public function testInsertFromSelect(): void
     {
         $this->loadFixtures('Authors', 'Articles');
         $select = (new Query($this->connection))->select(['name', "'some text'", 99])
@@ -3571,7 +3359,7 @@ class QueryTest extends TestCase
     /**
      * Test that an exception is raised when mixing query + array types.
      */
-    public function testInsertFailureMixingTypesArrayFirst()
+    public function testInsertFailureMixingTypesArrayFirst(): void
     {
         $this->expectException(DatabaseException::class);
         $this->loadFixtures('Articles');
@@ -3585,7 +3373,7 @@ class QueryTest extends TestCase
     /**
      * Test that an exception is raised when mixing query + array types.
      */
-    public function testInsertFailureMixingTypesQueryFirst()
+    public function testInsertFailureMixingTypesQueryFirst(): void
     {
         $this->expectException(DatabaseException::class);
         $this->loadFixtures('Articles');
@@ -3598,10 +3386,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that insert can use expression objects as values.
-     *
-     * @return void
      */
-    public function testInsertExpressionValues()
+    public function testInsertExpressionValues(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $query = new Query($this->connection);
@@ -3664,10 +3450,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that the identifier method creates an expression object.
-     *
-     * @return void
      */
-    public function testIdentifierExpression()
+    public function testIdentifierExpression(): void
     {
         $query = new Query($this->connection);
         /** @var \Cake\Database\Expression\IdentifierExpression $identifier */
@@ -3679,10 +3463,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests the interface contract of identifier
-     *
-     * @return void
      */
-    public function testIdentifierInterface()
+    public function testIdentifierInterface(): void
     {
         $query = new Query($this->connection);
         $identifier = $query->identifier('description');
@@ -3698,9 +3480,8 @@ class QueryTest extends TestCase
      * Tests that functions are correctly transformed and their parameters are bound
      *
      * @group FunctionExpression
-     * @return void
      */
-    public function testSQLFunctions()
+    public function testSQLFunctions(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -3804,12 +3585,11 @@ class QueryTest extends TestCase
      * Tests that the values in tuple comparison expression are being bound correctly,
      * specifically for dialects that translate tuple comparisons.
      *
-     * @return void
      * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::_transformTupleComparison()
      * @see \Cake\Database\Driver\Sqlite::_expressionTranslators()
      * @see \Cake\Database\Driver\Sqlserver::_expressionTranslators()
      */
-    public function testTupleComparisonValuesAreBeingBoundCorrectly()
+    public function testTupleComparisonValuesAreBeingBoundCorrectly(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
@@ -3850,12 +3630,11 @@ class QueryTest extends TestCase
      * Tests that the values in tuple comparison expressions are being bound as expected
      * when types are omitted, specifically for dialects that translate tuple comparisons.
      *
-     * @return void
      * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::_transformTupleComparison()
      * @see \Cake\Database\Driver\Sqlite::_expressionTranslators()
      * @see \Cake\Database\Driver\Sqlserver::_expressionTranslators()
      */
-    public function testTupleComparisonTypesCanBeOmitted()
+    public function testTupleComparisonTypesCanBeOmitted(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
@@ -3892,10 +3671,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that default types are passed to functions accepting a $types param
-     *
-     * @return void
      */
-    public function testDefaultTypes()
+    public function testDefaultTypes(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -3921,10 +3698,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests parameter binding
-     *
-     * @return void
      */
-    public function testBind()
+    public function testBind(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -3949,10 +3724,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that epilog() will actually append a string to a select query
-     *
-     * @return void
      */
-    public function testAppendSelect()
+    public function testAppendSelect(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -3970,10 +3743,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that epilog() will actually append a string to an insert query
-     *
-     * @return void
      */
-    public function testAppendInsert()
+    public function testAppendInsert(): void
     {
         $query = new Query($this->connection);
         $sql = $query
@@ -3990,10 +3761,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that epilog() will actually append a string to an update query
-     *
-     * @return void
      */
-    public function testAppendUpdate()
+    public function testAppendUpdate(): void
     {
         $query = new Query($this->connection);
         $sql = $query
@@ -4010,10 +3779,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that epilog() will actually append a string to a delete query
-     *
-     * @return void
      */
-    public function testAppendDelete()
+    public function testAppendDelete(): void
     {
         $query = new Query($this->connection);
         $sql = $query
@@ -4028,10 +3795,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests automatic identifier quoting in the select clause
-     *
-     * @return void
      */
-    public function testQuotingSelectFieldsAndAlias()
+    public function testQuotingSelectFieldsAndAlias(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4061,10 +3826,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests automatic identifier quoting in the from clause
-     *
-     * @return void
      */
-    public function testQuotingFromAndAlias()
+    public function testQuotingFromAndAlias(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4082,10 +3845,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests automatic identifier quoting for DISTINCT ON
-     *
-     * @return void
      */
-    public function testQuotingDistinctOn()
+    public function testQuotingDistinctOn(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4095,10 +3856,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests automatic identifier quoting in the join clause
-     *
-     * @return void
      */
-    public function testQuotingJoinsAndAlias()
+    public function testQuotingJoinsAndAlias(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4124,10 +3883,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests automatic identifier quoting in the group by clause
-     *
-     * @return void
      */
-    public function testQuotingGroupBy()
+    public function testQuotingGroupBy(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4145,10 +3902,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests automatic identifier quoting strings inside conditions expressions
-     *
-     * @return void
      */
-    public function testQuotingExpressions()
+    public function testQuotingExpressions(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4170,10 +3925,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that insert query parts get quoted automatically
-     *
-     * @return void
      */
-    public function testQuotingInsert()
+    public function testQuotingInsert(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4193,10 +3946,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests converting a query to a string
-     *
-     * @return void
      */
-    public function testToString()
+    public function testToString(): void
     {
         $query = new Query($this->connection);
         $query
@@ -4208,10 +3959,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $query = (new Query($this->connection))->select('*')
             ->from('articles')
@@ -4248,10 +3997,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests __debugInfo on incomplete query
-     *
-     * @return void
      */
-    public function testDebugInfoIncompleteQuery()
+    public function testDebugInfoIncompleteQuery(): void
     {
         $query = (new Query($this->connection))
             ->insert(['title']);
@@ -4262,10 +4009,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to pass ExpressionInterface to isNull and isNotNull
-     *
-     * @return void
      */
-    public function testIsNullWithExpressions()
+    public function testIsNullWithExpressions(): void
     {
         $this->loadFixtures('Authors');
         $query = new Query($this->connection);
@@ -4296,10 +4041,8 @@ class QueryTest extends TestCase
     /**
      * Tests that strings passed to isNull and isNotNull will be treated as identifiers
      * when using autoQuoting
-     *
-     * @return void
      */
-    public function testIsNullAutoQuoting()
+    public function testIsNullAutoQuoting(): void
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
@@ -4318,10 +4061,8 @@ class QueryTest extends TestCase
     /**
      * Tests that using the IS operator will automatically translate to the best
      * possible operator depending on the passed value
-     *
-     * @return void
      */
-    public function testDirectIsNull()
+    public function testDirectIsNull(): void
     {
         $this->loadFixtures('Authors');
         $sql = (new Query($this->connection))
@@ -4343,10 +4084,8 @@ class QueryTest extends TestCase
     /**
      * Tests that using the wrong NULL operator will throw meaningful exception instead of
      * cloaking as always-empty result set.
-     *
-     * @return void
      */
-    public function testIsNullInvalid()
+    public function testIsNullInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Expression `name` is missing operator (IS, IS NOT) with `null` value.');
@@ -4362,10 +4101,8 @@ class QueryTest extends TestCase
     /**
      * Tests that using the wrong NULL operator will throw meaningful exception instead of
      * cloaking as always-empty result set.
-     *
-     * @return void
      */
-    public function testIsNotNullInvalid()
+    public function testIsNotNullInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -4380,10 +4117,8 @@ class QueryTest extends TestCase
     /**
      * Tests that using the IS NOT operator will automatically translate to the best
      * possible operator depending on the passed value
-     *
-     * @return void
      */
-    public function testDirectIsNotNull()
+    public function testDirectIsNotNull(): void
     {
         $this->loadFixtures('Authors');
         $sql = (new Query($this->connection))
@@ -4404,10 +4139,8 @@ class QueryTest extends TestCase
 
     /**
      * Performs the simple update query and verifies the row count.
-     *
-     * @return void
      */
-    public function testRowCountAndClose()
+    public function testRowCountAndClose(): void
     {
         $this->loadFixtures('Authors');
 
@@ -4442,10 +4175,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that case statements work correctly for various use-cases.
-     *
-     * @return void
      */
-    public function testSqlCaseStatement()
+    public function testSqlCaseStatement(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -4530,10 +4261,8 @@ class QueryTest extends TestCase
 
     /**
      * Shows that bufferResults(false) will prevent client-side results buffering
-     *
-     * @return void
      */
-    public function testUnbufferedQuery()
+    public function testUnbufferedQuery(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -4566,10 +4295,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that cloning goes deep.
-     *
-     * @return void
      */
-    public function testDeepClone()
+    public function testDeepClone(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -4604,10 +4331,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests the selectTypeMap method
-     *
-     * @return void
      */
-    public function testSelectTypeMap()
+    public function testSelectTypeMap(): void
     {
         $query = new Query($this->connection);
         $typeMap = $query->getSelectTypeMap();
@@ -4619,10 +4344,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests the automatic type conversion for the fields in the result
-     *
-     * @return void
      */
-    public function testSelectTypeConversion()
+    public function testSelectTypeConversion(): void
     {
         TypeFactory::set('custom_datetime', new BarType('custom_datetime'));
         $this->loadFixtures('Comments');
@@ -4647,10 +4370,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that the JSON type can save and get data symmetrically
-     *
-     * @return void
      */
-    public function testSymmetricJsonType()
+    public function testSymmetricJsonType(): void
     {
         $query = new Query($this->connection);
         $insert = $query
@@ -4681,10 +4402,8 @@ class QueryTest extends TestCase
 
     /**
      * Test removeJoin().
-     *
-     * @return void
      */
-    public function testRemoveJoin()
+    public function testRemoveJoin(): void
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
@@ -4703,10 +4422,8 @@ class QueryTest extends TestCase
     /**
      * Tests that types in the type map are used in the
      * specific comparison functions when using a callable
-     *
-     * @return void
      */
-    public function testBetweenExpressionAndTypeMap()
+    public function testBetweenExpressionAndTypeMap(): void
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -4726,10 +4443,8 @@ class QueryTest extends TestCase
      * Test use of modifiers in a INSERT query
      *
      * Testing the generated SQL since the modifiers are usually different per driver
-     *
-     * @return void
      */
-    public function testInsertModifiers()
+    public function testInsertModifiers(): void
     {
         $query = new Query($this->connection);
         $result = $query
@@ -4760,10 +4475,8 @@ class QueryTest extends TestCase
      * Test use of modifiers in a UPDATE query
      *
      * Testing the generated SQL since the modifiers are usually different per driver
-     *
-     * @return void
      */
-    public function testUpdateModifiers()
+    public function testUpdateModifiers(): void
     {
         $query = new Query($this->connection);
         $result = $query
@@ -4803,10 +4516,8 @@ class QueryTest extends TestCase
      * Test use of modifiers in a DELETE query
      *
      * Testing the generated SQL since the modifiers are usually different per driver
-     *
-     * @return void
      */
-    public function testDeleteModifiers()
+    public function testDeleteModifiers(): void
     {
         $query = new Query($this->connection);
         $result = $query->delete()
@@ -4833,10 +4544,8 @@ class QueryTest extends TestCase
 
     /**
      * Test getValueBinder()
-     *
-     * @return void
      */
-    public function testGetValueBinder()
+    public function testGetValueBinder(): void
     {
         $query = new Query($this->connection);
 
@@ -4845,10 +4554,8 @@ class QueryTest extends TestCase
 
     /**
      * Test automatic results casting
-     *
-     * @return void
      */
-    public function testCastResults()
+    public function testCastResults(): void
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -4870,10 +4577,8 @@ class QueryTest extends TestCase
 
     /**
      * Test disabling type casting
-     *
-     * @return void
      */
-    public function testCastResultsDisable()
+    public function testCastResultsDisable(): void
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -4891,10 +4596,8 @@ class QueryTest extends TestCase
 
     /**
      * Test obtaining the current results casting mode.
-     *
-     * @return void
      */
-    public function testObtainingResultsCastingMode()
+    public function testObtainingResultsCastingMode(): void
     {
         $query = new Query($this->connection);
 
@@ -4906,10 +4609,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that type conversion is only applied once.
-     *
-     * @return void
      */
-    public function testAllNoDuplicateTypeCasting()
+    public function testAllNoDuplicateTypeCasting(): void
     {
         $this->skipIf($this->autoQuote, 'Produces bad SQL in postgres with autoQuoting');
         $query = new Query($this->connection);
@@ -4932,10 +4633,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that reading an undefined clause does not emit an error.
-     *
-     * @return void
      */
-    public function testClauseUndefined()
+    public function testClauseUndefined(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The \'nope\' clause is not defined. Valid clauses are: delete, update');
@@ -4951,9 +4650,8 @@ class QueryTest extends TestCase
      * @param int $count
      * @param array $rows
      * @param array $conditions
-     * @return void
      */
-    public function assertTable($table, $count, $rows, $conditions = [])
+    public function assertTable($table, $count, $rows, $conditions = []): void
     {
         $result = (new Query($this->connection))->select('*')
             ->from($table)
@@ -4973,9 +4671,8 @@ class QueryTest extends TestCase
      * @param string $pattern
      * @param string $query the result to compare against
      * @param bool $optional
-     * @return void
      */
-    public function assertQuotedQuery($pattern, $query, $optional = false)
+    public function assertQuotedQuery($pattern, $query, $optional = false): void
     {
         if ($optional) {
             $optional = '?';
@@ -4988,10 +4685,9 @@ class QueryTest extends TestCase
     /**
      * Test that calling fetchAssoc return an associated array.
      *
-     * @return void
      * @throws \Exception
      */
-    public function testFetchAssoc()
+    public function testFetchAssoc(): void
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -5019,10 +4715,9 @@ class QueryTest extends TestCase
     /**
      * Test that calling fetchAssoc return an empty associated array.
      *
-     * @return void
      * @throws \Exception
      */
-    public function testFetchAssocWithEmptyResult()
+    public function testFetchAssocWithEmptyResult(): void
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -5039,10 +4734,9 @@ class QueryTest extends TestCase
     /**
      * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
      *
-     * @return void
      * @throws \Exception
      */
-    public function testFetchObjects()
+    public function testFetchObjects(): void
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -5065,9 +4759,8 @@ class QueryTest extends TestCase
      * Test that fetchColumn() will return the correct value at $position.
      *
      * @throws \Exception
-     * @return void
      */
-    public function testFetchColumn()
+    public function testFetchColumn(): void
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -5107,9 +4800,8 @@ class QueryTest extends TestCase
      * Test that fetchColumn() will return false if $position is not set.
      *
      * @throws \Exception
-     * @return void
      */
-    public function testFetchColumnReturnsFalse()
+    public function testFetchColumnReturnsFalse(): void
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -5137,10 +4829,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that query expressions can be used for ordering.
-     *
-     * @return void
      */
-    public function testOrderBySubquery()
+    public function testOrderBySubquery(): void
     {
         $this->autoQuote = true;
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -5208,10 +4898,9 @@ class QueryTest extends TestCase
      * This replicates what the SQL Server driver would do for <= SQL Server 2008
      * when ordering on fields that are expressions.
      *
-     * @return void
      * @see \Cake\Database\Driver\Sqlserver::_pagingSubquery()
      */
-    public function testReusingExpressions()
+    public function testReusingExpressions(): void
     {
         $this->loadFixtures('Articles');
         $connection = $this->connection;
@@ -5311,10 +5000,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests creating StringExpression.
-     *
-     * @return void
      */
-    public function testStringExpression()
+    public function testStringExpression(): void
     {
         $driver = $this->connection->getDriver();
         if ($driver instanceof Mysql) {
@@ -5349,10 +5036,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests setting identifier collation.
-     *
-     * @return void
      */
-    public function testIdentifierCollation()
+    public function testIdentifierCollation(): void
     {
         $this->loadFixtures('Articles');
         $driver = $this->connection->getDriver();

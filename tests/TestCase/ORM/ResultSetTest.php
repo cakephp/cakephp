@@ -47,8 +47,6 @@ class ResultSetTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -68,10 +66,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test that result sets can be rewound and re-used.
-     *
-     * @return void
      */
-    public function testRewind()
+    public function testRewind(): void
     {
         $query = $this->table->find('all');
         $results = $query->all();
@@ -87,10 +83,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test that streaming results cannot be rewound
-     *
-     * @return void
      */
-    public function testRewindStreaming()
+    public function testRewindStreaming(): void
     {
         $query = $this->table->find('all')->enableBufferedResults(false);
         $results = $query->all();
@@ -109,10 +103,8 @@ class ResultSetTest extends TestCase
      *
      * Compare the results of a query with the results iterated, with
      * those of a different query that have been serialized/unserialized.
-     *
-     * @return void
      */
-    public function testSerialization()
+    public function testSerialization(): void
     {
         $query = $this->table->find('all');
         $results = $query->all();
@@ -127,10 +119,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test iteration after serialization
-     *
-     * @return void
      */
-    public function testIteratorAfterSerializationNoHydration()
+    public function testIteratorAfterSerializationNoHydration(): void
     {
         $query = $this->table->find('all')->enableHydration(false);
         $results = unserialize(serialize($query->all()));
@@ -143,10 +133,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test iteration after serialization
-     *
-     * @return void
      */
-    public function testIteratorAfterSerializationHydrated()
+    public function testIteratorAfterSerializationHydrated(): void
     {
         $query = $this->table->find('all');
         $results = unserialize(serialize($query->all()));
@@ -163,10 +151,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test converting resultsets into JSON
-     *
-     * @return void
      */
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $query = $this->table->find('all');
         $results = $query->all();
@@ -177,10 +163,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test first() method with a statement backed result set.
-     *
-     * @return void
      */
-    public function testFirst()
+    public function testFirst(): void
     {
         $query = $this->table->find('all');
         $results = $query->enableHydration(false)->all();
@@ -194,10 +178,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test first() method with a result set that has been unserialized
-     *
-     * @return void
      */
-    public function testFirstAfterSerialize()
+    public function testFirstAfterSerialize(): void
     {
         $query = $this->table->find('all');
         $results = $query->enableHydration(false)->all();
@@ -212,10 +194,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test the countable interface.
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
         $query = $this->table->find('all');
         $results = $query->all();
@@ -225,10 +205,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test the countable interface after unserialize
-     *
-     * @return void
      */
-    public function testCountAfterSerialize()
+    public function testCountAfterSerialize(): void
     {
         $query = $this->table->find('all');
         $results = $query->all();
@@ -239,10 +217,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Integration test to show methods from CollectionTrait work
-     *
-     * @return void
      */
-    public function testGroupBy()
+    public function testGroupBy(): void
     {
         $query = $this->table->find('all');
         $results = $query->all()->groupBy('author_id')->toArray();
@@ -265,10 +241,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $query = $this->table->find('all');
         $results = $query->all();
@@ -280,10 +254,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test that eagerLoader leaves empty associations unpopulated.
-     *
-     * @return void
      */
-    public function testBelongsToEagerLoaderLeavesEmptyAssociation()
+    public function testBelongsToEagerLoaderLeavesEmptyAssociation(): void
     {
         $comments = $this->getTableLocator()->get('Comments');
         $comments->belongsTo('Articles');
@@ -308,10 +280,8 @@ class ResultSetTest extends TestCase
     /**
      * Test showing associated record is preserved when selecting only field with
      * null value if auto fields is disabled.
-     *
-     * @return void
      */
-    public function testBelongsToEagerLoaderWithAutoFieldsFalse()
+    public function testBelongsToEagerLoaderWithAutoFieldsFalse(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
 
@@ -340,10 +310,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test that eagerLoader leaves empty associations unpopulated.
-     *
-     * @return void
      */
-    public function testHasOneEagerLoaderLeavesEmptyAssociation()
+    public function testHasOneEagerLoaderLeavesEmptyAssociation(): void
     {
         $this->table->hasOne('Comments');
 
@@ -368,10 +336,8 @@ class ResultSetTest extends TestCase
     /**
      * Test that fetching rows does not fail when no fields were selected
      * on the default alias.
-     *
-     * @return void
      */
-    public function testFetchMissingDefaultAlias()
+    public function testFetchMissingDefaultAlias(): void
     {
         $comments = $this->getTableLocator()->get('Comments');
         $query = $comments->find()->select(['Other__field' => 'test']);
@@ -392,10 +358,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test that associations have source() correctly set.
-     *
-     * @return void
      */
-    public function testSourceOnContainAssociations()
+    public function testSourceOnContainAssociations(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $comments = $this->getTableLocator()->get('TestPlugin.Comments');
@@ -418,10 +382,8 @@ class ResultSetTest extends TestCase
     /**
      * Ensure that isEmpty() on a ResultSet doesn't result in loss
      * of records. This behavior is provided by CollectionTrait.
-     *
-     * @return void
      */
-    public function testIsEmptyDoesNotConsumeData()
+    public function testIsEmptyDoesNotConsumeData(): void
     {
         $table = $this->getTableLocator()->get('Comments');
         $query = $table->find()
@@ -435,10 +397,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test that ResultSet
-     *
-     * @return void
      */
-    public function testCollectionMinAndMax()
+    public function testCollectionMinAndMax(): void
     {
         $query = $this->table->find('all');
 
@@ -454,10 +414,8 @@ class ResultSetTest extends TestCase
 
     /**
      * Test that ResultSet
-     *
-     * @return void
      */
-    public function testCollectionMinAndMaxWithAggregateField()
+    public function testCollectionMinAndMaxWithAggregateField(): void
     {
         $query = $this->table->find();
         $query->select([
@@ -472,9 +430,8 @@ class ResultSetTest extends TestCase
 
     /**
      * @see https://github.com/cakephp/cakephp/issues/14676
-     * @return void
      */
-    public function testQueryLoggingForSelectsWithZeroRows()
+    public function testQueryLoggingForSelectsWithZeroRows(): void
     {
         Log::setConfig('queries', ['className' => 'Array']);
 

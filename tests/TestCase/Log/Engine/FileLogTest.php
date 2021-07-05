@@ -28,10 +28,8 @@ class FileLogTest extends TestCase
 {
     /**
      * testLogFileWriting method
-     *
-     * @return void
      */
-    public function testLogFileWriting()
+    public function testLogFileWriting(): void
     {
         $this->_deleteLogs(LOGS);
 
@@ -57,10 +55,8 @@ class FileLogTest extends TestCase
 
     /**
      * test using the path setting to log logs in other places.
-     *
-     * @return void
      */
-    public function testPathSetting()
+    public function testPathSetting(): void
     {
         $path = TMP . 'tests' . DS;
         $this->_deleteLogs($path);
@@ -72,10 +68,8 @@ class FileLogTest extends TestCase
 
     /**
      * test log rotation
-     *
-     * @return void
      */
-    public function testRotation()
+    public function testRotation(): void
     {
         $path = TMP . 'tests' . DS;
         $this->_deleteLogs($path);
@@ -154,7 +148,7 @@ class FileLogTest extends TestCase
         $this->assertCount(0, glob($path . 'debug.log.*'));
     }
 
-    public function testMaskSetting()
+    public function testMaskSetting(): void
     {
         if (DS === '\\') {
             $this->markTestSkipped('File permission testing does not work on Windows.');
@@ -189,9 +183,8 @@ class FileLogTest extends TestCase
      * helper function to clears all log files in specified directory
      *
      * @param string $dir
-     * @return void
      */
-    protected function _deleteLogs($dir)
+    protected function _deleteLogs($dir): void
     {
         $files = array_merge(glob($dir . '*.log'), glob($dir . '*.log.*'));
         foreach ($files as $file) {
@@ -201,10 +194,8 @@ class FileLogTest extends TestCase
 
     /**
      * test dateFormat option
-     *
-     * @return void
      */
-    public function testDateFormat()
+    public function testDateFormat(): void
     {
         $this->_deleteLogs(LOGS);
 

@@ -44,8 +44,6 @@ class UrlHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -60,15 +58,13 @@ class UrlHelperTest extends TestCase
 
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
-        Router::scope('/', function (RouteBuilder $routes) {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->fallbacks(DashedRoute::class);
         });
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -80,10 +76,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Ensure HTML escaping of URL params. So link addresses are valid and not exploited
-     *
-     * @return void
      */
-    public function testBuildUrlConversion()
+    public function testBuildUrlConversion(): void
     {
         Router::connect('/:controller/:action/*');
 
@@ -120,10 +114,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * ensure that build factors in base paths.
-     *
-     * @return void
      */
-    public function testBuildBasePath()
+    public function testBuildBasePath(): void
     {
         Router::connect('/:controller/:action/*');
         $request = new ServerRequest([
@@ -145,10 +137,7 @@ class UrlHelperTest extends TestCase
         );
     }
 
-    /**
-     * @return void
-     */
-    public function testBuildUrlConversionUnescaped()
+    public function testBuildUrlConversionUnescaped(): void
     {
         $result = $this->Helper->build('/controller/action/1?one=1&two=2', ['escape' => false]);
         $this->assertSame('/controller/action/1?one=1&two=2', $result);
@@ -165,9 +154,6 @@ class UrlHelperTest extends TestCase
         $this->assertSame('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
     }
 
-    /**
-     * @return void
-     */
     public function testBuildFromPath(): void
     {
         $result = $this->Helper->buildFromPath('Articles::index');
@@ -181,10 +167,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * test assetTimestamp application
-     *
-     * @return void
      */
-    public function testAssetTimestamp()
+    public function testAssetTimestamp(): void
     {
         Configure::write('Foo.bar', 'test');
         Configure::write('Asset.timestamp', false);
@@ -222,10 +206,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * test assetUrl application
-     *
-     * @return void
      */
-    public function testAssetUrl()
+    public function testAssetUrl(): void
     {
         $this->Helper->webroot = '';
         $result = $this->Helper->assetUrl('js/post.js', ['fullBase' => true]);
@@ -255,10 +237,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test assetUrl and data uris
-     *
-     * @return void
      */
-    public function testAssetUrlDataUri()
+    public function testAssetUrlDataUri(): void
     {
         $request = $this->View->getRequest()
             ->withAttribute('base', 'subdir')
@@ -279,10 +259,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test assetUrl with no rewriting.
-     *
-     * @return void
      */
-    public function testAssetUrlNoRewrite()
+    public function testAssetUrlNoRewrite(): void
     {
         $request = Router::getRequest()
             ->withAttribute('base', '/cake_dev/index.php')
@@ -297,10 +275,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test assetUrl with plugins.
-     *
-     * @return void
      */
-    public function testAssetUrlPlugin()
+    public function testAssetUrlPlugin(): void
     {
         $this->Helper->webroot = '';
         $this->loadPlugins(['TestPlugin']);
@@ -316,10 +292,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Tests assetUrl() with full base URL.
-     *
-     * @return void
      */
-    public function testAssetUrlFullBase()
+    public function testAssetUrlFullBase(): void
     {
         $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => true]);
         $this->assertSame(Router::fullBaseUrl() . '/img/foo.jpg', $result);
@@ -330,10 +304,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * test assetUrl and Asset.timestamp = force
-     *
-     * @return void
      */
-    public function testAssetUrlTimestampForce()
+    public function testAssetUrlTimestampForce(): void
     {
         $this->Helper->webroot = '';
         Configure::write('Asset.timestamp', 'force');
@@ -344,10 +316,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test assetTimestamp with timestamp option overriding `Asset.timestamp` in Configure.
-     *
-     * @return void
      */
-    public function testAssetTimestampConfigureOverride()
+    public function testAssetTimestampConfigureOverride(): void
     {
         $this->Helper->webroot = '';
         Configure::write('Asset.timestamp', 'force');
@@ -359,10 +329,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * test assetTimestamp with plugins and themes
-     *
-     * @return void
      */
-    public function testAssetTimestampPluginsAndThemes()
+    public function testAssetTimestampPluginsAndThemes(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $this->loadPlugins(['TestPlugin']);
@@ -382,10 +350,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * test script()
-     *
-     * @return void
      */
-    public function testScript()
+    public function testScript(): void
     {
         $this->Helper->webroot = '';
         $result = $this->Helper->script(
@@ -397,10 +363,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test script and Asset.timestamp = force
-     *
-     * @return void
      */
-    public function testScriptTimestampForce()
+    public function testScriptTimestampForce(): void
     {
         $this->Helper->webroot = '';
         Configure::write('Asset.timestamp', 'force');
@@ -411,10 +375,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test script with timestamp option overriding `Asset.timestamp` in Configure
-     *
-     * @return void
      */
-    public function testScriptTimestampConfigureOverride()
+    public function testScriptTimestampConfigureOverride(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
@@ -425,10 +387,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * test image()
-     *
-     * @return void
      */
-    public function testImage()
+    public function testImage(): void
     {
         $result = $this->Helper->image('foo.jpg');
         $this->assertSame('img/foo.jpg', $result);
@@ -454,10 +414,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test image with `Asset.timestamp` = force
-     *
-     * @return void
      */
-    public function testImageTimestampForce()
+    public function testImageTimestampForce(): void
     {
         Configure::write('Asset.timestamp', 'force');
 
@@ -467,10 +425,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test image with timestamp option overriding `Asset.timestamp` in Configure
-     *
-     * @return void
      */
-    public function testImageTimestampConfigureOverride()
+    public function testImageTimestampConfigureOverride(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
@@ -481,10 +437,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * test css
-     *
-     * @return void
      */
-    public function testCss()
+    public function testCss(): void
     {
         $result = $this->Helper->css('style');
         $this->assertSame('css/style.css', $result);
@@ -492,10 +446,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test css with `Asset.timestamp` = force
-     *
-     * @return void
      */
-    public function testCssTimestampForce()
+    public function testCssTimestampForce(): void
     {
         Configure::write('Asset.timestamp', 'force');
 
@@ -505,10 +457,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test image with timestamp option overriding `Asset.timestamp` in Configure
-     *
-     * @return void
      */
-    public function testCssTimestampConfigureOverride()
+    public function testCssTimestampConfigureOverride(): void
     {
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
@@ -519,10 +469,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test generating paths with webroot().
-     *
-     * @return void
      */
-    public function testWebrootPaths()
+    public function testWebrootPaths(): void
     {
         $request = $this->View->getRequest()->withAttribute('webroot', '/');
         $this->View->setRequest(
@@ -567,10 +515,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test plugin based assets will NOT use the plugin name
-     *
-     * @return void
      */
-    public function testPluginAssetsPrependImageBaseUrl()
+    public function testPluginAssetsPrependImageBaseUrl(): void
     {
         $cdnPrefix = 'https://cdn.example.com/';
         $imageBaseUrl = Configure::read('App.imageBaseUrl');
@@ -594,10 +540,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test if an app Asset class is being loaded
-     *
-     * @return void
      */
-    public function testAppAssetPresent()
+    public function testAppAssetPresent(): void
     {
         $Url = new UrlHelper($this->View, ['assetUrlClassName' => Asset::class]);
         $Url->webroot = '';
@@ -617,10 +561,8 @@ class UrlHelperTest extends TestCase
 
     /**
      * Test if UrlHelper fails to load with wrong asset URL class name
-     *
-     * @return void
      */
-    public function testAppAssetPresentWrong()
+    public function testAppAssetPresentWrong(): void
     {
         $this->expectException(CakeException::class);
         new UrlHelper($this->View, ['assetUrlClassName' => 'InexistentClass']);

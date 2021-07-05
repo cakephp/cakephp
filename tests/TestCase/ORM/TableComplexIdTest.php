@@ -37,8 +37,6 @@ class TableComplexIdTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,8 +47,6 @@ class TableComplexIdTest extends TestCase
 
     /**
      * teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -60,10 +56,8 @@ class TableComplexIdTest extends TestCase
 
     /**
      * Test saving new records sets uuids
-     *
-     * @return void
      */
-    public function testSaveNew()
+    public function testSaveNew(): void
     {
         $now = new DateTime('now');
         $entity = new Entity([
@@ -80,10 +74,8 @@ class TableComplexIdTest extends TestCase
 
     /**
      * Test saving existing records works
-     *
-     * @return void
      */
-    public function testSaveUpdate()
+    public function testSaveUpdate(): void
     {
         $id = new DateTime('now');
         $entity = new Entity([
@@ -102,10 +94,8 @@ class TableComplexIdTest extends TestCase
 
     /**
      * Test delete with string pk.
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $table = $this->getTableLocator()->get('DateKeys');
         $entity = new Entity([

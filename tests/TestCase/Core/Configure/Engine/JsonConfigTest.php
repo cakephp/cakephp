@@ -51,8 +51,6 @@ class JsonConfigTest extends TestCase
 
     /**
      * Setup.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -62,10 +60,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test reading files.
-     *
-     * @return void
      */
-    public function testRead()
+    public function testRead(): void
     {
         $engine = new JsonConfig($this->path);
         $values = $engine->read('json_test');
@@ -75,10 +71,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test an exception is thrown by reading files that exist without .php extension.
-     *
-     * @return void
      */
-    public function testReadWithExistentFileWithoutExtension()
+    public function testReadWithExistentFileWithoutExtension(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new JsonConfig($this->path);
@@ -87,10 +81,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test an exception is thrown by reading files that don't exist.
-     *
-     * @return void
      */
-    public function testReadWithNonExistentFile()
+    public function testReadWithNonExistentFile(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new JsonConfig($this->path);
@@ -99,10 +91,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test reading an empty file.
-     *
-     * @return void
      */
-    public function testReadEmptyFile()
+    public function testReadEmptyFile(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('config file "empty.json"');
@@ -112,10 +102,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test an exception is thrown by reading files that contain invalid JSON.
-     *
-     * @return void
      */
-    public function testReadWithInvalidJson()
+    public function testReadWithInvalidJson(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('Error parsing JSON string fetched from config file "invalid.json"');
@@ -125,10 +113,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test reading keys with ../ doesn't work.
-     *
-     * @return void
      */
-    public function testReadWithDots()
+    public function testReadWithDots(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new JsonConfig($this->path);
@@ -137,10 +123,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test reading from plugins.
-     *
-     * @return void
      */
-    public function testReadPluginValue()
+    public function testReadPluginValue(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $engine = new JsonConfig($this->path);
@@ -152,10 +136,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test dumping data to JSON format.
-     *
-     * @return void
      */
-    public function testDump()
+    public function testDump(): void
     {
         $engine = new JsonConfig(TMP);
         $result = $engine->dump('test', $this->testData);
@@ -190,10 +172,8 @@ class JsonConfigTest extends TestCase
 
     /**
      * Test that dump() makes files read() can read.
-     *
-     * @return void
      */
-    public function testDumpRead()
+    public function testDumpRead(): void
     {
         $engine = new JsonConfig(TMP);
         $engine->dump('test', $this->testData);

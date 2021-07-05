@@ -30,7 +30,7 @@ class AuthUsersTable extends Table
      * @param array $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
-    public function findAuth(Query $query, array $options)
+    public function findAuth(Query $query, array $options): Query
     {
         $query->select(['id', 'username', 'password']);
         if (!empty($options['return_created'])) {
@@ -47,7 +47,7 @@ class AuthUsersTable extends Table
      * @param array $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
-    public function findUsername(Query $query, array $options)
+    public function findUsername(Query $query, array $options): Query
     {
         if (empty($options['username'])) {
             throw new CakeException(__('Username not defined'));

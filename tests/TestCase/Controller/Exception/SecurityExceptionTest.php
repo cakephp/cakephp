@@ -31,8 +31,6 @@ class SecurityExceptionTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,8 +40,6 @@ class SecurityExceptionTest extends TestCase
 
     /**
      * Test the getType() function.
-     *
-     * @return void
      */
     public function testGetType(): void
     {
@@ -56,8 +52,6 @@ class SecurityExceptionTest extends TestCase
 
     /**
      * Test the setMessage() function.
-     *
-     * @return void
      */
     public function testSetMessage(): void
     {
@@ -72,8 +66,6 @@ class SecurityExceptionTest extends TestCase
 
     /**
      * Test the setReason() and corresponding getReason() function.
-     *
-     * @return void
      */
     public function testSetGetReason(): void
     {

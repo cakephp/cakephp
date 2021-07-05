@@ -44,8 +44,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -62,8 +60,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -73,10 +69,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test constructor error
-     *
-     * @return void
      */
-    public function testConstructorInvalid()
+    public function testConstructorInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$errorHandler argument must be a config array or ErrorHandler');
@@ -85,10 +79,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test returning a response works ok.
-     *
-     * @return void
      */
-    public function testNoErrorResponse()
+    public function testNoErrorResponse(): void
     {
         $request = ServerRequestFactory::fromGlobals();
 
@@ -100,10 +92,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test using a factory method to make a renderer.
-     *
-     * @return void
      */
-    public function testRendererFactory()
+    public function testRendererFactory(): void
     {
         $request = ServerRequestFactory::fromGlobals();
 
@@ -122,7 +112,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
             'exceptionRenderer' => $factory,
         ]));
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new LogicException('Something bad');
         });
         $middleware->process($request, $handler);
@@ -130,14 +120,12 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test rendering an error page
-     *
-     * @return void
      */
-    public function testHandleException()
+    public function testHandleException(): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new \Cake\Http\Exception\NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
@@ -148,14 +136,12 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test creating a redirect response
-     *
-     * @return void
      */
-    public function testHandleRedirectException()
+    public function testHandleRedirectException(): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new RedirectException('http://example.org/login');
         });
         $result = $middleware->process($request, $handler);
@@ -170,10 +156,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test creating a redirect response
-     *
-     * @return void
      */
-    public function testHandleRedirectExceptionHeaders()
+    public function testHandleRedirectExceptionHeaders(): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
@@ -196,16 +180,14 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test rendering an error page holds onto the original request.
-     *
-     * @return void
      */
-    public function testHandleExceptionPreserveRequest()
+    public function testHandleExceptionPreserveRequest(): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Accept', 'application/json');
 
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new \Cake\Http\Exception\NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
@@ -217,10 +199,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test handling PHP 7's Error instance.
-     *
-     * @return void
      */
-    public function testHandlePHP7Error()
+    public function testHandlePHP7Error(): void
     {
         $middleware = new ErrorHandlerMiddleware();
         $request = ServerRequestFactory::fromGlobals();
@@ -232,17 +212,15 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test rendering an error page logs errors
-     *
-     * @return void
      */
-    public function testHandleExceptionLogAndTrace()
+    public function testHandleExceptionLogAndTrace(): void
     {
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
             'HTTP_REFERER' => '/other/path',
         ]);
         $middleware = new ErrorHandlerMiddleware(['log' => true, 'trace' => true]);
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
@@ -264,17 +242,15 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test rendering an error page logs errors with previous
-     *
-     * @return void
      */
-    public function testHandleExceptionLogAndTraceWithPrevious()
+    public function testHandleExceptionLogAndTraceWithPrevious(): void
     {
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
             'HTTP_REFERER' => '/other/path',
         ]);
         $middleware = new ErrorHandlerMiddleware(['log' => true, 'trace' => true]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): void {
             $previous = new \Cake\Datasource\Exception\RecordNotFoundException('Previous logged');
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!', null, $previous);
         });
@@ -300,17 +276,15 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test rendering an error page skips logging for specific classes
-     *
-     * @return void
      */
-    public function testHandleExceptionSkipLog()
+    public function testHandleExceptionSkipLog(): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware([
             'log' => true,
             'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
@@ -322,14 +296,12 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test rendering an error page logs exception attributes
-     *
-     * @return void
      */
-    public function testHandleExceptionLogAttributes()
+    public function testHandleExceptionLogAttributes(): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(['log' => true]);
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new MissingControllerException(['class' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
@@ -347,10 +319,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test handling an error and having rendering fail.
-     *
-     * @return void
      */
-    public function testHandleExceptionRenderingFails()
+    public function testHandleExceptionRenderingFails(): void
     {
         $request = ServerRequestFactory::fromGlobals();
 
@@ -367,7 +337,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
             'exceptionRenderer' => $factory,
         ]));
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             throw new \Cake\Http\Exception\ServiceUnavailableException('whoops');
         });
         $response = $middleware->process($request, $handler);
@@ -377,10 +347,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test exception args are not ignored in php7.4 with debug enabled.
-     *
-     * @return void
      */
-    public function testExceptionArgs()
+    public function testExceptionArgs(): void
     {
         $this->skipIf(PHP_VERSION_ID < 70400);
 

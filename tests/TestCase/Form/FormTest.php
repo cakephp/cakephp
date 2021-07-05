@@ -30,10 +30,8 @@ class FormTest extends TestCase
 {
     /**
      * Test setSchema() and getSchema()
-     *
-     * @return void
      */
-    public function testSetGetSchema()
+    public function testSetGetSchema(): void
     {
         $form = new Form();
         $schema = $form->getSchema();
@@ -51,10 +49,8 @@ class FormTest extends TestCase
 
     /**
      * Test getValidator()
-     *
-     * @return void
      */
-    public function testGetValidator()
+    public function testGetValidator(): void
     {
         $form = $this->getMockBuilder(Form::class)
             ->addMethods(['buildValidator'])
@@ -68,10 +64,8 @@ class FormTest extends TestCase
 
     /**
      * Test setValidator()
-     *
-     * @return void
      */
-    public function testSetValidator()
+    public function testSetValidator(): void
     {
         $form = new Form();
         $validator = new Validator();
@@ -82,10 +76,8 @@ class FormTest extends TestCase
 
     /**
      * Test validate method.
-     *
-     * @return void
      */
-    public function testValidate()
+    public function testValidate(): void
     {
         $form = new Form();
         $form->getValidator()
@@ -109,10 +101,8 @@ class FormTest extends TestCase
 
     /**
      * Test the get errors methods.
-     *
-     * @return void
      */
-    public function testGetErrors()
+    public function testGetErrors(): void
     {
         $form = new Form();
         $form->getValidator()
@@ -138,10 +128,8 @@ class FormTest extends TestCase
 
     /**
      * Test setErrors()
-     *
-     * @return void
      */
-    public function testSetErrors()
+    public function testSetErrors(): void
     {
         $form = new Form();
         $expected = [
@@ -154,10 +142,8 @@ class FormTest extends TestCase
 
     /**
      * Test _execute is skipped on validation failure.
-     *
-     * @return void
      */
-    public function testExecuteInvalid()
+    public function testExecuteInvalid(): void
     {
         $form = $this->getMockBuilder('Cake\Form\Form')
             ->onlyMethods(['_execute'])
@@ -175,10 +161,8 @@ class FormTest extends TestCase
 
     /**
      * test execute() when data is valid.
-     *
-     * @return void
      */
-    public function testExecuteValid()
+    public function testExecuteValid(): void
     {
         $form = new Form();
         $form->getValidator()
@@ -192,10 +176,8 @@ class FormTest extends TestCase
 
     /**
      * Test set() with one param.
-     *
-     * @return void
      */
-    public function testSetOneParam()
+    public function testSetOneParam(): void
     {
         $form = new Form();
         $data = ['test' => 'val', 'foo' => 'bar'];
@@ -209,10 +191,8 @@ class FormTest extends TestCase
 
     /**
      * test set() with 2 params
-     *
-     * @return void
      */
-    public function testSetTwoParam()
+    public function testSetTwoParam(): void
     {
         $form = new Form();
         $form->set('testing', 'value');
@@ -221,10 +201,8 @@ class FormTest extends TestCase
 
     /**
      * test chainable set()
-     *
-     * @return void
      */
-    public function testSetChained()
+    public function testSetChained(): void
     {
         $form = new Form();
         $result = $form->set('testing', 'value')
@@ -235,10 +213,8 @@ class FormTest extends TestCase
 
     /**
      * Test setting and getting form data.
-     *
-     * @return void
      */
-    public function testDataSetGet()
+    public function testDataSetGet(): void
     {
         $form = new Form();
         $expected = ['title' => 'title', 'is_published' => true];
@@ -251,10 +227,8 @@ class FormTest extends TestCase
 
     /**
      * test __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $form = new Form();
         $result = $form->__debugInfo();

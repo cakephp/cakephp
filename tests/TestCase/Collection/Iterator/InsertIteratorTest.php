@@ -26,10 +26,8 @@ class InsertIteratorTest extends TestCase
 {
     /**
      * Test insert simple path
-     *
-     * @return void
      */
-    public function testInsertSimplePath()
+    public function testInsertSimplePath(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],
@@ -47,10 +45,8 @@ class InsertIteratorTest extends TestCase
 
     /**
      * Test insert deep path
-     *
-     * @return void
      */
-    public function testInsertDeepPath()
+    public function testInsertDeepPath(): void
     {
         $items = [
             'a' => ['name' => 'Derp', 'a' => ['deep' => ['thing' => 1]]],
@@ -68,10 +64,8 @@ class InsertIteratorTest extends TestCase
 
     /**
      * Test that missing properties in the path will skip inserting
-     *
-     * @return void
      */
-    public function testInsertDeepPathMissingStep()
+    public function testInsertDeepPathMissingStep(): void
     {
         $items = [
             'a' => ['name' => 'Derp', 'a' => ['deep' => ['thing' => 1]]],
@@ -90,10 +84,8 @@ class InsertIteratorTest extends TestCase
     /**
      * Tests that the iterator will insert values as long as there still exist
      * some in the values array
-     *
-     * @return void
      */
-    public function testInsertTargetCountBigger()
+    public function testInsertTargetCountBigger(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],
@@ -112,10 +104,8 @@ class InsertIteratorTest extends TestCase
     /**
      * Tests that the iterator will insert values as long as there still exist
      * some in the values array
-     *
-     * @return void
      */
-    public function testInsertSourceBigger()
+    public function testInsertSourceBigger(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],
@@ -133,10 +123,8 @@ class InsertIteratorTest extends TestCase
 
     /**
      * Tests the iterator can be rewound
-     *
-     * @return void
      */
-    public function testRewind()
+    public function testRewind(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],

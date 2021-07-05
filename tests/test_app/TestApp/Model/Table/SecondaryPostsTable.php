@@ -18,9 +18,6 @@ use Cake\ORM\Table;
 
 class SecondaryPostsTable extends Table
 {
-    /**
-     * @return string
-     */
     public static function defaultConnectionName(): string
     {
         return 'secondary';

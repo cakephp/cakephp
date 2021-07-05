@@ -38,8 +38,6 @@ class PluginLoadCommandTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -53,8 +51,6 @@ class PluginLoadCommandTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -65,10 +61,8 @@ class PluginLoadCommandTest extends TestCase
 
     /**
      * Test generating help succeeds
-     *
-     * @return void
      */
-    public function testHelp()
+    public function testHelp(): void
     {
         $this->exec('plugin load --help');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -77,10 +71,8 @@ class PluginLoadCommandTest extends TestCase
 
     /**
      * Test loading a plugin modifies the app
-     *
-     * @return void
      */
-    public function testLoadModifiesApplication()
+    public function testLoadModifiesApplication(): void
     {
         $this->exec('plugin load TestPlugin');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -91,10 +83,8 @@ class PluginLoadCommandTest extends TestCase
 
     /**
      * Test loading an unknown plugin
-     *
-     * @return void
      */
-    public function testLoadUnknownPlugin()
+    public function testLoadUnknownPlugin(): void
     {
         $this->exec('plugin load NopeNotThere');
         $this->assertExitCode(Command::CODE_ERROR);

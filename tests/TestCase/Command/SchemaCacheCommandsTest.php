@@ -48,8 +48,6 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -67,8 +65,6 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -81,10 +77,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test that clear enables the cache if it was disabled.
-     *
-     * @return void
      */
-    public function testClearEnablesMetadataCache()
+    public function testClearEnablesMetadataCache(): void
     {
         $this->connection->cacheMetadata(false);
 
@@ -95,10 +89,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test that build enables the cache if it was disabled.
-     *
-     * @return void
      */
-    public function testBuildEnablesMetadataCache()
+    public function testBuildEnablesMetadataCache(): void
     {
         $this->connection->cacheMetadata(false);
 
@@ -109,10 +101,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() with no args.
-     *
-     * @return void
      */
-    public function testBuildNoArgs()
+    public function testBuildNoArgs(): void
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('set')
@@ -125,10 +115,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() with one arg.
-     *
-     * @return void
      */
-    public function testBuildNamedModel()
+    public function testBuildNamedModel(): void
     {
         $this->cache->expects($this->once())
             ->method('set')
@@ -144,10 +132,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() overwrites cached data.
-     *
-     * @return void
      */
-    public function testBuildOverwritesExistingData()
+    public function testBuildOverwritesExistingData(): void
     {
         $this->cache->expects($this->once())
             ->method('set')
@@ -165,10 +151,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() with a nonexistent connection name.
-     *
-     * @return void
      */
-    public function testBuildInvalidConnection()
+    public function testBuildInvalidConnection(): void
     {
         $this->exec('schema_cache build --connection derpy-derp articles');
         $this->assertExitError();
@@ -176,10 +160,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test clear() with an invalid connection name.
-     *
-     * @return void
      */
-    public function testClearInvalidConnection()
+    public function testClearInvalidConnection(): void
     {
         $this->exec('schema_cache clear --connection derpy-derp articles');
         $this->assertExitError();
@@ -187,10 +169,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test clear() with no args.
-     *
-     * @return void
      */
-    public function testClearNoArgs()
+    public function testClearNoArgs(): void
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('delete')
@@ -203,10 +183,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test clear() with a model name.
-     *
-     * @return void
      */
-    public function testClearNamedModel()
+    public function testClearNamedModel(): void
     {
         $this->cache->expects($this->never())
             ->method('set')

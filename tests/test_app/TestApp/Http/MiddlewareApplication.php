@@ -13,7 +13,6 @@ class MiddlewareApplication extends BaseApplication
 {
     /**
      * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware stack to set in your App Class
-     * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
@@ -39,7 +38,6 @@ class MiddlewareApplication extends BaseApplication
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(ServerRequestInterface $req): ResponseInterface
     {

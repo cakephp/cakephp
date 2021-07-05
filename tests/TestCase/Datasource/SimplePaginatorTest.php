@@ -22,9 +22,6 @@ use Cake\ORM\Entity;
 
 class SimplePaginatorTest extends PaginatorTest
 {
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -36,10 +33,8 @@ class SimplePaginatorTest extends PaginatorTest
 
     /**
      * test paginate() and custom find, to make sure the correct count is returned.
-     *
-     * @return void
      */
-    public function testPaginateCustomFind()
+    public function testPaginateCustomFind(): void
     {
         $this->loadFixtures('Posts');
         $titleExtractor = function ($result) {
@@ -100,10 +95,8 @@ class SimplePaginatorTest extends PaginatorTest
 
     /**
      * test paginate() and custom find with fields array, to make sure the correct count is returned.
-     *
-     * @return void
      */
-    public function testPaginateCustomFindFieldsArray()
+    public function testPaginateCustomFindFieldsArray(): void
     {
         $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -134,10 +127,8 @@ class SimplePaginatorTest extends PaginatorTest
 
     /**
      * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
-     *
-     * @return void
      */
-    public function testPaginateCustomFinder()
+    public function testPaginateCustomFinder(): void
     {
         $settings = [
             'PaginatorPosts' => [

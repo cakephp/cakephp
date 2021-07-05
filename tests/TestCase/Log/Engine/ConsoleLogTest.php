@@ -28,7 +28,7 @@ class ConsoleLogTest extends TestCase
     /**
      * Test writing to ConsoleOutput
      */
-    public function testConsoleOutputlogs()
+    public function testConsoleOutputlogs(): void
     {
         $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
@@ -45,10 +45,8 @@ class ConsoleLogTest extends TestCase
 
     /**
      * Test writing to a file stream
-     *
-     * @return void
      */
-    public function testlogToFileStream()
+    public function testlogToFileStream(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([
@@ -64,7 +62,7 @@ class ConsoleLogTest extends TestCase
     /**
      * test value of stream 'outputAs'
      */
-    public function testDefaultOutputAs()
+    public function testDefaultOutputAs(): void
     {
         $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
 
@@ -81,10 +79,8 @@ class ConsoleLogTest extends TestCase
 
     /**
      * test dateFormat option
-     *
-     * @return void
      */
-    public function testDateFormat()
+    public function testDateFormat(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([
@@ -99,10 +95,8 @@ class ConsoleLogTest extends TestCase
 
     /**
      * Test json formatter
-     *
-     * @return void
      */
-    public function testJsonFormatter()
+    public function testJsonFormatter(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([

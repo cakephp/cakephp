@@ -26,10 +26,8 @@ class CommandRetryTest extends TestCase
 {
     /**
      * Simple retry test
-     *
-     * @return void
      */
-    public function testRetry()
+    public function testRetry(): void
     {
         $count = 0;
         $action = function () use (&$count) {
@@ -48,10 +46,8 @@ class CommandRetryTest extends TestCase
 
     /**
      * Test attempts exceeded
-     *
-     * @return void
      */
-    public function testExceedAttempts()
+    public function testExceedAttempts(): void
     {
         $count = 0;
         $action = function () use (&$count) {
@@ -72,13 +68,10 @@ class CommandRetryTest extends TestCase
 
     /**
      * Test that the strategy is respected
-     *
-     * @return void
      */
-    public function testRespectStrategy()
+    public function testRespectStrategy(): void
     {
-        $count = 0;
-        $action = function () use (&$count) {
+        $action = function (): void {
             throw new Exception('this is failing');
         };
 

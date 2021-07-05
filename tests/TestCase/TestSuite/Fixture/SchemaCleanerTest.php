@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 
 class SchemaCleanerTest extends TestCase
 {
-    public function testForeignKeyConstruction()
+    public function testForeignKeyConstruction(): void
     {
         $connection = ConnectionManager::get('test');
 
@@ -43,7 +43,7 @@ class SchemaCleanerTest extends TestCase
         (new SchemaCleaner())->dropTables('test', ['test_table','test_table2']);
     }
 
-    public function testDropSchema()
+    public function testDropSchema(): void
     {
         $connection = ConnectionManager::get('test');
         /** @var SchemaDialect $dialect */
@@ -66,7 +66,7 @@ class SchemaCleanerTest extends TestCase
         $this->assertSame($initialNumberOfTables, $tables, 'The test tables should be dropped.');
     }
 
-    public function testTruncateSchema()
+    public function testTruncateSchema(): void
     {
         [$table1, $table2] = $this->createSchemas();
 
@@ -79,7 +79,7 @@ class SchemaCleanerTest extends TestCase
         $this->assertTestTableExistsWithCount($table2, 0);
     }
 
-    private function assertTestTableExistsWithCount(string $table, int $count)
+    private function assertTestTableExistsWithCount(string $table, int $count): void
     {
         $this->assertSame(
             $count,

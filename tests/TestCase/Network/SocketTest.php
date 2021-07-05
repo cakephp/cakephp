@@ -32,8 +32,6 @@ class SocketTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,8 +41,6 @@ class SocketTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -54,10 +50,8 @@ class SocketTest extends TestCase
 
     /**
      * testConstruct method
-     *
-     * @return void
      */
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $this->Socket = new Socket();
         $config = $this->Socket->getConfig();
@@ -86,10 +80,8 @@ class SocketTest extends TestCase
 
     /**
      * test host() method
-     *
-     * @return void
      */
-    public function testHost()
+    public function testHost(): void
     {
         $this->Socket = new Socket(['host' => '8.8.8.8']);
         $this->assertSame('dns.google', $this->Socket->host());
@@ -97,10 +89,8 @@ class SocketTest extends TestCase
 
     /**
      * test addresses() method
-     *
-     * @return void
      */
-    public function testAddresses()
+    public function testAddresses(): void
     {
         $this->Socket = new Socket();
         $this->assertContainsEquals('127.0.0.1', $this->Socket->addresses());
@@ -111,10 +101,8 @@ class SocketTest extends TestCase
 
     /**
      * testSocketConnection method
-     *
-     * @return void
      */
-    public function testSocketConnection()
+    public function testSocketConnection(): void
     {
         $this->assertFalse($this->Socket->connected);
         $this->Socket->disconnect();
@@ -140,7 +128,7 @@ class SocketTest extends TestCase
      *
      * @return array
      */
-    public static function invalidConnections()
+    public static function invalidConnections(): array
     {
         return [
             [['host' => 'invalid.host', 'port' => 9999, 'timeout' => 1]],
@@ -152,9 +140,8 @@ class SocketTest extends TestCase
      * testInvalidConnection method
      *
      * @dataProvider invalidConnections
-     * @return void
      */
-    public function testInvalidConnection(array $data)
+    public function testInvalidConnection(array $data): void
     {
         $this->expectException(\Cake\Network\Exception\SocketException::class);
         $this->Socket->setConfig($data);
@@ -163,10 +150,8 @@ class SocketTest extends TestCase
 
     /**
      * testSocketHost method
-     *
-     * @return void
      */
-    public function testSocketHost()
+    public function testSocketHost(): void
     {
         try {
             $this->Socket = new Socket();
@@ -189,10 +174,8 @@ class SocketTest extends TestCase
 
     /**
      * testSocketWriting method
-     *
-     * @return void
      */
-    public function testSocketWriting()
+    public function testSocketWriting(): void
     {
         try {
             $request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
@@ -204,10 +187,8 @@ class SocketTest extends TestCase
 
     /**
      * testSocketReading method
-     *
-     * @return void
      */
-    public function testSocketReading()
+    public function testSocketReading(): void
     {
         $this->Socket = new Socket(['timeout' => 5]);
         try {
@@ -226,10 +207,8 @@ class SocketTest extends TestCase
 
     /**
      * testTimeOutConnection method
-     *
-     * @return void
      */
-    public function testTimeOutConnection()
+    public function testTimeOutConnection(): void
     {
         $config = ['host' => '127.0.0.1', 'timeout' => 1];
         $this->Socket = new Socket($config);
@@ -247,10 +226,8 @@ class SocketTest extends TestCase
 
     /**
      * testLastError method
-     *
-     * @return void
      */
-    public function testLastError()
+    public function testLastError(): void
     {
         $this->Socket = new Socket();
         $this->Socket->setLastError(4, 'some error here');
@@ -259,10 +236,8 @@ class SocketTest extends TestCase
 
     /**
      * testReset method
-     *
-     * @return void
      */
-    public function testReset()
+    public function testReset(): void
     {
         $config = [
             'persistent' => true,
@@ -290,10 +265,8 @@ class SocketTest extends TestCase
 
     /**
      * testEncrypt
-     *
-     * @return void
      */
-    public function testEnableCryptoSocketExceptionNoSsl()
+    public function testEnableCryptoSocketExceptionNoSsl(): void
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
         $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 1];
@@ -319,10 +292,8 @@ class SocketTest extends TestCase
 
     /**
      * testEnableCryptoSocketExceptionNoTls
-     *
-     * @return void
      */
-    public function testEnableCryptoSocketExceptionNoTls()
+    public function testEnableCryptoSocketExceptionNoTls(): void
     {
         $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 1];
 
@@ -347,10 +318,8 @@ class SocketTest extends TestCase
 
     /**
      * Test that protocol in the host doesn't cause cert errors.
-     *
-     * @return void
      */
-    public function testConnectProtocolInHost()
+    public function testConnectProtocolInHost(): void
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
         $configSslTls = ['host' => 'ssl://smtp.gmail.com', 'port' => 465, 'timeout' => 5];
@@ -366,10 +335,8 @@ class SocketTest extends TestCase
 
     /**
      * _connectSocketToSslTls
-     *
-     * @return void
      */
-    protected function _connectSocketToSslTls()
+    protected function _connectSocketToSslTls(): void
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
         $configSslTls = ['host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5];
@@ -383,10 +350,8 @@ class SocketTest extends TestCase
 
     /**
      * testEnableCryptoBadMode
-     *
-     * @return void
      */
-    public function testEnableCryptoBadMode()
+    public function testEnableCryptoBadMode(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         // testing wrong encryption mode
@@ -397,10 +362,8 @@ class SocketTest extends TestCase
 
     /**
      * testEnableCrypto
-     *
-     * @return void
      */
-    public function testEnableCrypto()
+    public function testEnableCrypto(): void
     {
         $this->_connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client');
@@ -410,10 +373,8 @@ class SocketTest extends TestCase
 
     /**
      * testEnableCryptoExceptionEnableTwice
-     *
-     * @return void
      */
-    public function testEnableCryptoExceptionEnableTwice()
+    public function testEnableCryptoExceptionEnableTwice(): void
     {
         $this->expectException(\Cake\Network\Exception\SocketException::class);
         // testing on tls server
@@ -424,10 +385,8 @@ class SocketTest extends TestCase
 
     /**
      * testEnableCryptoExceptionDisableTwice
-     *
-     * @return void
      */
-    public function testEnableCryptoExceptionDisableTwice()
+    public function testEnableCryptoExceptionDisableTwice(): void
     {
         $this->expectException(\Cake\Network\Exception\SocketException::class);
         $this->_connectSocketToSslTls();
@@ -436,10 +395,8 @@ class SocketTest extends TestCase
 
     /**
      * testEnableCryptoEnableStatus
-     *
-     * @return void
      */
-    public function testEnableCryptoEnableTls12()
+    public function testEnableCryptoEnableTls12(): void
     {
         $this->_connectSocketToSslTls();
         $this->assertFalse($this->Socket->encrypted);
@@ -449,10 +406,8 @@ class SocketTest extends TestCase
 
     /**
      * testEnableCryptoEnableStatus
-     *
-     * @return void
      */
-    public function testEnableCryptoEnableStatus()
+    public function testEnableCryptoEnableStatus(): void
     {
         $this->_connectSocketToSslTls();
         $this->assertFalse($this->Socket->encrypted);
@@ -462,10 +417,8 @@ class SocketTest extends TestCase
 
     /**
      * test getting the context for a socket.
-     *
-     * @return void
      */
-    public function testGetContext()
+    public function testGetContext(): void
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
         $config = [
@@ -488,10 +441,8 @@ class SocketTest extends TestCase
 
     /**
      * test configuring the context from the flat keys.
-     *
-     * @return void
      */
-    public function testConfigContext()
+    public function testConfigContext(): void
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
         $this->skipIf(!empty(getenv('http_proxy')) || !empty(getenv('https_proxy')), 'Proxy detected and cannot test SSL.');
@@ -521,10 +472,8 @@ class SocketTest extends TestCase
 
     /**
      * test connect to a unix file socket
-     *
-     * @return void
      */
-    public function testConnectToUnixFileSocket()
+    public function testConnectToUnixFileSocket(): void
     {
         $socketName = 'unix:///tmp/test.socket';
         $socket = $this->getMockBuilder(Socket::class)

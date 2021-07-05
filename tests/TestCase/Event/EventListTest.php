@@ -27,10 +27,8 @@ class EventListTest extends TestCase
 {
     /**
      * testAddEventAndFlush
-     *
-     * @return void
      */
-    public function testAddEventAndFlush()
+    public function testAddEventAndFlush(): void
     {
         $eventList = new EventList();
         $event = new Event('my_event', $this);
@@ -50,10 +48,8 @@ class EventListTest extends TestCase
 
     /**
      * Testing implemented \ArrayAccess and \Count methods
-     *
-     * @return void
      */
-    public function testArrayAccess()
+    public function testArrayAccess(): void
     {
         $eventList = new EventList();
         $event = new Event('my_event', $this);

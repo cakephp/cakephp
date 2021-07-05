@@ -41,7 +41,7 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      */
-    public function testEventFiredMisconfiguredEventList()
+    public function testEventFiredMisconfiguredEventList(): void
     {
         $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $manager = EventManager::instance();
@@ -51,7 +51,7 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      */
-    public function testEventFiredWithMisconfiguredEventList()
+    public function testEventFiredWithMisconfiguredEventList(): void
     {
         $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $manager = EventManager::instance();
@@ -60,10 +60,8 @@ class TestCaseTest extends TestCase
 
     /**
      * tests assertEventFiredWith
-     *
-     * @return void
      */
-    public function testEventFiredWith()
+    public function testEventFiredWith(): void
     {
         $manager = EventManager::instance();
         $manager->setEventList(new EventList());
@@ -88,10 +86,8 @@ class TestCaseTest extends TestCase
 
     /**
      * tests assertEventFired
-     *
-     * @return void
      */
-    public function testEventFired()
+    public function testEventFired(): void
     {
         $manager = EventManager::instance();
         $manager->setEventList(new EventList());
@@ -112,10 +108,8 @@ class TestCaseTest extends TestCase
 
     /**
      * testSkipIf
-     *
-     * @return void
      */
-    public function testSkipIf()
+    public function testSkipIf(): void
     {
         $test = new FixturizedTestCase('testSkipIfTrue');
         $result = $test->run();
@@ -128,13 +122,11 @@ class TestCaseTest extends TestCase
 
     /**
      * test withErrorReporting
-     *
-     * @return void
      */
-    public function testWithErrorReporting()
+    public function testWithErrorReporting(): void
     {
         $errorLevel = error_reporting();
-        $this->withErrorReporting(E_USER_WARNING, function () {
+        $this->withErrorReporting(E_USER_WARNING, function (): void {
               $this->assertSame(E_USER_WARNING, error_reporting());
         });
         $this->assertSame($errorLevel, error_reporting());
@@ -142,16 +134,14 @@ class TestCaseTest extends TestCase
 
     /**
      * test withErrorReporting with exceptions
-     *
-     * @return void
      */
-    public function testWithErrorReportingWithException()
+    public function testWithErrorReportingWithException(): void
     {
         $this->expectException(AssertionFailedError::class);
 
         $errorLevel = error_reporting();
         try {
-            $this->withErrorReporting(E_USER_WARNING, function () {
+            $this->withErrorReporting(E_USER_WARNING, function (): void {
                 $this->assertSame(1, 2);
             });
         } finally {
@@ -161,20 +151,16 @@ class TestCaseTest extends TestCase
 
     /**
      * Test that TestCase::setUp() backs up values.
-     *
-     * @return void
      */
-    public function testSetupBackUpValues()
+    public function testSetupBackUpValues(): void
     {
         $this->assertArrayHasKey('debug', $this->_configure);
     }
 
     /**
      * test assertTextNotEquals()
-     *
-     * @return void
      */
-    public function testAssertTextNotEquals()
+    public function testAssertTextNotEquals(): void
     {
         $one = "\r\nOne\rTwooo";
         $two = "\nOne\nTwo";
@@ -183,10 +169,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextEquals()
-     *
-     * @return void
      */
-    public function testAssertTextEquals()
+    public function testAssertTextEquals(): void
     {
         $one = "\r\nOne\rTwo";
         $two = "\nOne\nTwo";
@@ -195,10 +179,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextStartsWith()
-     *
-     * @return void
      */
-    public function testAssertTextStartsWith()
+    public function testAssertTextStartsWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -212,10 +194,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextStartsNotWith()
-     *
-     * @return void
      */
-    public function testAssertTextStartsNotWith()
+    public function testAssertTextStartsNotWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -224,10 +204,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextEndsWith()
-     *
-     * @return void
      */
-    public function testAssertTextEndsWith()
+    public function testAssertTextEndsWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -237,10 +215,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextEndsNotWith()
-     *
-     * @return void
      */
-    public function testAssertTextEndsNotWith()
+    public function testAssertTextEndsNotWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -250,10 +226,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextContains()
-     *
-     * @return void
      */
-    public function testAssertTextContains()
+    public function testAssertTextContains(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -265,10 +239,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextNotContains()
-     *
-     * @return void
      */
-    public function testAssertTextNotContains()
+    public function testAssertTextNotContains(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -277,10 +249,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test testAssertWithinRange()
-     *
-     * @return void
      */
-    public function testAssertWithinRange()
+    public function testAssertWithinRange(): void
     {
         $this->assertWithinRange(21, 22, 1, 'Not within range');
         $this->assertWithinRange(21.3, 22.2, 1.0, 'Not within range');
@@ -288,10 +258,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test testAssertNotWithinRange()
-     *
-     * @return void
      */
-    public function testAssertNotWithinRange()
+    public function testAssertNotWithinRange(): void
     {
         $this->assertNotWithinRange(21, 23, 1, 'Within range');
         $this->assertNotWithinRange(21.3, 22.2, 0.7, 'Within range');
@@ -299,10 +267,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test getMockForModel()
-     *
-     * @return void
      */
-    public function testGetMockForModel()
+    public function testGetMockForModel(): void
     {
         static::setAppNamespace();
         // No methods will be mocked if $methods argument of getMockForModel() is empty.
@@ -341,10 +307,8 @@ class TestCaseTest extends TestCase
 
     /**
      * Test getMockForModel on secondary datasources.
-     *
-     * @return void
      */
-    public function testGetMockForModelSecondaryDatasource()
+    public function testGetMockForModelSecondaryDatasource(): void
     {
         ConnectionManager::alias('test', 'secondary');
 
@@ -354,10 +318,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test getMockForModel() with plugin models
-     *
-     * @return void
      */
-    public function testGetMockForModelWithPlugin()
+    public function testGetMockForModelWithPlugin(): void
     {
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
@@ -390,10 +352,8 @@ class TestCaseTest extends TestCase
 
     /**
      * testGetMockForModelTable
-     *
-     * @return void
      */
-    public function testGetMockForModelTable()
+    public function testGetMockForModelTable(): void
     {
         $Mock = $this->getMockForModel(
             'Table',
@@ -428,10 +388,8 @@ class TestCaseTest extends TestCase
 
     /**
      * Test getting a table mock that doesn't have a preset table name sets the proper name
-     *
-     * @return void
      */
-    public function testGetMockForModelSetTable()
+    public function testGetMockForModelSetTable(): void
     {
         static::setAppNamespace();
         ConnectionManager::alias('test', 'custom_i18n_datasource');
@@ -446,10 +404,8 @@ class TestCaseTest extends TestCase
 
     /**
      * Test loadRoutes() helper
-     *
-     * @return void
      */
-    public function testLoadRoutes()
+    public function testLoadRoutes(): void
     {
         $url = ['controller' => 'Articles', 'action' => 'index'];
         try {
@@ -466,10 +422,8 @@ class TestCaseTest extends TestCase
 
     /**
      * Test getting the state reset manager.
-     *
-     * @return void
      */
-    public function testGetResetStrategySuccess()
+    public function testGetResetStrategySuccess(): void
     {
         $instance = $this->getResetStrategy();
         $this->assertInstanceOf(ResetStrategyInterface::class, $instance);
@@ -478,10 +432,8 @@ class TestCaseTest extends TestCase
 
     /**
      * Test getting the state reset manager when class is invalid
-     *
-     * @return void
      */
-    public function testGetResetStrategyMissingClass()
+    public function testGetResetStrategyMissingClass(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot find class `NotThere`');
@@ -491,10 +443,8 @@ class TestCaseTest extends TestCase
 
     /**
      * Test getting the state reset manager when class is invalid
-     *
-     * @return void
      */
-    public function testGetStateResetInvalidClass()
+    public function testGetStateResetInvalidClass(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('does not implement the required');

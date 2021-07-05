@@ -30,8 +30,6 @@ class PluginLoadedCommandTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,10 +40,8 @@ class PluginLoadedCommandTest extends TestCase
 
     /**
      * Tests that list of loaded plugins is shown with loaded command.
-     *
-     * @return void
      */
-    public function testLoaded()
+    public function testLoaded(): void
     {
         $expected = Plugin::loaded();
 

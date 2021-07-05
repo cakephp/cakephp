@@ -31,9 +31,6 @@ class StreamTest extends TestCase
      */
     protected $stream;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -44,9 +41,6 @@ class StreamTest extends TestCase
         stream_wrapper_register('http', CakeStreamWrapper::class);
     }
 
-    /**
-     * @return void
-     */
     public function tearDown(): void
     {
         parent::tearDown();
@@ -55,10 +49,8 @@ class StreamTest extends TestCase
 
     /**
      * Test the send method
-     *
-     * @return void
      */
-    public function testSend()
+    public function testSend(): void
     {
         $stream = new Stream();
         $request = new Request('http://localhost', 'GET', [
@@ -76,10 +68,8 @@ class StreamTest extends TestCase
 
     /**
      * Test the send method by using cakephp:// protocol.
-     *
-     * @return void
      */
-    public function testSendByUsingCakephpProtocol()
+    public function testSendByUsingCakephpProtocol(): void
     {
         $stream = new Stream();
         $request = new Request('http://dummy/');
@@ -93,15 +83,13 @@ class StreamTest extends TestCase
 
     /**
      * Test stream error_handler cleanup when wrapper throws exception
-     *
-     * @return void
      */
-    public function testSendWrapperException()
+    public function testSendWrapperException(): void
     {
         $stream = new Stream();
         $request = new Request('http://throw_exception/');
 
-        $currentHandler = set_error_handler(function () {
+        $currentHandler = set_error_handler(function (): void {
         });
         restore_error_handler();
 
@@ -110,7 +98,7 @@ class StreamTest extends TestCase
         } catch (\Exception $e) {
         }
 
-        $newHandler = set_error_handler(function () {
+        $newHandler = set_error_handler(function (): void {
         });
         restore_error_handler();
 
@@ -119,10 +107,8 @@ class StreamTest extends TestCase
 
     /**
      * Test building the context headers
-     *
-     * @return void
      */
-    public function testBuildingContextHeader()
+    public function testBuildingContextHeader(): void
     {
         $request = new Request(
             'http://localhost',
@@ -152,10 +138,8 @@ class StreamTest extends TestCase
 
     /**
      * Test send() + context options with string content.
-     *
-     * @return void
      */
-    public function testSendContextContentString()
+    public function testSendContextContentString(): void
     {
         $content = json_encode(['a' => 'b']);
         $request = new Request(
@@ -181,10 +165,8 @@ class StreamTest extends TestCase
 
     /**
      * Test send() + context options with array content.
-     *
-     * @return void
      */
-    public function testSendContextContentArray()
+    public function testSendContextContentArray(): void
     {
         $request = new Request(
             'http://localhost',
@@ -209,10 +191,8 @@ class StreamTest extends TestCase
 
     /**
      * Test send() + context options with array content.
-     *
-     * @return void
      */
-    public function testSendContextContentArrayFiles()
+    public function testSendContextContentArrayFiles(): void
     {
         $request = new Request(
             'http://localhost',
@@ -232,10 +212,8 @@ class StreamTest extends TestCase
 
     /**
      * Test send() + context options for SSL.
-     *
-     * @return void
      */
-    public function testSendContextSsl()
+    public function testSendContextSsl(): void
     {
         $request = new Request('https://localhost.com/test.html');
         $options = [
@@ -267,10 +245,8 @@ class StreamTest extends TestCase
 
     /**
      * Test send() + context options for SSL.
-     *
-     * @return void
      */
-    public function testSendContextSslNoVerifyPeerName()
+    public function testSendContextSslNoVerifyPeerName(): void
     {
         $request = new Request('https://localhost.com/test.html');
         $options = [
@@ -303,10 +279,8 @@ class StreamTest extends TestCase
     /**
      * The PHP stream API returns ALL the headers for ALL the requests when
      * there are redirects.
-     *
-     * @return void
      */
-    public function testCreateResponseWithRedirects()
+    public function testCreateResponseWithRedirects(): void
     {
         $headers = [
             'HTTP/1.1 302 Found',
@@ -365,10 +339,8 @@ class StreamTest extends TestCase
 
     /**
      * Test that no exception is radied when not timed out.
-     *
-     * @return void
      */
-    public function testKeepDeadline()
+    public function testKeepDeadline(): void
     {
         $request = new Request('http://dummy/?sleep');
         $options = [
@@ -383,10 +355,8 @@ class StreamTest extends TestCase
 
     /**
      * Test that an exception is raised when timed out.
-     *
-     * @return void
      */
-    public function testMissDeadline()
+    public function testMissDeadline(): void
     {
         $request = new Request('http://dummy/?sleep');
         $options = [

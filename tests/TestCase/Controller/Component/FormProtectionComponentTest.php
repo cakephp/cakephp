@@ -47,8 +47,6 @@ class FormProtectionComponentTest extends TestCase
      * setUp method
      *
      * Initializes environment state.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -216,7 +214,7 @@ class FormProtectionComponentTest extends TestCase
         $this->FormProtection->startup($event);
     }
 
-    public function testValidationUnlockedFieldsMismatch()
+    public function testValidationUnlockedFieldsMismatch(): void
     {
         // Unlocked is empty when the token is created.
         $unlocked = '';
@@ -242,7 +240,7 @@ class FormProtectionComponentTest extends TestCase
         $this->FormProtection->startup($event);
     }
 
-    public function testValidationUnlockedFieldsSuccess()
+    public function testValidationUnlockedFieldsSuccess(): void
     {
         $unlocked = 'open';
         $fields = ['title'];
@@ -265,7 +263,7 @@ class FormProtectionComponentTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testCallbackReturnResponse()
+    public function testCallbackReturnResponse(): void
     {
         $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception) {
             return new Response(['body' => 'from callback']);
@@ -299,7 +297,7 @@ class FormProtectionComponentTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('error description');
 
-        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception) {
+        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception): void {
             throw new NotFoundException('error description');
         });
 

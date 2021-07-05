@@ -31,10 +31,8 @@ class ServerRequestFactoryTest extends TestCase
 {
     /**
      * Test fromGlobals reads super globals
-     *
-     * @return void
      */
-    public function testFromGlobalsSuperGlobals()
+    public function testFromGlobalsSuperGlobals(): void
     {
         $post = [
             'title' => 'custom',
@@ -71,9 +69,8 @@ class ServerRequestFactoryTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testFromGlobalsUrlSession()
+    public function testFromGlobalsUrlSession(): void
     {
         Configure::write('App.base', '/basedir');
         $server = [
@@ -89,10 +86,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test fromGlobals with App.base defined.
-     *
-     * @return void
      */
-    public function testFromGlobalsUrlBaseDefined()
+    public function testFromGlobalsUrlBaseDefined(): void
     {
         Configure::write('App.base', 'basedir');
         $server = [
@@ -108,10 +103,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test fromGlobals with mod-rewrite server configuration.
-     *
-     * @return void
      */
-    public function testFromGlobalsUrlModRewrite()
+    public function testFromGlobalsUrlModRewrite(): void
     {
         Configure::write('App.baseUrl', false);
 
@@ -174,10 +167,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test baseUrl with ModRewrite alias
-     *
-     * @return void
      */
-    public function testBaseUrlwithModRewriteAlias()
+    public function testBaseUrlwithModRewriteAlias(): void
     {
         Configure::write('App.base', '/control');
 
@@ -212,10 +203,8 @@ class ServerRequestFactoryTest extends TestCase
      * - index.php/
      * - index.php/apples/
      * - index.php/bananas/eat/tasty_banana
-     *
-     * @return void
      */
-    public function testBaseUrlWithModRewriteAndIndexPhp()
+    public function testBaseUrlWithModRewriteAndIndexPhp(): void
     {
         $request = ServerRequestFactory::fromGlobals([
             'DOCUMENT_ROOT' => '/cakephp/webroot/index.php',
@@ -270,10 +259,8 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test that even if mod_rewrite is on, and the url contains index.php
      * and there are numerous //s that the base/webroot is calculated correctly.
-     *
-     * @return void
      */
-    public function testBaseUrlWithModRewriteAndExtraSlashes()
+    public function testBaseUrlWithModRewriteAndExtraSlashes(): void
     {
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/cakephp/webroot///index.php/bananas/eat',
@@ -288,10 +275,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test fromGlobals with mod-rewrite in the root dir.
-     *
-     * @return void
      */
-    public function testFromGlobalsUrlModRewriteRootDir()
+    public function testFromGlobalsUrlModRewriteRootDir(): void
     {
         $server = [
             'DOCUMENT_ROOT' => '/cake/repo/branches/1.2.x.x/webroot',
@@ -308,10 +293,8 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test fromGlobals with App.baseUrl defined implying no
      * mod-rewrite and no virtual path.
-     *
-     * @return void
      */
-    public function testFromGlobalsUrlNoModRewriteWebrootDir()
+    public function testFromGlobalsUrlNoModRewriteWebrootDir(): void
     {
         Configure::write('App', [
             'dir' => 'app',
@@ -335,10 +318,8 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test fromGlobals with App.baseUrl defined implying no
      * mod-rewrite
-     *
-     * @return void
      */
-    public function testFromGlobalsUrlNoModRewrite()
+    public function testFromGlobalsUrlNoModRewrite(): void
     {
         Configure::write('App', [
             'dir' => 'app',
@@ -362,10 +343,8 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test fromGlobals with App.baseUrl defined implying no
      * mod-rewrite in the root dir.
-     *
-     * @return void
      */
-    public function testFromGlobalsUrlNoModRewriteRootDir()
+    public function testFromGlobalsUrlNoModRewriteRootDir(): void
     {
         Configure::write('App', [
             'dir' => 'cake',
@@ -388,10 +367,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Check that a sub-directory containing app|webroot doesn't get mishandled when re-writing is off.
-     *
-     * @return void
      */
-    public function testBaseUrlWithAppAndWebrootInDirname()
+    public function testBaseUrlWithAppAndWebrootInDirname(): void
     {
         Configure::write('App.baseUrl', '/approval/index.php');
 
@@ -414,10 +391,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test baseUrl and webroot with baseUrl
-     *
-     * @return void
      */
-    public function testBaseUrlAndWebrootWithBaseUrl()
+    public function testBaseUrlAndWebrootWithBaseUrl(): void
     {
         Configure::write('App.dir', 'App');
         Configure::write('App.baseUrl', '/App/webroot/index.php');
@@ -466,10 +441,8 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test that a request with a . in the main GET parameter is filtered out.
      * PHP changes GET parameter keys containing dots to _.
-     *
-     * @return void
      */
-    public function testGetParamsWithDot()
+    public function testGetParamsWithDot(): void
     {
         $request = ServerRequestFactory::fromGlobals([
             'PHP_SELF' => '/webroot/index.php',
@@ -488,10 +461,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test that a request with urlencoded bits in the main GET parameter are filtered out.
-     *
-     * @return void
      */
-    public function testGetParamWithUrlencodedElement()
+    public function testGetParamWithUrlencodedElement(): void
     {
         $request = ServerRequestFactory::fromGlobals([
             'PHP_SELF' => '/webroot/index.php',
@@ -513,7 +484,7 @@ class ServerRequestFactoryTest extends TestCase
      *
      * @return array Environment array
      */
-    public static function environmentGenerator()
+    public static function environmentGenerator(): array
     {
         return [
             [
@@ -913,9 +884,8 @@ class ServerRequestFactoryTest extends TestCase
      * @param string $name
      * @param array $data
      * @param array $expected
-     * @return void
      */
-    public function testEnvironmentDetection($name, $data, $expected)
+    public function testEnvironmentDetection($name, $data, $expected): void
     {
         if (isset($data['App'])) {
             Configure::write('App', $data['App']);
@@ -936,10 +906,7 @@ class ServerRequestFactoryTest extends TestCase
         }
     }
 
-    /**
-     * @return void
-     */
-    public function testFormUrlEncodedBodyParsing()
+    public function testFormUrlEncodedBodyParsing(): void
     {
         $data = [
             'Article' => ['title'],
@@ -984,10 +951,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test method overrides coming in from POST data.
-     *
-     * @return void
      */
-    public function testMethodOverrides()
+    public function testMethodOverrides(): void
     {
         $post = ['_method' => 'POST'];
         $request = ServerRequestFactory::fromGlobals([], [], $post);
@@ -1011,10 +976,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test getServerParams
-     *
-     * @return void
      */
-    public function testGetServerParams()
+    public function testGetServerParams(): void
     {
         $vars = [
             'REQUEST_METHOD' => 'PUT',
@@ -1033,10 +996,8 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Tests that overriding the method to GET will clean all request
      * data, to better simulate a GET request.
-     *
-     * @return void
      */
-    public function testMethodOverrideEmptyParsedBody()
+    public function testMethodOverrideEmptyParsedBody(): void
     {
         $body = ['_method' => 'GET', 'foo' => 'bar'];
         $request = ServerRequestFactory::fromGlobals(
@@ -1059,10 +1020,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Tests the default file upload merging behavior.
-     *
-     * @return void
      */
-    public function testFromGlobalsWithFilesAsObjectsDefault()
+    public function testFromGlobalsWithFilesAsObjectsDefault(): void
     {
         $this->assertNull(Configure::read('App.uploadedFilesAsObjects'));
 
@@ -1087,10 +1046,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Tests the "as arrays" file upload merging behavior.
-     *
-     * @return void
      */
-    public function testFromGlobalsWithFilesAsObjectsDisabled()
+    public function testFromGlobalsWithFilesAsObjectsDisabled(): void
     {
         Configure::write('App.uploadedFilesAsObjects', false);
 
@@ -1119,10 +1076,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Tests the "as objects" file upload merging behavior.
-     *
-     * @return void
      */
-    public function testFromGlobalsWithFilesAsObjectsEnabled()
+    public function testFromGlobalsWithFilesAsObjectsEnabled(): void
     {
         Configure::write('App.uploadedFilesAsObjects', true);
 
@@ -1151,10 +1106,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test processing files with `file` field names.
-     *
-     * @return void
      */
-    public function testFilesNested()
+    public function testFilesNested(): void
     {
         $files = [
             'image_main' => [
@@ -1266,10 +1219,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test processing a file input with no .'s in it.
-     *
-     * @return void
      */
-    public function testFilesFlat()
+    public function testFilesFlat(): void
     {
         $files = [
             'birth_cert' => [
@@ -1297,10 +1248,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test that files in the 0th index work.
-     *
-     * @return void
      */
-    public function testFilesZeroithIndex()
+    public function testFilesZeroithIndex(): void
     {
         $files = [
             0 => [
@@ -1324,10 +1273,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Tests that file uploads are merged into the post data as objects instead of as arrays.
-     *
-     * @return void
      */
-    public function testFilesAsObjectsInRequestData()
+    public function testFilesAsObjectsInRequestData(): void
     {
         $files = [
             'flat' => [
@@ -1468,10 +1415,8 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test passing invalid files list structure.
-     *
-     * @return void
      */
-    public function testFilesWithInvalidStructure()
+    public function testFilesWithInvalidStructure(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value in files specification');

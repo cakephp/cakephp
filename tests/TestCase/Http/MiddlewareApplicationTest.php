@@ -28,8 +28,6 @@ class MiddlewareApplicationTest extends TestCase
 {
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -39,10 +37,8 @@ class MiddlewareApplicationTest extends TestCase
 
     /**
      * Integration test for a simple controller.
-     *
-     * @return void
      */
-    public function testHandle()
+    public function testHandle(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
         $request = $request->withAttribute('params', [

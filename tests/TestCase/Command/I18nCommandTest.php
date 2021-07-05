@@ -33,8 +33,6 @@ class I18nCommandTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,8 +44,6 @@ class I18nCommandTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -67,10 +63,8 @@ class I18nCommandTest extends TestCase
 
     /**
      * Tests that init() creates the PO files from POT files.
-     *
-     * @return void
      */
-    public function testInit()
+    public function testInit(): void
     {
         $deDir = $this->localeDir . 'de_DE' . DS;
         if (!is_dir($deDir)) {
@@ -98,10 +92,8 @@ class I18nCommandTest extends TestCase
 
     /**
      * Test that the option parser is shaped right.
-     *
-     * @return void
      */
-    public function testGetOptionParser()
+    public function testGetOptionParser(): void
     {
         $this->exec('i18n -h');
 
@@ -111,10 +103,8 @@ class I18nCommandTest extends TestCase
 
     /**
      * Tests main interactive mode
-     *
-     * @return void
      */
-    public function testInteractiveQuit()
+    public function testInteractiveQuit(): void
     {
         $this->exec('i18n', ['q']);
         $this->assertExitSuccess();
@@ -122,10 +112,8 @@ class I18nCommandTest extends TestCase
 
     /**
      * Tests main interactive mode
-     *
-     * @return void
      */
-    public function testInteractiveHelp()
+    public function testInteractiveHelp(): void
     {
         $this->exec('i18n', ['h', 'q']);
         $this->assertExitSuccess();
@@ -134,10 +122,8 @@ class I18nCommandTest extends TestCase
 
     /**
      * Tests main interactive mode
-     *
-     * @return void
      */
-    public function testInteractiveInit()
+    public function testInteractiveInit(): void
     {
         $this->exec('i18n', [
             'i',

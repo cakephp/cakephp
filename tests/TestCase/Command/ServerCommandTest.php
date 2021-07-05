@@ -31,8 +31,6 @@ class ServerCommandTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,10 +40,8 @@ class ServerCommandTest extends TestCase
 
     /**
      * Test that the option parser is shaped right.
-     *
-     * @return void
      */
-    public function testGetOptionParser()
+    public function testGetOptionParser(): void
     {
         $parser = $this->command->getOptionParser();
         $options = $parser->options();

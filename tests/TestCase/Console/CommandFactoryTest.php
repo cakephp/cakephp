@@ -25,7 +25,7 @@ use TestApp\Command\DependencyCommand;
 
 class CommandFactoryTest extends TestCase
 {
-    public function testCreateCommand()
+    public function testCreateCommand(): void
     {
         $factory = new CommandFactory();
 
@@ -34,7 +34,7 @@ class CommandFactoryTest extends TestCase
         $this->assertInstanceOf(CommandInterface::class, $command);
     }
 
-    public function testCreateCommandDependencies()
+    public function testCreateCommandDependencies(): void
     {
         $container = new Container();
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
@@ -47,7 +47,7 @@ class CommandFactoryTest extends TestCase
         $this->assertInstanceOf(stdClass::class, $command->inject);
     }
 
-    public function testInvalid()
+    public function testInvalid(): void
     {
         $factory = new CommandFactory();
 

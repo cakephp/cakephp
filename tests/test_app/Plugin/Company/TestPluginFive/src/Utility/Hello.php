@@ -19,10 +19,8 @@ class Hello
 {
     /**
      * foo method
-     *
-     * @return string
      */
-    public function foo()
+    public function foo(): string
     {
         return 'bar';
     }

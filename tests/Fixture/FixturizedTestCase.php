@@ -32,30 +32,24 @@ class FixturizedTestCase extends TestCase
 
     /**
      * test that the shared fixture is correctly set
-     *
-     * @return void
      */
-    public function testFixturePresent()
+    public function testFixturePresent(): void
     {
         $this->assertInstanceOf(FixtureManager::class, $this->fixtureManager);
     }
 
     /**
      * test that it is possible to load fixtures on demand
-     *
-     * @return void
      */
-    public function testFixtureLoadOnDemand()
+    public function testFixtureLoadOnDemand(): void
     {
         $this->loadFixtures('Categories');
     }
 
     /**
      * test that calling loadFixtures without args loads all fixtures
-     *
-     * @return void
      */
-    public function testLoadAllFixtures()
+    public function testLoadAllFixtures(): void
     {
         $this->loadFixtures();
         $article = $this->getTableLocator()->get('Articles')->get(1);
@@ -66,20 +60,16 @@ class FixturizedTestCase extends TestCase
 
     /**
      * test that a test is marked as skipped using skipIf and its first parameter evaluates to true
-     *
-     * @return void
      */
-    public function testSkipIfTrue()
+    public function testSkipIfTrue(): void
     {
         $this->skipIf(true);
     }
 
     /**
      * test that a test is not marked as skipped using skipIf and its first parameter evaluates to false
-     *
-     * @return void
      */
-    public function testSkipIfFalse()
+    public function testSkipIfFalse(): void
     {
         $this->skipIf(false);
     }
@@ -87,10 +77,9 @@ class FixturizedTestCase extends TestCase
     /**
      * test that a fixtures are unloaded even if the test throws exceptions
      *
-     * @return void
      * @throws \Exception
      */
-    public function testThrowException()
+    public function testThrowException(): void
     {
         throw new Exception();
     }

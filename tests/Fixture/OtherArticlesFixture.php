@@ -36,7 +36,7 @@ class OtherArticlesFixture implements FixtureInterface
         return true;
     }
 
-    public function insert(ConnectionInterface $connection)
+    public function insert(ConnectionInterface $connection): void
     {
     }
 

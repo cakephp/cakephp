@@ -29,8 +29,6 @@ class SelectBoxWidgetTest extends TestCase
 {
     /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -47,10 +45,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test render no options
-     *
-     * @return void
      */
-    public function testRenderNoOptions()
+    public function testRenderNoOptions(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -68,10 +64,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test simple rendering
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -91,10 +85,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * Test render boolean options
-     *
-     * @return void
      */
-    public function testRenderBoolean()
+    public function testRenderBoolean(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -113,10 +105,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test simple iterator rendering
-     *
-     * @return void
      */
-    public function testRenderSimpleIterator()
+    public function testRenderSimpleIterator(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $options = new \ArrayObject(['a' => 'Albatross', 'b' => 'Budgie']);
@@ -138,10 +128,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test simple iterator rendering with empty option
-     *
-     * @return void
      */
-    public function testRenderSimpleIteratorWithEmpty()
+    public function testRenderSimpleIteratorWithEmpty(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $options = new Collection(['a' => 'Albatross', 'b' => 'Budgie']);
@@ -163,10 +151,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test complex option rendering
-     *
-     * @return void
      */
-    public function testRenderComplex()
+    public function testRenderComplex(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -193,10 +179,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering with a selected value
-     *
-     * @return void
      */
-    public function testRenderSelected()
+    public function testRenderSelected(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -236,10 +220,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test complex option rendering with a selected value
-     *
-     * @return void
      */
-    public function testRenderComplexSelected()
+    public function testRenderComplexSelected(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -267,10 +249,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering a multi select
-     *
-     * @return void
      */
-    public function testRenderMultipleSelect()
+    public function testRenderMultipleSelect(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -295,10 +275,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering multi select & selected values
-     *
-     * @return void
      */
-    public function testRenderMultipleSelected()
+    public function testRenderMultipleSelected(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -331,10 +309,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering with option groups
-     *
-     * @return void
      */
-    public function testRenderOptionGroups()
+    public function testRenderOptionGroups(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -378,10 +354,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering with numeric option group keys
-     *
-     * @return void
      */
-    public function testRenderOptionGroupsIntegerKeys()
+    public function testRenderOptionGroupsIntegerKeys(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -420,10 +394,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering with option groups and escaping
-     *
-     * @return void
      */
-    public function testRenderOptionGroupsEscape()
+    public function testRenderOptionGroupsEscape(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -466,10 +438,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering with option groups
-     *
-     * @return void
      */
-    public function testRenderOptionGroupsWithAttributes()
+    public function testRenderOptionGroupsWithAttributes(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -505,10 +475,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering with option groups with traversable nodes
-     *
-     * @return void
      */
-    public function testRenderOptionGroupsTraversable()
+    public function testRenderOptionGroupsTraversable(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $mammals = new \ArrayObject(['beaver' => 'Beaver', 'elk' => 'Elk']);
@@ -550,10 +518,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering option groups and selected values
-     *
-     * @return void
      */
-    public function testRenderOptionGroupsSelectedAndDisabled()
+    public function testRenderOptionGroupsSelectedAndDisabled(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -592,10 +558,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering a totally disabled element
-     *
-     * @return void
      */
-    public function testRenderDisabled()
+    public function testRenderDisabled(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -636,10 +600,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering a disabled element
-     *
-     * @return void
      */
-    public function testRenderDisabledMultiple()
+    public function testRenderDisabledMultiple(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -673,10 +635,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test complex option rendering with a disabled element
-     *
-     * @return void
      */
-    public function testRenderComplexDisabled()
+    public function testRenderComplexDisabled(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -704,10 +664,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test rendering with an empty value
-     *
-     * @return void
      */
-    public function testRenderEmptyOption()
+    public function testRenderEmptyOption(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -763,10 +721,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * Test rendering with disabling escaping.
-     *
-     * @return void
      */
-    public function testRenderEscapingOption()
+    public function testRenderEscapingOption(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -817,10 +773,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * test render with null options
-     *
-     * @return void
      */
-    public function testRenderNullOptions()
+    public function testRenderNullOptions(): void
     {
         $select = new SelectBoxWidget($this->templates);
         $data = [
@@ -856,10 +810,8 @@ class SelectBoxWidgetTest extends TestCase
 
     /**
      * Ensure templateVars option is hooked up.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'select' => '<select custom="{{custom}}" name="{{name}}"{{attrs}}>{{content}}</select>',

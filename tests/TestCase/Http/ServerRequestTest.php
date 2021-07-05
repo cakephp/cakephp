@@ -34,10 +34,8 @@ class ServerRequestTest extends TestCase
 {
     /**
      * Test custom detector with extra arguments.
-     *
-     * @return void
      */
-    public function testCustomArgsDetector()
+    public function testCustomArgsDetector(): void
     {
         $request = new ServerRequest();
         $request->addDetector('controller', function ($request, $name) {
@@ -53,10 +51,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the header detector.
-     *
-     * @return void
      */
-    public function testHeaderDetector()
+    public function testHeaderDetector(): void
     {
         $request = new ServerRequest();
         $request->addDetector('host', ['header' => ['host' => 'cakephp.org']]);
@@ -70,10 +66,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the accept header detector.
-     *
-     * @return void
      */
-    public function testExtensionDetector()
+    public function testExtensionDetector(): void
     {
         $request = new ServerRequest();
         $request = $request->withParam('_ext', 'json');
@@ -86,10 +80,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the accept header detector.
-     *
-     * @return void
      */
-    public function testAcceptHeaderDetector()
+    public function testAcceptHeaderDetector(): void
     {
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/json, text/plain, */*');
@@ -100,7 +92,7 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('json'));
     }
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $request = new ServerRequest();
         $this->assertInstanceOf(FlashMessage::class, $request->getAttribute('flash'));
@@ -108,10 +100,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test construction with query data
-     *
-     * @return void
      */
-    public function testConstructionQueryData()
+    public function testConstructionQueryData(): void
     {
         $data = [
             'query' => [
@@ -128,10 +118,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test constructing with a string url.
-     *
-     * @return void
      */
-    public function testConstructStringUrlIgnoreServer()
+    public function testConstructStringUrlIgnoreServer(): void
     {
         $request = new ServerRequest([
             'url' => '/articles/view/1',
@@ -145,10 +133,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test that querystring args provided in the URL string are parsed.
-     *
-     * @return void
      */
-    public function testQueryStringParsingFromInputUrl()
+    public function testQueryStringParsingFromInputUrl(): void
     {
         $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
@@ -159,10 +145,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test that querystrings are handled correctly.
-     *
-     * @return void
      */
-    public function testQueryStringAndNamedParams()
+    public function testQueryStringAndNamedParams(): void
     {
         $config = ['environment' => ['REQUEST_URI' => '/tasks/index?ts=123456']];
         $request = new ServerRequest($config);
@@ -182,7 +166,7 @@ class ServerRequestTest extends TestCase
     /**
      * Test that URL in path is handled correctly.
      */
-    public function testUrlInPath()
+    public function testUrlInPath(): void
     {
         $config = ['environment' => ['REQUEST_URI' => '/jump/http://cakephp.org']];
         $request = new ServerRequest($config);
@@ -197,10 +181,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getPath().
-     *
-     * @return void
      */
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $request = new ServerRequest(['url' => '']);
         $this->assertSame('/', $request->getPath());
@@ -214,10 +196,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test parsing POST data into the object.
-     *
-     * @return void
      */
-    public function testPostParsing()
+    public function testPostParsing(): void
     {
         $post = [
             'Article' => ['title'],
@@ -240,10 +220,8 @@ class ServerRequestTest extends TestCase
     /**
      * Test that the constructor uses uploaded file objects
      * if they are present. This could happen in test scenarios.
-     *
-     * @return void
      */
-    public function testFilesObject()
+    public function testFilesObject(): void
     {
         $file = new UploadedFile(
             __FILE__,
@@ -258,10 +236,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test passing an empty files list.
-     *
-     * @return void
      */
-    public function testFilesWithEmptyList()
+    public function testFilesWithEmptyList(): void
     {
         $request = new ServerRequest([
             'files' => [],
@@ -273,10 +249,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test replacing files.
-     *
-     * @return void
      */
-    public function testWithUploadedFiles()
+    public function testWithUploadedFiles(): void
     {
         $file = new UploadedFile(
             __FILE__,
@@ -295,10 +269,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting a single file
-     *
-     * @return void
      */
-    public function testGetUploadedFile()
+    public function testGetUploadedFile(): void
     {
         $file = new UploadedFile(
             __FILE__,
@@ -327,10 +299,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test replacing files with an invalid file
-     *
-     * @return void
      */
-    public function testWithUploadedFilesInvalidFile()
+    public function testWithUploadedFilesInvalidFile(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid file at \'avatar\'');
@@ -340,10 +310,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test replacing files with an invalid file
-     *
-     * @return void
      */
-    public function testWithUploadedFilesInvalidFileNested()
+    public function testWithUploadedFilesInvalidFileNested(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid file at \'user.avatar\'');
@@ -353,10 +321,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the clientIp method.
-     *
-     * @return void
      */
-    public function testClientIp()
+    public function testClientIp(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com, real.ip',
@@ -386,10 +352,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * test clientIp method with trusted proxies
-     *
-     * @return void
      */
-    public function testClientIpWithTrustedProxies()
+    public function testClientIpWithTrustedProxies(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_X_FORWARDED_FOR' => 'real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
@@ -422,10 +386,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the referrer function.
-     *
-     * @return void
      */
-    public function testReferer()
+    public function testReferer(): void
     {
         $request = new ServerRequest(['webroot' => '/']);
 
@@ -464,10 +426,8 @@ class ServerRequestTest extends TestCase
     /**
      * Test referer() with a base path that duplicates the
      * first segment.
-     *
-     * @return void
      */
-    public function testRefererBasePath()
+    public function testRefererBasePath(): void
     {
         $request = new ServerRequest([
             'url' => '/waves/users/login',
@@ -482,10 +442,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * test the simple uses of is()
-     *
-     * @return void
      */
-    public function testIsHttpMethods()
+    public function testIsHttpMethods(): void
     {
         $request = new ServerRequest();
 
@@ -511,10 +469,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test is() with JSON and XML.
-     *
-     * @return void
      */
-    public function testIsJsonAndXml()
+    public function testIsJsonAndXml(): void
     {
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'application/json, text/plain, */*');
@@ -531,10 +487,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test is() with multiple types.
-     *
-     * @return void
      */
-    public function testIsMultiple()
+    public function testIsMultiple(): void
     {
         $request = new ServerRequest();
 
@@ -550,10 +504,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test isAll()
-     *
-     * @return void
      */
-    public function testIsAll()
+    public function testIsAll(): void
     {
         $request = new ServerRequest();
 
@@ -567,10 +519,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getMethod()
-     *
-     * @return void
      */
-    public function testGetMethod()
+    public function testGetMethod(): void
     {
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete'],
@@ -580,10 +530,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withMethod()
-     *
-     * @return void
      */
-    public function testWithMethod()
+    public function testWithMethod(): void
     {
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete'],
@@ -596,10 +544,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withMethod() and invalid data
-     *
-     * @return void
      */
-    public function testWithMethodInvalid()
+    public function testWithMethodInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported HTTP method "no good" provided');
@@ -611,10 +557,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getProtocolVersion()
-     *
-     * @return void
      */
-    public function testGetProtocolVersion()
+    public function testGetProtocolVersion(): void
     {
         $request = new ServerRequest();
         $this->assertSame('1.1', $request->getProtocolVersion());
@@ -628,10 +572,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withProtocolVersion()
-     *
-     * @return void
      */
-    public function testWithProtocolVersion()
+    public function testWithProtocolVersion(): void
     {
         $request = new ServerRequest();
         $new = $request->withProtocolVersion('1.0');
@@ -642,10 +584,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withProtocolVersion() and invalid data
-     *
-     * @return void
      */
-    public function testWithProtocolVersionInvalid()
+    public function testWithProtocolVersionInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported protocol version \'no good\' provided');
@@ -655,10 +595,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test host retrieval.
-     *
-     * @return void
      */
-    public function testHost()
+    public function testHost(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -672,10 +610,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * test port retrieval.
-     *
-     * @return void
      */
-    public function testPort()
+    public function testPort(): void
     {
         $request = new ServerRequest(['environment' => ['SERVER_PORT' => '80']]);
 
@@ -691,10 +627,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * test domain retrieval.
-     *
-     * @return void
      */
-    public function testDomain()
+    public function testDomain(): void
     {
         $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
@@ -706,10 +640,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test scheme() method.
-     *
-     * @return void
      */
-    public function testScheme()
+    public function testScheme(): void
     {
         $request = new ServerRequest(['environment' => ['HTTPS' => 'on']]);
 
@@ -725,10 +657,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * test getting subdomains for a host.
-     *
-     * @return void
      */
-    public function testSubdomain()
+    public function testSubdomain(): void
     {
         $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
@@ -746,10 +676,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test AJAX, flash and friends
-     *
-     * @return void
      */
-    public function testisAjax()
+    public function testisAjax(): void
     {
         $request = new ServerRequest();
 
@@ -763,10 +691,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test __call exceptions
-     *
-     * @return void
      */
-    public function testMagicCallExceptionOnUnknownMethod()
+    public function testMagicCallExceptionOnUnknownMethod(): void
     {
         $this->expectException(\BadMethodCallException::class);
         $request = new ServerRequest();
@@ -775,10 +701,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test is(ssl)
-     *
-     * @return void
      */
-    public function testIsSsl()
+    public function testIsSsl(): void
     {
         $request = new ServerRequest();
 
@@ -800,10 +724,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test adding detectors and having them work.
-     *
-     * @return void
      */
-    public function testAddDetector()
+    public function testAddDetector(): void
     {
         $request = new ServerRequest();
 
@@ -896,10 +818,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting headers
-     *
-     * @return void
      */
-    public function testHeader()
+    public function testHeader(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -918,10 +838,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting headers with psr7 methods
-     *
-     * @return void
      */
-    public function testGetHeaders()
+    public function testGetHeaders(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -943,10 +861,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test hasHeader
-     *
-     * @return void
      */
-    public function testHasHeader()
+    public function testHasHeader(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -964,10 +880,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting headers with psr7 methods
-     *
-     * @return void
      */
-    public function testGetHeader()
+    public function testGetHeader(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -987,10 +901,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting headers with psr7 methods
-     *
-     * @return void
      */
-    public function testGetHeaderLine()
+    public function testGetHeaderLine(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -1010,10 +922,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test setting a header.
-     *
-     * @return void
      */
-    public function testWithHeader()
+    public function testWithHeader(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -1034,10 +944,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test adding a header.
-     *
-     * @return void
      */
-    public function testWithAddedHeader()
+    public function testWithAddedHeader(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -1061,10 +969,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test removing a header.
-     *
-     * @return void
      */
-    public function testWithoutHeader()
+    public function testWithoutHeader(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
@@ -1082,10 +988,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test accepts() with and without parameters
-     *
-     * @return void
      */
-    public function testAccepts()
+    public function testAccepts(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png',
@@ -1106,10 +1010,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test that accept header types are trimmed for comparisons.
-     *
-     * @return void
      */
-    public function testAcceptWithWhitespace()
+    public function testAcceptWithWhitespace(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/xml  ,  text/html ,  text/plain,image/png',
@@ -1125,10 +1027,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Content types from accepts() should respect the client's q preference values.
-     *
-     * @return void
      */
-    public function testAcceptWithQvalueSorting()
+    public function testAcceptWithQvalueSorting(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0',
@@ -1140,10 +1040,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the raw parsing of accept headers into the q value formatting.
-     *
-     * @return void
      */
-    public function testParseAcceptWithQValue()
+    public function testParseAcceptWithQValue(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png',
@@ -1159,10 +1057,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test parsing accept with a confusing accept value.
-     *
-     * @return void
      */
-    public function testParseAcceptNoQValues()
+    public function testParseAcceptNoQValues(): void
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'application/json, text/plain, */*',
@@ -1176,10 +1072,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test parsing accept ignores index param
-     *
-     * @return void
      */
-    public function testParseAcceptIgnoreAcceptExtensions()
+    public function testParseAcceptIgnoreAcceptExtensions(): void
     {
         $request = new ServerRequest(['environment' => [
             'url' => '/',
@@ -1197,10 +1091,8 @@ class ServerRequestTest extends TestCase
      * Test that parsing accept headers with invalid syntax works.
      *
      * The header used is missing a q value for application/xml.
-     *
-     * @return void
      */
-    public function testParseAcceptInvalidSyntax()
+    public function testParseAcceptInvalidSyntax(): void
     {
         $request = new ServerRequest(['environment' => [
             'url' => '/',
@@ -1217,10 +1109,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the getQuery() method
-     *
-     * @return void
      */
-    public function testGetQuery()
+    public function testGetQuery(): void
     {
         $array = [
             'query' => [
@@ -1255,10 +1145,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getQueryParams
-     *
-     * @return void
      */
-    public function testGetQueryParams()
+    public function testGetQueryParams(): void
     {
         $get = [
             'test' => ['foo', 'bar'],
@@ -1273,10 +1161,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withQueryParams and immutability
-     *
-     * @return void
      */
-    public function testWithQueryParams()
+    public function testWithQueryParams(): void
     {
         $get = [
             'test' => ['foo', 'bar'],
@@ -1293,10 +1179,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test using param()
-     *
-     * @return void
      */
-    public function testReadingParams()
+    public function testReadingParams(): void
     {
         $request = new ServerRequest([
             'params' => [
@@ -1315,10 +1199,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the data() method reading
-     *
-     * @return void
      */
-    public function testGetData()
+    public function testGetData(): void
     {
         $post = [
             'Model' => [
@@ -1337,10 +1219,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test that getData() doesn't fail on scalar data.
-     *
-     * @return void
      */
-    public function testGetDataOnStringData()
+    public function testGetDataOnStringData(): void
     {
         $post = 'strange, but could happen';
         $request = new ServerRequest(compact('post'));
@@ -1350,10 +1230,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test writing falsey values.
-     *
-     * @return void
      */
-    public function testDataWritingFalsey()
+    public function testDataWritingFalsey(): void
     {
         $request = new ServerRequest();
 
@@ -1376,7 +1254,7 @@ class ServerRequestTest extends TestCase
      * @dataProvider paramReadingDataProvider
      * @param mixed $expected
      */
-    public function testGetParam(string $toRead, $expected)
+    public function testGetParam(string $toRead, $expected): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -1398,10 +1276,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getParam returning a default value.
-     *
-     * @return void
      */
-    public function testGetParamDefault()
+    public function testGetParamDefault(): void
     {
         $request = new ServerRequest([
             'params' => [
@@ -1460,10 +1336,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * test writing request params with param()
-     *
-     * @return void
      */
-    public function testParamWriting()
+    public function testParamWriting(): void
     {
         $request = new ServerRequest(['url' => '/']);
         $request = $request->withParam('action', 'index');
@@ -1493,10 +1367,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test accept language
-     *
-     * @return void
      */
-    public function testAcceptLanguage()
+    public function testAcceptLanguage(): void
     {
         $request = new ServerRequest();
 
@@ -1538,10 +1410,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getBody
-     *
-     * @return void
      */
-    public function testGetBody()
+    public function testGetBody(): void
     {
         $request = new ServerRequest([
             'input' => 'key=val&some=data',
@@ -1553,10 +1423,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withBody
-     *
-     * @return void
      */
-    public function testWithBody()
+    public function testWithBody(): void
     {
         $request = new ServerRequest([
             'input' => 'key=val&some=data',
@@ -1570,10 +1438,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getUri
-     *
-     * @return void
      */
-    public function testGetUri()
+    public function testGetUri(): void
     {
         $request = new ServerRequest(['url' => 'articles/view/3']);
         $result = $request->getUri();
@@ -1583,10 +1449,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withUri
-     *
-     * @return void
      */
-    public function testWithUri()
+    public function testWithUri(): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -1603,10 +1467,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withUri() and preserveHost
-     *
-     * @return void
      */
-    public function testWithUriPreserveHost()
+    public function testWithUriPreserveHost(): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -1626,10 +1488,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withUri() and preserveHost missing the host header
-     *
-     * @return void
      */
-    public function testWithUriPreserveHostNoHostHeader()
+    public function testWithUriPreserveHostNoHostHeader(): void
     {
         $request = new ServerRequest([
             'url' => 'articles/view/3',
@@ -1645,10 +1505,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the cookie() method.
-     *
-     * @return void
      */
-    public function testGetCookie()
+    public function testGetCookie(): void
     {
         $request = new ServerRequest([
             'cookies' => [
@@ -1669,10 +1527,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getCookieParams()
-     *
-     * @return void
      */
-    public function testGetCookieParams()
+    public function testGetCookieParams(): void
     {
         $cookies = [
             'testing' => 'A value in the cookie',
@@ -1683,10 +1539,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withCookieParams()
-     *
-     * @return void
      */
-    public function testWithCookieParams()
+    public function testWithCookieParams(): void
     {
         $cookies = [
             'testing' => 'A value in the cookie',
@@ -1700,10 +1554,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting a cookie collection from a request.
-     *
-     * @return void
      */
-    public function testGetCookieCollection()
+    public function testGetCookieCollection(): void
     {
         $cookies = [
             'remember_me' => '1',
@@ -1720,10 +1572,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test replacing cookies from a collection
-     *
-     * @return void
      */
-    public function testWithCookieCollection()
+    public function testWithCookieCollection(): void
     {
         $cookies = new CookieCollection([new Cookie('remember_me', 1), new Cookie('color', 'red')]);
         $request = new ServerRequest(['cookies' => ['bad' => 'goaway']]);
@@ -1739,10 +1589,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * TestAllowMethod
-     *
-     * @return void
      */
-    public function testAllowMethod()
+    public function testAllowMethod(): void
     {
         $request = new ServerRequest(['environment' => [
             'url' => '/posts/edit/1',
@@ -1757,10 +1605,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test allowMethod throwing exception
-     *
-     * @return void
      */
-    public function testAllowMethodException()
+    public function testAllowMethodException(): void
     {
         $request = new ServerRequest([
             'url' => '/posts/edit/1',
@@ -1781,10 +1627,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Tests getting the session from the request
-     *
-     * @return void
      */
-    public function testGetSession()
+    public function testGetSession(): void
     {
         $session = new Session();
         $request = new ServerRequest(['session' => $session]);
@@ -1794,7 +1638,7 @@ class ServerRequestTest extends TestCase
         $this->assertEquals($session, $request->getSession());
     }
 
-    public function testGetFlash()
+    public function testGetFlash(): void
     {
         $request = new ServerRequest();
         $this->assertInstanceOf(FlashMessage::class, $request->getFlash());
@@ -1802,10 +1646,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the content type method.
-     *
-     * @return void
      */
-    public function testContentType()
+    public function testContentType(): void
     {
         $request = new ServerRequest([
             'environment' => ['HTTP_CONTENT_TYPE' => 'application/json'],
@@ -1820,10 +1662,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test updating params in a psr7 fashion.
-     *
-     * @return void
      */
-    public function testWithParam()
+    public function testWithParam(): void
     {
         $request = new ServerRequest([
             'params' => ['controller' => 'Articles'],
@@ -1845,10 +1685,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting the parsed body parameters.
-     *
-     * @return void
      */
-    public function testGetParsedBody()
+    public function testGetParsedBody(): void
     {
         $data = ['title' => 'First', 'body' => 'Best Article!'];
         $request = new ServerRequest(['post' => $data]);
@@ -1860,10 +1698,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test replacing the parsed body parameters.
-     *
-     * @return void
      */
-    public function testWithParsedBody()
+    public function testWithParsedBody(): void
     {
         $data = ['title' => 'First', 'body' => 'Best Article!'];
         $request = new ServerRequest([]);
@@ -1876,10 +1712,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test updating POST data in a psr7 fashion.
-     *
-     * @return void
      */
-    public function testWithData()
+    public function testWithData(): void
     {
         $request = new ServerRequest([
             'post' => [
@@ -1898,10 +1732,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test removing data from a request
-     *
-     * @return void
      */
-    public function testWithoutData()
+    public function testWithoutData(): void
     {
         $request = new ServerRequest([
             'post' => [
@@ -1920,10 +1752,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test updating POST data when keys don't exist
-     *
-     * @return void
      */
-    public function testWithDataMissingIntermediaryKeys()
+    public function testWithDataMissingIntermediaryKeys(): void
     {
         $request = new ServerRequest([
             'post' => [
@@ -1945,10 +1775,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test updating POST data with falsey values
-     *
-     * @return void
      */
-    public function testWithDataFalseyValues()
+    public function testWithDataFalseyValues(): void
     {
         $request = new ServerRequest([
             'post' => [],
@@ -1970,10 +1798,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test setting attributes.
-     *
-     * @return void
      */
-    public function testWithAttribute()
+    public function testWithAttribute(): void
     {
         $request = new ServerRequest([]);
         $this->assertNull($request->getAttribute('key'));
@@ -1991,10 +1817,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test that replacing the session can be done via withAttribute()
-     *
-     * @return void
      */
-    public function testWithAttributeSession()
+    public function testWithAttributeSession(): void
     {
         $request = new ServerRequest([]);
         $request->getSession()->write('attrKey', 'session-value');
@@ -2007,10 +1831,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getting all attributes.
-     *
-     * @return void
      */
-    public function testGetAttributes()
+    public function testGetAttributes(): void
     {
         $request = new ServerRequest([]);
         $new = $request->withAttribute('key', 'value')
@@ -2039,10 +1861,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test unsetting attributes.
-     *
-     * @return void
      */
-    public function testWithoutAttribute()
+    public function testWithoutAttribute(): void
     {
         $request = new ServerRequest([]);
         $new = $request->withAttribute('key', 'value');
@@ -2056,9 +1876,8 @@ class ServerRequestTest extends TestCase
      * Test that withoutAttribute() cannot remove emulatedAttributes properties.
      *
      * @dataProvider emulatedPropertyProvider
-     * @return void
      */
-    public function testWithoutAttributesDenyEmulatedProperties(string $prop)
+    public function testWithoutAttributesDenyEmulatedProperties(string $prop): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $request = new ServerRequest([]);
@@ -2067,10 +1886,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test the requestTarget methods.
-     *
-     * @return void
      */
-    public function testWithRequestTarget()
+    public function testWithRequestTarget(): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -2097,10 +1914,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withEnv()
-     *
-     * @return void
      */
-    public function testWithEnv()
+    public function testWithEnv(): void
     {
         $request = new ServerRequest();
 
@@ -2111,10 +1926,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test getEnv()
-     *
-     * @return void
      */
-    public function testGetEnv()
+    public function testGetEnv(): void
     {
         $request = new ServerRequest([
             'environment' => ['TEST' => 'ing'],

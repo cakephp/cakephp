@@ -41,8 +41,6 @@ class NumberHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -55,8 +53,6 @@ class NumberHelperTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -88,9 +84,8 @@ class NumberHelperTest extends TestCase
      * test CakeNumber class methods are called correctly
      *
      * @dataProvider methodProvider
-     * @return void
      */
-    public function testNumberHelperProxyMethodCalls(string $method)
+    public function testNumberHelperProxyMethodCalls(string $method): void
     {
         $number = $this->getMockBuilder(NumberMock::class)
             ->addMethods([$method])
@@ -109,9 +104,8 @@ class NumberHelperTest extends TestCase
      * corresponding method of Number class.
      *
      * @dataProvider methodProvider
-     * @return void
      */
-    public function testParameterCountMatch(string $method)
+    public function testParameterCountMatch(string $method): void
     {
         $numberMethod = new ReflectionMethod(Number::class, $method);
         $helperMethod = new ReflectionMethod(NumberHelper::class, $method);
@@ -121,10 +115,8 @@ class NumberHelperTest extends TestCase
 
     /**
      * test engine override
-     *
-     * @return void
      */
-    public function testEngineOverride()
+    public function testEngineOverride(): void
     {
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
         $this->assertInstanceOf(TestAppEngine::class, $Number->engine());

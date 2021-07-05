@@ -27,8 +27,6 @@ class ArrayEngineTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -41,8 +39,6 @@ class ArrayEngineTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -55,9 +51,8 @@ class ArrayEngineTest extends TestCase
      * Helper method for testing.
      *
      * @param array $config
-     * @return void
      */
-    protected function _configCache($config = [])
+    protected function _configCache($config = []): void
     {
         $defaults = [
             'className' => 'Array',
@@ -70,10 +65,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * testReadAndWriteCache method
-     *
-     * @return void
      */
-    public function testReadAndWriteCache()
+    public function testReadAndWriteCache(): void
     {
         $this->_configCache(['duration' => 1]);
 
@@ -93,10 +86,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * testExpiry method
-     *
-     * @return void
      */
-    public function testExpiry()
+    public function testExpiry(): void
     {
         $this->_configCache(['duration' => 1]);
 
@@ -114,10 +105,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * testDeleteCache method
-     *
-     * @return void
      */
-    public function testDeleteCache()
+    public function testDeleteCache(): void
     {
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('delete_test', $data, 'array');
@@ -129,10 +118,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * testDecrement method
-     *
-     * @return void
      */
-    public function testDecrement()
+    public function testDecrement(): void
     {
         $result = Cache::write('test_decrement', 5, 'array');
         $this->assertTrue($result);
@@ -152,10 +139,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * testIncrement method
-     *
-     * @return void
      */
-    public function testIncrement()
+    public function testIncrement(): void
     {
         $result = Cache::write('test_increment', 5, 'array');
         $this->assertTrue($result);
@@ -175,10 +160,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * test the clearing of cache keys
-     *
-     * @return void
      */
-    public function testClear()
+    public function testClear(): void
     {
         Cache::write('some_value', 'value', 'array');
 
@@ -191,10 +174,8 @@ class ArrayEngineTest extends TestCase
      * Tests that configuring groups for stored keys return the correct values when read/written
      * Shows that altering the group value is equivalent to deleting all keys under the same
      * group
-     *
-     * @return void
      */
-    public function testGroupsReadWrite()
+    public function testGroupsReadWrite(): void
     {
         Cache::setConfig('array_groups', [
             'engine' => 'array',
@@ -219,10 +200,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * Tests that deleting from a groups-enabled config is possible
-     *
-     * @return void
      */
-    public function testGroupDelete()
+    public function testGroupDelete(): void
     {
         Cache::setConfig('array_groups', [
             'engine' => 'array',
@@ -240,10 +219,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * Test clearing a cache group
-     *
-     * @return void
      */
-    public function testGroupClear()
+    public function testGroupClear(): void
     {
         Cache::setConfig('array_groups', [
             'engine' => 'array',
@@ -264,10 +241,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * Test add
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         Cache::delete('test_add_key', 'array');
 
@@ -284,10 +259,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * Test writeMany() with Traversable
-     *
-     * @return void
      */
-    public function testWriteManyTraversable()
+    public function testWriteManyTraversable(): void
     {
         $data = new \ArrayObject([
             'a' => 1,
@@ -303,10 +276,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * Test that passing a non iterable argument to setMultiple() throws exception.
-     *
-     * @return void
      */
-    public function testSetMultipleException()
+    public function testSetMultipleException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A cache set must be either an array or a Traversable.');
@@ -317,10 +288,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * Test that passing a non iterable argument to getMultiple() throws exception.
-     *
-     * @return void
      */
-    public function testGetMultipleException()
+    public function testGetMultipleException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
@@ -331,10 +300,8 @@ class ArrayEngineTest extends TestCase
 
     /**
      * Test that passing a non iterable argument to deleteMultiple() throws exception.
-     *
-     * @return void
      */
-    public function testDeleteMultipleException()
+    public function testDeleteMultipleException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');

@@ -38,10 +38,8 @@ class BasicWidgetTest extends TestCase
 
     /**
      * Test render in a simple case.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $text = new BasicWidget($this->templates);
         $result = $text->render(['name' => 'my_input'], $this->context);
@@ -53,10 +51,8 @@ class BasicWidgetTest extends TestCase
 
     /**
      * Test render with custom type
-     *
-     * @return void
      */
-    public function testRenderType()
+    public function testRenderType(): void
     {
         $text = new BasicWidget($this->templates);
         $data = [
@@ -72,10 +68,8 @@ class BasicWidgetTest extends TestCase
 
     /**
      * Test render with a value
-     *
-     * @return void
      */
-    public function testRenderWithValue()
+    public function testRenderWithValue(): void
     {
         $text = new BasicWidget($this->templates);
         $data = [
@@ -96,10 +90,8 @@ class BasicWidgetTest extends TestCase
 
     /**
      * Test render with additional attributes.
-     *
-     * @return void
      */
-    public function testRenderAttributes()
+    public function testRenderAttributes(): void
     {
         $text = new BasicWidget($this->templates);
         $data = [
@@ -122,10 +114,8 @@ class BasicWidgetTest extends TestCase
 
     /**
      * Test render with template params.
-     *
-     * @return void
      */
-    public function testRenderTemplateParams()
+    public function testRenderTemplateParams(): void
     {
         $text = new BasicWidget(new StringTemplate([
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}><span>{{help}}</span>',

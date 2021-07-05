@@ -49,8 +49,6 @@ class ConsoleIoTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -71,8 +69,6 @@ class ConsoleIoTest extends TestCase
 
     /**
      * teardown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -103,9 +99,8 @@ class ConsoleIoTest extends TestCase
      *
      * @dataProvider choiceProvider
      * @param array|string $choices
-     * @return void
      */
-    public function testAskChoices($choices)
+    public function testAskChoices($choices): void
     {
         $this->in->expects($this->once())
             ->method('read')
@@ -120,9 +115,8 @@ class ConsoleIoTest extends TestCase
      *
      * @dataProvider choiceProvider
      * @param array|string $choices
-     * @return void
      */
-    public function testAskChoicesInsensitive($choices)
+    public function testAskChoicesInsensitive($choices): void
     {
         $this->in->expects($this->once())
             ->method('read')
@@ -134,10 +128,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test ask method
-     *
-     * @return void
      */
-    public function testAsk()
+    public function testAsk(): void
     {
         $this->out->expects($this->once())
             ->method('write')
@@ -153,10 +145,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test ask method
-     *
-     * @return void
      */
-    public function testAskDefaultValue()
+    public function testAskDefaultValue(): void
     {
         $this->out->expects($this->once())
             ->method('write')
@@ -172,10 +162,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * testOut method
-     *
-     * @return void
      */
-    public function testOut()
+    public function testOut(): void
     {
         $this->out->expects($this->exactly(4))
             ->method('write')
@@ -194,10 +182,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * test that verbose and quiet output levels work
-     *
-     * @return void
      */
-    public function testVerboseOut()
+    public function testVerboseOut(): void
     {
         $this->out->expects($this->exactly(3))
             ->method('write')
@@ -216,10 +202,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * test that verbose and quiet output levels work
-     *
-     * @return void
      */
-    public function testVerboseOutput()
+    public function testVerboseOutput(): void
     {
         $this->out->expects($this->exactly(3))
             ->method('write')
@@ -238,10 +222,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * test that verbose and quiet output levels work
-     *
-     * @return void
      */
-    public function testQuietOutput()
+    public function testQuietOutput(): void
     {
         $this->out->expects($this->exactly(2))
             ->method('write')
@@ -261,10 +243,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * testErr method
-     *
-     * @return void
      */
-    public function testErr()
+    public function testErr(): void
     {
         $this->err->expects($this->exactly(4))
             ->method('write')
@@ -283,10 +263,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Tests abort() wrapper.
-     *
-     * @return void
      */
-    public function testAbort()
+    public function testAbort(): void
     {
         $this->expectException(StopException::class);
         $this->expectExceptionMessage('Some error');
@@ -305,10 +283,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Tests abort() wrapper.
-     *
-     * @return void
      */
-    public function testAbortCustomCode()
+    public function testAbortCustomCode(): void
     {
         $this->expectException(StopException::class);
         $this->expectExceptionMessage('Some error');
@@ -327,10 +303,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * testNl
-     *
-     * @return void
      */
-    public function testNl()
+    public function testNl(): void
     {
         $newLine = "\n";
         if (DS === '\\') {
@@ -343,10 +317,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * testHr
-     *
-     * @return void
      */
-    public function testHr()
+    public function testHr(): void
     {
         $bar = str_repeat('-', 79);
 
@@ -367,10 +339,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test overwriting.
-     *
-     * @return void
      */
-    public function testOverwrite()
+    public function testOverwrite(): void
     {
         $number = strlen('Some text I want to overwrite');
 
@@ -397,10 +367,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test overwriting content with shorter content
-     *
-     * @return void
      */
-    public function testOverwriteWithShorterContent()
+    public function testOverwriteWithShorterContent(): void
     {
         $length = strlen('12345');
 
@@ -435,10 +403,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test overwriting content with longer content
-     *
-     * @return void
      */
-    public function testOverwriteWithLongerContent()
+    public function testOverwriteWithLongerContent(): void
     {
         $this->out->expects($this->exactly(5))
             ->method('write')
@@ -466,10 +432,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Tests that setLoggers works properly
-     *
-     * @return void
      */
-    public function testSetLoggers()
+    public function testSetLoggers(): void
     {
         Log::drop('stdout');
         Log::drop('stderr');
@@ -484,10 +448,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Tests that setLoggers works properly with quiet
-     *
-     * @return void
      */
-    public function testSetLoggersQuiet()
+    public function testSetLoggersQuiet(): void
     {
         Log::drop('stdout');
         Log::drop('stderr');
@@ -498,10 +460,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Tests that setLoggers works properly with verbose
-     *
-     * @return void
      */
-    public function testSetLoggersVerbose()
+    public function testSetLoggersVerbose(): void
     {
         Log::drop('stdout');
         Log::drop('stderr');
@@ -514,10 +474,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Ensure that setStyle() just proxies to stdout.
-     *
-     * @return void
      */
-    public function testSetStyle()
+    public function testSetStyle(): void
     {
         $this->out->expects($this->once())
             ->method('setStyle')
@@ -527,10 +485,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Ensure that getStyle() just proxies to stdout.
-     *
-     * @return void
      */
-    public function testGetStyle()
+    public function testGetStyle(): void
     {
         $this->out->expects($this->once())
             ->method('getStyle')
@@ -540,10 +496,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Ensure that styles() just proxies to stdout.
-     *
-     * @return void
      */
-    public function testStyles()
+    public function testStyles(): void
     {
         $this->out->expects($this->once())
             ->method('styles');
@@ -552,10 +506,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test the helper method.
-     *
-     * @return void
      */
-    public function testHelper()
+    public function testHelper(): void
     {
         $this->out->expects($this->once())
             ->method('write')
@@ -589,9 +541,8 @@ class ConsoleIoTest extends TestCase
      * test out helper methods
      *
      * @dataProvider outHelperProvider
-     * @return void
      */
-    public function testOutHelpers(string $method)
+    public function testOutHelpers(string $method): void
     {
         $this->out->expects($this->exactly(2))
             ->method('write')
@@ -608,9 +559,8 @@ class ConsoleIoTest extends TestCase
      * test err helper methods
      *
      * @dataProvider errHelperProvider
-     * @return void
      */
-    public function testErrHelpers(string $method)
+    public function testErrHelpers(string $method): void
     {
         $this->err->expects($this->exactly(2))
             ->method('write')
@@ -625,10 +575,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test that createFile
-     *
-     * @return void
      */
-    public function testCreateFileSuccess()
+    public function testCreateFileSuccess(): void
     {
         $this->err->expects($this->never())
             ->method('write');
@@ -644,7 +592,7 @@ class ConsoleIoTest extends TestCase
         $this->assertStringEqualsFile($file, $contents);
     }
 
-    public function testCreateFileEmptySuccess()
+    public function testCreateFileEmptySuccess(): void
     {
         $this->err->expects($this->never())
             ->method('write');
@@ -660,7 +608,7 @@ class ConsoleIoTest extends TestCase
         $this->assertStringEqualsFile($file, $contents);
     }
 
-    public function testCreateFileDirectoryCreation()
+    public function testCreateFileDirectoryCreation(): void
     {
         $this->err->expects($this->never())
             ->method('write');
@@ -679,10 +627,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test that createFile with permissions error.
-     *
-     * @return void
      */
-    public function testCreateFilePermissionsError()
+    public function testCreateFilePermissionsError(): void
     {
         $this->skipIf(DS === '\\', 'Cant perform operations using permissions on windows.');
 
@@ -703,10 +649,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test that `q` raises an error.
-     *
-     * @return void
      */
-    public function testCreateFileOverwriteQuit()
+    public function testCreateFileOverwriteQuit(): void
     {
         $path = TMP . 'shell_test';
         mkdir($path);
@@ -725,10 +669,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test that `n` raises an error.
-     *
-     * @return void
      */
-    public function testCreateFileOverwriteNo()
+    public function testCreateFileOverwriteNo(): void
     {
         $path = TMP . 'shell_test';
         mkdir($path);
@@ -751,10 +693,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test the forceOverwrite parameter
-     *
-     * @return void
      */
-    public function testCreateFileOverwriteParam()
+    public function testCreateFileOverwriteParam(): void
     {
         $path = TMP . 'shell_test';
         mkdir($path);
@@ -773,10 +713,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * Test the `a` response
-     *
-     * @return void
      */
-    public function testCreateFileOverwriteAll()
+    public function testCreateFileOverwriteAll(): void
     {
         $path = TMP . 'shell_test';
         mkdir($path);

@@ -25,10 +25,7 @@ use Cake\ORM\Table;
  */
 class PublishedPostsTable extends Table
 {
-    /**
-     * @return \Cake\Database\Query
-     */
-    public function findPublished(Query $query, array $options)
+    public function findPublished(Query $query, array $options): Query
     {
         return $query->where(['published' => true]);
     }

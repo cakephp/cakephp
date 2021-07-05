@@ -27,10 +27,8 @@ class DashedRouteTest extends TestCase
 {
     /**
      * test that routes match their pattern.
-     *
-     * @return void
      */
-    public function testMatchBasic()
+    public function testMatchBasic(): void
     {
         $route = new DashedRoute('/{controller}/{action}/{id}', ['plugin' => null]);
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView', 'plugin' => null]);
@@ -139,10 +137,8 @@ class DashedRouteTest extends TestCase
 
     /**
      * test the parse method of DashedRoute.
-     *
-     * @return void
      */
-    public function testParse()
+    public function testParse(): void
     {
         $route = new DashedRoute('/{controller}/{action}/{id}', [], ['id' => Router::ID]);
         $route->compile();
@@ -193,10 +189,7 @@ class DashedRouteTest extends TestCase
         $this->assertEquals(['tv_shows'], $result['pass']);
     }
 
-    /**
-     * @return void
-     */
-    public function testMatchThenParse()
+    public function testMatchThenParse(): void
     {
         $route = new DashedRoute('/plugin/{controller}/{action}', [
             'plugin' => 'Vendor/PluginName',

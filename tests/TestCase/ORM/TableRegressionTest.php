@@ -38,15 +38,14 @@ class TableRegressionTest extends TestCase
      * in the afterSave callback
      *
      * @see https://github.com/cakephp/cakephp/issues/9079
-     * @return void
      */
-    public function testAfterSaveRollbackTransaction()
+    public function testAfterSaveRollbackTransaction(): void
     {
         $this->expectException(\Cake\ORM\Exception\RolledbackTransactionException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',
-            function () use ($table) {
+            function () use ($table): void {
                 $table->getConnection()->rollback();
             }
         );
@@ -56,10 +55,8 @@ class TableRegressionTest extends TestCase
 
     /**
      * Ensure that saving to a table with no primary key fails.
-     *
-     * @return void
      */
-    public function testSaveNoPrimaryKeyException()
+    public function testSaveNoPrimaryKeyException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('primary key');

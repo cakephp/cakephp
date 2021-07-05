@@ -41,9 +41,8 @@ class AuthorsTable extends Table
      *
      * @param \Cake\ORM\Query $query The query
      * @param array $options The options
-     * @return \Cake\ORM\Query
      */
-    public function findFormatted(Query $query, array $options = [])
+    public function findFormatted(Query $query, array $options = []): Query
     {
         return $query->formatResults(function ($results) {
             return $results->map(function ($author) {

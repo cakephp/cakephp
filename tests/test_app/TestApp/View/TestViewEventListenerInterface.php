@@ -44,9 +44,8 @@ class TestViewEventListenerInterface implements EventListenerInterface
      * beforeRender method
      *
      * @param \Cake\Event\EventInterface $event the event being sent
-     * @return void
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         $this->beforeRenderViewType = $event->getSubject()->getCurrentType();
     }
@@ -55,9 +54,8 @@ class TestViewEventListenerInterface implements EventListenerInterface
      * afterRender method
      *
      * @param \Cake\Event\EventInterface $event the event being sent
-     * @return void
      */
-    public function afterRender(EventInterface $event)
+    public function afterRender(EventInterface $event): void
     {
         $this->afterRenderViewType = $event->getSubject()->getCurrentType();
     }

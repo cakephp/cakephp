@@ -70,10 +70,8 @@ class CommonTableExpressionQueryTests extends TestCase
 
     /**
      * Tests with() sql generation.
-     *
-     * @return void
      */
-    public function testWithCte()
+    public function testWithCte(): void
     {
         $query = $this->connection->newQuery()
             ->with(new CommonTableExpression('cte', function () {
@@ -101,10 +99,8 @@ class CommonTableExpressionQueryTests extends TestCase
 
     /**
      * Tests calling with() with overwrite clears other CTEs.
-     *
-     * @return void
      */
-    public function testWithCteOverwrite()
+    public function testWithCteOverwrite(): void
     {
         $query = $this->connection->newQuery()
             ->with(new CommonTableExpression('cte', function () {
@@ -129,10 +125,8 @@ class CommonTableExpressionQueryTests extends TestCase
 
     /**
      * Tests recursive CTE.
-     *
-     * @return void
      */
-    public function testWithRecursiveCte()
+    public function testWithRecursiveCte(): void
     {
         $query = $this->connection->newQuery()
             ->with(function (CommonTableExpression $cte, Query $query) {
@@ -197,10 +191,8 @@ class CommonTableExpressionQueryTests extends TestCase
 
     /**
      * Test inserting from CTE.
-     *
-     * @return void
      */
-    public function testWithInsertQuery()
+    public function testWithInsertQuery(): void
     {
         $this->skipIf(
             ($this->connection->getDriver() instanceof Mysql),
@@ -265,10 +257,8 @@ class CommonTableExpressionQueryTests extends TestCase
 
     /**
      * Tests inserting from CTE as values list.
-     *
-     * @return void
      */
-    public function testWithInInsertWithValuesQuery()
+    public function testWithInInsertWithValuesQuery(): void
     {
         $this->skipIf(
             ($this->connection->getDriver() instanceof Sqlserver),
@@ -322,10 +312,8 @@ class CommonTableExpressionQueryTests extends TestCase
 
     /**
      * Tests updating from CTE.
-     *
-     * @return void
      */
-    public function testWithInUpdateQuery()
+    public function testWithInUpdateQuery(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
@@ -388,10 +376,8 @@ class CommonTableExpressionQueryTests extends TestCase
 
     /**
      * Tests deleting from CTE.
-     *
-     * @return void
      */
-    public function testWithInDeleteQuery()
+    public function testWithInDeleteQuery(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),

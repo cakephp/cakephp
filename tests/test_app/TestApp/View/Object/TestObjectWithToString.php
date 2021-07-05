@@ -12,10 +12,8 @@ class TestObjectWithToString
 {
     /**
      * Return string value.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return "I'm ObjectWithToString";
     }

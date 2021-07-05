@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Model\Table;
 
-use Cake\Datasource\QueryInterface;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -13,17 +13,13 @@ class TestTable extends Table
 {
     /**
      * @param array $config
-     * @return void
      */
     public function initialize(array $config): void
     {
         $this->setSchema(['id' => ['type' => 'integer']]);
     }
 
-    /**
-     * @return \Cake\Datasource\QueryInterface
-     */
-    public function findPublished(QueryInterface $query)
+    public function findPublished(Query $query): Query
     {
         return $query->applyOptions(['this' => 'worked']);
     }

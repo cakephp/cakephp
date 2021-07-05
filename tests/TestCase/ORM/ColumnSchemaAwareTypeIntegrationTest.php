@@ -43,7 +43,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         TypeFactory::setMap($map);
     }
 
-    public function testCustomTypesCanBeUsedInFixtures()
+    public function testCustomTypesCanBeUsedInFixtures(): void
     {
         $table = $this->getTableLocator()->get('ColumnSchemaAwareTypeValues');
 
@@ -55,7 +55,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function testCustomTypeCanProcessColumnInfo()
+    public function testCustomTypeCanProcessColumnInfo(): void
     {
         $column = $this->getTableLocator()->get('ColumnSchemaAwareTypeValues')->getSchema()->getColumn('val');
 
@@ -64,7 +64,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         $this->assertSame('Custom schema aware type comment', $column['comment']);
     }
 
-    public function testCustomTypeReceivesAllColumnDefinitionKeys()
+    public function testCustomTypeReceivesAllColumnDefinitionKeys(): void
     {
         $table = $this->getTableLocator()->get('ColumnSchemaAwareTypeValues');
 

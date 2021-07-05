@@ -31,10 +31,8 @@ class ValidatorTest extends TestCase
 {
     /**
      * tests getRequiredMessage
-     *
-     * @return void
      */
-    public function testGetRequiredMessage()
+    public function testGetRequiredMessage(): void
     {
         $validator = new Validator();
         $this->assertNull($validator->getRequiredMessage('field'));
@@ -50,10 +48,8 @@ class ValidatorTest extends TestCase
 
     /**
      * tests getNotEmptyMessage
-     *
-     * @return void
      */
-    public function testGetNotEmptyMessage()
+    public function testGetNotEmptyMessage(): void
     {
         $validator = new Validator();
         $this->assertNull($validator->getNotEmptyMessage('field'));
@@ -78,10 +74,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing you can dynamically add rules to a field
-     *
-     * @return void
      */
-    public function testAddingRulesToField()
+    public function testAddingRulesToField(): void
     {
         $validator = new Validator();
         $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
@@ -108,10 +102,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing addNested field rules
-     *
-     * @return void
      */
-    public function testAddNestedSingle()
+    public function testAddNestedSingle(): void
     {
         $validator = new Validator();
         $inner = new Validator();
@@ -123,10 +115,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing addNested connects providers
-     *
-     * @return void
      */
-    public function testAddNestedSingleProviders()
+    public function testAddNestedSingleProviders(): void
     {
         $validator = new Validator();
         $validator->setProvider('test', $this);
@@ -145,10 +135,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing addNested with extra `$message` and `$when` params
-     *
-     * @return void
      */
-    public function testAddNestedWithExtra()
+    public function testAddNestedWithExtra(): void
     {
         $inner = new Validator();
         $inner->requirePresence('username');
@@ -175,10 +163,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing addNestedMany field rules
-     *
-     * @return void
      */
-    public function testAddNestedMany()
+    public function testAddNestedMany(): void
     {
         $validator = new Validator();
         $inner = new Validator();
@@ -190,10 +176,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing addNestedMany connects providers
-     *
-     * @return void
      */
-    public function testAddNestedManyProviders()
+    public function testAddNestedManyProviders(): void
     {
         $validator = new Validator();
         $validator->setProvider('test', $this);
@@ -212,10 +196,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing addNestedMany with extra `$message` and `$when` params
-     *
-     * @return void
      */
-    public function testAddNestedManyWithExtra()
+    public function testAddNestedManyWithExtra(): void
     {
         $inner = new Validator();
         $inner->requirePresence('body');
@@ -247,10 +229,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests that calling field will create a default validation set for it
-     *
-     * @return void
      */
-    public function testFieldDefault()
+    public function testFieldDefault(): void
     {
         $validator = new Validator();
         $this->assertFalse($validator->hasField('foo'));
@@ -263,10 +243,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests that field method can be used as a setter
-     *
-     * @return void
      */
-    public function testFieldSetter()
+    public function testFieldSetter(): void
     {
         $validator = new Validator();
         $validationSet = new ValidationSet();
@@ -276,10 +254,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the remove method
-     *
-     * @return void
      */
-    public function testRemove()
+    public function testRemove(): void
     {
         $validator = new Validator();
         $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
@@ -299,10 +275,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the requirePresence method
-     *
-     * @return void
      */
-    public function testRequirePresence()
+    public function testRequirePresence(): void
     {
         $validator = new Validator();
         $this->assertSame($validator, $validator->requirePresence('title'));
@@ -320,10 +294,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the requirePresence method
-     *
-     * @return void
      */
-    public function testRequirePresenceAsArray()
+    public function testRequirePresenceAsArray(): void
     {
         $validator = new Validator();
         $validator->requirePresence(['title', 'created']);
@@ -346,10 +318,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the requirePresence failure case
-     *
-     * @return void
      */
-    public function testRequirePresenceAsArrayFailure()
+    public function testRequirePresenceAsArrayFailure(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
@@ -358,10 +328,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the requirePresence method when passing a callback
-     *
-     * @return void
      */
-    public function testRequirePresenceCallback()
+    public function testRequirePresenceCallback(): void
     {
         $validator = new Validator();
         $require = true;
@@ -381,10 +349,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the isPresenceRequired method
-     *
-     * @return void
      */
-    public function testIsPresenceRequired()
+    public function testIsPresenceRequired(): void
     {
         $validator = new Validator();
         $this->assertSame($validator, $validator->requirePresence('title'));
@@ -406,10 +372,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests errors generated when a field presence is required
-     *
-     * @return void
      */
-    public function testErrorsWithPresenceRequired()
+    public function testErrorsWithPresenceRequired(): void
     {
         $validator = new Validator();
         $validator->requirePresence('title');
@@ -425,10 +389,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test that validation on a certain condition generate errors
-     *
-     * @return void
      */
-    public function testErrorsWithPresenceRequiredOnCreate()
+    public function testErrorsWithPresenceRequiredOnCreate(): void
     {
         $validator = new Validator();
         $validator->requirePresence('id', 'update');
@@ -447,10 +409,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test that validate() can work with nested data.
-     *
-     * @return void
      */
-    public function testErrorsWithNestedFields()
+    public function testErrorsWithNestedFields(): void
     {
         $validator = new Validator();
         $user = new Validator();
@@ -484,10 +444,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test nested fields with many, but invalid data.
-     *
-     * @return void
      */
-    public function testErrorsWithNestedSingleInvalidType()
+    public function testErrorsWithNestedSingleInvalidType(): void
     {
         $validator = new Validator();
 
@@ -507,10 +465,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test nested fields with many, but invalid data.
-     *
-     * @return void
      */
-    public function testErrorsWithNestedManyInvalidType()
+    public function testErrorsWithNestedManyInvalidType(): void
     {
         $validator = new Validator();
 
@@ -530,10 +486,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test nested fields with many, but invalid data.
-     *
-     * @return void
      */
-    public function testErrorsWithNestedManySomeInvalid()
+    public function testErrorsWithNestedManySomeInvalid(): void
     {
         $validator = new Validator();
 
@@ -559,10 +513,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests custom error messages generated when a field presence is required
-     *
-     * @return void
      */
-    public function testCustomErrorsWithPresenceRequired()
+    public function testCustomErrorsWithPresenceRequired(): void
     {
         $validator = new Validator();
         $validator->requirePresence('title', true, 'Custom message');
@@ -573,10 +525,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests custom error messages generated when a field presence is required
-     *
-     * @return void
      */
-    public function testCustomErrorsWithPresenceRequiredAsArray()
+    public function testCustomErrorsWithPresenceRequiredAsArray(): void
     {
         $validator = new Validator();
         $validator->requirePresence(['title', 'content'], true, 'Custom message');
@@ -603,10 +553,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the testAllowEmptyFor method
-     *
-     * @return void
      */
-    public function testAllowEmptyFor()
+    public function testAllowEmptyFor(): void
     {
         $validator = new Validator();
         $validator
@@ -644,10 +592,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmpty method
-     *
-     * @return void
      */
-    public function testAllowEmpty()
+    public function testAllowEmpty(): void
     {
         $validator = new Validator();
         $this->assertSame($validator, $validator->allowEmptyString('title'));
@@ -662,10 +608,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmpty method with date/time fields.
-     *
-     * @return void
      */
-    public function testAllowEmptyWithDateTimeFields()
+    public function testAllowEmptyWithDateTimeFields(): void
     {
         $validator = new Validator();
         $validator->allowEmptyDate('created')
@@ -709,10 +653,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmpty method with file fields.
-     *
-     * @return void
      */
-    public function testAllowEmptyWithFileFields()
+    public function testAllowEmptyWithFileFields(): void
     {
         $validator = new Validator();
         $validator->allowEmptyFile('picture')
@@ -753,10 +695,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmptyString method
-     *
-     * @return void
      */
-    public function testAllowEmptyString()
+    public function testAllowEmptyString(): void
     {
         $validator = new Validator();
         $validator->allowEmptyString('title')
@@ -798,7 +738,7 @@ class ValidatorTest extends TestCase
     /**
      * Test allowEmptyString with callback
      */
-    public function testAllowEmptyStringCallbackWhen()
+    public function testAllowEmptyStringCallbackWhen(): void
     {
         $validator = new Validator();
         $validator->allowEmptyString(
@@ -825,10 +765,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEmptyArray method
-     *
-     * @return void
      */
-    public function testNotEmptyArray()
+    public function testNotEmptyArray(): void
     {
         $validator = new Validator();
         $validator->notEmptyArray('items', 'not empty');
@@ -859,10 +797,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmptyFile method
-     *
-     * @return void
      */
-    public function testAllowEmptyFile()
+    public function testAllowEmptyFile(): void
     {
         $validator = new Validator();
         $validator->allowEmptyFile('photo')
@@ -935,10 +871,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEmptyFile method
-     *
-     * @return void
      */
-    public function testNotEmptyFile()
+    public function testNotEmptyFile(): void
     {
         $validator = new Validator();
         $validator->notEmptyFile('photo', 'required field');
@@ -985,7 +919,7 @@ class ValidatorTest extends TestCase
      *
      * @retrn void
      */
-    public function testNotEmptyFileUpdate()
+    public function testNotEmptyFileUpdate(): void
     {
         $validator = new Validator();
         $validator->notEmptyArray('photo', 'message', 'update');
@@ -1002,10 +936,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmptyDate method
-     *
-     * @return void
      */
-    public function testAllowEmptyDate()
+    public function testAllowEmptyDate(): void
     {
         $validator = new Validator();
         $validator->allowEmptyDate('date')
@@ -1042,10 +974,8 @@ class ValidatorTest extends TestCase
 
     /**
      * test allowEmptyDate() with an update condition
-     *
-     * @return void
      */
-    public function testAllowEmptyDateUpdate()
+    public function testAllowEmptyDateUpdate(): void
     {
         $validator = new Validator();
         $validator->allowEmptyArray('date', 'be valid', 'update');
@@ -1064,10 +994,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEmptyDate method
-     *
-     * @return void
      */
-    public function testNotEmptyDate()
+    public function testNotEmptyDate(): void
     {
         $validator = new Validator();
         $validator->notEmptyDate('date', 'required field');
@@ -1111,10 +1039,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test notEmptyDate with update mode
-     *
-     * @return void
      */
-    public function testNotEmptyDateUpdate()
+    public function testNotEmptyDateUpdate(): void
     {
         $validator = new Validator();
         $validator->notEmptyDate('date', 'message', 'update');
@@ -1129,10 +1055,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmptyTime method
-     *
-     * @return void
      */
-    public function testAllowEmptyTime()
+    public function testAllowEmptyTime(): void
     {
         $validator = new Validator();
         $validator->allowEmptyTime('time')
@@ -1169,10 +1093,8 @@ class ValidatorTest extends TestCase
 
     /**
      * test allowEmptyTime with condition
-     *
-     * @return void
      */
-    public function testAllowEmptyTimeCondition()
+    public function testAllowEmptyTimeCondition(): void
     {
         $validator = new Validator();
         $validator->allowEmptyTime('time', 'valid time', 'update');
@@ -1191,10 +1113,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEmptyTime method
-     *
-     * @return void
      */
-    public function testNotEmptyTime()
+    public function testNotEmptyTime(): void
     {
         $validator = new Validator();
         $validator->notEmptyTime('time', 'required field');
@@ -1232,10 +1152,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test notEmptyTime with update mode
-     *
-     * @return void
      */
-    public function testNotEmptyTimeUpdate()
+    public function testNotEmptyTimeUpdate(): void
     {
         $validator = new Validator();
         $validator->notEmptyTime('time', 'message', 'update');
@@ -1250,10 +1168,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmptyDateTime method
-     *
-     * @return void
      */
-    public function testAllowEmptyDateTime()
+    public function testAllowEmptyDateTime(): void
     {
         $validator = new Validator();
         $validator->allowEmptyDate('published')
@@ -1292,10 +1208,8 @@ class ValidatorTest extends TestCase
 
     /**
      * test allowEmptyDateTime with a condition
-     *
-     * @return void
      */
-    public function testAllowEmptyDateTimeCondition()
+    public function testAllowEmptyDateTimeCondition(): void
     {
         $validator = new Validator();
         $validator->allowEmptyDateTime('published', 'datetime required', 'update');
@@ -1314,13 +1228,11 @@ class ValidatorTest extends TestCase
 
     /**
      * test allowEmptyDateTime with deprecated argument order
-     *
-     * @return void
      */
-    public function testAllowEmptyDateTimeDeprecated()
+    public function testAllowEmptyDateTimeDeprecated(): void
     {
         $validator = new Validator();
-        $this->deprecated(function () use ($validator) {
+        $this->deprecated(function () use ($validator): void {
             $validator->allowEmptyDateTime('published', 'datetime required', 'update');
         });
         $this->assertFalse($validator->isEmptyAllowed('published', true));
@@ -1338,10 +1250,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEmptyDateTime method
-     *
-     * @return void
      */
-    public function testNotEmptyDateTime()
+    public function testNotEmptyDateTime(): void
     {
         $validator = new Validator();
         $validator->notEmptyDateTime('published', 'required field');
@@ -1389,10 +1299,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test notEmptyDateTime with update mode
-     *
-     * @return void
      */
-    public function testNotEmptyDateTimeUpdate()
+    public function testNotEmptyDateTimeUpdate(): void
     {
         $validator = new Validator();
         $validator->notEmptyDatetime('published', 'message', 'update');
@@ -1407,10 +1315,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test the notEmpty() method.
-     *
-     * @return void
      */
-    public function testNotEmpty()
+    public function testNotEmpty(): void
     {
         $validator = new Validator();
         $validator->notEmptyString('title');
@@ -1422,10 +1328,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test the notEmpty() method.
-     *
-     * @return void
      */
-    public function testNotEmptyModes()
+    public function testNotEmptyModes(): void
     {
         $validator = new Validator();
         $validator->notEmptyString('title', 'Need a title', 'create');
@@ -1447,10 +1351,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test interactions between notEmpty() and isAllowed().
-     *
-     * @return void
      */
-    public function testNotEmptyAndIsAllowed()
+    public function testNotEmptyAndIsAllowed(): void
     {
         $validator = new Validator();
         $validator->allowEmptyString('title')
@@ -1471,10 +1373,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the allowEmpty method when passing a callback
-     *
-     * @return void
      */
-    public function testAllowEmptyCallback()
+    public function testAllowEmptyCallback(): void
     {
         $validator = new Validator();
         $allow = true;
@@ -1493,10 +1393,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEmpty method when passing a callback
-     *
-     * @return void
      */
-    public function testNotEmptyCallback()
+    public function testNotEmptyCallback(): void
     {
         $validator = new Validator();
         $prevent = true;
@@ -1515,10 +1413,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the isEmptyAllowed method
-     *
-     * @return void
      */
-    public function testIsEmptyAllowed()
+    public function testIsEmptyAllowed(): void
     {
         $validator = new Validator();
         $this->assertSame($validator, $validator->allowEmptyString('title'));
@@ -1540,10 +1436,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests errors generated when a field is not allowed to be empty
-     *
-     * @return void
      */
-    public function testErrorsWithEmptyNotAllowed()
+    public function testErrorsWithEmptyNotAllowed(): void
     {
         $validator = new Validator();
         $validator->notEmptyString('title');
@@ -1567,10 +1461,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests custom error messages generated when a field is allowed to be empty
-     *
-     * @return void
      */
-    public function testCustomErrorsWithAllowedEmpty()
+    public function testCustomErrorsWithAllowedEmpty(): void
     {
         $validator = new Validator();
         $validator->allowEmptyString('title', 'Custom message', false);
@@ -1582,10 +1474,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests custom error messages generated when a field is not allowed to be empty
-     *
-     * @return void
      */
-    public function testCustomErrorsWithEmptyNotAllowed()
+    public function testCustomErrorsWithEmptyNotAllowed(): void
     {
         $validator = new Validator();
         $validator->notEmptyString('title', 'Custom message');
@@ -1596,10 +1486,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests errors generated when a field is allowed to be empty
-     *
-     * @return void
      */
-    public function testErrorsWithEmptyAllowed()
+    public function testErrorsWithEmptyAllowed(): void
     {
         $validator = new Validator();
         $validator->allowEmptyString('title');
@@ -1627,10 +1515,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test the provider() method
-     *
-     * @return void
      */
-    public function testProvider()
+    public function testProvider(): void
     {
         $validator = new Validator();
         $object = new \stdClass();
@@ -1645,7 +1531,7 @@ class ValidatorTest extends TestCase
         $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
     }
 
-    public function testProviderWarning()
+    public function testProviderWarning(): void
     {
         $this->expectError();
         $this->expectErrorMessage('The provider must be an object or class name string. Got `array` instead.');
@@ -1657,10 +1543,8 @@ class ValidatorTest extends TestCase
     /**
      * Tests validate() method when using validators from the default provider, this proves
      * that it returns a default validation message and the custom one set in the rule
-     *
-     * @return void
      */
-    public function testErrorsFromDefaultProvider()
+    public function testErrorsFromDefaultProvider(): void
     {
         $validator = new Validator();
         $validator
@@ -1680,10 +1564,8 @@ class ValidatorTest extends TestCase
     /**
      * Tests using validation methods from different providers and returning the error
      * as a string
-     *
-     * @return void
      */
-    public function testErrorsFromCustomProvider()
+    public function testErrorsFromCustomProvider(): void
     {
         $validator = new Validator();
         $validator
@@ -1726,10 +1608,8 @@ class ValidatorTest extends TestCase
     /**
      * Tests that it is possible to pass extra arguments to the validation function
      * and it still gets the providers as last argument
-     *
-     * @return void
      */
-    public function testMethodsWithExtraArguments()
+    public function testMethodsWithExtraArguments(): void
     {
         $validator = new Validator();
         $validator->add('title', 'cool', [
@@ -1771,10 +1651,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests that it is possible to use a closure as a rule
-     *
-     * @return void
      */
-    public function testUsingClosureAsRule()
+    public function testUsingClosureAsRule(): void
     {
         $validator = new Validator();
         $validator->add('name', 'myRule', [
@@ -1790,8 +1668,6 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests that setting last globally will stop validating the rest of the rules
-     *
-     * @return void
      */
     public function testErrorsWithLastRuleGlobal(): void
     {
@@ -1811,10 +1687,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests that setting last to a rule will stop validating the rest of the rules
-     *
-     * @return void
      */
-    public function testErrorsWithLastRule()
+    public function testErrorsWithLastRule(): void
     {
         $validator = new Validator();
         $validator
@@ -1832,10 +1706,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests it is possible to get validation sets for a field using an array interface
-     *
-     * @return void
      */
-    public function testArrayAccessGet()
+    public function testArrayAccessGet(): void
     {
         $validator = new Validator();
         $validator
@@ -1847,10 +1719,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests it is possible to check for validation sets for a field using an array interface
-     *
-     * @return void
      */
-    public function testArrayAccessExists()
+    public function testArrayAccessExists(): void
     {
         $validator = new Validator();
         $validator
@@ -1863,10 +1733,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests it is possible to set validation rules for a field using an array interface
-     *
-     * @return void
      */
-    public function testArrayAccessSet()
+    public function testArrayAccessSet(): void
     {
         $validator = new Validator();
         $validator
@@ -1880,10 +1748,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests it is possible to unset validation rules
-     *
-     * @return void
      */
-    public function testArrayAccessUnset()
+    public function testArrayAccessUnset(): void
     {
         $validator = new Validator();
         $validator
@@ -1896,10 +1762,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the countable interface
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
         $validator = new Validator();
         $validator
@@ -1910,10 +1774,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests adding rules via alternative syntax
-     *
-     * @return void
      */
-    public function testAddMultiple()
+    public function testAddMultiple(): void
     {
         $validator = new Validator();
         $validator->add('title', [
@@ -1932,14 +1794,12 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests adding rules via alternative syntax and numeric keys
-     *
-     * @return void
      */
-    public function testAddMultipleNumericKeyArrays()
+    public function testAddMultipleNumericKeyArrays(): void
     {
         $validator = new Validator();
 
-        $this->deprecated(function () use ($validator) {
+        $this->deprecated(function () use ($validator): void {
             $validator->add('title', [
                 [
                     'rule' => 'notBlank',
@@ -1958,10 +1818,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests adding rules via alternative syntax and numeric keys
-     *
-     * @return void
      */
-    public function testAddMultipleNumericKeyArraysInvalid()
+    public function testAddMultipleNumericKeyArraysInvalid(): void
     {
         $validator = new Validator();
         $validator->add('title', 'notBlank', ['rule' => 'notBlank']);
@@ -1982,10 +1840,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Integration test for compareWith validator.
-     *
-     * @return void
      */
-    public function testCompareWithIntegration()
+    public function testCompareWithIntegration(): void
     {
         $validator = new Validator();
         $validator->add('password', [
@@ -2002,10 +1858,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test debugInfo helper method.
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $validator = new Validator();
         $validator->setProvider('test', $this);
@@ -2047,10 +1901,8 @@ class ValidatorTest extends TestCase
     /**
      * Tests that the 'create' and 'update' modes are preserved when using
      * nested validators
-     *
-     * @return void
      */
-    public function testNestedValidatorCreate()
+    public function testNestedValidatorCreate(): void
     {
         $validator = new Validator();
         $inner = new Validator();
@@ -2063,10 +1915,8 @@ class ValidatorTest extends TestCase
     /**
      * Tests that the 'create' and 'update' modes are preserved when using
      * nested validators
-     *
-     * @return void
      */
-    public function testNestedManyValidatorCreate()
+    public function testNestedManyValidatorCreate(): void
     {
         $validator = new Validator();
         $inner = new Validator();
@@ -2078,10 +1928,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notBlank proxy method
-     *
-     * @return void
      */
-    public function testNotBlank()
+    public function testNotBlank(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notBlank');
@@ -2090,10 +1938,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the alphanumeric proxy method
-     *
-     * @return void
      */
-    public function testAlphanumeric()
+    public function testAlphanumeric(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'alphaNumeric');
@@ -2102,10 +1948,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notalphanumeric proxy method
-     *
-     * @return void
      */
-    public function testNotAlphanumeric()
+    public function testNotAlphanumeric(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notAlphaNumeric');
@@ -2114,10 +1958,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the asciialphanumeric proxy method
-     *
-     * @return void
      */
-    public function testAsciiAlphanumeric()
+    public function testAsciiAlphanumeric(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'asciiAlphaNumeric');
@@ -2126,10 +1968,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notalphanumeric proxy method
-     *
-     * @return void
      */
-    public function testNotAsciiAlphanumeric()
+    public function testNotAsciiAlphanumeric(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notAsciiAlphaNumeric');
@@ -2138,10 +1978,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the lengthBetween proxy method
-     *
-     * @return void
      */
-    public function testLengthBetween()
+    public function testLengthBetween(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lengthBetween', [5, 7], [5, 7]);
@@ -2150,10 +1988,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the lengthBetween proxy method
-     *
-     * @return void
      */
-    public function testLengthBetweenFailure()
+    public function testLengthBetweenFailure(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
@@ -2162,10 +1998,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the creditCard proxy method
-     *
-     * @return void
      */
-    public function testCreditCard()
+    public function testCreditCard(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'creditCard');
@@ -2174,10 +2008,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the greaterThan proxy method
-     *
-     * @return void
      */
-    public function testGreaterThan()
+    public function testGreaterThan(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThan', 5, [Validation::COMPARE_GREATER, 5], 'comparison');
@@ -2186,10 +2018,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the greaterThanOrEqual proxy method
-     *
-     * @return void
      */
-    public function testGreaterThanOrEqual()
+    public function testGreaterThanOrEqual(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, [Validation::COMPARE_GREATER_OR_EQUAL, 5], 'comparison');
@@ -2198,10 +2028,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the lessThan proxy method
-     *
-     * @return void
      */
-    public function testLessThan()
+    public function testLessThan(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThan', 5, [Validation::COMPARE_LESS, 5], 'comparison');
@@ -2210,10 +2038,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the lessThanOrEqual proxy method
-     *
-     * @return void
      */
-    public function testLessThanOrEqual()
+    public function testLessThanOrEqual(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, [Validation::COMPARE_LESS_OR_EQUAL, 5], 'comparison');
@@ -2222,10 +2048,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the equals proxy method
-     *
-     * @return void
      */
-    public function testEquals()
+    public function testEquals(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'equals', 5, [Validation::COMPARE_EQUAL, 5], 'comparison');
@@ -2235,10 +2059,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEquals proxy method
-     *
-     * @return void
      */
-    public function testNotEquals()
+    public function testNotEquals(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notEquals', 5, [Validation::COMPARE_NOT_EQUAL, 5], 'comparison');
@@ -2247,10 +2069,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the sameAs proxy method
-     *
-     * @return void
      */
-    public function testSameAs()
+    public function testSameAs(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', Validation::COMPARE_SAME], 'compareFields');
@@ -2260,10 +2080,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notSameAs proxy method
-     *
-     * @return void
      */
-    public function testNotSameAs()
+    public function testNotSameAs(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', Validation::COMPARE_NOT_SAME], 'compareFields');
@@ -2272,10 +2090,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the equalToField proxy method
-     *
-     * @return void
      */
-    public function testEqualToField()
+    public function testEqualToField(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'equalToField', 'other', ['other', Validation::COMPARE_EQUAL], 'compareFields');
@@ -2285,10 +2101,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the notEqualToField proxy method
-     *
-     * @return void
      */
-    public function testNotEqualToField()
+    public function testNotEqualToField(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', Validation::COMPARE_NOT_EQUAL], 'compareFields');
@@ -2297,10 +2111,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the greaterThanField proxy method
-     *
-     * @return void
      */
-    public function testGreaterThanField()
+    public function testGreaterThanField(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThanField', 'other', ['other', Validation::COMPARE_GREATER], 'compareFields');
@@ -2310,10 +2122,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the greaterThanOrEqualToField proxy method
-     *
-     * @return void
      */
-    public function testGreaterThanOrEqualToField()
+    public function testGreaterThanOrEqualToField(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', Validation::COMPARE_GREATER_OR_EQUAL], 'compareFields');
@@ -2322,10 +2132,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the lessThanField proxy method
-     *
-     * @return void
      */
-    public function testLessThanField()
+    public function testLessThanField(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThanField', 'other', ['other', Validation::COMPARE_LESS], 'compareFields');
@@ -2335,10 +2143,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the lessThanOrEqualToField proxy method
-     *
-     * @return void
      */
-    public function testLessThanOrEqualToField()
+    public function testLessThanOrEqualToField(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', Validation::COMPARE_LESS_OR_EQUAL], 'compareFields');
@@ -2347,10 +2153,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the date proxy method
-     *
-     * @return void
      */
-    public function testDate()
+    public function testDate(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'date', ['ymd'], [['ymd']]);
@@ -2359,8 +2163,6 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the dateTime proxy method
-     *
-     * @return void
      */
     public function testDateTime(): void
     {
@@ -2374,10 +2176,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the time proxy method
-     *
-     * @return void
      */
-    public function testTime()
+    public function testTime(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'time');
@@ -2386,10 +2186,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the localizedTime proxy method
-     *
-     * @return void
      */
-    public function testLocalizedTime()
+    public function testLocalizedTime(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'localizedTime', 'date', ['date']);
@@ -2398,10 +2196,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the boolean proxy method
-     *
-     * @return void
      */
-    public function testBoolean()
+    public function testBoolean(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'boolean');
@@ -2410,10 +2206,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the decimal proxy method
-     *
-     * @return void
      */
-    public function testDecimal()
+    public function testDecimal(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'decimal', 2, [2]);
@@ -2422,10 +2216,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the IP proxy methods
-     *
-     * @return void
      */
-    public function testIps()
+    public function testIps(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'ip');
@@ -2440,10 +2232,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the minLength proxy method
-     *
-     * @return void
      */
-    public function testMinLength()
+    public function testMinLength(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'minLength', 2, [2]);
@@ -2452,10 +2242,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the minLengthBytes proxy method
-     *
-     * @return void
      */
-    public function testMinLengthBytes()
+    public function testMinLengthBytes(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'minLengthBytes', 11, [11]);
@@ -2464,10 +2252,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the maxLength proxy method
-     *
-     * @return void
      */
-    public function testMaxLength()
+    public function testMaxLength(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'maxLength', 2, [2]);
@@ -2476,10 +2262,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the maxLengthBytes proxy method
-     *
-     * @return void
      */
-    public function testMaxLengthBytes()
+    public function testMaxLengthBytes(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'maxLengthBytes', 9, [9]);
@@ -2488,10 +2272,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the numeric proxy method
-     *
-     * @return void
      */
-    public function testNumeric()
+    public function testNumeric(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'numeric');
@@ -2501,10 +2283,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the naturalNumber proxy method
-     *
-     * @return void
      */
-    public function testNaturalNumber()
+    public function testNaturalNumber(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'naturalNumber', null, [false]);
@@ -2513,10 +2293,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the nonNegativeInteger proxy method
-     *
-     * @return void
      */
-    public function testNonNegativeInteger()
+    public function testNonNegativeInteger(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'nonNegativeInteger', null, [true], 'naturalNumber');
@@ -2525,10 +2303,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the range proxy method
-     *
-     * @return void
      */
-    public function testRange()
+    public function testRange(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'range', [1, 4], [1, 4]);
@@ -2537,10 +2313,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the range failure case
-     *
-     * @return void
      */
-    public function testRangeFailure()
+    public function testRangeFailure(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
@@ -2549,10 +2323,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the url proxy method
-     *
-     * @return void
      */
-    public function testUrl()
+    public function testUrl(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'url', null, [false]);
@@ -2561,10 +2333,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the urlWithProtocol proxy method
-     *
-     * @return void
      */
-    public function testUrlWithProtocol()
+    public function testUrlWithProtocol(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'urlWithProtocol', null, [true], 'url');
@@ -2573,10 +2343,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the inList proxy method
-     *
-     * @return void
      */
-    public function testInList()
+    public function testInList(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'inList', ['a', 'b'], [['a', 'b']]);
@@ -2585,10 +2353,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the uuid proxy method
-     *
-     * @return void
      */
-    public function testUuid()
+    public function testUuid(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'uuid');
@@ -2597,10 +2363,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the uploadedFile proxy method
-     *
-     * @return void
      */
-    public function testUploadedFile()
+    public function testUploadedFile(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'uploadedFile', ['foo' => 'bar'], [['foo' => 'bar']]);
@@ -2609,10 +2373,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the latlog proxy methods
-     *
-     * @return void
      */
-    public function testLatLong()
+    public function testLatLong(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'latLong', null, [], 'geoCoordinate');
@@ -2627,10 +2389,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the ascii proxy method
-     *
-     * @return void
      */
-    public function testAscii()
+    public function testAscii(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'ascii');
@@ -2639,10 +2399,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the utf8 proxy methods
-     *
-     * @return void
      */
-    public function testUtf8()
+    public function testUtf8(): void
     {
         // Grinning face
         $extended = 'some' . "\xf0\x9f\x98\x80" . 'value';
@@ -2655,10 +2413,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Test utf8extended proxy method.
-     *
-     * @return void
      */
-    public function testUtf8Extended()
+    public function testUtf8Extended(): void
     {
         // Grinning face
         $extended = 'some' . "\xf0\x9f\x98\x80" . 'value';
@@ -2671,10 +2427,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the email proxy method
-     *
-     * @return void
      */
-    public function testEmail()
+    public function testEmail(): void
     {
         $validator = new Validator();
         $validator->email('username');
@@ -2684,10 +2438,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the integer proxy method
-     *
-     * @return void
      */
-    public function testInteger()
+    public function testInteger(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'integer', null, [], 'isInteger');
@@ -2696,10 +2448,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the isArray proxy method
-     *
-     * @return void
      */
-    public function testIsArray()
+    public function testIsArray(): void
     {
         $validator = new Validator();
         $validator->isArray('username');
@@ -2709,10 +2459,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the scalar proxy method
-     *
-     * @return void
      */
-    public function testScalar()
+    public function testScalar(): void
     {
         $validator = new Validator();
         $validator->scalar('username');
@@ -2722,10 +2470,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the hexColor proxy method
-     *
-     * @return void
      */
-    public function testHexColor()
+    public function testHexColor(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'hexColor');
@@ -2735,10 +2481,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the multiple proxy method
-     *
-     * @return void
      */
-    public function testMultiple()
+    public function testMultiple(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod(
@@ -2762,10 +2506,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the hasAtLeast method
-     *
-     * @return void
      */
-    public function testHasAtLeast()
+    public function testHasAtLeast(): void
     {
         $validator = new Validator();
         $validator->hasAtLeast('things', 3);
@@ -2784,10 +2526,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the hasAtMost method
-     *
-     * @return void
      */
-    public function testHasAtMost()
+    public function testHasAtMost(): void
     {
         $validator = new Validator();
         $validator->hasAtMost('things', 3);
@@ -2802,10 +2542,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the regex proxy method
-     *
-     * @return void
      */
-    public function testRegex()
+    public function testRegex(): void
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'regex', '/(?<!\\S)\\d++(?!\\S)/', ['/(?<!\\S)\\d++(?!\\S)/'], 'custom');
@@ -2822,7 +2560,7 @@ class ValidatorTest extends TestCase
      * @param array $pass
      * @param string|null $name
      */
-    protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null)
+    protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null): void
     {
         $name = $name ?: $method;
         if ($extra !== null) {
@@ -2852,10 +2590,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing adding DefaultProvider
-     *
-     * @return void
      */
-    public function testAddingDefaultProvider()
+    public function testAddingDefaultProvider(): void
     {
         $validator = new Validator();
         $this->assertEmpty($validator->providers(), 'Providers should be empty');
@@ -2867,10 +2603,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Testing getting DefaultProvider(s)
-     *
-     * @return void
      */
-    public function testGetDefaultProvider()
+    public function testGetDefaultProvider(): void
     {
         Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
         $this->assertEquals(Validator::getDefaultProvider('test-provider'), 'MyNameSpace\Validation\MyProvider', 'Default provider `test-provider` is missing');

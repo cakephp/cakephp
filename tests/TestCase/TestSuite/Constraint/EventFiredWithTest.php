@@ -17,10 +17,8 @@ class EventFiredWithTest extends TestCase
 {
     /**
      * tests EventFiredWith constraint
-     *
-     * @return void
      */
-    public function testMatches()
+    public function testMatches(): void
     {
         $manager = EventManager::instance();
         $manager->setEventList(new EventList());
@@ -60,10 +58,8 @@ class EventFiredWithTest extends TestCase
 
     /**
      * tests trying to assert data key=>value when an event is fired multiple times
-     *
-     * @return void
      */
-    public function testMatchesInvalid()
+    public function testMatchesInvalid(): void
     {
         $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $manager = EventManager::instance();

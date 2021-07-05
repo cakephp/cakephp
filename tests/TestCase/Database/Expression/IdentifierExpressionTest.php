@@ -27,10 +27,8 @@ class IdentifierExpressionTest extends TestCase
 {
     /**
      * Tests getting and setting the field
-     *
-     * @return void
      */
-    public function testGetAndSet()
+    public function testGetAndSet(): void
     {
         $expression = new IdentifierExpression('foo');
         $this->assertSame('foo', $expression->getIdentifier());
@@ -40,10 +38,8 @@ class IdentifierExpressionTest extends TestCase
 
     /**
      * Tests converting to sql
-     *
-     * @return void
      */
-    public function testSQL()
+    public function testSQL(): void
     {
         $expression = new IdentifierExpression('foo');
         $this->assertSame('foo', $expression->sql(new ValueBinder()));
@@ -51,10 +47,8 @@ class IdentifierExpressionTest extends TestCase
 
     /**
      * Tests setting collation.
-     *
-     * @return void
      */
-    public function testCollation()
+    public function testCollation(): void
     {
         $expresssion = new IdentifierExpression('test', 'utf8_general_ci');
         $this->assertSame('test COLLATE utf8_general_ci', $expresssion->sql(new ValueBinder()));

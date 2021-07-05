@@ -31,8 +31,6 @@ class CacheTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,8 +40,6 @@ class CacheTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -54,10 +50,8 @@ class CacheTest extends TestCase
 
     /**
      * Configure cache settings for test
-     *
-     * @return void
      */
-    protected function _configCache()
+    protected function _configCache(): void
     {
         Cache::setConfig('tests', [
             'engine' => 'File',
@@ -68,10 +62,8 @@ class CacheTest extends TestCase
 
     /**
      * tests Cache::pool() fallback
-     *
-     * @return void
      */
-    public function testCachePoolFallback()
+    public function testCachePoolFallback(): void
     {
         $filename = tempnam(CACHE, 'tmp_');
 
@@ -98,10 +90,8 @@ class CacheTest extends TestCase
 
     /**
      * tests you can disable Cache::pool() fallback
-     *
-     * @return void
      */
-    public function testCachePoolFallbackDisabled()
+    public function testCachePoolFallbackDisabled(): void
     {
         $filename = tempnam(CACHE, 'tmp_');
 
@@ -119,10 +109,8 @@ class CacheTest extends TestCase
 
     /**
      * tests handling misconfiguration of fallback
-     *
-     * @return void
      */
-    public function testCacheEngineFallbackToSelf()
+    public function testCacheEngineFallbackToSelf(): void
     {
         $filename = tempnam(CACHE, 'tmp_');
 
@@ -149,10 +137,8 @@ class CacheTest extends TestCase
 
     /**
      * tests Cache::pool() fallback when using groups
-     *
-     * @return void
      */
-    public function testCacheFallbackWithGroups()
+    public function testCacheFallbackWithGroups(): void
     {
         $filename = tempnam(CACHE, 'tmp_');
 
@@ -183,10 +169,8 @@ class CacheTest extends TestCase
 
     /**
      * tests cache fallback
-     *
-     * @return void
      */
-    public function testCacheFallbackIntegration()
+    public function testCacheFallbackIntegration(): void
     {
         $filename = tempnam(CACHE, 'tmp_');
 
@@ -227,10 +211,8 @@ class CacheTest extends TestCase
 
     /**
      * Check that no fatal errors are issued doing normal things when Cache.disable is true.
-     *
-     * @return void
      */
-    public function testNonFatalErrorsWithCacheDisable()
+    public function testNonFatalErrorsWithCacheDisable(): void
     {
         Cache::disable();
         $this->_configCache();
@@ -242,10 +224,8 @@ class CacheTest extends TestCase
 
     /**
      * Check that a null instance is returned from engine() when caching is disabled.
-     *
-     * @return void
      */
-    public function testNullEngineWhenCacheDisable()
+    public function testNullEngineWhenCacheDisable(): void
     {
         $this->_configCache();
         Cache::disable();
@@ -256,10 +236,8 @@ class CacheTest extends TestCase
 
     /**
      * Test configuring an invalid class fails
-     *
-     * @return void
      */
-    public function testConfigInvalidClassType()
+    public function testConfigInvalidClassType(): void
     {
         Cache::setConfig('tests', [
             'className' => '\stdClass',
@@ -273,10 +251,8 @@ class CacheTest extends TestCase
 
     /**
      * Test engine init failing triggers an error but falls back to NullEngine
-     *
-     * @return void
      */
-    public function testConfigFailedInit()
+    public function testConfigFailedInit(): void
     {
         $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
         $mock->method('init')->will($this->returnValue(false));
@@ -292,10 +268,8 @@ class CacheTest extends TestCase
 
     /**
      * test configuring CacheEngines in App/libs
-     *
-     * @return void
      */
-    public function testConfigWithLibAndPluginEngines()
+    public function testConfigWithLibAndPluginEngines(): void
     {
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
@@ -318,10 +292,8 @@ class CacheTest extends TestCase
 
     /**
      * Test write from a config that is undefined.
-     *
-     * @return void
      */
-    public function testWriteNonExistentConfig()
+    public function testWriteNonExistentConfig(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -330,10 +302,8 @@ class CacheTest extends TestCase
 
     /**
      * Test write from a config that is undefined.
-     *
-     * @return void
      */
-    public function testIncrementNonExistentConfig()
+    public function testIncrementNonExistentConfig(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -342,10 +312,8 @@ class CacheTest extends TestCase
 
     /**
      * Test increment with value < 0
-     *
-     * @return void
      */
-    public function testIncrementSubZero()
+    public function testIncrementSubZero(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -354,10 +322,8 @@ class CacheTest extends TestCase
 
     /**
      * Test write from a config that is undefined.
-     *
-     * @return void
      */
-    public function testDecrementNonExistentConfig()
+    public function testDecrementNonExistentConfig(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -366,10 +332,8 @@ class CacheTest extends TestCase
 
     /**
      * Test decrement value < 0
-     *
-     * @return void
      */
-    public function testDecrementSubZero()
+    public function testDecrementSubZero(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -403,9 +367,8 @@ class CacheTest extends TestCase
      *
      * @dataProvider configProvider
      * @param \Cake\Cache\CacheEngine|array $config
-     * @return void
      */
-    public function testConfigVariants($config)
+    public function testConfigVariants($config): void
     {
         $this->assertNotContains('test', Cache::configured(), 'test config should not exist.');
         Cache::setConfig('tests', $config);
@@ -417,10 +380,8 @@ class CacheTest extends TestCase
 
     /**
      * testConfigInvalidEngine method
-     *
-     * @return void
      */
-    public function testConfigInvalidEngine()
+    public function testConfigInvalidEngine(): void
     {
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
@@ -432,10 +393,8 @@ class CacheTest extends TestCase
 
     /**
      * test that trying to configure classes that don't extend CacheEngine fail.
-     *
-     * @return void
      */
-    public function testConfigInvalidObject()
+    public function testConfigInvalidObject(): void
     {
         $this->getMockBuilder(\stdClass::class)
             ->setMockClassName('RubbishEngine')
@@ -450,10 +409,8 @@ class CacheTest extends TestCase
 
     /**
      * Ensure you cannot reconfigure a cache adapter.
-     *
-     * @return void
      */
-    public function testConfigErrorOnReconfigure()
+    public function testConfigErrorOnReconfigure(): void
     {
         Cache::setConfig('tests', ['engine' => 'File', 'path' => CACHE]);
 
@@ -464,10 +421,8 @@ class CacheTest extends TestCase
 
     /**
      * Test reading configuration.
-     *
-     * @return void
      */
-    public function testConfigRead()
+    public function testConfigRead(): void
     {
         $config = [
             'engine' => 'File',
@@ -483,10 +438,8 @@ class CacheTest extends TestCase
 
     /**
      * Test reading configuration with numeric string.
-     *
-     * @return void
      */
-    public function testConfigReadNumeric()
+    public function testConfigReadNumeric(): void
     {
         $config = [
             'engine' => 'File',
@@ -502,10 +455,8 @@ class CacheTest extends TestCase
 
     /**
      * test config() with dotted name
-     *
-     * @return void
      */
-    public function testConfigDottedAlias()
+    public function testConfigDottedAlias(): void
     {
         Cache::setConfig('cache.dotted', [
             'className' => 'File',
@@ -523,7 +474,7 @@ class CacheTest extends TestCase
     /**
      * testGroupConfigs method
      */
-    public function testGroupConfigs()
+    public function testGroupConfigs(): void
     {
         Cache::drop('test');
         Cache::setConfig('latest', [
@@ -579,7 +530,7 @@ class CacheTest extends TestCase
     /**
      * testGroupConfigsWithCacheInstance method
      */
-    public function testGroupConfigsWithCacheInstance()
+    public function testGroupConfigsWithCacheInstance(): void
     {
         Cache::drop('test');
         $cache = new FileEngine();
@@ -597,7 +548,7 @@ class CacheTest extends TestCase
     /**
      * testGroupConfigsThrowsException method
      */
-    public function testGroupConfigsThrowsException()
+    public function testGroupConfigsThrowsException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Cache::groupConfigs('bogus');
@@ -606,10 +557,8 @@ class CacheTest extends TestCase
     /**
      * test that configured returns an array of the currently configured cache
      * config
-     *
-     * @return void
      */
-    public function testConfigured()
+    public function testConfigured(): void
     {
         Cache::drop('default');
         $result = Cache::configured();
@@ -620,10 +569,8 @@ class CacheTest extends TestCase
     /**
      * test that drop removes cache configs, and that further attempts to use that config
      * do not work.
-     *
-     * @return void
      */
-    public function testDrop()
+    public function testDrop(): void
     {
         static::setAppNamespace();
 
@@ -642,10 +589,8 @@ class CacheTest extends TestCase
 
     /**
      * testWriteEmptyValues method
-     *
-     * @return void
      */
-    public function testWriteEmptyValues()
+    public function testWriteEmptyValues(): void
     {
         $this->_configCache();
         Cache::write('App.falseTest', false, 'tests');
@@ -666,10 +611,8 @@ class CacheTest extends TestCase
 
     /**
      * testWriteEmptyValues method
-     *
-     * @return void
      */
-    public function testWriteEmptyKey()
+    public function testWriteEmptyKey(): void
     {
         $this->_configCache();
 
@@ -681,10 +624,8 @@ class CacheTest extends TestCase
 
     /**
      * testReadWriteMany method
-     *
-     * @return void
      */
-    public function testReadWriteMany()
+    public function testReadWriteMany(): void
     {
         $this->_configCache();
         $data = [
@@ -707,10 +648,8 @@ class CacheTest extends TestCase
 
     /**
      * testDeleteMany method
-     *
-     * @return void
      */
-    public function testDeleteMany()
+    public function testDeleteMany(): void
     {
         $this->_configCache();
         $data = [
@@ -735,10 +674,8 @@ class CacheTest extends TestCase
 
     /**
      * Test that failed writes cause errors to be triggered.
-     *
-     * @return void
      */
-    public function testWriteTriggerError()
+    public function testWriteTriggerError(): void
     {
         static::setAppNamespace();
         Cache::setConfig('test_trigger', [
@@ -756,10 +693,8 @@ class CacheTest extends TestCase
      *
      * Check that the "Cache.disable" configuration and a change to it
      * (even after a cache config has been setup) is taken into account.
-     *
-     * @return void
      */
-    public function testCacheDisable()
+    public function testCacheDisable(): void
     {
         Cache::enable();
         Cache::setConfig('test_cache_disable_1', [
@@ -805,10 +740,8 @@ class CacheTest extends TestCase
 
     /**
      * test clearAll() method
-     *
-     * @return void
      */
-    public function testClearAll()
+    public function testClearAll(): void
     {
         Cache::setConfig('configTest', [
             'engine' => 'File',
@@ -836,10 +769,8 @@ class CacheTest extends TestCase
 
     /**
      * Test toggling enabled state of cache.
-     *
-     * @return void
      */
-    public function testEnableDisableEnabled()
+    public function testEnableDisableEnabled(): void
     {
         Cache::enable();
         $this->assertTrue(Cache::enabled(), 'Should be on');
@@ -849,10 +780,8 @@ class CacheTest extends TestCase
 
     /**
      * test remember method.
-     *
-     * @return void
      */
-    public function testRemember()
+    public function testRemember(): void
     {
         $this->_configCache();
         $counter = 0;
@@ -871,10 +800,8 @@ class CacheTest extends TestCase
 
     /**
      * Test add method.
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $this->_configCache();
         Cache::delete('test_add_key', 'tests');
@@ -892,20 +819,16 @@ class CacheTest extends TestCase
 
     /**
      * Test getting the registry
-     *
-     * @return void
      */
-    public function testGetRegistry()
+    public function testGetRegistry(): void
     {
         $this->assertInstanceOf(CacheRegistry::class, Cache::getRegistry());
     }
 
     /**
      * Test setting the registry
-     *
-     * @return void
      */
-    public function testSetAndGetRegistry()
+    public function testSetAndGetRegistry(): void
     {
         $registry = new CacheRegistry();
         Cache::setRegistry($registry);
@@ -915,10 +838,8 @@ class CacheTest extends TestCase
 
     /**
      * Test getting instances with pool
-     *
-     * @return void
      */
-    public function testPool()
+    public function testPool(): void
     {
         $this->_configCache();
 
@@ -928,10 +849,8 @@ class CacheTest extends TestCase
 
     /**
      * Test getting instances with pool
-     *
-     * @return void
      */
-    public function testPoolCacheDisabled()
+    public function testPoolCacheDisabled(): void
     {
         Cache::disable();
         $pool = Cache::pool('tests');

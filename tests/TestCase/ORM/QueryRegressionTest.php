@@ -53,10 +53,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test for https://github.com/cakephp/cakephp/issues/3087
-     *
-     * @return void
      */
-    public function testSelectTimestampColumn()
+    public function testSelectTimestampColumn(): void
     {
         $this->loadFixtures('Users');
         $table = $this->getTableLocator()->get('users');
@@ -68,10 +66,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that EagerLoader does not try to create queries for associations having no
      * keys to compare against
-     *
-     * @return void
      */
-    public function testEagerLoadingFromEmptyResults()
+    public function testEagerLoadingFromEmptyResults(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('Articles');
@@ -82,10 +78,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that eagerloading associations with aliased fields works.
-     *
-     * @return void
      */
-    public function testEagerLoadingAliasedAssociationFields()
+    public function testEagerLoadingAliasedAssociationFields(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -109,10 +103,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that eagerloading and hydration works for associations that have
      * different aliases in the association and targetTable
-     *
-     * @return void
      */
-    public function testEagerLoadingMismatchingAliasInBelongsTo()
+    public function testEagerLoadingMismatchingAliasInBelongsTo(): void
     {
         $this->loadFixtures('Articles', 'Users');
         $table = $this->getTableLocator()->get('Articles');
@@ -130,10 +122,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that eagerloading and hydration works for associations that have
      * different aliases in the association and targetTable
-     *
-     * @return void
      */
-    public function testEagerLoadingMismatchingAliasInHasOne()
+    public function testEagerLoadingMismatchingAliasInHasOne(): void
     {
         $this->loadFixtures('Articles', 'Users');
         $articles = $this->getTableLocator()->get('Articles');
@@ -150,10 +140,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that eagerloading belongsToMany with find list fails with a helpful message.
-     *
-     * @return void
      */
-    public function testEagerLoadingBelongsToManyList()
+    public function testEagerLoadingBelongsToManyList(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('Articles');
@@ -169,10 +157,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that eagerloading and hydration works for associations that have
      * different aliases in the association and targetTable
-     *
-     * @return void
      */
-    public function testEagerLoadingNestedMatchingCalls()
+    public function testEagerLoadingNestedMatchingCalls(): void
     {
         $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags', 'AuthorsTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -207,10 +193,8 @@ class QueryRegressionTest extends TestCase
      * naturally be attached to the query instead of eagerly loaded. What should
      * happen here is that One of the duplicates will be changed to be loaded using
      * an extra query, but yielding the same results
-     *
-     * @return void
      */
-    public function testDuplicateAttachableAliases()
+    public function testDuplicateAttachableAliases(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags', 'Authors');
         $this->getTableLocator()->get('Stuff', ['table' => 'tags']);
@@ -245,10 +229,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test for https://github.com/cakephp/cakephp/issues/3410
-     *
-     * @return void
      */
-    public function testNullableTimeColumn()
+    public function testNullableTimeColumn(): void
     {
         $this->loadFixtures('Users');
         $table = $this->getTableLocator()->get('users');
@@ -261,10 +243,8 @@ class QueryRegressionTest extends TestCase
      * Test for https://github.com/cakephp/cakephp/issues/3626
      *
      * Checks that join data is actually created and not tried to be updated every time
-     *
-     * @return void
      */
-    public function testCreateJointData()
+    public function testCreateJointData(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'SpecialTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -294,10 +274,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that the junction table instance taken from both sides of a belongsToMany
      * relationship is actually the same object.
-     *
-     * @return void
      */
-    public function testReciprocalBelongsToMany()
+    public function testReciprocalBelongsToMany(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -316,10 +294,8 @@ class QueryRegressionTest extends TestCase
      *
      * Makes sure that the belongsToMany association is not overwritten with conflicting information
      * by any of the sides when the junction() function is invoked
-     *
-     * @return void
      */
-    public function testReciprocalBelongsToManyNoOverwrite()
+    public function testReciprocalBelongsToManyNoOverwrite(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -358,9 +334,8 @@ class QueryRegressionTest extends TestCase
      *
      * @dataProvider strategyProvider
      * @param string $strategy
-     * @return void
      */
-    public function testBelongsToManyDeepSave($strategy)
+    public function testBelongsToManyDeepSave($strategy): void
     {
         $this->loadFixtures('Articles', 'Tags', 'SpecialTags', 'Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -419,9 +394,8 @@ class QueryRegressionTest extends TestCase
      * during a  save operation
      *
      * @see https://github.com/cakephp/cakephp/issues/3803
-     * @return void
      */
-    public function testSaveWithCallbacks()
+    public function testSaveWithCallbacks(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -440,10 +414,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Test that save() works with entities containing expressions
      * as properties.
-     *
-     * @return void
      */
-    public function testSaveWithExpressionProperty()
+    public function testSaveWithExpressionProperty(): void
     {
         $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
@@ -457,9 +429,8 @@ class QueryRegressionTest extends TestCase
      * data is not removed because of excessive associations filtering.
      *
      * @see https://github.com/cakephp/cakephp/issues/4009
-     * @return void
      */
-    public function testBelongsToManyDeepSave2()
+    public function testBelongsToManyDeepSave2(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'SpecialTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -514,10 +485,8 @@ class QueryRegressionTest extends TestCase
     /**
      * An integration test that spot checks that associations use the
      * correct alias names to generate queries.
-     *
-     * @return void
      */
-    public function testPluginAssociationQueryGeneration()
+    public function testPluginAssociationQueryGeneration(): void
     {
         $this->loadFixtures('Articles', 'Comments', 'Authors');
         $this->loadPlugins(['TestPlugin']);
@@ -547,9 +516,8 @@ class QueryRegressionTest extends TestCase
      * the associations are selected.
      *
      * @see https://github.com/cakephp/cakephp/issues/4454
-     * @return void
      */
-    public function testAssociationChainOrder()
+    public function testAssociationChainOrder(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags', 'Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -576,10 +544,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that offset/limit are elided from subquery loads.
-     *
-     * @return void
      */
-    public function testAssociationSubQueryNoOffset()
+    public function testAssociationSubQueryNoOffset(): void
     {
         $this->loadFixtures('Articles', 'Translates');
         $table = $this->getTableLocator()->get('Articles');
@@ -597,9 +563,8 @@ class QueryRegressionTest extends TestCase
      * Tests that using the subquery strategy in a deep association returns the right results
      *
      * @see https://github.com/cakephp/cakephp/issues/4484
-     * @return void
      */
-    public function testDeepBelongsToManySubqueryStrategy()
+    public function testDeepBelongsToManySubqueryStrategy(): void
     {
         $this->loadFixtures('Authors', 'Tags', 'Articles', 'ArticlesTags');
         $table = $this->getTableLocator()->get('Authors');
@@ -620,9 +585,8 @@ class QueryRegressionTest extends TestCase
      * Tests that using the subquery strategy in a deep association returns the right results
      *
      * @see https://github.com/cakephp/cakephp/issues/5769
-     * @return void
      */
-    public function testDeepBelongsToManySubqueryStrategy2()
+    public function testDeepBelongsToManySubqueryStrategy2(): void
     {
         $this->loadFixtures('Articles', 'Authors', 'Tags', 'Authors', 'AuthorsTags');
         $table = $this->getTableLocator()->get('Authors');
@@ -651,9 +615,8 @@ class QueryRegressionTest extends TestCase
      * seamlessly with either select or subquery.
      *
      * @see https://github.com/cakephp/cakephp/issues/6781
-     * @return void
      */
-    public function testDeepHasManyEitherStrategy()
+    public function testDeepHasManyEitherStrategy(): void
     {
         $this->loadFixtures('Tags', 'FeaturedTags', 'TagsTranslations');
         $tags = $this->getTableLocator()->get('Tags');
@@ -697,9 +660,8 @@ class QueryRegressionTest extends TestCase
      * the correct results
      *
      * @see https://github.com/cakephp/cakephp/issues/4511
-     * @return void
      */
-    public function testCountWithContain()
+    public function testCountWithContain(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -717,9 +679,8 @@ class QueryRegressionTest extends TestCase
      * Tests that getting the count of a query with bind is correct
      *
      * @see https://github.com/cakephp/cakephp/issues/8466
-     * @return void
      */
-    public function testCountWithBind()
+    public function testCountWithBind(): void
     {
         $this->loadFixtures('Articles');
         $table = $this->getTableLocator()->get('Articles');
@@ -735,10 +696,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test count() with inner join containments.
-     *
-     * @return void
      */
-    public function testCountWithInnerJoinContain()
+    public function testCountWithInnerJoinContain(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -753,7 +712,7 @@ class QueryRegressionTest extends TestCase
         $this->assertNotFalse($result);
 
         $table->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query): void {
                 $query->contain(['Authors']);
             });
 
@@ -763,10 +722,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that bind in subqueries works.
-     *
-     * @return void
      */
-    public function testSubqueryBind()
+    public function testSubqueryBind(): void
     {
         $this->loadFixtures('Articles');
         $table = $this->getTableLocator()->get('Articles');
@@ -788,10 +745,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Test that deep containments don't generate empty entities for
      * intermediary relations.
-     *
-     * @return void
      */
-    public function testContainNoEmptyAssociatedObjects()
+    public function testContainNoEmptyAssociatedObjects(): void
     {
         $this->loadFixtures('Comments', 'Users', 'Articles');
         $comments = $this->getTableLocator()->get('Comments');
@@ -820,9 +775,8 @@ class QueryRegressionTest extends TestCase
      * Tests that using a comparison expression inside an OR condition works
      *
      * @see https://github.com/cakephp/cakephp/issues/5081
-     * @return void
      */
-    public function testOrConditionsWithExpression()
+    public function testOrConditionsWithExpression(): void
     {
         $this->loadFixtures('Articles');
         $table = $this->getTableLocator()->get('Articles');
@@ -842,9 +796,8 @@ class QueryRegressionTest extends TestCase
      * Tests that calling count on a query having a union works correctly
      *
      * @see https://github.com/cakephp/cakephp/issues/5107
-     * @return void
      */
-    public function testCountWithUnionQuery()
+    public function testCountWithUnionQuery(): void
     {
         $this->loadFixtures('Articles');
         $table = $this->getTableLocator()->get('Articles');
@@ -856,10 +809,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Integration test when selecting no fields on the primary table.
-     *
-     * @return void
      */
-    public function testSelectNoFieldsOnPrimaryAlias()
+    public function testSelectNoFieldsOnPrimaryAlias(): void
     {
         $this->loadFixtures('Articles', 'Users');
         $table = $this->getTableLocator()->get('Articles');
@@ -875,9 +826,8 @@ class QueryRegressionTest extends TestCase
      * does not emit notice errors.
      *
      * @see https://github.com/cakephp/cakephp/issues/12766
-     * @return void
      */
-    public function testAliasedAggregateFieldTypeConversionSafe()
+    public function testAliasedAggregateFieldTypeConversionSafe(): void
     {
         $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
@@ -899,10 +849,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that calling first on the query results will not remove all other results
      * from the set.
-     *
-     * @return void
      */
-    public function testFirstOnResultSet()
+    public function testFirstOnResultSet(): void
     {
         $this->loadFixtures('Articles');
         $results = $this->getTableLocator()->get('Articles')->find()->all();
@@ -915,9 +863,8 @@ class QueryRegressionTest extends TestCase
      * Checks that matching and contain can be called for the same belongsTo association
      *
      * @see https://github.com/cakephp/cakephp/issues/5463
-     * @return void
      */
-    public function testFindMatchingAndContain()
+    public function testFindMatchingAndContain(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -936,9 +883,8 @@ class QueryRegressionTest extends TestCase
      * Checks that matching and contain can be called for the same belongsTo association
      *
      * @see https://github.com/cakephp/cakephp/issues/5463
-     * @return void
      */
-    public function testFindMatchingAndContainWithSubquery()
+    public function testFindMatchingAndContainWithSubquery(): void
     {
         $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('authors');
@@ -958,9 +904,8 @@ class QueryRegressionTest extends TestCase
      * Tests that matching does not overwrite associations in contain
      *
      * @see https://github.com/cakephp/cakephp/issues/5584
-     * @return void
      */
-    public function testFindMatchingOverwrite()
+    public function testFindMatchingOverwrite(): void
     {
         $this->loadFixtures('Articles', 'Comments', 'Tags', 'ArticlesTags');
         $comments = $this->getTableLocator()->get('Comments');
@@ -988,9 +933,8 @@ class QueryRegressionTest extends TestCase
      * Tests that matching does not overwrite associations in contain
      *
      * @see https://github.com/cakephp/cakephp/issues/5584
-     * @return void
      */
-    public function testFindMatchingOverwrite2()
+    public function testFindMatchingOverwrite2(): void
     {
         $this->loadFixtures('Articles', 'Comments', 'Tags', 'ArticlesTags', 'Authors');
         $comments = $this->getTableLocator()->get('Comments');
@@ -1014,10 +958,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that trying to contain an inexistent association
      * throws an exception and not a fatal error.
-     *
-     * @return void
      */
-    public function testQueryNotFatalError()
+    public function testQueryNotFatalError(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->loadFixtures('Comments');
@@ -1030,9 +972,8 @@ class QueryRegressionTest extends TestCase
      * works correctly.
      *
      * @see https://github.com/cakephp/cakephp/issues/5721
-     * @return void
      */
-    public function testFindMatchingWithContain()
+    public function testFindMatchingWithContain(): void
     {
         $this->loadFixtures('Articles', 'Comments', 'Users');
         $comments = $this->getTableLocator()->get('Comments');
@@ -1057,10 +998,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that HasMany associations don't use duplicate PK values.
-     *
-     * @return void
      */
-    public function testHasManyEagerLoadingUniqueKey()
+    public function testHasManyEagerLoadingUniqueKey(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('ArticlesTags');
@@ -1085,9 +1024,8 @@ class QueryRegressionTest extends TestCase
      * does not trigger any errors and fetches the right results.
      *
      * @see https://github.com/cakephp/cakephp/issues/6214
-     * @return void
      */
-    public function testContainWithNoFields()
+    public function testContainWithNoFields(): void
     {
         $this->loadFixtures('Comments', 'Users');
         $table = $this->getTableLocator()->get('Comments');
@@ -1105,9 +1043,8 @@ class QueryRegressionTest extends TestCase
      * Tests that find() and contained associations using computed fields doesn't error out.
      *
      * @see https://github.com/cakephp/cakephp/issues/9326
-     * @return void
      */
-    public function testContainWithComputedField()
+    public function testContainWithComputedField(): void
     {
         $this->loadFixtures('Comments', 'Users');
         $table = $this->getTableLocator()->get('Users');
@@ -1132,9 +1069,8 @@ class QueryRegressionTest extends TestCase
      * will no trigger any errors and fetch the right results
      *
      * @see https://github.com/cakephp/cakephp/issues/6223
-     * @return void
      */
-    public function testMatchingWithNoFields()
+    public function testMatchingWithNoFields(): void
     {
         $this->loadFixtures('Comments', 'Users');
         $table = $this->getTableLocator()->get('Users');
@@ -1151,10 +1087,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that empty conditions in a matching clause don't cause errors.
-     *
-     * @return void
      */
-    public function testMatchingEmptyQuery()
+    public function testMatchingEmptyQuery(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('Articles');
@@ -1177,10 +1111,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that using a subquery as part of an expression will not make invalid SQL
-     *
-     * @return void
      */
-    public function testSubqueryInSelectExpression()
+    public function testSubqueryInSelectExpression(): void
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
@@ -1206,9 +1138,8 @@ class QueryRegressionTest extends TestCase
      * Tests calling last on an empty table
      *
      * @see https://github.com/cakephp/cakephp/issues/6683
-     * @return void
      */
-    public function testFindLastOnEmptyTable()
+    public function testFindLastOnEmptyTable(): void
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
@@ -1221,9 +1152,8 @@ class QueryRegressionTest extends TestCase
      * Tests calling contain in a nested closure
      *
      * @see https://github.com/cakephp/cakephp/issues/7591
-     * @return void
      */
-    public function testContainInNestedClosure()
+    public function testContainInNestedClosure(): void
     {
         $this->loadFixtures('Comments', 'Articles', 'Authors', 'Tags', 'AuthorsTags');
         $table = $this->getTableLocator()->get('Comments');
@@ -1242,10 +1172,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Test that the typemaps used in function expressions
      * create the correct results.
-     *
-     * @return void
      */
-    public function testTypemapInFunctions()
+    public function testTypemapInFunctions(): void
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
@@ -1269,10 +1197,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Test that the typemaps used in function expressions
      * create the correct results.
-     *
-     * @return void
      */
-    public function testTypemapInFunctions2()
+    public function testTypemapInFunctions2(): void
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
@@ -1286,10 +1212,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that contain queries map types correctly.
-     *
-     * @return void
      */
-    public function testBooleanConditionsInContain()
+    public function testBooleanConditionsInContain(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'SpecialTags');
         $table = $this->getTableLocator()->get('Articles');
@@ -1312,10 +1236,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that contain queries map types correctly.
-     *
-     * @return void
      */
-    public function testComplexTypesInJoinedWhere()
+    public function testComplexTypesInJoinedWhere(): void
     {
         $this->loadFixtures('Comments', 'Users');
         $table = $this->getTableLocator()->get('Users');
@@ -1335,10 +1257,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that nested contain queries map types correctly.
-     *
-     * @return void
      */
-    public function testComplexNestedTypesInJoinedWhere()
+    public function testComplexNestedTypesInJoinedWhere(): void
     {
         $this->loadFixtures('Comments', 'Users', 'Articles');
         $table = $this->getTableLocator()->get('Users');
@@ -1364,10 +1284,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that matching queries map types correctly.
-     *
-     * @return void
      */
-    public function testComplexTypesInJoinedWhereWithMatching()
+    public function testComplexTypesInJoinedWhereWithMatching(): void
     {
         $this->loadFixtures('Comments', 'Users', 'Articles');
         $table = $this->getTableLocator()->get('Users');
@@ -1403,10 +1321,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that notMatching queries map types correctly.
-     *
-     * @return void
      */
-    public function testComplexTypesInJoinedWhereWithNotMatching()
+    public function testComplexTypesInJoinedWhereWithNotMatching(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $Tags = $this->getTableLocator()->get('Tags');
@@ -1428,10 +1344,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that innerJoinWith queries map types correctly.
-     *
-     * @return void
      */
-    public function testComplexTypesInJoinedWhereWithInnerJoinWith()
+    public function testComplexTypesInJoinedWhereWithInnerJoinWith(): void
     {
         $this->loadFixtures('Comments', 'Users', 'Articles');
         $table = $this->getTableLocator()->get('Users');
@@ -1467,10 +1381,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test that leftJoinWith queries map types correctly.
-     *
-     * @return void
      */
-    public function testComplexTypesInJoinedWhereWithLeftJoinWith()
+    public function testComplexTypesInJoinedWhereWithLeftJoinWith(): void
     {
         $this->loadFixtures('Comments', 'Users', 'Articles');
         $table = $this->getTableLocator()->get('Users');
@@ -1507,10 +1419,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that it is possible to contain to fetch
      * associations off of a junction table.
-     *
-     * @return void
      */
-    public function testBelongsToManyJoinDataAssociation()
+    public function testBelongsToManyJoinDataAssociation(): void
     {
         $this->loadFixtures('Authors', 'Articles', 'Tags', 'SpecialTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -1540,10 +1450,8 @@ class QueryRegressionTest extends TestCase
      * Tests that it is possible to use matching with dot notation
      * even when part of the part of the path in the dot notation is
      * shared for two different calls
-     *
-     * @return void
      */
-    public function testDotNotationNotOverride()
+    public function testDotNotationNotOverride(): void
     {
         $this->loadFixtures('Comments', 'Articles', 'Tags', 'Authors', 'SpecialTags');
         $table = $this->getTableLocator()->get('Comments');
@@ -1568,10 +1476,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Test expression based ordering with unions.
-     *
-     * @return void
      */
-    public function testComplexOrderWithUnion()
+    public function testComplexOrderWithUnion(): void
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
@@ -1596,10 +1502,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Test that associations that are loaded with subqueries
      * do not cause errors when the subquery has a limit & order clause.
-     *
-     * @return void
      */
-    public function testEagerLoadOrderAndSubquery()
+    public function testEagerLoadOrderAndSubquery(): void
     {
         $this->loadFixtures('Articles', 'Comments');
         $table = $this->getTableLocator()->get('Articles');
@@ -1619,10 +1523,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that having bound placeholders in the order clause does not result
      * in an error when trying to count a query.
-     *
-     * @return void
      */
-    public function testCountWithComplexOrderBy()
+    public function testCountWithComplexOrderBy(): void
     {
         $this->loadFixtures('Articles');
         $table = $this->getTableLocator()->get('Articles');
@@ -1652,9 +1554,8 @@ class QueryRegressionTest extends TestCase
      * where clause of a query
      *
      * @see https://github.com/cakephp/cakephp/issues/7943
-     * @return void
      */
-    public function testFunctionInWhereClause()
+    public function testFunctionInWhereClause(): void
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
@@ -1667,10 +1568,8 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that `notMatching()` can be used on `belongsToMany`
      * associations without passing a query builder callback.
-     *
-     * @return void
      */
-    public function testNotMatchingForBelongsToManyWithoutQueryBuilder()
+    public function testNotMatchingForBelongsToManyWithoutQueryBuilder(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
 
@@ -1689,9 +1588,8 @@ class QueryRegressionTest extends TestCase
      * Tests deep formatters get the right object type when applied in a beforeFind
      *
      * @see https://github.com/cakephp/cakephp/issues/9787
-     * @return void
      */
-    public function testFormatDeepDistantAssociationRecords2()
+    public function testFormatDeepDistantAssociationRecords2(): void
     {
         $this->loadFixtures('Authors', 'Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('authors');
@@ -1712,7 +1610,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table->find()->contain(['articles.articlesTags.tags']);
 
-        $query->mapReduce(function ($row, $key, $mr) {
+        $query->mapReduce(function ($row, $key, $mr): void {
             foreach ((array)$row->articles as $article) {
                 foreach ((array)$article->articles_tags as $articleTag) {
                     $mr->emit($articleTag->tag->name);
@@ -1726,10 +1624,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that subqueries can be used with function expressions.
-     *
-     * @return void
      */
-    public function testFunctionExpressionWithSubquery()
+    public function testFunctionExpressionWithSubquery(): void
     {
         $this->loadFixtures('Articles');
         $table = $this->getTableLocator()->get('Articles');
@@ -1756,10 +1652,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that correlated subqueries can be used with function expressions.
-     *
-     * @return void
      */
-    public function testFunctionExpressionWithCorrelatedSubquery()
+    public function testFunctionExpressionWithCorrelatedSubquery(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -1787,10 +1681,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that subqueries can be used with multi argument function expressions.
-     *
-     * @return void
      */
-    public function testMultiArgumentFunctionExpressionWithSubquery()
+    public function testMultiArgumentFunctionExpressionWithSubquery(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -1821,10 +1713,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that correlated subqueries can be used with multi argument function expressions.
-     *
-     * @return void
      */
-    public function testMultiArgumentFunctionExpressionWithCorrelatedSubquery()
+    public function testMultiArgumentFunctionExpressionWithCorrelatedSubquery(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -1858,10 +1748,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that subqueries can be used with function expressions that are being transpiled.
-     *
-     * @return void
      */
-    public function testTranspiledFunctionExpressionWithSubquery()
+    public function testTranspiledFunctionExpressionWithSubquery(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
@@ -1888,10 +1776,8 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that correlated subqueries can be used with function expressions that are being transpiled.
-     *
-     * @return void
      */
-    public function testTranspiledFunctionExpressionWithCorrelatedSubquery()
+    public function testTranspiledFunctionExpressionWithCorrelatedSubquery(): void
     {
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');

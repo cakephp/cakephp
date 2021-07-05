@@ -46,10 +46,8 @@ class LoggingStatementTest extends TestCase
 
     /**
      * Tests that queries are logged when executed without params
-     *
-     * @return void
      */
-    public function testExecuteNoParams()
+    public function testExecuteNoParams(): void
     {
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(3));
@@ -69,10 +67,8 @@ class LoggingStatementTest extends TestCase
 
     /**
      * Tests that queries are logged when executed with params
-     *
-     * @return void
      */
-    public function testExecuteWithParams()
+    public function testExecuteWithParams(): void
     {
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
@@ -92,10 +88,8 @@ class LoggingStatementTest extends TestCase
 
     /**
      * Tests that queries are logged when executed with bound params
-     *
-     * @return void
      */
-    public function testExecuteWithBinding()
+    public function testExecuteWithBinding(): void
     {
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
@@ -127,10 +121,8 @@ class LoggingStatementTest extends TestCase
 
     /**
      * Tests that queries are logged despite database errors
-     *
-     * @return void
      */
-    public function testExecuteWithError()
+    public function testExecuteWithError(): void
     {
         $exception = new LogicException('This is bad');
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
@@ -156,10 +148,8 @@ class LoggingStatementTest extends TestCase
 
     /**
      * Tests setting and getting the logger
-     *
-     * @return void
      */
-    public function testSetAndGetLogger()
+    public function testSetAndGetLogger(): void
     {
         $logger = new QueryLogger(['connection' => 'test']);
         $st = new LoggingStatement(

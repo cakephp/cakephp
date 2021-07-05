@@ -32,8 +32,6 @@ class StringTemplateTraitTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,10 +41,8 @@ class StringTemplateTraitTest extends TestCase
 
     /**
      * testInitStringTemplates
-     *
-     * @return void
      */
-    public function testInitStringTemplates()
+    public function testInitStringTemplates(): void
     {
         $templates = [
             'text' => '<p>{{text}}</p>',
@@ -64,10 +60,8 @@ class StringTemplateTraitTest extends TestCase
 
     /**
      * test settings['templates']
-     *
-     * @return void
      */
-    public function testInitStringTemplatesArrayForm()
+    public function testInitStringTemplatesArrayForm(): void
     {
         $this->Template->setConfig(
             'templates.text',
@@ -85,10 +79,8 @@ class StringTemplateTraitTest extends TestCase
 
     /**
      * testFormatStringTemplate
-     *
-     * @return void
      */
-    public function testFormatStringTemplate()
+    public function testFormatStringTemplate(): void
     {
         $templates = [
             'text' => '<p>{{text}}</p>',
@@ -105,10 +97,8 @@ class StringTemplateTraitTest extends TestCase
 
     /**
      * testGetTemplater
-     *
-     * @return void
      */
-    public function testGetTemplater()
+    public function testGetTemplater(): void
     {
         $templates = [
             'text' => '<p>{{text}}</p>',

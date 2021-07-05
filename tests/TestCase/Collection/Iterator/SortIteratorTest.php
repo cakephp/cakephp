@@ -27,10 +27,8 @@ class SortIteratorTest extends TestCase
 {
     /**
      * Tests sorting numbers with an identity callbacks
-     *
-     * @return void
      */
-    public function testSortNumbersIdentity()
+    public function testSortNumbersIdentity(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
         $identity = function ($a) {
@@ -47,10 +45,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting numbers with custom callback
-     *
-     * @return void
      */
-    public function testSortNumbersCustom()
+    public function testSortNumbersCustom(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
         $callback = function ($a) {
@@ -67,10 +63,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with numeric sort
-     *
-     * @return void
      */
-    public function testSortComplexNumeric()
+    public function testSortComplexNumeric(): void
     {
         $items = new ArrayObject([
             ['foo' => 1, 'bar' => 'a'],
@@ -102,10 +96,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with natural sort
-     *
-     * @return void
      */
-    public function testSortComplexNatural()
+    public function testSortComplexNatural(): void
     {
         $items = new ArrayObject([
             ['foo' => 'foo_1', 'bar' => 'a'],
@@ -138,10 +130,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with natural sort with string callback
-     *
-     * @return void
      */
-    public function testSortComplexNaturalWithPath()
+    public function testSortComplexNaturalWithPath(): void
     {
         $items = new ArrayObject([
             ['foo' => 'foo_1', 'bar' => 'a'],
@@ -171,10 +161,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with a deep path
-     *
-     * @return void
      */
-    public function testSortComplexDeepPath()
+    public function testSortComplexDeepPath(): void
     {
         $items = new ArrayObject([
             ['foo' => ['bar' => 1], 'bar' => 'a'],
@@ -194,10 +182,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting datetime
-     *
-     * @return void
      */
-    public function testSortDateTime()
+    public function testSortDateTime(): void
     {
         $items = new ArrayObject([
             new \DateTime('2014-07-21'),
