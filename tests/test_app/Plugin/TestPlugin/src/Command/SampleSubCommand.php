@@ -23,7 +23,6 @@ use Cake\Console\ConsoleIo;
 class SampleSubCommand extends Command
 {
     /**
-<<<<<<< HEAD:tests/test_app/Plugin/TestPlugin/src/Command/SampleSubCommand.php
      * Get the command name.
      *
      * @return string
@@ -34,11 +33,6 @@ class SampleSubCommand extends Command
     }
 
     public function execute(Arguments $args, ConsoleIo $io)
-=======
-     * say_hello method
-     */
-    public function say_hello(): void
->>>>>>> 4.next:tests/test_app/Plugin/TestPluginTwo/src/Shell/WelcomeShell.php
     {
     }
 }

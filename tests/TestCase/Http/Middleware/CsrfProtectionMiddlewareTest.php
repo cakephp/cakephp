@@ -543,45 +543,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
     }
 
-<<<<<<< HEAD
-    /**
-     * @return void
-     */
-    public function testSkippingTokenCheckUsingSkipCheckCallback()
-=======
-    public function testSkippingTokenCheckUsingWhitelistCallback(): void
-    {
-        $this->deprecated(function (): void {
-            $request = new ServerRequest([
-                'post' => [
-                    '_csrfToken' => 'foo',
-                ],
-                'environment' => [
-                    'REQUEST_METHOD' => 'POST',
-                ],
-            ]);
-            $response = new Response();
-
-            $middleware = new CsrfProtectionMiddleware();
-            $middleware->whitelistCallback(function (ServerRequestInterface $request) {
-                $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
-
-                return true;
-            });
-
-            $handler = new TestRequestHandler(function ($request) {
-                $this->assertEmpty($request->getParsedBody());
-
-                return new Response();
-            });
-
-            $response = $middleware->process($request, $handler);
-            $this->assertInstanceOf(Response::class, $response);
-        });
-    }
-
     public function testSkippingTokenCheckUsingSkipCheckCallback(): void
->>>>>>> 4.next
     {
         $request = new ServerRequest([
             'post' => [
