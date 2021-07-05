@@ -77,8 +77,7 @@ class CommandRetryTest extends TestCase
      */
     public function testRespectStrategy()
     {
-        $count = 0;
-        $action = function () use (&$count) {
+        $action = function () {
             throw new Exception('this is failing');
         };
 

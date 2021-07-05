@@ -13,6 +13,9 @@ class TextHelperTestObject extends TextHelper
         $this->_engine = $string;
     }
 
+    /**
+     * @return mixed
+     */
     public function engine()
     {
         return $this->_engine;
