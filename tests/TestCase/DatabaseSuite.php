@@ -42,7 +42,6 @@ class DatabaseSuite extends TestSuite
 
     /**
      * @param bool $preferCache
-     * @return int
      */
     public function count($preferCache = false): int
     {
@@ -51,16 +50,14 @@ class DatabaseSuite extends TestSuite
 
     /**
      * Runs the tests and collects their result in a TestResult.
-     *
-     * @return \PHPUnit\Framework\TestResult
      */
     public function run(?TestResult $result = null): TestResult
     {
         $permutations = [
-            'Identifier Quoting' => function () {
+            'Identifier Quoting' => function (): void {
                 ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);
             },
-            'No identifier quoting' => function () {
+            'No identifier quoting' => function (): void {
                 ConnectionManager::get('test')->getDriver()->enableAutoQuoting(false);
             },
         ];

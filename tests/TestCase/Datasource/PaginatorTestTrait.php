@@ -37,8 +37,6 @@ trait PaginatorTestTrait
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -53,8 +51,6 @@ trait PaginatorTestTrait
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -64,10 +60,8 @@ trait PaginatorTestTrait
 
     /**
      * Test that non-numeric values are rejected for page, and limit
-     *
-     * @return void
      */
-    public function testPageParamCasting()
+    public function testPageParamCasting(): void
     {
         $this->Post->expects($this->any())
             ->method('getAlias')
@@ -88,10 +82,8 @@ trait PaginatorTestTrait
     /**
      * test that unknown keys in the default settings are
      * passed to the find operations.
-     *
-     * @return void
      */
-    public function testPaginateExtraParams()
+    public function testPaginateExtraParams(): void
     {
         $params = ['page' => '-1'];
         $settings = [
@@ -127,10 +119,8 @@ trait PaginatorTestTrait
 
     /**
      * Test to make sure options get sent to custom finder methods via paginate
-     *
-     * @return void
      */
-    public function testPaginateCustomFinderOptions()
+    public function testPaginateCustomFinderOptions(): void
     {
         $this->loadFixtures('Posts');
         $settings = [
@@ -154,17 +144,15 @@ trait PaginatorTestTrait
 
     /**
      * Test that nested eager loaders don't trigger invalid SQL errors.
-     *
-     * @return void
      */
-    public function testPaginateNestedEagerLoader()
+    public function testPaginateNestedEagerLoader(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags');
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
-        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
             $query ->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
@@ -180,10 +168,8 @@ trait PaginatorTestTrait
 
     /**
      * test that flat default pagination parameters work.
-     *
-     * @return void
      */
-    public function testDefaultPaginateParams()
+    public function testDefaultPaginateParams(): void
     {
         $settings = [
             'order' => ['PaginatorPosts.id' => 'DESC'],
@@ -214,10 +200,8 @@ trait PaginatorTestTrait
 
     /**
      * Tests that flat default pagination parameters work for multi order.
-     *
-     * @return void
      */
-    public function testDefaultPaginateParamsMultiOrder()
+    public function testDefaultPaginateParamsMultiOrder(): void
     {
         $settings = [
             'order' => ['PaginatorPosts.id' => 'DESC', 'PaginatorPosts.title' => 'ASC'],
@@ -252,10 +236,8 @@ trait PaginatorTestTrait
 
     /**
      * test that default sort and default direction are injected into request
-     *
-     * @return void
      */
-    public function testDefaultPaginateParamsIntoRequest()
+    public function testDefaultPaginateParamsIntoRequest(): void
     {
         $settings = [
             'order' => ['PaginatorPosts.id' => 'DESC'],
@@ -289,10 +271,8 @@ trait PaginatorTestTrait
 
     /**
      * test that option merging prefers specific models
-     *
-     * @return void
      */
-    public function testMergeOptionsModelSpecific()
+    public function testMergeOptionsModelSpecific(): void
     {
         $settings = [
             'page' => 1,
@@ -324,10 +304,8 @@ trait PaginatorTestTrait
 
     /**
      * test mergeOptions with custom scope
-     *
-     * @return void
      */
-    public function testMergeOptionsCustomScope()
+    public function testMergeOptionsCustomScope(): void
     {
         $params = [
             'page' => 10,
@@ -399,10 +377,8 @@ trait PaginatorTestTrait
 
     /**
      * test mergeOptions with customFind key
-     *
-     * @return void
      */
-    public function testMergeOptionsCustomFindKey()
+    public function testMergeOptionsCustomFindKey(): void
     {
         $params = [
             'page' => 10,
@@ -429,10 +405,8 @@ trait PaginatorTestTrait
 
     /**
      * test merging options from the querystring.
-     *
-     * @return void
      */
-    public function testMergeOptionsQueryString()
+    public function testMergeOptionsQueryString(): void
     {
         $params = [
             'page' => 99,
@@ -457,10 +431,8 @@ trait PaginatorTestTrait
 
     /**
      * test that the default allowedParameters doesn't let people screw with things they should not be allowed to.
-     *
-     * @return void
      */
-    public function testMergeOptionsDefaultAllowedParameters()
+    public function testMergeOptionsDefaultAllowedParameters(): void
     {
         $params = [
             'page' => 10,
@@ -489,10 +461,8 @@ trait PaginatorTestTrait
 
     /**
      * test that modifying the deprecated whitelist works.
-     *
-     * @return void
      */
-    public function testMergeOptionsExtraWhitelist()
+    public function testMergeOptionsExtraWhitelist(): void
     {
         $params = [
             'page' => 10,
@@ -507,7 +477,7 @@ trait PaginatorTestTrait
             'limit' => 20,
             'maxLimit' => 100,
         ];
-        $this->deprecated(function () use ($settings, $params) {
+        $this->deprecated(function () use ($settings, $params): void {
             $this->Paginator->setConfig('whitelist', ['fields']);
             $defaults = $this->Paginator->getDefaults('Post', $settings);
             $result = $this->Paginator->mergeOptions($params, $defaults);
@@ -525,10 +495,8 @@ trait PaginatorTestTrait
 
     /**
      * test mergeOptions with limit > maxLimit in code.
-     *
-     * @return void
      */
-    public function testMergeOptionsMaxLimit()
+    public function testMergeOptionsMaxLimit(): void
     {
         $settings = [
             'limit' => 200,
@@ -565,10 +533,8 @@ trait PaginatorTestTrait
 
     /**
      * test getDefaults with limit > maxLimit in code.
-     *
-     * @return void
      */
-    public function testGetDefaultMaxLimit()
+    public function testGetDefaultMaxLimit(): void
     {
         $settings = [
             'page' => 1,
@@ -617,10 +583,8 @@ trait PaginatorTestTrait
 
     /**
      * Integration test to ensure that validateSort is being used by paginate()
-     *
-     * @return void
      */
-    public function testValidateSortInvalid()
+    public function testValidateSortInvalid(): void
     {
         $table = $this->_getMockPosts(['query']);
         $query = $this->_getMockFindQuery();
@@ -653,10 +617,8 @@ trait PaginatorTestTrait
 
     /**
      * test that invalid directions are ignored.
-     *
-     * @return void
      */
-    public function testValidateSortInvalidDirection()
+    public function testValidateSortInvalidDirection(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -675,10 +637,8 @@ trait PaginatorTestTrait
     /**
      * Test that "sort" and "direction" in paging params is properly set based
      * on initial value of "order" in paging settings.
-     *
-     * @return void
      */
-    public function testValidaSortInitialSortAndDirection()
+    public function testValidaSortInitialSortAndDirection(): void
     {
         $table = $this->_getMockPosts(['query']);
         $query = $this->_getMockFindQuery();
@@ -716,10 +676,8 @@ trait PaginatorTestTrait
     /**
      * Test that "sort" and "direction" in paging params is properly set based
      * on initial value of "order" in paging settings.
-     *
-     * @return void
      */
-    public function testValidateSortAndDirectionAliased()
+    public function testValidateSortAndDirectionAliased(): void
     {
         $table = $this->_getMockPosts(['query']);
         $query = $this->_getMockFindQuery();
@@ -763,10 +721,9 @@ trait PaginatorTestTrait
     /**
      * testValidateSortRetainsOriginalSortValue
      *
-     * @return void
      * @see https://github.com/cakephp/cakephp/issues/11740
      */
-    public function testValidateSortRetainsOriginalSortValue()
+    public function testValidateSortRetainsOriginalSortValue(): void
     {
         $table = $this->_getMockPosts(['query']);
         $query = $this->_getMockFindQuery();
@@ -803,10 +760,8 @@ trait PaginatorTestTrait
 
     /**
      * Test that a really large page number gets clamped to the max page size.
-     *
-     * @return void
      */
-    public function testOutOfRangePageNumberGetsClamped()
+    public function testOutOfRangePageNumberGetsClamped(): void
     {
         $this->loadFixtures('Posts');
         $params['page'] = 3000;
@@ -833,10 +788,8 @@ trait PaginatorTestTrait
 
     /**
      * Test that a really REALLY large page number gets clamped to the max page size.
-     *
-     * @return void
      */
-    public function testOutOfVeryBigPageNumberGetsClamped()
+    public function testOutOfVeryBigPageNumberGetsClamped(): void
     {
         $this->expectException(\Cake\Datasource\Exception\PageOutOfBoundsException::class);
         $this->loadFixtures('Posts');
@@ -850,10 +803,8 @@ trait PaginatorTestTrait
 
     /**
      * test that fields not in sortableFields won't be part of order conditions.
-     *
-     * @return void
      */
-    public function testValidateAllowedSortFailure()
+    public function testValidateAllowedSortFailure(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -869,12 +820,10 @@ trait PaginatorTestTrait
 
     /**
      * test that fields not in whitelist won't be part of order conditions.
-     *
-     * @return void
      */
-    public function testValidateSortWhitelistFailure()
+    public function testValidateSortWhitelistFailure(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $model = $this->mockAliasHasFieldModel();
             $options = [
                 'sort' => 'body',
@@ -888,10 +837,8 @@ trait PaginatorTestTrait
 
     /**
      * test that fields in the sortableFields are not validated
-     *
-     * @return void
      */
-    public function testValidateAllowedSortTrusted()
+    public function testValidateAllowedSortTrusted(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -912,10 +859,8 @@ trait PaginatorTestTrait
 
     /**
      * test that sortableFields as empty array does not allow any sorting
-     *
-     * @return void
      */
-    public function testValidateAllowedSortEmpty()
+    public function testValidateAllowedSortEmpty(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -935,10 +880,8 @@ trait PaginatorTestTrait
 
     /**
      * test that fields in the sortableFields are not validated
-     *
-     * @return void
      */
-    public function testValidateAllowedSortNotInSchema()
+    public function testValidateAllowedSortNotInSchema(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -964,10 +907,8 @@ trait PaginatorTestTrait
 
     /**
      * test that multiple fields in the sortableFields are not validated and properly aliased.
-     *
-     * @return void
      */
-    public function testValidateAllowedSortMultiple()
+    public function testValidateAllowedSortMultiple(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -1017,10 +958,8 @@ trait PaginatorTestTrait
 
     /**
      * test that multiple sort works.
-     *
-     * @return void
      */
-    public function testValidateSortMultiple()
+    public function testValidateSortMultiple(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -1041,10 +980,8 @@ trait PaginatorTestTrait
 
     /**
      * test that multiple sort adds in query data.
-     *
-     * @return void
      */
-    public function testValidateSortMultipleWithQuery()
+    public function testValidateSortMultipleWithQuery(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -1084,10 +1021,8 @@ trait PaginatorTestTrait
 
     /**
      * Tests that sort query string and model prefixes default match on assoc merging.
-     *
-     * @return void
      */
-    public function testValidateSortMultipleWithQueryAndAliasedDefault()
+    public function testValidateSortMultipleWithQueryAndAliasedDefault(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -1111,10 +1046,8 @@ trait PaginatorTestTrait
 
     /**
      * Tests that order strings can used by Paginator
-     *
-     * @return void
      */
-    public function testValidateSortWithString()
+    public function testValidateSortWithString(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -1129,10 +1062,8 @@ trait PaginatorTestTrait
 
     /**
      * Test that no sort doesn't trigger an error.
-     *
-     * @return void
      */
-    public function testValidateSortNoSort()
+    public function testValidateSortNoSort(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -1146,10 +1077,8 @@ trait PaginatorTestTrait
 
     /**
      * Test sorting with incorrect aliases on valid fields.
-     *
-     * @return void
      */
-    public function testValidateSortInvalidAlias()
+    public function testValidateSortInvalidAlias(): void
     {
         $model = $this->mockAliasHasFieldModel();
 
@@ -1207,9 +1136,8 @@ trait PaginatorTestTrait
      * test that maxLimit is respected
      *
      * @dataProvider checkLimitProvider
-     * @return void
      */
-    public function testCheckLimit(array $input, int $expected)
+    public function testCheckLimit(array $input, int $expected): void
     {
         $result = $this->Paginator->checkLimit($input);
         $this->assertSame($expected, $result['limit']);
@@ -1217,10 +1145,8 @@ trait PaginatorTestTrait
 
     /**
      * Integration test for checkLimit() being applied inside paginate()
-     *
-     * @return void
      */
-    public function testPaginateMaxLimit()
+    public function testPaginateMaxLimit(): void
     {
         $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -1248,10 +1174,8 @@ trait PaginatorTestTrait
     /**
      * test paginate() and custom finders to ensure the count + find
      * use the custom type.
-     *
-     * @return void
      */
-    public function testPaginateCustomFindCount()
+    public function testPaginateCustomFindCount(): void
     {
         $settings = [
             'finder' => 'published',
@@ -1280,10 +1204,8 @@ trait PaginatorTestTrait
     /**
      * Tests that it is possible to pass an already made query object to
      * paginate()
-     *
-     * @return void
      */
-    public function testPaginateQuery()
+    public function testPaginateQuery(): void
     {
         $params = ['page' => '-1'];
         $settings = [
@@ -1315,10 +1237,8 @@ trait PaginatorTestTrait
 
     /**
      * test paginate() with bind()
-     *
-     * @return void
      */
-    public function testPaginateQueryWithBindValue()
+    public function testPaginateQueryWithBindValue(): void
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
@@ -1340,10 +1260,8 @@ trait PaginatorTestTrait
     /**
      * Tests that passing a query object with a limit clause set will
      * overwrite it with the passed defaults.
-     *
-     * @return void
      */
-    public function testPaginateQueryWithLimit()
+    public function testPaginateQueryWithLimit(): void
     {
         $params = ['page' => '-1'];
         $settings = [

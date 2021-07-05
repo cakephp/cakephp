@@ -53,10 +53,8 @@ class AggregatesQueryTests extends TestCase
 
     /**
      * Tests filtering aggregate function rows.
-     *
-     * @return void
      */
-    public function testFilters()
+    public function testFilters(): void
     {
         $skip = !($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres);
         if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite) {

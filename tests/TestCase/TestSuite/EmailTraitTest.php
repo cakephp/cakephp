@@ -35,8 +35,6 @@ class EmailTraitTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -60,8 +58,6 @@ class EmailTraitTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -74,10 +70,8 @@ class EmailTraitTest extends TestCase
 
     /**
      * tests assertions against any emails that were sent
-     *
-     * @return void
      */
-    public function testSingleAssertions()
+    public function testSingleAssertions(): void
     {
         $this->sendEmails();
 
@@ -106,10 +100,8 @@ class EmailTraitTest extends TestCase
 
     /**
      * tests multiple email assertions
-     *
-     * @return void
      */
-    public function testMultipleAssertions()
+    public function testMultipleAssertions(): void
     {
         $this->assertNoMailSent();
 
@@ -138,10 +130,8 @@ class EmailTraitTest extends TestCase
 
     /**
      * tests assertNoMailSent fails when no mail is sent
-     *
-     * @return void
      */
-    public function testAssertNoMailSentFailure()
+    public function testAssertNoMailSentFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Failed asserting that no emails were sent.');
@@ -152,10 +142,8 @@ class EmailTraitTest extends TestCase
 
     /**
      * tests assertMailContainsHtml fails appropriately
-     *
-     * @return void
      */
-    public function testAssertContainsHtmlFailure()
+    public function testAssertContainsHtmlFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -166,10 +154,8 @@ class EmailTraitTest extends TestCase
 
     /**
      * tests assertMailContainsText fails appropriately
-     *
-     * @return void
      */
-    public function testAssertContainsTextFailure()
+    public function testAssertContainsTextFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -180,10 +166,8 @@ class EmailTraitTest extends TestCase
 
     /**
      * Tests asserting using RegExp characters doesn't break the assertion
-     *
-     * @return void
      */
-    public function testAssertUsingRegExpCharacters()
+    public function testAssertUsingRegExpCharacters(): void
     {
         (new Mailer())
             ->setTo('to3@example.com')
@@ -201,7 +185,7 @@ class EmailTraitTest extends TestCase
      * @param array $params Assertion params
      * @dataProvider failureMessageDataProvider
      */
-    public function testFailureMessages($assertion, $expectedMessage, $params)
+    public function testFailureMessages($assertion, $expectedMessage, $params): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -238,10 +222,8 @@ class EmailTraitTest extends TestCase
 
     /**
      * sends some emails
-     *
-     * @return void
      */
-    private function sendEmails()
+    private function sendEmails(): void
     {
         (new Mailer())
             ->setSender(['sender@example.com' => 'Sender'])

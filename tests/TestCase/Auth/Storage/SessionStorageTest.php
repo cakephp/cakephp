@@ -34,8 +34,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -50,8 +48,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test write
-     *
-     * @return void
      */
     public function testWrite(): void
     {
@@ -65,8 +61,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test read
-     *
-     * @return void
      */
     public function testRead(): void
     {
@@ -81,8 +75,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test read from local var
-     *
-     * @return void
      */
     public function testGetFromLocalVar(): void
     {
@@ -97,8 +89,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test delete
-     *
-     * @return void
      */
     public function testDelete(): void
     {
@@ -111,8 +101,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test redirectUrl()
-     *
-     * @return void
      */
     public function redirectUrl(): void
     {

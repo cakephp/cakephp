@@ -42,10 +42,8 @@ class PaginatorTest extends TestCase
 
     /**
      * test paginate() and custom find, to make sure the correct count is returned.
-     *
-     * @return void
      */
-    public function testPaginateCustomFind()
+    public function testPaginateCustomFind(): void
     {
         $this->loadFixtures('Posts');
         $titleExtractor = function ($result) {
@@ -106,10 +104,8 @@ class PaginatorTest extends TestCase
 
     /**
      * test paginate() and custom find with fields array, to make sure the correct count is returned.
-     *
-     * @return void
      */
-    public function testPaginateCustomFindFieldsArray()
+    public function testPaginateCustomFindFieldsArray(): void
     {
         $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -140,10 +136,8 @@ class PaginatorTest extends TestCase
 
     /**
      * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
-     *
-     * @return void
      */
-    public function testPaginateCustomFinder()
+    public function testPaginateCustomFinder(): void
     {
         $settings = [
             'PaginatorPosts' => [
@@ -168,10 +162,8 @@ class PaginatorTest extends TestCase
 
     /**
      * test direction setting.
-     *
-     * @return void
      */
-    public function testPaginateDefaultDirection()
+    public function testPaginateDefaultDirection(): void
     {
         $settings = [
             'PaginatorPosts' => [

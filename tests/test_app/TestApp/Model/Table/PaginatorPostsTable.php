@@ -25,8 +25,6 @@ class PaginatorPostsTable extends Table
 {
     /**
      * initialize method
-     *
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -59,8 +57,6 @@ class PaginatorPostsTable extends Table
 
     /**
      * Custom finder, used with fixture data to ensure Paginator is sending options
-     *
-     * @return \Cake\ORM\Query
      */
     public function findAuthor(Query $query, array $options = []): Query
     {

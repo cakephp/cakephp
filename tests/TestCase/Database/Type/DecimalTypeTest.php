@@ -49,8 +49,6 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -65,8 +63,6 @@ class DecimalTypeTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -77,10 +73,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -93,10 +87,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test converting string decimals to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -118,10 +110,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $result = $this->type->toDatabase('', $this->driver);
         $this->assertNull($result);
@@ -150,10 +140,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Arrays are invalid.
-     *
-     * @return void
      */
-    public function testToDatabaseInvalid()
+    public function testToDatabaseInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase(['3', '4'], $this->driver);
@@ -161,10 +149,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Non numeric strings are invalid.
-     *
-     * @return void
      */
-    public function testToDatabaseInvalid2()
+    public function testToDatabaseInvalid2(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase('some data', $this->driver);
@@ -172,10 +158,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test marshalling
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $result = $this->type->marshal('some data');
         $this->assertNull($result);
@@ -208,10 +192,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Tests marshalling numbers using the locale aware parser
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsing()
+    public function testMarshalWithLocaleParsing(): void
     {
         $this->type->useLocaleParser();
 
@@ -235,10 +217,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * test marshal() number in the danish locale which uses . for thousands separator.
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsingDanish()
+    public function testMarshalWithLocaleParsingDanish(): void
     {
         $this->type->useLocaleParser();
 
@@ -252,10 +232,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test that exceptions are raised on invalid parsers.
-     *
-     * @return void
      */
-    public function testUseLocaleParsingInvalid()
+    public function testUseLocaleParsingInvalid(): void
     {
         $this->expectException(\RuntimeException::class);
         DecimalType::$numberClass = 'stdClass';
@@ -264,10 +242,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }

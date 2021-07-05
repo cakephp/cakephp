@@ -39,7 +39,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderJoinable()
+    public function strategiesProviderJoinable(): array
     {
         return [['join'], ['select']];
     }
@@ -49,7 +49,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderExternal()
+    public function strategiesProviderExternal(): array
     {
         return [['subquery'], ['select']];
     }
@@ -58,9 +58,8 @@ class BindingKeyTest extends TestCase
      * Tests that bindingKey can be used in belongsTo associations
      *
      * @dataProvider strategiesProviderJoinable
-     * @return void
      */
-    public function testBelongsto(string $strategy)
+    public function testBelongsto(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
         $users->belongsTo('AuthUsers', [
@@ -90,9 +89,8 @@ class BindingKeyTest extends TestCase
      * Tests that bindingKey can be used in hasOne associations
      *
      * @dataProvider strategiesProviderJoinable
-     * @return void
      */
-    public function testHasOne(string $strategy)
+    public function testHasOne(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
         $users->hasOne('SiteAuthors', [
@@ -114,9 +112,8 @@ class BindingKeyTest extends TestCase
      * Tests that bindingKey can be used in hasOne associations
      *
      * @dataProvider strategiesProviderExternal
-     * @return void
      */
-    public function testHasMany(string $strategy)
+    public function testHasMany(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
         $authors = $users->hasMany('SiteAuthors', [

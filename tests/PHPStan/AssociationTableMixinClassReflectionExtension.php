@@ -22,16 +22,12 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
 
     /**
      * @param Broker $broker Class reflection broker
-     * @return void
      */
     public function setBroker(Broker $broker): void
     {
         $this->broker = $broker;
     }
 
-    /**
-     * @return ClassReflection
-     */
     protected function getTableReflection(): ClassReflection
     {
         return $this->broker->getClass(Table::class);
@@ -40,7 +36,6 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
     /**
      * @param ClassReflection $classReflection Class reflection
      * @param string $methodName Method name
-     * @return bool
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
@@ -59,7 +54,6 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
     /**
      * @param ClassReflection $classReflection Class reflection
      * @param string $methodName Method name
-     * @return MethodReflection
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
@@ -74,7 +68,6 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
     /**
      * @param ClassReflection $classReflection Class reflection
      * @param string $propertyName Method name
-     * @return bool
      */
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
@@ -88,7 +81,6 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
     /**
      * @param ClassReflection $classReflection Class reflection
      * @param string $propertyName Method name
-     * @return PropertyReflection
      */
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {

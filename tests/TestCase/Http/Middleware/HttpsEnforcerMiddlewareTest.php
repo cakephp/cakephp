@@ -45,7 +45,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         Configure::write('debug', true);
     }
 
-    public function testForRequestWithHttps()
+    public function testForRequestWithHttps(): void
     {
         $uri = new Uri('https://localhost/foo');
         $request = new ServerRequest();
@@ -62,7 +62,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $this->assertSame('success', (string)$result->getBody());
     }
 
-    public function testRedirect()
+    public function testRedirect(): void
     {
         $uri = new Uri('http://localhost/foo');
         $request = new ServerRequest();
@@ -97,10 +97,8 @@ class HttpsEnforcerMiddlewareTest extends TestCase
 
     /**
      * Test that exception is thrown when redirect is disabled.
-     *
-     * @return void
      */
-    public function testNoRedirectException()
+    public function testNoRedirectException(): void
     {
         $this->expectException(BadRequestException::class);
 
@@ -118,10 +116,8 @@ class HttpsEnforcerMiddlewareTest extends TestCase
 
     /**
      * Test that exception is thrown for non GET request even if redirect is enabled.
-     *
-     * @return void
      */
-    public function testExceptionForNonGetRequest()
+    public function testExceptionForNonGetRequest(): void
     {
         $this->expectException(BadRequestException::class);
 
@@ -139,10 +135,8 @@ class HttpsEnforcerMiddlewareTest extends TestCase
 
     /**
      * Test that HTTPS check is skipped when debug is on.
-     *
-     * @return void
      */
-    public function testNoCheckWithDebugOn()
+    public function testNoCheckWithDebugOn(): void
     {
         Configure::write('debug', true);
 

@@ -28,8 +28,6 @@ class CheckboxWidgetTest extends TestCase
 {
     /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,10 +41,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Test rendering simple checkboxes.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -79,10 +75,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Test rendering disabled checkboxes.
-     *
-     * @return void
      */
-    public function testRenderDisabled()
+    public function testRenderDisabled(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -103,10 +97,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Test rendering checked checkboxes.
-     *
-     * @return void
      */
-    public function testRenderChecked()
+    public function testRenderChecked(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -173,9 +165,8 @@ class CheckboxWidgetTest extends TestCase
      *
      * @dataProvider checkedProvider
      * @param mixed $checked
-     * @return void
      */
-    public function testRenderCheckedValue($checked)
+    public function testRenderCheckedValue($checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -216,9 +207,8 @@ class CheckboxWidgetTest extends TestCase
      *
      * @dataProvider uncheckedProvider
      * @param mixed $checked
-     * @return void
      */
-    public function testRenderUnCheckedValue($checked)
+    public function testRenderUnCheckedValue($checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -240,10 +230,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Ensure templateVars option is hooked up.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'checkbox' => '<input type="checkbox" custom="{{custom}}" name="{{name}}" value="{{value}}"{{attrs}}>',
@@ -271,10 +259,8 @@ class CheckboxWidgetTest extends TestCase
      * testRenderCustomAttributes method
      *
      * Test render with custom attributes.
-     *
-     * @return void
      */
-    public function testRenderCustomAttributes()
+    public function testRenderCustomAttributes(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
 

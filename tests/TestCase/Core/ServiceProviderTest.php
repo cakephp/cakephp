@@ -25,7 +25,7 @@ use TestApp\ServiceProvider\PersonServiceProvider;
  */
 class ServiceProviderTest extends TestCase
 {
-    public function testBootstrapHook()
+    public function testBootstrapHook(): void
     {
         $container = new Container();
         $container->addServiceProvider(new PersonServiceProvider());
@@ -37,7 +37,7 @@ class ServiceProviderTest extends TestCase
         $this->assertSame('boot', $container->get('boot')->name);
     }
 
-    public function testServicesHook()
+    public function testServicesHook(): void
     {
         $container = new Container();
         $container->addServiceProvider(new PersonServiceProvider());

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchemaDialect;
@@ -32,10 +33,8 @@ class SqlserverSchemaTest extends TestCase
 {
     /**
      * Helper method for skipping tests that need a real connection.
-     *
-     * @return void
      */
-    protected function _needsConnection()
+    protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') === false, 'Not using Sqlserver for test config');
@@ -43,10 +42,8 @@ class SqlserverSchemaTest extends TestCase
 
     /**
      * Helper method for testing methods.
-     *
-     * @return void
      */
-    protected function _createTables(ConnectionInterface $connection)
+    protected function _createTables(ConnectionInterface $connection): void
     {
         $this->_needsConnection();
 
@@ -300,9 +297,8 @@ SQL;
      * Test parsing Sqlserver column types from field description.
      *
      * @dataProvider convertColumnProvider
-     * @return void
      */
-    public function testConvertColumn(string $type, ?int $length, ?int $precision, ?int $scale, array $expected)
+    public function testConvertColumn(string $type, ?int $length, ?int $precision, ?int $scale, array $expected): void
     {
         $field = [
             'name' => 'field',
@@ -333,10 +329,8 @@ SQL;
 
     /**
      * Test listing tables with Sqlserver
-     *
-     * @return void
      */
-    public function testListTables()
+    public function testListTables(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -350,10 +344,8 @@ SQL;
 
     /**
      * Test describing a table with Sqlserver
-     *
-     * @return void
      */
-    public function testDescribeTable()
+    public function testDescribeTable(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -495,10 +487,8 @@ SQL;
 
     /**
      * Test describing a table with postgres and composite keys
-     *
-     * @return void
      */
-    public function testDescribeTableCompositeKey()
+    public function testDescribeTableCompositeKey(): void
     {
         $this->_needsConnection();
         $connection = ConnectionManager::get('test');
@@ -522,10 +512,8 @@ SQL;
 
     /**
      * Test that describe accepts tablenames containing `schema.table`.
-     *
-     * @return void
      */
-    public function testDescribeWithSchemaName()
+    public function testDescribeWithSchemaName(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -538,10 +526,8 @@ SQL;
 
     /**
      * Test describing a table with indexes
-     *
-     * @return void
      */
-    public function testDescribeTableIndexes()
+    public function testDescribeTableIndexes(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -823,9 +809,8 @@ SQL;
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider
-     * @return void
      */
-    public function testColumnSql(string $name, array $data, string $expected)
+    public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchemaDialect($driver);
@@ -890,7 +875,7 @@ SQL;
      *
      * @dataProvider constraintSqlProvider
      */
-    public function testConstraintSql(string $name, array $data, string $expected)
+    public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchemaDialect($driver);
@@ -907,10 +892,8 @@ SQL;
 
     /**
      * Test the addConstraintSql method.
-     *
-     * @return void
      */
-    public function testAddConstraintSql()
+    public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -958,10 +941,8 @@ SQL;
 
     /**
      * Test the dropConstraintSql method.
-     *
-     * @return void
      */
-    public function testDropConstraintSql()
+    public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1009,10 +990,8 @@ SQL;
 
     /**
      * Integration test for converting a Schema\Table into MySQL table creates.
-     *
-     * @return void
      */
-    public function testCreateSql()
+    public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1085,10 +1064,8 @@ SQL;
 
     /**
      * test dropSql
-     *
-     * @return void
      */
-    public function testDropSql()
+    public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1105,10 +1082,8 @@ SQL;
 
     /**
      * Test truncateSql()
-     *
-     * @return void
      */
-    public function testTruncateSql()
+    public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1131,10 +1106,8 @@ SQL;
 
     /**
      * Get a schema instance with a mocked driver/pdo instances
-     *
-     * @return \Cake\Database\Driver
      */
-    protected function _getMockedDriver()
+    protected function _getMockedDriver(): Driver
     {
         $driver = new Sqlserver();
         $mock = $this->getMockBuilder(PDO::class)

@@ -41,8 +41,6 @@ class CellTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -56,8 +54,6 @@ class CellTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -68,10 +64,8 @@ class CellTest extends TestCase
 
     /**
      * Tests basic cell rendering.
-     *
-     * @return void
      */
-    public function testCellRender()
+    public function testCellRender(): void
     {
         $cell = $this->View->cell('Articles::teaserList');
         $render = "{$cell}";
@@ -89,10 +83,8 @@ class CellTest extends TestCase
 
     /**
      * Tests debug output.
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $cell = $this->View->cell('Articles::teaserList');
         $data = $cell->__debugInfo();
@@ -104,12 +96,10 @@ class CellTest extends TestCase
 
     /**
      * Test __toString() hitting an error when rendering views.
-     *
-     * @return void
      */
-    public function testCellImplictRenderWithError()
+    public function testCellImplictRenderWithError(): void
     {
-        $capture = function ($errno, $msg) {
+        $capture = function ($errno, $msg): void {
             restore_error_handler();
             $this->assertSame(E_USER_WARNING, $errno);
             $this->assertStringContainsString('Could not render cell - Cell template file', $msg);
@@ -126,10 +116,8 @@ class CellTest extends TestCase
      *
      * This test sets its own error handler, as PHPUnit won't convert
      * errors into exceptions when the caller is a __toString() method.
-     *
-     * @return void
      */
-    public function testCellWithArguments()
+    public function testCellWithArguments(): void
     {
         $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
         $render = "{$cell}";
@@ -138,10 +126,8 @@ class CellTest extends TestCase
 
     /**
      * Tests that cell runs default action when none is provided.
-     *
-     * @return void
      */
-    public function testDefaultCellAction()
+    public function testDefaultCellAction(): void
     {
         $appCell = $this->View->cell('Articles');
 
@@ -155,10 +141,8 @@ class CellTest extends TestCase
 
     /**
      * Tests that cell action setting the templatePath
-     *
-     * @return void
      */
-    public function testSettingCellTemplatePathFromAction()
+    public function testSettingCellTemplatePathFromAction(): void
     {
         $appCell = $this->View->cell('Articles::customTemplatePath');
 
@@ -169,10 +153,8 @@ class CellTest extends TestCase
 
     /**
      * Tests that cell action setting the template using the ViewBuilder renders the correct template
-     *
-     * @return void
      */
-    public function testSettingCellTemplateFromActionViewBuilder()
+    public function testSettingCellTemplateFromActionViewBuilder(): void
     {
         $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
 
@@ -182,10 +164,8 @@ class CellTest extends TestCase
 
     /**
      * Tests manual render() invocation.
-     *
-     * @return void
      */
-    public function testCellManualRender()
+    public function testCellManualRender(): void
     {
         /** @var \TestApp\View\Cell\ArticlesCell $cell */
         $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
@@ -197,10 +177,8 @@ class CellTest extends TestCase
 
     /**
      * Tests manual render() invocation with error
-     *
-     * @return void
      */
-    public function testCellManualRenderError()
+    public function testCellManualRenderError(): void
     {
         $cell = $this->View->cell('Articles');
 
@@ -223,10 +201,8 @@ class CellTest extends TestCase
 
     /**
      * Test rendering a cell with a theme.
-     *
-     * @return void
      */
-    public function testCellRenderThemed()
+    public function testCellRenderThemed(): void
     {
         $this->View->setTheme('TestTheme');
         $cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
@@ -237,10 +213,8 @@ class CellTest extends TestCase
 
     /**
      * Test that a cell can render a plugin view.
-     *
-     * @return void
      */
-    public function testCellRenderPluginTemplate()
+    public function testCellRenderPluginTemplate(): void
     {
         $cell = $this->View->cell('Articles');
         $this->assertStringContainsString(
@@ -258,10 +232,8 @@ class CellTest extends TestCase
 
     /**
      * Tests that using plugin's cells works.
-     *
-     * @return void
      */
-    public function testPluginCell()
+    public function testPluginCell(): void
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
         $this->assertStringContainsString('hello world!', "{$cell}");
@@ -269,10 +241,8 @@ class CellTest extends TestCase
 
     /**
      * Tests that using namespaced cells works.
-     *
-     * @return void
      */
-    public function testNamespacedCell()
+    public function testNamespacedCell(): void
     {
         $cell = $this->View->cell('Admin/Menu');
         $this->assertStringContainsString('Admin Menu Cell', $cell->render());
@@ -280,10 +250,8 @@ class CellTest extends TestCase
 
     /**
      * Tests that using namespaced cells in plugins works
-     *
-     * @return void
      */
-    public function testPluginNamespacedCell()
+    public function testPluginNamespacedCell(): void
     {
         $cell = $this->View->cell('TestPlugin.Admin/Menu');
         $this->assertStringContainsString('Test Plugin Admin Menu Cell', $cell->render());
@@ -291,10 +259,8 @@ class CellTest extends TestCase
 
     /**
      * Test that plugin cells can render other view templates.
-     *
-     * @return void
      */
-    public function testPluginCellAlternateTemplate()
+    public function testPluginCellAlternateTemplate(): void
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
         $cell->viewBuilder()->setTemplate('../../element/translate');
@@ -303,10 +269,8 @@ class CellTest extends TestCase
 
     /**
      * Test that plugin cells can render other view templates.
-     *
-     * @return void
      */
-    public function testPluginCellAlternateTemplateRenderParam()
+    public function testPluginCellAlternateTemplateRenderParam(): void
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
         $result = $cell->render('../../element/translate');
@@ -315,10 +279,8 @@ class CellTest extends TestCase
 
     /**
      * Tests that using an nonexistent cell throws an exception.
-     *
-     * @return void
      */
-    public function testNonExistentCell()
+    public function testNonExistentCell(): void
     {
         $this->expectException(\Cake\View\Exception\MissingCellException::class);
         $cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
@@ -327,10 +289,8 @@ class CellTest extends TestCase
 
     /**
      * Tests missing method errors
-     *
-     * @return void
      */
-    public function testCellMissingMethod()
+    public function testCellMissingMethod(): void
     {
         $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.');
@@ -340,10 +300,8 @@ class CellTest extends TestCase
 
     /**
      * Test that cell options are passed on.
-     *
-     * @return void
      */
-    public function testCellOptions()
+    public function testCellOptions(): void
     {
         $cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
         $this->assertSame(10, $cell->limit);
@@ -352,10 +310,8 @@ class CellTest extends TestCase
 
     /**
      * Test that cells get the helper configuration from the view that created them.
-     *
-     * @return void
      */
-    public function testCellInheritsHelperConfig()
+    public function testCellInheritsHelperConfig(): void
     {
         $request = new ServerRequest();
         $response = new Response();
@@ -369,10 +325,8 @@ class CellTest extends TestCase
 
     /**
      * Test that cells the view class name of a custom view passed on.
-     *
-     * @return void
      */
-    public function testCellInheritsCustomViewClass()
+    public function testCellInheritsCustomViewClass(): void
     {
         $request = new ServerRequest();
         $response = new Response();
@@ -385,10 +339,8 @@ class CellTest extends TestCase
 
     /**
      * Test that cells the view class name of a controller passed on.
-     *
-     * @return void
      */
-    public function testCellInheritsController()
+    public function testCellInheritsController(): void
     {
         $request = new ServerRequest();
         $response = new Response();
@@ -402,10 +354,8 @@ class CellTest extends TestCase
 
     /**
      * Test cached render.
-     *
-     * @return void
      */
-    public function testCachedRenderSimple()
+    public function testCachedRenderSimple(): void
     {
         Cache::setConfig('default', ['className' => 'Array']);
 
@@ -421,10 +371,8 @@ class CellTest extends TestCase
 
     /**
      * Test read cached cell.
-     *
-     * @return void
      */
-    public function testReadCachedCell()
+    public function testReadCachedCell(): void
     {
         Cache::setConfig('default', ['className' => 'Array']);
         Cache::write('cell_test_app_view_cell_articles_cell_display_default', 'from cache');
@@ -437,10 +385,8 @@ class CellTest extends TestCase
 
     /**
      * Test cached render array config
-     *
-     * @return void
      */
-    public function testCachedRenderArrayConfig()
+    public function testCachedRenderArrayConfig(): void
     {
         Cache::setConfig('cell', ['className' => 'Array']);
         Cache::write('my_key', 'from cache', 'cell');
@@ -455,10 +401,8 @@ class CellTest extends TestCase
 
     /**
      * Test cached render when using an action changing the template used
-     *
-     * @return void
      */
-    public function testCachedRenderSimpleCustomTemplate()
+    public function testCachedRenderSimpleCustomTemplate(): void
     {
         Cache::setConfig('default', ['className' => 'Array']);
 
@@ -475,10 +419,8 @@ class CellTest extends TestCase
     /**
      * Test that when the cell cache is enabled, the cell action is only invoke the first
      * time the cell is rendered
-     *
-     * @return void
      */
-    public function testCachedRenderSimpleCustomTemplateViewBuilder()
+    public function testCachedRenderSimpleCustomTemplateViewBuilder(): void
     {
         Cache::setConfig('default', ['className' => 'Array']);
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
@@ -494,10 +436,8 @@ class CellTest extends TestCase
     /**
      * Test that when the cell cache is enabled, the cell action is only invoke the first
      * time the cell is rendered
-     *
-     * @return void
      */
-    public function testACachedViewCellReRendersWhenGivenADifferentTemplate()
+    public function testACachedViewCellReRendersWhenGivenADifferentTemplate(): void
     {
         Cache::setConfig('default', ['className' => 'Array']);
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);

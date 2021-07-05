@@ -19,9 +19,8 @@ class TestBeforeAfterHelper extends Helper
      * beforeLayout method
      *
      * @param string $viewFile View file name.
-     * @return void
      */
-    public function beforeLayout(EventInterface $event, string $viewFile)
+    public function beforeLayout(EventInterface $event, string $viewFile): void
     {
         $this->property = 'Valuation';
     }
@@ -30,9 +29,8 @@ class TestBeforeAfterHelper extends Helper
      * afterLayout method
      *
      * @param string $layoutFile Layout file name.
-     * @return void
      */
-    public function afterLayout(EventInterface $event, string $layoutFile)
+    public function afterLayout(EventInterface $event, string $layoutFile): void
     {
         $this->_View->append('content', 'modified in the afterlife');
     }

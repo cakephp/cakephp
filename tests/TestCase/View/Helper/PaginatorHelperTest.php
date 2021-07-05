@@ -47,8 +47,6 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -89,8 +87,6 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -102,10 +98,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test the templates method.
-     *
-     * @return void
      */
-    public function testTemplates()
+    public function testTemplates(): void
     {
         $result = $this->Paginator->setTemplates([
             'test' => 'val',
@@ -125,10 +119,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testHasPrevious method
-     *
-     * @return void
      */
-    public function testHasPrevious()
+    public function testHasPrevious(): void
     {
         $this->assertFalse($this->Paginator->hasPrev());
         $this->setPagingParams(['Article' => [
@@ -139,10 +131,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testHasNext method
-     *
-     * @return void
      */
-    public function testHasNext()
+    public function testHasNext(): void
     {
         $this->assertTrue($this->Paginator->hasNext());
         $this->setPagingParams(['Article' => [
@@ -153,10 +143,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testSortLinks method
-     *
-     * @return void
      */
-    public function testSortLinks()
+    public function testSortLinks(): void
     {
         $request = new ServerRequest([
             'url' => '/accounts/',
@@ -321,7 +309,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * test sort() with escape option
      */
-    public function testSortEscape()
+    public function testSortEscape(): void
     {
         $result = $this->Paginator->sort('title', 'TestTitle >');
         $expected = [
@@ -345,10 +333,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test that sort() works with virtual field order options.
-     *
-     * @return void
      */
-    public function testSortLinkWithVirtualField()
+    public function testSortLinkWithVirtualField(): void
     {
         $request = new ServerRequest([
             'url' => '/accounts/',
@@ -408,10 +394,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testSortLinksUsingDirectionOption method
-     *
-     * @return void
      */
-    public function testSortLinksUsingDirectionOption()
+    public function testSortLinksUsingDirectionOption(): void
     {
         $request = new ServerRequest([
             'url' => '/accounts/',
@@ -444,10 +428,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testSortLinksUsingDotNotation method
-     *
-     * @return void
      */
-    public function testSortLinksUsingDotNotation()
+    public function testSortLinksUsingDotNotation(): void
     {
         $request = new ServerRequest([
             'url' => '/accounts/',
@@ -518,10 +500,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test multiple pagination sort links
-     *
-     * @return void
      */
-    public function testSortLinksMultiplePagination()
+    public function testSortLinksMultiplePagination(): void
     {
         $request = new ServerRequest([
             'url' => '/accounts/',
@@ -578,10 +558,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test creating paging links for missing models.
-     *
-     * @return void
      */
-    public function testPagingLinksMissingModel()
+    public function testPagingLinksMissingModel(): void
     {
         $result = $this->Paginator->sort('title', 'Title', ['model' => 'Missing']);
         $expected = [
@@ -614,10 +592,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testSortKey method
-     *
-     * @return void
      */
-    public function testSortKey()
+    public function testSortKey(): void
     {
         $result = $this->Paginator->sortKey('Article', ['sort' => 'Article.title']);
         $this->assertSame('Article.title', $result);
@@ -629,10 +605,8 @@ class PaginatorHelperTest extends TestCase
     /**
      * Test that sortKey falls back to the default sorting options set
      * in the $params which are the default pagination options.
-     *
-     * @return void
      */
-    public function testSortKeyFallbackToParams()
+    public function testSortKeyFallbackToParams(): void
     {
         $this->setPagingParams([
             'Article' => [
@@ -660,10 +634,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testSortDir method
-     *
-     * @return void
      */
-    public function testSortDir()
+    public function testSortDir(): void
     {
         $result = $this->Paginator->sortDir();
         $expected = 'asc';
@@ -723,10 +695,8 @@ class PaginatorHelperTest extends TestCase
     /**
      * Test that sortDir falls back to the default sorting options set
      * in the $params which are the default pagination options.
-     *
-     * @return void
      */
-    public function testSortDirFallbackToParams()
+    public function testSortDirFallbackToParams(): void
     {
         $this->setPagingParams([
             'Article' => [
@@ -757,10 +727,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testSortAdminLinks method
-     *
-     * @return void
      */
-    public function testSortAdminLinks()
+    public function testSortAdminLinks(): void
     {
         Router::reload();
         Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
@@ -811,10 +779,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test that generated URLs work without sort defined within the request
-     *
-     * @return void
      */
-    public function testDefaultSortAndNoSort()
+    public function testDefaultSortAndNoSort(): void
     {
         $request = new ServerRequest([
             'url' => '/articles/index',
@@ -847,10 +813,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testUrlGeneration method
-     *
-     * @return void
      */
-    public function testUrlGeneration()
+    public function testUrlGeneration(): void
     {
         $result = $this->Paginator->sort('controller');
         $expected = [
@@ -912,7 +876,7 @@ class PaginatorHelperTest extends TestCase
      * @param string $expected
      * @dataProvider urlGenerationResetsToPage1Provider
      */
-    public function testUrlGenerationResetsToPage1($field, $options, $expected)
+    public function testUrlGenerationResetsToPage1($field, $options, $expected): void
     {
         $this->setPagingParams([
             'Article' => [
@@ -961,10 +925,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test URL generation with prefix routes
-     *
-     * @return void
      */
-    public function testGenerateUrlWithPrefixes()
+    public function testGenerateUrlWithPrefixes(): void
     {
         Router::reload();
         Router::connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
@@ -1038,10 +1000,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test URL generation can leave prefix routes
-     *
-     * @return void
      */
-    public function testGenerateUrlWithPrefixesLeavePrefix()
+    public function testGenerateUrlWithPrefixesLeavePrefix(): void
     {
         Router::reload();
         Router::connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
@@ -1079,10 +1039,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test generateUrl with multiple pagination
-     *
-     * @return void
      */
-    public function testGenerateUrlMultiplePagination()
+    public function testGenerateUrlMultiplePagination(): void
     {
         $request = new ServerRequest([
             'url' => '/Posts/index',
@@ -1146,10 +1104,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test generateUrl with multiple pagination and query string values
-     *
-     * @return void
      */
-    public function testGenerateUrlMultiplePaginationQueryStringData()
+    public function testGenerateUrlMultiplePaginationQueryStringData(): void
     {
         $request = new ServerRequest([
             'url' => '/Posts/index',
@@ -1187,10 +1143,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testOptions method
-     *
-     * @return void
      */
-    public function testOptions()
+    public function testOptions(): void
     {
         $this->Paginator->options = [];
         $this->View->setRequest($this->View->getRequest()->withAttribute('params', []));
@@ -1231,10 +1185,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testPassedArgsMergingWithUrlOptions method
-     *
-     * @return void
      */
-    public function testPassedArgsMergingWithUrlOptions()
+    public function testPassedArgsMergingWithUrlOptions(): void
     {
         $request = new ServerRequest([
             'url' => '/articles/',
@@ -1290,10 +1242,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test that generated URLs don't include sort and direction parameters
-     *
-     * @return void
      */
-    public function testDefaultSortRemovedFromUrl()
+    public function testDefaultSortRemovedFromUrl(): void
     {
         $request = new ServerRequest([
             'url' => '/Articles/',
@@ -1324,10 +1274,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Tests that generated default order URL doesn't include sort and direction parameters.
-     *
-     * @return void
      */
-    public function testDefaultSortRemovedFromUrlWithAliases()
+    public function testDefaultSortRemovedFromUrlWithAliases(): void
     {
         $request = new ServerRequest([
             'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
@@ -1357,10 +1305,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test the prev() method.
-     *
-     * @return void
      */
-    public function testPrev()
+    public function testPrev(): void
     {
         $this->setPagingParams([
             'Client' => [
@@ -1424,10 +1370,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test that prev() and the shared implementation underneath picks up from options
-     *
-     * @return void
      */
-    public function testPrevWithOptions()
+    public function testPrevWithOptions(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -1450,10 +1394,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the next() method.
-     *
-     * @return void
      */
-    public function testNext()
+    public function testNext(): void
     {
         $result = $this->Paginator->next('Next >>');
         $expected = [
@@ -1490,10 +1432,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test next() with disabled links
-     *
-     * @return void
      */
-    public function testNextDisabled()
+    public function testNextDisabled(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -1531,10 +1471,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test next() with a model argument.
-     *
-     * @return void
      */
-    public function testNextAndPrevNonDefaultModel()
+    public function testNextAndPrevNonDefaultModel(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -1593,10 +1531,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testNumbers method
-     *
-     * @return void
      */
-    public function testNumbers()
+    public function testNumbers(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Article' => [
@@ -1877,10 +1813,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test for URLs with paging params as route placeholders instead of query string params.
-     *
-     * @return void
      */
-    public function testRoutePlaceholder()
+    public function testRoutePlaceholder(): void
     {
         Router::reload();
         Router::connect('/{controller}/{action}/{page}');
@@ -1936,10 +1870,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testNumbersPages method
-     *
-     * @return void
      */
-    public function testNumbersMulti()
+    public function testNumbersMulti(): void
     {
         $expected = [
             1 => '*1 2 3 4 5 6 7 ',
@@ -2126,7 +2058,7 @@ class PaginatorHelperTest extends TestCase
      * @param array $options Options for PaginatorHelper::numbers
      * @return string[]
      */
-    protected function getNumbersForMultiplePages($pagesToCheck, $pageCount, $options = [])
+    protected function getNumbersForMultiplePages($pagesToCheck, $pageCount, $options = []): array
     {
         $options['templates'] = [
             'first' => '<{{text}} ',
@@ -2157,10 +2089,8 @@ class PaginatorHelperTest extends TestCase
      * Test that numbers() lets you overwrite templates.
      *
      * The templates file has no li elements.
-     *
-     * @return void
      */
-    public function testNumbersTemplates()
+    public function testNumbersTemplates(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -2195,10 +2125,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test modulus option for numbers()
-     *
-     * @return void
      */
-    public function testNumbersModulus()
+    public function testNumbersModulus(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -2382,10 +2310,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test modulus option for numbers()
-     *
-     * @return void
      */
-    public function testNumbersModulusMulti()
+    public function testNumbersModulusMulti(): void
     {
         $expected = [
             1 => '*1 2 3 4 ',
@@ -2457,10 +2383,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Tests that disabling modulus displays all page links.
-     *
-     * @return void
      */
-    public function testModulusDisabled()
+    public function testModulusDisabled(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -2487,10 +2411,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test that numbers() with url options.
-     *
-     * @return void
      */
-    public function testNumbersWithUrlOptions()
+    public function testNumbersWithUrlOptions(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -2545,10 +2467,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test numbers() with routing parameters.
-     *
-     * @return void
      */
-    public function testNumbersRouting()
+    public function testNumbersRouting(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -2578,10 +2498,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test that numbers() works with the non default model.
-     *
-     * @return void
      */
-    public function testNumbersNonDefaultModel()
+    public function testNumbersNonDefaultModel(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -2612,10 +2530,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test first() and last() with tag options
-     *
-     * @return void
      */
-    public function testFirstAndLastTag()
+    public function testFirstAndLastTag(): void
     {
         $this->setPagingParams(['Article' => [
             'page' => 2,
@@ -2674,10 +2590,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test that on the last page you don't get a link ot the last page.
-     *
-     * @return void
      */
-    public function testLastNoOutput()
+    public function testLastNoOutput(): void
     {
         $this->setPagingParams(['Article' => [
             'page' => 15,
@@ -2691,10 +2605,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test first() with a the model parameter.
-     *
-     * @return void
      */
-    public function testFirstNonDefaultModel()
+    public function testFirstNonDefaultModel(): void
     {
         $this->setPagingParams([
             'Article' => ['page' => 1],
@@ -2724,10 +2636,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test first() on the first page.
-     *
-     * @return void
      */
-    public function testFirstEmpty()
+    public function testFirstEmpty(): void
     {
         $this->View->setRequest($this->View->getRequest()->withParam('paging.Article.page', 1));
 
@@ -2738,10 +2648,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test first() and options()
-     *
-     * @return void
      */
-    public function testFirstFullBaseUrl()
+    public function testFirstFullBaseUrl(): void
     {
         $this->setPagingParams(['Article' => [
             'page' => 3,
@@ -2766,10 +2674,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test first() on the fence-post
-     *
-     * @return void
      */
-    public function testFirstBoundaries()
+    public function testFirstBoundaries(): void
     {
         $this->setPagingParams(['Article' => ['page' => 3]]);
         $result = $this->Paginator->first();
@@ -2802,10 +2708,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test params() method
-     *
-     * @return void
      */
-    public function testParams()
+    public function testParams(): void
     {
         $result = $this->Paginator->params();
         $this->assertArrayHasKey('page', $result);
@@ -2817,10 +2721,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test param() method
-     *
-     * @return void
      */
-    public function testParam()
+    public function testParam(): void
     {
         $result = $this->Paginator->param('count');
         $this->assertSame(62, $result);
@@ -2831,10 +2733,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test last() method
-     *
-     * @return void
      */
-    public function testLast()
+    public function testLast(): void
     {
         $result = $this->Paginator->last();
         $expected = [
@@ -2885,10 +2785,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the options for last()
-     *
-     * @return void
      */
-    public function testLastOptions()
+    public function testLastOptions(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -2936,10 +2834,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test last() with a the model parameter.
-     *
-     * @return void
      */
-    public function testLastNonDefaultModel()
+    public function testLastNonDefaultModel(): void
     {
         $this->setPagingParams([
             'Article' => ['page' => 7],
@@ -2969,10 +2865,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testCounter method
-     *
-     * @return void
      */
-    public function testCounter()
+    public function testCounter(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -3012,10 +2906,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Tests that numbers are formatted according to the locale when using counter()
-     *
-     * @return void
      */
-    public function testCounterBigNumbers()
+    public function testCounterBigNumbers(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Client' => [
@@ -3051,10 +2943,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testHasPage method
-     *
-     * @return void
      */
-    public function testHasPage()
+    public function testHasPage(): void
     {
         $result = $this->Paginator->hasPage(15, 'Article');
         $this->assertFalse($result);
@@ -3071,10 +2961,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * testNextLinkUsingDotNotation method
-     *
-     * @return void
      */
-    public function testNextLinkUsingDotNotation()
+    public function testNextLinkUsingDotNotation(): void
     {
         $request = new ServerRequest([
             'url' => '/Accounts/index',
@@ -3117,10 +3005,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the current() method
-     *
-     * @return void
      */
-    public function testCurrent()
+    public function testCurrent(): void
     {
         $result = $this->Paginator->current();
         $params = $this->View->getRequest()->getAttribute('paging');
@@ -3132,10 +3018,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the total() method
-     *
-     * @return void
      */
-    public function testTotal()
+    public function testTotal(): void
     {
         $result = $this->Paginator->total();
         $params = $this->View->getRequest()->getAttribute('paging');
@@ -3147,10 +3031,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the defaultModel() method
-     *
-     * @return void
      */
-    public function testNoDefaultModel()
+    public function testNoDefaultModel(): void
     {
         $this->View->setRequest(new ServerRequest());
         $this->assertNull($this->Paginator->defaultModel());
@@ -3164,10 +3046,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the numbers() method when there is only one page
-     *
-     * @return void
      */
-    public function testWithOnePage()
+    public function testWithOnePage(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Article' => [
@@ -3186,10 +3066,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the numbers() method when there is only one page
-     *
-     * @return void
      */
-    public function testWithZeroPages()
+    public function testWithZeroPages(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Article' => [
@@ -3266,7 +3144,7 @@ class PaginatorHelperTest extends TestCase
      * @param string $expected
      * @dataProvider dataMetaProvider
      */
-    public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected)
+    public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
             'Article' => [
@@ -3292,10 +3170,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the limitControl() method
-     *
-     * @return void
      */
-    public function testLimitControl()
+    public function testLimitControl(): void
     {
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
@@ -3383,10 +3259,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the limitControl() method with defaults and query
-     *
-     * @return void
      */
-    public function testLimitControlQuery()
+    public function testLimitControlQuery(): void
     {
         $out = $this->Paginator->limitControl([], 50);
         $expected = [
@@ -3438,10 +3312,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test using paging params set by SimplePaginator which doesn't do count query.
-     *
-     * @return void
      */
-    public function testMethodsWhenThereIsNoPageCount()
+    public function testMethodsWhenThereIsNoPageCount(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -3491,7 +3363,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * @param mixed $params
      */
-    protected function setPagingParams($params, bool $merge = true)
+    protected function setPagingParams($params, bool $merge = true): void
     {
         if ($merge) {
             $params = Hash::merge($this->View->getRequest()->getAttribute('paging'), $params);
@@ -3501,10 +3373,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * Test that generates a URL that keeps the passed parameters
-     *
-     * @return void
      */
-    public function testPaginationWithPassedParams()
+    public function testPaginationWithPassedParams(): void
     {
         $request = new ServerRequest([
             'url' => '/articles/index/whatever/3',

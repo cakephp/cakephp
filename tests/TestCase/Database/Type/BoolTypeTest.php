@@ -37,8 +37,6 @@ class BoolTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,10 +47,8 @@ class BoolTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $this->assertNull($this->type->toDatabase(null, $this->driver));
         $this->assertTrue($this->type->toDatabase(true, $this->driver));
@@ -65,10 +61,8 @@ class BoolTypeTest extends TestCase
 
     /**
      * Test converting an array to boolean results in an exception
-     *
-     * @return void
      */
-    public function testToDatabaseInvalid()
+    public function testToDatabaseInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase([1, 2], $this->driver);
@@ -76,10 +70,8 @@ class BoolTypeTest extends TestCase
 
     /**
      * Tests that passing an invalid value will throw an exception
-     *
-     * @return void
      */
-    public function testToDatabaseInvalidArray()
+    public function testToDatabaseInvalidArray(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase([1, 2, 3], $this->driver);
@@ -87,10 +79,8 @@ class BoolTypeTest extends TestCase
 
     /**
      * Test converting string booleans to PHP values.
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertTrue($this->type->toPHP(1, $this->driver));
@@ -108,10 +98,8 @@ class BoolTypeTest extends TestCase
 
     /**
      * Test converting string booleans to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -143,10 +131,8 @@ class BoolTypeTest extends TestCase
 
     /**
      * Test marshalling booleans
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $this->assertNull($this->type->marshal(null));
         $this->assertTrue($this->type->marshal(true));
@@ -167,10 +153,8 @@ class BoolTypeTest extends TestCase
 
     /**
      * Test converting booleans to PDO types.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_NULL, $this->type->toStatement(null, $this->driver));
         $this->assertSame(PDO::PARAM_BOOL, $this->type->toStatement(true, $this->driver));

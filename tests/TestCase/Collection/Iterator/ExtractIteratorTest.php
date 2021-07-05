@@ -27,10 +27,8 @@ class ExtractIteratorTest extends TestCase
 {
     /**
      * Tests it is possible to extract a column in the first level of an array
-     *
-     * @return void
      */
-    public function testExtractFromArrayShallow()
+    public function testExtractFromArrayShallow(): void
     {
         $items = [
             ['a' => 1, 'b' => 2],
@@ -48,10 +46,8 @@ class ExtractIteratorTest extends TestCase
 
     /**
      * Tests it is possible to extract a column in the first level of an object
-     *
-     * @return void
      */
-    public function testExtractFromObjectShallow()
+    public function testExtractFromObjectShallow(): void
     {
         $items = [
             new ArrayObject(['a' => 1, 'b' => 2]),
@@ -69,10 +65,8 @@ class ExtractIteratorTest extends TestCase
 
     /**
      * Tests it is possible to extract a column deeply nested in the structure
-     *
-     * @return void
      */
-    public function testExtractFromArrayDeep()
+    public function testExtractFromArrayDeep(): void
     {
         $items = [
             ['a' => ['b' => ['c' => 10]], 'b' => 2],
@@ -86,10 +80,8 @@ class ExtractIteratorTest extends TestCase
 
     /**
      * Tests that it is possible to pass a callable as the extractor.
-     *
-     * @return void
      */
-    public function testExtractWithCallable()
+    public function testExtractWithCallable(): void
     {
         $items = [
             ['a' => 1, 'b' => 2],

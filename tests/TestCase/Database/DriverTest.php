@@ -50,10 +50,8 @@ class DriverTest extends TestCase
     /**
      * Test if building the object throws an exception if we're not passing
      * required config data.
-     *
-     * @return void
      */
-    public function testConstructorException()
+    public function testConstructorException(): void
     {
         $arg = ['login' => 'Bear'];
         try {
@@ -68,10 +66,8 @@ class DriverTest extends TestCase
 
     /**
      * Test the constructor.
-     *
-     * @return void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $arg = ['quoteIdentifiers' => true];
         $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
@@ -86,10 +82,8 @@ class DriverTest extends TestCase
 
     /**
      * Test supportsSavePoints().
-     *
-     * @return void
      */
-    public function testSupportsSavePoints()
+    public function testSupportsSavePoints(): void
     {
         $result = $this->driver->supportsSavePoints();
         $this->assertTrue($result);
@@ -97,10 +91,8 @@ class DriverTest extends TestCase
 
     /**
      * Test supportsQuoting().
-     *
-     * @return void
      */
-    public function testSupportsQuoting()
+    public function testSupportsQuoting(): void
     {
         $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
@@ -125,9 +117,8 @@ class DriverTest extends TestCase
      *
      * @dataProvider schemaValueProvider
      * @param mixed $input
-     * @return void
      */
-    public function testSchemaValue($input, string $expected)
+    public function testSchemaValue($input, string $expected): void
     {
         $result = $this->driver->schemaValue($input);
         $this->assertSame($expected, $result);
@@ -136,10 +127,8 @@ class DriverTest extends TestCase
     /**
      * Test schemaValue().
      * Asserting that quote() is being called because none of the conditions were met before.
-     *
-     * @return void
      */
-    public function testSchemaValueConnectionQuoting()
+    public function testSchemaValueConnectionQuoting(): void
     {
         $value = 'string';
 
@@ -160,10 +149,8 @@ class DriverTest extends TestCase
 
     /**
      * Test lastInsertId().
-     *
-     * @return void
      */
-    public function testLastInsertId()
+    public function testLastInsertId(): void
     {
         $connection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
@@ -181,10 +168,8 @@ class DriverTest extends TestCase
 
     /**
      * Test isConnected().
-     *
-     * @return void
      */
-    public function testIsConnected()
+    public function testIsConnected(): void
     {
         $this->assertFalse($this->driver->isConnected());
 
@@ -204,10 +189,8 @@ class DriverTest extends TestCase
 
     /**
      * test autoQuoting().
-     *
-     * @return void
      */
-    public function testAutoQuoting()
+    public function testAutoQuoting(): void
     {
         $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
@@ -220,10 +203,8 @@ class DriverTest extends TestCase
 
     /**
      * Test compileQuery().
-     *
-     * @return void
      */
-    public function testCompileQuery()
+    public function testCompileQuery(): void
     {
         $compiler = $this->getMockBuilder(QueryCompiler::class)
             ->onlyMethods(['compile'])
@@ -264,20 +245,16 @@ class DriverTest extends TestCase
 
     /**
      * Test newCompiler().
-     *
-     * @return void
      */
-    public function testNewCompiler()
+    public function testNewCompiler(): void
     {
         $this->assertInstanceOf(QueryCompiler::class, $this->driver->newCompiler());
     }
 
     /**
      * Test newTableSchema().
-     *
-     * @return void
      */
-    public function testNewTableSchema()
+    public function testNewTableSchema(): void
     {
         $tableName = 'articles';
         $actual = $this->driver->newTableSchema($tableName);
@@ -287,10 +264,8 @@ class DriverTest extends TestCase
 
     /**
      * Test __destruct().
-     *
-     * @return void
      */
-    public function testDestructor()
+    public function testDestructor(): void
     {
         $this->driver->setConnection(true);
         $this->driver->__destruct();

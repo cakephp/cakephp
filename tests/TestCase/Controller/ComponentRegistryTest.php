@@ -37,8 +37,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,8 +47,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -61,8 +57,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * test triggering callbacks on loaded helpers
-     *
-     * @return void
      */
     public function testLoad(): void
     {
@@ -79,8 +73,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Tests loading as an alias
-     *
-     * @return void
      */
     public function testLoadWithAlias(): void
     {
@@ -106,8 +98,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * test load and enable = false
-     *
-     * @return void
      */
     public function testLoadWithEnableFalse(): void
     {
@@ -124,8 +114,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * test MissingComponent exception
-     *
-     * @return void
      */
     public function testLoadMissingComponent(): void
     {
@@ -135,8 +123,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * test loading a plugin component.
-     *
-     * @return void
      */
     public function testLoadPluginComponent(): void
     {
@@ -148,8 +134,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test loading components with aliases and plugins.
-     *
-     * @return void
      */
     public function testLoadWithAliasAndPlugin(): void
     {
@@ -164,8 +148,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * test getting the controller out of the collection
-     *
-     * @return void
      */
     public function testGetController(): void
     {
@@ -175,8 +157,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test reset.
-     *
-     * @return void
      */
     public function testReset(): void
     {
@@ -197,8 +177,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test unloading.
-     *
-     * @return void
      */
     public function testUnload(): void
     {
@@ -214,8 +192,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test __unset.
-     *
-     * @return void
      */
     public function testUnset(): void
     {
@@ -230,8 +206,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test that unloading a none existing component triggers an error.
-     *
-     * @return void
      */
     public function testUnloadUnknown(): void
     {
@@ -242,8 +216,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test set.
-     *
-     * @return void
      */
     public function testSet(): void
     {
@@ -260,8 +232,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test __set.
-     *
-     * @return void
      */
     public function testMagicSet(): void
     {
@@ -277,8 +247,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test Countable.
-     *
-     * @return void
      */
     public function testCountable(): void
     {
@@ -290,8 +258,6 @@ class ComponentRegistryTest extends TestCase
 
     /**
      * Test Traversable.
-     *
-     * @return void
      */
     public function testTraversable(): void
     {

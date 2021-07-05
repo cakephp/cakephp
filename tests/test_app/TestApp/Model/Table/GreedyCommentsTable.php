@@ -15,7 +15,6 @@ class GreedyCommentsTable extends Table
      * initialize hook
      *
      * @param array $config Config data.
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -28,7 +27,6 @@ class GreedyCommentsTable extends Table
      *
      * @param string $type Find type
      * @param array $options find options
-     * @return \Cake\ORM\Query
      */
     public function find(string $type = 'all', $options = []): Query
     {

@@ -35,8 +35,6 @@ class LocaleSelectorMiddlewareTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,8 +44,6 @@ class LocaleSelectorMiddlewareTest extends TestCase
 
     /**
      * Resets the default locale
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -58,10 +54,8 @@ class LocaleSelectorMiddlewareTest extends TestCase
     /**
      * The default locale should not change when there are no accepted
      * locales.
-     *
-     * @return void
      */
-    public function testInvokeNoAcceptedLocales()
+    public function testInvokeNoAcceptedLocales(): void
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new LocaleSelectorMiddleware([]);
@@ -76,10 +70,8 @@ class LocaleSelectorMiddlewareTest extends TestCase
 
     /**
      * The default locale should not change when the request locale is not accepted
-     *
-     * @return void
      */
-    public function testInvokeLocaleNotAccepted()
+    public function testInvokeLocaleNotAccepted(): void
     {
         $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'en-GB,en;q=0.8,es;q=0.6,da;q=0.4']);
         $middleware = new LocaleSelectorMiddleware(['en_CA', 'en_US', 'es']);
@@ -89,10 +81,8 @@ class LocaleSelectorMiddlewareTest extends TestCase
 
     /**
      * The default locale should change when the request locale is accepted
-     *
-     * @return void
      */
-    public function testInvokeLocaleAccepted()
+    public function testInvokeLocaleAccepted(): void
     {
         $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'es,es-ES;q=0.8,da;q=0.4']);
         $middleware = new LocaleSelectorMiddleware(['en_CA', 'es']);
@@ -102,10 +92,8 @@ class LocaleSelectorMiddlewareTest extends TestCase
 
     /**
      * The default locale should change when the request locale has an accepted fallback option
-     *
-     * @return void
      */
-    public function testInvokeLocaleAcceptedFallback()
+    public function testInvokeLocaleAcceptedFallback(): void
     {
         $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'es-ES;q=0.8,da;q=0.4']);
         $middleware = new LocaleSelectorMiddleware(['en_CA', 'es']);
@@ -115,10 +103,8 @@ class LocaleSelectorMiddlewareTest extends TestCase
 
     /**
      * The default locale should change when the '*' is accepted
-     *
-     * @return void
      */
-    public function testInvokeLocaleAcceptAll()
+    public function testInvokeLocaleAcceptAll(): void
     {
         $middleware = new LocaleSelectorMiddleware(['*']);
 

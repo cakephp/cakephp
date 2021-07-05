@@ -27,10 +27,8 @@ class TranslateTraitTest extends TestCase
 {
     /**
      * Tests that missing translation entries are created automatically
-     *
-     * @return void
      */
-    public function testTranslationCreate()
+    public function testTranslationCreate(): void
     {
         $entity = new TranslateTestEntity();
         $entity->translation('eng')->set('title', 'My Title');
@@ -45,10 +43,8 @@ class TranslateTraitTest extends TestCase
 
     /**
      * Tests that modifying existing translation entries work
-     *
-     * @return void
      */
-    public function testTranslationModify()
+    public function testTranslationModify(): void
     {
         $entity = new TranslateTestEntity();
         $entity->set('_translations', [
@@ -61,10 +57,8 @@ class TranslateTraitTest extends TestCase
 
     /**
      * Tests empty translations.
-     *
-     * @return void
      */
-    public function testTranslationEmpty()
+    public function testTranslationEmpty(): void
     {
         $entity = new TranslateTestEntity();
         $entity->set('_translations', [
@@ -79,10 +73,8 @@ class TranslateTraitTest extends TestCase
      * Tests that just accessing the translation will mark the property as dirty, this
      * is to facilitate the saving process by not having to remember to mark the property
      * manually
-     *
-     * @return void
      */
-    public function testTranslationDirty()
+    public function testTranslationDirty(): void
     {
         $entity = new TranslateTestEntity();
         $entity->set('_translations', [

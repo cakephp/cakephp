@@ -56,10 +56,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * Sanity check Implemented events
-     *
-     * @return void
      */
-    public function testImplementedEventsDefault()
+    public function testImplementedEventsDefault(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -74,10 +72,8 @@ class TimestampBehaviorTest extends TestCase
      * testImplementedEventsCustom
      *
      * The behavior allows for handling any event - test an example
-     *
-     * @return void
      */
-    public function testImplementedEventsCustom()
+    public function testImplementedEventsCustom(): void
     {
         $table = $this->getTable();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
@@ -92,10 +88,9 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testCreatedAbsent
      *
-     * @return void
      * @triggers Model.beforeSave
      */
-    public function testCreatedAbsent()
+    public function testCreatedAbsent(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -114,10 +109,9 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testCreatedPresent
      *
-     * @return void
      * @triggers Model.beforeSave
      */
-    public function testCreatedPresent()
+    public function testCreatedPresent(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -136,10 +130,9 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testCreatedNotNew
      *
-     * @return void
      * @triggers Model.beforeSave
      */
-    public function testCreatedNotNew()
+    public function testCreatedNotNew(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -158,10 +151,9 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testModifiedAbsent
      *
-     * @return void
      * @triggers Model.beforeSave
      */
-    public function testModifiedAbsent()
+    public function testModifiedAbsent(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -181,10 +173,9 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testModifiedPresent
      *
-     * @return void
      * @triggers Model.beforeSave
      */
-    public function testModifiedPresent()
+    public function testModifiedPresent(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -205,10 +196,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * test that timestamp creation doesn't fail on missing columns
-     *
-     * @return void
      */
-    public function testModifiedMissingColumn()
+    public function testModifiedMissingColumn(): void
     {
         $table = $this->getTable();
         $table->getSchema()->removeColumn('created')->removeColumn('modified');
@@ -228,10 +217,9 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testUseImmutable
      *
-     * @return void
      * @triggers Model.beforeSave
      */
-    public function testUseImmutable()
+    public function testUseImmutable(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -253,10 +241,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * tests using non-DateTimeType throws runtime exception
-     *
-     * @return void
      */
-    public function testNonDateTimeTypeException()
+    public function testNonDateTimeTypeException(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('TimestampBehavior only supports columns of type DateTimeType.');
@@ -279,10 +265,9 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testInvalidEventConfig
      *
-     * @return void
      * @triggers Model.beforeSave
      */
-    public function testInvalidEventConfig()
+    public function testInvalidEventConfig(): void
     {
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid');
@@ -297,10 +282,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * testGetTimestamp
-     *
-     * @return void
      */
-    public function testGetTimestamp()
+    public function testGetTimestamp(): void
     {
         $table = $this->getTable();
         $behavior = new TimestampBehavior($table);
@@ -318,10 +301,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * testGetTimestampPersists
-     *
-     * @return void
      */
-    public function testGetTimestampPersists()
+    public function testGetTimestampPersists(): void
     {
         $table = $this->getTable();
         $behavior = new TimestampBehavior($table);
@@ -338,10 +319,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * testGetTimestampRefreshes
-     *
-     * @return void
      */
-    public function testGetTimestampRefreshes()
+    public function testGetTimestampRefreshes(): void
     {
         $table = $this->getTable();
         $behavior = new TimestampBehavior($table);
@@ -358,10 +337,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * testSetTimestampExplicit
-     *
-     * @return void
      */
-    public function testSetTimestampExplicit()
+    public function testSetTimestampExplicit(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -379,10 +356,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * testTouch
-     *
-     * @return void
      */
-    public function testTouch()
+    public function testTouch(): void
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
@@ -402,10 +377,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * testTouchNoop
-     *
-     * @return void
      */
-    public function testTouchNoop()
+    public function testTouchNoop(): void
     {
         $table = $this->getTable();
         $config = [
@@ -429,10 +402,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * testTouchCustomEvent
-     *
-     * @return void
      */
-    public function testTouchCustomEvent()
+    public function testTouchCustomEvent(): void
     {
         $table = $this->getTable();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
@@ -453,10 +424,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * Test that calling save, triggers an insert including the created and updated field values
-     *
-     * @return void
      */
-    public function testSaveTriggersInsert()
+    public function testSaveTriggersInsert(): void
     {
         $this->loadFixtures('Users');
 
@@ -483,10 +452,8 @@ class TimestampBehaviorTest extends TestCase
 
     /**
      * Helper method to get Table instance with created/modified column
-     *
-     * @return \Cake\ORM\Table
      */
-    protected function getTable()
+    protected function getTable(): Table
     {
         $schema = [
             'created' => ['type' => 'datetime'],

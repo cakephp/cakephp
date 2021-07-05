@@ -31,10 +31,8 @@ class ClientTest extends TestCase
 {
     /**
      * Test storing config options and modifying them.
-     *
-     * @return void
      */
-    public function testConstructConfig()
+    public function testConstructConfig(): void
     {
         $config = [
             'scheme' => 'http',
@@ -66,10 +64,8 @@ class ClientTest extends TestCase
 
     /**
      * testAdapterInstanceCheck
-     *
-     * @return void
      */
-    public function testAdapterInstanceCheck()
+    public function testAdapterInstanceCheck(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Adapter must be an instance of Cake\Http\Client\AdapterInterface');
@@ -210,7 +206,7 @@ class ClientTest extends TestCase
     /**
      * @dataProvider urlProvider
      */
-    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts)
+    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts): void
     {
         $http = new Client();
 
@@ -220,10 +216,8 @@ class ClientTest extends TestCase
 
     /**
      * test simple get request with headers & cookies.
-     *
-     * @return void
      */
-    public function testGetSimpleWithHeadersAndCookies()
+    public function testGetSimpleWithHeadersAndCookies(): void
     {
         $response = new Response();
 
@@ -264,10 +258,8 @@ class ClientTest extends TestCase
 
     /**
      * test get request with no data
-     *
-     * @return void
      */
-    public function testGetNoData()
+    public function testGetNoData(): void
     {
         $response = new Response();
 
@@ -298,10 +290,8 @@ class ClientTest extends TestCase
 
     /**
      * test get request with querystring data
-     *
-     * @return void
      */
-    public function testGetQuerystring()
+    public function testGetQuerystring(): void
     {
         $response = new Response();
 
@@ -334,10 +324,8 @@ class ClientTest extends TestCase
 
     /**
      * test get request with string of query data.
-     *
-     * @return void
      */
-    public function testGetQuerystringString()
+    public function testGetQuerystringString(): void
     {
         $response = new Response();
 
@@ -371,10 +359,8 @@ class ClientTest extends TestCase
     /**
      * Test a GET with a request body. Services like
      * elasticsearch use this feature.
-     *
-     * @return void
      */
-    public function testGetWithContent()
+    public function testGetWithContent(): void
     {
         $response = new Response();
 
@@ -404,10 +390,8 @@ class ClientTest extends TestCase
 
     /**
      * Test invalid authentication types throw exceptions.
-     *
-     * @return void
      */
-    public function testInvalidAuthenticationType()
+    public function testInvalidAuthenticationType(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $mock = $this->getMockBuilder(Stream::class)
@@ -427,10 +411,8 @@ class ClientTest extends TestCase
 
     /**
      * Test setting basic authentication with get
-     *
-     * @return void
      */
-    public function testGetWithAuthenticationAndProxy()
+    public function testGetWithAuthenticationAndProxy(): void
     {
         $response = new Response();
 
@@ -486,9 +468,8 @@ class ClientTest extends TestCase
      * test simple POST request.
      *
      * @dataProvider methodProvider
-     * @return void
      */
-    public function testMethodsSimple(string $method)
+    public function testMethodsSimple(string $method): void
     {
         $response = new Response();
 
@@ -533,9 +514,8 @@ class ClientTest extends TestCase
      * Test that using the 'type' option sets the correct headers
      *
      * @dataProvider typeProvider
-     * @return void
      */
-    public function testPostWithTypeKey(string $type, string $mime)
+    public function testPostWithTypeKey(string $type, string $mime): void
     {
         $response = new Response();
         $data = 'some data';
@@ -567,10 +547,8 @@ class ClientTest extends TestCase
 
     /**
      * Test that string payloads with no content type have a default content-type set.
-     *
-     * @return void
      */
-    public function testPostWithStringDataDefaultsToFormEncoding()
+    public function testPostWithStringDataDefaultsToFormEncoding(): void
     {
         $response = new Response();
         $data = 'some=value&more=data';
@@ -599,10 +577,8 @@ class ClientTest extends TestCase
 
     /**
      * Test that exceptions are raised on invalid types.
-     *
-     * @return void
      */
-    public function testExceptionOnUnknownType()
+    public function testExceptionOnUnknownType(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $mock = $this->getMockBuilder(Stream::class)
@@ -620,10 +596,8 @@ class ClientTest extends TestCase
 
     /**
      * Test that Client stores cookies
-     *
-     * @return void
      */
-    public function testCookieStorage()
+    public function testCookieStorage(): void
     {
         $adapter = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
@@ -653,10 +627,8 @@ class ClientTest extends TestCase
 
     /**
      * Test cookieJar config option.
-     *
-     * @return void
      */
-    public function testCookieJar()
+    public function testCookieJar(): void
     {
         $jar = new CookieCollection();
         $http = new Client([
@@ -668,10 +640,8 @@ class ClientTest extends TestCase
 
     /**
      * Test addCookie() method.
-     *
-     * @return void
      */
-    public function testAddCookie()
+    public function testAddCookie(): void
     {
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '/', 'example.com');
@@ -684,10 +654,8 @@ class ClientTest extends TestCase
 
     /**
      * Test addCookie() method without a domain.
-     *
-     * @return void
      */
-    public function testAddCookieWithoutDomain()
+    public function testAddCookieWithoutDomain(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cookie must have a domain and a path set.');
@@ -702,10 +670,8 @@ class ClientTest extends TestCase
 
     /**
      * Test addCookie() method without a path.
-     *
-     * @return void
      */
-    public function testAddCookieWithoutPath()
+    public function testAddCookieWithoutPath(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cookie must have a domain and a path set.');
@@ -720,10 +686,8 @@ class ClientTest extends TestCase
 
     /**
      * test head request with querystring data
-     *
-     * @return void
      */
-    public function testHeadQuerystring()
+    public function testHeadQuerystring(): void
     {
         $response = new Response();
 
@@ -753,10 +717,8 @@ class ClientTest extends TestCase
 
     /**
      * test redirects
-     *
-     * @return void
      */
-    public function testRedirects()
+    public function testRedirects(): void
     {
         $url = 'http://cakephp.org';
 
@@ -838,10 +800,8 @@ class ClientTest extends TestCase
 
     /**
      * testSendRequest
-     *
-     * @return void
      */
-    public function testSendRequest()
+    public function testSendRequest(): void
     {
         $response = new Response();
 
@@ -881,10 +841,8 @@ class ClientTest extends TestCase
 
     /**
      * test redirect across sub domains
-     *
-     * @return void
      */
-    public function testRedirectDifferentSubDomains()
+    public function testRedirectDifferentSubDomains(): void
     {
         $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
             ->onlyMethods(['send'])
@@ -931,7 +889,7 @@ class ClientTest extends TestCase
     /**
      * Scheme is set when passed to client in string
      */
-    public function testCreateFromUrlSetsScheme()
+    public function testCreateFromUrlSetsScheme(): void
     {
         $client = Client::createFromUrl('https://example.co/');
         $this->assertSame('https', $client->getConfig('scheme'));
@@ -940,7 +898,7 @@ class ClientTest extends TestCase
     /**
      * Host is set when passed to client in string
      */
-    public function testCreateFromUrlSetsHost()
+    public function testCreateFromUrlSetsHost(): void
     {
         $client = Client::createFromUrl('https://example.co/');
         $this->assertSame('example.co', $client->getConfig('host'));
@@ -949,7 +907,7 @@ class ClientTest extends TestCase
     /**
      * basePath is set when passed to client in string
      */
-    public function testCreateFromUrlSetsBasePath()
+    public function testCreateFromUrlSetsBasePath(): void
     {
         $client = Client::createFromUrl('https://example.co/api/v1');
         $this->assertSame('/api/v1', $client->getConfig('basePath'));
@@ -958,7 +916,7 @@ class ClientTest extends TestCase
     /**
      * Test exception is thrown when URL cannot be parsed
      */
-    public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed()
+    public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Client::createFromUrl('htps://');
@@ -969,7 +927,7 @@ class ClientTest extends TestCase
     /**
      * Port is set when passed to client in string
      */
-    public function testCreateFromUrlSetsPort()
+    public function testCreateFromUrlSetsPort(): void
     {
         $client = Client::createFromUrl('https://example.co:8765/');
         $this->assertSame(8765, $client->getConfig('port'));
@@ -978,7 +936,7 @@ class ClientTest extends TestCase
     /**
      * Test exception is throw when no scheme is provided.
      */
-    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoSchemeProvided()
+    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoSchemeProvided(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Client::createFromUrl('example.co');
@@ -989,7 +947,7 @@ class ClientTest extends TestCase
     /**
      * Test exception is thrown if passed URL has no domain
      */
-    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoDomainProvided()
+    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoDomainProvided(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Client::createFromUrl('/api/v1');
@@ -1001,7 +959,7 @@ class ClientTest extends TestCase
      * Test that the passed parsed URL parts won't override other constructor defaults
      * or add undefined configuration
      */
-    public function testCreateFromUrlOnlySetSchemePortHostBasePath()
+    public function testCreateFromUrlOnlySetSchemePortHostBasePath(): void
     {
         $client = Client::createFromUrl('http://example.co:80/some/uri/?foo=bar');
         $config = $client->getConfig();

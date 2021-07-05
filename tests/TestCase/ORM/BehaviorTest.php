@@ -30,10 +30,8 @@ class BehaviorTest extends TestCase
 {
     /**
      * Test the side effects of the constructor.
-     *
-     * @return void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $config = ['key' => 'value'];
@@ -43,10 +41,8 @@ class BehaviorTest extends TestCase
 
     /**
      * Test getting table instance.
-     *
-     * @return void
      */
-    public function testGetTable()
+    public function testGetTable(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
 
@@ -54,7 +50,7 @@ class BehaviorTest extends TestCase
         $this->assertSame($table, $behavior->table());
     }
 
-    public function testReflectionCache()
+    public function testReflectionCache(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test3Behavior($table);
@@ -72,10 +68,8 @@ class BehaviorTest extends TestCase
 
     /**
      * Test the default behavior of implementedEvents
-     *
-     * @return void
      */
-    public function testImplementedEvents()
+    public function testImplementedEvents(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new TestBehavior($table);
@@ -92,10 +86,8 @@ class BehaviorTest extends TestCase
 
     /**
      * Test that implementedEvents uses the priority setting.
-     *
-     * @return void
      */
-    public function testImplementedEventsWithPriority()
+    public function testImplementedEventsWithPriority(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new TestBehavior($table, ['priority' => 10]);
@@ -130,10 +122,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testImplementedMethods
-     *
-     * @return void
      */
-    public function testImplementedMethods()
+    public function testImplementedMethods(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table);
@@ -145,10 +135,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testImplementedMethodsAliased
-     *
-     * @return void
      */
-    public function testImplementedMethodsAliased()
+    public function testImplementedMethodsAliased(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table, [
@@ -164,10 +152,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testImplementedMethodsDisabled
-     *
-     * @return void
      */
-    public function testImplementedMethodsDisabled()
+    public function testImplementedMethodsDisabled(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table, [
@@ -179,10 +165,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testImplementedFinders
-     *
-     * @return void
      */
-    public function testImplementedFinders()
+    public function testImplementedFinders(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table);
@@ -194,10 +178,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testImplementedFindersAliased
-     *
-     * @return void
      */
-    public function testImplementedFindersAliased()
+    public function testImplementedFindersAliased(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table, [
@@ -213,10 +195,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testImplementedFindersDisabled
-     *
-     * @return void
      */
-    public function testImplementedFindersDisabled()
+    public function testImplementedFindersDisabled(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table, [
@@ -229,10 +209,8 @@ class BehaviorTest extends TestCase
      * testVerifyConfig
      *
      * Don't expect an exception to be thrown
-     *
-     * @return void
      */
-    public function testVerifyConfig()
+    public function testVerifyConfig(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table);
@@ -244,10 +222,8 @@ class BehaviorTest extends TestCase
      * testVerifyConfigImplementedFindersOverridden
      *
      * Simply don't expect an exception to be thrown
-     *
-     * @return void
      */
-    public function testVerifyConfigImplementedFindersOverridden()
+    public function testVerifyConfigImplementedFindersOverridden(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table, [
@@ -261,10 +237,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testVerifyImplementedFindersInvalid
-     *
-     * @return void
      */
-    public function testVerifyImplementedFindersInvalid()
+    public function testVerifyImplementedFindersInvalid(): void
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method findNotDefined is not callable on class ' . Test2Behavior::class);
@@ -281,10 +255,8 @@ class BehaviorTest extends TestCase
      * testVerifyConfigImplementedMethodsOverridden
      *
      * Don't expect an exception to be thrown
-     *
-     * @return void
      */
-    public function testVerifyConfigImplementedMethodsOverridden()
+    public function testVerifyConfigImplementedMethodsOverridden(): void
     {
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table);
@@ -299,10 +271,8 @@ class BehaviorTest extends TestCase
 
     /**
      * testVerifyImplementedMethodsInvalid
-     *
-     * @return void
      */
-    public function testVerifyImplementedMethodsInvalid()
+    public function testVerifyImplementedMethodsInvalid(): void
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method iDoNotExist is not callable on class ' . Test2Behavior::class);

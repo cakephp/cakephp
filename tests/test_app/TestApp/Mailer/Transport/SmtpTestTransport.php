@@ -13,18 +13,14 @@ class SmtpTestTransport extends SmtpTransport
 {
     /**
      * Helper to change the socket
-     *
-     * @return void
      */
-    public function setSocket(Socket $socket)
+    public function setSocket(Socket $socket): void
     {
         $this->_socket = $socket;
     }
 
     /**
      * Disabled the socket change
-     *
-     * @return void
      */
     protected function _generateSocket(): void
     {

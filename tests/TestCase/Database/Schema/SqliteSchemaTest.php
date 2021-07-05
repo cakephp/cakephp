@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqliteSchemaDialect;
@@ -31,10 +32,8 @@ class SqliteSchemaTest extends TestCase
 {
     /**
      * Helper method for skipping tests that need a real connection.
-     *
-     * @return void
      */
-    protected function _needsConnection()
+    protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlite') === false, 'Not using Sqlite for test config');
@@ -155,9 +154,8 @@ class SqliteSchemaTest extends TestCase
      * Test parsing SQLite column types from field description.
      *
      * @dataProvider convertColumnProvider
-     * @return void
      */
-    public function testConvertColumn(string $type, array $expected)
+    public function testConvertColumn(string $type, array $expected): void
     {
         $field = [
             'pk' => false,
@@ -187,10 +185,8 @@ class SqliteSchemaTest extends TestCase
     /**
      * Tests converting multiple rows into a primary constraint with multiple
      * columns
-     *
-     * @return void
      */
-    public function testConvertCompositePrimaryKey()
+    public function testConvertCompositePrimaryKey(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
         $dialect = new SqliteSchemaDialect($driver);
@@ -220,9 +216,8 @@ class SqliteSchemaTest extends TestCase
      * Creates tables for testing listTables/describe()
      *
      * @param \Cake\Database\Connection $connection
-     * @return void
      */
-    protected function _createTables($connection)
+    protected function _createTables($connection): void
     {
         $this->_needsConnection();
 
@@ -283,10 +278,8 @@ SQL;
 
     /**
      * Test SchemaCollection listing tables with Sqlite
-     *
-     * @return void
      */
-    public function testListTables()
+    public function testListTables(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -301,10 +294,8 @@ SQL;
 
     /**
      * Test describing a table with Sqlite
-     *
-     * @return void
      */
-    public function testDescribeTable()
+    public function testDescribeTable(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -394,10 +385,8 @@ SQL;
 
     /**
      * Tests SQLite views
-     *
-     * @return void
      */
-    public function testDescribeView()
+    public function testDescribeView(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -426,10 +415,8 @@ SQL;
      *
      * Composite keys in SQLite are never autoincrement, and shouldn't be marked
      * as such.
-     *
-     * @return void
      */
-    public function testDescribeTableCompositeKey()
+    public function testDescribeTableCompositeKey(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -443,10 +430,8 @@ SQL;
 
     /**
      * Test describing a table with indexes
-     *
-     * @return void
      */
-    public function testDescribeTableIndexes()
+    public function testDescribeTableIndexes(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -676,10 +661,8 @@ SQL;
 
     /**
      * Test the addConstraintSql method.
-     *
-     * @return void
      */
-    public function testAddConstraintSql()
+    public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -696,10 +679,8 @@ SQL;
 
     /**
      * Test the dropConstraintSql method.
-     *
-     * @return void
      */
-    public function testDropConstraintSql()
+    public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -717,9 +698,8 @@ SQL;
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider
-     * @return void
      */
-    public function testColumnSql(string $name, array $data, string $expected)
+    public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);
@@ -730,10 +710,8 @@ SQL;
 
     /**
      * Test generating a column that is a primary key.
-     *
-     * @return void
      */
-    public function testColumnSqlPrimaryKey()
+    public function testColumnSqlPrimaryKey(): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);
@@ -758,10 +736,8 @@ SQL;
 
     /**
      * Test generating a bigint column that is a primary key.
-     *
-     * @return void
      */
-    public function testColumnSqlPrimaryKeyBigInt()
+    public function testColumnSqlPrimaryKeyBigInt(): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);
@@ -838,7 +814,7 @@ SQL;
      *
      * @dataProvider constraintSqlProvider
      */
-    public function testConstraintSql(string $name, array $data, string $expected)
+    public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);
@@ -874,7 +850,7 @@ SQL;
      *
      * @dataProvider indexSqlProvider
      */
-    public function testIndexSql(string $name, array $data, string $expected)
+    public function testIndexSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchemaDialect($driver);
@@ -891,10 +867,8 @@ SQL;
 
     /**
      * Integration test for converting a Schema\Table into MySQL table creates.
-     *
-     * @return void
      */
-    public function testCreateSql()
+    public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -943,10 +917,8 @@ SQL;
 
     /**
      * Tests creating temporary tables
-     *
-     * @return void
      */
-    public function testCreateTemporary()
+    public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -965,10 +937,8 @@ SQL;
 
     /**
      * Test primary key generation & auto-increment.
-     *
-     * @return void
      */
-    public function testCreateSqlCompositeIntegerKey()
+    public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1033,10 +1003,8 @@ SQL;
 
     /**
      * test dropSql
-     *
-     * @return void
      */
-    public function testDropSql()
+    public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1053,10 +1021,8 @@ SQL;
 
     /**
      * Test truncateSql()
-     *
-     * @return void
      */
-    public function testTruncateSql()
+    public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1086,10 +1052,8 @@ SQL;
 
     /**
      * Test truncateSql() with no sequences
-     *
-     * @return void
      */
-    public function testTruncateSqlNoSequences()
+    public function testTruncateSqlNoSequences(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1119,10 +1083,8 @@ SQL;
 
     /**
      * Get a schema instance with a mocked driver/pdo instances
-     *
-     * @return \Cake\Database\Driver
      */
-    protected function _getMockedDriver()
+    protected function _getMockedDriver(): Driver
     {
         $driver = new Sqlite();
         $mock = $this->getMockBuilder(PDO::class)

@@ -34,8 +34,6 @@ class MoFileParserTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,10 +44,8 @@ class MoFileParserTest extends TestCase
 
     /**
      * Tests parsing a file with plurals and message context
-     *
-     * @return void
      */
-    public function testParse()
+    public function testParse(): void
     {
         $parser = new MoFileParser();
         $file = $this->path . 'rule_1_mo' . DS . 'core.mo';
@@ -80,10 +76,8 @@ class MoFileParserTest extends TestCase
 
     /**
      * Tests parsing a file with single form plurals
-     *
-     * @return void
      */
-    public function testParse0()
+    public function testParse0(): void
     {
         $parser = new MoFileParser();
         $file = $this->path . 'rule_0_mo' . DS . 'core.mo';
@@ -118,10 +112,8 @@ class MoFileParserTest extends TestCase
 
     /**
      * Tests parsing a file with larger plural forms
-     *
-     * @return void
      */
-    public function testParse2()
+    public function testParse2(): void
     {
         $parser = new MoFileParser();
         $file = $this->path . 'rule_9_mo' . DS . 'core.mo';
@@ -153,10 +145,8 @@ class MoFileParserTest extends TestCase
 
     /**
      * Tests parsing a file with plurals and message context
-     *
-     * @return void
      */
-    public function testParseFull()
+    public function testParseFull(): void
     {
         $parser = new MoFileParser();
         $file = $this->path . 'rule_0_mo' . DS . 'default.mo';

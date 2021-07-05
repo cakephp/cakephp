@@ -27,8 +27,6 @@ class WeakPasswordHasherTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -40,8 +38,6 @@ class WeakPasswordHasherTest extends TestCase
     /**
      * Tests that any password not produced by WeakPasswordHasher needs
      * to be rehashed
-     *
-     * @return void
      */
     public function testNeedsRehash(): void
     {
@@ -53,8 +49,6 @@ class WeakPasswordHasherTest extends TestCase
 
     /**
      * Tests hash() and check()
-     *
-     * @return void
      */
     public function testHashAndCheck(): void
     {

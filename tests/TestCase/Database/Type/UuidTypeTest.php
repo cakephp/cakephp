@@ -37,8 +37,6 @@ class UuidTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,10 +47,8 @@ class UuidTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -65,10 +61,8 @@ class UuidTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $result = $this->type->toDatabase('some data', $this->driver);
         $this->assertSame('some data', $result);
@@ -88,20 +82,16 @@ class UuidTypeTest extends TestCase
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }
 
     /**
      * Test generating new ids
-     *
-     * @return void
      */
-    public function testNewId()
+    public function testNewId(): void
     {
         $one = $this->type->newId();
         $two = $this->type->newId();
@@ -113,10 +103,8 @@ class UuidTypeTest extends TestCase
 
     /**
      * Tests that marshalling an empty string results in null
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $this->assertNull($this->type->marshal(''));
         $this->assertSame('2', $this->type->marshal(2));

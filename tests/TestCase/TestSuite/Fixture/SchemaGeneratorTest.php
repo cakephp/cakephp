@@ -26,10 +26,8 @@ class SchemaGeneratorTest extends TestCase
 {
     /**
      * test reload on a table subset.
-     *
-     * @return void
      */
-    public function testReload()
+    public function testReload(): void
     {
         $generator = new SchemaGenerator(__DIR__ . '/test_schema.php', 'test');
 

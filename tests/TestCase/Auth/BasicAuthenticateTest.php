@@ -48,8 +48,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -68,8 +66,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test applying settings in the constructor
-     *
-     * @return void
      */
     public function testConstructor(): void
     {
@@ -83,8 +79,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoData(): void
     {
@@ -95,8 +89,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoUsername(): void
     {
@@ -110,8 +102,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoPassword(): void
     {
@@ -125,8 +115,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateInjection(): void
     {
@@ -144,8 +132,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * Test that username of 0 works.
-     *
-     * @return void
      */
     public function testAuthenticateUsernameZero(): void
     {
@@ -175,8 +161,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test that challenge headers are sent when no credentials are found.
-     *
-     * @return void
      */
     public function testAuthenticateChallenge(): void
     {
@@ -196,8 +180,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test authenticate success
-     *
-     * @return void
      */
     public function testAuthenticateSuccess(): void
     {

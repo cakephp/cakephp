@@ -27,8 +27,6 @@ class DefaultPasswordHasherTest extends TestCase
     /**
      * Tests that a password not produced by DefaultPasswordHasher needs
      * to be rehashed
-     *
-     * @return void
      */
     public function testNeedsRehash(): void
     {
@@ -41,8 +39,6 @@ class DefaultPasswordHasherTest extends TestCase
     /**
      * Tests that when the hash options change, the password needs
      * to be rehashed
-     *
-     * @return void
      */
     public function testNeedsRehashWithDifferentOptions(): void
     {

@@ -16,10 +16,8 @@ class EventFiredTest extends TestCase
 {
     /**
      * tests EventFired constraint
-     *
-     * @return void
      */
-    public function testMatches()
+    public function testMatches(): void
     {
         $manager = EventManager::instance();
         $manager->setEventList(new EventList());

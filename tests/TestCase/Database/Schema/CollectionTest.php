@@ -40,8 +40,6 @@ class CollectionTest extends TestCase
 
     /**
      * Setup function
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -53,8 +51,6 @@ class CollectionTest extends TestCase
 
     /**
      * Teardown function
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -68,10 +64,8 @@ class CollectionTest extends TestCase
      *
      * Tests for positive describe() calls are in each platformSchema
      * test case.
-     *
-     * @return void
      */
-    public function testDescribeIncorrectTable()
+    public function testDescribeIncorrectTable(): void
     {
         $this->expectException(\Cake\Database\Exception::class);
         $schema = new Collection($this->connection);
@@ -80,10 +74,8 @@ class CollectionTest extends TestCase
 
     /**
      * Tests that schema metadata is cached
-     *
-     * @return void
      */
-    public function testDescribeCache()
+    public function testDescribeCache(): void
     {
         $this->connection->cacheMetadata('_cake_model_');
         $schema = $this->connection->getSchemaCollection();

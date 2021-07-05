@@ -28,8 +28,6 @@ class TextareaWidgetTest extends TestCase
 {
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,10 +41,8 @@ class TextareaWidgetTest extends TestCase
 
     /**
      * Test render in a simple case.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $input = new TextareaWidget($this->templates);
         $result = $input->render(['name' => 'comment'], $this->context);
@@ -59,10 +55,8 @@ class TextareaWidgetTest extends TestCase
 
     /**
      * Test render with a value
-     *
-     * @return void
      */
-    public function testRenderWithValue()
+    public function testRenderWithValue(): void
     {
         $input = new TextareaWidget($this->templates);
         $data = ['name' => 'comment', 'data-foo' => '<val>', 'val' => 'some <html>'];
@@ -86,10 +80,8 @@ class TextareaWidgetTest extends TestCase
 
     /**
      * Ensure templateVars option is hooked up.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'textarea' => '<textarea custom="{{custom}}" name="{{name}}"{{attrs}}>{{value}}</textarea>',

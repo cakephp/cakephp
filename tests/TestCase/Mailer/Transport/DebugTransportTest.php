@@ -29,8 +29,6 @@ class DebugTransportTest extends TestCase
 {
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -40,10 +38,8 @@ class DebugTransportTest extends TestCase
 
     /**
      * testSend method
-     *
-     * @return void
      */
-    public function testSend()
+    public function testSend(): void
     {
         $message = new Message();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');

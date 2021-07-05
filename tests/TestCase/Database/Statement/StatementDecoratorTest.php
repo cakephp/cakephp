@@ -28,10 +28,8 @@ class StatementDecoratorTest extends TestCase
     /**
      * Tests that calling lastInsertId will proxy it to
      * the driver's lastInsertId method
-     *
-     * @return void
      */
-    public function testLastInsertId()
+    public function testLastInsertId(): void
     {
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
@@ -46,10 +44,8 @@ class StatementDecoratorTest extends TestCase
     /**
      * Tests that calling lastInsertId will get the last insert id by
      * column name
-     *
-     * @return void
      */
-    public function testLastInsertIdWithReturning()
+    public function testLastInsertIdWithReturning(): void
     {
         $internal = $this->getMockBuilder(StatementInterface::class)->getMock();
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
@@ -67,10 +63,8 @@ class StatementDecoratorTest extends TestCase
     /**
      * Tests that the statement will not be executed twice if the iterator
      * is requested more than once
-     *
-     * @return void
      */
-    public function testNoDoubleExecution()
+    public function testNoDoubleExecution(): void
     {
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $driver = $this->getMockBuilder('Cake\Database\DriverInterface')->getMock();

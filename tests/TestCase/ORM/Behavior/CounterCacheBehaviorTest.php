@@ -51,8 +51,6 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -90,8 +88,6 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -102,10 +98,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing simple counter caching when adding a record
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
@@ -131,10 +125,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing simple counter caching when adding a record
-     *
-     * @return void
      */
-    public function testAddIgnore()
+    public function testAddIgnore(): void
     {
         $this->post->belongsTo('Users');
 
@@ -155,10 +147,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing simple counter caching when adding a record
-     *
-     * @return void
      */
-    public function testAddScope()
+    public function testAddScope(): void
     {
         $this->post->belongsTo('Users');
 
@@ -181,10 +171,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertSame(2, $after->get('posts_published'));
     }
 
-    /**
-     * @return void
-     */
-    public function testSaveWithNullForeignKey()
+    public function testSaveWithNullForeignKey(): void
     {
         $this->comment->belongsTo('Users');
 
@@ -204,10 +191,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing simple counter caching when deleting a record
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->post->belongsTo('Users');
 
@@ -228,10 +213,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing simple counter caching when deleting a record
-     *
-     * @return void
      */
-    public function testDeleteIgnore()
+    public function testDeleteIgnore(): void
     {
         $this->post->belongsTo('Users');
 
@@ -253,10 +236,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing update simple counter caching when updating a record association
-     *
-     * @return void
      */
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $this->post->belongsTo('Users');
         $this->post->belongsTo('Categories');
@@ -311,10 +292,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing counter cache with custom find
-     *
-     * @return void
      */
-    public function testCustomFind()
+    public function testCustomFind(): void
     {
         $this->post->belongsTo('Users');
 
@@ -337,10 +316,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing counter cache with lambda returning number
-     *
-     * @return void
      */
-    public function testLambdaNumber()
+    public function testLambdaNumber(): void
     {
         $this->post->belongsTo('Users');
 
@@ -368,10 +345,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing counter cache with lambda returning false
-     *
-     * @return void
      */
-    public function testLambdaFalse()
+    public function testLambdaFalse(): void
     {
         $this->post->belongsTo('Users');
 
@@ -399,10 +374,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing counter cache with lambda returning number and changing of related ID
-     *
-     * @return void
      */
-    public function testLambdaNumberUpdate()
+    public function testLambdaNumberUpdate(): void
     {
         $this->post->belongsTo('Users');
 
@@ -438,10 +411,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing counter cache with lambda returning a subquery
-     *
-     * @return void
      */
-    public function testLambdaSubquery()
+    public function testLambdaSubquery(): void
     {
         $this->post->belongsTo('Users');
 
@@ -466,10 +437,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing multiple counter cache when adding a record
-     *
-     * @return void
      */
-    public function testMultiple()
+    public function testMultiple(): void
     {
         $this->post->belongsTo('Users');
 
@@ -498,10 +467,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Tests to see that the binding key configuration is respected.
-     *
-     * @return void
      */
-    public function testBindingKey()
+    public function testBindingKey(): void
     {
         $this->post->hasMany('UserCategoryPosts', [
             'bindingKey' => ['category_id', 'user_id'],
@@ -527,10 +494,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing the ignore if dirty option
-     *
-     * @return void
      */
-    public function testIgnoreDirty()
+    public function testIgnoreDirty(): void
     {
         $this->post->belongsTo('Users');
         $this->comment->belongsTo('Users');
@@ -573,10 +538,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Testing the ignore if dirty option with just one field set to ignoreDirty
-     *
-     * @return void
      */
-    public function testIgnoreDirtyMixed()
+    public function testIgnoreDirtyMixed(): void
     {
         $this->post->belongsTo('Users');
         $this->comment->belongsTo('Users');
@@ -615,10 +578,8 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Get a new Entity
-     *
-     * @return Entity
      */
-    protected function _getEntity()
+    protected function _getEntity(): Entity
     {
         return new Entity([
             'title' => 'Test 123',
@@ -628,20 +589,16 @@ class CounterCacheBehaviorTest extends TestCase
 
     /**
      * Returns entity for user
-     *
-     * @return Entity
      */
-    protected function _getUser(int $id = 1)
+    protected function _getUser(int $id = 1): Entity
     {
         return $this->user->get($id);
     }
 
     /**
      * Returns entity for category
-     *
-     * @return Entity
      */
-    protected function _getCategory(int $id = 1)
+    protected function _getCategory(int $id = 1): Entity
     {
         return $this->category->find('all')->where(['id' => $id])->first();
     }

@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace TestApp\Model\Table;
 
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -33,9 +34,8 @@ class ArticlesTable extends Table
      *
      * @param \Cake\ORM\Query $query The query
      * @param array $options The options
-     * @return \Cake\ORM\Query
      */
-    public function findPublished($query, array $options = [])
+    public function findPublished($query, array $options = []): Query
     {
         $query = $query->where([$this->aliasField('published') => 'Y']);
 
@@ -48,28 +48,22 @@ class ArticlesTable extends Table
 
     /**
      * Example public method
-     *
-     * @return void
      */
-    public function doSomething()
+    public function doSomething(): void
     {
     }
 
     /**
      * Example Secondary public method
-     *
-     * @return void
      */
-    public function doSomethingElse()
+    public function doSomethingElse(): void
     {
     }
 
     /**
      * Example protected method
-     *
-     * @return void
      */
-    protected function _innerMethod()
+    protected function _innerMethod(): void
     {
     }
 }

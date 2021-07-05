@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace TestApp\TestCase\Event;
 
+use Cake\Event\EventInterface;
+
 /**
  * Mock class used to test event dispatching
  */
@@ -13,9 +15,9 @@ class EventTestListener
     /**
      * Test function to be used in event dispatching
      *
-     * @return void
+     * @return bool|void
      */
-    public function listenerFunction()
+    public function listenerFunction(EventInterface $event)
     {
         $this->callList[] = __FUNCTION__;
     }
@@ -23,9 +25,9 @@ class EventTestListener
     /**
      * Test function to be used in event dispatching
      *
-     * @return void
+     * @return bool|void
      */
-    public function secondListenerFunction()
+    public function secondListenerFunction(EventInterface $event)
     {
         $this->callList[] = __FUNCTION__;
     }
@@ -33,10 +35,9 @@ class EventTestListener
     /**
      * Auxiliary function to help in stopPropagation testing
      *
-     * @param \Cake\Event\EventInterface $event
-     * @return void
+     * @return bool|void
      */
-    public function stopListener($event)
+    public function stopListener(EventInterface $event)
     {
         $event->stopPropagation();
     }

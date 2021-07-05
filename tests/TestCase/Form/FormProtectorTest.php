@@ -50,9 +50,8 @@ class FormProtectorTest extends TestCase
      *
      * @param array $data
      * @param string|null $errorMessage
-     * @return void
      */
-    public function validate($data, $errorMessage = null)
+    public function validate($data, $errorMessage = null): void
     {
         $protector = new FormProtector();
         $result = $protector->validate($data, $this->url, $this->sessionId);
@@ -69,8 +68,6 @@ class FormProtectorTest extends TestCase
      * testValidate method
      *
      * Simple hash validation test
-     *
-     * @return void
      */
     public function testValidate(): void
     {
@@ -89,8 +86,6 @@ class FormProtectorTest extends TestCase
      * testValidateNoUnlockedInRequestData method
      *
      * Test that validate fails if you are missing unlocked in request data.
-     *
-     * @return void
      */
     public function testValidateNoUnlockedInRequestData(): void
     {
@@ -108,8 +103,6 @@ class FormProtectorTest extends TestCase
      * testValidateFormHacking method
      *
      * Test that validate fails if any of its required fields are missing.
-     *
-     * @return void
      */
     public function testValidateFormHacking(): void
     {
@@ -127,8 +120,6 @@ class FormProtectorTest extends TestCase
      * testValidateEmptyForm method
      *
      * Test that validate fails if empty form is submitted.
-     *
-     * @return void
      */
     public function testValidateEmptyForm(): void
     {
@@ -139,8 +130,6 @@ class FormProtectorTest extends TestCase
      * testValidate array fields method
      *
      * Test that validate fails if empty form is submitted.
-     *
-     * @return void
      */
     public function testValidateInvalidFields(): void
     {
@@ -159,8 +148,6 @@ class FormProtectorTest extends TestCase
      *
      * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI
      * attacks. Thanks to Felix Wilhelm
-     *
-     * @return void
      */
     public function testValidateObjectDeserialize(): void
     {
@@ -190,8 +177,6 @@ class FormProtectorTest extends TestCase
      * testValidateArray method
      *
      * Tests validation of checkbox arrays.
-     *
-     * @return void
      */
     public function testValidateArray(): void
     {
@@ -220,8 +205,6 @@ class FormProtectorTest extends TestCase
      * testValidateIntFieldName method
      *
      * Tests validation of integer field names.
-     *
-     * @return void
      */
     public function testValidateIntFieldName(): void
     {
@@ -242,8 +225,6 @@ class FormProtectorTest extends TestCase
 
     /**
      * testValidateNoModel method
-     *
-     * @return void
      */
     public function testValidateNoModel(): void
     {
@@ -261,8 +242,6 @@ class FormProtectorTest extends TestCase
 
     /**
      * test validate uses full URL
-     *
-     * @return void
      */
     public function testValidateSubdirectory(): void
     {
@@ -284,8 +263,6 @@ class FormProtectorTest extends TestCase
      * testValidateComplex method
      *
      * Tests hash validation for multiple records, including locked fields.
-     *
-     * @return void
      */
     public function testValidateComplex(): void
     {
@@ -313,8 +290,6 @@ class FormProtectorTest extends TestCase
      * testValidateMultipleSelect method
      *
      * Test ValidatePost with multiple select elements.
-     *
-     * @return void
      */
     public function testValidateMultipleSelect(): void
     {
@@ -354,8 +329,6 @@ class FormProtectorTest extends TestCase
      *
      * First block tests un-checked checkbox
      * Second block tests checked checkbox
-     *
-     * @return void
      */
     public function testValidateCheckbox(): void
     {
@@ -386,8 +359,6 @@ class FormProtectorTest extends TestCase
 
     /**
      * testValidateHidden method
-     *
-     * @return void
      */
     public function testValidateHidden(): void
     {
@@ -409,8 +380,6 @@ class FormProtectorTest extends TestCase
      * testValidateDisabledFieldsInData method
      *
      * Test validating post data with posted unlocked fields.
-     *
-     * @return void
      */
     public function testValidateDisabledFieldsInData(): void
     {
@@ -437,8 +406,6 @@ class FormProtectorTest extends TestCase
      * testValidateFailNoDisabled method
      *
      * Test that missing 'unlocked' input causes failure.
-     *
-     * @return void
      */
     public function testValidateFailNoDisabled(): void
     {
@@ -461,8 +428,6 @@ class FormProtectorTest extends TestCase
      * testValidateFailNoDebug method
      *
      * Test that missing 'debug' input causes failure.
-     *
-     * @return void
      */
     public function testValidateFailNoDebug(): void
     {
@@ -486,8 +451,6 @@ class FormProtectorTest extends TestCase
      * testValidateFailNoDebugMode method
      *
      * Test that missing 'debug' input is not the problem when debug mode disabled.
-     *
-     * @return void
      */
     public function testValidateFailNoDebugMode(): void
     {
@@ -513,8 +476,6 @@ class FormProtectorTest extends TestCase
      * testValidateFailDisabledFieldTampering method
      *
      * Test that validate fails when unlocked fields are changed.
-     *
-     * @return void
      */
     public function testValidateFailDisabledFieldTampering(): void
     {
@@ -544,8 +505,6 @@ class FormProtectorTest extends TestCase
 
     /**
      * testValidateHiddenMultipleModel method
-     *
-     * @return void
      */
     public function testValidateHiddenMultipleModel(): void
     {
@@ -564,8 +523,6 @@ class FormProtectorTest extends TestCase
 
     /**
      * testValidateHasManyModel method
-     *
-     * @return void
      */
     public function testValidateHasManyModel(): void
     {
@@ -593,8 +550,6 @@ class FormProtectorTest extends TestCase
 
     /**
      * testValidateHasManyRecordsPass method
-     *
-     * @return void
      */
     public function testValidateHasManyRecordsPass(): void
     {
@@ -636,8 +591,6 @@ class FormProtectorTest extends TestCase
      * testValidateHasManyRecords method
      *
      * validate should fail, hidden fields have been changed.
-     *
-     * @return void
      */
     public function testValidateHasManyRecordsFail(): void
     {
@@ -703,7 +656,6 @@ class FormProtectorTest extends TestCase
      *
      * Test validate with radio buttons.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidateRadio(): void
@@ -746,8 +698,6 @@ class FormProtectorTest extends TestCase
      * testValidateUrlAsHashInput method
      *
      * Test validate uses here() as a hash input.
-     *
-     * @return void
      */
     public function testValidateUrlAsHashInput(): void
     {
@@ -782,8 +732,6 @@ class FormProtectorTest extends TestCase
      * testValidateDebugFormat method
      *
      * Test that debug token format is right.
-     *
-     * @return void
      */
     public function testValidateDebugFormat(): void
     {
@@ -816,8 +764,6 @@ class FormProtectorTest extends TestCase
      * testValidateFailTampering method
      *
      * Test that validate fails with tampered fields and explanation.
-     *
-     * @return void
      */
     public function testValidateFailTampering(): void
     {
@@ -845,8 +791,6 @@ class FormProtectorTest extends TestCase
      * testValidateFailTamperingMutatedIntoArray method
      *
      * Test that validate fails with tampered fields and explanation.
-     *
-     * @return void
      */
     public function testValidateFailTamperingMutatedIntoArray(): void
     {
@@ -877,8 +821,6 @@ class FormProtectorTest extends TestCase
      * testValidateUnexpectedDebugToken method
      *
      * Test that debug token should not be sent if debug is disabled.
-     *
-     * @return void
      */
     public function testValidateUnexpectedDebugToken(): void
     {

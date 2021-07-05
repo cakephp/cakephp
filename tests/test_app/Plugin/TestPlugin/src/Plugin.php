@@ -23,7 +23,7 @@ class Plugin extends BasePlugin
 {
     public function events(EventManagerInterface $events): EventManagerInterface
     {
-        $events->on('TestPlugin.load', function () {
+        $events->on('TestPlugin.load', function (): void {
         });
 
         return $events;

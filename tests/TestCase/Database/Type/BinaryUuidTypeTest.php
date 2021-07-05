@@ -39,8 +39,6 @@ class BinaryUuidTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -51,10 +49,8 @@ class BinaryUuidTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -79,7 +75,7 @@ class BinaryUuidTypeTest extends TestCase
     /**
      * Test exceptions on invalid data.
      */
-    public function testToPHPFailure()
+    public function testToPHPFailure(): void
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to convert array into binary uuid.');
@@ -89,10 +85,8 @@ class BinaryUuidTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $fh = fopen(__FILE__, 'r');
         $result = $this->type->toDatabase($fh, $this->driver);
@@ -105,10 +99,8 @@ class BinaryUuidTypeTest extends TestCase
 
     /**
      * Test converting to database format fails
-     *
-     * @return void
      */
-    public function testToDatabaseInvalid()
+    public function testToDatabaseInvalid(): void
     {
         $value = 'mUMPWUxCpaCi685A9fEwJZ';
         $result = $this->type->toDatabase($value, $this->driver);
@@ -117,10 +109,8 @@ class BinaryUuidTypeTest extends TestCase
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_LOB, $this->type->toStatement('', $this->driver));
     }

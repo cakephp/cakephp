@@ -26,10 +26,8 @@ class PackageTest extends TestCase
 {
     /**
      * Test adding messages.
-     *
-     * @return void
      */
-    public function testAddMessage()
+    public function testAddMessage(): void
     {
         $package = new Package();
 

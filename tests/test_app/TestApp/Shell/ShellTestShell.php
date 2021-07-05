@@ -62,7 +62,7 @@ class ShellTestShell extends Shell
         $this->stopped = $status;
     }
 
-    protected function _secret()
+    protected function _secret(): void
     {
     }
 

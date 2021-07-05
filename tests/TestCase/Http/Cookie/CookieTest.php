@@ -47,7 +47,7 @@ class CookieTest extends TestCase
      *
      * @dataProvider invalidNameProvider
      */
-    public function testValidateNameInvalidChars(string $name)
+    public function testValidateNameInvalidChars(string $name): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('contains invalid characters.');
@@ -56,10 +56,8 @@ class CookieTest extends TestCase
 
     /**
      * Test empty cookie name
-     *
-     * @return void
      */
-    public function testValidateNameEmptyName()
+    public function testValidateNameEmptyName(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The cookie name cannot be empty.');
@@ -68,10 +66,8 @@ class CookieTest extends TestCase
 
     /**
      * Tests the header value
-     *
-     * @return void
      */
-    public function testToHeaderValue()
+    public function testToHeaderValue(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $result = $cookie->toHeaderValue();
@@ -93,10 +89,8 @@ class CookieTest extends TestCase
 
     /**
      * Test getting the value from the cookie
-     *
-     * @return void
      */
-    public function testGetValue()
+    public function testGetValue(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $result = $cookie->getValue();
@@ -109,10 +103,8 @@ class CookieTest extends TestCase
 
     /**
      * Test setting values in cookies
-     *
-     * @return void
      */
-    public function testWithValue()
+    public function testWithValue(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withValue('new');
@@ -123,12 +115,10 @@ class CookieTest extends TestCase
 
     /**
      * Test getting the value from the cookie
-     *
-     * @return void
      */
-    public function testGetStringValue()
+    public function testGetStringValue(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $cookie = new Cookie('cakephp', 'thing');
             $this->assertSame('thing', $cookie->getStringValue());
 
@@ -142,10 +132,8 @@ class CookieTest extends TestCase
 
     /**
      * Test setting domain in cookies
-     *
-     * @return void
      */
-    public function testWithDomain()
+    public function testWithDomain(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withDomain('example.com');
@@ -156,10 +144,8 @@ class CookieTest extends TestCase
 
     /**
      * Test setting path in cookies
-     *
-     * @return void
      */
-    public function testWithPath()
+    public function testWithPath(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withPath('/api');
@@ -170,10 +156,8 @@ class CookieTest extends TestCase
 
     /**
      * Test setting SameSite in cookies
-     *
-     * @return void
      */
-    public function testWithSameSite()
+    public function testWithSameSite(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withSameSite(CookieInterface::SAMESITE_LAX);
@@ -184,10 +168,8 @@ class CookieTest extends TestCase
 
     /**
      * Test setting SameSite in cookies
-     *
-     * @return void
      */
-    public function testWithSameSiteException()
+    public function testWithSameSiteException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
@@ -198,10 +180,8 @@ class CookieTest extends TestCase
 
     /**
      * Test default path in cookies
-     *
-     * @return void
      */
-    public function testDefaultPath()
+    public function testDefaultPath(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $this->assertStringContainsString('path=/', $cookie->toHeaderValue());
@@ -209,10 +189,8 @@ class CookieTest extends TestCase
 
     /**
      * Test setting httponly in cookies
-     *
-     * @return void
      */
-    public function testWithHttpOnly()
+    public function testWithHttpOnly(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withHttpOnly(true);
@@ -223,10 +201,8 @@ class CookieTest extends TestCase
 
     /**
      * Test setting secure in cookies
-     *
-     * @return void
      */
-    public function testWithSecure()
+    public function testWithSecure(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withSecure(true);
@@ -237,10 +213,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the never expiry method
-     *
-     * @return void
      */
-    public function testWithNeverExpire()
+    public function testWithNeverExpire(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withNeverExpire();
@@ -250,10 +224,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the expired method
-     *
-     * @return void
      */
-    public function testWithExpired()
+    public function testWithExpired(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withExpired();
@@ -265,10 +237,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the withExpiry method
-     *
-     * @return void
      */
-    public function testWithExpiry()
+    public function testWithExpiry(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withExpiry(Chronos::createFromDate(2022, 6, 15));
@@ -280,10 +250,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the withExpiry method changes timezone
-     *
-     * @return void
      */
-    public function testWithExpiryChangesTimezone()
+    public function testWithExpiryChangesTimezone(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $date = Chronos::createFromDate(2022, 6, 15);
@@ -300,10 +268,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the isExpired method
-     *
-     * @return void
      */
-    public function testIsExpired()
+    public function testIsExpired(): void
     {
         $date = Chronos::now();
         $cookie = new Cookie('cakephp', 'yay');
@@ -321,10 +287,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the withName method
-     *
-     * @return void
      */
-    public function testWithName()
+    public function testWithName(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withName('user');
@@ -335,10 +299,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the withAddedValue method
-     *
-     * @return void
      */
-    public function testWithAddedValue()
+    public function testWithAddedValue(): void
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "icing": true}');
         $new = $cookie->withAddedValue('type', 'mvc')
@@ -351,10 +313,8 @@ class CookieTest extends TestCase
 
     /**
      * Test the withoutAddedValue method
-     *
-     * @return void
      */
-    public function testWithoutAddedValue()
+    public function testWithoutAddedValue(): void
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
         $new = $cookie->withoutAddedValue('type')
@@ -368,10 +328,8 @@ class CookieTest extends TestCase
 
     /**
      * Test check() with serialized source data.
-     *
-     * @return void
      */
-    public function testCheckStringSourceData()
+    public function testCheckStringSourceData(): void
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
         $this->assertTrue($cookie->check('type'));
@@ -382,10 +340,8 @@ class CookieTest extends TestCase
 
     /**
      * Test check() with array source data.
-     *
-     * @return void
      */
-    public function testCheckArraySourceData()
+    public function testCheckArraySourceData(): void
     {
         $data = [
             'type' => 'mvc',
@@ -400,10 +356,8 @@ class CookieTest extends TestCase
 
     /**
      * test read() and set on different types
-     *
-     * @return void
      */
-    public function testReadExpandsOnDemand()
+    public function testReadExpandsOnDemand(): void
     {
         $data = [
             'username' => 'florian',
@@ -428,10 +382,8 @@ class CookieTest extends TestCase
 
     /**
      * test read() on structured data.
-     *
-     * @return void
      */
-    public function testReadComplexData()
+    public function testReadComplexData(): void
     {
         $data = [
             'username' => 'florian',
@@ -456,10 +408,8 @@ class CookieTest extends TestCase
 
     /**
      * Test reading complex data serialized in 1.x and early 2.x
-     *
-     * @return void
      */
-    public function testReadLegacyComplexData()
+    public function testReadLegacyComplexData(): void
     {
         $data = 'key|value,key2|value2';
         $cookie = new Cookie('cakephp', $data);
@@ -469,10 +419,8 @@ class CookieTest extends TestCase
 
     /**
      * Test that toHeaderValue() collapses data.
-     *
-     * @return void
      */
-    public function testToHeaderValueCollapsesComplexData()
+    public function testToHeaderValueCollapsesComplexData(): void
     {
         $data = [
             'username' => 'florian',
@@ -489,10 +437,8 @@ class CookieTest extends TestCase
 
     /**
      * Tests getting the id
-     *
-     * @return void
      */
-    public function testGetId()
+    public function testGetId(): void
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $this->assertSame('cakephp;;/', $cookie->getId());
@@ -504,7 +450,7 @@ class CookieTest extends TestCase
         $this->assertSame('test;example.com;/path', $cookie->getId());
     }
 
-    public function testCreateFromHeaderString()
+    public function testCreateFromHeaderString(): void
     {
         $header = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org; samesite=invalid; secure; httponly';
         $result = Cookie::createFromHeaderString($header);
@@ -514,7 +460,7 @@ class CookieTest extends TestCase
         $this->assertNull($result->getSameSite());
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         Cookie::setDefaults(['path' => '/cakephp', 'expires' => time()]);
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
@@ -527,7 +473,7 @@ class CookieTest extends TestCase
         $this->assertNull($cookie->getExpiry());
     }
 
-    public function testInvalidExpiresForDefaults()
+    public function testInvalidExpiresForDefaults(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid type `array` for expire');
@@ -536,7 +482,7 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
     }
 
-    public function testInvalidSameSiteForDefaults()
+    public function testInvalidSameSiteForDefaults(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));

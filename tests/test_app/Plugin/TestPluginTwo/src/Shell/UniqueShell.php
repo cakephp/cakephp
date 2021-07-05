@@ -26,10 +26,8 @@ class UniqueShell extends Shell
 {
     /**
      * main method
-     *
-     * @return void
      */
-    public function main()
+    public function main(): void
     {
         $this->out('This is the main method called from TestPluginTwo.UniqueShell');
     }

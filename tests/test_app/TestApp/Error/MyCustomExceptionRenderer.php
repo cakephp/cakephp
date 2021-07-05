@@ -9,19 +9,16 @@ class MyCustomExceptionRenderer extends ExceptionRenderer
 {
     /**
      * @param \Cake\Controller\Controller $controller
-     * @return void
      */
-    public function setController($controller)
+    public function setController($controller): void
     {
         $this->controller = $controller;
     }
 
     /**
      * custom error message type.
-     *
-     * @return string
      */
-    public function missingWidgetThing()
+    public function missingWidgetThing(): string
     {
         return 'widget thing is missing';
     }

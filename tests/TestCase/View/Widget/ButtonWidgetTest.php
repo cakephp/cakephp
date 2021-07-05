@@ -38,10 +38,8 @@ class ButtonWidgetTest extends TestCase
 
     /**
      * Test render in a simple case.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $button = new ButtonWidget($this->templates);
         $result = $button->render(['name' => 'my_input'], $this->context);
@@ -54,10 +52,8 @@ class ButtonWidgetTest extends TestCase
 
     /**
      * Test render with custom type
-     *
-     * @return void
      */
-    public function testRenderType()
+    public function testRenderType(): void
     {
         $button = new ButtonWidget($this->templates);
         $data = [
@@ -76,10 +72,8 @@ class ButtonWidgetTest extends TestCase
 
     /**
      * Test render with a text
-     *
-     * @return void
      */
-    public function testRenderWithText()
+    public function testRenderWithText(): void
     {
         $button = new ButtonWidget($this->templates);
         $data = [
@@ -106,10 +100,8 @@ class ButtonWidgetTest extends TestCase
 
     /**
      * Test render with additional attributes.
-     *
-     * @return void
      */
-    public function testRenderAttributes()
+    public function testRenderAttributes(): void
     {
         $button = new ButtonWidget($this->templates);
         $data = [
@@ -134,10 +126,8 @@ class ButtonWidgetTest extends TestCase
 
     /**
      * Ensure templateVars option is hooked up.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'button' => '<button {{attrs}} custom="{{custom}}">{{text}}</button>',

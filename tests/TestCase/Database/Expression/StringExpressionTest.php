@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
  */
 class StringExpressionTest extends TestCase
 {
-    public function testCollation()
+    public function testCollation(): void
     {
         $expr = new StringExpression('testString', 'utf8_general_ci');
 

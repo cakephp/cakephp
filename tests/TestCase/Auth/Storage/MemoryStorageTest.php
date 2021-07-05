@@ -36,8 +36,6 @@ class MemoryStorageTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,8 +47,6 @@ class MemoryStorageTest extends TestCase
 
     /**
      * Test write.
-     *
-     * @return void
      */
     public function testWrite(): void
     {
@@ -60,8 +56,6 @@ class MemoryStorageTest extends TestCase
 
     /**
      * Test read.
-     *
-     * @return void
      */
     public function testRead(): void
     {
@@ -70,8 +64,6 @@ class MemoryStorageTest extends TestCase
 
     /**
      * Test delete.
-     *
-     * @return void
      */
     public function testDelete(): void
     {
@@ -83,8 +75,6 @@ class MemoryStorageTest extends TestCase
 
     /**
      * Test redirectUrl.
-     *
-     * @return void
      */
     public function testRedirectUrl(): void
     {

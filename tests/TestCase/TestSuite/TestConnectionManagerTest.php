@@ -22,7 +22,7 @@ use Cake\TestSuite\TestConnectionManager;
 
 class TestConnectionManagerTest extends TestCase
 {
-    public function testAliasConnections()
+    public function testAliasConnections(): void
     {
         ConnectionManager::dropAlias('default');
 

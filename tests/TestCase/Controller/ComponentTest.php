@@ -35,8 +35,6 @@ class ComponentTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,8 +44,6 @@ class ComponentTest extends TestCase
 
     /**
      * test accessing inner components.
-     *
-     * @return void
      */
     public function testInnerComponentConstruction(): void
     {
@@ -59,8 +55,6 @@ class ComponentTest extends TestCase
 
     /**
      * test component loading
-     *
-     * @return void
      */
     public function testNestedComponentLoading(): void
     {
@@ -75,8 +69,6 @@ class ComponentTest extends TestCase
 
     /**
      * test that component components are not enabled in the collection.
-     *
-     * @return void
      */
     public function testInnerComponentsAreNotEnabled(): void
     {
@@ -96,8 +88,6 @@ class ComponentTest extends TestCase
 
     /**
      * test a component being used more than once.
-     *
-     * @return void
      */
     public function testMultipleComponentInitialize(): void
     {
@@ -113,8 +103,6 @@ class ComponentTest extends TestCase
 
     /**
      * Test a duplicate component being loaded more than once with same and differing configurations.
-     *
-     * @return void
      */
     public function testDuplicateComponentInitialize(): void
     {
@@ -133,8 +121,6 @@ class ComponentTest extends TestCase
 
     /**
      * Test mutually referencing components.
-     *
-     * @return void
      */
     public function testSomethingReferencingFlashComponent(): void
     {
@@ -148,8 +134,6 @@ class ComponentTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
     public function testDebugInfo(): void
     {
@@ -171,8 +155,6 @@ class ComponentTest extends TestCase
 
     /**
      * Tests null return for unknown magic properties.
-     *
-     * @return void
      */
     public function testMagicReturnsNull(): void
     {
@@ -182,8 +164,6 @@ class ComponentTest extends TestCase
 
     /**
      * Tests config via constructor
-     *
-     * @return void
      */
     public function testConfigViaConstructor(): void
     {
@@ -194,8 +174,6 @@ class ComponentTest extends TestCase
 
     /**
      * Lazy load a component without events.
-     *
-     * @return void
      */
     public function testLazyLoading(): void
     {
@@ -211,8 +189,6 @@ class ComponentTest extends TestCase
 
     /**
      * Lazy load a component that does not exist.
-     *
-     * @return void
      */
     public function testLazyLoadingDoesNotExists(): void
     {
@@ -224,8 +200,6 @@ class ComponentTest extends TestCase
 
     /**
      * Lazy loaded components can have config options
-     *
-     * @return void
      */
     public function testConfiguringInnerComponent(): void
     {
@@ -237,8 +211,6 @@ class ComponentTest extends TestCase
 
     /**
      * Test enabling events for lazy loaded components
-     *
-     * @return void
      */
     public function testEventsInnerComponent(): void
     {
@@ -258,8 +230,6 @@ class ComponentTest extends TestCase
 
     /**
      * Disabled events do not register for event listeners.
-     *
-     * @return void
      */
     public function testNoEventsInnerComponent(): void
     {
@@ -277,10 +247,8 @@ class ComponentTest extends TestCase
 
     /**
      * Test that calling getController() without setting a controller throws exception
-     *
-     * @return void
      */
-    public function testGetControllerException()
+    public function testGetControllerException(): void
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Controller not set for ComponentRegistry');

@@ -27,7 +27,7 @@ use Cake\View\ViewBuilder;
  */
 class ViewBuilderTest extends TestCase
 {
-    public function testSetVar()
+    public function testSetVar(): void
     {
         $builder = new ViewBuilder();
 
@@ -35,7 +35,7 @@ class ViewBuilderTest extends TestCase
         $this->assertSame('value', $builder->getVar('testing'));
     }
 
-    public function testSetVars()
+    public function testSetVars(): void
     {
         $builder = new ViewBuilder();
 
@@ -58,7 +58,7 @@ class ViewBuilderTest extends TestCase
         );
     }
 
-    public function testHasVar()
+    public function testHasVar(): void
     {
         $builder = new ViewBuilder();
 
@@ -120,9 +120,8 @@ class ViewBuilderTest extends TestCase
      * Test string property accessor/mutator methods.
      *
      * @dataProvider stringPropertyProvider
-     * @return void
      */
-    public function testStringProperties(string $property, string $value)
+    public function testStringProperties(string $property, string $value): void
     {
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
@@ -137,9 +136,8 @@ class ViewBuilderTest extends TestCase
      * Test string property accessor/mutator methods.
      *
      * @dataProvider boolPropertyProvider
-     * @return void
      */
-    public function testBoolProperties(string $property, bool $default, bool $value)
+    public function testBoolProperties(string $property, bool $default, bool $value): void
     {
         $set = 'enable' . ucfirst($property);
         $get = 'is' . ucfirst($property) . 'Enabled';
@@ -154,9 +152,8 @@ class ViewBuilderTest extends TestCase
      * Test array property accessor/mutator methods.
      *
      * @dataProvider arrayPropertyProvider
-     * @return void
      */
-    public function testArrayProperties(string $property, array $value)
+    public function testArrayProperties(string $property, array $value): void
     {
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
@@ -171,9 +168,8 @@ class ViewBuilderTest extends TestCase
      * Test array property accessor/mutator methods.
      *
      * @dataProvider arrayPropertyProvider
-     * @return void
      */
-    public function testArrayPropertyMerge(string $property, array $value)
+    public function testArrayPropertyMerge(string $property, array $value): void
     {
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
@@ -190,10 +186,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * test building with all the options.
-     *
-     * @return void
      */
-    public function testBuildComplete()
+    public function testBuildComplete(): void
     {
         $request = new ServerRequest();
         $response = new Response();
@@ -235,10 +229,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * Test that the default is AppView.
-     *
-     * @return void
      */
-    public function testBuildAppViewMissing()
+    public function testBuildAppViewMissing(): void
     {
         static::setAppNamespace('Nope');
         $builder = new ViewBuilder();
@@ -248,10 +240,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * Test that the default is AppView.
-     *
-     * @return void
      */
-    public function testBuildAppViewPresent()
+    public function testBuildAppViewPresent(): void
     {
         static::setAppNamespace();
         $builder = new ViewBuilder();
@@ -261,10 +251,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * test missing view class
-     *
-     * @return void
      */
-    public function testBuildMissingViewClass()
+    public function testBuildMissingViewClass(): void
     {
         $this->expectException(\Cake\View\Exception\MissingViewException::class);
         $this->expectExceptionMessage('View class "Foo" is missing.');
@@ -275,10 +263,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * testJsonSerialize()
-     *
-     * @return void
      */
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $builder = new ViewBuilder();
 
@@ -305,10 +291,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * testCreateFromArray()
-     *
-     * @return void
      */
-    public function testCreateFromArray()
+    public function testCreateFromArray(): void
     {
         $builder = new ViewBuilder();
 
@@ -331,10 +315,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * test setOptions() with 1 string param, merge true
-     *
-     * @return void
      */
-    public function testSetOptionsOne()
+    public function testSetOptionsOne(): void
     {
         $builder = new ViewBuilder();
         $this->assertSame($builder, $builder->setOptions(['newOption']));
@@ -343,10 +325,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * test setOptions() with 2 strings in array, merge true.
-     *
-     * @return void
      */
-    public function testSetOptionsMultiple()
+    public function testSetOptionsMultiple(): void
     {
         $builder = new ViewBuilder();
         $builder->setOptions(['oldOption'], false);
@@ -362,10 +342,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * test empty params reads _viewOptions.
-     *
-     * @return void
      */
-    public function testReadingViewOptions()
+    public function testReadingViewOptions(): void
     {
         $builder = new ViewBuilder();
         $builder->setOptions(['one', 'two', 'three'], false);
@@ -375,10 +353,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * test setting $merge `false` overrides correct options.
-     *
-     * @return void
      */
-    public function testMergeFalseViewOptions()
+    public function testMergeFalseViewOptions(): void
     {
         $builder = new ViewBuilder();
         $builder->setOptions(['one', 'two', 'three'], false);
@@ -390,10 +366,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * test _viewOptions is undefined and $opts is null, an empty array is returned.
-     *
-     * @return void
      */
-    public function testUndefinedValidViewOptions()
+    public function testUndefinedValidViewOptions(): void
     {
         $builder = new ViewBuilder();
         $builder->setOptions([], false);
@@ -402,10 +376,7 @@ class ViewBuilderTest extends TestCase
         $this->assertEmpty($result);
     }
 
-    /**
-     * @return void
-     */
-    public function testOptionSetGet()
+    public function testOptionSetGet(): void
     {
         $builder = new ViewBuilder();
         $result = $builder->setOption('foo', 'bar');
@@ -418,10 +389,7 @@ class ViewBuilderTest extends TestCase
         $this->assertNull($builder->getOption('nonexistent'));
     }
 
-    /**
-     * @return void
-     */
-    public function testDisableAutoLayout()
+    public function testDisableAutoLayout(): void
     {
         $builder = new ViewBuilder();
         $this->assertTrue($builder->isAutoLayoutEnabled());
@@ -430,10 +398,7 @@ class ViewBuilderTest extends TestCase
         $this->assertFalse($builder->isAutoLayoutEnabled());
     }
 
-    /**
-     * @return void
-     */
-    public function testAddHelperChained()
+    public function testAddHelperChained(): void
     {
         $builder = new ViewBuilder();
         $builder->addHelper('Form')
@@ -449,10 +414,7 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($expected, $helpers);
     }
 
-    /**
-     * @return void
-     */
-    public function testAddHelperOptions()
+    public function testAddHelperOptions(): void
     {
         $builder = new ViewBuilder();
         $builder->addHelper('Form')

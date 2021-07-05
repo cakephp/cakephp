@@ -41,8 +41,6 @@ class TestFixtureTest extends TestCase
 
     /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -52,8 +50,6 @@ class TestFixtureTest extends TestCase
 
     /**
      * Tear down
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -63,10 +59,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test initializing a static fixture
-     *
-     * @return void
      */
-    public function testInitStaticFixture()
+    public function testInitStaticFixture(): void
     {
         $Fixture = new ArticlesFixture();
         $this->assertSame('articles', $Fixture->table);
@@ -92,10 +86,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test import fixture initialization
-     *
-     * @return void
      */
-    public function testInitImport()
+    public function testInitImport(): void
     {
         $fixture = new ImportsFixture();
         $fixture->fields = $fixture->records = null;
@@ -117,10 +109,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test import fixture initialization
-     *
-     * @return void
      */
-    public function testInitImportModel()
+    public function testInitImportModel(): void
     {
         $fixture = new ImportsFixture();
         $fixture->fields = $fixture->records = null;
@@ -143,10 +133,8 @@ class TestFixtureTest extends TestCase
     /**
      * test schema reflection without $import or $fields and without the table existing
      * it will throw an exception
-     *
-     * @return void
      */
-    public function testInitNoImportNoFieldsException()
+    public function testInitNoImportNoFieldsException(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`: the table does not exist.');
@@ -156,10 +144,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test schema reflection without $import or $fields will reflect the schema
-     *
-     * @return void
      */
-    public function testInitNoImportNoFields()
+    public function testInitNoImportNoFields(): void
     {
         $db = ConnectionManager::get('test');
         $table = new TableSchema('letters', [
@@ -194,10 +180,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test create method
-     *
-     * @return void
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $fixture = new ArticlesFixture();
         $db = $this->getMockBuilder('Cake\Database\Connection')
@@ -224,10 +208,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test create method, trigger error
-     *
-     * @return void
      */
-    public function testCreateError()
+    public function testCreateError(): void
     {
         $this->expectError();
         $fixture = new ArticlesFixture();
@@ -248,10 +230,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test the insert method
-     *
-     * @return void
      */
-    public function testInsert()
+    public function testInsert(): void
     {
         $fixture = new ArticlesFixture();
 
@@ -301,10 +281,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test the insert method
-     *
-     * @return void
      */
-    public function testInsertImport()
+    public function testInsertImport(): void
     {
         $fixture = new ImportsFixture();
 
@@ -348,10 +326,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * test the insert method
-     *
-     * @return void
      */
-    public function testInsertStrings()
+    public function testInsertStrings(): void
     {
         $fixture = new StringsTestsFixture();
 
@@ -401,10 +377,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * Test the drop method
-     *
-     * @return void
      */
-    public function testDrop()
+    public function testDrop(): void
     {
         $fixture = new ArticlesFixture();
 
@@ -431,10 +405,8 @@ class TestFixtureTest extends TestCase
 
     /**
      * Test the truncate method.
-     *
-     * @return void
      */
-    public function testTruncate()
+    public function testTruncate(): void
     {
         $fixture = new ArticlesFixture();
 

@@ -36,19 +36,15 @@ class ArticlesCell extends \Cake\View\Cell
 
     /**
      * Default cell action.
-     *
-     * @return void
      */
-    public function display()
+    public function display(): void
     {
     }
 
     /**
      * Renders articles in teaser view mode.
-     *
-     * @return void
      */
-    public function teaserList()
+    public function teaserList(): void
     {
         $this->set('articles', [
             ['title' => 'Lorem ipsum', 'body' => 'dolorem sit amet'],
@@ -61,10 +57,8 @@ class ArticlesCell extends \Cake\View\Cell
     /**
      * Renders a view using a different template than the action name
      * The template is set using the ViewBuilder bound to the Cell
-     *
-     * @return void
      */
-    public function customTemplateViewBuilder()
+    public function customTemplateViewBuilder(): void
     {
         $this->counter++;
         $this->viewBuilder()->setTemplate('alternate_teaser_list');
@@ -73,20 +67,16 @@ class ArticlesCell extends \Cake\View\Cell
     /**
      * Renders a template in a custom templatePath
      * The template is set using the ViewBuilder bound to the Cell
-     *
-     * @return void
      */
-    public function customTemplatePath()
+    public function customTemplatePath(): void
     {
         $this->viewBuilder()->setTemplatePath(static::TEMPLATE_FOLDER . '/Articles/Subdir');
     }
 
     /**
      * Simple echo.
-     *
-     * @return void
      */
-    public function doEcho(string $msg1, string $msg2)
+    public function doEcho(string $msg1, string $msg2): void
     {
         $this->set('msg', $msg1 . $msg2);
     }

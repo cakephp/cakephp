@@ -22,7 +22,7 @@ namespace TestPlugin\Controller;
 
 class TestsController extends TestPluginAppController
 {
-    public function index()
+    public function index(): void
     {
         $this->set('test_value', 'It is a variable');
     }

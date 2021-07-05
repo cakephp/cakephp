@@ -51,8 +51,6 @@ class DebuggerTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -65,8 +63,6 @@ class DebuggerTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -78,10 +74,8 @@ class DebuggerTest extends TestCase
 
     /**
      * testDocRef method
-     *
-     * @return void
      */
-    public function testDocRef()
+    public function testDocRef(): void
     {
         ini_set('docref_root', '');
         $this->assertEquals(ini_get('docref_root'), '');
@@ -94,10 +88,8 @@ class DebuggerTest extends TestCase
 
     /**
      * test Excerpt writing
-     *
-     * @return void
      */
-    public function testExcerpt()
+    public function testExcerpt(): void
     {
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
         $this->assertIsArray($result);
@@ -137,10 +129,8 @@ class DebuggerTest extends TestCase
 
     /**
      * Test that setOutputFormat works.
-     *
-     * @return void
      */
-    public function testSetOutputFormat()
+    public function testSetOutputFormat(): void
     {
         Debugger::setOutputFormat('html');
         $this->assertSame('html', Debugger::getOutputFormat());
@@ -148,10 +138,8 @@ class DebuggerTest extends TestCase
 
     /**
      * Test that getOutputFormat/setOutputFormat works.
-     *
-     * @return void
      */
-    public function testGetSetOutputFormat()
+    public function testGetSetOutputFormat(): void
     {
         Debugger::setOutputFormat('html');
         $this->assertSame('html', Debugger::getOutputFormat());
@@ -159,10 +147,8 @@ class DebuggerTest extends TestCase
 
     /**
      * Test that choosing a nonexistent format causes an exception
-     *
-     * @return void
      */
-    public function testSetOutputAsException()
+    public function testSetOutputAsException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         Debugger::setOutputFormat('Invalid junk');
@@ -170,10 +156,8 @@ class DebuggerTest extends TestCase
 
     /**
      * Test outputError with description encoding
-     *
-     * @return void
      */
-    public function testOutputErrorDescriptionEncoding()
+    public function testOutputErrorDescriptionEncoding(): void
     {
         Debugger::setOutputFormat('html');
 
@@ -194,10 +178,8 @@ class DebuggerTest extends TestCase
 
     /**
      * Tests that the correct line is being highlighted.
-     *
-     * @return void
      */
-    public function testOutputErrorLineHighlight()
+    public function testOutputErrorLineHighlight(): void
     {
         Debugger::setOutputFormat('js');
 
@@ -219,10 +201,8 @@ class DebuggerTest extends TestCase
 
     /**
      * Tests that changes in output formats using Debugger::output() change the templates used.
-     *
-     * @return void
      */
-    public function testAddFormat()
+    public function testAddFormat(): void
     {
         Debugger::addFormat('js', [
             'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
@@ -263,10 +243,8 @@ class DebuggerTest extends TestCase
 
     /**
      * Test adding a format that is handled by a callback.
-     *
-     * @return void
      */
-    public function testAddFormatCallback()
+    public function testAddFormatCallback(): void
     {
         Debugger::addFormat('callback', ['callback' => [$this, 'customFormat']]);
         Debugger::setOutputFormat('callback');
@@ -290,20 +268,16 @@ class DebuggerTest extends TestCase
 
     /**
      * Test method for testing addFormat with callbacks.
-     *
-     * @return void
      */
-    public function customFormat(array $error, array $strings)
+    public function customFormat(array $error, array $strings): void
     {
         echo $error['error'] . ': I eated an error ' . $error['file'];
     }
 
     /**
      * testTrimPath method
-     *
-     * @return void
      */
-    public function testTrimPath()
+    public function testTrimPath(): void
     {
         $this->assertSame('APP/', Debugger::trimPath(APP));
         $this->assertSame('CORE' . DS . 'src' . DS, Debugger::trimPath(CAKE));
@@ -312,10 +286,8 @@ class DebuggerTest extends TestCase
 
     /**
      * testExportVar method
-     *
-     * @return void
      */
-    public function testExportVar()
+    public function testExportVar(): void
     {
         $Controller = new Controller();
         $Controller->viewBuilder()->setHelpers(['Html', 'Form']);
@@ -421,7 +393,7 @@ TEXT;
         $this->assertStringContainsString('(resource (closed)) Resource id #', $result);
     }
 
-    public function testExportVarTypedProperty()
+    public function testExportVarTypedProperty(): void
     {
         $this->skipIf(version_compare(PHP_VERSION, '7.4.0', '<'), 'typed properties require PHP7.4');
         // This is gross but was simpler than adding a fixture file.
@@ -434,10 +406,8 @@ TEXT;
 
     /**
      * Test exporting various kinds of false.
-     *
-     * @return void
      */
-    public function testExportVarZero()
+    public function testExportVarZero(): void
     {
         $data = [
             'nothing' => '',
@@ -461,10 +431,8 @@ TEXT;
 
     /**
      * test exportVar with cyclic objects.
-     *
-     * @return void
      */
-    public function testExportVarCyclicRef()
+    public function testExportVarCyclicRef(): void
     {
         $parent = new stdClass();
         $parent->name = 'cake';
@@ -489,10 +457,8 @@ TEXT;
 
     /**
      * test exportVar with array objects
-     *
-     * @return void
      */
-    public function testExportVarSplFixedArray()
+    public function testExportVarSplFixedArray(): void
     {
         $subject = new SplFixedArray(2);
         $subject[0] = 'red';
@@ -510,10 +476,8 @@ TEXT;
 
     /**
      * Tests plain text variable export.
-     *
-     * @return void
      */
-    public function testExportVarAsPlainText()
+    public function testExportVarAsPlainText(): void
     {
         Debugger::configInstance('exportFormatter', null);
         $result = Debugger::exportVarAsPlainText(123);
@@ -526,10 +490,8 @@ TEXT;
 
     /**
      * test exportVar with cyclic objects.
-     *
-     * @return void
      */
-    public function testExportVarDebugInfo()
+    public function testExportVarDebugInfo(): void
     {
         $form = new Form();
 
@@ -540,10 +502,8 @@ TEXT;
 
     /**
      * Test exportVar with an exception during __debugInfo()
-     *
-     * @return void
      */
-    public function testExportVarInvalidDebugInfo()
+    public function testExportVarInvalidDebugInfo(): void
     {
         $result = Debugger::exportVar(new ThrowsDebugInfo());
         $expected = '(unable to export object: from __debugInfo)';
@@ -552,10 +512,8 @@ TEXT;
 
     /**
      * Text exportVarAsNodes()
-     *
-     * @return void
      */
-    public function testExportVarAsNodes()
+    public function testExportVarAsNodes(): void
     {
         $data = [
             1 => 'Index one',
@@ -587,10 +545,8 @@ TEXT;
 
     /**
      * testLog method
-     *
-     * @return void
      */
-    public function testLog()
+    public function testLog(): void
     {
         Log::setConfig('test', [
             'className' => 'Array',
@@ -613,10 +569,8 @@ TEXT;
 
     /**
      * Tests that logging does not apply formatting.
-     *
-     * @return void
      */
-    public function testLogShouldNotApplyFormatting()
+    public function testLogShouldNotApplyFormatting(): void
     {
         Log::setConfig('test', [
             'className' => 'Array',
@@ -648,10 +602,8 @@ TEXT;
 
     /**
      * test log() depth
-     *
-     * @return void
      */
-    public function testLogDepth()
+    public function testLogDepth(): void
     {
         Log::setConfig('test', [
             'className' => 'Array',
@@ -669,10 +621,8 @@ TEXT;
 
     /**
      * testDump method
-     *
-     * @return void
      */
-    public function testDump()
+    public function testDump(): void
     {
         $var = ['People' => [
             [
@@ -726,10 +676,8 @@ TEXT;
 
     /**
      * test getInstance.
-     *
-     * @return void
      */
-    public function testGetInstance()
+    public function testGetInstance(): void
     {
         $result = Debugger::getInstance();
         $exporter = $result->getConfig('exportFormatter');
@@ -749,10 +697,8 @@ TEXT;
 
     /**
      * Test that exportVar() will stop traversing recursive arrays.
-     *
-     * @return void
      */
-    public function testExportVarRecursion()
+    public function testExportVarRecursion(): void
     {
         $array = [];
         $array['foo'] = &$array;
@@ -763,10 +709,8 @@ TEXT;
 
     /**
      * test trace exclude
-     *
-     * @return void
      */
-    public function testTraceExclude()
+    public function testTraceExclude(): void
     {
         $result = Debugger::trace();
         $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
@@ -779,10 +723,8 @@ TEXT;
 
     /**
      * Tests that __debugInfo is used when available
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $object = new DebuggableThing();
         $result = Debugger::exportVar($object, 2);
@@ -797,10 +739,8 @@ eos;
 
     /**
      * Tests reading the output mask settings.
-     *
-     * @return void
      */
-    public function testSetOutputMask()
+    public function testSetOutputMask(): void
     {
         Debugger::setOutputMask(['password' => '[**********]']);
         $this->assertEquals(['password' => '[**********]'], Debugger::outputMask());
@@ -812,10 +752,8 @@ eos;
 
     /**
      * Test configure based output mask configuration
-     *
-     * @return void
      */
-    public function testConfigureOutputMask()
+    public function testConfigureOutputMask(): void
     {
         Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
         Debugger::getInstance(TestDebugger::class);
@@ -828,10 +766,8 @@ eos;
 
     /**
      * Tests the masking of an array key.
-     *
-     * @return void
      */
-    public function testMaskArray()
+    public function testMaskArray(): void
     {
         Debugger::setOutputMask(['password' => '[**********]']);
         $result = Debugger::exportVar(['password' => 'pass1234']);
@@ -841,10 +777,8 @@ eos;
 
     /**
      * Tests the masking of an array key.
-     *
-     * @return void
      */
-    public function testMaskObject()
+    public function testMaskObject(): void
     {
         Debugger::setOutputMask(['password' => '[**********]']);
         $object = new SecurityThing();
@@ -855,10 +789,8 @@ eos;
 
     /**
      * test testPrintVar()
-     *
-     * @return void
      */
-    public function testPrintVar()
+    public function testPrintVar(): void
     {
         ob_start();
         Debugger::printVar('this-is-a-test', ['file' => __FILE__, 'line' => __LINE__], false);
@@ -933,10 +865,8 @@ EXPECTED;
 
     /**
      * test formatHtmlMessage
-     *
-     * @return void
      */
-    public function testFormatHtmlMessage()
+    public function testFormatHtmlMessage(): void
     {
         $output = Debugger::formatHtmlMessage('Some `code` to `replace`');
         $this->assertSame('Some <code>code</code> to <code>replace</code>', $output);
@@ -953,10 +883,8 @@ EXPECTED;
 
     /**
      * test adding invalid editor
-     *
-     * @return void
      */
-    public function testAddEditorInvalid()
+    public function testAddEditorInvalid(): void
     {
         $this->expectException(RuntimeException::class);
         Debugger::addEditor('nope', ['invalid']);
@@ -964,10 +892,8 @@ EXPECTED;
 
     /**
      * test choosing an unknown editor
-     *
-     * @return void
      */
-    public function testSetEditorInvalid()
+    public function testSetEditorInvalid(): void
     {
         $this->expectException(RuntimeException::class);
         Debugger::setEditor('nope');
@@ -975,10 +901,8 @@ EXPECTED;
 
     /**
      * test choosing a default editor
-     *
-     * @return void
      */
-    public function testSetEditorPredefined()
+    public function testSetEditorPredefined(): void
     {
         Debugger::setEditor('phpstorm');
         Debugger::setEditor('macvim');
@@ -990,10 +914,8 @@ EXPECTED;
 
     /**
      * Test configure based editor setup
-     *
-     * @return void
      */
-    public function testConfigureEditor()
+    public function testConfigureEditor(): void
     {
         Configure::write('Debugger.editor', 'emacs');
         Debugger::getInstance(TestDebugger::class);
@@ -1005,10 +927,8 @@ EXPECTED;
 
     /**
      * test using a valid editor.
-     *
-     * @return void
      */
-    public function testEditorUrlValid()
+    public function testEditorUrlValid(): void
     {
         Debugger::addEditor('open', 'open://{file}:{line}');
         Debugger::setEditor('open');
@@ -1017,10 +937,8 @@ EXPECTED;
 
     /**
      * test using a valid editor.
-     *
-     * @return void
      */
-    public function testEditorUrlClosure()
+    public function testEditorUrlClosure(): void
     {
         Debugger::addEditor('open', function (string $file, int $line) {
             return "${file}/${line}";

@@ -53,8 +53,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -72,8 +70,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tear down.
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -97,7 +93,6 @@ class LinkConstraintTest extends TestCase
      * @dataProvider invalidConstructorArgumentOneDataProvider
      * @param mixed $value
      * @param string $actualType
-     * @return void
      */
     public function testInvalidConstructorArgumentOne($value, $actualType): void
     {
@@ -114,7 +109,6 @@ class LinkConstraintTest extends TestCase
      * Tests that an exception is thrown when passing an invalid value for the `$requiredLinkStatus` argument.
      *
      * @dataProvider invalidConstructorArgumentOneDataProvider
-     * @return void
      */
     public function testInvalidConstructorArgumentTwo(): void
     {
@@ -126,8 +120,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that an exception is thrown when an association with the given name doesn't exist.
-     *
-     * @return void
      */
     public function testNonExistentAssociation(): void
     {
@@ -147,8 +139,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that an exception is thrown when the checked entity doesn't contain all primary key values.
-     *
-     * @return void
      */
     public function testMissingPrimaryKeyValues(): void
     {
@@ -161,7 +151,7 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasMany('Comments');
 
-        $Articles->getEventManager()->on('Model.beforeRules', function (Event $event) {
+        $Articles->getEventManager()->on('Model.beforeRules', function (Event $event): void {
             $event->getSubject()->setPrimaryKey(['id', 'nonexistent']);
         });
 
@@ -177,8 +167,6 @@ class LinkConstraintTest extends TestCase
     /**
      * Tests that an exception is thrown when the number of the extracted primary keys in the check entity doesn't
      * match the required number of primary key parts.
-     *
-     * @return void
      */
     public function testNonMatchingKeyFields(): void
     {
@@ -227,7 +215,6 @@ class LinkConstraintTest extends TestCase
      *
      * @dataProvider invalidRepositoryOptionsDataProvider
      * @param mixed $options
-     * @return void
      */
     public function testInvalidRepository($options): void
     {
@@ -250,8 +237,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a required `belongsTo` link exists.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaBelongsToIsLinked(): void
     {
@@ -271,8 +256,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a required `belongsTo` link does not exist.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaBelongsToIsNotLinked(): void
     {
@@ -308,8 +291,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a required `belongsToMany` link exists.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaBelongsToManyToIsLinked(): void
     {
@@ -328,8 +309,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a required `belongsToMany` link does not exist.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaBelongsToManyIsNotLinked(): void
     {
@@ -362,8 +341,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a required `hasMany` link exists.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaHasManyIsLinked(): void
     {
@@ -383,8 +360,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a required `hasMany` link does not exist.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaHasManyIsNotLinked(): void
     {
@@ -414,8 +389,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a required `hasOne` link exists.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaHasOneIsLinked(): void
     {
@@ -435,8 +408,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a required `hasOne` link does not exist.
-     *
-     * @return void
      */
     public function testMustBeLinkedViaHasOneIsNotLinked(): void
     {
@@ -466,8 +437,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a prohibited `belongsTo` link does not exist.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaBelongsToIsNotLinked(): void
     {
@@ -492,8 +461,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a prohibited `belongsTo` link exists.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaBelongsToIsLinked(): void
     {
@@ -522,8 +489,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a prohibited `belongsToMany` link does not exist.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaBelongsToManyIsNotLinked(): void
     {
@@ -545,8 +510,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a prohibited `belongsToMany` link exists.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaBelongsToManyIsLinked(): void
     {
@@ -574,8 +537,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a prohibited `hasMany` link does not exist.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaHasManyIsNotLinked(): void
     {
@@ -594,8 +555,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a prohibited `hasMany` link exists.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaHasManyIsLinked(): void
     {
@@ -624,8 +583,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule succeeds when a prohibited `hasOne` link does not exist.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaHasOneIsNotLinked(): void
     {
@@ -644,8 +601,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that the rule fails when a prohibited `hasOne` link exists.
-     *
-     * @return void
      */
     public function testMustNotBeLinkedViaHasOneIsLinked(): void
     {
@@ -674,8 +629,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with disabled foreign keys and expression conditions works.
-     *
-     * @return void
      */
     public function testDisabledForeignKeyAndSubQueryConditionsWithMustNotBeLinkedIsNotLinked(): void
     {
@@ -713,8 +666,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with disabled foreign keys and expression conditions works.
-     *
-     * @return void
      */
     public function testDisabledForeignKeyAndSubQueryConditionsWithMustNotBeLinkedIsLinked(): void
     {
@@ -762,8 +713,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with array conditions works.
-     *
-     * @return void
      */
     public function testConditionsWithMustNotBeLinkedIsNotLinked(): void
     {
@@ -786,8 +735,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with array conditions works.
-     *
-     * @return void
      */
     public function testConditionsWithMustNotBeLinkedIsLinked(): void
     {
@@ -820,8 +767,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with conditions that are referencing the main table works.
-     *
-     * @return void
      */
     public function testConditionsReferencingParentColumnWithMustNotBeLinkedIsNotLinked(): void
     {
@@ -858,8 +803,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with conditions that are referencing the main table works.
-     *
-     * @return void
      */
     public function testConditionsReferencingParentColumnWithMustNotBeLinkedIsLinked(): void
     {
@@ -895,8 +838,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with custom finders works.
-     *
-     * @return void
      */
     public function testFinderWithMustNotBeLinkedIsNotLinked(): void
     {
@@ -928,8 +869,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using associations with custom finders works.
-     *
-     * @return void
      */
     public function testFinderWithMustNotBeLinkedIsLinked(): void
     {
@@ -960,8 +899,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using association instances works.
-     *
-     * @return void
      */
     public function testAssociationInstanceWithMustBeLinkedIsLinked(): void
     {
@@ -981,8 +918,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests that using association instances works.
-     *
-     * @return void
      */
     public function testAssociationInstanceWithMustBeLinkedIsNotLinked(): void
     {
@@ -1018,8 +953,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests implicit delete operations on `hasMany` associations.
-     *
-     * @return void
      */
     public function testImplicitHasManyDeleteErrors(): void
     {
@@ -1061,8 +994,6 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Tests implicit delete operations on `belongsToMany` junction associations.
-     *
-     * @return void
      */
     public function testImplicitBelongsToManyJunctionDeleteErrors(): void
     {

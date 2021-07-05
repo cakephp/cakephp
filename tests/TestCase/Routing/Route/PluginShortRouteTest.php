@@ -28,8 +28,6 @@ class PluginShortRouteTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -40,10 +38,8 @@ class PluginShortRouteTest extends TestCase
 
     /**
      * test the parsing of routes.
-     *
-     * @return void
      */
-    public function testParsing()
+    public function testParsing(): void
     {
         $route = new PluginShortRoute('/{plugin}', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
@@ -58,10 +54,8 @@ class PluginShortRouteTest extends TestCase
 
     /**
      * test the reverse routing of the plugin shortcut URLs.
-     *
-     * @return void
      */
-    public function testMatch()
+    public function testMatch(): void
     {
         $route = new PluginShortRoute('/{plugin}', ['action' => 'index'], ['plugin' => 'foo|bar']);
 

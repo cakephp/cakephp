@@ -26,8 +26,6 @@ class AuthSecurityExceptionTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -37,8 +35,6 @@ class AuthSecurityExceptionTest extends TestCase
 
     /**
      * Test the getType() function.
-     *
-     * @return void
      */
     public function testGetType(): void
     {

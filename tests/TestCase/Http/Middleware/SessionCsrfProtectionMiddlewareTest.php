@@ -22,6 +22,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -58,10 +59,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Provides the request handler
-     *
-     * @return \Psr\Http\Server\RequestHandlerInterface
      */
-    protected function _getRequestHandler()
+    protected function _getRequestHandler(): RequestHandlerInterface
     {
         return new TestRequestHandler(function () {
             return new Response();
@@ -70,10 +69,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test setting the cookie value
-     *
-     * @return void
      */
-    public function testSettingTokenInSession()
+    public function testSettingTokenInSession(): void
     {
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
@@ -105,9 +102,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Test that the CSRF tokens are not required for idempotent operations
      *
      * @dataProvider safeHttpMethodProvider
-     * @return void
      */
-    public function testSafeMethodNoCsrfRequired(string $method)
+    public function testSafeMethodNoCsrfRequired(string $method): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -129,9 +125,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Ensure unsalted tokens work.
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testValidTokenInHeaderBackwardsCompat(string $method)
+    public function testValidTokenInHeaderBackwardsCompat(string $method): void
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -154,9 +149,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Test that the X-CSRF-Token works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testValidTokenInHeader(string $method)
+    public function testValidTokenInHeader(string $method): void
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -180,9 +174,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Test that the X-CSRF-Token works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testInvalidTokenInHeader(string $method)
+    public function testInvalidTokenInHeader(string $method): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -211,9 +204,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Ensure unsalted tokens are still accepted.
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testValidTokenInRequestDataBackwardsCompat(string $method)
+    public function testValidTokenInRequestDataBackwardsCompat(string $method): void
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -242,9 +234,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Ensure salted tokens are accepted.
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testValidTokenInRequestData(string $method)
+    public function testValidTokenInRequestData(string $method): void
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -272,9 +263,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testInvalidTokenRequestData(string $method)
+    public function testInvalidTokenRequestData(string $method): void
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -294,10 +284,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that missing post field fails
-     *
-     * @return void
      */
-    public function testInvalidTokenRequestDataMissing()
+    public function testInvalidTokenRequestDataMissing(): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -316,9 +304,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Test that missing session key fails
      *
      * @dataProvider httpMethodProvider
-     * @return void
      */
-    public function testInvalidTokenMissingSession(string $method)
+    public function testInvalidTokenMissingSession(string $method): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -342,10 +329,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that the configuration options work.
-     *
-     * @return void
      */
-    public function testConfigurationCookieCreate()
+    public function testConfigurationCookieCreate(): void
     {
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
@@ -368,10 +353,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      * Test that the configuration options work.
      *
      * There should be no exception thrown.
-     *
-     * @return void
      */
-    public function testConfigurationValidate()
+    public function testConfigurationValidate(): void
     {
         $middleware = new SessionCsrfProtectionMiddleware([
             'key' => 'csrf',
@@ -388,10 +371,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
     }
 
-    /**
-     * @return void
-     */
-    public function testSkippingTokenCheckUsingSkipCheckCallback()
+    public function testSkippingTokenCheckUsingSkipCheckCallback(): void
     {
         $request = new ServerRequest([
             'post' => [
@@ -422,10 +402,8 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Ensure salting is not consistent
-     *
-     * @return void
      */
-    public function testSaltToken()
+    public function testSaltToken(): void
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();

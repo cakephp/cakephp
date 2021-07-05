@@ -26,10 +26,8 @@ class TestSuiteTest extends TestCase
 {
     /**
      * testAddTestDirectory
-     *
-     * @return void
      */
-    public function testAddTestDirectory()
+    public function testAddTestDirectory(): void
     {
         $testFolder = CORE_TEST_CASES . DS . 'TestSuite';
         $count = count(glob($testFolder . DS . '*Test.php'));
@@ -46,10 +44,8 @@ class TestSuiteTest extends TestCase
 
     /**
      * testAddTestDirectoryRecursive
-     *
-     * @return void
      */
-    public function testAddTestDirectoryRecursive()
+    public function testAddTestDirectoryRecursive(): void
     {
         $testFolder = CORE_TEST_CASES . DS . 'Cache';
         $count = count(glob($testFolder . DS . '*Test.php'));
@@ -67,10 +63,8 @@ class TestSuiteTest extends TestCase
 
     /**
      * testAddTestDirectoryRecursiveWithHidden
-     *
-     * @return void
      */
-    public function testAddTestDirectoryRecursiveWithHidden()
+    public function testAddTestDirectoryRecursiveWithHidden(): void
     {
         $this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithHidden unless the tmp folder is writable.');
 
@@ -96,10 +90,8 @@ class TestSuiteTest extends TestCase
 
     /**
      * testAddTestDirectoryRecursiveWithNonPhp
-     *
-     * @return void
      */
-    public function testAddTestDirectoryRecursiveWithNonPhp()
+    public function testAddTestDirectoryRecursiveWithNonPhp(): void
     {
         $this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithNonPhp unless the tmp folder is writable.');
 

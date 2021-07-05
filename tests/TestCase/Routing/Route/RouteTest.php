@@ -30,8 +30,6 @@ class RouteTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -39,9 +37,9 @@ class RouteTest extends TestCase
         Configure::write('Routing', ['prefixes' => []]);
     }
 
-    public function testDeprecatedPlaceholders()
+    public function testDeprecatedPlaceholders(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $route = new Route('/:controller/:action/:id');
             $route->compile();
 
@@ -51,10 +49,8 @@ class RouteTest extends TestCase
 
     /**
      * Test the construction of a Route
-     *
-     * @return void
      */
-    public function testConstruction()
+    public function testConstruction(): void
     {
         $route = new Route('/{controller}/{action}/{id}', [], ['id' => '[0-9]+']);
 
@@ -64,7 +60,7 @@ class RouteTest extends TestCase
         $this->assertFalse($route->compiled());
     }
 
-    public function testConstructionWithInvalidMethod()
+    public function testConstructionWithInvalidMethod(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
@@ -73,10 +69,8 @@ class RouteTest extends TestCase
 
     /**
      * Test set middleware in the constructor
-     *
-     * @return void
      */
-    public function testConstructorSetMiddleware()
+    public function testConstructorSetMiddleware(): void
     {
         $route = new Route('/{controller}/{action}/*', [], ['_middleware' => ['auth', 'cookie']]);
         $this->assertSame(['auth', 'cookie'], $route->getMiddleware());
@@ -84,10 +78,8 @@ class RouteTest extends TestCase
 
     /**
      * Test Route compiling.
-     *
-     * @return void
      */
-    public function testBasicRouteCompiling()
+    public function testBasicRouteCompiling(): void
     {
         $route = new Route('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
         $result = $route->compile();
@@ -123,10 +115,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that single letter placeholders work.
-     *
-     * @return void
      */
-    public function testRouteCompileSmallPlaceholders()
+    public function testRouteCompileSmallPlaceholders(): void
     {
         $route = new Route(
             '/fighters/{id}/move/{x}/{y}',
@@ -148,10 +138,8 @@ class RouteTest extends TestCase
 
     /**
      * Test route compile with brace format.
-     *
-     * @return void
      */
-    public function testRouteCompileBraces()
+    public function testRouteCompileBraces(): void
     {
         $route = new Route(
             '/fighters/{id}/move/{x}/{y}',
@@ -187,10 +175,8 @@ class RouteTest extends TestCase
 
     /**
      * Test route compile with brace format.
-     *
-     * @return void
      */
-    public function testRouteCompileBracesVariableName()
+    public function testRouteCompileBracesVariableName(): void
     {
         $route = new Route(
             '/fighters/{0id}',
@@ -211,10 +197,8 @@ class RouteTest extends TestCase
 
     /**
      * Test route compile with brace format.
-     *
-     * @return void
      */
-    public function testRouteCompileBracesInvalid()
+    public function testRouteCompileBracesInvalid(): void
     {
         $route = new Route(
             '/fighters/{ id }',
@@ -231,10 +215,8 @@ class RouteTest extends TestCase
 
     /**
      * Test route compile with mixed placeholder types brace format.
-     *
-     * @return void
      */
-    public function testRouteCompileMixedPlaceholders()
+    public function testRouteCompileMixedPlaceholders(): void
     {
         $route = new Route(
             '/images/{open/{id}',
@@ -269,10 +251,8 @@ class RouteTest extends TestCase
 
     /**
      * Test parsing routes with extensions.
-     *
-     * @return void
      */
-    public function testRouteParsingWithExtensions()
+    public function testRouteParsingWithExtensions(): void
     {
         $route = new Route(
             '/{controller}/{action}/*',
@@ -302,7 +282,7 @@ class RouteTest extends TestCase
     /**
      * @return array
      */
-    public function provideMatchParseExtension()
+    public function provideMatchParseExtension(): array
     {
         return [
             ['/foo/bar.xml', ['/foo/bar', 'xml'], ['xml', 'json', 'xml.gz']],
@@ -321,10 +301,9 @@ class RouteTest extends TestCase
      * @param string $url
      * @param array $expected
      * @param array $ext
-     * @return void
      * @dataProvider provideMatchParseExtension
      */
-    public function testMatchParseExtension($url, array $expected, array $ext)
+    public function testMatchParseExtension($url, array $expected, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
         $result = $route->parseExtension($url);
@@ -334,7 +313,7 @@ class RouteTest extends TestCase
     /**
      * @return array
      */
-    public function provideNoMatchParseExtension()
+    public function provideNoMatchParseExtension(): array
     {
         return [
             ['/foo/bar', ['xml']],
@@ -351,10 +330,9 @@ class RouteTest extends TestCase
      *
      * @param string $url
      * @param array $ext
-     * @return void
      * @dataProvider provideNoMatchParseExtension
      */
-    public function testNoMatchParseExtension($url, array $ext)
+    public function testNoMatchParseExtension($url, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
         [$outUrl, $outExt] = $route->parseExtension($url);
@@ -364,10 +342,8 @@ class RouteTest extends TestCase
 
     /**
      * Expects extensions to be set
-     *
-     * @return void
      */
-    public function testSetExtensions()
+    public function testSetExtensions(): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', []);
         $this->assertEquals([], $route->getExtensions());
@@ -384,10 +360,8 @@ class RouteTest extends TestCase
 
     /**
      * Expects extensions to be return.
-     *
-     * @return void
      */
-    public function testGetExtensions()
+    public function testGetExtensions(): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', []);
         $this->assertEquals([], $route->getExtensions());
@@ -403,10 +377,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that route parameters that overlap don't cause errors.
-     *
-     * @return void
      */
-    public function testRouteParameterOverlap()
+    public function testRouteParameterOverlap(): void
     {
         $route = new Route('/invoices/add/{idd}/{id}', ['controller' => 'Invoices', 'action' => 'add']);
         $result = $route->compile();
@@ -419,10 +391,8 @@ class RouteTest extends TestCase
 
     /**
      * Test compiling routes with keys that have patterns
-     *
-     * @return void
      */
-    public function testRouteCompilingWithParamPatterns()
+    public function testRouteCompilingWithParamPatterns(): void
     {
         $route = new Route(
             '/{controller}/{action}/{id}',
@@ -489,10 +459,8 @@ class RouteTest extends TestCase
 
     /**
      * Test route with unicode
-     *
-     * @return void
      */
-    public function testCompileWithUnicodePatterns()
+    public function testCompileWithUnicodePatterns(): void
     {
         $route = new Route(
             '/test/{slug}',
@@ -514,10 +482,8 @@ class RouteTest extends TestCase
     /**
      * Test more complex route compiling & parsing with mid route greedy stars
      * and optional routing parameters
-     *
-     * @return void
      */
-    public function testComplexRouteCompilingAndParsing()
+    public function testComplexRouteCompilingAndParsing(): void
     {
         $route = new Route(
             '/posts/{month}/{day}/{year}/*',
@@ -574,10 +540,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that routes match their pattern.
-     *
-     * @return void
      */
-    public function testMatchBasic()
+    public function testMatchBasic(): void
     {
         $route = new Route('/{controller}/{action}/{id}', ['plugin' => null]);
         $result = $route->match(['controller' => 'Posts', 'action' => 'view', 'plugin' => null]);
@@ -655,10 +619,8 @@ class RouteTest extends TestCase
 
     /**
      * Test match() with persist option
-     *
-     * @return void
      */
-    public function testMatchWithPersistOption()
+    public function testMatchWithPersistOption(): void
     {
         $context = [
             'params' => ['lang' => 'en'],
@@ -673,10 +635,8 @@ class RouteTest extends TestCase
 
     /**
      * Test match() with _host and other keys.
-     *
-     * @return void
      */
-    public function testMatchWithHostKeys()
+    public function testMatchWithHostKeys(): void
     {
         $context = [
             '_host' => 'foo.com',
@@ -747,10 +707,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that the _host option sets the default host.
-     *
-     * @return void
      */
-    public function testMatchWithHostOption()
+    public function testMatchWithHostOption(): void
     {
         $route = new Route(
             '/fallback',
@@ -766,10 +724,8 @@ class RouteTest extends TestCase
 
     /**
      * Test wildcard host options
-     *
-     * @return void
      */
-    public function testMatchWithHostWildcardOption()
+    public function testMatchWithHostWildcardOption(): void
     {
         $route = new Route(
             '/fallback',
@@ -824,10 +780,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that non-greedy routes fail with extra passed args
-     *
-     * @return void
      */
-    public function testMatchGreedyRouteFailurePassedArg()
+    public function testMatchGreedyRouteFailurePassedArg(): void
     {
         $route = new Route('/{controller}/{action}', ['plugin' => null]);
         $result = $route->match(['controller' => 'Posts', 'action' => 'view', '0']);
@@ -840,10 +794,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that falsey values do not interrupt a match.
-     *
-     * @return void
      */
-    public function testMatchWithFalseyValues()
+    public function testMatchWithFalseyValues(): void
     {
         $route = new Route('/{controller}/{action}/*', ['plugin' => null]);
         $result = $route->match([
@@ -854,10 +806,8 @@ class RouteTest extends TestCase
 
     /**
      * Test match() with greedy routes, and passed args.
-     *
-     * @return void
      */
-    public function testMatchWithPassedArgs()
+    public function testMatchWithPassedArgs(): void
     {
         $route = new Route('/{controller}/{action}/*', ['plugin' => null]);
 
@@ -887,10 +837,8 @@ class RouteTest extends TestCase
     /**
      * Test that the pass option lets you use positional arguments for the
      * route elements that were named.
-     *
-     * @return void
      */
-    public function testMatchWithPassOption()
+    public function testMatchWithPassOption(): void
     {
         $route = new Route(
             '/blog/{id}-{slug}',
@@ -933,10 +881,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that match() with pass and greedy routes.
-     *
-     * @return void
      */
-    public function testMatchWithPassOptionGreedy()
+    public function testMatchWithPassOptionGreedy(): void
     {
         $route = new Route(
             '/blog/{id}-{slug}/*',
@@ -968,10 +914,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that extensions work.
-     *
-     * @return void
      */
-    public function testMatchWithExtension()
+    public function testMatchWithExtension(): void
     {
         $route = new Route('/{controller}/{action}');
         $result = $route->match([
@@ -1016,10 +960,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that match with patterns works.
-     *
-     * @return void
      */
-    public function testMatchWithPatterns()
+    public function testMatchWithPatterns(): void
     {
         $route = new Route('/{controller}/{action}/{id}', ['plugin' => null], ['id' => '[0-9]+']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'view', 'id' => 'foo']);
@@ -1040,10 +982,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that match() with multibyte pattern
-     *
-     * @return void
      */
-    public function testMatchWithMultibytePattern()
+    public function testMatchWithMultibytePattern(): void
     {
         $route = new Route(
             '/articles/{action}/{id}',
@@ -1060,10 +1000,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that match() matches explicit GET routes
-     *
-     * @return void
      */
-    public function testMatchWithExplicitGet()
+    public function testMatchWithExplicitGet(): void
     {
         $route = new Route(
             '/anything',
@@ -1078,10 +1016,8 @@ class RouteTest extends TestCase
 
     /**
      * Test separartor.
-     *
-     * @return void
      */
-    public function testQueryStringGeneration()
+    public function testQueryStringGeneration(): void
     {
         $route = new Route('/{controller}/{action}/*');
 
@@ -1106,10 +1042,8 @@ class RouteTest extends TestCase
     /**
      * Ensure that parseRequest() calls parse() as that is required
      * for backwards compat
-     *
-     * @return void
      */
-    public function testParseRequestDelegates()
+    public function testParseRequestDelegates(): void
     {
         /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
         $route = $this->getMockBuilder('Cake\Routing\Route\Route')
@@ -1134,10 +1068,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that parseRequest() applies host conditions
-     *
-     * @return void
      */
-    public function testParseRequestHostConditions()
+    public function testParseRequestHostConditions(): void
     {
         $route = new Route(
             '/fallback',
@@ -1180,10 +1112,8 @@ class RouteTest extends TestCase
 
     /**
      * test the parse method of Route.
-     *
-     * @return void
      */
-    public function testParse()
+    public function testParse(): void
     {
         $route = new Route(
             '/{controller}/{action}/{id}',
@@ -1225,10 +1155,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that :key elements are urldecoded
-     *
-     * @return void
      */
-    public function testParseUrlDecodeElements()
+    public function testParseUrlDecodeElements(): void
     {
         $route = new Route(
             '/{controller}/{slug}',
@@ -1248,10 +1176,8 @@ class RouteTest extends TestCase
 
     /**
      * Test numerically indexed defaults, get appended to pass
-     *
-     * @return void
      */
-    public function testParseWithPassDefaults()
+    public function testParseWithPassDefaults(): void
     {
         $route = new Route('/{controller}', ['action' => 'display', 'home']);
         $result = $route->parse('/Posts', 'GET');
@@ -1266,10 +1192,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that middleware is returned from parse()
-     *
-     * @return void
      */
-    public function testParseWithMiddleware()
+    public function testParseWithMiddleware(): void
     {
         $route = new Route('/{controller}', ['action' => 'display', 'home']);
         $route->setMiddleware(['auth', 'cookie']);
@@ -1286,10 +1210,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that http header conditions can cause route failures.
-     *
-     * @return void
      */
-    public function testParseWithHttpHeaderConditions()
+    public function testParseWithHttpHeaderConditions(): void
     {
         $route = new Route('/sample', ['controller' => 'Posts', 'action' => 'index', '_method' => 'POST']);
         $this->assertNull($route->parse('/sample', 'GET'));
@@ -1307,10 +1229,8 @@ class RouteTest extends TestCase
     /**
      * Test that http header conditions can cause route failures.
      * And that http method names are normalized.
-     *
-     * @return void
      */
-    public function testParseWithMultipleHttpMethodConditions()
+    public function testParseWithMultipleHttpMethodConditions(): void
     {
         $route = new Route('/sample', [
             'controller' => 'Posts',
@@ -1331,10 +1251,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that http header conditions can work with URL generation
-     *
-     * @return void
      */
-    public function testMatchWithMultipleHttpMethodConditions()
+    public function testMatchWithMultipleHttpMethodConditions(): void
     {
         $route = new Route('/sample', [
             'controller' => 'Posts',
@@ -1378,10 +1296,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that patterns work for {action}
-     *
-     * @return void
      */
-    public function testPatternOnAction()
+    public function testPatternOnAction(): void
     {
         $route = new Route(
             '/blog/{action}/*',
@@ -1409,10 +1325,8 @@ class RouteTest extends TestCase
 
     /**
      * Test the parseArgs method
-     *
-     * @return void
      */
-    public function testParsePassedArgument()
+    public function testParsePassedArgument(): void
     {
         $route = new Route('/{controller}/{action}/*');
         $result = $route->parse('/Posts/edit/1/2/0', 'GET');
@@ -1427,10 +1341,8 @@ class RouteTest extends TestCase
 
     /**
      * Test matching of parameters where one parameter name starts with another parameter name
-     *
-     * @return void
      */
-    public function testMatchSimilarParameters()
+    public function testMatchSimilarParameters(): void
     {
         $route = new Route('/{thisParam}/{thisParamIsLonger}');
 
@@ -1446,10 +1358,8 @@ class RouteTest extends TestCase
 
     /**
      * Test match() with trailing ** style routes.
-     *
-     * @return void
      */
-    public function testMatchTrailing()
+    public function testMatchTrailing(): void
     {
         $route = new Route('/pages/**', ['controller' => 'Pages', 'action' => 'display']);
         $id = 'test/ spaces/漢字/la†în';
@@ -1464,10 +1374,8 @@ class RouteTest extends TestCase
 
     /**
      * Test match handles optional keys
-     *
-     * @return void
      */
-    public function testMatchNullValueOptionalKey()
+    public function testMatchNullValueOptionalKey(): void
     {
         $route = new Route('/path/{optional}/fixed');
         $this->assertSame('/path/fixed', $route->match(['optional' => null]));
@@ -1478,10 +1386,8 @@ class RouteTest extends TestCase
 
     /**
      * Test matching fails on required keys (controller/action)
-     *
-     * @return void
      */
-    public function testMatchControllerRequiredKeys()
+    public function testMatchControllerRequiredKeys(): void
     {
         $route = new Route('/{controller}/', ['action' => 'index']);
         $this->assertNull($route->match(['controller' => null, 'action' => 'index']));
@@ -1492,10 +1398,8 @@ class RouteTest extends TestCase
 
     /**
      * Test restructuring args with pass key
-     *
-     * @return void
      */
-    public function testPassArgRestructure()
+    public function testPassArgRestructure(): void
     {
         $route = new Route('/{controller}/{action}/{slug}', [], [
             'pass' => ['slug'],
@@ -1513,10 +1417,8 @@ class RouteTest extends TestCase
 
     /**
      * Test the /** special type on parsing.
-     *
-     * @return void
      */
-    public function testParseTrailing()
+    public function testParseTrailing(): void
     {
         $route = new Route('/{controller}/{action}/**');
         $result = $route->parse('/Posts/index/1/2/3/foo:bar', 'GET');
@@ -1540,10 +1442,8 @@ class RouteTest extends TestCase
 
     /**
      * Test the /** special type on parsing - UTF8.
-     *
-     * @return void
      */
-    public function testParseTrailingUTF8()
+    public function testParseTrailingUTF8(): void
     {
         $route = new Route('/category/**', ['controller' => 'Categories', 'action' => 'index']);
         $result = $route->parse('/category/%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84', 'GET');
@@ -1558,10 +1458,8 @@ class RouteTest extends TestCase
 
     /**
      * Test getName();
-     *
-     * @return void
      */
-    public function testGetName()
+    public function testGetName(): void
     {
         $route = new Route('/foo/bar', [], ['_name' => 'testing']);
         $this->assertSame('', $route->getName());
@@ -1590,10 +1488,8 @@ class RouteTest extends TestCase
 
     /**
      * Test getName() with plugins.
-     *
-     * @return void
      */
-    public function testGetNamePlugins()
+    public function testGetNamePlugins(): void
     {
         $route = new Route(
             '/a/{controller}/{action}',
@@ -1616,10 +1512,8 @@ class RouteTest extends TestCase
 
     /**
      * Test getName() with prefixes.
-     *
-     * @return void
      */
-    public function testGetNamePrefix()
+    public function testGetNamePrefix(): void
     {
         $route = new Route(
             '/admin/{controller}/{action}',
@@ -1648,10 +1542,8 @@ class RouteTest extends TestCase
 
     /**
      * Test that utf-8 patterns work for {section}
-     *
-     * @return void
      */
-    public function testUTF8PatternOnSection()
+    public function testUTF8PatternOnSection(): void
     {
         $route = new Route(
             '/{section}',
@@ -1688,10 +1580,9 @@ class RouteTest extends TestCase
     /**
      * Test getting the static path for a route.
      *
-     * @return void
      * @deprecated
      */
-    public function testStaticPath()
+    public function testStaticPath(): void
     {
         $route = new Route('/pages/:id/*', ['controller' => 'Pages', 'action' => 'display']);
         $this->assertSame('/pages/', $route->staticPath());
@@ -1705,10 +1596,8 @@ class RouteTest extends TestCase
 
     /**
      * Test getting the static path for a route.
-     *
-     * @return void
      */
-    public function testStaticPathBrace()
+    public function testStaticPathBrace(): void
     {
         $route = new Route('/*', ['controller' => 'Pages', 'action' => 'display']);
         $this->assertSame('/', $route->staticPath());
@@ -1731,10 +1620,8 @@ class RouteTest extends TestCase
 
     /**
      * Test for __set_state magic method on CakeRoute
-     *
-     * @return void
      */
-    public function testSetState()
+    public function testSetState(): void
     {
         $route = Route::__set_state([
             'keys' => [],
@@ -1762,10 +1649,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting the method on a route.
-     *
-     * @return void
      */
-    public function testSetMethods()
+    public function testSetMethods(): void
     {
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $result = $route->setMethods(['put']);
@@ -1779,10 +1664,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting the method on a route to an invalid method
-     *
-     * @return void
      */
-    public function testSetMethodsInvalid()
+    public function testSetMethodsInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
@@ -1792,10 +1675,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting patterns through the method
-     *
-     * @return void
      */
-    public function testSetPatterns()
+    public function testSetPatterns(): void
     {
         $route = new Route('/reviews/{date}/{id}', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPatterns([
@@ -1814,10 +1695,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting patterns enables multibyte mode
-     *
-     * @return void
      */
-    public function testSetPatternsMultibyte()
+    public function testSetPatternsMultibyte(): void
     {
         $route = new Route('/reviews/{accountid}/{slug}', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPatterns([
@@ -1831,10 +1710,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting host requirements
-     *
-     * @return void
      */
-    public function testSetHost()
+    public function testSetHost(): void
     {
         $route = new Route('/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $result = $route->setHost('blog.example.com');
@@ -1855,10 +1732,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting pass parameters
-     *
-     * @return void
      */
-    public function testSetPass()
+    public function testSetPass(): void
     {
         $route = new Route('/reviews/{date}/{id}', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPass(['date', 'id']);
@@ -1868,10 +1743,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting persisted parameters
-     *
-     * @return void
      */
-    public function testSetPersist()
+    public function testSetPersist(): void
     {
         $route = new Route('/reviews/{date}/{id}', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPersist(['date']);
@@ -1881,10 +1754,8 @@ class RouteTest extends TestCase
 
     /**
      * Test setting/getting middleware.
-     *
-     * @return void
      */
-    public function testSetMiddleware()
+    public function testSetMiddleware(): void
     {
         $route = new Route('/reviews/{date}/{id}', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setMiddleware(['auth', 'cookie']);

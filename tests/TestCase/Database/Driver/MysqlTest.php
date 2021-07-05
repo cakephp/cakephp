@@ -29,8 +29,6 @@ class MysqlTest extends TestCase
 {
     /**
      * setup
-     *
-     * @return void
      */
     public function setup(): void
     {
@@ -41,10 +39,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test connecting to MySQL with default configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigDefault()
+    public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -83,10 +79,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test connecting to MySQL with custom configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigCustom()
+    public function testConnectionConfigCustom(): void
     {
         $config = [
             'persistent' => false,
@@ -133,10 +127,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test schema
-     *
-     * @return void
      */
-    public function testSchema()
+    public function testSchema(): void
     {
         $connection = ConnectionManager::get('test');
         $config = ConnectionManager::getConfig('test');
@@ -145,10 +137,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test isConnected
-     *
-     * @return void
      */
-    public function testIsConnected()
+    public function testIsConnected(): void
     {
         $connection = ConnectionManager::get('test');
         $connection->disconnect();
@@ -158,7 +148,7 @@ class MysqlTest extends TestCase
         $this->assertTrue($connection->isConnected(), 'Should be connected.');
     }
 
-    public function testRollbackTransactionAutoConnect()
+    public function testRollbackTransactionAutoConnect(): void
     {
         $connection = ConnectionManager::get('test');
         $connection->disconnect();
@@ -168,7 +158,7 @@ class MysqlTest extends TestCase
         $this->assertTrue($driver->isConnected());
     }
 
-    public function testCommitTransactionAutoConnect()
+    public function testCommitTransactionAutoConnect(): void
     {
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
@@ -181,9 +171,8 @@ class MysqlTest extends TestCase
      * @dataProvider versionStringProvider
      * @param string $dbVersion
      * @param string $expectedVersion
-     * @return void
      */
-    public function testVersion($dbVersion, $expectedVersion)
+    public function testVersion($dbVersion, $expectedVersion): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
         $connection = $this->getMockBuilder(Connection::class)

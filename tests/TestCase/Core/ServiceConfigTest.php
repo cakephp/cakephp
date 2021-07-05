@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
  */
 class ServiceConfigTest extends TestCase
 {
-    public function testGet()
+    public function testGet(): void
     {
         Configure::write('first', 'first-val');
         Configure::write('nested.path', 'nested-val');
@@ -38,7 +38,7 @@ class ServiceConfigTest extends TestCase
         $this->assertSame('default', $config->get('nested.nope', 'default'));
     }
 
-    public function testHas()
+    public function testHas(): void
     {
         Configure::write('first', 'first-val');
         Configure::write('nested.path', 'nested-val');

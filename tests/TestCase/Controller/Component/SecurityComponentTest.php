@@ -61,8 +61,6 @@ class SecurityComponentTest extends TestCase
      * setUp method
      *
      * Initializes environment state.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -85,8 +83,6 @@ class SecurityComponentTest extends TestCase
 
     /**
      * Resets environment state.
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -117,7 +113,6 @@ class SecurityComponentTest extends TestCase
      * Test that requests are still blackholed when controller has incorrect
      * visibility keyword in the blackhole callback.
      *
-     * @return void
      * @triggers Controller.startup $Controller, $this->Controller
      */
     public function testBlackholeWithBrokenCallback(): void
@@ -145,7 +140,6 @@ class SecurityComponentTest extends TestCase
      * Ensure that directly requesting the blackholeCallback as the controller
      * action results in an exception.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testExceptionWhenActionIsBlackholeCallback(): void
@@ -162,10 +156,8 @@ class SecurityComponentTest extends TestCase
 
     /**
      * test blackholeCallback returning a response
-     *
-     * @return void
      */
-    public function testBlackholeReturnResponse()
+    public function testBlackholeReturnResponse(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -192,8 +184,6 @@ class SecurityComponentTest extends TestCase
      * testConstructorSettingProperties method
      *
      * Test that initialize can set properties.
-     *
-     * @return void
      */
     public function testConstructorSettingProperties(): void
     {
@@ -208,7 +198,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testRequireSecureFail method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireSecureFail(): void
@@ -227,7 +216,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testRequireSecureSucceed method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireSecureSucceed(): void
@@ -245,7 +233,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testRequireSecureEmptyFail method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireSecureEmptyFail(): void
@@ -263,7 +250,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testRequireSecureEmptySucceed method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireSecureEmptySucceed(): void
@@ -283,7 +269,6 @@ class SecurityComponentTest extends TestCase
      *
      * Simple hash validation test
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePost(): void
@@ -308,7 +293,6 @@ class SecurityComponentTest extends TestCase
      * Test that validatePost fires on GET with request data.
      * This could happen when method overriding is used.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostOnGetWithData(): void
@@ -338,7 +322,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that validatePost fails if you are missing the session information.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostNoSession(): void
@@ -366,7 +349,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that validatePost fails if you are missing unlocked in request data.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostNoUnlockedInRequestData(): void
@@ -388,7 +370,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that validatePost fails if any of its required fields are missing.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostFormTampering(): void
@@ -410,7 +391,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that validatePost fails if empty form is submitted.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostEmptyForm(): void
@@ -430,7 +410,6 @@ class SecurityComponentTest extends TestCase
      * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI
      * attacks. Thanks to Felix Wilhelm
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostObjectDeserialize(): void
@@ -462,7 +441,6 @@ class SecurityComponentTest extends TestCase
      *
      * Tests validation post data ignores `_csrfToken`.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostIgnoresCsrfToken(): void
@@ -486,7 +464,6 @@ class SecurityComponentTest extends TestCase
      *
      * Tests validation of checkbox arrays.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostArray(): void
@@ -519,8 +496,6 @@ class SecurityComponentTest extends TestCase
      * testValidateIntFieldName method
      *
      * Tests validation of integer field names.
-     *
-     * @return void
      */
     public function testValidateIntFieldName(): void
     {
@@ -545,7 +520,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testValidatePostNoModel method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostNoModel(): void
@@ -569,7 +543,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testValidatePostSimple method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostSimple(): void
@@ -593,7 +566,6 @@ class SecurityComponentTest extends TestCase
     /**
      * test validatePost uses full URL
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostSubdirectory(): void
@@ -626,7 +598,6 @@ class SecurityComponentTest extends TestCase
      *
      * Tests hash validation for multiple records, including locked fields.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostComplex(): void
@@ -660,7 +631,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test ValidatePost with multiple select elements.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostMultipleSelect(): void
@@ -709,7 +679,6 @@ class SecurityComponentTest extends TestCase
      * First block tests un-checked checkbox
      * Second block tests checked checkbox
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostCheckbox(): void
@@ -753,7 +722,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testValidatePostHidden method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostHidden(): void
@@ -780,7 +748,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test validating post data with posted unlocked fields.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostDisabledFieldsInData(): void
@@ -812,7 +779,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that missing 'unlocked' input causes failure.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostFailNoDisabled(): void
@@ -840,7 +806,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that missing 'debug' input causes failure.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostFailNoDebug(): void
@@ -869,7 +834,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that missing 'debug' input is not the problem when debug mode disabled.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostFailNoDebugMode(): void
@@ -898,7 +862,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that validatePost fails when unlocked fields are changed.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostFailDisabledFieldTampering(): void
@@ -932,10 +895,8 @@ class SecurityComponentTest extends TestCase
 
     /**
      * Test that invalid types cause failures.
-     *
-     * @return void
      */
-    public function testValidatePostFailArrayData()
+    public function testValidatePostFailArrayData(): void
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
@@ -957,7 +918,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testValidateHiddenMultipleModel method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidateHiddenMultipleModel(): void
@@ -981,7 +941,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testValidateHasManyModel method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidateHasManyModel(): void
@@ -1014,7 +973,6 @@ class SecurityComponentTest extends TestCase
     /**
      * testValidateHasManyRecordsPass method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidateHasManyRecordsPass(): void
@@ -1061,7 +1019,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that values like Foo.0.1
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidateNestedNumericSets(): void
@@ -1091,7 +1048,6 @@ class SecurityComponentTest extends TestCase
      *
      * validatePost should fail, hidden fields have been changed.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidateHasManyRecordsFail(): void
@@ -1158,7 +1114,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test validatePost with radio buttons.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostRadio(): void
@@ -1206,7 +1161,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test validatePost uses here() as a hash input.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostUrlAsHashInput(): void
@@ -1246,8 +1200,6 @@ class SecurityComponentTest extends TestCase
      * testGenerateToken method
      *
      * Test generateToken().
-     *
-     * @return void
      */
     public function testGenerateToken(): void
     {
@@ -1264,7 +1216,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test unlocked actions.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testUnlockedActions(): void
@@ -1283,7 +1234,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that debug token format is right.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostDebugFormat(): void
@@ -1321,8 +1271,6 @@ class SecurityComponentTest extends TestCase
      * testBlackholeThrowsException method
      *
      * Test blackhole will now throw passed exception if debug enabled.
-     *
-     * @return void
      */
     public function testBlackholeThrowsException(): void
     {
@@ -1336,8 +1284,6 @@ class SecurityComponentTest extends TestCase
      * testBlackholeThrowsBadRequest method
      *
      * Test blackhole will throw BadRequest if debug disabled.
-     *
-     * @return void
      */
     public function testBlackholeThrowsBadRequest(): void
     {
@@ -1360,7 +1306,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that validatePost fails with tampered fields and explanation.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostFailTampering(): void
@@ -1393,7 +1338,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that validatePost fails with tampered fields and explanation.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostFailTamperingMutatedIntoArray(): void
@@ -1426,7 +1370,6 @@ class SecurityComponentTest extends TestCase
      *
      * Test that debug token should not be sent if debug is disabled.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testValidatePostUnexpectedDebugToken(): void

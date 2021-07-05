@@ -30,7 +30,7 @@ use TestPlugin\Plugin as TestPlugin;
  */
 class PluginCollectionTest extends TestCase
 {
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $plugins = new PluginCollection([new TestPlugin()]);
 
@@ -38,7 +38,7 @@ class PluginCollectionTest extends TestCase
         $this->assertTrue($plugins->has('TestPlugin'));
     }
 
-    public function testAdd()
+    public function testAdd(): void
     {
         $plugins = new PluginCollection();
         $this->assertCount(0, $plugins);
@@ -47,7 +47,7 @@ class PluginCollectionTest extends TestCase
         $this->assertCount(1, $plugins);
     }
 
-    public function testAddOperations()
+    public function testAddOperations(): void
     {
         $plugins = new PluginCollection();
         $plugins->add(new TestPlugin());
@@ -61,7 +61,7 @@ class PluginCollectionTest extends TestCase
         $this->assertFalse($plugins->has('TestPlugin'));
     }
 
-    public function testAddVendoredPlugin()
+    public function testAddVendoredPlugin(): void
     {
         $plugins = new PluginCollection();
         $plugins->add(new TestPluginThree());
@@ -72,7 +72,7 @@ class PluginCollectionTest extends TestCase
         $this->assertFalse($plugins->has('TestPlugin'));
     }
 
-    public function testHas()
+    public function testHas(): void
     {
         $plugins = new PluginCollection();
         $this->assertFalse($plugins->has('TestPlugin'));
@@ -82,7 +82,7 @@ class PluginCollectionTest extends TestCase
         $this->assertFalse($plugins->has('Plugin'));
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $plugins = new PluginCollection();
         $plugin = new TestPlugin();
@@ -91,14 +91,14 @@ class PluginCollectionTest extends TestCase
         $this->assertSame($plugin, $plugins->get('TestPlugin'));
     }
 
-    public function testGetAutoload()
+    public function testGetAutoload(): void
     {
         $plugins = new PluginCollection();
         $plugin = $plugins->get('ParentPlugin');
         $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
     }
 
-    public function testGetInvalid()
+    public function testGetInvalid(): void
     {
         $this->expectException(MissingPluginException::class);
 
@@ -106,7 +106,7 @@ class PluginCollectionTest extends TestCase
         $plugins->get('Invalid');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $plugins = new PluginCollection();
 
@@ -125,7 +125,7 @@ class PluginCollectionTest extends TestCase
         $this->assertSame('TestTheme', $plugin->getName());
     }
 
-    public function testIterator()
+    public function testIterator(): void
     {
         $data = [
             new TestPlugin(),
@@ -140,7 +140,7 @@ class PluginCollectionTest extends TestCase
         $this->assertSame($data, $out);
     }
 
-    public function testWith()
+    public function testWith(): void
     {
         $plugins = new PluginCollection();
         $plugin = new TestPlugin();
@@ -165,10 +165,8 @@ class PluginCollectionTest extends TestCase
      *
      * This situation can happen when a plugin like bake
      * needs to discover things inside other plugins.
-     *
-     * @return void
      */
-    public function testWithInnerIteration()
+    public function testWithInnerIteration(): void
     {
         $plugins = new PluginCollection();
         $plugin = new TestPlugin();
@@ -189,7 +187,7 @@ class PluginCollectionTest extends TestCase
         $this->assertSame($pluginThree, $out[1]);
     }
 
-    public function testWithInvalidHook()
+    public function testWithInvalidHook(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -198,7 +196,7 @@ class PluginCollectionTest extends TestCase
         }
     }
 
-    public function testFindPathNoConfigureData()
+    public function testFindPathNoConfigureData(): void
     {
         Configure::write('plugins', []);
         $plugins = new PluginCollection();
@@ -207,7 +205,7 @@ class PluginCollectionTest extends TestCase
         $this->assertSame(TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS, $path);
     }
 
-    public function testFindPathLoadsConfigureData()
+    public function testFindPathLoadsConfigureData(): void
     {
         $configPath = ROOT . DS . 'cakephp-plugins.php';
         $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
@@ -230,7 +228,7 @@ PHP;
         $this->assertSame('/config/path', $path);
     }
 
-    public function testFindPathConfigureData()
+    public function testFindPathConfigureData(): void
     {
         Configure::write('plugins', ['TestPlugin' => '/some/path']);
         $plugins = new PluginCollection();
@@ -239,7 +237,7 @@ PHP;
         $this->assertSame('/some/path', $path);
     }
 
-    public function testFindPathMissingPlugin()
+    public function testFindPathMissingPlugin(): void
     {
         Configure::write('plugins', []);
         $plugins = new PluginCollection();

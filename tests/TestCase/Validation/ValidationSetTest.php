@@ -29,10 +29,8 @@ class ValidationSetTest extends TestCase
 {
     /**
      * testGetRule method
-     *
-     * @return void
      */
-    public function testGetRule()
+    public function testGetRule(): void
     {
         $field = new ValidationSet();
         $field->add('notBlank', ['rule' => 'notBlank', 'message' => 'Can not be empty']);
@@ -44,10 +42,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * testGetRules method
-     *
-     * @return void
      */
-    public function testGetRules()
+    public function testGetRules(): void
     {
         $field = new ValidationSet();
         $field->add('notBlank', ['rule' => 'notBlank', 'message' => 'Can not be empty']);
@@ -59,10 +55,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Tests getting a rule from the set using array access
-     *
-     * @return void
      */
-    public function testArrayAccessGet()
+    public function testArrayAccessGet(): void
     {
         $set = (new ValidationSet())
             ->add('notBlank', ['rule' => 'notBlank'])
@@ -84,10 +78,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Tests checking a rule from the set using array access
-     *
-     * @return void
      */
-    public function testArrayAccessExists()
+    public function testArrayAccessExists(): void
     {
         $set = (new ValidationSet())
             ->add('notBlank', ['rule' => 'notBlank'])
@@ -102,10 +94,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Tests setting a rule in the set using array access
-     *
-     * @return void
      */
-    public function testArrayAccessSet()
+    public function testArrayAccessSet(): void
     {
         $set = (new ValidationSet())
             ->add('notBlank', ['rule' => 'notBlank']);
@@ -119,10 +109,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Tests unseting a rule from the set using array access
-     *
-     * @return void
      */
-    public function testArrayAccessUnset()
+    public function testArrayAccessUnset(): void
     {
         $set = (new ValidationSet())
             ->add('notBlank', ['rule' => 'notBlank'])
@@ -141,10 +129,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Tests it is possible to iterate a validation set object
-     *
-     * @return void
      */
-    public function testIterator()
+    public function testIterator(): void
     {
         $set = (new ValidationSet())
             ->add('notBlank', ['rule' => 'notBlank'])
@@ -170,10 +156,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Tests countable interface
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
         $set = (new ValidationSet())
             ->add('notBlank', ['rule' => 'notBlank'])
@@ -187,10 +171,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Test removeRule method
-     *
-     * @return void
      */
-    public function testRemoveRule()
+    public function testRemoveRule(): void
     {
         $set = (new ValidationSet())
             ->add('notBlank', ['rule' => 'notBlank'])
@@ -212,10 +194,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Test requirePresence and isPresenceRequired methods
-     *
-     * @return void
      */
-    public function testRequirePresence()
+    public function testRequirePresence(): void
     {
         $set = new ValidationSet();
 
@@ -230,10 +210,8 @@ class ValidationSetTest extends TestCase
 
     /**
      * Test allowEmpty and isEmptyAllowed methods
-     *
-     * @return void
      */
-    public function testAllowEmpty()
+    public function testAllowEmpty(): void
     {
         $set = new ValidationSet();
 

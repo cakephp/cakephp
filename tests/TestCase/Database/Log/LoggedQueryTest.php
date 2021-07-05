@@ -45,10 +45,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that LoggedQuery can be converted to string
-     *
-     * @return void
      */
-    public function testStringConversion()
+    public function testStringConversion(): void
     {
         $logged = new LoggedQuery();
         $logged->query = 'SELECT foo FROM bar';
@@ -57,10 +55,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that query placeholders are replaced when logged
-     *
-     * @return void
      */
-    public function testStringInterpolation()
+    public function testStringInterpolation(): void
     {
         $query = new LoggedQuery();
         $query->driver = $this->driver;
@@ -73,10 +69,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that positional placeholders are replaced when logging a query
-     *
-     * @return void
      */
-    public function testStringInterpolationNotNamed()
+    public function testStringInterpolationNotNamed(): void
     {
         $query = new LoggedQuery();
         $query->driver = $this->driver;
@@ -89,10 +83,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that repeated placeholders are correctly replaced
-     *
-     * @return void
      */
-    public function testStringInterpolationDuplicate()
+    public function testStringInterpolationDuplicate(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p1 AND c = :p2 AND d = :p2';
@@ -104,10 +96,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that named placeholders
-     *
-     * @return void
      */
-    public function testStringInterpolationNamed()
+    public function testStringInterpolationNamed(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p11 AND c = :p20 AND d = :p2';
@@ -119,10 +109,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that placeholders are replaced with correctly escaped strings
-     *
-     * @return void
      */
-    public function testStringInterpolationSpecialChars()
+    public function testStringInterpolationSpecialChars(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4';
@@ -134,10 +122,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that query placeholders are replaced when logged
-     *
-     * @return void
      */
-    public function testBinaryInterpolation()
+    public function testBinaryInterpolation(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';
@@ -150,10 +136,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that unknown possible binary data is not replaced to hex.
-     *
-     * @return void
      */
-    public function testBinaryInterpolationIgnored()
+    public function testBinaryInterpolationIgnored(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';
@@ -163,7 +147,7 @@ class LoggedQueryTest extends TestCase
         $this->assertSame($expected, (string)$query);
     }
 
-    public function testGetContext()
+    public function testGetContext(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';
@@ -177,10 +161,7 @@ class LoggedQueryTest extends TestCase
         $this->assertSame($expected, $query->getContext());
     }
 
-    /**
-     * @return void
-     */
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';

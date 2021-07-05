@@ -32,9 +32,6 @@ use TestApp\Command\FormatSpecifierCommand;
 
 class Application extends BaseApplication
 {
-    /**
-     * @return void
-     */
     public function bootstrap(): void
     {
         parent::bootstrap();
@@ -47,9 +44,6 @@ class Application extends BaseApplication
         }
     }
 
-    /**
-     * @return \Cake\Console\CommandCollection
-     */
     public function console(CommandCollection $commands): CommandCollection
     {
         return $commands
@@ -58,9 +52,6 @@ class Application extends BaseApplication
             ->addMany($commands->autoDiscover());
     }
 
-    /**
-     * @return \Cake\Http\MiddlewareQueue
-     */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue->add(function ($request, $handler) {
@@ -74,12 +65,10 @@ class Application extends BaseApplication
 
     /**
      * Routes hook, used for testing with RoutingMiddleware.
-     *
-     * @return void
      */
     public function routes(RouteBuilder $routes): void
     {
-        $routes->scope('/app', function (RouteBuilder $routes) {
+        $routes->scope('/app', function (RouteBuilder $routes): void {
             $routes->connect('/articles', ['controller' => 'Articles']);
             $routes->connect('/articles/{action}/*', ['controller' => 'Articles']);
 
@@ -99,7 +88,6 @@ class Application extends BaseApplication
      * Container register hook
      *
      * @param \Cake\Core\ContainerInterface $container The container to update
-     * @return void
      */
     public function services(ContainerInterface $container): void
     {
