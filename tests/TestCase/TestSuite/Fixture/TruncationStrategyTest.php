@@ -30,7 +30,7 @@ class TruncationStrategyTest extends TestCase
     /**
      * Test that beforeTest truncates tables from the previous test
      */
-    public function testSetupSimple(): void
+    public function testTeardownSimple(): void
     {
         $articles = TableRegistry::get('Articles');
         $articlesTags = TableRegistry::get('ArticlesTags');
@@ -41,7 +41,7 @@ class TruncationStrategyTest extends TestCase
         $this->assertGreaterThan(0, $rowCount);
 
         $strategy = new TruncationStrategy($this->fixtureManager);
-        $strategy->setupTest();
+        $strategy->teardownTest();
 
         $rowCount = $articles->find()->count();
         $this->assertEquals(0, $rowCount);

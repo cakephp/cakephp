@@ -66,7 +66,7 @@ class TruncationStrategy implements ResetStrategyInterface
      *
      * @return void
      */
-    public function setupTest(): void
+    public function teardownTest(): void
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
@@ -104,7 +104,7 @@ class TruncationStrategy implements ResetStrategyInterface
      *
      * @return void
      */
-    public function teardownTest(): void
+    public function setupTest(): void
     {
     }
 
