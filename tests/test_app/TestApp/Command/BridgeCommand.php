@@ -9,6 +9,9 @@ use Cake\Console\ConsoleIo;
 
 class BridgeCommand extends Command
 {
+    /**
+     * @inheritDoc
+     */
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $name = $io->ask('What is your name');
