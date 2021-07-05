@@ -26,9 +26,6 @@ use Cake\View\Widget\DateTimeWidget;
  */
 class DateTimeWidgetTest extends TestCase
 {
-    /**
-     * @setUp
-     */
     public function setUp(): void
     {
         parent::setUp();
