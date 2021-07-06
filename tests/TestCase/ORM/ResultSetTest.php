@@ -402,10 +402,10 @@ class ResultSetTest extends TestCase
     {
         $query = $this->table->find('all');
 
-        $min = $query->min('id');
+        $min = $query->all()->min('id');
         $minExpected = $this->table->get(1);
 
-        $max = $query->max('id');
+        $max = $query->all()->max('id');
         $maxExpected = $this->table->get(3);
 
         $this->assertEquals($minExpected, $min);
@@ -422,8 +422,8 @@ class ResultSetTest extends TestCase
             'counter' => 'COUNT(*)',
         ])->group('author_id');
 
-        $min = $query->min('counter');
-        $max = $query->max('counter');
+        $min = $query->all()->min('counter');
+        $max = $query->all()->max('counter');
 
         $this->assertTrue($max > $min);
     }

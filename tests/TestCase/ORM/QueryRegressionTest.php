@@ -1034,6 +1034,7 @@ class QueryRegressionTest extends TestCase
             ->select(['Comments.id', 'Comments.user_id'])
             ->contain(['Users'])
             ->where(['Users.id' => 1])
+            ->all()
             ->combine('id', 'user_id');
 
         $this->assertEquals([3 => 1, 4 => 1, 5 => 1], $results->toArray());
@@ -1080,6 +1081,7 @@ class QueryRegressionTest extends TestCase
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.id' => 1]);
             })
+            ->all()
             ->extract('id')
             ->toList();
         $this->assertEquals([2], $results);
@@ -1132,20 +1134,6 @@ class QueryRegressionTest extends TestCase
             ->first()
             ->ratio;
         $this->assertSame(0.5, (float)$ratio);
-    }
-
-    /**
-     * Tests calling last on an empty table
-     *
-     * @see https://github.com/cakephp/cakephp/issues/6683
-     */
-    public function testFindLastOnEmptyTable(): void
-    {
-        $this->loadFixtures('Comments');
-        $table = $this->getTableLocator()->get('Comments');
-        $table->deleteAll(['1 = 1']);
-        $this->assertSame(0, $table->find()->count());
-        $this->assertNull($table->find()->last());
     }
 
     /**
@@ -1742,7 +1730,7 @@ class QueryRegressionTest extends TestCase
                 ];
             });
 
-        $results = $query->extract('value')->toArray();
+        $results = $query->all()->extract('value')->toArray();
         $this->assertEquals(['mariano', '1', 'mariano'], $results);
     }
 

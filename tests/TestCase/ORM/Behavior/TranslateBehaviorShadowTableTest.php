@@ -452,7 +452,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         ]);
 
         $table->setLocale('eng');
-        $results = $table->find()->combine('title', 'subtitle', 'id')->toArray();
+        $results = $table->find()->all()->combine('title', 'subtitle', 'id')->toArray();
         $expected = [
             1 => ['Title #1' => 'SubTitle #1'],
             2 => ['Title #2' => 'SubTitle #2'],
