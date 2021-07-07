@@ -43,7 +43,7 @@ class TruncationStrategy implements ResetStrategyInterface
      *
      * @var array
      */
-    protected $tables = [];
+    protected static $tables = [];
 
     /**
      * @var \Cake\TestSuite\Fixture\FixtureLoader
@@ -121,12 +121,12 @@ class TruncationStrategy implements ResetStrategyInterface
     protected function getTableSchema(Connection $db, string $table): TableSchemaInterface
     {
         $name = $db->configName();
-        if (isset($this->tables[$name][$table])) {
-            return $this->tables[$name][$table];
+        if (isset(static::$tables[$name][$table])) {
+            return static::$tables[$name][$table];
         }
         $schema = $db->getSchemaCollection();
         $tableSchema = $schema->describe($table);
-        $this->tables[$name][$table] = $tableSchema;
+        static::$tables[$name][$table] = $tableSchema;
 
         return $tableSchema;
     }
