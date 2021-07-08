@@ -92,12 +92,6 @@
       <code>$this-&gt;headers</code>
     </PropertyTypeCoercion>
   </file>
-  <file src="src/Http/MiddlewareQueue.php">
-    <DeprecatedClass occurrences="2">
-      <code>new DoublePassDecoratorMiddleware($middleware)</code>
-      <code>new DoublePassDecoratorMiddleware($middleware)</code>
-    </DeprecatedClass>
-  </file>
   <file src="src/Http/ServerRequest.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$this-&gt;data</code>
