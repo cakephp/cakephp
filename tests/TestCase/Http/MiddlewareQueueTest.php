@@ -368,19 +368,4 @@ class MiddlewareQueueTest extends TestCase
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
     }
-
-    /**
-     * @deprecated
-     */
-    public function testAddingDeprecatedDoublePassMiddleware(): void
-    {
-        $queue = new MiddlewareQueue();
-        $cb = function ($request, $response, $next) {
-            return $next($request, $response);
-        };
-        $queue->add($cb);
-        $this->deprecated(function () use ($queue, $cb): void {
-            $this->assertSame($cb, $queue->current()->getCallable());
-        });
-    }
 }

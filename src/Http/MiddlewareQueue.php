@@ -18,13 +18,11 @@ namespace Cake\Http;
 
 use Cake\Core\App;
 use Cake\Http\Middleware\ClosureDecoratorMiddleware;
-use Cake\Http\Middleware\DoublePassDecoratorMiddleware;
 use Closure;
 use Countable;
 use LogicException;
 use OutOfBoundsException;
 use Psr\Http\Server\MiddlewareInterface;
-use ReflectionFunction;
 use RuntimeException;
 use SeekableIterator;
 
@@ -68,9 +66,10 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return \Psr\Http\Server\MiddlewareInterface
      * @throws \RuntimeException If Middleware not found.
      */
-    protected function resolve($middleware): MiddlewareInterface
+    protected function resolve(MiddlewareInterface|Closure|string $middleware): MiddlewareInterface
     {
         if (is_string($middleware)) {
+            /** @psalm-var class-string<\Psr\Http\Server\MiddlewareInterface>|null $className */
             $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null) {
                 throw new RuntimeException(sprintf(
@@ -78,20 +77,12 @@ class MiddlewareQueue implements Countable, SeekableIterator
                     $middleware
                 ));
             }
-            $middleware = new $className();
+
+            return new $className();
         }
 
         if ($middleware instanceof MiddlewareInterface) {
             return $middleware;
-        }
-
-        if (!$middleware instanceof Closure) {
-            return new DoublePassDecoratorMiddleware($middleware);
-        }
-
-        $info = new ReflectionFunction($middleware);
-        if ($info->getNumberOfParameters() > 2) {
-            return new DoublePassDecoratorMiddleware($middleware);
         }
 
         return new ClosureDecoratorMiddleware($middleware);
