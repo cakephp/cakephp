@@ -136,7 +136,7 @@ class LazyEagerLoader
      * entities.
      *
      * @param \Cake\Datasource\EntityInterface[]|\Traversable $objects The original list of entities
-     * @param \Cake\Collection\CollectionInterface|\Cake\ORM\Query $results The loaded results
+     * @param \Cake\ORM\Query $results The loaded results
      * @param string[] $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array
@@ -147,6 +147,7 @@ class LazyEagerLoader
         $properties = $this->_getPropertyMap($source, $associations);
         $primaryKey = (array)$source->getPrimaryKey();
         $results = $results
+            ->all()
             ->indexBy(function ($e) use ($primaryKey) {
                 /** @var \Cake\Datasource\EntityInterface $e */
                 return implode(';', $e->extract($primaryKey));

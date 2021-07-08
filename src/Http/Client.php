@@ -208,7 +208,7 @@ class Client implements ClientInterface
      * too. If a path is included in the URL, the client instance will build urls with it prepended.
      * Other parts of the url string are ignored.
      *
-     * @param  string $url A string URL e.g. https://example.com
+     * @param string $url A string URL e.g. https://example.com
      * @return static
      * @throws \InvalidArgumentException
      */

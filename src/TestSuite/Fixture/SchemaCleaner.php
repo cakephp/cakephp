@@ -122,8 +122,8 @@ class SchemaCleaner
     }
 
     /**
-     * @param  \Cake\Datasource\ConnectionInterface $connection Connection.
-     * @param  array               $commands Sql commands to run
+     * @param \Cake\Datasource\ConnectionInterface $connection Connection.
+     * @param array $commands Sql commands to run
      * @return void
      * @throws \Exception
      */
@@ -150,7 +150,7 @@ class SchemaCleaner
     }
 
     /**
-     * @param  string $connectionName name of the connection.
+     * @param string $connectionName name of the connection.
      * @return \Cake\Database\Schema\CollectionInterface
      */
     protected function getSchema(string $connectionName): CollectionInterface
@@ -159,7 +159,7 @@ class SchemaCleaner
     }
 
     /**
-     * @param  string $connectionName Name of the connection.
+     * @param string $connectionName Name of the connection.
      * @return \Cake\Database\Schema\SchemaDialect
      */
     protected function getDialect(string $connectionName): SchemaDialect

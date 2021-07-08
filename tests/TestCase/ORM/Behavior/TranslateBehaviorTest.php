@@ -128,7 +128,7 @@ class TranslateBehaviorTest extends TestCase
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 
         $table->setLocale('eng');
-        $results = $table->find()->combine('title', 'body', 'id')->toArray();
+        $results = $table->find()->all()->combine('title', 'body', 'id')->toArray();
         $expected = [
             1 => ['Title #1' => 'Content #1'],
             2 => ['Title #2' => 'Content #2'],
@@ -293,7 +293,9 @@ class TranslateBehaviorTest extends TestCase
         $table->setLocale('spa');
         $results = $table->find()
             ->where(['Comments.id' => 6])
-            ->combine('id', 'comment')->toArray();
+            ->all()
+            ->combine('id', 'comment')
+            ->toArray();
         $expected = [6 => 'Second Comment for Second Article'];
         $this->assertSame($expected, $results);
     }
@@ -468,7 +470,7 @@ class TranslateBehaviorTest extends TestCase
             3 => ['Third Article' => 'Third Article Body'],
         ];
 
-        $grouped = $results->combine('title', 'body', 'id');
+        $grouped = $results->all()->combine('title', 'body', 'id');
         $this->assertEquals($expected, $grouped->toArray());
     }
 
@@ -504,7 +506,7 @@ class TranslateBehaviorTest extends TestCase
             3 => ['Third Article' => 'Third Article Body'],
         ];
 
-        $grouped = $results->combine('title', 'body', 'id');
+        $grouped = $results->all()->combine('title', 'body', 'id');
         $this->assertEquals($expected, $grouped->toArray());
     }
 
@@ -564,7 +566,7 @@ class TranslateBehaviorTest extends TestCase
             3 => ['Titulek #3' => 'Obsah #3'],
         ];
 
-        $grouped = $results->combine('title', 'body', 'id');
+        $grouped = $results->all()->combine('title', 'body', 'id');
         $this->assertEquals($expected, $grouped->toArray());
     }
 
@@ -1231,7 +1233,7 @@ class TranslateBehaviorTest extends TestCase
         $query = $table->find()->where(['Comments.id' => 6]);
         $query2 = $table->find()->where(['Comments.id' => 5]);
         $query->union($query2);
-        $results = $query->sortBy('id', SORT_ASC)->toList();
+        $results = $query->all()->sortBy('id', SORT_ASC)->toList();
         $this->assertCount(2, $results);
 
         $this->assertSame('First Comment for Second Article', $results[0]->comment);

@@ -51,7 +51,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
             'this text has been processed via a custom type',
             'this text also has been processed via a custom type',
         ];
-        $result = $table->find()->orderAsc('id')->extract('val')->toArray();
+        $result = $table->find()->orderAsc('id')->all()->extract('val')->toArray();
         $this->assertSame($expected, $result);
     }
 
