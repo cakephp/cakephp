@@ -30,7 +30,7 @@
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
         "laminas/laminas-httphandlerrunner": "^1.1",
-        "league/container": "^3.2",
+        "league/container": "^3.2 || ^4.0",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
