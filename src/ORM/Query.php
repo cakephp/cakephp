@@ -39,9 +39,6 @@ use Traversable;
  * required.
  *
  * @see \Cake\Collection\CollectionInterface For a full description of the collection methods supported by this class
- * @property \Cake\ORM\Table $_repository Instance of a table object this query is bound to.
- * @method \Cake\ORM\Table getRepository() Returns the default table object that will be used by this query,
- *   that is, the table that will appear in the from clause.
  * @method \Cake\Collection\CollectionInterface each(callable $c) Passes each of the query results to the callable
  * @method \Cake\Collection\CollectionInterface sortBy($callback, int $dir) Sorts the query with the callback
  * @method \Cake\Collection\CollectionInterface filter(callable $c = null) Keeps the results using passing the callable test
