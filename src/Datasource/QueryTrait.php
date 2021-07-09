@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use InvalidArgumentException;
@@ -538,32 +537,6 @@ trait QueryTrait
     public function getOptions(): array
     {
         return $this->_options;
-    }
-
-    /**
-     * Enables calling methods from the result set as if they were from this class
-     *
-     * @param string $method the method to call
-     * @param array $arguments list of arguments for the method to call
-     * @return mixed
-     * @throws \BadMethodCallException if no such method exists in result set
-     */
-    public function __call(string $method, array $arguments)
-    {
-        $resultSetClass = $this->_decoratorClass();
-        if (in_array($method, get_class_methods($resultSetClass), true)) {
-            deprecationWarning(sprintf(
-                'Calling result set method `%s()` directly on query instance is deprecated. ' .
-                'You must call `all()` to retrieve the results first.',
-                $method
-            ));
-            $results = $this->all();
-
-            return $results->$method(...$arguments);
-        }
-        throw new BadMethodCallException(
-            sprintf('Unknown method "%s"', $method)
-        );
     }
 
     /**

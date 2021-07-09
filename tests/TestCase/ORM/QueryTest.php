@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
@@ -1769,42 +1768,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Provides a list of collection methods that can be proxied
-     * from the query
-     *
-     * @return array
-     */
-    public function collectionMethodsProvider(): array
-    {
-        $identity = function ($a) {
-            return $a;
-        };
-        $collection = new Collection([]);
-
-        return [
-            ['filter', $identity, $collection],
-            ['reject', $identity, $collection],
-            ['every', $identity, false],
-            ['some', $identity, false],
-            ['contains', $identity, true],
-            ['map', $identity, $collection],
-            ['reduce', $identity, $collection],
-            ['extract', $identity, $collection],
-            ['max', $identity, 9],
-            ['min', $identity, 1],
-            ['sortBy', $identity, $collection],
-            ['groupBy', $identity, $collection],
-            ['countBy', $identity, $collection],
-            ['shuffle', $identity, $collection],
-            ['sample', 10, $collection],
-            ['take', 1, $collection],
-            ['append', new \ArrayIterator(), $collection],
-            ['compile', true, $collection],
-            ['isEmpty', true, true],
-        ];
-    }
-
-    /**
      * testClearContain
      */
     public function testClearContain(): void
@@ -1829,48 +1792,6 @@ class QueryTest extends TestCase
         $result = $query->getContain();
         $this->assertIsArray($result);
         $this->assertEmpty($result);
-    }
-
-    /**
-     * Tests that query can proxy collection methods
-     *
-     * @dataProvider collectionMethodsProvider
-     * @param mixed $arg
-     * @param mixed $return
-     */
-    public function testCollectionProxy(string $method, $arg, $return): void
-    {
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['all'])
-            ->setConstructorArgs([$this->connection, $this->table])
-            ->getMock();
-        $query->select();
-        $resultSet = $this->getMockbuilder('Cake\ORM\ResultSet')
-            ->onlyMethods([$method])
-            ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
-            ->getMock();
-        $query->expects($this->once())
-            ->method('all')
-            ->will($this->returnValue($resultSet));
-        $resultSet->expects($this->once())
-            ->method($method)
-            ->with($arg, 99)
-            ->will($this->returnValue($return));
-
-        $this->deprecated(function () use ($return, $query, $method, $arg) {
-            $this->assertSame($return, $query->{$method}($arg, 99));
-        });
-    }
-
-    /**
-     * Tests that calling an nonexistent method in query throws an
-     * exception
-     */
-    public function testCollectionProxyBadMethod(): void
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Unknown method "derpFilter"');
-        $this->getTableLocator()->get('articles')->find('all')->derpFilter();
     }
 
     /**
