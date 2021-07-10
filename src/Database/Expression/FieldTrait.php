@@ -24,7 +24,7 @@ trait FieldTrait
     /**
      * The field name or expression to be used in the left hand side of the operator
      *
-     * @var array|string|\Cake\Database\ExpressionInterface
+     * @var \Cake\Database\ExpressionInterface|array|string
      */
     protected $_field;
 

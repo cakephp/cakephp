@@ -122,7 +122,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
     /**
      * Sets the default format used when type converting instances of this type to string
      *
-     * @param string|int|int[] $format Format.
+     * @param array<int>|string|int $format Format.
      * @return void
      */
     public static function setToStringFormat($format): void;
@@ -166,7 +166,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|int[]|null $format Any format accepted by IntlDateFormatter.
+     * @param array<int>|string|null $format Any format accepted by IntlDateFormatter.
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      * @return static|null
      * @throws \InvalidArgumentException If $format is a single int instead of array of constants

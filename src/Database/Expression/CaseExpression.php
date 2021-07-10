@@ -47,7 +47,7 @@ class CaseExpression implements ExpressionInterface
     /**
      * The `ELSE` value for the case statement. If null then no `ELSE` will be included.
      *
-     * @var string|\Cake\Database\ExpressionInterface|array|null
+     * @var \Cake\Database\ExpressionInterface|array|string|null
      */
     protected $_elseValue;
 

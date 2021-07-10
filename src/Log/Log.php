@@ -340,7 +340,7 @@ class Log
      * then the logged message will be ignored and silently dropped. You can check if this has happened
      * by inspecting the return of write(). If false the message was not handled.
      *
-     * @param int|string $level The severity level of the message being written.
+     * @param string|int $level The severity level of the message being written.
      *    The value must be an integer or string matching a known level.
      * @param string $message Message content to log
      * @param array|string $context Additional data to be used for logging the message.

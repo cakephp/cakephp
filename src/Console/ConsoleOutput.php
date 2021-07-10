@@ -190,7 +190,7 @@ class ConsoleOutput
      * Outputs a single or multiple messages to stdout or stderr. If no parameters
      * are passed, outputs just a newline.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to output.
      */

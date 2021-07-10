@@ -186,8 +186,8 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     /**
      * Calculate the data needed to format a relative difference string.
      *
-     * @param int|string $futureTime The timestamp from the future.
-     * @param int|string $pastTime The timestamp from the past.
+     * @param string|int $futureTime The timestamp from the future.
+     * @param string|int $pastTime The timestamp from the past.
      * @param bool $backwards Whether or not the difference was backwards.
      * @param array $options An array of options.
      * @return array An array of values.

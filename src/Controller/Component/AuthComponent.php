@@ -578,7 +578,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * $this->Auth->allow();
      * ```
      *
-     * @param string|string[]|null $actions Controller action name or array of actions
+     * @param array<string>|string|null $actions Controller action name or array of actions
      * @return void
      * @link https://book.cakephp.org/4/en/controllers/components/authentication.html#making-actions-public
      */
@@ -608,7 +608,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * ```
      * to remove all items from the allowed list
      *
-     * @param string|string[]|null $actions Controller action name or array of actions
+     * @param array<string>|string|null $actions Controller action name or array of actions
      * @return void
      * @see \Cake\Controller\Component\AuthComponent::allow()
      * @link https://book.cakephp.org/4/en/controllers/components/authentication.html#making-actions-require-authorization

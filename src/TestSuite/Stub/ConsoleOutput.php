@@ -43,7 +43,7 @@ class ConsoleOutput extends ConsoleOutputBase
     /**
      * Write output to the buffer.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int
      */

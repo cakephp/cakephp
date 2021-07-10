@@ -44,7 +44,7 @@ class HasOne extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string|string[]
+     * @return array<string>|string
      */
     public function getForeignKey()
     {

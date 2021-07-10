@@ -729,7 +729,7 @@ class Router
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.
      *
-     * @param string[]|string|null $extensions List of extensions to be added.
+     * @param array<string>|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return string[] Array of extensions Router is configured to parse.

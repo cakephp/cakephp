@@ -43,7 +43,7 @@ class SchemaManager
      * Import the schema from a file, or an array of files.
      *
      * @param string $connectionName Connection
-     * @param string|string[] $file File to dump
+     * @param array<string>|string $file File to dump
      * @param bool|null $verbose Set to true to display messages
      * @param bool|null $enableDropping Will drop all tables prior to creating the schema (true by default)
      * @return void

@@ -431,7 +431,7 @@ class Paginator implements PaginatorInterface
      * Shim method for reading the deprecated sortWhitelist or sortableFields options.
      *
      * @param array $config The configuration data to coalesce and emit warnings on.
-     * @return string[]|null
+     * @return array<string>|null
      */
     protected function getSortableFields(array $config): ?array
     {

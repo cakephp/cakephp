@@ -50,7 +50,7 @@ class SelectWithPivotLoader extends SelectLoader
     /**
      * Custom conditions for the junction association
      *
-     * @var array|string|\Cake\Database\ExpressionInterface|\Closure|null
+     * @var \Cake\Database\ExpressionInterface|\Closure|array|string|null
      */
     protected $junctionConditions;
 
@@ -142,7 +142,7 @@ class SelectWithPivotLoader extends SelectLoader
      * which the filter should be applied
      *
      * @param array $options the options to use for getting the link field.
-     * @return string|string[]
+     * @return array<string>|string
      */
     protected function _linkField(array $options)
     {

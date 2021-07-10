@@ -430,7 +430,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
      *
-     * @param \Closure|array|string|\Cake\Database\ExpressionInterface $conditions to be joined with AND
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with AND
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
@@ -448,7 +448,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "OR"
      *
-     * @param \Closure|array|string|\Cake\Database\ExpressionInterface $conditions to be joined with OR
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with OR
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
@@ -468,7 +468,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
      *
-     * @param \Closure|array|string|\Cake\Database\ExpressionInterface $conditions to be joined with AND
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with AND
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
@@ -485,7 +485,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "OR"
      *
-     * @param \Closure|array|string|\Cake\Database\ExpressionInterface $conditions to be joined with OR
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with OR
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
@@ -506,7 +506,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * "NOT ( (condition1) AND (conditions2) )" conjunction depends on the one
      * currently configured for this object.
      *
-     * @param \Closure|\Cake\Database\ExpressionInterface|array|string $conditions to be added and negated
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be added and negated
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return $this

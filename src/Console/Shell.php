@@ -661,7 +661,7 @@ class Shell
     /**
      * Output at the verbose level.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout.
      */
@@ -673,7 +673,7 @@ class Shell
     /**
      * Output at all levels.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout.
      */
@@ -693,7 +693,7 @@ class Shell
      * present in most shells. Using Shell::QUIET for a message means it will always display.
      * While using Shell::VERBOSE means it will only display when verbose output is toggled.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout.
@@ -708,7 +708,7 @@ class Shell
      * Outputs a single or multiple error messages to stderr. If no parameters
      * are passed outputs just a newline.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      */
@@ -720,7 +720,7 @@ class Shell
     /**
      * Convenience method for out() that wraps message between <info /> tag
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout.
@@ -734,7 +734,7 @@ class Shell
     /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/4/en/console-and-shells.html#Shell::err
@@ -747,7 +747,7 @@ class Shell
     /**
      * Convenience method for out() that wraps message between <success /> tag
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout.

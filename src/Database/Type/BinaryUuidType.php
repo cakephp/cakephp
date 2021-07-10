@@ -36,7 +36,7 @@ class BinaryUuidType extends BaseType
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return string|resource|null
+     * @return resource|string|null
      */
     public function toDatabase($value, DriverInterface $driver)
     {

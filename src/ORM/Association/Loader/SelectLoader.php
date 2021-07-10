@@ -281,7 +281,7 @@ class SelectLoader
      * filtering needs to be done using a subquery.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string|string[] $key the fields that should be used for filtering
+     * @param array<string>|string $key the fields that should be used for filtering
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
@@ -360,7 +360,7 @@ class SelectLoader
      * which the filter should be applied
      *
      * @param array $options The options for getting the link field.
-     * @return string|string[]
+     * @return array<string>|string
      * @throws \RuntimeException
      */
     protected function _linkField(array $options)

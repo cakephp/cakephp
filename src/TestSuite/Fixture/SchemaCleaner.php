@@ -73,7 +73,7 @@ class SchemaCleaner
      * @param string $connectionName Name of the connection.
      * @param string $dialectMethod Method applied to the SQL dialect.
      * @param string $action Action displayed in the info message
-     * @param string[]|null $tables Tables to truncate (all if null)
+     * @param array<string>|null $tables Tables to truncate (all if null)
      * @return void
      * @throws \Exception
      */
