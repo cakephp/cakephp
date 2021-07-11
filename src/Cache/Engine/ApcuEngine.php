@@ -18,6 +18,7 @@ namespace Cake\Cache\Engine;
 
 use APCUIterator;
 use Cake\Cache\CacheEngine;
+use DateInterval;
 use RuntimeException;
 
 /**
@@ -61,7 +62,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True on success and false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $key = $this->_key($key);
         $duration = $this->duration($ttl);
@@ -78,7 +79,7 @@ class ApcuEngine extends CacheEngine
      *   has expired, or if there was an error fetching it
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = apcu_fetch($this->_key($key), $success);
         if ($success === false) {
@@ -96,7 +97,7 @@ class ApcuEngine extends CacheEngine
      * @return int|false New incremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
         $key = $this->_key($key);
 
@@ -111,7 +112,7 @@ class ApcuEngine extends CacheEngine
      * @return int|false New decremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-dec.php
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
         $key = $this->_key($key);
 
@@ -125,7 +126,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
 
@@ -170,7 +171,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-add.php
      */
-    public function add(string $key, $value): bool
+    public function add(string $key, mixed $value): bool
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];

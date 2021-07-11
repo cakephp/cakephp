@@ -45,7 +45,7 @@ class PersistenceFailedException extends CakeException
      * @param int $code The code of the error, is also the HTTP status code for the error.
      * @param \Throwable|null $previous the previous exception.
      */
-    public function __construct(EntityInterface $entity, $message, ?int $code = null, ?Throwable $previous = null)
+    public function __construct(EntityInterface $entity, array|string $message, ?int $code = null, ?Throwable $previous = null)
     {
         $this->_entity = $entity;
         if (is_array($message)) {

@@ -19,6 +19,7 @@ namespace Cake\Utility;
 use Cake\Utility\Exception\XmlException;
 use Closure;
 use DOMDocument;
+use DOMElement;
 use DOMNode;
 use DOMText;
 use Exception;
@@ -102,7 +103,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function build($input, array $options = [])
+    public static function build(object|array|string $input, array $options = []): SimpleXMLElement|DOMDocument
     {
         $defaults = [
             'return' => 'simplexml',
@@ -140,7 +141,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _loadXml(string $input, array $options)
+    protected static function _loadXml(string $input, array $options): SimpleXMLElement|DOMDocument
     {
         return static::load(
             $input,
@@ -167,7 +168,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function loadHtml(string $input, array $options = [])
+    public static function loadHtml(string $input, array $options = []): SimpleXMLElement|DOMDocument
     {
         $defaults = [
             'return' => 'simplexml',
@@ -200,7 +201,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function load(string $input, array $options, Closure $callable)
+    protected static function load(string $input, array $options, Closure $callable): SimpleXMLElement|DOMDocument
     {
         $flags = 0;
         if (!empty($options['parseHuge'])) {
@@ -261,7 +262,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function fromArray($input, array $options = [])
+    public static function fromArray(object|array $input, array $options = []): SimpleXMLElement|DOMDocument
     {
         if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
             $input = $input->toArray();
@@ -307,7 +308,7 @@ class Xml
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _fromArray(DOMDocument $dom, $node, &$data, $format): void
+    protected static function _fromArray(DOMDocument $dom, DOMDocument|DOMElement $node, array &$data, string $format): void
     {
         if (empty($data) || !is_array($data)) {
             return;
@@ -429,7 +430,7 @@ class Xml
      * @return array Array representation of the XML structure.
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function toArray($obj): array
+    public static function toArray(SimpleXMLElement|DOMDocument|DOMNode $obj): array
     {
         if ($obj instanceof DOMNode) {
             $obj = simplexml_import_dom($obj);

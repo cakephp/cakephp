@@ -62,7 +62,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param array $defaults The defaults attributes.
      * @return static
      */
-    public static function createFromHeader(array $header, array $defaults = [])
+    public static function createFromHeader(array $header, array $defaults = []): static
     {
         $cookies = [];
         foreach ($header as $value) {
@@ -82,7 +82,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to extract cookie data from
      * @return static
      */
-    public static function createFromServerRequest(ServerRequestInterface $request)
+    public static function createFromServerRequest(ServerRequestInterface $request): static
     {
         $data = $request->getCookieParams();
         $cookies = [];
@@ -113,7 +113,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
      * @return static
      */
-    public function add(CookieInterface $cookie)
+    public function add(CookieInterface $cookie): static
     {
         $new = clone $this;
         $new->cookies[$cookie->getId()] = $cookie;
@@ -171,7 +171,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $name The name of the cookie to remove.
      * @return static
      */
-    public function remove(string $name)
+    public function remove(string $name): static
     {
         $new = clone $this;
         $key = mb_strtolower($name);
@@ -306,7 +306,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param \Psr\Http\Message\RequestInterface $request Request to get cookie context from.
      * @return static
      */
-    public function addFromResponse(ResponseInterface $response, RequestInterface $request)
+    public function addFromResponse(ResponseInterface $response, RequestInterface $request): static
     {
         $uri = $request->getUri();
         $host = $uri->getHost();

@@ -132,7 +132,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildHavingPart($parts, $query, $binder)
+    protected function _buildHavingPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $selectParts = $query->clause('select');
 

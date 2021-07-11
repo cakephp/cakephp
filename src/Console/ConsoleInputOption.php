@@ -101,7 +101,7 @@ class ConsoleInputOption
         string $short = '',
         string $help = '',
         bool $isBoolean = false,
-        $default = null,
+        string|bool|null $default = null,
         array $choices = [],
         bool $multiple = false,
         bool $required = false
@@ -205,7 +205,7 @@ class ConsoleInputOption
      *
      * @return string|bool|null
      */
-    public function defaultValue()
+    public function defaultValue(): string|bool|null
     {
         return $this->_default;
     }
@@ -247,7 +247,7 @@ class ConsoleInputOption
      * @return true
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function validChoice($value): bool
+    public function validChoice(string|bool $value): bool
     {
         if (empty($this->_choices)) {
             return true;

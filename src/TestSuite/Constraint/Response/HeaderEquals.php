@@ -48,7 +48,7 @@ class HeaderEquals extends ResponseBase
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return $this->response->getHeaderLine($this->headerName) === $other;
     }

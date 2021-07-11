@@ -31,6 +31,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingElementException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
+use Generator;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
@@ -713,7 +714,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeRender $this, [$templateFileName]
      * @triggers View.afterRender $this, [$templateFileName]
      */
-    public function render(?string $template = null, $layout = null): string
+    public function render(?string $template = null, string|false|null $layout = null): string
     {
         $defaultLayout = '';
         $defaultAutoLayout = null;
@@ -804,7 +805,7 @@ class View implements EventDispatcherInterface
      * @param mixed $default The default/fallback content of $var.
      * @return mixed The content of the named var if its set, otherwise $default.
      */
-    public function get(string $var, $default = null)
+    public function get(string $var, mixed $default = null): mixed
     {
         return $this->viewVars[$var] ?? $default;
     }
@@ -818,7 +819,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @throws \RuntimeException If the array combine operation failed.
      */
-    public function set($name, $value = null)
+    public function set(array|string $name, mixed $value = null)
     {
         if (is_array($name)) {
             if (is_array($value)) {
@@ -892,7 +893,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::concat()
      */
-    public function append(string $name, $value = null)
+    public function append(string $name, mixed $value = null)
     {
         $this->Blocks->concat($name, $value);
 
@@ -910,7 +911,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::concat()
      */
-    public function prepend(string $name, $value)
+    public function prepend(string $name, mixed $value)
     {
         $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 
@@ -927,7 +928,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::set()
      */
-    public function assign(string $name, $value)
+    public function assign(string $name, mixed $value)
     {
         $this->Blocks->set($name, $value);
 
@@ -1046,7 +1047,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the attribute to get.
      * @return mixed
      */
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         $registry = $this->helpers();
         if (isset($registry->{$name})) {
@@ -1418,7 +1419,7 @@ class View implements EventDispatcherInterface
      * @param string|null $plugin The plugin to fetch paths for.
      * @return \Generator
      */
-    protected function getLayoutPaths(?string $plugin)
+    protected function getLayoutPaths(?string $plugin): Generator
     {
         $subDir = '';
         if ($this->layoutPath) {
@@ -1440,7 +1441,7 @@ class View implements EventDispatcherInterface
      * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
      * @return string|false Either a string to the element filename or false when one can't be found.
      */
-    protected function _getElementFileName(string $name, bool $pluginCheck = true)
+    protected function _getElementFileName(string $name, bool $pluginCheck = true): string|false
     {
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
@@ -1460,7 +1461,7 @@ class View implements EventDispatcherInterface
      * @param string|null $plugin The plugin to fetch paths for.
      * @return \Generator
      */
-    protected function getElementPaths(?string $plugin)
+    protected function getElementPaths(?string $plugin): Generator
     {
         $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
         foreach ($this->_paths($plugin) as $path) {

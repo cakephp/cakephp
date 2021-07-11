@@ -17,6 +17,11 @@ declare(strict_types=1);
 
 namespace Cake\Datasource;
 
+use Cake\Database\ExpressionInterface;
+use Cake\ORM\Association;
+use Cake\ORM\Table;
+use Closure;
+
 /**
  * The basis for every query object
  *
@@ -40,7 +45,7 @@ interface QueryInterface
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select($fields, bool $overwrite = false);
+    public function select(ExpressionInterface|Association|Table|callable|array|string $fields, bool $overwrite = false);
 
     /**
      * Returns a key => value array representing a single aliased field
@@ -136,7 +141,7 @@ interface QueryInterface
      * @param array $options The options for the finder.
      * @return static Returns a modified query.
      */
-    public function find(string $finder, array $options = []);
+    public function find(string $finder, array $options = []): static;
 
     /**
      * Returns the first result out of executing this query, if the query has not been
@@ -150,7 +155,7 @@ interface QueryInterface
      *
      * @return \Cake\Datasource\EntityInterface|array|null the first result from the ResultSet
      */
-    public function first();
+    public function first(): EntityInterface|array|null;
 
     /**
      * Returns the total amount of results for the query.
@@ -175,7 +180,7 @@ interface QueryInterface
      * @param \Cake\Database\ExpressionInterface|int|null $num number of records to be returned
      * @return $this
      */
-    public function limit($num);
+    public function limit(ExpressionInterface|int|null $num);
 
     /**
      * Sets the number of records that should be skipped from the original result set
@@ -195,7 +200,7 @@ interface QueryInterface
      * @param \Cake\Database\ExpressionInterface|int|null $num number of records to be skipped
      * @return $this
      */
-    public function offset($num);
+    public function offset(ExpressionInterface|int|null $num);
 
     /**
      * Adds a single or multiple fields to be used in the ORDER clause for this query.
@@ -246,7 +251,7 @@ interface QueryInterface
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
-    public function order($fields, $overwrite = false);
+    public function order(ExpressionInterface|Closure|array|string $fields, bool $overwrite = false);
 
     /**
      * Set the page of results you want.
@@ -401,5 +406,5 @@ interface QueryInterface
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this
      */
-    public function where($conditions = null, array $types = [], bool $overwrite = false);
+    public function where(Closure|array|string|null $conditions = null, array $types = [], bool $overwrite = false);
 }

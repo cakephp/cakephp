@@ -45,7 +45,7 @@ class MissingTemplateException extends CakeException
      * @param int|null $code The code of the error.
      * @param \Throwable|null $previous the previous exception.
      */
-    public function __construct($file, array $paths = [], ?int $code = null, ?Throwable $previous = null)
+    public function __construct(array|string $file, array $paths = [], ?int $code = null, ?Throwable $previous = null)
     {
         $this->filename = is_array($file) ? array_pop($file) : $file;
         $this->paths = $paths;

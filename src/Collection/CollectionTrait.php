@@ -38,6 +38,9 @@ use OuterIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 use Traversable;
+use const SORT_ASC;
+use const SORT_DESC;
+use const SORT_NUMERIC;
 
 /**
  * Offers a handful of methods to manipulate iterators
@@ -55,7 +58,7 @@ trait CollectionTrait
      * @param mixed ...$args Constructor arguments.
      * @return \Cake\Collection\CollectionInterface
      */
-    protected function newCollection(...$args): CollectionInterface
+    protected function newCollection(mixed ...$args): CollectionInterface
     {
         return new Collection(...$args);
     }
@@ -189,17 +192,17 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function max($path, int $sort = \SORT_NUMERIC)
+    public function max($path, int $sort = SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $path, \SORT_DESC, $sort))->first();
+        return (new SortIterator($this->unwrap(), $path, SORT_DESC, $sort))->first();
     }
 
     /**
      * @inheritDoc
      */
-    public function min($path, int $sort = \SORT_NUMERIC)
+    public function min($path, int $sort = SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $path, \SORT_ASC, $sort))->first();
+        return (new SortIterator($this->unwrap(), $path, SORT_ASC, $sort))->first();
     }
 
     /**
@@ -254,7 +257,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sortBy($path, int $order = \SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface
+    public function sortBy($path, int $order = SORT_DESC, int $sort = SORT_NUMERIC): CollectionInterface
     {
         return new SortIterator($this->unwrap(), $path, $order, $sort);
     }

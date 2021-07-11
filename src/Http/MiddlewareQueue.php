@@ -94,7 +94,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|array|string $middleware The middleware(s) to append.
      * @return $this
      */
-    public function add($middleware)
+    public function add(MiddlewareInterface|Closure|array|string $middleware)
     {
         if (is_array($middleware)) {
             $this->queue = array_merge($this->queue, $middleware);
@@ -113,7 +113,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return $this
      * @see MiddlewareQueue::add()
      */
-    public function push($middleware)
+    public function push(MiddlewareInterface|Closure|array|string $middleware)
     {
         return $this->add($middleware);
     }
@@ -124,7 +124,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|array|string $middleware The middleware(s) to prepend.
      * @return $this
      */
-    public function prepend($middleware)
+    public function prepend(MiddlewareInterface|Closure|array|string $middleware)
     {
         if (is_array($middleware)) {
             $this->queue = array_merge($middleware, $this->queue);
@@ -146,7 +146,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAt(int $index, $middleware)
+    public function insertAt(int $index, MiddlewareInterface|Closure|string $middleware)
     {
         array_splice($this->queue, $index, 0, [$middleware]);
 
@@ -164,7 +164,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return $this
      * @throws \LogicException If middleware to insert before is not found.
      */
-    public function insertBefore(string $class, $middleware)
+    public function insertBefore(string $class, MiddlewareInterface|Closure|string $middleware)
     {
         $found = false;
         $i = 0;
@@ -197,7 +197,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAfter(string $class, $middleware)
+    public function insertAfter(string $class, MiddlewareInterface|Closure|string $middleware)
     {
         $found = false;
         $i = 0;
@@ -239,7 +239,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \SeekableIterator::seek()
      */
-    public function seek($position): void
+    public function seek(int $position): void
     {
         if (!isset($this->queue[$position])) {
             throw new OutOfBoundsException("Invalid seek position ($position)");

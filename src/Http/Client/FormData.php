@@ -96,7 +96,7 @@ class FormData implements Countable
      * @param mixed $value The value for the part.
      * @return $this
      */
-    public function add($name, $value = null)
+    public function add(FormDataPart|string $name, mixed $value = null)
     {
         if (is_string($name)) {
             if (is_array($value)) {
@@ -139,7 +139,7 @@ class FormData implements Countable
      * @param mixed $value Either a string filename, or a filehandle.
      * @return \Cake\Http\Client\FormDataPart
      */
-    public function addFile(string $name, $value): FormDataPart
+    public function addFile(string $name, mixed $value): FormDataPart
     {
         $this->_hasFile = true;
 
@@ -177,7 +177,7 @@ class FormData implements Countable
      * @param mixed $value The value to add.
      * @return void
      */
-    public function addRecursive(string $name, $value): void
+    public function addRecursive(string $name, mixed $value): void
     {
         foreach ($value as $key => $value) {
             $key = $name . '[' . $key . ']';

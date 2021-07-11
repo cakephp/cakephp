@@ -23,6 +23,7 @@ use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\Rule\ValidCount;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 /**
  * ORM flavoured rules checker.
@@ -52,7 +53,7 @@ class RulesChecker extends BaseRulesChecker
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return \Cake\Datasource\RuleInvoker
      */
-    public function isUnique(array $fields, $message = null): RuleInvoker
+    public function isUnique(array $fields, array|string|null $message = null): RuleInvoker
     {
         $options = is_array($message) ? $message : ['message' => $message];
         $message = $options['message'] ?? null;
@@ -96,7 +97,7 @@ class RulesChecker extends BaseRulesChecker
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return \Cake\Datasource\RuleInvoker
      */
-    public function existsIn($field, $table, $message = null): RuleInvoker
+    public function existsIn(array|string $field, Table|Association|string $table, array|string|null $message = null): RuleInvoker
     {
         $options = [];
         if (is_array($message)) {
@@ -137,7 +138,7 @@ class RulesChecker extends BaseRulesChecker
      * @return \Cake\Datasource\RuleInvoker
      * @since 4.0.0
      */
-    public function isLinkedTo($association, ?string $field = null, ?string $message = null): RuleInvoker
+    public function isLinkedTo(Association|string $association, ?string $field = null, ?string $message = null): RuleInvoker
     {
         return $this->_addLinkConstraintRule(
             $association,
@@ -167,7 +168,7 @@ class RulesChecker extends BaseRulesChecker
      * @return \Cake\Datasource\RuleInvoker
      * @since 4.0.0
      */
-    public function isNotLinkedTo($association, ?string $field = null, ?string $message = null): RuleInvoker
+    public function isNotLinkedTo(Association|string $association, ?string $field = null, ?string $message = null): RuleInvoker
     {
         return $this->_addLinkConstraintRule(
             $association,
@@ -196,7 +197,7 @@ class RulesChecker extends BaseRulesChecker
      * @see \Cake\ORM\Rule\LinkConstraint::STATUS_NOT_LINKED
      */
     protected function _addLinkConstraintRule(
-        $association,
+        Association|string $association,
         ?string $errorField,
         ?string $message,
         string $linkStatus,
@@ -221,7 +222,7 @@ class RulesChecker extends BaseRulesChecker
                 }
             }
         } else {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
                 getTypeName($association)
             ));

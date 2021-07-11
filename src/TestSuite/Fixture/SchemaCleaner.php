@@ -50,7 +50,7 @@ class SchemaCleaner
      * @return void
      * @throws \Exception if the dropping failed.
      */
-    public function dropTables(string $connectionName, $tables = null): void
+    public function dropTables(string $connectionName, ?array $tables = null): void
     {
         $this->handle($connectionName, 'dropConstraintSql', 'dropping constraints', $tables);
         $this->handle($connectionName, 'dropTableSql', 'dropping', $tables);
@@ -64,7 +64,7 @@ class SchemaCleaner
      * @return void
      * @throws \Exception if the truncation failed.
      */
-    public function truncateTables(string $connectionName, $tables = null): void
+    public function truncateTables(string $connectionName, ?array $tables = null): void
     {
         $this->handle($connectionName, 'truncateTableSql', 'truncating', $tables);
     }
@@ -77,7 +77,7 @@ class SchemaCleaner
      * @return void
      * @throws \Exception
      */
-    protected function handle(string $connectionName, string $dialectMethod, string $action, $tables): void
+    protected function handle(string $connectionName, string $dialectMethod, string $action, ?array $tables): void
     {
         $schema = $this->getSchema($connectionName);
         $dialect = $this->getDialect($connectionName);
@@ -129,8 +129,8 @@ class SchemaCleaner
      */
     protected function executeStatements(ConnectionInterface $connection, array $commands): void
     {
-        $connection->disableConstraints(function ($connection) use ($commands) {
-            $connection->transactional(function (ConnectionInterface $connection) use ($commands) {
+        $connection->disableConstraints(function ($connection) use ($commands): void {
+            $connection->transactional(function (ConnectionInterface $connection) use ($commands): void {
                 foreach ($commands as $sql) {
                     $connection->execute($sql);
                 }

@@ -71,8 +71,8 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      */
     public function __construct(
         RecursiveIterator $items,
-        $valuePath,
-        $keyPath,
+        callable|string $valuePath,
+        callable|string $keyPath,
         string $spacer,
         int $mode = RecursiveIteratorIterator::SELF_FIRST
     ) {
@@ -87,7 +87,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         $extractor = $this->_key;
 
@@ -124,7 +124,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return mixed
      */
-    protected function _fetchCurrent()
+    protected function _fetchCurrent(): mixed
     {
         if ($this->_current !== null) {
             return $this->_current;

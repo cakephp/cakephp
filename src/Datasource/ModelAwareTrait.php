@@ -138,7 +138,7 @@ trait ModelAwareTrait
      * @param \Cake\Datasource\Locator\LocatorInterface|callable $factory The factory function used to create instances.
      * @return void
      */
-    public function modelFactory(string $type, $factory): void
+    public function modelFactory(string $type, LocatorInterface|callable $factory): void
     {
         if (!$factory instanceof LocatorInterface && !is_callable($factory)) {
             throw new InvalidArgumentException(sprintf(

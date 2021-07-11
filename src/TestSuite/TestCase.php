@@ -24,6 +24,7 @@ use Cake\Http\BaseApplication;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
@@ -36,6 +37,7 @@ use PHPUnit\Framework\Constraint\DirectoryExists;
 use PHPUnit\Framework\Constraint\FileExists;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\Constraint\RegularExpression;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
@@ -415,7 +417,7 @@ abstract class TestCase extends BaseTestCase
     public function assertEventFiredWith(
         string $name,
         string $dataKey,
-        $dataValue,
+        mixed $dataValue,
         ?EventManager $eventManager = null,
         string $message = ''
     ): void {
@@ -810,7 +812,7 @@ abstract class TestCase extends BaseTestCase
      * @param array|string $regex Full regexp from `assertHtml`
      * @return string|false
      */
-    protected function _assertAttributes(array $assertions, string $string, bool $fullDebug = false, $regex = '')
+    protected function _assertAttributes(array $assertions, string $string, bool $fullDebug = false, array|string $regex = ''): string|false
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
@@ -926,7 +928,7 @@ abstract class TestCase extends BaseTestCase
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    public function getMockForModel(string $alias, array $methods = [], array $options = [])
+    public function getMockForModel(string $alias, array $methods = [], array $options = []): Table|MockObject
     {
         $className = $this->_getTableClassName($alias, $options);
         $connectionName = $className::defaultConnectionName();

@@ -48,7 +48,7 @@ interface InvalidPropertyInterface
      * @param string $field The name of the field.
      * @return mixed|null
      */
-    public function getInvalidField(string $field);
+    public function getInvalidField(string $field): mixed;
 
     /**
      * Sets a field as invalid and not patchable into the entity.
@@ -57,5 +57,5 @@ interface InvalidPropertyInterface
      * @param mixed $value The invalid value to be set for $field.
      * @return $this
      */
-    public function setInvalidField(string $field, $value);
+    public function setInvalidField(string $field, mixed $value);
 }

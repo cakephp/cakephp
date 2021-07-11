@@ -52,7 +52,7 @@ trait StringTemplateTrait
      * @param string|null $template String for reading a specific template, null for all.
      * @return array|string
      */
-    public function getTemplates(?string $template = null)
+    public function getTemplates(?string $template = null): array|string
     {
         return $this->templater()->get($template);
     }

@@ -48,7 +48,7 @@ class BelongsTo extends Association
      *
      * @return array<string>|string
      */
-    public function getForeignKey()
+    public function getForeignKey(): array|string
     {
         if ($this->_foreignKey === null) {
             $this->_foreignKey = $this->_modelKey($this->getTarget()->getAlias());
@@ -118,7 +118,7 @@ class BelongsTo extends Association
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */
-    public function saveAssociated(EntityInterface $entity, array $options = [])
+    public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
         if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {

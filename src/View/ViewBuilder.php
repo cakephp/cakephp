@@ -133,7 +133,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param mixed $value Value.
      * @return $this
      */
-    public function setVar(string $name, $value = null)
+    public function setVar(string $name, mixed $value = null)
     {
         $this->_vars[$name] = $value;
 
@@ -175,7 +175,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string $name Var name
      * @return mixed The var value or null if unset.
      */
-    public function getVar(string $name)
+    public function getVar(string $name): mixed
     {
         return $this->_vars[$name] ?? null;
     }
@@ -427,7 +427,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string $name The name of the option.
      * @return mixed
      */
-    public function getOption(string $name)
+    public function getOption(string $name): mixed
     {
         return $this->_options[$name] ?? null;
     }
@@ -439,7 +439,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param mixed $value Value to set.
      * @return $this
      */
-    public function setOption(string $name, $value)
+    public function setOption(string $name, mixed $value)
     {
         $this->_options[$name] = $value;
 
@@ -615,7 +615,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @return void
      * @throws \RuntimeException
      */
-    protected function _checkViewVars(&$item, string $key): void
+    protected function _checkViewVars(mixed &$item, string $key): void
     {
         if ($item instanceof Exception) {
             $item = (string)$item;
@@ -678,7 +678,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string $data Serialized string.
      * @return void
      */
-    public function unserialize($data): void
+    public function unserialize(string $data): void
     {
         $this->createFromArray(unserialize($data));
     }

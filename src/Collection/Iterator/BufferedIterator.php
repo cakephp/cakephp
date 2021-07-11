@@ -87,7 +87,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->_key;
     }
@@ -97,7 +97,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->_current;
     }
@@ -221,7 +221,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      * @param string $collection The serialized buffer iterator
      * @return void
      */
-    public function unserialize($collection): void
+    public function unserialize(string $collection): void
     {
         $this->__construct([]);
         $this->_buffer = unserialize($collection);

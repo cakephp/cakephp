@@ -188,7 +188,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select($fields = [], bool $overwrite = false)
+    public function select(ExpressionInterface|Table|Association|callable|array|string $fields = [], bool $overwrite = false)
     {
         if ($fields instanceof Association) {
             $fields = $fields->getTarget();
@@ -218,7 +218,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return $this
      * @throws \InvalidArgumentException If Association|Table is not passed in first argument
      */
-    public function selectAllExcept($table, array $excludedFields, bool $overwrite = false)
+    public function selectAllExcept(Table|Association $table, array $excludedFields, bool $overwrite = false)
     {
         if ($table instanceof Association) {
             $table = $table->getTarget();
@@ -404,7 +404,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * defaults to merging previous list with the new one.
      * @return $this
      */
-    public function contain($associations, $override = false)
+    public function contain(array|string $associations, callable|bool $override = false)
     {
         $loader = $this->getEagerLoader();
         if ($override === true) {
@@ -810,7 +810,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return static
      */
-    public function cleanCopy()
+    public function cleanCopy(): static
     {
         $clone = clone $this;
         $clone->triggerBeforeFind();
@@ -1206,7 +1206,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param \Cake\Database\ExpressionInterface|string|null $table Unused parameter.
      * @return $this
      */
-    public function update($table = null)
+    public function update(ExpressionInterface|string|null $table = null)
     {
         if (!$table) {
             $repository = $this->getRepository();
@@ -1262,7 +1262,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param \Cake\ORM\Table $table The table this query is starting on
      * @return static
      */
-    public static function subquery(Table $table)
+    public static function subquery(Table $table): static
     {
         $query = new static($table->getConnection(), $table);
         $query->aliasingEnabled = false;

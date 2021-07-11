@@ -184,7 +184,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return object|array
      */
-    public function current()
+    public function current(): object|array
     {
         return $this->_current;
     }
@@ -277,7 +277,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return object|array|null
      */
-    public function first()
+    public function first(): object|array|null
     {
         foreach ($this as $result) {
             if ($this->_statement !== null && !$this->_useBuffering) {
@@ -334,7 +334,7 @@ class ResultSet implements ResultSetInterface
      * @param string $serialized Serialized object
      * @return void
      */
-    public function unserialize($serialized)
+    public function unserialize(string $serialized): void
     {
         $this->__unserialize((array)(unserialize($serialized) ?: []));
     }
@@ -437,7 +437,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return mixed
      */
-    protected function _fetchResult()
+    protected function _fetchResult(): mixed
     {
         if ($this->_statement === null) {
             return false;
@@ -457,7 +457,7 @@ class ResultSet implements ResultSetInterface
      * @param array $row Array containing columns and values or false if there is no results
      * @return \Cake\Datasource\EntityInterface|array Results
      */
-    protected function _groupResult(array $row)
+    protected function _groupResult(array $row): EntityInterface|array
     {
         $defaultAlias = $this->_defaultAlias;
         $results = $presentAliases = [];
@@ -569,7 +569,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'items' => $this->toArray(),

@@ -29,7 +29,7 @@ class MailContainsAttachment extends MailContains
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         [$expectedFilename, $expectedFileInfo] = $other;
 
@@ -68,7 +68,7 @@ class MailContainsAttachment extends MailContains
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         [$expectedFilename] = $other;
 

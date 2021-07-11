@@ -326,7 +326,7 @@ class Response extends Message implements ResponseInterface
      * @param string $name The name of the cookie value.
      * @return array|string|null Either the cookie's value or null when the cookie is undefined.
      */
-    public function getCookie(string $name)
+    public function getCookie(string $name): array|string|null
     {
         $this->buildCookieCollection();
 
@@ -401,7 +401,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return mixed
      */
-    public function getJson()
+    public function getJson(): mixed
     {
         return $this->_getJson();
     }
@@ -411,7 +411,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return mixed
      */
-    protected function _getJson()
+    protected function _getJson(): mixed
     {
         if ($this->_json) {
             return $this->_json;

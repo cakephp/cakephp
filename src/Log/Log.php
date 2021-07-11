@@ -275,7 +275,7 @@ class Log
      * @return void
      * @throws \BadMethodCallException When trying to modify an existing config.
      */
-    public static function setConfig($key, $config = null): void
+    public static function setConfig(array|string $key, ?array $config = null): void
     {
         static::_setConfig($key, $config);
         static::$_dirtyConfig = true;
@@ -351,7 +351,7 @@ class Log
      * @return bool Success
      * @throws \InvalidArgumentException If invalid level is passed.
      */
-    public static function write($level, string $message, $context = []): bool
+    public static function write(string|int $level, string $message, array|string $context = []): bool
     {
         static::_init();
         if (is_int($level) && in_array($level, static::$_levelMap, true)) {
@@ -403,7 +403,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function emergency(string $message, $context = []): bool
+    public static function emergency(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -419,7 +419,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function alert(string $message, $context = []): bool
+    public static function alert(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -435,7 +435,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function critical(string $message, $context = []): bool
+    public static function critical(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -451,7 +451,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function error(string $message, $context = []): bool
+    public static function error(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -467,7 +467,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function warning(string $message, $context = []): bool
+    public static function warning(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -483,7 +483,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function notice(string $message, $context = []): bool
+    public static function notice(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -499,7 +499,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function debug(string $message, $context = []): bool
+    public static function debug(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -515,7 +515,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function info(string $message, $context = []): bool
+    public static function info(string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }

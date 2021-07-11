@@ -80,7 +80,7 @@ class FlashMessage
      * @return void
      * @see FlashMessage::$_defaultConfig For default values for the options.
      */
-    public function set($message, array $options = []): void
+    public function set(string $message, array $options = []): void
     {
         $options += (array)$this->getConfig();
 

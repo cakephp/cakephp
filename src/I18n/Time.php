@@ -125,7 +125,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
-    public function __construct($time = null, $tz = null)
+    public function __construct(DateTimeInterface|string|int|null $time = null, DateTimeZone|string|null $tz = null)
     {
         if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimezone();
@@ -149,7 +149,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
      * @return string Formatted date string
      */
-    public function nice($timezone = null, $locale = null): string
+    public function nice(DateTimeZone|string|null $timezone = null, ?string $locale = null): string
     {
         return (string)$this->i18nFormat(static::$niceFormat, $timezone, $locale);
     }
@@ -190,7 +190,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * @param bool $range Range.
      * @return array<string>|int 1, 2, 3, or 4 quarter of year, or array if $range true
      */
-    public function toQuarter(bool $range = false)
+    public function toQuarter(bool $range = false): array|int
     {
         $quarter = (int)ceil((int)$this->format('m') / 3);
         if ($range === false) {
@@ -279,7 +279,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * @return array List of timezone identifiers
      * @since 2.2
      */
-    public static function listTimezones($filter = null, ?string $country = null, $options = []): array
+    public static function listTimezones(string|int|null $filter = null, ?string $country = null, array|bool $options = []): array
     {
         if (is_bool($options)) {
             $options = [

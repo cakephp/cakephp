@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use DateInterval;
 
 /**
  * Array storage engine for cache.
@@ -49,7 +50,7 @@ class ArrayEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $key = $this->_key($key);
         $expires = time() + $this->duration($ttl);
@@ -66,7 +67,7 @@ class ArrayEngine extends CacheEngine
      * @return mixed The cached data, or default value if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
         if (!isset($this->data[$key])) {
@@ -92,7 +93,7 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return int|false New incremented value, false otherwise
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
         if ($this->get($key) === null) {
             $this->set($key, 0);
@@ -110,7 +111,7 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return int|false New decremented value, false otherwise
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
         if ($this->get($key) === null) {
             $this->set($key, 0);
@@ -127,7 +128,7 @@ class ArrayEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
         unset($this->data[$key]);

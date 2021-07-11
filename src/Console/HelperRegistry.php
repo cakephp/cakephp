@@ -98,7 +98,7 @@ class HelperRegistry extends ObjectRegistry
      * @return \Cake\Console\Helper The constructed helper class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    protected function _create($class, string $alias, array $config): Helper
+    protected function _create(string $class, string $alias, array $config): Helper
     {
         /** @var \Cake\Console\Helper */
         return new $class($this->_io, $config);

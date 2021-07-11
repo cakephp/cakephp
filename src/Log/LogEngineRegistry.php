@@ -68,7 +68,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @return \Psr\Log\LoggerInterface The constructed logger class.
      * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
-    protected function _create($class, string $alias, array $config): LoggerInterface
+    protected function _create(LoggerInterface|string $class, string $alias, array $config): LoggerInterface
     {
         if (is_callable($class)) {
             $class = $class($alias);

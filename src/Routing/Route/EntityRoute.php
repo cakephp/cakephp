@@ -68,7 +68,7 @@ class EntityRoute extends Route
      * @param \ArrayAccess|array $entity Entity value from the URL options
      * @return void
      */
-    protected function _checkEntity($entity): void
+    protected function _checkEntity(ArrayAccess|array $entity): void
     {
         if (!$entity instanceof ArrayAccess && !is_array($entity)) {
             throw new RuntimeException(sprintf(

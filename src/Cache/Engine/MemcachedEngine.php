@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use DateInterval;
 use InvalidArgumentException;
 use Memcached;
 use RuntimeException;
@@ -287,7 +288,7 @@ class MemcachedEngine extends CacheEngine
      * @return string|int|bool|null
      * @see https://secure.php.net/manual/en/memcached.getoption.php
      */
-    public function getOption(int $name)
+    public function getOption(int $name): string|int|bool|null
     {
         return $this->_Memcached->getOption($name);
     }
@@ -306,7 +307,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure
      * @see https://www.php.net/manual/en/memcached.set.php
      */
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $duration = $this->duration($ttl);
 
@@ -322,7 +323,7 @@ class MemcachedEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool Whether the write was successful or not.
      */
-    public function setMultiple($values, $ttl = null): bool
+    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
     {
         $cacheData = [];
         foreach ($values as $key => $value) {
@@ -341,7 +342,7 @@ class MemcachedEngine extends CacheEngine
      * @return mixed The cached data, or default value if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
         $value = $this->_Memcached->get($key);
@@ -360,7 +361,7 @@ class MemcachedEngine extends CacheEngine
      * @return array An array containing, for each of the given $keys, the cached data or
      *   false if cached data could not be retrieved.
      */
-    public function getMultiple($keys, $default = null): array
+    public function getMultiple(iterable $keys, mixed $default = null): array
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
@@ -383,7 +384,7 @@ class MemcachedEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return int|false New incremented value, false otherwise
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
         return $this->_Memcached->increment($this->_key($key), $offset);
     }
@@ -395,7 +396,7 @@ class MemcachedEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return int|false New decremented value, false otherwise
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
         return $this->_Memcached->decrement($this->_key($key), $offset);
     }
@@ -407,7 +408,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed.
      */
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         return $this->_Memcached->delete($this->_key($key));
     }
@@ -419,7 +420,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool of boolean values that are true if the key was successfully
      *   deleted, false if it didn't exist or couldn't be removed.
      */
-    public function deleteMultiple($keys): bool
+    public function deleteMultiple(iterable $keys): bool
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
@@ -457,7 +458,7 @@ class MemcachedEngine extends CacheEngine
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
      */
-    public function add(string $key, $value): bool
+    public function add(string $key, mixed $value): bool
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);

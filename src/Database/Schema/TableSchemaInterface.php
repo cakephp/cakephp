@@ -217,7 +217,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @return $this
      * @throws \Cake\Database\Exception\DatabaseException
      */
-    public function addIndex(string $name, $attrs);
+    public function addIndex(string $name, array|string $attrs);
 
     /**
      * Read information about an index based on name.
@@ -256,7 +256,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @return $this
      * @throws \Cake\Database\Exception\DatabaseException
      */
-    public function addConstraint(string $name, $attrs);
+    public function addConstraint(string $name, array|string $attrs);
 
     /**
      * Read information about a constraint based on name.

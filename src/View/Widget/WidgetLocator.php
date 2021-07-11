@@ -185,7 +185,7 @@ class WidgetLocator
      * @return \Cake\View\Widget\WidgetInterface Widget instance.
      * @throws \ReflectionException
      */
-    protected function _resolveWidget($config): WidgetInterface
+    protected function _resolveWidget(mixed $config): WidgetInterface
     {
         if (is_string($config)) {
             $config = [$config];

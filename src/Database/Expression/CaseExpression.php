@@ -62,7 +62,7 @@ class CaseExpression implements ExpressionInterface
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      */
-    public function __construct($conditions = [], $values = [], $types = [])
+    public function __construct(ExpressionInterface|array $conditions = [], ExpressionInterface|array $values = [], array $types = [])
     {
         if (!empty($conditions)) {
             $this->add($conditions, $values, $types);
@@ -86,7 +86,7 @@ class CaseExpression implements ExpressionInterface
      * @param array $types associative array of types to be associated with the values
      * @return $this
      */
-    public function add($conditions = [], $values = [], $types = [])
+    public function add(ExpressionInterface|array $conditions = [], ExpressionInterface|array $values = [], array $types = [])
     {
         if (!is_array($conditions)) {
             $conditions = [$conditions];
@@ -165,7 +165,7 @@ class CaseExpression implements ExpressionInterface
      * @param string|null $type Type of value
      * @return void
      */
-    public function elseValue($value = null, ?string $type = null): void
+    public function elseValue(ExpressionInterface|array|string|null $value = null, ?string $type = null): void
     {
         if (is_array($value)) {
             end($value);
@@ -190,7 +190,7 @@ class CaseExpression implements ExpressionInterface
      * @param \Cake\Database\ValueBinder $binder Sql generator
      * @return string
      */
-    protected function _compile($part, ValueBinder $binder): string
+    protected function _compile(ExpressionInterface|array|string $part, ValueBinder $binder): string
     {
         if ($part instanceof ExpressionInterface) {
             $part = $part->sql($binder);

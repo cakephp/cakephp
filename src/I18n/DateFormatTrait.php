@@ -19,6 +19,7 @@ namespace Cake\I18n;
 use Cake\Chronos\DifferenceFormatterInterface;
 use Closure;
 use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use IntlDateFormatter;
 use RuntimeException;
@@ -119,7 +120,7 @@ trait DateFormatTrait
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
      * @return string Formatted date string
      */
-    public function nice($timezone = null, $locale = null): string
+    public function nice(DateTimeZone|string|null $timezone = null, ?string $locale = null): string
     {
         return (string)$this->i18nFormat(static::$niceFormat, $timezone, $locale);
     }
@@ -177,7 +178,7 @@ trait DateFormatTrait
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
      * @return string|int Formatted and translated date string
      */
-    public function i18nFormat($format = null, $timezone = null, $locale = null)
+    public function i18nFormat(array|string|int|null $format = null, DateTimeZone|string|null $timezone = null, ?string $locale = null): string|int
     {
         if ($format === Time::UNIX_TIMESTAMP_FORMAT) {
             return $this->getTimestamp();
@@ -206,7 +207,7 @@ trait DateFormatTrait
      * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
-    protected function _formatObject($date, $format, ?string $locale): string
+    protected function _formatObject(DateTime|DateTimeImmutable $date, array|string|int $format, ?string $locale): string
     {
         $pattern = '';
 
@@ -296,7 +297,7 @@ trait DateFormatTrait
      * @param array<int>|string|int $format Format.
      * @return void
      */
-    public static function setToStringFormat($format): void
+    public static function setToStringFormat(array|string|int $format): void
     {
         static::$_toStringFormat = $format;
     }
@@ -336,7 +337,7 @@ trait DateFormatTrait
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      * @return static|null
      */
-    public static function parseDateTime(string $time, $format = null, $tz = null)
+    public static function parseDateTime(string $time, array|string|int|null $format = null, DateTimeZone|string|null $tz = null): ?static
     {
         $format = $format ?? static::$_toStringFormat;
         $pattern = '';
@@ -398,7 +399,7 @@ trait DateFormatTrait
      * @param array|string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
-    public static function parseDate(string $date, $format = null)
+    public static function parseDate(string $date, array|string|int|null $format = null): ?static
     {
         if (is_int($format)) {
             $format = [$format, IntlDateFormatter::NONE];
@@ -428,7 +429,7 @@ trait DateFormatTrait
      * @param string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
-    public static function parseTime(string $time, $format = null)
+    public static function parseTime(string $time, string|int|null $format = null): ?static
     {
         if (is_int($format)) {
             $format = [IntlDateFormatter::NONE, $format];

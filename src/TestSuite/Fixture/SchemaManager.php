@@ -17,6 +17,7 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Console\ConsoleIo;
 use Cake\Datasource\ConnectionManager;
+use RuntimeException;
 
 /**
  * This class will create the schema of the test DB
@@ -52,7 +53,7 @@ class SchemaManager
      */
     public static function create(
         string $connectionName,
-        $file,
+        array|string $file,
         ?bool $verbose = false,
         ?bool $enableDropping = true
     ): void {
@@ -65,12 +66,12 @@ class SchemaManager
         $stmts = [];
         foreach ($files as $file) {
             if (!file_exists($file)) {
-                throw new \RuntimeException('The file ' . $file . ' could not found.');
+                throw new RuntimeException('The file ' . $file . ' could not found.');
             }
 
             $stmts[] = $sql = file_get_contents($file);
             if ($sql === false) {
-                throw new \RuntimeException('The file ' . $file . ' could not read.');
+                throw new RuntimeException('The file ' . $file . ' could not read.');
             }
         }
 

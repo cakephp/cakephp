@@ -82,7 +82,7 @@ class Translator
      * @param string $key The message key.
      * @return mixed The message translation string, or false if not found.
      */
-    protected function getMessage(string $key)
+    protected function getMessage(string $key): mixed
     {
         $message = $this->package->getMessage($key);
         if ($message) {
@@ -172,7 +172,7 @@ class Translator
      * @param array $vars The variables containing the `_context` key.
      * @return array|string
      */
-    protected function resolveContext(string $key, array $message, array $vars)
+    protected function resolveContext(string $key, array $message, array $vars): array|string
     {
         $context = $vars['_context'] ?? null;
 

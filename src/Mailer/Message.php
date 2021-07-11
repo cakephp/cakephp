@@ -331,7 +331,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setFrom($email, ?string $name = null)
+    public function setFrom(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle('from', $email, $name, 'From requires only 1 email address.');
     }
@@ -356,7 +356,7 @@ class Message implements JsonSerializable, Serializable
      * @throws \InvalidArgumentException
      * @link https://tools.ietf.org/html/rfc2822.html#section-3.6.2
      */
-    public function setSender($email, ?string $name = null)
+    public function setSender(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle('sender', $email, $name, 'Sender requires only 1 email address.');
     }
@@ -381,7 +381,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setReplyTo($email, ?string $name = null)
+    public function setReplyTo(array|string $email, ?string $name = null)
     {
         return $this->setEmail('replyTo', $email, $name);
     }
@@ -404,7 +404,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addReplyTo($email, ?string $name = null)
+    public function addReplyTo(array|string $email, ?string $name = null)
     {
         return $this->addEmail('replyTo', $email, $name);
     }
@@ -418,7 +418,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setReadReceipt($email, ?string $name = null)
+    public function setReadReceipt(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle(
             'readReceipt',
@@ -447,7 +447,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setReturnPath($email, ?string $name = null)
+    public function setReturnPath(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle('returnPath', $email, $name, 'Return-Path requires only 1 email address.');
     }
@@ -470,7 +470,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function setTo($email, ?string $name = null)
+    public function setTo(array|string $email, ?string $name = null)
     {
         return $this->setEmail('to', $email, $name);
     }
@@ -493,7 +493,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addTo($email, ?string $name = null)
+    public function addTo(array|string $email, ?string $name = null)
     {
         return $this->addEmail('to', $email, $name);
     }
@@ -506,7 +506,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function setCc($email, ?string $name = null)
+    public function setCc(array|string $email, ?string $name = null)
     {
         return $this->setEmail('cc', $email, $name);
     }
@@ -529,7 +529,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addCc($email, ?string $name = null)
+    public function addCc(array|string $email, ?string $name = null)
     {
         return $this->addEmail('cc', $email, $name);
     }
@@ -542,7 +542,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function setBcc($email, ?string $name = null)
+    public function setBcc(array|string $email, ?string $name = null)
     {
         return $this->setEmail('bcc', $email, $name);
     }
@@ -565,7 +565,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addBcc($email, ?string $name = null)
+    public function addBcc(array|string $email, ?string $name = null)
     {
         return $this->addEmail('bcc', $email, $name);
     }
@@ -686,7 +686,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function setEmail(string $varName, $email, ?string $name)
+    protected function setEmail(string $varName, array|string $email, ?string $name)
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
@@ -743,7 +743,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function setEmailSingle(string $varName, $email, ?string $name, string $throwMessage)
+    protected function setEmailSingle(string $varName, array|string $email, ?string $name, string $throwMessage)
     {
         if ($email === []) {
             $this->{$varName} = $email;
@@ -771,7 +771,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function addEmail(string $varName, $email, ?string $name)
+    protected function addEmail(string $varName, array|string $email, ?string $name)
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
@@ -1060,7 +1060,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setMessageId($message)
+    public function setMessageId(string|bool $message)
     {
         if (is_bool($message)) {
             $this->messageId = $message;
@@ -1081,7 +1081,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return string|bool
      */
-    public function getMessageId()
+    public function getMessageId(): string|bool
     {
         return $this->messageId;
     }
@@ -1246,7 +1246,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return array
      */
-    public function getBody()
+    public function getBody(): array
     {
         if (empty($this->message)) {
             $this->message = $this->generateMessage();
@@ -1565,7 +1565,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return string
      */
-    public function getBodyText()
+    public function getBodyText(): string
     {
         return $this->textMessage;
     }
@@ -1575,7 +1575,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return string
      */
-    public function getBodyHtml()
+    public function getBodyHtml(): string
     {
         return $this->htmlMessage;
     }
@@ -1791,7 +1791,7 @@ class Message implements JsonSerializable, Serializable
      *   or UploadedFileInterface instance.
      * @return string File contents in base64 encoding
      */
-    protected function readFile($file): string
+    protected function readFile(UploadedFileInterface|string $file): string
     {
         if (is_string($file)) {
             $content = (string)file_get_contents($file);
@@ -1923,7 +1923,7 @@ class Message implements JsonSerializable, Serializable
      * @param string $data Serialized string.
      * @return void
      */
-    public function unserialize($data)
+    public function unserialize(string $data): void
     {
         $array = unserialize($data);
         if (!is_array($array)) {

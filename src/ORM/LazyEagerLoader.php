@@ -42,7 +42,7 @@ class LazyEagerLoader
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>
      */
-    public function loadInto($entities, array $contain, Table $source)
+    public function loadInto(EntityInterface|array $entities, array $contain, Table $source): EntityInterface|array
     {
         $returnSingle = false;
 
@@ -141,7 +141,7 @@ class LazyEagerLoader
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array
      */
-    protected function _injectResults(iterable $objects, $results, array $associations, Table $source): array
+    protected function _injectResults(iterable $objects, Query $results, array $associations, Table $source): array
     {
         $injected = [];
         $properties = $this->_getPropertyMap($source, $associations);

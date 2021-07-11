@@ -55,7 +55,7 @@ class EventFired extends Constraint
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         $list = $this->_eventManager->getEventList();
 

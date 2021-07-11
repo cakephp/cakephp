@@ -57,7 +57,7 @@ class MoFileParser
      * @return array List of messages extracted from the file
      * @throws \RuntimeException If stream content has an invalid format.
      */
-    public function parse($file): array
+    public function parse(string $file): array
     {
         $stream = fopen($file, 'rb');
 
@@ -152,7 +152,7 @@ class MoFileParser
      * @param bool $isBigEndian Whether or not the current platform is Big Endian
      * @return int
      */
-    protected function _readLong($stream, $isBigEndian): int
+    protected function _readLong($stream, bool $isBigEndian): int
     {
         $result = unpack($isBigEndian ? 'N1' : 'V1', fread($stream, 4));
         $result = current($result);

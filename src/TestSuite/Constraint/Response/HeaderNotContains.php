@@ -28,7 +28,7 @@ class HeaderNotContains extends HeaderContains
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return parent::matches($other) === false;
     }

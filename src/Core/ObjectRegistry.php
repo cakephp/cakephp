@@ -77,7 +77,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @psalm-return TObject
      * @throws \Exception If the class cannot be found.
      */
-    public function load(string $name, array $config = [])
+    public function load(string $name, array $config = []): mixed
     {
         if (isset($config['className'])) {
             $objName = $name;
@@ -196,7 +196,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @psalm-param TObject|string $class
      * @psalm-return TObject
      */
-    abstract protected function _create($class, string $alias, array $config);
+    abstract protected function _create(object|string $class, string $alias, array $config): object;
 
     /**
      * Get the list of loaded objects.
@@ -227,7 +227,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @throws \RuntimeException If not loaded or found.
      * @psalm-return TObject
      */
-    public function get(string $name)
+    public function get(string $name): object
     {
         if (!isset($this->_loaded[$name])) {
             throw new RuntimeException(sprintf('Unknown object "%s"', $name));
@@ -243,7 +243,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return object|null
      * @psalm-return TObject|null
      */
-    public function __get(string $name)
+    public function __get(string $name): ?object
     {
         return $this->_loaded[$name] ?? null;
     }
@@ -267,7 +267,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @psalm-param TObject $object
      * @return void
      */
-    public function __set(string $name, $object): void
+    public function __set(string $name, object $object): void
     {
         $this->set($name, $object);
     }

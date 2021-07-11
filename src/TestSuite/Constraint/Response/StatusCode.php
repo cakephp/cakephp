@@ -38,7 +38,7 @@ class StatusCode extends StatusCodeBase
      * @param mixed $other Expected code
      * @return string
      */
-    public function failureDescription($other): string
+    public function failureDescription(mixed $other): string
     {
         return '`' . $other . '` ' . $this->toString();
     }

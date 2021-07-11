@@ -128,7 +128,7 @@ class RadioWidget extends BasicWidget
      * @param array|true|null $disabled The disabled values.
      * @return bool
      */
-    protected function _isDisabled(array $radio, $disabled): bool
+    protected function _isDisabled(array $radio, array|bool|null $disabled): bool
     {
         if (!$disabled) {
             return false;
@@ -150,7 +150,7 @@ class RadioWidget extends BasicWidget
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
      */
-    protected function _renderInput($val, $text, $data, $context): string
+    protected function _renderInput(string|int $val, array|string $text, array $data, ContextInterface $context): string
     {
         $escape = $data['escape'];
         if (is_array($text) && isset($text['text'], $text['value'])) {
@@ -241,7 +241,7 @@ class RadioWidget extends BasicWidget
      * @param bool $escape Whether or not to HTML escape the label.
      * @return string|false Generated label.
      */
-    protected function _renderLabel(array $radio, $label, $input, $context, $escape)
+    protected function _renderLabel(array $radio, array|string|false $label, string $input, ContextInterface $context, bool $escape): string|false
     {
         if (isset($radio['label'])) {
             $label = $radio['label'];

@@ -18,6 +18,8 @@ namespace Cake\I18n;
 
 use Cake\Chronos\ChronosInterface;
 use Cake\Chronos\DifferenceFormatterInterface;
+use Closure;
+use DateTimeZone;
 use JsonSerializable;
 
 /**
@@ -51,7 +53,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
      * @return string Formatted date string
      */
-    public function nice($timezone = null, $locale = null): string;
+    public function nice(DateTimeZone|string|null $timezone = null, ?string $locale = null): string;
 
     /**
      * Returns a formatted string for this time object using the preferred format and
@@ -109,7 +111,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
      * @return string|int Formatted and translated date string
      */
-    public function i18nFormat($format = null, $timezone = null, $locale = null);
+    public function i18nFormat(string|int|null $format = null, DateTimeZone|string|null $timezone = null, ?string $locale = null): string|int;
 
     /**
      * Resets the format used to the default when converting an instance of this type to
@@ -125,7 +127,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * @param array<int>|string|int $format Format.
      * @return void
      */
-    public static function setToStringFormat($format): void;
+    public static function setToStringFormat(array|string|int $format): void;
 
     /**
      * Sets the default format used when converting this object to JSON
@@ -145,7 +147,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * @param \Closure|array|string|int $format Format.
      * @return void
      */
-    public static function setJsonEncodeFormat($format): void;
+    public static function setJsonEncodeFormat(Closure|array|string|int $format): void;
 
     /**
      * Returns a new Time object after parsing the provided time string based on
@@ -171,7 +173,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * @return static|null
      * @throws \InvalidArgumentException If $format is a single int instead of array of constants
      */
-    public static function parseDateTime(string $time, $format = null, $tz = null);
+    public static function parseDateTime(string $time, array|string|null $format = null, DateTimeZone|string|null $tz = null): ?static;
 
     /**
      * Returns a new Time object after parsing the provided $date string based on
@@ -195,7 +197,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * @param array|string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
-    public static function parseDate(string $date, $format = null);
+    public static function parseDate(string $date, array|string|int|null $format = null): ?static;
 
     /**
      * Returns a new Time object after parsing the provided $time string based on
@@ -217,7 +219,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * @param string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
-    public static function parseTime(string $time, $format = null);
+    public static function parseTime(string $time, string|int|null $format = null): ?static;
 
     /**
      * Get the difference formatter instance.

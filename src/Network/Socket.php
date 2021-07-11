@@ -203,7 +203,7 @@ class Socket
      * @param resource $context context
      * @return resource|null
      */
-    protected function _getStreamSocketClient($remoteSocketTarget, &$errNum, &$errStr, $timeout, $connectAs, $context)
+    protected function _getStreamSocketClient(string $remoteSocketTarget, int &$errNum, string &$errStr, int $timeout, int $connectAs, $context)
     {
         $resource = stream_socket_client(
             $remoteSocketTarget,

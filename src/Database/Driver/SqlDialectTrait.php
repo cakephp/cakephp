@@ -279,7 +279,7 @@ trait SqlDialectTrait
      * @param string|int $name save point name
      * @return string
      */
-    public function savePointSQL($name): string
+    public function savePointSQL(string|int $name): string
     {
         return 'SAVEPOINT LEVEL' . $name;
     }
@@ -290,7 +290,7 @@ trait SqlDialectTrait
      * @param string|int $name save point name
      * @return string
      */
-    public function releaseSavePointSQL($name): string
+    public function releaseSavePointSQL(string|int $name): string
     {
         return 'RELEASE SAVEPOINT LEVEL' . $name;
     }
@@ -301,7 +301,7 @@ trait SqlDialectTrait
      * @param string|int $name save point name
      * @return string
      */
-    public function rollbackSavePointSQL($name): string
+    public function rollbackSavePointSQL(string|int $name): string
     {
         return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
     }

@@ -284,7 +284,7 @@ class PaginatorComponent extends Component
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
      */
-    public function setConfig($key, $value = null, $merge = true)
+    public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
     {
         $this->_paginator->setConfig($key, $value, $merge);
 
@@ -298,7 +298,7 @@ class PaginatorComponent extends Component
      * @param mixed $default The return value when the key does not exist.
      * @return mixed Config value being read.
      */
-    public function getConfig(?string $key = null, $default = null)
+    public function getConfig(?string $key = null, mixed $default = null): mixed
     {
         return $this->_paginator->getConfig($key, $default);
     }
@@ -310,7 +310,7 @@ class PaginatorComponent extends Component
      * @param mixed|null $value The value to set.
      * @return $this
      */
-    public function configShallow($key, $value = null)
+    public function configShallow(array|string $key, mixed $value = null)
     {
         $this->_paginator->configShallow($key, null);
 
@@ -324,7 +324,7 @@ class PaginatorComponent extends Component
      * @param array $args Method arguments.
      * @return mixed
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         return $this->_paginator->{$method}(...$args);
     }

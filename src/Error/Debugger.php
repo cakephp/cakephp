@@ -196,7 +196,7 @@ class Debugger
      * @param string|null $class Class name.
      * @return static
      */
-    public static function getInstance(?string $class = null)
+    public static function getInstance(?string $class = null): static
     {
         static $instance = [];
         if (!empty($class)) {
@@ -220,7 +220,7 @@ class Debugger
      * @return mixed Config value being read, or the object itself on write operations.
      * @throws \Cake\Core\Exception\CakeException When trying to set a key that is invalid.
      */
-    public static function configInstance($key = null, $value = null, bool $merge = true)
+    public static function configInstance(array|string|null $key = null, mixed $value = null, bool $merge = true): mixed
     {
         if ($key === null) {
             return static::getInstance()->getConfig($key);
@@ -270,7 +270,7 @@ class Debugger
      * @param \Closure|string $template The string template or closure
      * @return void
      */
-    public static function addEditor(string $name, $template): void
+    public static function addEditor(string $name, Closure|string $template): void
     {
         $instance = static::getInstance();
         if (!is_string($template) && !($template instanceof Closure)) {
@@ -328,7 +328,7 @@ class Debugger
      * @see \Cake\Error\Debugger::exportVar()
      * @link https://book.cakephp.org/4/en/development/debugging.html#outputting-values
      */
-    public static function dump($var, int $maxDepth = 3): void
+    public static function dump(mixed $var, int $maxDepth = 3): void
     {
         pr(static::exportVar($var, $maxDepth));
     }
@@ -342,7 +342,7 @@ class Debugger
      * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      */
-    public static function log($var, $level = 'debug', int $maxDepth = 3): void
+    public static function log(mixed $var, string|int $level = 'debug', int $maxDepth = 3): void
     {
         /** @var string $source */
         $source = static::trace(['start' => 1]);
@@ -370,7 +370,7 @@ class Debugger
      * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */
-    public static function trace(array $options = [])
+    public static function trace(array $options = []): array|string
     {
         return Debugger::formatTrace(debug_backtrace(), $options);
     }
@@ -392,7 +392,7 @@ class Debugger
      * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */
-    public static function formatTrace($backtrace, array $options = [])
+    public static function formatTrace(Throwable|array $backtrace, array $options = []): array|string
     {
         if ($backtrace instanceof Throwable) {
             $backtrace = $backtrace->getTrace();
@@ -621,7 +621,7 @@ class Debugger
      * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return string Variable as a formatted string
      */
-    public static function exportVar($var, int $maxDepth = 3): string
+    public static function exportVar(mixed $var, int $maxDepth = 3): string
     {
         $context = new DebugContext($maxDepth);
         $node = static::export($var, $context);
@@ -636,7 +636,7 @@ class Debugger
      * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return string Variable as a string
      */
-    public static function exportVarAsPlainText($var, int $maxDepth = 3): string
+    public static function exportVarAsPlainText(mixed $var, int $maxDepth = 3): string
     {
         return (new TextFormatter())->dump(
             static::export($var, new DebugContext($maxDepth))
@@ -653,7 +653,7 @@ class Debugger
      * @param int $maxDepth The depth to generate nodes to. Defaults to 3.
      * @return \Cake\Error\Debug\NodeInterface The root node of the tree.
      */
-    public static function exportVarAsNodes($var, int $maxDepth = 3): NodeInterface
+    public static function exportVarAsNodes(mixed $var, int $maxDepth = 3): NodeInterface
     {
         return static::export($var, new DebugContext($maxDepth));
     }
@@ -665,7 +665,7 @@ class Debugger
      * @param \Cake\Error\Debug\DebugContext $context Dump context
      * @return \Cake\Error\Debug\NodeInterface The dumped variable.
      */
-    protected static function export($var, DebugContext $context): NodeInterface
+    protected static function export(mixed $var, DebugContext $context): NodeInterface
     {
         $type = static::getType($var);
         switch ($type) {
@@ -994,7 +994,7 @@ class Debugger
      * @param mixed $var The variable to get the type of.
      * @return string The type of variable.
      */
-    public static function getType($var): string
+    public static function getType(mixed $var): string
     {
         $type = getTypeName($var);
 
@@ -1025,7 +1025,7 @@ class Debugger
      *    environment conditions.
      * @return void
      */
-    public static function printVar($var, array $location = [], ?bool $showHtml = null): void
+    public static function printVar(mixed $var, array $location = [], ?bool $showHtml = null): void
     {
         $location += ['file' => null, 'line' => null];
         if ($location['file']) {

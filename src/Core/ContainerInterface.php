@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use League\Container\Definition\DefinitionInterface;
+use League\Container\ServiceProvider\ServiceProviderInterface;
 use Psr\Container\ContainerInterface as PsrInterface;
 
 /**
@@ -43,7 +44,7 @@ interface ContainerInterface extends PsrInterface
      * @param bool $shared Set to true to make a service shared.
      * @return \League\Container\Definition\DefinitionInterface
      */
-    public function add(string $id, $concrete = null, bool $shared = false): DefinitionInterface;
+    public function add(string $id, mixed $concrete = null, bool $shared = false): DefinitionInterface;
 
     /**
      * Add a service provider to the container
@@ -51,7 +52,7 @@ interface ContainerInterface extends PsrInterface
      * @param \League\Container\ServiceProvider\ServiceProviderInterface $provider The service provider to add.
      * @return $this
      */
-    public function addServiceProvider($provider);
+    public function addServiceProvider(ServiceProviderInterface $provider);
 
     /**
      * Modify an existing definition

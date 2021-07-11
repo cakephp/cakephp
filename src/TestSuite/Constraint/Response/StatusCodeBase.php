@@ -36,7 +36,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @return bool
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function matches($other): bool
+    public function matches(array|int $other): bool
     {
         if (!$other) {
             $other = $this->code;
@@ -67,7 +67,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         /** @psalm-suppress InternalMethod */
         return $this->toString();

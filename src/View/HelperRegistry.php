@@ -90,7 +90,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $name Name of property to read
      * @return \Cake\View\Helper|null
      */
-    public function __get(string $name)
+    public function __get(string $name): ?Helper
     {
         if (isset($this->_loaded[$name])) {
             return $this->_loaded[$name];
@@ -147,7 +147,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @return \Cake\View\Helper The constructed helper class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    protected function _create($class, string $alias, array $config): Helper
+    protected function _create(string $class, string $alias, array $config): Helper
     {
         /** @var \Cake\View\Helper $instance */
         $instance = new $class($this->_View, $config);

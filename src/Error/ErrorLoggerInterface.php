@@ -47,5 +47,5 @@ interface ErrorLoggerInterface
      * @param array $context Context.
      * @return bool
      */
-    public function logMessage($level, string $message, array $context = []): bool;
+    public function logMessage(string|int $level, string $message, array $context = []): bool;
 }

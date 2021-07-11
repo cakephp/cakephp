@@ -97,7 +97,7 @@ class Helper implements EventListenerInterface
      * @param array $params Array of params for the method.
      * @return mixed|void
      */
-    public function __call(string $method, array $params)
+    public function __call(string $method, array $params): mixed
     {
         trigger_error(sprintf('Method %1$s::%2$s does not exist', static::class, $method), E_USER_WARNING);
     }
@@ -108,7 +108,7 @@ class Helper implements EventListenerInterface
      * @param string $name Name of the property being accessed.
      * @return \Cake\View\Helper|null|void Helper instance if helper with provided name exists
      */
-    public function __get(string $name)
+    public function __get(string $name): Helper|null|null
     {
         if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
             $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];

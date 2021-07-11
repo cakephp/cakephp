@@ -101,7 +101,7 @@ class InsertIterator extends Collection
      *
      * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         $row = parent::current();
 

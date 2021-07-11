@@ -19,6 +19,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use Cake\Cache\InvalidArgumentException;
 use CallbackFilterIterator;
+use DateInterval;
 use Exception;
 use FilesystemIterator;
 use LogicException;
@@ -111,7 +112,7 @@ class FileEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         if ($value === '' || !$this->_init) {
             return false;
@@ -157,7 +158,7 @@ class FileEngine extends CacheEngine
      * @return mixed The cached data, or default value if the data doesn't exist, has
      *   expired, or if there was an error fetching it
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
 
@@ -211,7 +212,7 @@ class FileEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed
      */
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
 
@@ -332,7 +333,7 @@ class FileEngine extends CacheEngine
      * @return int|false
      * @throws \LogicException
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
         throw new LogicException('Files cannot be atomically decremented.');
     }
@@ -345,7 +346,7 @@ class FileEngine extends CacheEngine
      * @return int|false
      * @throws \LogicException
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
         throw new LogicException('Files cannot be atomically incremented.');
     }

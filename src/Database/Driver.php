@@ -124,7 +124,7 @@ abstract class Driver implements DriverInterface
      */
     protected function _connect(string $dsn, array $config): bool
     {
-        $action = function () use ($dsn, $config) {
+        $action = function () use ($dsn, $config): void {
             $this->setConnection(new PDO(
                 $dsn,
                 $config['username'] ?: null,
@@ -187,7 +187,7 @@ abstract class Driver implements DriverInterface
      *
      * @return \PDO
      */
-    public function getConnection()
+    public function getConnection(): PDO
     {
         if ($this->_connection === null) {
             throw new MissingConnectionException([
@@ -206,7 +206,7 @@ abstract class Driver implements DriverInterface
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function setConnection($connection)
+    public function setConnection(PDO $connection)
     {
         $this->_connection = $connection;
 

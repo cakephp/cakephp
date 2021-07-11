@@ -53,7 +53,7 @@ class CookieEquals extends ResponseBase
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         $cookie = $this->response->getCookie($this->cookieName);
 

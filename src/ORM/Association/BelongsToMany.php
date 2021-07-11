@@ -165,7 +165,7 @@ class BelongsToMany extends Association
      * @param array<string>|string $key the key to be used to link both tables together
      * @return $this
      */
-    public function setTargetForeignKey($key)
+    public function setTargetForeignKey(array|string $key)
     {
         $this->_targetForeignKey = $key;
 
@@ -177,7 +177,7 @@ class BelongsToMany extends Association
      *
      * @return array<string>|string
      */
-    public function getTargetForeignKey()
+    public function getTargetForeignKey(): array|string
     {
         if ($this->_targetForeignKey === null) {
             $this->_targetForeignKey = $this->_modelKey($this->getTarget()->getAlias());
@@ -203,7 +203,7 @@ class BelongsToMany extends Association
      *
      * @return array<string>|string
      */
-    public function getForeignKey()
+    public function getForeignKey(): array|string
     {
         if ($this->_foreignKey === null) {
             $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
@@ -218,7 +218,7 @@ class BelongsToMany extends Association
      * @param mixed $sort A find() compatible order clause
      * @return $this
      */
-    public function setSort($sort)
+    public function setSort(mixed $sort)
     {
         $this->_sort = $sort;
 
@@ -230,7 +230,7 @@ class BelongsToMany extends Association
      *
      * @return mixed
      */
-    public function getSort()
+    public function getSort(): mixed
     {
         return $this->_sort;
     }
@@ -256,7 +256,7 @@ class BelongsToMany extends Association
      * @return \Cake\ORM\Table
      * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
-    public function junction($table = null): Table
+    public function junction(Table|string|null $table = null): Table
     {
         if ($table === null && $this->_junctionTable !== null) {
             return $this->_junctionTable;
@@ -680,7 +680,7 @@ class BelongsToMany extends Association
      * @see \Cake\ORM\Table::save()
      * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
      */
-    public function saveAssociated(EntityInterface $entity, array $options = [])
+    public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
         $strategy = $this->getSaveStrategy();
@@ -718,7 +718,7 @@ class BelongsToMany extends Association
      * @return \Cake\Datasource\EntityInterface|false The parent entity after all links have been
      * created if no errors happened, false otherwise
      */
-    protected function _saveTarget(EntityInterface $parentEntity, array $entities, $options)
+    protected function _saveTarget(EntityInterface $parentEntity, array $entities, array $options): EntityInterface|false
     {
         $joinAssociations = false;
         if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
@@ -906,7 +906,7 @@ class BelongsToMany extends Association
      *   any of them is lacking a primary key value.
      * @return bool Success
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = []): bool
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, array|bool $options = []): bool
     {
         if (is_bool($options)) {
             $options = [
@@ -968,7 +968,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table|string $through Name of the Table instance or the instance itself
      * @return $this
      */
-    public function setThrough($through)
+    public function setThrough(Table|string $through)
     {
         $this->_through = $through;
 
@@ -980,7 +980,7 @@ class BelongsToMany extends Association
      *
      * @return \Cake\ORM\Table|string
      */
-    public function getThrough()
+    public function getThrough(): Table|string
     {
         return $this->_through;
     }
@@ -995,7 +995,7 @@ class BelongsToMany extends Association
      *   are not an array, the association conditions will be
      *   returned unmodified.
      */
-    protected function targetConditions()
+    protected function targetConditions(): mixed
     {
         if ($this->_targetConditions !== null) {
             return $this->_targetConditions;
@@ -1063,7 +1063,7 @@ class BelongsToMany extends Association
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
      */
-    public function find($type = null, array $options = []): Query
+    public function find(array|string|null $type = null, array $options = []): Query
     {
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
@@ -1251,7 +1251,7 @@ class BelongsToMany extends Association
         array $jointEntities,
         array $targetEntities,
         array $options = []
-    ) {
+    ): array|false {
         $junction = $this->junction();
         $target = $this->getTarget();
         $belongsTo = $junction->getAssociation($target->getAlias());

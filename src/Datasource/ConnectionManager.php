@@ -78,7 +78,7 @@ class ConnectionManager
      * @throws \Cake\Core\Exception\CakeException When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
-    public static function setConfig($key, $config = null): void
+    public static function setConfig(array|string $key, ?array $config = null): void
     {
         if (is_array($config)) {
             $config['name'] = $key;
@@ -194,7 +194,7 @@ class ConnectionManager
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
      * data is missing.
      */
-    public static function get(string $name, bool $useAliases = true)
+    public static function get(string $name, bool $useAliases = true): ConnectionInterface
     {
         if ($useAliases && isset(static::$_aliasMap[$name])) {
             $name = static::$_aliasMap[$name];

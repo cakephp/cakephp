@@ -188,7 +188,7 @@ class Connection implements ConnectionInterface
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
      * @return $this
      */
-    public function setDriver($driver, $config = [])
+    public function setDriver(DriverInterface|string $driver, array $config = [])
     {
         if (is_string($driver)) {
             /** @psalm-var class-string<\Cake\Database\DriverInterface>|null $className */
@@ -278,7 +278,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($query): StatementInterface
+    public function prepare(Query|string $query): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($query) {
             $statement = $this->_driver->prepare($query);
@@ -613,7 +613,7 @@ class Connection implements ConnectionInterface
      * @param string|int $name Save point name or id
      * @return void
      */
-    public function createSavePoint($name): void
+    public function createSavePoint(string|int $name): void
     {
         $this->execute($this->_driver->savePointSQL($name))->closeCursor();
     }
@@ -624,7 +624,7 @@ class Connection implements ConnectionInterface
      * @param string|int $name Save point name or id
      * @return void
      */
-    public function releaseSavePoint($name): void
+    public function releaseSavePoint(string|int $name): void
     {
         $sql = $this->_driver->releaseSavePointSQL($name);
         if ($sql) {
@@ -638,7 +638,7 @@ class Connection implements ConnectionInterface
      * @param string|int $name Save point name or id
      * @return void
      */
-    public function rollbackSavepoint($name): void
+    public function rollbackSavepoint(string|int $name): void
     {
         $this->execute($this->_driver->rollbackSavePointSQL($name))->closeCursor();
     }
@@ -753,7 +753,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\TypeInterface|string|int $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
-    public function quote($value, $type = 'string'): string
+    public function quote(mixed $value, TypeInterface|string|int $type = 'string'): string
     {
         [$value, $type] = $this->cast($value, $type);
 
@@ -791,7 +791,7 @@ class Connection implements ConnectionInterface
      *   true to use `_cake_model_` or the name of the cache config to use.
      * @return void
      */
-    public function cacheMetadata($cache): void
+    public function cacheMetadata(string|bool $cache): void
     {
         $this->_schemaCollection = null;
         $this->_config['cacheMetadata'] = $cache;

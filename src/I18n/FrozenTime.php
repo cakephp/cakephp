@@ -127,7 +127,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
-    public function __construct($time = null, $tz = null)
+    public function __construct(DateTimeInterface|string|int|null $time = null, DateTimeZone|string|null $tz = null)
     {
         if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimezone();
@@ -199,7 +199,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * @return array List of timezone identifiers
      * @since 2.2
      */
-    public static function listTimezones($filter = null, ?string $country = null, $options = []): array
+    public static function listTimezones(string|int|null $filter = null, ?string $country = null, array|bool $options = []): array
     {
         if (is_bool($options)) {
             $options = [

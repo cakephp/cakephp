@@ -313,7 +313,7 @@ class StringTemplate
      * @param bool $escape Define if the value must be escaped
      * @return string The composed attribute.
      */
-    protected function _formatAttribute(string $key, $value, $escape = true): string
+    protected function _formatAttribute(string $key, array|string $value, bool $escape = true): string
     {
         if (is_array($value)) {
             $value = implode(' ', $value);
@@ -344,7 +344,7 @@ class StringTemplate
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
      * @return array<string>|string
      */
-    public function addClass($input, $newClass, string $useIndex = 'class')
+    public function addClass(array|string $input, array|string $newClass, string $useIndex = 'class'): array|string
     {
         // NOOP
         if (empty($newClass)) {

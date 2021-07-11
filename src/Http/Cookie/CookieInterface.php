@@ -15,6 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
+use DateTime;
+use DateTimeImmutable;
+
 /**
  * Cookie Interface
  */
@@ -65,7 +68,7 @@ interface CookieInterface
      * @param string $name Name of the cookie
      * @return static
      */
-    public function withName(string $name);
+    public function withName(string $name): static;
 
     /**
      * Gets the cookie name
@@ -79,7 +82,7 @@ interface CookieInterface
      *
      * @return array|string
      */
-    public function getValue();
+    public function getValue(): array|string;
 
     /**
      * Gets the cookie value as scalar.
@@ -88,7 +91,7 @@ interface CookieInterface
      *
      * @return mixed
      */
-    public function getScalarValue();
+    public function getScalarValue(): mixed;
 
     /**
      * Create a cookie with an updated value.
@@ -96,7 +99,7 @@ interface CookieInterface
      * @param array|string $value Value of the cookie to set
      * @return static
      */
-    public function withValue($value);
+    public function withValue(array|string $value): static;
 
     /**
      * Get the id for a cookie
@@ -120,7 +123,7 @@ interface CookieInterface
      * @param string $path Sets the path
      * @return static
      */
-    public function withPath(string $path);
+    public function withPath(string $path): static;
 
     /**
      * Get the domain attribute.
@@ -135,14 +138,14 @@ interface CookieInterface
      * @param string $domain Domain to set
      * @return static
      */
-    public function withDomain(string $domain);
+    public function withDomain(string $domain): static;
 
     /**
      * Get the current expiry time
      *
      * @return \DateTime|\DateTimeImmutable|null Timestamp of expiry or null
      */
-    public function getExpiry();
+    public function getExpiry(): DateTime|DateTimeImmutable|null;
 
     /**
      * Get the timestamp from the expiration time
@@ -164,14 +167,14 @@ interface CookieInterface
      * @param \DateTime|\DateTimeImmutable $dateTime Date time object
      * @return static
      */
-    public function withExpiry($dateTime);
+    public function withExpiry(DateTime|DateTimeImmutable $dateTime): static;
 
     /**
      * Create a new cookie that will virtually never expire.
      *
      * @return static
      */
-    public function withNeverExpire();
+    public function withNeverExpire(): static;
 
     /**
      * Create a new cookie that will expire/delete the cookie from the browser.
@@ -180,7 +183,7 @@ interface CookieInterface
      *
      * @return static
      */
-    public function withExpired();
+    public function withExpired(): static;
 
     /**
      * Check if a cookie is expired when compared to $time
@@ -190,7 +193,7 @@ interface CookieInterface
      * @param \DateTime|\DateTimeImmutable $time The time to test against. Defaults to 'now' in UTC.
      * @return bool
      */
-    public function isExpired($time = null): bool;
+    public function isExpired(DateTime|DateTimeImmutable|null $time = null): bool;
 
     /**
      * Check if the cookie is HTTP only
@@ -205,7 +208,7 @@ interface CookieInterface
      * @param bool $httpOnly HTTP Only
      * @return static
      */
-    public function withHttpOnly(bool $httpOnly);
+    public function withHttpOnly(bool $httpOnly): static;
 
     /**
      * Check if the cookie is secure
@@ -220,7 +223,7 @@ interface CookieInterface
      * @param bool $secure Secure attribute value
      * @return static
      */
-    public function withSecure(bool $secure);
+    public function withSecure(bool $secure): static;
 
     /**
      * Get the SameSite attribute.
@@ -236,7 +239,7 @@ interface CookieInterface
      *   One of CookieInterface::SAMESITE_* constants.
      * @return static
      */
-    public function withSameSite(?string $sameSite);
+    public function withSameSite(?string $sameSite): static;
 
     /**
      * Get cookie options

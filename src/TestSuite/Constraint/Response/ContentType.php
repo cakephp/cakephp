@@ -33,7 +33,7 @@ class ContentType extends ResponseBase
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         $alias = $this->response->getMimeType($other);
         if ($alias !== false) {

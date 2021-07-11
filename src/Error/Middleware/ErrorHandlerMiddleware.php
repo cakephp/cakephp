@@ -82,7 +82,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *  or config array.
      * @throws \InvalidArgumentException
      */
-    public function __construct($errorHandler = [])
+    public function __construct(ErrorHandler|array $errorHandler = [])
     {
         if (func_num_args() > 1) {
             deprecationWarning(

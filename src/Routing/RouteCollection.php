@@ -19,7 +19,9 @@ namespace Cake\Routing;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
+use Closure;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 
 /**
@@ -394,7 +396,7 @@ class RouteCollection
      * @return $this
      * @throws \RuntimeException
      */
-    public function registerMiddleware(string $name, $middleware)
+    public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {
         $this->_middleware[$name] = $middleware;
 

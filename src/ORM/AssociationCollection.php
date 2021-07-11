@@ -159,7 +159,7 @@ class AssociationCollection implements IteratorAggregate
      * @return \Cake\ORM\Association[] An array of Association objects.
      * @since 3.5.3
      */
-    public function getByType($class): array
+    public function getByType(array|string $class): array
     {
         $class = array_map('strtolower', (array)$class);
 
@@ -353,7 +353,7 @@ class AssociationCollection implements IteratorAggregate
      * @param array|bool $keys the list of association names to normalize
      * @return array
      */
-    public function normalizeKeys($keys): array
+    public function normalizeKeys(array|bool $keys): array
     {
         if ($keys === true) {
             $keys = $this->keys();

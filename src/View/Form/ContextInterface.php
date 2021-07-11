@@ -65,7 +65,7 @@ interface ContextInterface
      *   is needed for.
      * @return mixed
      */
-    public function val(string $field, array $options = []);
+    public function val(string $field, array $options = []): mixed;
 
     /**
      * Check if a given field is 'required'.

@@ -141,7 +141,7 @@ class Component implements EventListenerInterface
      * @param string $name Name of component to get.
      * @return \Cake\Controller\Component|null A Component object or null.
      */
-    public function __get(string $name)
+    public function __get(string $name): ?Component
     {
         if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
             $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];

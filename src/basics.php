@@ -41,7 +41,7 @@ if (!function_exists('debug')) {
      * @link https://book.cakephp.org/4/en/development/debugging.html#basic-debugging
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#debug
      */
-    function debug($var, $showHtml = null, $showFrom = true)
+    function debug(mixed $var, ?bool $showHtml = null, bool $showFrom = true): mixed
     {
         if (!Configure::read('debug')) {
             return $var;
@@ -133,7 +133,7 @@ if (!function_exists('dd')) {
      * @return void
      * @link https://book.cakephp.org/4/en/development/debugging.html#basic-debugging
      */
-    function dd($var, $showHtml = null): void
+    function dd(mixed $var, ?bool $showHtml = null): void
     {
         if (!Configure::read('debug')) {
             return;

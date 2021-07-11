@@ -48,7 +48,7 @@ class BodyContains extends ResponseBase
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         $method = 'mb_strpos';
         if ($this->ignoreCase) {

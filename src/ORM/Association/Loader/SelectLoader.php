@@ -221,7 +221,7 @@ class SelectLoader
      * and options as value.
      * @return array
      */
-    protected function _extractFinder($finderData): array
+    protected function _extractFinder(array|string $finderData): array
     {
         $finderData = (array)$finderData;
 
@@ -285,7 +285,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
-    protected function _addFilteringJoin(Query $query, $key, $subquery): Query
+    protected function _addFilteringJoin(Query $query, array|string $key, Query $subquery): Query
     {
         $filter = [];
         $aliasedTable = $this->sourceAlias;
@@ -321,7 +321,7 @@ class SelectLoader
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query
      */
-    protected function _addFilteringCondition(Query $query, $key, $filter): Query
+    protected function _addFilteringCondition(Query $query, array|string $key, mixed $filter): Query
     {
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
@@ -342,7 +342,7 @@ class SelectLoader
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
      */
-    protected function _createTupleCondition(Query $query, array $keys, $filter, $operator): TupleComparison
+    protected function _createTupleCondition(Query $query, array $keys, mixed $filter, string $operator): TupleComparison
     {
         $types = [];
         $defaults = $query->getDefaultTypes();
@@ -363,7 +363,7 @@ class SelectLoader
      * @return array<string>|string
      * @throws \RuntimeException
      */
-    protected function _linkField(array $options)
+    protected function _linkField(array $options): array|string
     {
         $links = [];
         $name = $this->alias;

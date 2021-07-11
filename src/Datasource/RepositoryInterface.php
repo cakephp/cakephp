@@ -16,6 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use ArrayAccess;
+use Cake\Database\Expression\QueryExpression;
+use Closure;
+
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
@@ -68,7 +72,7 @@ interface RepositoryInterface
      * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\Datasource\QueryInterface
      */
-    public function find(string $type = 'all', array $options = []);
+    public function find(string $type = 'all', array $options = []): QueryInterface;
 
     /**
      * Returns a single record after finding it by its primary key, if no record is
@@ -90,14 +94,14 @@ interface RepositoryInterface
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
-    public function get($primaryKey, array $options = []): EntityInterface;
+    public function get(mixed $primaryKey, array $options = []): EntityInterface;
 
     /**
      * Creates a new Query instance for this repository
      *
      * @return \Cake\Datasource\QueryInterface
      */
-    public function query();
+    public function query(): QueryInterface;
 
     /**
      * Update all matching records.
@@ -111,7 +115,7 @@ interface RepositoryInterface
      * can take.
      * @return int Count Returns the affected rows.
      */
-    public function updateAll($fields, $conditions): int;
+    public function updateAll(QueryExpression|Closure|array|string $fields, mixed $conditions): int;
 
     /**
      * Deletes all records matching the provided conditions.
@@ -128,7 +132,7 @@ interface RepositoryInterface
      * @return int Returns the number of affected rows.
      * @see \Cake\Datasource\RepositoryInterface::delete()
      */
-    public function deleteAll($conditions): int;
+    public function deleteAll(mixed $conditions): int;
 
     /**
      * Returns true if there is any record in this repository matching the specified
@@ -137,7 +141,7 @@ interface RepositoryInterface
      * @param array $conditions list of conditions to pass to the query
      * @return bool
      */
-    public function exists($conditions): bool;
+    public function exists(array $conditions): bool;
 
     /**
      * Persists an entity based on the fields that are marked as dirty and
@@ -148,7 +152,7 @@ interface RepositoryInterface
      * @param \ArrayAccess|array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      */
-    public function save(EntityInterface $entity, $options = []);
+    public function save(EntityInterface $entity, ArrayAccess|array $options = []): EntityInterface|false;
 
     /**
      * Delete a single entity.
@@ -160,7 +164,7 @@ interface RepositoryInterface
      * @param \ArrayAccess|array $options The options for the delete.
      * @return bool success
      */
-    public function delete(EntityInterface $entity, $options = []): bool;
+    public function delete(EntityInterface $entity, ArrayAccess|array $options = []): bool;
 
     /**
      * This creates a new entity object.

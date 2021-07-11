@@ -201,7 +201,7 @@ class Mailer implements EventListenerInterface
      *
      * @param array|string|null $config Array of configs, or string to load configs from app.php
      */
-    public function __construct($config = null)
+    public function __construct(array|string|null $config = null)
     {
         $this->message = new $this->messageClass();
 
@@ -298,7 +298,7 @@ class Mailer implements EventListenerInterface
      * @param mixed $value View variable value.
      * @return $this
      */
-    public function setViewVars($key, $value = null)
+    public function setViewVars(array|string $key, mixed $value = null)
     {
         $this->getRenderer()->set($key, $value);
 
@@ -377,7 +377,7 @@ class Mailer implements EventListenerInterface
      * @return array
      * @psalm-return array{headers: string, message: string}
      */
-    public function deliver(string $content = '')
+    public function deliver(string $content = ''): array
     {
         $this->render($content);
 
@@ -394,7 +394,7 @@ class Mailer implements EventListenerInterface
      *    an array with config.
      * @return $this
      */
-    public function setProfile($config)
+    public function setProfile(array|string $config)
     {
         if (is_string($config)) {
             $name = $config;
@@ -459,7 +459,7 @@ class Mailer implements EventListenerInterface
      * @throws \LogicException When the chosen transport lacks a send method.
      * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
-    public function setTransport($name)
+    public function setTransport(AbstractTransport|string $name)
     {
         if (is_string($name)) {
             $transport = TransportFactory::get($name);
@@ -561,7 +561,7 @@ class Mailer implements EventListenerInterface
      * @param array|string|true $log Log config.
      * @return void
      */
-    protected function setLogConfig($log)
+    protected function setLogConfig(array|string|bool $log): void
     {
         $config = [
             'level' => 'debug',
@@ -583,7 +583,7 @@ class Mailer implements EventListenerInterface
      * @param array|string $value The value to convert
      * @return string
      */
-    protected function flatten($value): string
+    protected function flatten(array|string $value): string
     {
         return is_array($value) ? implode(';', $value) : $value;
     }

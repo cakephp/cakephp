@@ -19,6 +19,8 @@ namespace Cake\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
+use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
@@ -28,10 +30,15 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query;
+use Cake\ORM\ResultSet;
+use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -300,7 +307,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $name Property name
      * @return \Cake\Datasource\RepositoryInterface|null The model instance or null
      */
-    public function __get(string $name)
+    public function __get(string $name): ?RepositoryInterface
     {
         if (!empty($this->modelClass)) {
             if (strpos($this->modelClass, '\\') === false) {
@@ -337,7 +344,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param mixed $value Value to set.
      * @return void
      */
-    public function __set(string $name, $value): void
+    public function __set(string $name, mixed $value): void
     {
         if ($name === 'components') {
             triggerWarning(
@@ -560,7 +567,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @psalm-param array{only?: array|string, except?: array|string} $options
      */
-    public function middleware($middleware, array $options = [])
+    public function middleware(MiddlewareInterface|Closure|string $middleware, array $options = []): void
     {
         $this->middlewares[] = [
             'middleware' => $middleware,
@@ -668,7 +675,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/4/en/controllers.html#Controller::redirect
      */
-    public function redirect($url, int $status = 302): ?Response
+    public function redirect(UriInterface|array|string $url, int $status = 302): ?Response
     {
         $this->autoRender = false;
 
@@ -763,7 +770,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *   Careful with trusting external sources.
      * @return string Referring URL
      */
-    public function referer($default = '/', bool $local = true): string
+    public function referer(array|string|null $default = '/', bool $local = true): string
     {
         $referer = $this->request->referer($local);
         if ($referer === null) {
@@ -799,7 +806,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
      */
-    public function paginate($object = null, array $settings = [])
+    public function paginate(Table|Query|string|null $object = null, array $settings = []): ResultSet|ResultSetInterface
     {
         if (is_object($object)) {
             $table = $object;
@@ -859,7 +866,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): Response|null|null
     {
     }
 
@@ -871,7 +878,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): Response|null|null
     {
     }
 
@@ -891,7 +898,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRedirect(EventInterface $event, $url, Response $response)
+    public function beforeRedirect(EventInterface $event, array|string $url, Response $response): Response|null|null
     {
     }
 
@@ -902,7 +909,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function afterFilter(EventInterface $event)
+    public function afterFilter(EventInterface $event): Response|null|null
     {
     }
 }

@@ -146,7 +146,7 @@ class Cookie implements CookieInterface
      */
     public function __construct(
         string $name,
-        $value = '',
+        array|string $value = '',
         ?DateTimeInterface $expiresAt = null,
         ?string $path = null,
         ?string $domain = null,
@@ -215,7 +215,7 @@ class Cookie implements CookieInterface
      * @return static
      * @see \Cake\Cookie\Cookie::setDefaults()
      */
-    public static function create(string $name, $value, array $options = [])
+    public static function create(string $name, array|string $value, array $options = []): static
     {
         $options += static::$defaults;
         $options['expires'] = static::dateTimeInstance($options['expires']);
@@ -238,7 +238,7 @@ class Cookie implements CookieInterface
      * @param mixed $expires Expiry value.
      * @return \DateTime|\DatetimeImmutable|null
      */
-    protected static function dateTimeInstance($expires): ?DateTimeInterface
+    protected static function dateTimeInstance(mixed $expires): ?DateTimeInterface
     {
         if ($expires === null) {
             return $expires;
@@ -275,7 +275,7 @@ class Cookie implements CookieInterface
      * @return static
      * @see \Cake\Cookie\Cookie::setDefaults()
      */
-    public static function createFromHeaderString(string $cookie, array $defaults = [])
+    public static function createFromHeaderString(string $cookie, array $defaults = []): static
     {
         if (strpos($cookie, '";"') !== false) {
             $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
@@ -451,7 +451,7 @@ class Cookie implements CookieInterface
      * @param array|string $value The value to store.
      * @return void
      */
-    protected function _setValue($value): void
+    protected function _setValue(array|string $value): void
     {
         $this->isExpanded = is_array($value);
         $this->value = $value;
@@ -641,7 +641,7 @@ class Cookie implements CookieInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected static function validateSameSiteValue(string $sameSite)
+    protected static function validateSameSiteValue(string $sameSite): void
     {
         if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
             throw new InvalidArgumentException(
@@ -677,7 +677,7 @@ class Cookie implements CookieInterface
      * @param mixed $value Value to write
      * @return static
      */
-    public function withAddedValue(string $path, $value)
+    public function withAddedValue(string $path, mixed $value): static
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
@@ -697,7 +697,7 @@ class Cookie implements CookieInterface
      * @param string $path Path to remove
      * @return static
      */
-    public function withoutAddedValue(string $path)
+    public function withoutAddedValue(string $path): static
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
@@ -720,7 +720,7 @@ class Cookie implements CookieInterface
      * @param string $path Path to read the data from
      * @return mixed
      */
-    public function read(?string $path = null)
+    public function read(?string $path = null): mixed
     {
         if ($this->isExpanded === false) {
             /** @psalm-suppress PossiblyInvalidArgument */
@@ -794,7 +794,7 @@ class Cookie implements CookieInterface
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return array|string Map of key and values
      */
-    protected function _expand(string $string)
+    protected function _expand(string $string): array|string
     {
         $this->isExpanded = true;
         $first = substr($string, 0, 1);

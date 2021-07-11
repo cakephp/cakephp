@@ -40,7 +40,7 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param array $config The configuration data for the plugin if using a string for $name
      * @return $this
      */
-    public function addPlugin($name, array $config = []);
+    public function addPlugin(PluginInterface|string $name, array $config = []);
 
     /**
      * Run bootstrap logic for loaded plugins.

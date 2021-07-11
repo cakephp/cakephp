@@ -312,7 +312,7 @@ trait IntegrationTestTrait
      * @param mixed $value The value of the cookie.
      * @return void
      */
-    public function cookie(string $name, $value): void
+    public function cookie(string $name, mixed $value): void
     {
         $this->_cookie[$name] = $value;
     }
@@ -341,7 +341,7 @@ trait IntegrationTestTrait
      * @return void
      * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
-    public function cookieEncrypted(string $name, $value, $encrypt = 'aes', $key = null): void
+    public function cookieEncrypted(string $name, mixed $value, string|false $encrypt = 'aes', ?string $key = null): void
     {
         $this->_cookieEncryptionKey = $key;
         $this->_cookie[$name] = $this->_encrypt($value, $encrypt);
@@ -357,7 +357,7 @@ trait IntegrationTestTrait
      * @param array|string $url The URL to request.
      * @return void
      */
-    public function get($url): void
+    public function get(array|string $url): void
     {
         $this->_sendRequest($url, 'GET');
     }
@@ -373,7 +373,7 @@ trait IntegrationTestTrait
      * @param array|string $data The data for the request.
      * @return void
      */
-    public function post($url, $data = []): void
+    public function post(array|string $url, array|string $data = []): void
     {
         $this->_sendRequest($url, 'POST', $data);
     }
@@ -389,7 +389,7 @@ trait IntegrationTestTrait
      * @param array|string $data The data for the request.
      * @return void
      */
-    public function patch($url, $data = []): void
+    public function patch(array|string $url, array|string $data = []): void
     {
         $this->_sendRequest($url, 'PATCH', $data);
     }
@@ -405,7 +405,7 @@ trait IntegrationTestTrait
      * @param array|string $data The data for the request.
      * @return void
      */
-    public function put($url, $data = []): void
+    public function put(array|string $url, array|string $data = []): void
     {
         $this->_sendRequest($url, 'PUT', $data);
     }
@@ -420,7 +420,7 @@ trait IntegrationTestTrait
      * @param array|string $url The URL to request.
      * @return void
      */
-    public function delete($url): void
+    public function delete(array|string $url): void
     {
         $this->_sendRequest($url, 'DELETE');
     }
@@ -435,7 +435,7 @@ trait IntegrationTestTrait
      * @param array|string $url The URL to request.
      * @return void
      */
-    public function head($url): void
+    public function head(array|string $url): void
     {
         $this->_sendRequest($url, 'HEAD');
     }
@@ -450,7 +450,7 @@ trait IntegrationTestTrait
      * @param array|string $url The URL to request.
      * @return void
      */
-    public function options($url): void
+    public function options(array|string $url): void
     {
         $this->_sendRequest($url, 'OPTIONS');
     }
@@ -466,7 +466,7 @@ trait IntegrationTestTrait
      * @return void
      * @throws \PHPUnit\Exception|\Throwable
      */
-    protected function _sendRequest($url, $method, $data = []): void
+    protected function _sendRequest(array|string $url, string $method, array|string $data = []): void
     {
         $dispatcher = $this->_makeDispatcher();
         $url = $dispatcher->resolveUrl($url);
@@ -567,7 +567,7 @@ trait IntegrationTestTrait
      * @param array|string $data The request data.
      * @return array The request context
      */
-    protected function _buildRequest(string $url, $method, $data = []): array
+    protected function _buildRequest(string $url, string $method, array|string $data = []): array
     {
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
@@ -756,7 +756,7 @@ trait IntegrationTestTrait
      * @param string $name The view variable to get.
      * @return mixed The view variable if set.
      */
-    public function viewVariable(string $name)
+    public function viewVariable(string $name): mixed
     {
         return $this->_controller ? $this->_controller->viewBuilder()->getVar($name) : null;
     }
@@ -828,7 +828,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertRedirect($url = null, $message = ''): void
+    public function assertRedirect(array|string|null $url = null, string $message = ''): void
     {
         if (!$this->_response) {
             $this->fail('No response set, cannot assert header.');
@@ -855,7 +855,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertRedirectEquals($url = null, $message = '')
+    public function assertRedirectEquals(array|string|null $url = null, string $message = ''): void
     {
         if (!$this->_response) {
             $this->fail('No response set, cannot assert header.');
@@ -994,7 +994,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertResponseEquals($content, $message = ''): void
+    public function assertResponseEquals(mixed $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($content, new BodyEquals($this->_response), $verboseMessage);
@@ -1007,7 +1007,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertResponseNotEquals($content, $message = ''): void
+    public function assertResponseNotEquals(mixed $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($content, new BodyNotEquals($this->_response), $verboseMessage);
@@ -1131,7 +1131,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertSession($expected, string $path, string $message = ''): void
+    public function assertSession(mixed $expected, string $path, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($expected, new SessionEquals($path), $verboseMessage);
@@ -1241,7 +1241,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertCookie($expected, string $name, string $message = ''): void
+    public function assertCookie(mixed $expected, string $name, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);
@@ -1292,7 +1292,7 @@ trait IntegrationTestTrait
      * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function assertCookieEncrypted(
-        $expected,
+        mixed $expected,
         string $name,
         string $encrypt = 'aes',
         ?string $key = null,

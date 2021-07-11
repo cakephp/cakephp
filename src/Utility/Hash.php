@@ -18,6 +18,13 @@ namespace Cake\Utility;
 use ArrayAccess;
 use InvalidArgumentException;
 use RuntimeException;
+use const SORT_ASC;
+use const SORT_DESC;
+use const SORT_LOCALE_STRING;
+use const SORT_NATURAL;
+use const SORT_NUMERIC;
+use const SORT_REGULAR;
+use const SORT_STRING;
 
 /**
  * Library of array functions for manipulating and extracting data
@@ -46,7 +53,7 @@ class Hash
      * @return mixed The value fetched from the array, or null.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::get
      */
-    public static function get($data, $path, $default = null)
+    public static function get(ArrayAccess|array $data, array|string|int|null $path, mixed $default = null): mixed
     {
         if (!(is_array($data) || $data instanceof ArrayAccess)) {
             throw new InvalidArgumentException(
@@ -122,7 +129,7 @@ class Hash
      *   if there are no matches.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::extract
      */
-    public static function extract($data, string $path)
+    public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
         if (!(is_array($data) || $data instanceof ArrayAccess)) {
             throw new InvalidArgumentException(
@@ -218,7 +225,7 @@ class Hash
      * @param string $token The token being matched.
      * @return bool
      */
-    protected static function _matchToken($key, string $token): bool
+    protected static function _matchToken(mixed $key, string $token): bool
     {
         switch ($token) {
             case '{n}':
@@ -239,7 +246,7 @@ class Hash
      * @param string $selector The patterns to match.
      * @return bool Fitness of expression.
      */
-    protected static function _matches($data, string $selector): bool
+    protected static function _matches(ArrayAccess|array $data, string $selector): bool
     {
         preg_match_all(
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
@@ -310,7 +317,7 @@ class Hash
      * @return array The data with $values inserted.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
-    public static function insert(array $data, string $path, $values = null): array
+    public static function insert(array $data, string $path, mixed $values = null): array
     {
         $noTokens = strpos($path, '[') === false;
         if ($noTokens && strpos($path, '.') === false) {
@@ -356,7 +363,7 @@ class Hash
      * @param mixed $values The values to insert when doing inserts.
      * @return array data.
      */
-    protected static function _simpleOp(string $op, array $data, array $path, $values = null): array
+    protected static function _simpleOp(string $op, array $data, array $path, mixed $values = null): array
     {
         $_list = &$data;
 
@@ -463,7 +470,7 @@ class Hash
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::combine
      * @throws \RuntimeException When keys and values count is unequal.
      */
-    public static function combine(array $data, $keyPath, $valuePath = null, ?string $groupPath = null): array
+    public static function combine(array $data, array|string|null $keyPath, array|string|null $valuePath = null, ?string $groupPath = null): array
     {
         if (empty($data)) {
             return [];
@@ -649,7 +656,7 @@ class Hash
      * @return array Filtered array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::filter
      */
-    public static function filter(array $data, $callback = ['self', '_filter']): array
+    public static function filter(array $data, callable|array $callback = ['self', '_filter']): array
     {
         foreach ($data as $k => $v) {
             if (is_array($v)) {
@@ -666,7 +673,7 @@ class Hash
      * @param mixed $var Array to filter.
      * @return bool
      */
-    protected static function _filter($var): bool
+    protected static function _filter(mixed $var): bool
     {
         return $var === 0 || $var === 0.0 || $var === '0' || !empty($var);
     }
@@ -762,7 +769,7 @@ class Hash
      * @return array Merged array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::merge
      */
-    public static function merge(array $data, $merge): array
+    public static function merge(array $data, mixed $merge): array
     {
         $args = array_slice(func_get_args(), 1);
         $return = $data;
@@ -908,7 +915,7 @@ class Hash
      * @return mixed The reduced value.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::reduce
      */
-    public static function reduce(array $data, string $path, callable $function)
+    public static function reduce(array $data, string $path, callable $function): mixed
     {
         $values = (array)static::extract($data, $path);
 
@@ -940,7 +947,7 @@ class Hash
      * @return mixed The results of the applied method.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::apply
      */
-    public static function apply(array $data, string $path, callable $function)
+    public static function apply(array $data, string $path, callable $function): mixed
     {
         $values = (array)static::extract($data, $path);
 
@@ -980,7 +987,7 @@ class Hash
      * @return array Sorted array of data
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::sort
      */
-    public static function sort(array $data, string $path, $dir = 'asc', $type = 'regular'): array
+    public static function sort(array $data, string $path, string|int $dir = 'asc', array|string $type = 'regular'): array
     {
         if (empty($data)) {
             return [];
@@ -1015,8 +1022,8 @@ class Hash
         if (is_string($dir)) {
             $dir = strtolower($dir);
         }
-        if (!in_array($dir, [\SORT_ASC, \SORT_DESC], true)) {
-            $dir = $dir === 'asc' ? \SORT_ASC : \SORT_DESC;
+        if (!in_array($dir, [SORT_ASC, SORT_DESC], true)) {
+            $dir = $dir === 'asc' ? SORT_ASC : SORT_DESC;
         }
 
         $ignoreCase = false;
@@ -1030,15 +1037,15 @@ class Hash
         $type = strtolower($type);
 
         if ($type === 'numeric') {
-            $type = \SORT_NUMERIC;
+            $type = SORT_NUMERIC;
         } elseif ($type === 'string') {
-            $type = \SORT_STRING;
+            $type = SORT_STRING;
         } elseif ($type === 'natural') {
-            $type = \SORT_NATURAL;
+            $type = SORT_NATURAL;
         } elseif ($type === 'locale') {
-            $type = \SORT_LOCALE_STRING;
+            $type = SORT_LOCALE_STRING;
         } else {
-            $type = \SORT_REGULAR;
+            $type = SORT_REGULAR;
         }
         if ($ignoreCase) {
             $values = array_map('mb_strtolower', $values);
@@ -1070,7 +1077,7 @@ class Hash
      * @param mixed $key The key for the data.
      * @return array
      */
-    protected static function _squash(array $data, $key = null): array
+    protected static function _squash(array $data, mixed $key = null): array
     {
         $stack = [];
         foreach ($data as $k => $r) {

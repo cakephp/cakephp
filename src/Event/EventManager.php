@@ -79,7 +79,7 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventManager|null $manager Event manager instance.
      * @return \Cake\Event\EventManager The global event manager
      */
-    public static function instance(?EventManager $manager = null)
+    public static function instance(?EventManager $manager = null): EventManager
     {
         if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
@@ -302,7 +302,7 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventInterface $event Event instance.
      * @return mixed The result of the $listener function.
      */
-    protected function _callListener(callable $listener, EventInterface $event)
+    protected function _callListener(callable $listener, EventInterface $event): mixed
     {
         $data = (array)$event->getData();
 

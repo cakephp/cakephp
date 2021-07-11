@@ -55,7 +55,7 @@ class CallbackStatement extends StatementDecorator
      * @param string|int $type Either 'num' or 'assoc' to indicate the result format you would like.
      * @return array|false
      */
-    public function fetch($type = parent::FETCH_TYPE_NUM)
+    public function fetch(string|int $type = parent::FETCH_TYPE_NUM): array|false
     {
         $callback = $this->_callback;
         $row = $this->_statement->fetch($type);

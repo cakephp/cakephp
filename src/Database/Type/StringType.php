@@ -34,7 +34,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, DriverInterface $driver): ?string
+    public function toDatabase(mixed $value, DriverInterface $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -61,7 +61,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toPHP($value, DriverInterface $driver): ?string
+    public function toPHP(mixed $value, DriverInterface $driver): ?string
     {
         if ($value === null) {
             return null;
@@ -77,7 +77,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, DriverInterface $driver): int
+    public function toStatement(mixed $value, DriverInterface $driver): int
     {
         return PDO::PARAM_STR;
     }
@@ -88,7 +88,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
      */
-    public function marshal($value): ?string
+    public function marshal(mixed $value): ?string
     {
         if ($value === null || is_array($value)) {
             return null;

@@ -23,6 +23,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
+use CurlHandle;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -195,7 +196,7 @@ class Curl implements AdapterInterface
      * @param string $responseData string The response data from curl_exec
      * @return \Cake\Http\Client\Response[]
      */
-    protected function createResponse($handle, $responseData): array
+    protected function createResponse(CurlHandle $handle, string $responseData): array
     {
         $headerSize = curl_getinfo($handle, CURLINFO_HEADER_SIZE);
         $headers = trim(substr($responseData, 0, $headerSize));
@@ -211,7 +212,7 @@ class Curl implements AdapterInterface
      * @param \CurlHandle $ch Curl Resource handle
      * @return string|bool
      */
-    protected function exec($ch)
+    protected function exec(CurlHandle $ch): string|bool
     {
         return curl_exec($ch);
     }

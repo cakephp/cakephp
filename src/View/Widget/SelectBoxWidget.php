@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use ArrayAccess;
 use Cake\View\Form\ContextInterface;
 use Traversable;
 
@@ -180,7 +181,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array|string|bool $value The provided empty value.
      * @return array The generated option key/value.
      */
-    protected function _emptyValue($value): array
+    protected function _emptyValue(array|string|bool $value): array
     {
         if ($value === true) {
             return ['' => ''];
@@ -208,11 +209,11 @@ class SelectBoxWidget extends BasicWidget
      */
     protected function _renderOptgroup(
         string $label,
-        $optgroup,
+        ArrayAccess|array $optgroup,
         ?array $disabled,
-        $selected,
-        $templateVars,
-        $escape
+        array|string|null $selected,
+        array $templateVars,
+        bool $escape
     ): string {
         $opts = $optgroup;
         $attrs = [];
@@ -243,7 +244,7 @@ class SelectBoxWidget extends BasicWidget
      * @param bool $escape Toggle HTML escaping.
      * @return string[] Option elements.
      */
-    protected function _renderOptions(iterable $options, ?array $disabled, $selected, $templateVars, $escape): array
+    protected function _renderOptions(iterable $options, ?array $disabled, array|string|null $selected, array $templateVars, bool $escape): array
     {
         $out = [];
         foreach ($options as $key => $val) {
@@ -307,7 +308,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array<string>|string|int|false|null $selected The selected values.
      * @return bool
      */
-    protected function _isSelected(string $key, $selected): bool
+    protected function _isSelected(string $key, array|string|int|false|null $selected): bool
     {
         if ($selected === null) {
             return false;

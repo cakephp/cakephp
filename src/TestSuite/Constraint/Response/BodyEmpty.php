@@ -28,7 +28,7 @@ class BodyEmpty extends ResponseBase
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return empty($this->_getBodyAsString());
     }
@@ -49,7 +49,7 @@ class BodyEmpty extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         return $this->toString();
     }

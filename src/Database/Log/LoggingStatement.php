@@ -159,7 +159,7 @@ class LoggingStatement extends StatementDecorator
      * @param string|int|null $type PDO type or name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string'): void
+    public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void
     {
         parent::bindValue($column, $value, $type);
 

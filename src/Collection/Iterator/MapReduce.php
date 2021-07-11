@@ -144,7 +144,7 @@ class MapReduce implements IteratorAggregate
      * @param mixed $bucket the name of the bucket where to put the record
      * @return void
      */
-    public function emitIntermediate($val, $bucket): void
+    public function emitIntermediate(mixed $val, mixed $bucket): void
     {
         $this->_intermediate[$bucket][] = $val;
     }
@@ -157,7 +157,7 @@ class MapReduce implements IteratorAggregate
      * @param mixed $key and optional key to assign to the value
      * @return void
      */
-    public function emit($val, $key = null): void
+    public function emit(mixed $val, mixed $key = null): void
     {
         $this->_result[$key ?? $this->_counter] = $val;
         $this->_counter++;

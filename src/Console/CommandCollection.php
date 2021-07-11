@@ -130,7 +130,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @throws \InvalidArgumentException when unknown commands are fetched.
      * @psalm-return \Cake\Console\CommandInterface|class-string
      */
-    public function get(string $name)
+    public function get(string $name): CommandInterface|string
     {
         if (!$this->has($name)) {
             throw new InvalidArgumentException("The $name is not a known command name.");

@@ -36,7 +36,7 @@ trait MailerAwareTrait
      * @return \Cake\Mailer\Mailer
      * @throws \Cake\Mailer\Exception\MissingMailerException if undefined mailer class.
      */
-    protected function getMailer(string $name, $config = null): Mailer
+    protected function getMailer(string $name, array|string|null $config = null): Mailer
     {
         $className = App::className($name, 'Mailer', 'Mailer');
         if ($className === null) {

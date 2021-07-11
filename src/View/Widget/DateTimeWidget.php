@@ -178,7 +178,7 @@ class DateTimeWidget extends BasicWidget
      * @return string
      * @throws \InvalidArgumentException If invalid input type is passed.
      */
-    protected function formatDateTime($value, array $options): string
+    protected function formatDateTime(DateTime|string|int|null $value, array $options): string
     {
         if ($value === '' || $value === null) {
             return '';

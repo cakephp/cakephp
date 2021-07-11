@@ -38,7 +38,7 @@ class BinaryUuidType extends BaseType
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return resource|string|null
      */
-    public function toDatabase($value, DriverInterface $driver)
+    public function toDatabase(mixed $value, DriverInterface $driver)
     {
         if (!is_string($value)) {
             return $value;
@@ -70,7 +70,7 @@ class BinaryUuidType extends BaseType
      * @return resource|string|null
      * @throws \Cake\Core\Exception\CakeException
      */
-    public function toPHP($value, DriverInterface $driver)
+    public function toPHP(mixed $value, DriverInterface $driver)
     {
         if ($value === null) {
             return null;
@@ -92,7 +92,7 @@ class BinaryUuidType extends BaseType
      * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, DriverInterface $driver): int
+    public function toStatement(mixed $value, DriverInterface $driver): int
     {
         return PDO::PARAM_LOB;
     }
@@ -106,7 +106,7 @@ class BinaryUuidType extends BaseType
      * @param mixed $value The value to convert.
      * @return mixed Converted value.
      */
-    public function marshal($value)
+    public function marshal(mixed $value): mixed
     {
         return $value;
     }
@@ -117,7 +117,7 @@ class BinaryUuidType extends BaseType
      * @param mixed $binary The value to convert.
      * @return string Converted value.
      */
-    protected function convertBinaryUuidToString($binary): string
+    protected function convertBinaryUuidToString(mixed $binary): string
     {
         $string = unpack('H*', $binary);
 
@@ -136,7 +136,7 @@ class BinaryUuidType extends BaseType
      * @param string $string The value to convert.
      * @return string Converted value.
      */
-    protected function convertStringToBinaryUuid($string): string
+    protected function convertStringToBinaryUuid(string $string): string
     {
         $string = str_replace('-', '', $string);
 

@@ -190,7 +190,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      *     the generated request instance.
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
+    public function createServerRequest(string $method, UriInterface|string $uri, array $serverParams = []): ServerRequestInterface
     {
         $serverParams['REQUEST_METHOD'] = $method;
         $options = ['environment' => $serverParams];

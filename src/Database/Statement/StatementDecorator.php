@@ -78,7 +78,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string $property internal property to get
      * @return mixed
      */
-    public function __get(string $property)
+    public function __get(string $property): mixed
     {
         if ($property === 'queryString') {
             /** @psalm-suppress NoInterfaceProperties */
@@ -106,7 +106,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string|int|null $type name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string'): void
+    public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void
     {
         $this->_statement->bindValue($column, $value, $type);
     }
@@ -146,7 +146,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @return string|int
      */
-    public function errorCode()
+    public function errorCode(): string|int
     {
         return $this->_statement->errorCode();
     }
@@ -195,7 +195,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return mixed Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = self::FETCH_TYPE_NUM)
+    public function fetch(string|int $type = self::FETCH_TYPE_NUM): mixed
     {
         return $this->_statement->fetch($type);
     }
@@ -219,7 +219,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param int $position The numeric position of the column to retrieve in the result
      * @return mixed Returns the specific value of the column designated at $position
      */
-    public function fetchColumn(int $position)
+    public function fetchColumn(int $position): mixed
     {
         $result = $this->fetch(static::FETCH_TYPE_NUM);
         if ($result && isset($result[$position])) {
@@ -243,7 +243,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array|false List of all results from database for this statement. False on failure.
      */
-    public function fetchAll($type = self::FETCH_TYPE_NUM)
+    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array|false
     {
         return $this->_statement->fetchAll($type);
     }
@@ -282,7 +282,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return \Cake\Database\StatementInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    public function getIterator()
+    public function getIterator(): StatementInterface
     {
         if (!$this->_hasExecuted) {
             $this->execute();
@@ -335,7 +335,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string|null $column the name of the column representing the primary key
      * @return string|int
      */
-    public function lastInsertId(?string $table = null, ?string $column = null)
+    public function lastInsertId(?string $table = null, ?string $column = null): string|int
     {
         if ($column && $this->columnCount()) {
             $row = $this->fetch(static::FETCH_TYPE_ASSOC);
@@ -353,7 +353,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @return \Cake\Database\StatementInterface
      */
-    public function getInnerStatement()
+    public function getInnerStatement(): StatementInterface
     {
         return $this->_statement;
     }

@@ -193,7 +193,7 @@ class HtmlFormatter implements FormatterInterface
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected function exportObject($var, int $indent): string
+    protected function exportObject(ClassNode|ReferenceNode $var, int $indent): string
     {
         $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
         $out = sprintf(

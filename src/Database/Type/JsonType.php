@@ -35,7 +35,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @return string|null
      * @throws \InvalidArgumentException
      */
-    public function toDatabase($value, DriverInterface $driver): ?string
+    public function toDatabase(mixed $value, DriverInterface $driver): ?string
     {
         if (is_resource($value)) {
             throw new InvalidArgumentException('Cannot convert a resource value to JSON');
@@ -87,7 +87,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, DriverInterface $driver): int
+    public function toStatement(mixed $value, DriverInterface $driver): int
     {
         return PDO::PARAM_STR;
     }
@@ -98,7 +98,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return mixed Converted value.
      */
-    public function marshal($value)
+    public function marshal(mixed $value): mixed
     {
         return $value;
     }

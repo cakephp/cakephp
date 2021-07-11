@@ -70,7 +70,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      * @param string $collection The serialized collection
      * @return void
      */
-    public function unserialize($collection): void
+    public function unserialize(string $collection): void
     {
         $this->__construct(unserialize($collection));
     }

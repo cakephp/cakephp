@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\MutableDate;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
 use IntlDateFormatter;
 
 /**
@@ -129,7 +132,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * @param \DateTimeZone|string|null $tz The timezone in which the date is taken.
      *                                  Ignored if `$time` is a DateTimeInterface instance.
      */
-    public function __construct($time = 'now', $tz = null)
+    public function __construct(DateTime|DateTimeImmutable|string|int|null $time = 'now', DateTimeZone|string|null $tz = null)
     {
         parent::__construct($time, $tz);
     }

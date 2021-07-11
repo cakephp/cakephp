@@ -212,7 +212,7 @@ class Client implements ClientInterface
      * @return static
      * @throws \InvalidArgumentException
      */
-    public static function createFromUrl(string $url)
+    public static function createFromUrl(string $url): static
     {
         $parts = parse_url($url);
 
@@ -275,7 +275,7 @@ class Client implements ClientInterface
      * @param array $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function get(string $url, $data = [], array $options = []): Response
+    public function get(string $url, array|string $data = [], array $options = []): Response
     {
         $options = $this->_mergeOptions($options);
         $body = null;
@@ -301,7 +301,7 @@ class Client implements ClientInterface
      * @param array $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function post(string $url, $data = [], array $options = []): Response
+    public function post(string $url, mixed $data = [], array $options = []): Response
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -317,7 +317,7 @@ class Client implements ClientInterface
      * @param array $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function put(string $url, $data = [], array $options = []): Response
+    public function put(string $url, mixed $data = [], array $options = []): Response
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -333,7 +333,7 @@ class Client implements ClientInterface
      * @param array $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function patch(string $url, $data = [], array $options = []): Response
+    public function patch(string $url, mixed $data = [], array $options = []): Response
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -349,7 +349,7 @@ class Client implements ClientInterface
      * @param array $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function options(string $url, $data = [], array $options = []): Response
+    public function options(string $url, mixed $data = [], array $options = []): Response
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -365,7 +365,7 @@ class Client implements ClientInterface
      * @param array $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function trace(string $url, $data = [], array $options = []): Response
+    public function trace(string $url, mixed $data = [], array $options = []): Response
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -381,7 +381,7 @@ class Client implements ClientInterface
      * @param array $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function delete(string $url, $data = [], array $options = []): Response
+    public function delete(string $url, mixed $data = [], array $options = []): Response
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -414,7 +414,7 @@ class Client implements ClientInterface
      * @param array $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Response
      */
-    protected function _doRequest(string $method, string $url, $data, $options): Response
+    protected function _doRequest(string $method, string $url, mixed $data, array $options): Response
     {
         $request = $this->_createRequest(
             $method,
@@ -514,7 +514,7 @@ class Client implements ClientInterface
      * @param array $options The config options stored with Client::config()
      * @return string A complete url with scheme, port, host, and path.
      */
-    public function buildUrl(string $url, $query = [], array $options = []): string
+    public function buildUrl(string $url, array|string $query = [], array $options = []): string
     {
         if (empty($options) && empty($query)) {
             return $url;
@@ -566,7 +566,7 @@ class Client implements ClientInterface
      * @param array $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Request
      */
-    protected function _createRequest(string $method, string $url, $data, $options): Request
+    protected function _createRequest(string $method, string $url, mixed $data, array $options): Request
     {
         $headers = (array)($options['headers'] ?? []);
         if (isset($options['type'])) {
@@ -672,7 +672,7 @@ class Client implements ClientInterface
      * @return object Authentication strategy instance.
      * @throws \Cake\Core\Exception\CakeException when an invalid strategy is chosen.
      */
-    protected function _createAuth(array $auth, array $options)
+    protected function _createAuth(array $auth, array $options): object
     {
         if (empty($auth['type'])) {
             $auth['type'] = 'basic';

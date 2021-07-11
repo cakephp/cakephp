@@ -90,7 +90,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      *
      * @return array
      */
-    public function current()
+    public function current(): array
     {
         if ($this->_callback === null) {
             return parent::current();
@@ -126,7 +126,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      * @param string $iterators The serialized iterators
      * @return void
      */
-    public function unserialize($iterators): void
+    public function unserialize(string $iterators): void
     {
         parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
         $this->_iterators = unserialize($iterators);

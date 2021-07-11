@@ -69,7 +69,7 @@ abstract class AbstractLocator implements LocatorInterface
      * @param array $options The options you want to build the instance with.
      * @return \Cake\Datasource\RepositoryInterface
      */
-    abstract protected function createInstance(string $alias, array $options);
+    abstract protected function createInstance(string $alias, array $options): RepositoryInterface;
 
     /**
      * @inheritDoc

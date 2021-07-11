@@ -132,7 +132,7 @@ class HtmlHelper extends Helper
      * @return string|null A completed `<link />` element, or null if the element was sent to a block.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-meta-tags
      */
-    public function meta($type, $content = null, array $options = []): ?string
+    public function meta(array|string $type, array|string|null $content = null, array $options = []): ?string
     {
         if (!is_array($type)) {
             $types = [
@@ -250,7 +250,7 @@ class HtmlHelper extends Helper
      * @return string An `<a />` element.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-links
      */
-    public function link($title, $url = null, array $options = []): string
+    public function link(array|string $title, array|string|null $url = null, array $options = []): string
     {
         $escapeTitle = true;
         if ($url !== null) {
@@ -374,7 +374,7 @@ class HtmlHelper extends Helper
      * @return string|null CSS `<link />` or `<style />` tag, depending on the type of link.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-css-files
      */
-    public function css($path, array $options = []): ?string
+    public function css(array|string $path, array $options = []): ?string
     {
         $options += [
             'once' => true,
@@ -478,7 +478,7 @@ class HtmlHelper extends Helper
      *   or if $once is true and the file has been included before.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-javascript-files
      */
-    public function script($url, array $options = []): ?string
+    public function script(array|string $url, array $options = []): ?string
     {
         $defaults = [
             'block' => null,
@@ -656,7 +656,7 @@ class HtmlHelper extends Helper
      * @return string completed img tag
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-images
      */
-    public function image($path, array $options = []): string
+    public function image(array|string $path, array $options = []): string
     {
         if (is_string($path)) {
             $path = $this->Url->image($path, $options);
@@ -739,9 +739,9 @@ class HtmlHelper extends Helper
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-table-cells
      */
     public function tableCells(
-        $data,
-        $oddTrOptions = null,
-        $evenTrOptions = null,
+        array|string $data,
+        array|bool|null $oddTrOptions = null,
+        array|bool|null $evenTrOptions = null,
         bool $useCount = false,
         bool $continueOddEven = true
     ): string {
@@ -990,7 +990,7 @@ class HtmlHelper extends Helper
      * @param array $options Array of HTML attributes, and special options above.
      * @return string Generated media element
      */
-    public function media($path, array $options = []): string
+    public function media(array|string $path, array $options = []): string
     {
         $options += [
             'tag' => null,

@@ -456,7 +456,7 @@ class ServerRequest implements ServerRequestInterface
      * @return mixed
      * @throws \BadMethodCallException when an invalid method is called.
      */
-    public function __call(string $name, array $params)
+    public function __call(string $name, array $params): mixed
     {
         if (strpos($name, 'is') === 0) {
             $type = strtolower(substr($name, 2));
@@ -480,7 +480,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
      */
-    public function is($type, ...$args): bool
+    public function is(array|string $type, mixed ...$args): bool
     {
         if (is_array($type)) {
             foreach ($type as $_type) {
@@ -728,7 +728,7 @@ class ServerRequest implements ServerRequestInterface
      * @param callable|array $callable A callable or options array for the detector definition.
      * @return void
      */
-    public static function addDetector(string $name, $callable): void
+    public static function addDetector(string $name, callable|array $callable): void
     {
         $name = strtolower($name);
         if (is_callable($callable)) {
@@ -799,7 +799,7 @@ class ServerRequest implements ServerRequestInterface
      * @return bool Whether or not the header is defined.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function hasHeader($name): bool
+    public function hasHeader(string $name): bool
     {
         $name = $this->normalizeHeaderName($name);
 
@@ -817,7 +817,7 @@ class ServerRequest implements ServerRequestInterface
      *   If the header doesn't exist, an empty array will be returned.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getHeader($name): array
+    public function getHeader(string $name): array
     {
         $name = $this->normalizeHeaderName($name);
         if (isset($this->_environment[$name])) {
@@ -834,7 +834,7 @@ class ServerRequest implements ServerRequestInterface
      * @return string Header values collapsed into a comma separated string.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getHeaderLine($name): string
+    public function getHeaderLine(string $name): string
     {
         $value = $this->getHeader($name);
 
@@ -849,7 +849,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withHeader($name, $value)
+    public function withHeader(string $name, array|string $value): static
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -869,7 +869,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader(string $name, array|string $value): static
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -890,7 +890,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withoutHeader($name)
+    public function withoutHeader(string $name): static
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -925,7 +925,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static A new instance with the updated method.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withMethod($method)
+    public function withMethod(string $method): static
     {
         $new = clone $this;
 
@@ -976,7 +976,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static A new instance with the updated query string data.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): static
     {
         $new = clone $this;
         $new->query = $query;
@@ -1090,7 +1090,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array|bool Either an array of all the types the client accepts or a boolean if they accept the
      *   provided type.
      */
-    public function accepts(?string $type = null)
+    public function accepts(?string $type = null): array|bool
     {
         $raw = $this->parseAccept();
         $accept = [];
@@ -1132,7 +1132,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string|null $language The language to test.
      * @return array|bool If a $language is provided, a boolean. Otherwise the array of accepted languages.
      */
-    public function acceptLanguage(?string $language = null)
+    public function acceptLanguage(?string $language = null): array|bool
     {
         $raw = $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept-Language'));
         $accept = [];
@@ -1210,7 +1210,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array|string|null Query data.
      * @see ServerRequest::getQueryParams()
      */
-    public function getQuery(?string $name = null, $default = null)
+    public function getQuery(?string $name = null, mixed $default = null): array|string|null
     {
         if ($name === null) {
             return $this->query;
@@ -1251,7 +1251,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $default The default data.
      * @return mixed The value being read.
      */
-    public function getData(?string $name = null, $default = null)
+    public function getData(?string $name = null, mixed $default = null): mixed
     {
         if ($name === null) {
             return $this->data;
@@ -1271,7 +1271,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array|string|null $default The default value if the cookie is not set.
      * @return array|string|null Either the cookie value, or null if the value doesn't exist.
      */
-    public function getCookie(string $key, $default = null)
+    public function getCookie(string $key, array|string|null $default = null): array|string|null
     {
         return Hash::get($this->cookies, $key, $default);
     }
@@ -1303,7 +1303,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Cake\Http\Cookie\CookieCollection $cookies The cookie collection
      * @return static
      */
-    public function withCookieCollection(CookieCollection $cookies)
+    public function withCookieCollection(CookieCollection $cookies): static
     {
         $new = clone $this;
         $values = [];
@@ -1331,7 +1331,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $cookies The new cookie data to use.
      * @return static
      */
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): static
     {
         $new = clone $this;
         $new->cookies = $cookies;
@@ -1350,7 +1350,7 @@ class ServerRequest implements ServerRequestInterface
      * @return object|array|null The deserialized body parameters, if any.
      *     These will typically be an array.
      */
-    public function getParsedBody()
+    public function getParsedBody(): object|array|null
     {
         return $this->data;
     }
@@ -1362,7 +1362,7 @@ class ServerRequest implements ServerRequestInterface
      *     typically be in an array or object.
      * @return static
      */
-    public function withParsedBody($data)
+    public function withParsedBody(object|array|null $data): static
     {
         $new = clone $this;
         $new->data = $data;
@@ -1401,7 +1401,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $version HTTP protocol version
      * @return static
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion(string $version): static
     {
         if (!preg_match('/^(1\.[01]|2)$/', $version)) {
             throw new InvalidArgumentException("Unsupported protocol version '{$version}' provided");
@@ -1441,7 +1441,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $value Value to set
      * @return static
      */
-    public function withEnv(string $key, string $value)
+    public function withEnv(string $key, string $value): static
     {
         $new = clone $this;
         $new->_environment[$key] = $value;
@@ -1467,7 +1467,7 @@ class ServerRequest implements ServerRequestInterface
      * @return true
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */
-    public function allowMethod($methods): bool
+    public function allowMethod(array|string $methods): bool
     {
         $methods = (array)$methods;
         foreach ($methods as $method) {
@@ -1493,7 +1493,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the request data.
      * @return static
      */
-    public function withData(string $name, $value)
+    public function withData(string $name, mixed $value): static
     {
         $copy = clone $this;
 
@@ -1513,7 +1513,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The dot separated path to remove.
      * @return static
      */
-    public function withoutData(string $name)
+    public function withoutData(string $name): static
     {
         $copy = clone $this;
 
@@ -1534,7 +1534,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the the request parameters.
      * @return static
      */
-    public function withParam(string $name, $value)
+    public function withParam(string $name, mixed $value): static
     {
         $copy = clone $this;
         $copy->params = Hash::insert($copy->params, $name, $value);
@@ -1549,7 +1549,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $default The default value if `$name` is not set. Default `null`.
      * @return mixed
      */
-    public function getParam(string $name, $default = null)
+    public function getParam(string $name, mixed $default = null): mixed
     {
         return Hash::get($this->params, $name, $default);
     }
@@ -1561,7 +1561,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value of the attribute.
      * @return static
      */
-    public function withAttribute($name, $value)
+    public function withAttribute(string $name, mixed $value): static
     {
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
@@ -1580,7 +1580,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException
      */
-    public function withoutAttribute($name)
+    public function withoutAttribute(string $name): static
     {
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
@@ -1600,7 +1600,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed|null $default The default value if the attribute has not been set.
      * @return mixed
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, mixed $default = null): mixed
     {
         if (in_array($name, $this->emulatedAttributes, true)) {
             if ($name === 'here') {
@@ -1669,7 +1669,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException when $files contains an invalid object.
      */
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): static
     {
         $this->validateUploadedFiles($uploadedFiles, '');
         $new = clone $this;
@@ -1716,7 +1716,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Psr\Http\Message\StreamInterface $body The new request body
      * @return static
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): static
     {
         $new = clone $this;
         $new->stream = $body;
@@ -1745,7 +1745,7 @@ class ServerRequest implements ServerRequestInterface
      * @param bool $preserveHost Whether or not the host should be retained.
      * @return static
      */
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
         $new = clone $this;
         $new->uri = $uri;
@@ -1780,7 +1780,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget(string $requestTarget): static
     {
         $new = clone $this;
         $new->requestTarget = $requestTarget;

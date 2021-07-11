@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\ExpressionInterface;
+
 /**
  * Contains the field property with a getter and a setter for it
  */
@@ -34,7 +36,7 @@ trait FieldTrait
      * @param \Cake\Database\ExpressionInterface|array|string $field The field to compare with.
      * @return void
      */
-    public function setField($field): void
+    public function setField(ExpressionInterface|array|string $field): void
     {
         $this->_field = $field;
     }
@@ -44,7 +46,7 @@ trait FieldTrait
      *
      * @return \Cake\Database\ExpressionInterface|array|string
      */
-    public function getField()
+    public function getField(): ExpressionInterface|array|string
     {
         return $this->_field;
     }

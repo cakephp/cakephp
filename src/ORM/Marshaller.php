@@ -302,7 +302,7 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null
      */
-    protected function _marshalAssociation(Association $assoc, $value, array $options)
+    protected function _marshalAssociation(Association $assoc, mixed $value, array $options): EntityInterface|array|null
     {
         if (!is_array($value)) {
             return null;
@@ -738,7 +738,7 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null
      */
-    protected function _mergeAssociation($original, Association $assoc, $value, array $options)
+    protected function _mergeAssociation(EntityInterface|array $original, Association $assoc, mixed $value, array $options): EntityInterface|array|null
     {
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);

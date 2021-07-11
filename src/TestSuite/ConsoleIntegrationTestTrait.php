@@ -143,7 +143,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertExitSuccess($message = '')
+    public function assertExitSuccess(string $message = ''): void
     {
         $this->assertThat(Command::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
     }
@@ -154,7 +154,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertExitError($message = '')
+    public function assertExitError(string $message = ''): void
     {
         $this->assertThat(Command::CODE_ERROR, new ExitCode($this->_exitCode), $message);
     }

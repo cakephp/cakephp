@@ -91,7 +91,7 @@ class BufferedStatement implements Iterator, StatementInterface
      * @param string $property internal property to get
      * @return mixed
      */
-    public function __get(string $property)
+    public function __get(string $property): mixed
     {
         if ($property === 'queryString') {
             /** @psalm-suppress NoInterfaceProperties */
@@ -281,7 +281,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->index;
     }
@@ -291,7 +291,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->buffer[$this->index];
     }

@@ -56,7 +56,7 @@ interface SchemaInterface
      * @param array|string $attrs The attributes for the column or the type name.
      * @return $this
      */
-    public function addColumn(string $name, $attrs);
+    public function addColumn(string $name, array|string $attrs);
 
     /**
      * Get column data in the table.

@@ -139,7 +139,7 @@ class PaginatorHelper extends Helper
      * @param string|null $model Optional model name. Uses the default if none is specified.
      * @return mixed Content of the requested param.
      */
-    public function param(string $key, ?string $model = null)
+    public function param(string $key, ?string $model = null): mixed
     {
         $params = $this->params($model);
 
@@ -269,7 +269,7 @@ class PaginatorHelper extends Helper
      * @param array $templates An array of templates with the 'active' and 'disabled' keys.
      * @return string Generated HTML
      */
-    protected function _toggledLink($text, $enabled, $options, $templates): string
+    protected function _toggledLink(string|false $text, bool $enabled, array $options, array $templates): string
     {
         $template = $templates['active'];
         if (!$enabled) {
@@ -421,7 +421,7 @@ class PaginatorHelper extends Helper
      *  key the returned link will sort by 'desc'.
      * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-sort-links
      */
-    public function sort(string $key, $title = null, array $options = []): string
+    public function sort(string $key, array|string|null $title = null, array $options = []): string
     {
         $options += ['url' => [], 'model' => null, 'escape' => true];
         $url = $options['url'];
@@ -1033,7 +1033,7 @@ class PaginatorHelper extends Helper
      * @return string Numbers string.
      * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-jump-links
      */
-    public function first($first = '<< first', array $options = []): string
+    public function first(string|int $first = '<< first', array $options = []): string
     {
         $options += [
             'url' => [],
@@ -1093,7 +1093,7 @@ class PaginatorHelper extends Helper
      * @return string Numbers string.
      * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-jump-links
      */
-    public function last($last = 'last >>', array $options = []): string
+    public function last(string|int $last = 'last >>', array $options = []): string
     {
         $options += [
             'model' => $this->defaultModel(),
