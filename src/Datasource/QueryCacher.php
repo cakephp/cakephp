@@ -35,14 +35,14 @@ class QueryCacher
     /**
      * The key or function to generate a key.
      *
-     * @var string|\Closure
+     * @var \Closure|string
      */
     protected $_key;
 
     /**
      * Config for cache engine.
      *
-     * @var string|\Psr\SimpleCache\CacheInterface
+     * @var \Psr\SimpleCache\CacheInterface|string
      */
     protected $_config;
 

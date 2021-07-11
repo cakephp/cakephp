@@ -355,7 +355,7 @@ trait EntityTrait
      * When checking multiple fields. All fields must not be null
      * in order for true to be returned.
      *
-     * @param string|string[] $field The field or fields to check.
+     * @param array<string>|string $field The field or fields to check.
      * @return bool
      */
     public function has($field): bool
@@ -435,7 +435,7 @@ trait EntityTrait
      * $entity->unset(['name', 'last_name']);
      * ```
      *
-     * @param string|string[] $field The field to unset.
+     * @param array<string>|string $field The field to unset.
      * @return $this
      */
     public function unset($field)
@@ -452,7 +452,7 @@ trait EntityTrait
      * Removes a field or list of fields from this entity
      *
      * @deprecated 4.0.0 Use {@link unset()} instead. Will be removed in 5.0.
-     * @param string|string[] $field The field to unset.
+     * @param array<string>|string $field The field to unset.
      * @return $this
      */
     public function unsetProperty($field)

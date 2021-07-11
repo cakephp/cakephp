@@ -203,7 +203,7 @@ class ShellDispatcher
      * Built-in extra parameter is :
      *
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
-     * @return bool|int|null
+     * @return int|bool|null
      * @throws \Cake\Console\Exception\MissingShellMethodException
      */
     protected function _dispatch(array $extra = [])

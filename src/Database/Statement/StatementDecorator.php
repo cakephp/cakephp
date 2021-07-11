@@ -144,7 +144,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     /**
      * Returns the error code for the last error that occurred when executing this statement.
      *
-     * @return int|string
+     * @return string|int
      */
     public function errorCode()
     {

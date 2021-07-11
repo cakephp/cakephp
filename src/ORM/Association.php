@@ -106,14 +106,14 @@ abstract class Association
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
-     * @var string|string[]|null
+     * @var array<string>|string|null
      */
     protected $_bindingKey;
 
     /**
      * The name of the field representing the foreign key to the table to load
      *
-     * @var string|string[]
+     * @var array<string>|string
      */
     protected $_foreignKey;
 
@@ -121,7 +121,7 @@ abstract class Association
      * A list of conditions to be always included when fetching records from
      * the target association
      *
-     * @var array|\Closure
+     * @var \Closure|array
      */
     protected $_conditions = [];
 
@@ -449,7 +449,7 @@ abstract class Association
      * Sets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * @param string|string[] $key the table field or fields to be used to link both tables together
+     * @param array<string>|string $key the table field or fields to be used to link both tables together
      * @return $this
      */
     public function setBindingKey($key)
@@ -463,7 +463,7 @@ abstract class Association
      * Gets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * @return string|string[]
+     * @return array<string>|string
      */
     public function getBindingKey()
     {
@@ -479,7 +479,7 @@ abstract class Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string|string[]
+     * @return array<string>|string
      */
     public function getForeignKey()
     {
@@ -489,7 +489,7 @@ abstract class Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param string|string[] $key the key or keys to be used to link both tables together
+     * @param array<string>|string $key the key or keys to be used to link both tables together
      * @return $this
      */
     public function setForeignKey($key)

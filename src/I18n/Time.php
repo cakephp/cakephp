@@ -41,7 +41,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
@@ -57,7 +57,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]|\Closure
+     * @var \Closure|array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
@@ -73,7 +73,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\Time::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
@@ -82,7 +82,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Time::$wordEnd`
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
@@ -188,7 +188,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * Returns the quarter
      *
      * @param bool $range Range.
-     * @return string[]|int 1, 2, 3, or 4 quarter of year, or array if $range true
+     * @return array<string>|int 1, 2, 3, or 4 quarter of year, or array if $range true
      */
     public function toQuarter(bool $range = false)
     {
@@ -267,7 +267,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
     /**
      * Get list of timezone identifiers
      *
-     * @param int|string|null $filter A regex to filter identifier
+     * @param string|int|null $filter A regex to filter identifier
      *   Or one of DateTimeZone class constants
      * @param string|null $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY

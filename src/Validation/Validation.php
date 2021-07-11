@@ -232,7 +232,7 @@ class Validation
      * Returns true if $check is in the proper credit card format.
      *
      * @param mixed $check credit card number to validate
-     * @param string|string[] $type 'all' may be passed as a string, defaults to fast which checks format of
+     * @param array<string>|string $type 'all' may be passed as a string, defaults to fast which checks format of
      *     most major credit cards if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -695,7 +695,7 @@ class Validation
      *
      * The list of what is considered to be boolean values, may be set via $booleanValues.
      *
-     * @param bool|int|string $check Value to check.
+     * @param string|int|bool $check Value to check.
      * @param array $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success.
      */
@@ -713,7 +713,7 @@ class Validation
      *
      * The list of what is considered to be truthy values, may be set via $truthyValues.
      *
-     * @param bool|int|string $check Value to check.
+     * @param string|int|bool $check Value to check.
      * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
      * @return bool Success.
      */
@@ -731,7 +731,7 @@ class Validation
      *
      * The list of what is considered to be falsey values, may be set via $falseyValues.
      *
-     * @param bool|int|string $check Value to check.
+     * @param string|int|bool $check Value to check.
      * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
      * @return bool Success.
      */
@@ -1302,7 +1302,7 @@ class Validation
      *
      * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check.
      * @param string $operator See `Validation::comparison()`.
-     * @param int|string $size Size in bytes or human readable string like '5MB'.
+     * @param string|int $size Size in bytes or human readable string like '5MB'.
      * @return bool Success
      */
     public static function fileSize($check, string $operator, $size): bool

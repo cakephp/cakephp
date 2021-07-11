@@ -90,7 +90,7 @@ class NumberHelper extends Helper
     /**
      * Formats a number with a level of precision.
      *
-     * @param float|string $number A floating point number.
+     * @param string|float $number A floating point number.
      * @param int $precision The precision of the returned number.
      * @param array $options Additional options.
      * @return string Formatted float.
@@ -105,7 +105,7 @@ class NumberHelper extends Helper
     /**
      * Returns a formatted-for-humans file size.
      *
-     * @param int|string $size Size in bytes
+     * @param string|int $size Size in bytes
      * @return string Human readable size
      * @see \Cake\I18n\Number::toReadableSize()
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#interacting-with-human-readable-values
@@ -122,7 +122,7 @@ class NumberHelper extends Helper
      *
      * - `multiply`: Multiply the input value by 100 for decimal percentages.
      *
-     * @param float|string $number A floating point number
+     * @param string|float $number A floating point number
      * @param int $precision The precision of the returned number
      * @param array $options Options
      * @return string Percentage string
@@ -146,7 +146,7 @@ class NumberHelper extends Helper
      * - `after` - The string to place after decimal numbers, e.g. ']'
      * - `escape` - Whether or not to escape html in resulting string
      *
-     * @param float|string $number A floating point number.
+     * @param string|float $number A floating point number.
      * @param array $options An array with options.
      * @return string Formatted number
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#formatting-numbers
@@ -178,7 +178,7 @@ class NumberHelper extends Helper
      *   currency code.
      * - `escape` - Whether or not to escape html in resulting string
      *
-     * @param float|string $number Value to format.
+     * @param string|float $number Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
      * @param array $options Options list.
      * @return string Number formatted as a currency.
@@ -203,7 +203,7 @@ class NumberHelper extends Helper
      * - `after` - The string to place after decimal numbers, e.g. ']'
      * - `escape` - Set to false to prevent escaping
      *
-     * @param float|string $value A floating point number
+     * @param string|float $value A floating point number
      * @param array $options Options list.
      * @return string formatted delta
      */

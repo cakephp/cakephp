@@ -51,7 +51,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Last record fetched from the statement
      *
-     * @var array|object
+     * @var object|array
      */
     protected $_current;
 
@@ -103,7 +103,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var array|\SplFixedArray
+     * @var \SplFixedArray|array
      */
     protected $_results = [];
 
@@ -182,7 +182,7 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @return array|object
+     * @return object|array
      */
     public function current()
     {
@@ -275,7 +275,7 @@ class ResultSet implements ResultSetInterface
      *
      * This method will also close the underlying statement cursor.
      *
-     * @return array|object|null
+     * @return object|array|null
      */
     public function first()
     {

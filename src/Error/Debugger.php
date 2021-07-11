@@ -338,7 +338,7 @@ class Debugger
      * as well as export the variable using exportVar. By default the log is written to the debug log.
      *
      * @param mixed $var Variable or content to log.
-     * @param int|string $level Type of log to use. Defaults to 'debug'.
+     * @param string|int $level Type of log to use. Defaults to 'debug'.
      * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      */

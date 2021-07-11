@@ -104,7 +104,7 @@ class CorsBuilder
      * Accepts a string or an array of domains that have CORS enabled.
      * You can use `*.example.com` wildcards to accept subdomains, or `*` to allow all domains
      *
-     * @param string|string[] $domains The allowed domains
+     * @param array<string>|string $domains The allowed domains
      * @return $this
      */
     public function allowOrigin($domains)
@@ -202,7 +202,7 @@ class CorsBuilder
     /**
      * Define the max-age preflight OPTIONS requests are valid for.
      *
-     * @param int|string $age The max-age for OPTIONS requests in seconds
+     * @param string|int $age The max-age for OPTIONS requests in seconds
      * @return $this
      */
     public function maxAge($age)

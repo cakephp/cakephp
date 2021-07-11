@@ -38,21 +38,21 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Denotes whether the fieldname key must be present in data array
      *
-     * @var string|bool|callable
+     * @var callable|string|bool
      */
     protected $_validatePresent = false;
 
     /**
      * Denotes if a field is allowed to be empty
      *
-     * @var string|bool|callable
+     * @var callable|string|bool
      */
     protected $_allowEmpty = false;
 
     /**
      * Returns whether or not a field can be left out.
      *
-     * @return string|bool|callable
+     * @return callable|string|bool
      */
     public function isPresenceRequired()
     {
@@ -62,7 +62,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets whether a field is required to be present in data array.
      *
-     * @param string|bool|callable $validatePresent Valid values are true, false, 'create', 'update' or a callable.
+     * @param callable|string|bool $validatePresent Valid values are true, false, 'create', 'update' or a callable.
      * @return $this
      */
     public function requirePresence($validatePresent)
@@ -75,7 +75,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns whether or not a field can be left empty.
      *
-     * @return string|bool|callable
+     * @return callable|string|bool
      */
     public function isEmptyAllowed()
     {
@@ -85,7 +85,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets whether a field value is allowed to be empty.
      *
-     * @param string|bool|callable $allowEmpty Valid values are true, false,
+     * @param callable|string|bool $allowEmpty Valid values are true, false,
      * 'create', 'update' or a callable.
      * @return $this
      */

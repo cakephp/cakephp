@@ -174,7 +174,7 @@ class RouteBuilder
      * Future routes connected in through this builder will have the connected
      * extensions applied. However, setting extensions does not modify existing routes.
      *
-     * @param string|string[] $extensions The extensions to set.
+     * @param array<string>|string $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions($extensions)
@@ -197,7 +197,7 @@ class RouteBuilder
     /**
      * Add additional extensions to what is already in current scope
      *
-     * @param string|string[] $extensions One or more extensions to add
+     * @param array<string>|string $extensions One or more extensions to add
      * @return $this
      */
     public function addExtensions($extensions)
