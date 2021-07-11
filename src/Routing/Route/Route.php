@@ -185,8 +185,8 @@ class Route
     /**
      * Normalize method names to upper case and validate that they are valid HTTP methods.
      *
-     * @param string|string[] $methods Methods.
-     * @return string|string[]
+     * @param array<string>|string $methods Methods.
+     * @return array<string>|string
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
     protected function normalizeAndValidateMethods($methods)

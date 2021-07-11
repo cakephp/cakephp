@@ -94,7 +94,7 @@ interface StatementInterface
     /**
      * Returns the error code for the last error that occurred when executing this statement
      *
-     * @return int|string
+     * @return string|int
      */
     public function errorCode();
 

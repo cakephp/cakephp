@@ -429,7 +429,7 @@ class Response implements ResponseInterface
     /**
      * Stream target or resource object.
      *
-     * @var string|resource
+     * @var resource|string
      */
     protected $_streamTarget = 'php://memory';
 
@@ -811,8 +811,8 @@ class Response implements ResponseInterface
     /**
      * Create a new instance with the headers to enable client caching.
      *
-     * @param int|string $since a valid time since the response text has not been modified
-     * @param int|string $time a valid time for cache expiry
+     * @param string|int $since a valid time since the response text has not been modified
+     * @param string|int $time a valid time for cache expiry
      * @return static
      */
     public function withCache($since, $time = '+1 day')
@@ -1142,7 +1142,7 @@ class Response implements ResponseInterface
     /**
      * Create a new response with the Content-Length header set.
      *
-     * @param int|string $bytes Number of bytes
+     * @param string|int $bytes Number of bytes
      * @return static
      */
     public function withLength($bytes)

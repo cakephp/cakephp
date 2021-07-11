@@ -42,7 +42,7 @@ class EagerLoader
      * Contains a nested array with the compiled containments tree
      * This is a normalized version of the user provided containments array.
      *
-     * @var \Cake\ORM\EagerLoadable[]|\Cake\ORM\EagerLoadable|null
+     * @var \Cake\ORM\EagerLoadable|array<\Cake\ORM\EagerLoadable>|null
      */
     protected $_normalized;
 

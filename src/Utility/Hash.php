@@ -39,7 +39,7 @@ class Hash
      *
      * @param \ArrayAccess|array $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
-     * @param string|int|string[]|null $path The path being searched for. Either a dot
+     * @param array<string>|string|int|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
      * @throws \InvalidArgumentException
@@ -456,8 +456,8 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param string|string[]|null $keyPath A dot-separated string.
-     * @param string|string[]|null $valuePath A dot-separated string.
+     * @param array<string>|string|null $keyPath A dot-separated string.
+     * @param array<string>|string|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::combine
@@ -542,7 +542,7 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param string[] $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return string[]|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()

@@ -43,7 +43,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\FrozenTime::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
@@ -59,7 +59,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]|\Closure
+     * @var \Closure|array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
@@ -75,7 +75,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\FrozenTime::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
@@ -84,7 +84,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * The format to use when formatting a time using `Cake\I18n\FrozenTime::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\FrozenTime::$wordEnd`
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\FrozenTime::timeAgoInWords()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
@@ -187,7 +187,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
     /**
      * Get list of timezone identifiers
      *
-     * @param int|string|null $filter A regex to filter identifier
+     * @param string|int|null $filter A regex to filter identifier
      *   Or one of DateTimeZone class constants
      * @param string|null $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY

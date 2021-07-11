@@ -309,7 +309,7 @@ class StringTemplate
      * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
      *
      * @param string $key The name of the attribute to create
-     * @param string|string[] $value The value of the attribute to create.
+     * @param array<string>|string $value The value of the attribute to create.
      * @param bool $escape Define if the value must be escaped
      * @return string The composed attribute.
      */
@@ -342,7 +342,7 @@ class StringTemplate
      * @param array|string $input The array or string to add the class to
      * @param array|string $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return string|string[]
+     * @return array<string>|string
      */
     public function addClass($input, $newClass, string $useIndex = 'class')
     {

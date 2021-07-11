@@ -277,7 +277,7 @@ abstract class BaseErrorHandler
     /**
      * Log an error.
      *
-     * @param int|string $level The level name of the log.
+     * @param string|int $level The level name of the log.
      * @param array $data Array of error data.
      * @return bool
      */

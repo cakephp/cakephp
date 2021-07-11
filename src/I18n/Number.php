@@ -85,7 +85,7 @@ class Number
      *
      * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
      *
-     * @param float|string $value A floating point number.
+     * @param string|float $value A floating point number.
      * @param int $precision The precision of the returned number.
      * @param array $options Additional options
      * @return string Formatted float.
@@ -101,7 +101,7 @@ class Number
     /**
      * Returns a formatted-for-humans file size.
      *
-     * @param int|string $size Size in bytes
+     * @param string|int $size Size in bytes
      * @return string Human readable size
      * @link https://book.cakephp.org/4/en/core-libraries/number.html#interacting-with-human-readable-values
      */
@@ -131,7 +131,7 @@ class Number
      * - `multiply`: Multiply the input value by 100 for decimal percentages.
      * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
      *
-     * @param float|string $value A floating point number
+     * @param string|float $value A floating point number
      * @param int $precision The precision of the returned number
      * @param array $options Options
      * @return string Percentage string
@@ -159,7 +159,7 @@ class Number
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
-     * @param float|string $value A floating point number.
+     * @param string|float $value A floating point number.
      * @param array $options An array with options.
      * @return string Formatted number
      */
@@ -202,7 +202,7 @@ class Number
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
-     * @param float|string $value A floating point number
+     * @param string|float $value A floating point number
      * @param array $options Options list.
      * @return string formatted delta
      */
@@ -234,7 +234,7 @@ class Number
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
-     * @param float|string $value Value to format.
+     * @param string|float $value Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
      * @param array $options Options list.
      * @return string Number formatted as a currency.

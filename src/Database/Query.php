@@ -412,7 +412,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param \Closure|\Cake\Database\Expression\CommonTableExpression $cte The CTE to add.
+     * @param \Cake\Database\Expression\CommonTableExpression|\Closure $cte The CTE to add.
      * @param bool $overwrite Whether to reset the list of CTEs.
      * @return $this
      */
@@ -469,7 +469,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
-     * @param \Cake\Database\ExpressionInterface|array|callable|string $fields fields to be added to the list.
+     * @param \Cake\Database\ExpressionInterface|callable|array|string $fields fields to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
@@ -790,7 +790,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * See `join()` for further details on conditions and types.
      *
-     * @param string|string[] $table The table to join with
+     * @param array<string>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -812,7 +812,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
-     * @param string|string[] $table The table to join with
+     * @param array<string>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -851,7 +851,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Returns an array that can be passed to the join method describing a single join clause
      *
-     * @param string|string[] $table The table to join with
+     * @param array<string>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
@@ -993,7 +993,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param \Cake\Database\ExpressionInterface|array|string|\Closure|null $conditions The conditions to filter on.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\TypeFactory
@@ -1196,7 +1196,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
      *
-     * @param \Cake\Database\ExpressionInterface|array|string|\Closure $conditions The conditions to add with AND.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\TypeFactory
@@ -1266,7 +1266,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
      *
-     * @param \Cake\Database\ExpressionInterface|array|\Closure|string $fields fields to be added to the list
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
@@ -1406,7 +1406,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|array|string|\Closure|null $conditions The having conditions.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The having conditions.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Query::where()
@@ -1431,7 +1431,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|array|string|\Closure $conditions The AND conditions for HAVING.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The AND conditions for HAVING.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::andWhere()
      * @return $this
@@ -2052,7 +2052,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Query parts traversal method used by traverseExpressions()
      *
-     * @param \Cake\Database\ExpressionInterface|\Cake\Database\ExpressionInterface[] $expression Query expression or
+     * @param \Cake\Database\ExpressionInterface|array<\Cake\Database\ExpressionInterface> $expression Query expression or
      *   array of expressions.
      * @param \Closure $callback The callback to be executed for each ExpressionInterface
      *   found inside this query.
@@ -2294,7 +2294,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
-     * @param \Cake\Database\ExpressionInterface|array|string|\Closure|null $append Expression or builder function to append.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $append Expression or builder function to append.
      *   to append.
      * @param string $conjunction type of conjunction to be used to operate part
      * @param array $types associative array of type names used to bind values to query

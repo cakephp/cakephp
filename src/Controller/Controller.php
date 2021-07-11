@@ -553,7 +553,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Register middleware for the controller.
      *
-     * @param \Closure|\Psr\Http\Server\MiddlewareInterface|string $middleware Middleware.
+     * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware Middleware.
      * @param array $options Valid options:
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
@@ -792,7 +792,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * This method will also make the PaginatorHelper available in the view.
      *
-     * @param \Cake\ORM\Table|string|\Cake\ORM\Query|null $object Table to paginate
+     * @param \Cake\ORM\Table|\Cake\ORM\Query|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results

@@ -662,7 +662,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * setting takes precedence over group settings.
      *
      * @param array|string $field the name of the field or list of fields.
-     * @param string|bool|callable $mode Valid values are true, false, 'create', 'update'.
+     * @param callable|string|bool $mode Valid values are true, false, 'create', 'update'.
      *   If a callable is passed then the field will be required only when the callback
      *   returns true.
      * @param string|null $message The message to show if the field presence validation fails.
@@ -754,7 +754,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param int|null $flags A bitmask of EMPTY_* flags which specify what is empty.
      *   If no flags/bitmask is provided only `null` will be allowed as empty value.
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
+     * @param callable|string|bool $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @param string|null $message The message to show if the field is not
@@ -781,7 +781,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
+     * @param callable|string|bool $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -799,7 +799,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param string|bool|callable $when Indicates when the field is not allowed
+     * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -822,7 +822,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
+     * @param callable|string|bool $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -841,7 +841,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param string|bool|callable $when Indicates when the field is not allowed
+     * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -864,7 +864,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
+     * @param callable|string|bool $when Indicates when the field is allowed to be empty
      *   Valid values are true, 'create', 'update'. If a callable is passed then
      *   the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -883,7 +883,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param string|bool|callable $when Indicates when the field is not allowed
+     * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -906,7 +906,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
+     * @param callable|string|bool $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -922,7 +922,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param string|bool|callable $when Indicates when the field is not allowed
+     * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -947,7 +947,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
+     * @param callable|string|bool $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @return $this
@@ -966,7 +966,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param string|bool|callable $when Indicates when the field is not allowed
+     * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -992,7 +992,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
-     * @param string|bool|callable $when Indicates when the field is allowed to be empty
+     * @param callable|string|bool $when Indicates when the field is allowed to be empty
      *   Valid values are true, false, 'create', 'update'. If a callable is passed then
      *   the field will allowed to be empty only when the callback returns false.
      * @return $this
@@ -1011,7 +1011,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
-     * @param string|bool|callable $when Indicates when the field is not allowed
+     * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are false (never), 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
@@ -1029,7 +1029,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Converts validator to fieldName => $settings array
      *
-     * @param int|string $fieldName name of field
+     * @param string|int $fieldName name of field
      * @param array $defaults default settings
      * @param array|string $settings settings from data
      * @return array[]
@@ -1054,11 +1054,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Invert a when clause for creating notEmpty rules
      *
-     * @param string|bool|callable $when Indicates when the field is not allowed
+     * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are true (always), 'create', 'update'. If a
      *   callable is passed then the field will allowed to be empty only when
      *   the callback returns false.
-     * @return string|bool|callable
+     * @return callable|string|bool
      */
     protected function invertWhenClause($when)
     {

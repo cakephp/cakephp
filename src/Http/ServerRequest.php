@@ -55,7 +55,7 @@ class ServerRequest implements ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var array|object|null
+     * @var object|array|null
      */
     protected $data = [];
 
@@ -475,7 +475,7 @@ class ServerRequest implements ServerRequestInterface
      * defined with Cake\Http\ServerRequest::addDetector(). Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
-     * @param string|string[] $type The type of request you want to check. If an array
+     * @param array<string>|string $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
@@ -1347,7 +1347,7 @@ class ServerRequest implements ServerRequestInterface
      * post data. For other content types, it may be the deserialized request
      * body.
      *
-     * @return array|object|null The deserialized body parameters, if any.
+     * @return object|array|null The deserialized body parameters, if any.
      *     These will typically be an array.
      */
     public function getParsedBody()
@@ -1358,7 +1358,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Update the parsed body and get a new instance.
      *
-     * @param array|object|null $data The deserialized body data. This will
+     * @param object|array|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
      */
