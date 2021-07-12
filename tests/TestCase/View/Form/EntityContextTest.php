@@ -20,6 +20,7 @@ use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\ORM\Entity;
+use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
@@ -32,6 +33,11 @@ use TestApp\Model\Entity\Tag;
  */
 class EntityContextTest extends TestCase
 {
+    /**
+     * @inheritDoc
+     */
+    protected $stateResetStrategy = TransactionStrategy::class;
+
     /**
      * Fixtures to use.
      *
