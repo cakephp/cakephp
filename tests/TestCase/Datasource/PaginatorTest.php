@@ -17,17 +17,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\ORM\Entity;
-use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\TestCase;
 
 class PaginatorTest extends TestCase
 {
     use PaginatorTestTrait;
-
-    /**
-     * @inheritDoc
-     */
-    protected $stateResetStrategy = TransactionStrategy::class;
 
     /**
      * fixtures property
