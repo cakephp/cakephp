@@ -33,11 +33,6 @@ use TestApp\Mailer\TestEmail;
  */
 class EmailTest extends TestCase
 {
-    /**
-     * @inheritDoc
-     */
-    protected $stateResetStrategy = TransactionStrategy::class;
-
     protected $fixtures = ['core.Users'];
 
     /**
