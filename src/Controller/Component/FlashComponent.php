@@ -89,12 +89,12 @@ class FlashComponent extends Component
      * Proxy method to FlashMessage instance.
      *
      * @param array|string $key The key to set, or a complete array of configs.
-     * @param mixed|null $value The value to set.
+     * @param mixed $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
      * @throws \Cake\Core\Exception\CakeException When trying to set a key that is invalid.
      */
-    public function setConfig($key, $value = null, $merge = true)
+    public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
     {
         $this->flash()->setConfig($key, $value, $merge);
 
@@ -108,7 +108,7 @@ class FlashComponent extends Component
      * @param mixed $default The return value when the key does not exist.
      * @return mixed Configuration data at the named key or null if the key does not exist.
      */
-    public function getConfig(?string $key = null, $default = null)
+    public function getConfig(?string $key = null, mixed $default = null): mixed
     {
         return $this->flash()->getConfig($key, $default);
     }
@@ -120,7 +120,7 @@ class FlashComponent extends Component
      * @return mixed Configuration data at the named key
      * @throws \InvalidArgumentException
      */
-    public function getConfigOrFail(string $key)
+    public function getConfigOrFail(string $key): mixed
     {
         return $this->flash()->getConfigOrFail($key);
     }
@@ -129,10 +129,10 @@ class FlashComponent extends Component
      * Proxy method to FlashMessage instance.
      *
      * @param array|string $key The key to set, or a complete array of configs.
-     * @param mixed|null $value The value to set.
+     * @param mixed $value The value to set.
      * @return $this
      */
-    public function configShallow($key, $value = null)
+    public function configShallow(array|string $key, mixed $value = null)
     {
         $this->flash()->configShallow($key, $value);
 

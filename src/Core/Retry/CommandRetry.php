@@ -60,9 +60,9 @@ class CommandRetry
      *
      * @param callable $action The callable action to execute with a retry strategy
      * @return mixed The return value of the passed action callable
-     * @throws \Exception
+     * @throws \Exception Throws exception from last failure
      */
-    public function run(callable $action)
+    public function run(callable $action): mixed
     {
         $this->numRetries = 0;
         while (true) {

@@ -156,8 +156,23 @@ parameters:
 			path: src/Core/ObjectRegistry.php
 
 		-
-			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
+			message: "#^PHPDoc tag @param for parameter \\$class with type string\\|TObject is not subtype of native type object\\|string\\.$#"
 			count: 1
+			path: src/Core/ObjectRegistry.php
+
+		-
+			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\.$#"
+			count: 2
+			path: src/Core/ObjectRegistry.php
+
+		-
+			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\|null\\.$#"
+			count: 1
+			path: src/Core/ObjectRegistry.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
+			count: 2
 			path: src/Core/ObjectRegistry.php
 
 		-

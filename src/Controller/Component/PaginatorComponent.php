@@ -280,11 +280,11 @@ class PaginatorComponent extends Component
      * Proxy setting config options to Paginator.
      *
      * @param array|string $key The key to set, or a complete array of configs.
-     * @param mixed|null $value The value to set.
+     * @param mixed $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
      */
-    public function setConfig($key, $value = null, $merge = true)
+    public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
     {
         $this->_paginator->setConfig($key, $value, $merge);
 
@@ -298,7 +298,7 @@ class PaginatorComponent extends Component
      * @param mixed $default The return value when the key does not exist.
      * @return mixed Config value being read.
      */
-    public function getConfig(?string $key = null, $default = null)
+    public function getConfig(?string $key = null, mixed $default = null): mixed
     {
         return $this->_paginator->getConfig($key, $default);
     }
@@ -307,10 +307,10 @@ class PaginatorComponent extends Component
      * Proxy setting config options to Paginator.
      *
      * @param array|string $key The key to set, or a complete array of configs.
-     * @param mixed|null $value The value to set.
+     * @param mixed $value The value to set.
      * @return $this
      */
-    public function configShallow($key, $value = null)
+    public function configShallow(array|string $key, mixed $value = null)
     {
         $this->_paginator->configShallow($key, null);
 

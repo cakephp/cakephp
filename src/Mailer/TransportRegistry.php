@@ -68,7 +68,7 @@ class TransportRegistry extends ObjectRegistry
      * @return \Cake\Mailer\AbstractTransport The constructed transport class.
      * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
-    protected function _create($class, string $alias, array $config): AbstractTransport
+    protected function _create(object|string $class, string $alias, array $config): AbstractTransport
     {
         if (is_object($class)) {
             $instance = $class;
