@@ -209,7 +209,7 @@ class RulesChecker extends BaseRulesChecker
             if ($errorField === null) {
                 $errorField = $association->getProperty();
             }
-        } elseif (is_string($association)) {
+        } else {
             $associationAlias = $association;
 
             if ($errorField === null) {
@@ -221,11 +221,6 @@ class RulesChecker extends BaseRulesChecker
                     $errorField = Inflector::underscore($association);
                 }
             }
-        } else {
-            throw new InvalidArgumentException(sprintf(
-                'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
-                getTypeName($association)
-            ));
         }
 
         if (!$message) {

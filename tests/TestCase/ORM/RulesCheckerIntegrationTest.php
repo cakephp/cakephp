@@ -1331,36 +1331,6 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     */
-    public function testIsLinkedToInvalidArgumentOne(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
-
-        $Comments = $this->getTableLocator()->get('Comments');
-
-        /** @var \Cake\ORM\RulesChecker $rulesChecker */
-        $rulesChecker = $Comments->rulesChecker();
-        $rulesChecker->isLinkedTo(null);
-    }
-
-    /**
-     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     */
-    public function testIsNotLinkedToInvalidArgumentOne(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
-
-        $Comments = $this->getTableLocator()->get('Comments');
-
-        /** @var \Cake\ORM\RulesChecker $rulesChecker */
-        $rulesChecker = $Comments->rulesChecker();
-        $rulesChecker->isNotLinkedTo(null);
-    }
-
-    /**
      * Tests that the error field name is inferred from the association name in case no name is provided.
      */
     public function testIsLinkedToInferFieldFromAssociationName(): void

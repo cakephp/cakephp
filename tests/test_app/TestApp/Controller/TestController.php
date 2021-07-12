@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\ORM\Table;
 
 /**
@@ -30,7 +31,7 @@ class TestController extends ControllerTestAppController
      *
      * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): ?Response
     {
     }
 

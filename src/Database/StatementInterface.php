@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use stdClass;
+
 /**
  * Represents a database statement. Concrete implementations
  * can either use PDOStatement or a native driver
@@ -131,10 +133,10 @@ interface StatementInterface
      * ```
      *
      * @param string|int $type 'num' for positional columns, assoc for named columns, or PDO fetch mode constants.
-     * @return mixed Result array containing columns and values or false if no results
+     * @return \stdClass|array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch(string|int $type = 'num'): mixed;
+    public function fetch(string|int $type = 'num'): stdClass|array|false;
 
     /**
      * Returns an array with all rows resulting from executing this statement
@@ -148,9 +150,9 @@ interface StatementInterface
      * ```
      *
      * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array|false list of all results from database for this statement or false on failure.
+     * @return \stdClass|array|false list of all results from database for this statement or false on failure.
      */
-    public function fetchAll(string|int $type = 'num'): array|false;
+    public function fetchAll(string|int $type = 'num'): stdClass|array|false;
 
     /**
      * Returns the value of the result at position.

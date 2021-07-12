@@ -118,7 +118,7 @@ class FileLog extends BaseLog
      * @return void
      * @see Cake\Log\Log::$_levels
      */
-    public function log(mixed $level, string $message, array $context = []): void
+    public function log($level, $message, $context = [])
     {
         $message = $this->_format($message, $context);
         $message = $this->formatter->format($level, $message, $context);

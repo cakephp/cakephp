@@ -17,7 +17,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
     /**
      * @inheritDoc
      */
-    public function toPHP($value, DriverInterface $d)
+    public function toPHP(mixed $value, DriverInterface $d): UuidValue
     {
         return new UuidValue($value);
     }
@@ -47,7 +47,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
     /**
      * @inheritDoc
      */
-    public function marshal($value)
+    public function marshal($value): mixed
     {
         return $value;
     }
@@ -55,7 +55,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
     /**
      * @inheritDoc
      */
-    public function toDatabase($value, DriverInterface $d)
+    public function toDatabase(mixed $value, DriverInterface $d): mixed
     {
         return $value;
     }

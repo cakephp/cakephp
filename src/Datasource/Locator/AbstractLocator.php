@@ -41,7 +41,7 @@ abstract class AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    public function get(string $alias, array $options = [])
+    public function get(string $alias, array $options = []): RepositoryInterface
     {
         $storeOptions = $options;
         unset($storeOptions['allowFallbackClass']);
@@ -74,7 +74,7 @@ abstract class AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    public function set(string $alias, RepositoryInterface $repository)
+    public function set(string $alias, RepositoryInterface $repository): RepositoryInterface
     {
         return $this->instances[$alias] = $repository;
     }

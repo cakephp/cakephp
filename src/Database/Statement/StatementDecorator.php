@@ -21,6 +21,7 @@ use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Countable;
 use IteratorAggregate;
+use stdClass;
 
 /**
  * Represents a database statement. Statements contains queries that can be
@@ -192,10 +193,10 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * ```
      *
      * @param string|int $type 'num' for positional columns, assoc for named columns
-     * @return mixed Result array containing columns and values or false if no results
+     * @return \stdClass|array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch(string|int $type = self::FETCH_TYPE_NUM): mixed
+    public function fetch(string|int $type = self::FETCH_TYPE_NUM): stdClass|array|false
     {
         return $this->_statement->fetch($type);
     }
@@ -241,9 +242,9 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * ```
      *
      * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array|false List of all results from database for this statement. False on failure.
+     * @return \stdClass|array|false List of all results from database for this statement. False on failure.
      */
-    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array|false
+    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): stdClass|array|false
     {
         return $this->_statement->fetchAll($type);
     }

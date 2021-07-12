@@ -14,7 +14,7 @@ class WelcomeSayHelloCommand extends Command
         return 'welcome say_hello';
     }
 
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
     }
 }

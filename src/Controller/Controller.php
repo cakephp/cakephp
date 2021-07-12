@@ -866,7 +866,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(EventInterface $event): Response|null|null
+    public function beforeFilter(EventInterface $event): ?Response
     {
     }
 
@@ -878,7 +878,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRender(EventInterface $event): Response|null|null
+    public function beforeRender(EventInterface $event): ?Response
     {
     }
 
@@ -898,7 +898,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRedirect(EventInterface $event, array|string $url, Response $response): Response|null|null
+    public function beforeRedirect(EventInterface $event, array|string $url, Response $response): ?Response
     {
     }
 
@@ -909,7 +909,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
-    public function afterFilter(EventInterface $event): Response|null|null
+    public function afterFilter(EventInterface $event): ?Response
     {
     }
 }

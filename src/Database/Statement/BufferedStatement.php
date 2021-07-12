@@ -20,6 +20,7 @@ use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Iterator;
+use stdClass;
 
 /**
  * A statement decorator that implements buffered results.
@@ -126,7 +127,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function errorCode()
+    public function errorCode(): string|int
     {
         return $this->statement->errorCode();
     }
@@ -153,7 +154,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchColumn(int $position)
+    public function fetchColumn(int $position): mixed
     {
         $result = $this->fetch(static::FETCH_TYPE_NUM);
         if ($result !== false && isset($result[$position])) {
@@ -185,18 +186,15 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function lastInsertId(?string $table = null, ?string $column = null)
+    public function lastInsertId(?string $table = null, ?string $column = null): string|int
     {
         return $this->statement->lastInsertId($table, $column);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string|int $type The type to fetch.
-     * @return array|false
+     * @inheritDoc
      */
-    public function fetch($type = self::FETCH_TYPE_NUM)
+    public function fetch(string|int $type = self::FETCH_TYPE_NUM): stdClass|array|false
     {
         if ($this->_allFetched) {
             $row = false;
@@ -237,7 +235,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchAll($type = self::FETCH_TYPE_NUM)
+    public function fetchAll($type = self::FETCH_TYPE_NUM): stdClass|array|false
     {
         if ($this->_allFetched) {
             return $this->buffer;

@@ -398,7 +398,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to check
      * @return bool
      */
-    public function offsetExists(string $field): bool
+    public function offsetExists(mixed $field): bool
     {
         return isset($this->_fields[$field]);
     }
@@ -409,7 +409,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to check
      * @return \Cake\Validation\ValidationSet
      */
-    public function offsetGet(string $field): ValidationSet
+    public function offsetGet(mixed $field): ValidationSet
     {
         return $this->field($field);
     }
@@ -421,7 +421,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationSet|array $rules set of rules to apply to field
      * @return void
      */
-    public function offsetSet(string $field, ValidationSet|array $rules): void
+    public function offsetSet(mixed $field, mixed $rules): void
     {
         if (!$rules instanceof ValidationSet) {
             $set = new ValidationSet();
@@ -439,7 +439,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to unset
      * @return void
      */
-    public function offsetUnset(string $field): void
+    public function offsetUnset(mixed $field): void
     {
         unset($this->_fields[$field]);
     }

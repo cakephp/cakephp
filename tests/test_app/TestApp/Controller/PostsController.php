@@ -18,6 +18,7 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Response;
 
 /**
  * PostsController class
@@ -47,7 +48,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): ?Response
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->FormProtection);
@@ -56,7 +57,7 @@ class PostsController extends AppController
         $this->FormProtection->setConfig('unlockedFields', ['some_unlocked_field']);
     }
 
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): ?Response
     {
         if ($this->request->getQuery('clear')) {
             $this->set('flash', $this->request->getSession()->consume('Flash'));

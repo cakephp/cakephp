@@ -153,9 +153,9 @@ interface QueryInterface
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return \Cake\Datasource\EntityInterface|array|null the first result from the ResultSet
+     * @return mixed the first result from the ResultSet
      */
-    public function first(): EntityInterface|array|null;
+    public function first(): mixed;
 
     /**
      * Returns the total amount of results for the query.

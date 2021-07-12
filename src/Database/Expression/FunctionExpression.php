@@ -108,7 +108,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function add(array $conditions, array $types = [], bool $prepend = false)
+    public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false)
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->getTypeMap()->setTypes($types);

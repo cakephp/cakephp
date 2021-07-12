@@ -576,7 +576,7 @@ trait EntityTrait
      * @param string $offset The offset to check.
      * @return bool Success
      */
-    public function offsetExists(string $offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
@@ -587,7 +587,7 @@ trait EntityTrait
      * @param string $offset The offset to get.
      * @return mixed
      */
-    public function &offsetGet(string $offset): mixed
+    public function &offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
@@ -599,7 +599,7 @@ trait EntityTrait
      * @param mixed $value The value to set.
      * @return void
      */
-    public function offsetSet(string $offset, mixed $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
@@ -610,7 +610,7 @@ trait EntityTrait
      * @param string $offset The offset to remove.
      * @return void
      */
-    public function offsetUnset(string $offset): void
+    public function offsetUnset(mixed $offset): void
     {
         $this->unset($offset);
     }
@@ -1006,7 +1006,7 @@ trait EntityTrait
      * @param \Cake\Datasource\EntityInterface|array $object The object to read errors from.
      * @return bool
      */
-    protected function _readHasErrors(EntityInterface|array $object): bool
+    protected function _readHasErrors(mixed $object): bool
     {
         if ($object instanceof EntityInterface && $object->hasErrors()) {
             return true;

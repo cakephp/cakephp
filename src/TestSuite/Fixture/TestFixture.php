@@ -19,6 +19,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\ConstraintsInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -326,7 +327,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function insert(ConnectionInterface $connection)
+    public function insert(ConnectionInterface $connection): StatementInterface|bool
     {
         if (isset($this->records) && !empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();

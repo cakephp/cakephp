@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Http\Cookie;
 
 use Cake\Utility\Hash;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -367,7 +368,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withName(string $name)
+    public function withName(string $name): static
     {
         $this->validateName($name);
         $new = clone $this;
@@ -416,7 +417,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getValue()
+    public function getValue(): array|string
     {
         return $this->value;
     }
@@ -424,7 +425,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getScalarValue()
+    public function getScalarValue(): mixed
     {
         if ($this->isExpanded) {
             /** @psalm-suppress PossiblyInvalidArgument */
@@ -437,7 +438,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withValue($value)
+    public function withValue($value): static
     {
         $new = clone $this;
         $new->_setValue($value);
@@ -460,7 +461,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withPath(string $path)
+    public function withPath(string $path): static
     {
         $new = clone $this;
         $new->path = $path;
@@ -479,7 +480,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withDomain(string $domain)
+    public function withDomain(string $domain): static
     {
         $new = clone $this;
         $new->domain = $domain;
@@ -506,7 +507,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withSecure(bool $secure)
+    public function withSecure(bool $secure): static
     {
         $new = clone $this;
         $new->secure = $secure;
@@ -517,7 +518,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withHttpOnly(bool $httpOnly)
+    public function withHttpOnly(bool $httpOnly): static
     {
         $new = clone $this;
         $new->httpOnly = $httpOnly;
@@ -536,7 +537,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withExpiry($dateTime)
+    public function withExpiry($dateTime): static
     {
         $new = clone $this;
         $new->expiresAt = $dateTime->setTimezone(new DateTimeZone('GMT'));
@@ -547,7 +548,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getExpiry()
+    public function getExpiry(): DateTime|DateTimeImmutable|null
     {
         return $this->expiresAt;
     }
@@ -592,7 +593,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withNeverExpire()
+    public function withNeverExpire(): static
     {
         $new = clone $this;
         $new->expiresAt = new DateTimeImmutable('2038-01-01');
@@ -603,7 +604,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withExpired()
+    public function withExpired(): static
     {
         $new = clone $this;
         $new->expiresAt = new DateTimeImmutable('1970-01-01 00:00:01');
@@ -622,7 +623,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withSameSite(?string $sameSite)
+    public function withSameSite(?string $sameSite): static
     {
         if ($sameSite !== null) {
             $this->validateSameSiteValue($sameSite);

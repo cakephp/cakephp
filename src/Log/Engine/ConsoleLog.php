@@ -89,7 +89,7 @@ class ConsoleLog extends BaseLog
      * @return void success of write.
      * @see Cake\Log\Log::$_levels
      */
-    public function log(mixed $level, string $message, array $context = []): void
+    public function log($level, $message, $context = []):
     {
         $message = $this->_format($message, $context);
         $this->_output->write($this->formatter->format($level, $message, $context));

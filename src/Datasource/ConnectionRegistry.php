@@ -65,20 +65,13 @@ class ConnectionRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * If a callable is passed as first argument, The returned value of this
-     * function will be the result of the callable.
-     *
-     * @param \Cake\Datasource\ConnectionInterface|callable|string $class The classname or object to make.
+     * @param \Cake\Datasource\ConnectionInterface|string $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array $config An array of settings to use for the datasource.
      * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.
      */
-    protected function _create(ConnectionInterface|callable|string $class, string $alias, array $config): ConnectionInterface
+    protected function _create(object|string $class, string $alias, array $config): ConnectionInterface
     {
-        if (is_callable($class)) {
-            return $class($alias);
-        }
-
         if (is_object($class)) {
             return $class;
         }

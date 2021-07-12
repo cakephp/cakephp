@@ -42,11 +42,9 @@ class HasOne extends Association
     ];
 
     /**
-     * Gets the name of the field representing the foreign key to the target table.
-     *
-     * @return array<string>|string
+     * @inheritDoc
      */
-    public function getForeignKey(): array|string
+    public function getForeignKey(): array|string|false
     {
         if ($this->_foreignKey === null) {
             $this->_foreignKey = $this->_modelKey($this->getSource()->getAlias());

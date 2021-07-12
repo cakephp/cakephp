@@ -121,11 +121,6 @@ class Xml
             return static::_loadXml(file_get_contents($input), $options);
         }
 
-        if (!is_string($input)) {
-            $type = gettype($input);
-            throw new XmlException("Invalid input. {$type} cannot be parsed as XML.");
-        }
-
         if (strpos($input, '<') !== false) {
             return static::_loadXml($input, $options);
         }
@@ -434,9 +429,6 @@ class Xml
     {
         if ($obj instanceof DOMNode) {
             $obj = simplexml_import_dom($obj);
-        }
-        if (!($obj instanceof SimpleXMLElement)) {
-            throw new XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
         }
         $result = [];
         $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));

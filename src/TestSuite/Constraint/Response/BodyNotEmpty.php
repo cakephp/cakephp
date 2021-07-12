@@ -28,7 +28,7 @@ class BodyNotEmpty extends BodyEmpty
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches(mixed $other): bool
+    public function matches($other): bool
     {
         return parent::matches($other) === false;
     }

@@ -78,37 +78,7 @@ class LinkConstraintTest extends TestCase
     }
 
     /**
-     * Data provider for invalid constructor argument.
-     *
-     * @return array
-     */
-    public function invalidConstructorArgumentOneDataProvider(): array
-    {
-        return [[null, 'NULL'], [1, 'integer'], [[], 'array'], [new \stdClass(), 'stdClass']];
-    }
-
-    /**
-     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     *
-     * @dataProvider invalidConstructorArgumentOneDataProvider
-     * @param mixed $value
-     * @param string $actualType
-     */
-    public function testInvalidConstructorArgumentOne($value, $actualType): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf(
-            'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
-            $actualType
-        ));
-
-        new LinkConstraint($value, LinkConstraint::STATUS_LINKED);
-    }
-
-    /**
      * Tests that an exception is thrown when passing an invalid value for the `$requiredLinkStatus` argument.
-     *
-     * @dataProvider invalidConstructorArgumentOneDataProvider
      */
     public function testInvalidConstructorArgumentTwo(): void
     {

@@ -199,11 +199,9 @@ class BelongsToMany extends Association
     }
 
     /**
-     * Gets the name of the field representing the foreign key to the source table.
-     *
-     * @return array<string>|string
+     * @inheritDoc
      */
-    public function getForeignKey(): array|string
+    public function getForeignKey(): array|string|false
     {
         if ($this->_foreignKey === null) {
             $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
@@ -954,7 +952,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
-    public function setConditions($conditions)
+    public function setConditions(Closure|array $conditions)
     {
         parent::setConditions($conditions);
         $this->_targetConditions = $this->_junctionConditions = null;

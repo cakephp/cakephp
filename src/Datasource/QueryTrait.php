@@ -137,7 +137,7 @@ trait QueryTrait
      * @return \Cake\Datasource\ResultSetInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    public function getIterator(): ResultSetInterface
+    public function getIterator()
     {
         return $this->all();
     }
@@ -490,9 +490,9 @@ trait QueryTrait
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return \Cake\Datasource\EntityInterface|array|null The first result from the ResultSet.
+     * @return mixed The first result from the ResultSet.
      */
-    public function first(): EntityInterface|array|null
+    public function first(): mixed
     {
         if ($this->_dirty) {
             $this->limit(1);

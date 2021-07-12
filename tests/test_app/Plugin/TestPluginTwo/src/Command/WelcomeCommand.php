@@ -9,7 +9,7 @@ use Cake\Console\ConsoleIo;
 
 class WelcomeCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->out('This is the say_hello method called from TestPluginTwo.WelcomeCommand');
     }

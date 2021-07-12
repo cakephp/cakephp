@@ -133,14 +133,18 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      * Enabled behaviors will be registered with the event manager.
      *
-     * @param string $class The classname that is missing.
+     * @param \Cake\ORM\Behavior|string $class The classname that is missing.
      * @param string $alias The alias of the object.
      * @param array $config An array of config to use for the behavior.
      * @return \Cake\ORM\Behavior The constructed behavior class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    protected function _create(string $class, string $alias, array $config): Behavior
+    protected function _create(object|string $class, string $alias, array $config): Behavior
     {
+        if (is_object($class)) {
+            return $class;
+        }
+
         /** @var \Cake\ORM\Behavior $instance */
         $instance = new $class($this->_table, $config);
         $enable = $config['enabled'] ?? true;

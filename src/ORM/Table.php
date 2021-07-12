@@ -1845,7 +1845,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
-    public function save(EntityInterface $entity, $options = [])
+    public function save(EntityInterface $entity, SaveOptionsBuilder|ArrayAccess|array $options = []): EntityInterface|false
     {
         if ($options instanceof SaveOptionsBuilder) {
             $options = $options->toArray();

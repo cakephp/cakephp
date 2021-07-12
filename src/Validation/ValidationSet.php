@@ -173,7 +173,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $index name of the rule
      * @return bool
      */
-    public function offsetExists(string $index): bool
+    public function offsetExists(mixed $index): bool
     {
         return isset($this->_rules[$index]);
     }
@@ -184,7 +184,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $index name of the rule
      * @return \Cake\Validation\ValidationRule
      */
-    public function offsetGet(string $index): ValidationRule
+    public function offsetGet(mixed $index): ValidationRule
     {
         return $this->_rules[$index];
     }
@@ -196,7 +196,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationRule|array $rule Rule to add to $index
      * @return void
      */
-    public function offsetSet(string $index, ValidationRule|array $rule): void
+    public function offsetSet(mixed $index, mixed $rule): void
     {
         $this->add($index, $rule);
     }
@@ -207,7 +207,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $index name of the rule
      * @return void
      */
-    public function offsetUnset(string $index): void
+    public function offsetUnset(mixed $index): void
     {
         unset($this->_rules[$index]);
     }

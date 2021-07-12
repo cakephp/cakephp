@@ -49,7 +49,7 @@ class RouterTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        Router::defaultRouteClass('Cake\Routing\Route\Route');
+        Router::defaultRouteClass(Route::class);
     }
 
     /**

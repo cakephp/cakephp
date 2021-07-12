@@ -139,7 +139,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple($keys, $default = null): iterable
     {
         $this->ensureValidType($keys);
 
@@ -162,7 +162,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\InvalidArgumentException If $values is neither an array nor a Traversable,
      *   or if any of the $values are not a legal value.
      */
-    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         $this->ensureValidType($values, self::CHECK_KEY);
 
@@ -194,7 +194,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple($keys): bool
     {
         $this->ensureValidType($keys);
 
@@ -220,7 +220,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return bool
      * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
      */
-    public function has(string $key): bool
+    public function has($key): bool
     {
         return $this->get($key) !== null;
     }
@@ -233,7 +233,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return mixed The value of the item from the cache, or $default in case of cache miss.
      * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
      */
-    abstract public function get(string $key, mixed $default = null): mixed;
+    abstract public function get($key, $default = null);
 
     /**
      * Persists data in the cache, uniquely referenced by the given key with an optional expiration TTL time.
@@ -247,7 +247,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\InvalidArgumentException
      *   MUST be thrown if the $key string is not a legal value.
      */
-    abstract public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool;
+    abstract public function set($key, $value, $ttl = null): bool;
 
     /**
      * Increment a number under the key and return incremented value
@@ -273,7 +273,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    abstract public function delete(string $key): bool;
+    abstract public function delete($key);
 
     /**
      * Delete all keys from the cache

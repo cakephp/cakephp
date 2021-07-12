@@ -48,7 +48,7 @@ class HeaderSet extends ResponseBase
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches(mixed $other): bool
+    public function matches($other): bool
     {
         return $this->response->hasHeader($this->headerName);
     }

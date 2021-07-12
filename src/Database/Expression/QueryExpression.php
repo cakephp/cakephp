@@ -334,14 +334,14 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param \Cake\Database\ExpressionInterface|array $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param \Cake\Database\ExpressionInterface|array $values associative array of values to be associated with the
+     * @param \Cake\Database\ExpressionInterface|array|string|float|int|bool|null $values associative array of values to be associated with the
      * conditions passed in $conditions. If there are more $values than $conditions,
      * the last $value is used as the `ELSE` value.
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      * @return $this
      */
-    public function addCase(ExpressionInterface|array $conditions, ExpressionInterface|array $values = [], array $types = [])
+    public function addCase(ExpressionInterface|array $conditions, ExpressionInterface|array|string|float|int|bool|null $values = [], array $types = [])
     {
         return $this->add(new CaseExpression($conditions, $values, $types));
     }

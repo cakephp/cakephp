@@ -186,33 +186,6 @@ class XmlTest extends TestCase
     }
 
     /**
-     * data provider function for testBuildInvalidData
-     *
-     * @return array
-     */
-    public static function invalidDataProvider(): array
-    {
-        return [
-            [null],
-            [false],
-            [''],
-            ['http://localhost/notthere.xml'],
-        ];
-    }
-
-    /**
-     * testBuildInvalidData
-     *
-     * @dataProvider invalidDataProvider
-     * @param mixed $value
-     */
-    public function testBuildInvalidData($value): void
-    {
-        $this->expectException(\RuntimeException::class);
-        Xml::build($value);
-    }
-
-    /**
      * Test that building SimpleXmlElement with invalid XML causes the right exception.
      */
     public function testBuildInvalidDataSimpleXml(): void
@@ -589,9 +562,6 @@ XML;
     public static function invalidArrayDataProvider(): array
     {
         return [
-            [''],
-            [null],
-            [false],
             [[]],
             [['numeric key as root']],
             [['item1' => '', 'item2' => '']],
@@ -1173,31 +1143,6 @@ XML;
 
         $result = Xml::build($xml);
         $this->assertSame(' Mark ', (string)$result->name);
-    }
-
-    /**
-     * data provider for toArray() failures
-     *
-     * @return array
-     */
-    public static function invalidToArrayDataProvider(): array
-    {
-        return [
-            [new \DateTime()],
-            [[]],
-        ];
-    }
-
-    /**
-     * testToArrayFail method
-     *
-     * @dataProvider invalidToArrayDataProvider
-     * @param mixed $value
-     */
-    public function testToArrayFail($value): void
-    {
-        $this->expectException(\Cake\Utility\Exception\XmlException::class);
-        Xml::toArray($value);
     }
 
     /**

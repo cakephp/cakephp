@@ -32,7 +32,7 @@ class SampleSubCommand extends Command
         return 'sample sub';
     }
 
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
     }
 }

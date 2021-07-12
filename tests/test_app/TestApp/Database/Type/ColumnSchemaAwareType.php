@@ -18,7 +18,7 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
     /**
      * @inheritDoc
      */
-    public function toPHP($value, DriverInterface $driver)
+    public function toPHP(mixed $value, DriverInterface $driver): mixed
     {
         return $value;
     }
@@ -26,7 +26,7 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
     /**
      * @inheritDoc
      */
-    public function marshal($value)
+    public function marshal(mixed $value): mixed
     {
         return $value;
     }
@@ -34,7 +34,7 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
     /**
      * @inheritDoc
      */
-    public function toDatabase($value, DriverInterface $driver)
+    public function toDatabase(mixed $value, DriverInterface $driver): mixed
     {
         return $value;
     }

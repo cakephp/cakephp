@@ -108,7 +108,7 @@ class Helper implements EventListenerInterface
      * @param string $name Name of the property being accessed.
      * @return \Cake\View\Helper|null|void Helper instance if helper with provided name exists
      */
-    public function __get(string $name): Helper|null|null
+    public function __get(string $name): ?Helper
     {
         if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
             $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];

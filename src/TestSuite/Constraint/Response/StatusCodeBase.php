@@ -36,7 +36,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @return bool
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function matches(array|int $other): bool
+    public function matches($other): bool
     {
         if (!$other) {
             $other = $this->code;

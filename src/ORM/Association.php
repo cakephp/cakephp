@@ -114,7 +114,7 @@ abstract class Association
     /**
      * The name of the field representing the foreign key to the table to load
      *
-     * @var array<string>|string
+     * @var array<string>|string|false
      */
     protected $_foreignKey;
 
@@ -425,9 +425,9 @@ abstract class Association
      *
      * @param \Closure|array $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return \Cake\ORM\Association
+     * @return $this
      */
-    public function setConditions(Closure|array $conditions): Association
+    public function setConditions(Closure|array $conditions)
     {
         $this->_conditions = $conditions;
 
@@ -480,9 +480,9 @@ abstract class Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return array<string>|string
+     * @return array<string>|string|false
      */
-    public function getForeignKey(): array|string
+    public function getForeignKey(): array|string|false
     {
         return $this->_foreignKey;
     }

@@ -681,7 +681,7 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function transactional(callable $callback)
+    public function transactional(callable $callback): mixed
     {
         $this->begin();
 
@@ -721,7 +721,7 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function disableConstraints(callable $callback)
+    public function disableConstraints(callable $callback): mixed
     {
         return $this->getDisconnectRetry()->run(function () use ($callback) {
             $this->disableForeignKeys();

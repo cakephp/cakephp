@@ -328,10 +328,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param callable $callback A function or callable to be executed for each part
+     * @param \Closure $callback A function or callable to be executed for each part
      * @return $this
      */
-    public function traverse(callable $callback)
+    public function traverse(Closure $callback)
     {
         foreach ($this->_parts as $name => $part) {
             $callback($part, $name);
@@ -469,11 +469,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
-     * @param \Cake\Database\ExpressionInterface|callable|array|string $fields fields to be added to the list.
+     * @param \Cake\Database\ExpressionInterface|callable|array|string|float|int|bool $fields fields to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select(ExpressionInterface|callable|array|string $fields = [], bool $overwrite = false)
+    public function select(ExpressionInterface|callable|array|string|float|int|bool $fields = [], bool $overwrite = false)
     {
         if (!is_string($fields) && is_callable($fields)) {
             $fields = $fields($this);
@@ -835,13 +835,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to that methods description for further details.
      *
      * @param array|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
      * values to the corresponding database representation.
      * @return $this
      */
-    public function innerJoin(array|string $table, ExpressionInterface|array|string $conditions = [], array $types = [])
+    public function innerJoin(array|string $table, ExpressionInterface|Closure|array|string $conditions = [], array $types = [])
     {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
 
@@ -852,13 +852,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Returns an array that can be passed to the join method describing a single join clause
      *
      * @param array<string>|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
      * @return array
      * @psalm-suppress InvalidReturnType
      */
-    protected function _makeJoin(array|string $table, ExpressionInterface|array|string $conditions, string $type): array
+    protected function _makeJoin(array|string $table, ExpressionInterface|Closure|array|string $conditions, string $type): array
     {
         $alias = $table;
 
@@ -1297,11 +1297,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|string $field The field to order on.
+     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
-    public function orderAsc(QueryExpression|Closure|string $field, bool $overwrite = false)
+    public function orderAsc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['order'] = null;
@@ -1331,11 +1331,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|string $field The field to order on.
+     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
-    public function orderDesc(QueryExpression|Closure|string $field, bool $overwrite = false)
+    public function orderDesc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['order'] = null;
@@ -1743,12 +1743,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function update(ExpressionInterface|string $table)
     {
-        if (!is_string($table) && !($table instanceof ExpressionInterface)) {
-            $text = 'Table must be of type string or "%s", got "%s"';
-            $message = sprintf($text, ExpressionInterface::class, gettype($table));
-            throw new InvalidArgumentException($message);
-        }
-
         $this->_dirty();
         $this->_type = 'update';
         $this->_parts['update'][0] = $table;
@@ -1932,7 +1926,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @return \Cake\Database\StatementInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    public function getIterator(): StatementInterface
+    public function getIterator()
     {
         if ($this->_iterator === null || $this->_dirty) {
             $this->_iterator = $this->execute();
@@ -2052,13 +2046,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Query parts traversal method used by traverseExpressions()
      *
-     * @param \Cake\Database\ExpressionInterface|array<\Cake\Database\ExpressionInterface> $expression Query expression or
+     * @param mixed $expression Query expression or
      *   array of expressions.
      * @param \Closure $callback The callback to be executed for each ExpressionInterface
      *   found inside this query.
      * @return void
      */
-    protected function _expressionsVisitor(ExpressionInterface|array $expression, Closure $callback): void
+    protected function _expressionsVisitor(mixed $expression, Closure $callback): void
     {
         if (is_array($expression)) {
             foreach ($expression as $e) {

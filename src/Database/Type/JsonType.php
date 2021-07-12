@@ -55,7 +55,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return array|string|null
      */
-    public function toPHP($value, DriverInterface $driver)
+    public function toPHP(mixed $value, DriverInterface $driver): array|string|null
     {
         if (!is_string($value)) {
             return null;

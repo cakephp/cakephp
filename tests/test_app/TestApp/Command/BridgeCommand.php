@@ -12,7 +12,7 @@ class BridgeCommand extends Command
     /**
      * @inheritDoc
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $name = $io->ask('What is your name');
 

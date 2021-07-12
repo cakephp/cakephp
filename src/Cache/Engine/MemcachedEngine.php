@@ -307,7 +307,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure
      * @see https://www.php.net/manual/en/memcached.set.php
      */
-    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
         $duration = $this->duration($ttl);
 
@@ -323,7 +323,7 @@ class MemcachedEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool Whether the write was successful or not.
      */
-    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         $cacheData = [];
         foreach ($values as $key => $value) {
@@ -342,7 +342,7 @@ class MemcachedEngine extends CacheEngine
      * @return mixed The cached data, or default value if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
         $value = $this->_Memcached->get($key);
@@ -361,7 +361,7 @@ class MemcachedEngine extends CacheEngine
      * @return array An array containing, for each of the given $keys, the cached data or
      *   false if cached data could not be retrieved.
      */
-    public function getMultiple(iterable $keys, mixed $default = null): array
+    public function getMultiple($keys, $default = null): array
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
@@ -408,7 +408,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed.
      */
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         return $this->_Memcached->delete($this->_key($key));
     }
@@ -420,7 +420,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool of boolean values that are true if the key was successfully
      *   deleted, false if it didn't exist or couldn't be removed.
      */
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple($keys): bool
     {
         $cacheKeys = [];
         foreach ($keys as $key) {

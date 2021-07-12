@@ -799,7 +799,7 @@ class ServerRequest implements ServerRequestInterface
      * @return bool Whether or not the header is defined.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function hasHeader(string $name): bool
+    public function hasHeader($name)
     {
         $name = $this->normalizeHeaderName($name);
 
@@ -817,7 +817,7 @@ class ServerRequest implements ServerRequestInterface
      *   If the header doesn't exist, an empty array will be returned.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getHeader(string $name): array
+    public function getHeader($name)
     {
         $name = $this->normalizeHeaderName($name);
         if (isset($this->_environment[$name])) {
@@ -834,7 +834,7 @@ class ServerRequest implements ServerRequestInterface
      * @return string Header values collapsed into a comma separated string.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getHeaderLine(string $name): string
+    public function getHeaderLine($name)
     {
         $value = $this->getHeader($name);
 
@@ -849,7 +849,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withHeader(string $name, array|string $value): static
+    public function withHeader($name, $value)
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -869,7 +869,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withAddedHeader(string $name, array|string $value): static
+    public function withAddedHeader($name, $value)
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -890,7 +890,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withoutHeader(string $name): static
+    public function withoutHeader($name)
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -925,7 +925,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static A new instance with the updated method.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function withMethod(string $method): static
+    public function withMethod($method)
     {
         $new = clone $this;
 
@@ -1207,10 +1207,10 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name The name or dotted path to the query param or null to read all.
      * @param mixed $default The default value if the named parameter is not set, and $name is not null.
-     * @return array|string|null Query data.
+     * @return mixed Query data.
      * @see ServerRequest::getQueryParams()
      */
-    public function getQuery(?string $name = null, mixed $default = null): array|string|null
+    public function getQuery(?string $name = null, mixed $default = null): mixed
     {
         if ($name === null) {
             return $this->query;
@@ -1362,7 +1362,7 @@ class ServerRequest implements ServerRequestInterface
      *     typically be in an array or object.
      * @return static
      */
-    public function withParsedBody(object|array|null $data): static
+    public function withParsedBody($data)
     {
         $new = clone $this;
         $new->data = $data;
@@ -1401,7 +1401,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $version HTTP protocol version
      * @return static
      */
-    public function withProtocolVersion(string $version): static
+    public function withProtocolVersion($version)
     {
         if (!preg_match('/^(1\.[01]|2)$/', $version)) {
             throw new InvalidArgumentException("Unsupported protocol version '{$version}' provided");
@@ -1561,7 +1561,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value of the attribute.
      * @return static
      */
-    public function withAttribute(string $name, mixed $value): static
+    public function withAttribute($name, $value)
     {
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
@@ -1580,7 +1580,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException
      */
-    public function withoutAttribute(string $name): static
+    public function withoutAttribute($name)
     {
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
@@ -1600,7 +1600,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed|null $default The default value if the attribute has not been set.
      * @return mixed
      */
-    public function getAttribute(string $name, mixed $default = null): mixed
+    public function getAttribute($name, $default = null)
     {
         if (in_array($name, $this->emulatedAttributes, true)) {
             if ($name === 'here') {
@@ -1745,7 +1745,7 @@ class ServerRequest implements ServerRequestInterface
      * @param bool $preserveHost Whether or not the host should be retained.
      * @return static
      */
-    public function withUri(UriInterface $uri, bool $preserveHost = false): static
+    public function withUri($uri, $preserveHost = false)
     {
         $new = clone $this;
         $new->uri = $uri;
@@ -1780,7 +1780,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function withRequestTarget(string $requestTarget): static
+    public function withRequestTarget($requestTarget)
     {
         $new = clone $this;
         $new->requestTarget = $requestTarget;

@@ -208,7 +208,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    protected function createInstance(string $alias, array $options)
+    protected function createInstance(string $alias, array $options): Table
     {
         if (strpos($alias, '\\') === false) {
             [, $classAlias] = pluginSplit($alias);

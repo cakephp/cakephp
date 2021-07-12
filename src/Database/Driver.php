@@ -206,7 +206,7 @@ abstract class Driver implements DriverInterface
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function setConnection(PDO $connection)
+    public function setConnection(object $connection)
     {
         $this->_connection = $connection;
 
@@ -221,7 +221,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function prepare($query): StatementInterface
+    public function prepare(Query|string $query): StatementInterface
     {
         $this->connect();
         $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
@@ -370,7 +370,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function lastInsertId(?string $table = null, ?string $column = null)
+    public function lastInsertId(?string $table = null, ?string $column = null): string|int
     {
         $this->connect();
 

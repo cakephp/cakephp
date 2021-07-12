@@ -188,7 +188,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select(ExpressionInterface|Table|Association|callable|array|string $fields = [], bool $overwrite = false)
+    public function select(ExpressionInterface|Table|Association|callable|array|string|float|int|bool $fields = [], bool $overwrite = false)
     {
         if ($fields instanceof Association) {
             $fields = $fields->getTarget();
@@ -216,16 +216,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string[] $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return $this
-     * @throws \InvalidArgumentException If Association|Table is not passed in first argument
      */
     public function selectAllExcept(Table|Association $table, array $excludedFields, bool $overwrite = false)
     {
         if ($table instanceof Association) {
             $table = $table->getTarget();
-        }
-
-        if (!($table instanceof Table)) {
-            throw new InvalidArgumentException('You must provide either an Association or a Table object');
         }
 
         $fields = array_diff($table->getSchema()->columns(), $excludedFields);
@@ -1176,7 +1171,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return static Returns a modified query.
      * @psalm-suppress MoreSpecificReturnType
      */
-    public function find(string $finder, array $options = [])
+    public function find(string $finder, array $options = []): static
     {
         $table = $this->getRepository();
 

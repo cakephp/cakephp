@@ -152,7 +152,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function reduce(callable $callback, $initial = null)
+    public function reduce(callable $callback, mixed $initial = null): mixed
     {
         $isFirst = false;
         if (func_num_args() < 2) {
@@ -192,7 +192,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function max($path, int $sort = SORT_NUMERIC)
+    public function max($path, int $sort = SORT_NUMERIC): mixed
     {
         return (new SortIterator($this->unwrap(), $path, SORT_DESC, $sort))->first();
     }
@@ -200,7 +200,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function min($path, int $sort = SORT_NUMERIC)
+    public function min($path, int $sort = SORT_NUMERIC): mixed
     {
         return (new SortIterator($this->unwrap(), $path, SORT_ASC, $sort))->first();
     }
@@ -208,7 +208,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function avg($path = null)
+    public function avg($path = null): float|int|null
     {
         $result = $this;
         if ($path !== null) {
@@ -231,7 +231,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function median($path = null)
+    public function median($path = null): float|int|null
     {
         $items = $this;
         if ($path !== null) {
@@ -327,7 +327,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sumOf($path = null)
+    public function sumOf($path = null): float|int
     {
         if ($path === null) {
             return array_sum($this->toList());
@@ -388,7 +388,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function firstMatch(array $conditions)
+    public function firstMatch(array $conditions): mixed
     {
         return $this->match($conditions)->first();
     }
@@ -396,7 +396,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function first()
+    public function first(): mixed
     {
         $iterator = new LimitIterator($this, 0, 1);
         foreach ($iterator as $result) {
@@ -407,7 +407,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function last()
+    public function last(): mixed
     {
         $iterator = $this->optimizeUnwrap();
         if (is_array($iterator)) {

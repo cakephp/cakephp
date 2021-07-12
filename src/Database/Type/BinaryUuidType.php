@@ -36,9 +36,9 @@ class BinaryUuidType extends BaseType
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return resource|string|null
+     * @return string|null
      */
-    public function toDatabase(mixed $value, DriverInterface $driver)
+    public function toDatabase(mixed $value, DriverInterface $driver): string|null
     {
         if (!is_string($value)) {
             return $value;
@@ -67,19 +67,16 @@ class BinaryUuidType extends BaseType
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return resource|string|null
+     * @return string|null
      * @throws \Cake\Core\Exception\CakeException
      */
-    public function toPHP(mixed $value, DriverInterface $driver)
+    public function toPHP(mixed $value, DriverInterface $driver): string|null
     {
         if ($value === null) {
             return null;
         }
         if (is_string($value)) {
             return $this->convertBinaryUuidToString($value);
-        }
-        if (is_resource($value)) {
-            return $value;
         }
 
         throw new CakeException(sprintf('Unable to convert %s into binary uuid.', gettype($value)));

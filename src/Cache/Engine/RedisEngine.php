@@ -144,7 +144,7 @@ class RedisEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
         $key = $this->_key($key);
         $value = $this->serialize($value);
@@ -165,7 +165,7 @@ class RedisEngine extends CacheEngine
      * @return mixed The cached data, or the default if the data doesn't exist, has
      *   expired, or if there was an error fetching it
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, $default = null)
     {
         $value = $this->_Redis->get($this->_key($key));
         if ($value === false) {
@@ -221,7 +221,7 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         $key = $this->_key($key);
 

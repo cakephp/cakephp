@@ -20,6 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\DriverInterface;
 use PDO;
 use PDOStatement as Statement;
+use stdClass;
 
 /**
  * Decorator for \PDOStatement class mainly used for converting human readable
@@ -110,10 +111,10 @@ class PDOStatement extends StatementDecorator
      * ```
      *
      * @param string|int $type 'num' for positional columns, assoc for named columns
-     * @return mixed Result array containing columns and values or false if no results
+     * @return \stdClass|array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch(string|int $type = parent::FETCH_TYPE_NUM): mixed
+    public function fetch(string|int $type = parent::FETCH_TYPE_NUM): stdClass|array|false
     {
         if ($type === static::FETCH_TYPE_NUM) {
             return $this->_statement->fetch(PDO::FETCH_NUM);
@@ -147,10 +148,10 @@ class PDOStatement extends StatementDecorator
      * ```
      *
      * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array|false list of all results from database for this statement, false on failure
+     * @return \stdClass|array|false list of all results from database for this statement, false on failure
      * @psalm-assert string $type
      */
-    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): array|false
+    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): stdClass|array|false
     {
         if ($type === static::FETCH_TYPE_NUM) {
             return $this->_statement->fetchAll(PDO::FETCH_NUM);
