@@ -21,7 +21,6 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Filesystem\Filesystem;
-use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
 use TestApp\Shell\MergeShell;
@@ -39,11 +38,6 @@ class_alias(TestBananaTask::class, 'Cake\Shell\Task\TestBananaTask');
  */
 class ShellTest extends TestCase
 {
-    /**
-     * @inheritDoc
-     */
-    protected $stateResetStrategy = TransactionStrategy::class;
-
     /**
      * Fixtures used in this test case
      *
