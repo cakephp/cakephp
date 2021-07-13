@@ -20,7 +20,6 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -29,11 +28,6 @@ use Cake\TestSuite\TestCase;
 class SchemaCacheCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
-
-    /**
-     * @inheritDoc
-     */
-    protected $stateResetStrategy = TransactionStrategy::class;
 
     /**
      * Fixtures.
