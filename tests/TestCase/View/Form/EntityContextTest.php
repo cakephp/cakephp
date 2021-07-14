@@ -40,14 +40,6 @@ class EntityContextTest extends TestCase
     protected $fixtures = ['core.Articles', 'core.Comments', 'core.Tags', 'core.ArticlesTags'];
 
     /**
-     * setup method.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    /**
      * tests getRequiredMessage
      */
     public function testGetRequiredMessage(): void

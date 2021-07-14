@@ -30,22 +30,6 @@ use TypeError;
 class XmlTest extends TestCase
 {
     /**
-     * autoFixtures property
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
-     * fixtures property
-     *
-     * @var array
-     */
-    protected $fixtures = [
-        'core.Articles', 'core.Users',
-    ];
-
-    /**
      * setUp method
      */
     public function setUp(): void
