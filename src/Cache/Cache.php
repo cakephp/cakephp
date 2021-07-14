@@ -71,7 +71,7 @@ class Cache
      * An array mapping URL schemes to fully qualified caching engine
      * class names.
      *
-     * @var string[]
+     * @var array<string>
      * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [
@@ -466,7 +466,7 @@ class Cache
     /**
      * Delete all keys from the cache from all configurations.
      *
-     * @return bool[] Status code. For each configuration, it reports the status of the operation
+     * @return array<bool> Status code. For each configuration, it reports the status of the operation
      */
     public static function clearAll(): array
     {

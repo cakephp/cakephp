@@ -44,14 +44,14 @@ class FixtureManager extends FixtureLoader
     /**
      * Holds the fixture classes that where instantiated
      *
-     * @var \Cake\Datasource\FixtureInterface[]
+     * @var array<\Cake\Datasource\FixtureInterface>
      */
     protected $_loaded = [];
 
     /**
      * Holds the fixture classes that where instantiated indexed by class name
      *
-     * @var \Cake\Datasource\FixtureInterface[]
+     * @var array<\Cake\Datasource\FixtureInterface>
      */
     protected $_fixtureMap = [];
 
@@ -275,7 +275,7 @@ class FixtureManager extends FixtureLoader
      *
      * @param \Cake\Datasource\FixtureInterface $fixture the fixture object to create
      * @param \Cake\Datasource\ConnectionInterface $db The Connection object instance to use
-     * @param string[] $sources The existing tables in the datasource.
+     * @param array<string> $sources The existing tables in the datasource.
      * @param bool $drop whether drop the fixture if it is already created or not
      * @return void
      */
@@ -320,7 +320,7 @@ class FixtureManager extends FixtureLoader
 
         try {
             $createTables = function (ConnectionInterface $db, array $fixtures) use ($test): void {
-                /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
+                /** @var array<\Cake\Datasource\FixtureInterface> $fixtures */
                 $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 $this->_insertionMap[$configName] = $this->_insertionMap[$configName] ?? [];
@@ -403,7 +403,7 @@ class FixtureManager extends FixtureLoader
     /**
      * Run a function on each connection and collection of fixtures.
      *
-     * @param string[] $fixtures A list of fixtures to operate on.
+     * @param array<string> $fixtures A list of fixtures to operate on.
      * @param callable $operation The operation to run on each connection + fixture set.
      * @return void
      */
@@ -431,7 +431,7 @@ class FixtureManager extends FixtureLoader
     /**
      * Get the unique list of connections that a set of fixtures contains.
      *
-     * @param string[] $fixtures The array of fixtures a list of connections is needed from.
+     * @param array<string> $fixtures The array of fixtures a list of connections is needed from.
      * @return array An array of connection names.
      */
     protected function _fixtureConnections(array $fixtures): array

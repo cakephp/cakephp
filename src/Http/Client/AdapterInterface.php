@@ -27,7 +27,7 @@ interface AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request object to send.
      * @param array $options Array of options for the stream.
-     * @return \Cake\Http\Client\Response[] Array of populated Response objects
+     * @return array<\Cake\Http\Client\Response> Array of populated Response objects
      */
     public function send(RequestInterface $request, array $options): array;
 }

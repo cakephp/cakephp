@@ -31,7 +31,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     protected $name;
 
     /**
-     * @var \Cake\Database\ExpressionInterface[]
+     * @var array<\Cake\Database\ExpressionInterface>
      */
     protected $partitions = [];
 

@@ -66,7 +66,7 @@ class ArrayLog extends BaseLog
     /**
      * Read the internal storage
      *
-     * @return string[]
+     * @return array<string>
      */
     public function read(): array
     {

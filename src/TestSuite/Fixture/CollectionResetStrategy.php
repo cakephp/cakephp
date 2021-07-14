@@ -26,14 +26,14 @@ namespace Cake\TestSuite\Fixture;
 class CollectionResetStrategy implements ResetStrategyInterface
 {
     /**
-     * @var \Cake\TestSuite\Fixture\ResetStrategyInterface[]
+     * @var array<\Cake\TestSuite\Fixture\ResetStrategyInterface>
      */
     protected $items = [];
 
     /**
      * Constructor
      *
-     * @param \Cake\TestSuite\Fixture\ResetStrategyInterface[] $items The strategies to aggregate.
+     * @param array<\Cake\TestSuite\Fixture\ResetStrategyInterface> $items The strategies to aggregate.
      */
     public function __construct(array $items)
     {

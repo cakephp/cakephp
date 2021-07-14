@@ -64,7 +64,7 @@ class TranslatorRegistry
      * packages where none can be found for the combination of translator
      * name and locale.
      *
-     * @var callable[]
+     * @var array<callable>
      */
     protected $_loaders = [];
 

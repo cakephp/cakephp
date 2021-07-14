@@ -28,7 +28,7 @@ use PDOException;
 class ErrorCodeWaitStrategy implements RetryStrategyInterface
 {
     /**
-     * @var int[]
+     * @var array<int>
      */
     protected $errorCodes;
 
@@ -38,7 +38,7 @@ class ErrorCodeWaitStrategy implements RetryStrategyInterface
     protected $retryInterval;
 
     /**
-     * @param int[] $errorCodes DB-specific error codes that allow retrying
+     * @param array<int> $errorCodes DB-specific error codes that allow retrying
      * @param int $retryInterval Seconds to wait before allowing next retry, 0 for no wait.
      */
     public function __construct(array $errorCodes, int $retryInterval)

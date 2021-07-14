@@ -47,7 +47,7 @@ class Configure
      * Configured engine classes, used to load config files from resources
      *
      * @see \Cake\Core\Configure::load()
-     * @var \Cake\Core\Configure\ConfigEngineInterface[]
+     * @var array<\Cake\Core\Configure\ConfigEngineInterface>
      */
     protected static $_engines = [];
 
@@ -270,7 +270,7 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
-     * @return string[]
+     * @return array<string>
      */
     public static function configured(): array
     {
@@ -365,7 +365,7 @@ class Configure
      * @param string $key The identifier to create in the config adapter.
      *   This could be a filename or a cache key depending on the adapter being used.
      * @param string $config The name of the configured adapter to dump data with.
-     * @param string[] $keys The name of the top-level keys you want to dump.
+     * @param array<string> $keys The name of the top-level keys you want to dump.
      *   This allows you save only some data stored in Configure.
      * @return bool Success
      * @throws \Cake\Core\Exception\CakeException if the adapter does not implement a `dump` method.

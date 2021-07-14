@@ -350,7 +350,7 @@ class Marshaller
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
-     * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
+     * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      * @see \Cake\ORM\Table::newEntities()
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -376,7 +376,7 @@ class Marshaller
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshal.
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
-     * @return \Cake\Datasource\EntityInterface[] An array of built entities.
+     * @return array<\Cake\Datasource\EntityInterface> An array of built entities.
      * @throws \BadMethodCallException
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
@@ -470,7 +470,7 @@ class Marshaller
      *
      * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
-     * @return \Cake\Datasource\EntityInterface[] An array of entities.
+     * @return array<\Cake\Datasource\EntityInterface> An array of entities.
      */
     protected function _loadAssociatedByIds(Association $assoc, array $ids): array
     {
@@ -652,7 +652,7 @@ class Marshaller
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array $options List of options.
-     * @return \Cake\Datasource\EntityInterface[]
+     * @return array<\Cake\Datasource\EntityInterface>
      * @see \Cake\ORM\Entity::$_accessible
      * @psalm-suppress NullArrayOffset
      */
@@ -779,11 +779,11 @@ class Marshaller
      * Creates a new sub-marshaller and merges the associated data for a BelongstoMany
      * association.
      *
-     * @param \Cake\Datasource\EntityInterface[] $original The original entities list.
+     * @param array<\Cake\Datasource\EntityInterface> $original The original entities list.
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
-     * @return \Cake\Datasource\EntityInterface[]
+     * @return array<\Cake\Datasource\EntityInterface>
      */
     protected function _mergeBelongsToMany(array $original, BelongsToMany $assoc, array $value, array $options): array
     {
@@ -809,11 +809,11 @@ class Marshaller
     /**
      * Merge the special _joinData property into the entity set.
      *
-     * @param \Cake\Datasource\EntityInterface[] $original The original entities list.
+     * @param array<\Cake\Datasource\EntityInterface> $original The original entities list.
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
-     * @return \Cake\Datasource\EntityInterface[] An array of entities
+     * @return array<\Cake\Datasource\EntityInterface> An array of entities
      */
     protected function _mergeJoinData(array $original, BelongsToMany $assoc, array $value, array $options): array
     {

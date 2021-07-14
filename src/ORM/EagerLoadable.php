@@ -36,7 +36,7 @@ class EagerLoadable
     /**
      * A list of other associations to load from this level.
      *
-     * @var \Cake\ORM\EagerLoadable[]
+     * @var array<\Cake\ORM\EagerLoadable>
      */
     protected $_associations = [];
 
@@ -157,7 +157,7 @@ class EagerLoadable
     /**
      * Returns the Association class instance to use for loading the records.
      *
-     * @return \Cake\ORM\EagerLoadable[]
+     * @return array<\Cake\ORM\EagerLoadable>
      */
     public function associations(): array
     {

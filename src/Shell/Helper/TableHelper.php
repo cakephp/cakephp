@@ -39,7 +39,7 @@ class TableHelper extends Helper
      * Calculate the column widths
      *
      * @param array $rows The rows on which the columns width will be calculated on.
-     * @return int[]
+     * @return array<int>
      */
     protected function _calculateWidths(array $rows): array
     {
@@ -82,7 +82,7 @@ class TableHelper extends Helper
     /**
      * Output a row separator.
      *
-     * @param int[] $widths The widths of each column to output.
+     * @param array<int> $widths The widths of each column to output.
      * @return void
      */
     protected function _rowSeparator(array $widths): void
@@ -99,7 +99,7 @@ class TableHelper extends Helper
      * Output a row.
      *
      * @param array $row The row to output.
-     * @param int[] $widths The widths of each column to output.
+     * @param array<int> $widths The widths of each column to output.
      * @param array $options Options to be passed.
      * @return void
      */

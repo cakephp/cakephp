@@ -125,7 +125,7 @@ class CorsBuilder
     /**
      * Normalize the origin to regular expressions and put in an array format
      *
-     * @param string[] $domains Domain names to normalize.
+     * @param array<string> $domains Domain names to normalize.
      * @return array
      */
     protected function _normalizeDomains(array $domains): array
@@ -151,7 +151,7 @@ class CorsBuilder
     /**
      * Set the list of allowed HTTP Methods.
      *
-     * @param string[] $methods The allowed HTTP methods
+     * @param array<string> $methods The allowed HTTP methods
      * @return $this
      */
     public function allowMethods(array $methods)
@@ -176,7 +176,7 @@ class CorsBuilder
     /**
      * Allowed headers that can be sent in CORS requests.
      *
-     * @param string[] $headers The list of headers to accept in CORS requests.
+     * @param array<string> $headers The list of headers to accept in CORS requests.
      * @return $this
      */
     public function allowHeaders(array $headers)
@@ -189,7 +189,7 @@ class CorsBuilder
     /**
      * Define the headers a client library/browser can expose to scripting
      *
-     * @param string[] $headers The list of headers to expose CORS responses
+     * @param array<string> $headers The list of headers to expose CORS responses
      * @return $this
      */
     public function exposeHeaders(array $headers)

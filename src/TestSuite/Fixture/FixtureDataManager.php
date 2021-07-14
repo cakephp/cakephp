@@ -40,19 +40,19 @@ class FixtureDataManager extends FixtureLoader
     /**
      * A mapping between the fixture name (including the prefix) and the object.
      *
-     * @var \Cake\Datasource\FixtureInterface[]
+     * @var array<\Cake\Datasource\FixtureInterface>
      */
     protected $fixtures = [];
 
     /**
      * A map between a fixture name without the plugin prefix and the object.
      *
-     * @var \Cake\Datasource\FixtureInterface[]
+     * @var array<\Cake\Datasource\FixtureInterface>
      */
     protected $nameMap = [];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $inserted = [];
 
@@ -60,7 +60,7 @@ class FixtureDataManager extends FixtureLoader
      * A map of test classes and whether or not their fixtures have
      * been added to the nameMap.
      *
-     * @var bool[]
+     * @var array<bool>
      */
     protected $visitedTests = [];
 
@@ -196,7 +196,7 @@ class FixtureDataManager extends FixtureLoader
     /**
      * Run a function on each connection and collection of fixtures.
      *
-     * @param string[] $fixtures A list of fixtures to operate on.
+     * @param array<string> $fixtures A list of fixtures to operate on.
      * @param callable $operation The operation to run on each connection + fixture set.
      * @return void
      */
@@ -216,7 +216,7 @@ class FixtureDataManager extends FixtureLoader
     /**
      * Get the unique list of connections that a set of fixtures contains.
      *
-     * @param string[] $fixtures The array of fixtures a list of connections is needed from.
+     * @param array<string> $fixtures The array of fixtures a list of connections is needed from.
      * @return array An array of connection names.
      */
     protected function fixtureConnections(array $fixtures): array

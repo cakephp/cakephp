@@ -31,7 +31,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets hidden fields.
      *
-     * @param string[] $fields An array of fields to hide from array exports.
+     * @param array<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -40,14 +40,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the hidden fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getHidden(): array;
 
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param string[] $fields An array of fields to treat as virtual.
+     * @param array<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -56,7 +56,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getVirtual(): array;
 
@@ -81,7 +81,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the dirty fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getDirty(): array;
 
@@ -164,7 +164,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested original fields
      * stored in this entity, indexed by field name.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array;
@@ -173,7 +173,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with only the original fields
      * stored in this entity, indexed by field name.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array;
@@ -234,7 +234,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Get the list of visible fields.
      *
-     * @return string[] A list of fields that are 'visible' in all representations.
+     * @return array<string> A list of fields that are 'visible' in all representations.
      */
     public function getVisible(): array;
 
@@ -252,7 +252,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param string[] $fields list of fields to be returned
+     * @param array<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */

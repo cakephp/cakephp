@@ -231,7 +231,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *
      * @throws \InvalidArgumentException Thrown when a value is invalid.
      * @param string $value Value to check
-     * @param string[] $allowed List of allowed values
+     * @param array<string> $allowed List of allowed values
      * @return void
      */
     protected function checkValues(string $value, array $allowed): void

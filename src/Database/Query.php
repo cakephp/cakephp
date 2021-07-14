@@ -100,7 +100,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_selectParts = [
         'with', 'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
@@ -110,21 +110,21 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
@@ -142,7 +142,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * statement upon retrieval. Each one of the callback function will receive
      * the row array as first argument.
      *
-     * @var callable[]
+     * @var array<callable>
      */
     protected $_resultDecorators = [];
 
@@ -361,7 +361,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * @param callable $visitor A function or callable to be executed for each part
-     * @param string[] $parts The list of query parts to traverse
+     * @param array<string> $parts The list of query parts to traverse
      * @return $this
      */
     public function traverseParts(callable $visitor, array $parts)
@@ -1639,7 +1639,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * with Query::values().
      *
      * @param array $columns The columns to insert into.
-     * @param string[] $types A map between columns & their datatypes.
+     * @param array<string> $types A map between columns & their datatypes.
      * @return $this
      * @throws \RuntimeException When there are 0 columns.
      */

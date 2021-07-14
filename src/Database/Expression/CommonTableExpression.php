@@ -36,7 +36,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * The field names to use for the CTE.
      *
-     * @var \Cake\Database\Expression\IdentifierExpression[]
+     * @var array<\Cake\Database\Expression\IdentifierExpression>
      */
     protected $fields = [];
 

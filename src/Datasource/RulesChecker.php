@@ -65,28 +65,28 @@ class RulesChecker
     /**
      * The list of rules to be checked on both create and update operations
      *
-     * @var \Cake\Datasource\RuleInvoker[]
+     * @var array<\Cake\Datasource\RuleInvoker>
      */
     protected $_rules = [];
 
     /**
      * The list of rules to check during create operations
      *
-     * @var \Cake\Datasource\RuleInvoker[]
+     * @var array<\Cake\Datasource\RuleInvoker>
      */
     protected $_createRules = [];
 
     /**
      * The list of rules to check during update operations
      *
-     * @var \Cake\Datasource\RuleInvoker[]
+     * @var array<\Cake\Datasource\RuleInvoker>
      */
     protected $_updateRules = [];
 
     /**
      * The list of rules to check during delete operations
      *
-     * @var \Cake\Datasource\RuleInvoker[]
+     * @var array<\Cake\Datasource\RuleInvoker>
      */
     protected $_deleteRules = [];
 
@@ -289,7 +289,7 @@ class RulesChecker
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
      * @param array $options Extra options to pass to checker functions.
-     * @param \Cake\Datasource\RuleInvoker[] $rules The list of rules that must be checked.
+     * @param array<\Cake\Datasource\RuleInvoker> $rules The list of rules that must be checked.
      * @return bool
      */
     protected function _checkRules(EntityInterface $entity, array $options = [], array $rules = []): bool

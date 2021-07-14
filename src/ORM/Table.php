@@ -1447,7 +1447,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * composite keys when comparing values.
      *
      * @param array $options the original options passed to a finder
-     * @param string[] $keys the keys to check in $options to build matchers from
+     * @param array<string> $keys the keys to check in $options to build matchers from
      * the associated value
      * @return array
      */
@@ -2105,7 +2105,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Note: The ORM will not generate primary key values for composite primary keys.
      * You can overwrite _newId() in your table class.
      *
-     * @param string[] $primary The primary key columns to get a new ID for.
+     * @param array<string> $primary The primary key columns to get a new ID for.
      * @return string|null Either null or the primary key value or a list of primary key values.
      */
     protected function _newId(array $primary)
@@ -2222,7 +2222,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ]
         );
 
-        /** @var bool[] $isNew */
+        /** @var array<bool> $isNew */
         $isNew = [];
         $cleanup = function ($entities) use (&$isNew): void {
             /** @var array<\Cake\Datasource\EntityInterface> $entities */

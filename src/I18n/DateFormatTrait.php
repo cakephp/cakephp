@@ -52,7 +52,7 @@ trait DateFormatTrait
     /**
      * In-memory cache of date formatters
      *
-     * @var \IntlDateFormatter[]
+     * @var array<\IntlDateFormatter>
      */
     protected static $_formatters = [];
 

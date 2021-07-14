@@ -56,7 +56,7 @@ class DateTimeWidget extends BasicWidget
     /**
      * Formats for various input types.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $formatMap = [
         'datetime-local' => 'Y-m-d\TH:i:s',

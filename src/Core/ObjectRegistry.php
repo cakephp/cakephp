@@ -46,7 +46,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Map of loaded objects.
      *
-     * @var object[]
+     * @var array<object>
      * @psalm-var array<array-key, TObject>
      */
     protected $_loaded = [];
@@ -201,7 +201,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Get the list of loaded objects.
      *
-     * @return string[] List of object names.
+     * @return array<string> List of object names.
      */
     public function loaded(): array
     {
@@ -288,7 +288,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * easier
      *
      * @param array $objects Array of child objects to normalize.
-     * @return array[] Array of normalized objects.
+     * @return array<array> Array of normalized objects.
      */
     public function normalizeArray(array $objects): array
     {

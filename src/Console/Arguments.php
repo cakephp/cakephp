@@ -25,14 +25,14 @@ class Arguments
     /**
      * Positional argument name map
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $argNames;
 
     /**
      * Positional arguments.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $args;
 
@@ -46,9 +46,9 @@ class Arguments
     /**
      * Constructor
      *
-     * @param string[] $args Positional arguments
+     * @param array<string> $args Positional arguments
      * @param array $options Named arguments
-     * @param string[] $argNames List of argument names. Order is expected to be
+     * @param array<string> $argNames List of argument names. Order is expected to be
      *  the same as $args.
      */
     public function __construct(array $args, array $options, array $argNames)
@@ -61,7 +61,7 @@ class Arguments
     /**
      * Get all positional arguments.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getArguments(): array
     {

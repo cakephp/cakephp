@@ -26,7 +26,7 @@ interface NodeInterface
     /**
      * Get the child nodes of this node.
      *
-     * @return \Cake\Error\Debug\NodeInterface[]
+     * @return array<\Cake\Error\Debug\NodeInterface>
      */
     public function getChildren(): array;
 

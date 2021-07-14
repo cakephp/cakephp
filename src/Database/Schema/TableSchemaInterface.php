@@ -230,7 +230,7 @@ interface TableSchemaInterface extends SchemaInterface
     /**
      * Get the names of all the indexes in the table.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function indexes(): array;
 
@@ -277,7 +277,7 @@ interface TableSchemaInterface extends SchemaInterface
     /**
      * Get the names of all the constraints in the table.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function constraints(): array;
 }

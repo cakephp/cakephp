@@ -95,7 +95,7 @@ class Folder
     /**
      * Functions array to be called depending on the sort type chosen.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',
@@ -440,7 +440,7 @@ class Folder
      * @param string $path The path to chmod.
      * @param int|null $mode Octal value, e.g. 0755.
      * @param bool $recursive Chmod recursively, set to false to only change the current directory.
-     * @param string[] $exceptions Array of files, directories to skip.
+     * @param array<string> $exceptions Array of files, directories to skip.
      * @return bool Success.
      */
     public function chmod(string $path, ?int $mode = null, bool $recursive = true, array $exceptions = []): bool

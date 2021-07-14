@@ -29,7 +29,7 @@ class ConsoleInput extends ConsoleInputBase
     /**
      * Reply values for ask() and askChoice()
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $replies = [];
 
@@ -43,7 +43,7 @@ class ConsoleInput extends ConsoleInputBase
     /**
      * Constructor
      *
-     * @param string[] $replies A list of replies for read()
+     * @param array<string> $replies A list of replies for read()
      */
     public function __construct(array $replies)
     {

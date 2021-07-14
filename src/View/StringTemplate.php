@@ -153,7 +153,7 @@ class StringTemplate
      * ]);
      * ```
      *
-     * @param string[] $templates An associative list of named templates.
+     * @param array<string> $templates An associative list of named templates.
      * @return $this
      */
     public function add(array $templates)
@@ -167,7 +167,7 @@ class StringTemplate
     /**
      * Compile templates into a more efficient printf() compatible format.
      *
-     * @param string[] $templates The template names to compile. If empty all templates will be compiled.
+     * @param array<string> $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
     protected function _compileTemplates(array $templates = []): void

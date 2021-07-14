@@ -60,7 +60,7 @@ class HasMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,

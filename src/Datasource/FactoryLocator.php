@@ -28,7 +28,7 @@ class FactoryLocator
     /**
      * A list of model factory functions.
      *
-     * @var (callable|\Cake\Datasource\Locator\LocatorInterface)[]
+     * @var array<callable|\Cake\Datasource\Locator\LocatorInterface>
      */
     protected static $_modelFactories = [];
 

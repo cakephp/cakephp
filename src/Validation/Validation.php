@@ -97,7 +97,7 @@ class Validation
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected const COMPARE_STRING = [
         self::COMPARE_EQUAL,
@@ -858,7 +858,7 @@ class Validation
      * Checks that value has a valid file extension.
      *
      * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check
-     * @param string[] $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param array<string> $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension($check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
@@ -1142,7 +1142,7 @@ class Validation
      * Checks if a value is in a given list. Comparison is case sensitive by default.
      *
      * @param mixed $check Value to check.
-     * @param string[] $list List to check against.
+     * @param array<string> $list List to check against.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success.
      */

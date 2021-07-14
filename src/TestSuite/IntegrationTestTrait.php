@@ -180,7 +180,7 @@ trait IntegrationTestTrait
     /**
      * List of fields that are excluded from field validation.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_unlockedFields = [];
 
@@ -230,7 +230,7 @@ trait IntegrationTestTrait
     /**
      * Set list of fields that are excluded from field validation.
      *
-     * @param string[] $unlockedFields List of fields that are excluded from field validation.
+     * @param array<string> $unlockedFields List of fields that are excluded from field validation.
      * @return void
      */
     public function setUnlockedFields(array $unlockedFields = []): void
