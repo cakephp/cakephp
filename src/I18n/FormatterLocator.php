@@ -37,7 +37,7 @@ class FormatterLocator
      * Tracks whether or not a registry entry has been converted from a
      * FQCN to a formatter object.
      *
-     * @var bool[]
+     * @var array<bool>
      */
     protected $converted = [];
 

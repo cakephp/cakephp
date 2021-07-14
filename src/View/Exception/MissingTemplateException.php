@@ -28,7 +28,7 @@ class MissingTemplateException extends CakeException
     protected $filename;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $paths;
 
@@ -41,7 +41,7 @@ class MissingTemplateException extends CakeException
      * Constructor
      *
      * @param array|string $file Either the file name as a string, or in an array for backwards compatibility.
-     * @param string[] $paths The path list that template could not be found in.
+     * @param array<string> $paths The path list that template could not be found in.
      * @param int|null $code The code of the error.
      * @param \Throwable|null $previous the previous exception.
      */

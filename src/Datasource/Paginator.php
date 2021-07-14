@@ -409,7 +409,7 @@ class Paginator implements PaginatorInterface
     /**
      * Shim method for reading the deprecated whitelist or allowedParameters options
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getAllowedParameters(): array
     {

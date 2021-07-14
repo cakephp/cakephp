@@ -145,14 +145,14 @@ class Router
      * The stack of URL filters to apply against routing URLs before passing the
      * parameters to the route collection.
      *
-     * @var callable[]
+     * @var array<callable>
      */
     protected static $_urlFilters = [];
 
     /**
      * Default extensions defined with Router::extensions()
      *
-     * @var string[]
+     * @var array<string>
      */
     protected static $_defaultExtensions = [];
 
@@ -732,7 +732,7 @@ class Router
      * @param array<string>|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
-     * @return string[] Array of extensions Router is configured to parse.
+     * @return array<string> Array of extensions Router is configured to parse.
      */
     public static function extensions($extensions = null, $merge = true): array
     {
@@ -894,7 +894,7 @@ class Router
     /**
      * Get the route scopes and their connected routes.
      *
-     * @return \Cake\Routing\Route\Route[]
+     * @return array<\Cake\Routing\Route\Route>
      */
     public static function routes(): array
     {
@@ -957,7 +957,7 @@ class Router
      * - Vendor/Cms.Management/Admin/Articles::view
      *
      * @param string $url Route path in [Plugin.][Prefix/]Controller::action format
-     * @return string[]
+     * @return array<string>
      */
     public static function parseRoutePath(string $url): array
     {

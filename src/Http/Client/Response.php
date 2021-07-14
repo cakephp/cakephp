@@ -377,7 +377,7 @@ class Response extends Message implements ResponseInterface
         $this->buildCookieCollection();
 
         $out = [];
-        /** @var \Cake\Http\Cookie\Cookie[] $cookies */
+        /** @var array<\Cake\Http\Cookie\Cookie> $cookies */
         $cookies = $this->cookies;
         foreach ($cookies as $cookie) {
             $out[$cookie->getName()] = $cookie->toArray();
@@ -454,7 +454,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Provides magic __get() support.
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function _getHeaders(): array
     {

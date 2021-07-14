@@ -62,7 +62,7 @@ interface QueryInterface
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return string[]
+     * @return array<string>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array;
 

@@ -68,7 +68,7 @@ class TestEmailTransport extends DebugTransport
     /**
      * Gets emails sent
      *
-     * @return \Cake\Mailer\Message[]
+     * @return array<\Cake\Mailer\Message>
      */
     public static function getMessages()
     {

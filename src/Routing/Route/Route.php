@@ -82,7 +82,7 @@ class Route
     /**
      * List of connected extensions for this route.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_extensions = [];
 
@@ -148,7 +148,7 @@ class Route
     /**
      * Set the supported extensions for this route.
      *
-     * @param string[] $extensions The extensions to set.
+     * @param array<string> $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions(array $extensions)
@@ -161,7 +161,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getExtensions(): array
     {
@@ -171,7 +171,7 @@ class Route
     /**
      * Set the accepted HTTP methods for this route.
      *
-     * @param string[] $methods The HTTP methods to accept.
+     * @param array<string> $methods The HTTP methods to accept.
      * @return $this
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
@@ -211,7 +211,7 @@ class Route
      * If any of your patterns contain multibyte values, the `multibytePattern`
      * mode will be enabled.
      *
-     * @param string[] $patterns The patterns to apply to routing elements
+     * @param array<string> $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns)
@@ -241,7 +241,7 @@ class Route
     /**
      * Set the names of parameters that will be converted into passed parameters
      *
-     * @param string[] $names The names of the parameters that should be passed.
+     * @param array<string> $names The names of the parameters that should be passed.
      * @return $this
      */
     public function setPass(array $names)
@@ -566,7 +566,7 @@ class Route
      *
      * @param string $args A string with the passed params. eg. /1/foo
      * @param array $context The current route context, which should contain controller/action keys.
-     * @return string[] Array of passed args.
+     * @return array<string> Array of passed args.
      */
     protected function _parseArgs(string $args, array $context): array
     {

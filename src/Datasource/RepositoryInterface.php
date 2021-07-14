@@ -207,7 +207,7 @@ interface RepositoryInterface
      *
      * @param array $data The data to build an entity with.
      * @param array $options A list of options for the objects hydration.
-     * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
+     * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      */
     public function newEntities(array $data, array $options = []): array;
 
@@ -246,7 +246,7 @@ interface RepositoryInterface
      * data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array $options A list of options for the objects hydration.
-     * @return \Cake\Datasource\EntityInterface[]
+     * @return array<\Cake\Datasource\EntityInterface>
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array;
 }

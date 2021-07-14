@@ -40,7 +40,7 @@ abstract class Driver implements DriverInterface
     protected const MAX_ALIAS_LENGTH = null;
 
     /**
-     * @var int[] DB-specific error codes that allow connect retry
+     * @var array<int>  DB-specific error codes that allow connect retry
      */
     protected const RETRY_ERROR_CODES = [];
 

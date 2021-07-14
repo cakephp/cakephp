@@ -116,8 +116,8 @@ class LazyEagerLoader
      * in the top level entities.
      *
      * @param \Cake\ORM\Table $source The table having the top level associations
-     * @param string[] $associations The name of the top level associations
-     * @return string[]
+     * @param array<string> $associations The name of the top level associations
+     * @return array<string>
      */
     protected function _getPropertyMap(Table $source, array $associations): array
     {
@@ -137,7 +137,7 @@ class LazyEagerLoader
      *
      * @param \Traversable|array<\Cake\Datasource\EntityInterface> $objects The original list of entities
      * @param \Cake\ORM\Query $results The loaded results
-     * @param string[] $associations The top level associations that were loaded
+     * @param array<string> $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array
      */

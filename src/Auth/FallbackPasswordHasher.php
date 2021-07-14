@@ -35,7 +35,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
     /**
      * Holds the list of password hasher objects that will be used
      *
-     * @var \Cake\Auth\AbstractPasswordHasher[]
+     * @var array<\Cake\Auth\AbstractPasswordHasher>
      */
     protected $_hashers = [];
 

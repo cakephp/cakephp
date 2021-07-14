@@ -42,7 +42,7 @@ class RouteCollection
     /**
      * The hash map of named routes that are in this collection.
      *
-     * @var \Cake\Routing\Route\Route[]
+     * @var array<\Cake\Routing\Route\Route>
      */
     protected $_named = [];
 
@@ -70,7 +70,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_extensions = [];
 
@@ -202,7 +202,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return string[] The set of names of the url
+     * @return array<string> The set of names of the url
      */
     protected function _getNames(array $url): array
     {
@@ -329,7 +329,7 @@ class RouteCollection
     /**
      * Get all the connected routes as a flat list.
      *
-     * @return \Cake\Routing\Route\Route[]
+     * @return array<\Cake\Routing\Route\Route>
      */
     public function routes(): array
     {
@@ -345,7 +345,7 @@ class RouteCollection
     /**
      * Get the connected named routes.
      *
-     * @return \Cake\Routing\Route\Route[]
+     * @return array<\Cake\Routing\Route\Route>
      */
     public function named(): array
     {
@@ -355,7 +355,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return string[] The valid extensions.
+     * @return array<string> The valid extensions.
      */
     public function getExtensions(): array
     {
@@ -365,7 +365,7 @@ class RouteCollection
     /**
      * Set the extensions that the route collection can handle.
      *
-     * @param string[] $extensions The list of extensions to set.
+     * @param array<string> $extensions The list of extensions to set.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return $this
@@ -405,7 +405,7 @@ class RouteCollection
      * Add middleware to a middleware group
      *
      * @param string $name Name of the middleware group
-     * @param string[] $middlewareNames Names of the middleware
+     * @param array<string> $middlewareNames Names of the middleware
      * @return $this
      * @throws \RuntimeException
      */
@@ -464,7 +464,7 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param string[] $names The names of the middleware or groups to fetch
+     * @param array<string> $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
      * @throws \RuntimeException when a requested middleware does not exist.

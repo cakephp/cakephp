@@ -66,7 +66,7 @@ class SyslogLog extends BaseLog
     /**
      * Used to map the string names back to their LOG_* constants
      *
-     * @var int[]
+     * @var array<int>
      */
     protected $_levelMap = [
         'emergency' => LOG_EMERG,

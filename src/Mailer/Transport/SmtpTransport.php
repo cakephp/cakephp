@@ -196,7 +196,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Parses and stores the response lines in `'code' => 'message'` format.
      *
-     * @param string[] $responseLines Response lines to parse.
+     * @param array<string> $responseLines Response lines to parse.
      * @return void
      */
     protected function _bufferResponseLines(array $responseLines): void

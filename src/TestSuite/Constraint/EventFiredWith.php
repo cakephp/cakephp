@@ -84,7 +84,7 @@ class EventFiredWith extends Constraint
             return false;
         }
 
-        /** @var \Cake\Event\EventInterface[] $events */
+        /** @var array<\Cake\Event\EventInterface> $events */
         $events = $eventGroup[$other];
 
         if (count($events) > 1) {

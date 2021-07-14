@@ -181,14 +181,14 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Objects that will be used for authentication checks.
      *
-     * @var \Cake\Auth\BaseAuthenticate[]
+     * @var array<\Cake\Auth\BaseAuthenticate>
      */
     protected $_authenticateObjects = [];
 
     /**
      * Objects that will be used for authorization checks.
      *
-     * @var \Cake\Auth\BaseAuthorize[]
+     * @var array<\Cake\Auth\BaseAuthorize>
      */
     protected $_authorizeObjects = [];
 
@@ -202,7 +202,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Controller actions for which user validation is not required.
      *
-     * @var string[]
+     * @var array<string>
      * @see \Cake\Controller\Component\AuthComponent::allow()
      */
     public $allowedActions = [];

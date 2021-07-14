@@ -209,7 +209,7 @@ class ResponseEmitter implements EmitterInterface
     /**
      * Emit cookies using setcookie()
      *
-     * @param (\Cake\Http\Cookie\CookieInterface|string)[] $cookies An array of cookies.
+     * @param array<\Cake\Http\Cookie\CookieInterface|string> $cookies An array of cookies.
      * @return void
      */
     protected function emitCookies(array $cookies): void
