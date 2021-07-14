@@ -30,7 +30,7 @@ trait CookieCryptTrait
     /**
      * Valid cipher names for encrypted cookies.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_validCiphers = ['aes'];
 

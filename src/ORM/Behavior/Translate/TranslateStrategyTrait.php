@@ -106,7 +106,7 @@ trait TranslateStrategyTrait
      */
     protected function unsetEmptyFields($entity)
     {
-        /** @var \Cake\ORM\Entity[] $translations */
+        /** @var array<\Cake\ORM\Entity> $translations */
         $translations = (array)$entity->get('_translations');
         foreach ($translations as $locale => $translation) {
             $fields = $translation->extract($this->_config['fields'], false);

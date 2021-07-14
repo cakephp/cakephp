@@ -48,7 +48,7 @@ trait ModelAwareTrait
     /**
      * A list of overridden model factory functions.
      *
-     * @var (callable|\Cake\Datasource\Locator\LocatorInterface)[]
+     * @var array<callable|\Cake\Datasource\Locator\LocatorInterface>
      */
     protected $_modelFactories = [];
 

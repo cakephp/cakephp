@@ -56,7 +56,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
-     * @var \Cake\ORM\Table[]
+     * @var array<\Cake\ORM\Table>
      */
     protected $_fallbacked = [];
 
@@ -339,7 +339,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * debugging common mistakes when setting up associations or created new table
      * classes.
      *
-     * @return \Cake\ORM\Table[]
+     * @return array<\Cake\ORM\Table>
      */
     public function genericInstances(): array
     {

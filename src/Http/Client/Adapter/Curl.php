@@ -193,7 +193,7 @@ class Curl implements AdapterInterface
      *
      * @param \CurlHandle $handle Curl handle
      * @param string $responseData string The response data from curl_exec
-     * @return \Cake\Http\Client\Response[]
+     * @return array<\Cake\Http\Client\Response>
      */
     protected function createResponse($handle, $responseData): array
     {

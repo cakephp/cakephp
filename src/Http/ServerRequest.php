@@ -106,7 +106,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Trusted proxies list
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $trustedProxies = [];
 
@@ -116,7 +116,7 @@ class ServerRequest implements ServerRequestInterface
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
      * various formats and ways to define detectors.
      *
-     * @var (callable|array)[]
+     * @var array<callable|array>
      */
     protected static $_detectors = [
         'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
@@ -397,7 +397,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * register trusted proxies
      *
-     * @param string[] $proxies ips list of trusted proxies
+     * @param array<string> $proxies ips list of trusted proxies
      * @return void
      */
     public function setTrustedProxies(array $proxies): void
@@ -409,7 +409,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get trusted proxies
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getTrustedProxies(): array
     {
@@ -637,7 +637,7 @@ class ServerRequest implements ServerRequestInterface
      * See Request::is() for how to add additional types and the
      * built-in types.
      *
-     * @param string[] $types The types to check.
+     * @param array<string> $types The types to check.
      * @return bool Success.
      * @see \Cake\Http\ServerRequest::is()
      */
@@ -768,7 +768,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return string[][] An associative array of headers and their values.
+     * @return array<string[]> An associative array of headers and their values.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array
@@ -813,7 +813,7 @@ class ServerRequest implements ServerRequestInterface
      * is not present an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return string[] An associative array of headers and their values.
+     * @return array<string> An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -1053,7 +1053,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
      *   While `example.co.uk` contains 2.
-     * @return string[] An array of subdomains.
+     * @return array<string> An array of subdomains.
      */
     public function subdomains(int $tldLength = 1): array
     {

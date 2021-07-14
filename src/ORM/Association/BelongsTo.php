@@ -36,7 +36,7 @@ class BelongsTo extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -145,7 +145,7 @@ class BelongsTo extends Association
      * clause for getting the results on the target table.
      *
      * @param array $options list of options passed to attachTo method
-     * @return \Cake\Database\Expression\IdentifierExpression[]
+     * @return array<\Cake\Database\Expression\IdentifierExpression>
      * @throws \RuntimeException if the number of columns in the foreignKey do not
      * match the number of columns in the target table primaryKey
      */

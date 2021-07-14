@@ -130,7 +130,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Holds the ValidationSet objects array
      *
-     * @var \Cake\Validation\ValidationSet[]
+     * @var array<\Cake\Validation\ValidationSet>
      * @psalm-var array<string, \Cake\Validation\ValidationSet>
      */
     protected $_fields = [];
@@ -217,7 +217,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @return array[] Array of failed fields
+     * @return array<array> Array of failed fields
      */
     public function validate(array $data, bool $newRecord = true): array
     {
@@ -375,7 +375,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of default providers.
      *
-     * @return string[]
+     * @return array<string>
      */
     public static function getDefaultProviders(): array
     {
@@ -385,7 +385,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of providers in this validator.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function providers(): array
     {
@@ -447,7 +447,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns an iterator for each of the fields to be validated
      *
-     * @return \Cake\Validation\ValidationSet[]
+     * @return array<\Cake\Validation\ValidationSet>
      * @psalm-return \Traversable<string, \Cake\Validation\ValidationSet>
      */
     public function getIterator(): Traversable
@@ -1032,7 +1032,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|int $fieldName name of field
      * @param array $defaults default settings
      * @param array|string $settings settings from data
-     * @return array[]
+     * @return array<array>
      * @throws \InvalidArgumentException
      */
     protected function _convertValidatorToArray($fieldName, array $defaults = [], $settings = []): array

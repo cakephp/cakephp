@@ -27,7 +27,7 @@ class IsUnique
     /**
      * The list of fields to check
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_fields;
 
@@ -47,7 +47,7 @@ class IsUnique
      *
      * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
      *
-     * @param string[] $fields The list of fields to check uniqueness for
+     * @param array<string> $fields The list of fields to check uniqueness for
      * @param array $options The options for unique checks.
      */
     public function __construct(array $fields, array $options = [])

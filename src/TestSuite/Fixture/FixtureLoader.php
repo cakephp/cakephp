@@ -101,14 +101,14 @@ abstract class FixtureLoader
     /**
      * Get the list of all fixtures that have been loaded.
      *
-     * @return \Cake\Datasource\FixtureInterface[]
+     * @return array<\Cake\Datasource\FixtureInterface>
      */
     abstract public function loaded(): array;
 
     /**
      * Get the list of fixture tables that were loaded since the last call to setupTest.
      *
-     * @return string[]
+     * @return array<string>
      */
     abstract public function getInserted(): array;
 }

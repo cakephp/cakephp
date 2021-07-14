@@ -167,7 +167,7 @@ trait StaticConfigTrait
     /**
      * Returns an array containing the named configurations
      *
-     * @return string[] Array of configurations.
+     * @return array<string> Array of configurations.
      */
     public static function configured(): array
     {
@@ -303,7 +303,7 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param string[] $map Additions/edits to the class map to apply.
+     * @param array<string> $map Additions/edits to the class map to apply.
      * @return void
      * @psalm-param array<string, class-string> $map
      */
@@ -315,7 +315,7 @@ REGEXP;
     /**
      * Returns the DSN class map for this class.
      *
-     * @return string[]
+     * @return array<string>
      * @psalm-return array<string, class-string>
      */
     public static function getDsnClassMap(): array

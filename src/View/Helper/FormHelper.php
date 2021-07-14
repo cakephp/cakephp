@@ -226,7 +226,7 @@ class FormHelper extends Helper
      * `data` - Corresponds to request data (POST/PUT).
      * `query` - Corresponds to request's query string.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $supportedValueSources = ['context', 'data', 'query'];
 
@@ -234,14 +234,14 @@ class FormHelper extends Helper
      * The default sources.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @var string[]
+     * @var array<string>
      */
     protected $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_groupedInputTypes = ['radio', 'multicheckbox'];
 
@@ -2478,7 +2478,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return string[] List of value sources.
+     * @return array<string> List of value sources.
      */
     public function getValueSources(): array
     {
@@ -2488,7 +2488,7 @@ class FormHelper extends Helper
     /**
      * Validate value sources.
      *
-     * @param string[] $sources A list of strings identifying a source.
+     * @param array<string> $sources A list of strings identifying a source.
      * @return void
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */

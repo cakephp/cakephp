@@ -113,7 +113,7 @@ class Log
     /**
      * An array mapping url schemes to fully qualified Log engine class names
      *
-     * @var string[]
+     * @var array<string>
      * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [
@@ -139,7 +139,7 @@ class Log
     /**
      * Handled log levels
      *
-     * @var string[]
+     * @var array<string>
      */
     protected static $_levels = [
         'emergency',
@@ -228,7 +228,7 @@ class Log
      * Call this method to obtain current
      * level configuration.
      *
-     * @return string[] Active log levels
+     * @return array<string> Active log levels
      */
     public static function levels(): array
     {

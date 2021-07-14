@@ -213,7 +213,7 @@ class View implements EventDispatcherInterface
     /**
      * List of variables to collect from the associated controller.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
@@ -230,21 +230,21 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of paths.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var string[][]
+     * @var array<string[]>
      */
     protected $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_parents = [];
 
@@ -266,7 +266,7 @@ class View implements EventDispatcherInterface
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_stack = [];
 
@@ -790,7 +790,7 @@ class View implements EventDispatcherInterface
     /**
      * Returns a list of variables available in the current View context
      *
-     * @return string[] Array of the set view variable names.
+     * @return array<string> Array of the set view variable names.
      */
     public function getVars(): array
     {
@@ -842,7 +842,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the names of all the existing blocks.
      *
-     * @return string[] An array containing the blocks.
+     * @return array<string> An array containing the blocks.
      * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks(): array
@@ -1479,7 +1479,7 @@ class View implements EventDispatcherInterface
      * and layouts.
      *
      * @param string $basePath Base path on which to get the prefixed one.
-     * @return string[] Array with all the templates paths.
+     * @return array<string> Array with all the templates paths.
      */
     protected function _getSubPaths(string $basePath): array
     {
@@ -1505,7 +1505,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return string[] paths
+     * @return array<string> paths
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {

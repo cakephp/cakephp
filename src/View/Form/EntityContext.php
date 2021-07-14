@@ -77,14 +77,14 @@ class EntityContext implements ContextInterface
     /**
      * A dictionary of tables
      *
-     * @var \Cake\ORM\Table[]
+     * @var array<\Cake\ORM\Table>
      */
     protected $_tables = [];
 
     /**
      * Dictionary of validators.
      *
-     * @var \Cake\Validation\Validator[]
+     * @var array<\Cake\Validation\Validator>
      */
     protected $_validator = [];
 
@@ -166,7 +166,7 @@ class EntityContext implements ContextInterface
      *
      * Gets the primary key columns from the root entity's schema.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getPrimaryKey(): array
     {
@@ -282,7 +282,7 @@ class EntityContext implements ContextInterface
     /**
      * Get default value from table schema for given entity field.
      *
-     * @param string[] $parts Each one of the parts in a path for a field name
+     * @param array<string> $parts Each one of the parts in a path for a field name
      * @return mixed
      */
     protected function _schemaDefault(array $parts)
@@ -305,7 +305,7 @@ class EntityContext implements ContextInterface
      * primary key column is guessed out of the provided $path array
      *
      * @param mixed $values The list from which to extract primary keys from
-     * @param string[] $path Each one of the parts in a path for a field name
+     * @param array<string> $path Each one of the parts in a path for a field name
      * @return array|null
      */
     protected function _extractMultiple($values, array $path): ?array
@@ -554,7 +554,7 @@ class EntityContext implements ContextInterface
      *
      * If the context is for an array of entities, the 0th index will be used.
      *
-     * @return string[] Array of field names in the table/entity.
+     * @return array<string> Array of field names in the table/entity.
      */
     public function fieldNames(): array
     {

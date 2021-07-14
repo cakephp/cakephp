@@ -47,7 +47,7 @@ trait EntityTrait
      * List of field names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_hidden = [];
 
@@ -56,7 +56,7 @@ trait EntityTrait
      * representations of this Entity. If a field is present in both _hidden and _virtual
      * the field will **not** be in the array/JSON versions of the entity.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_virtual = [];
 
@@ -64,7 +64,7 @@ trait EntityTrait
      * Holds a list of the fields that were modified or added after this object
      * was originally created.
      *
-     * @var bool[]
+     * @var array<bool>
      */
     protected $_dirty = [];
 
@@ -107,7 +107,7 @@ trait EntityTrait
      * not defined in the map will take its value. For example, `'*' => true`
      * means that any field not defined in the map will be accessible by default
      *
-     * @var bool[]
+     * @var array<bool>
      */
     protected $_accessible = ['*' => true];
 
@@ -451,7 +451,7 @@ trait EntityTrait
     /**
      * Sets hidden fields.
      *
-     * @param string[] $fields An array of fields to hide from array exports.
+     * @param array<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -472,7 +472,7 @@ trait EntityTrait
     /**
      * Gets the hidden fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getHidden(): array
     {
@@ -482,7 +482,7 @@ trait EntityTrait
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param string[] $fields An array of fields to treat as virtual.
+     * @param array<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -503,7 +503,7 @@ trait EntityTrait
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getVirtual(): array
     {
@@ -516,7 +516,7 @@ trait EntityTrait
      * The list of visible fields is all standard fields
      * plus virtual fields minus hidden fields.
      *
-     * @return string[] A list of fields that are 'visible' in all
+     * @return array<string> A list of fields that are 'visible' in all
      *     representations.
      */
     public function getVisible(): array
@@ -663,7 +663,7 @@ trait EntityTrait
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param string[] $fields list of fields to be returned
+     * @param array<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
@@ -686,7 +686,7 @@ trait EntityTrait
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array
@@ -706,7 +706,7 @@ trait EntityTrait
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array
@@ -762,7 +762,7 @@ trait EntityTrait
     /**
      * Gets the dirty fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getDirty(): array
     {
@@ -1156,7 +1156,7 @@ trait EntityTrait
      * Returns the raw accessible configuration for this entity.
      * The `*` wildcard refers to all fields.
      *
-     * @return bool[]
+     * @return array<bool>
      */
     public function getAccessible(): array
     {

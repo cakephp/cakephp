@@ -43,14 +43,14 @@ class ConnectionManager
     /**
      * A map of connection aliases.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected static $_aliasMap = [];
 
     /**
      * An array mapping url schemes to fully qualified driver class names
      *
-     * @var string[]
+     * @var array<string>
      * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [

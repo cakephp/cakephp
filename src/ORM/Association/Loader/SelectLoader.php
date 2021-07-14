@@ -337,7 +337,7 @@ class SelectLoader
      * from $keys with the tuple values in $filter using the provided operator.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string[] $keys the fields that should be used for filtering
+     * @param array<string> $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
@@ -528,7 +528,7 @@ class SelectLoader
      * be done with multiple foreign keys
      *
      * @param array $resultMap A keyed arrays containing the target table
-     * @param string[] $sourceKeys An array with aliased keys to match
+     * @param array<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */

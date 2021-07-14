@@ -38,7 +38,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Stored associations
      *
-     * @var \Cake\ORM\Association[]
+     * @var array<\Cake\ORM\Association>
      */
     protected $_items = [];
 
@@ -144,7 +144,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get the names of all the associations in the collection.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function keys(): array
     {
@@ -156,7 +156,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @param array|string $class The type of associations you want.
      *   For example 'BelongsTo' or array like ['BelongsTo', 'HasOne']
-     * @return \Cake\ORM\Association[] An array of Association objects.
+     * @return array<\Cake\ORM\Association> An array of Association objects.
      * @since 3.5.3
      */
     public function getByType($class): array
@@ -369,7 +369,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Allow looping through the associations
      *
-     * @return \Cake\ORM\Association[]
+     * @return array<\Cake\ORM\Association>
      * @psalm-return \Traversable<string, \Cake\ORM\Association>
      */
     public function getIterator(): Traversable

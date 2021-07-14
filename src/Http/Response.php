@@ -56,7 +56,7 @@ class Response implements ResponseInterface
     /**
      * Allowed HTTP status codes and their default description.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_statusCodes = [
         100 => 'Continue',
@@ -1313,7 +1313,7 @@ class Response implements ResponseInterface
     public function getCookies(): array
     {
         $out = [];
-        /** @var \Cake\Http\Cookie\Cookie[] $cookies */
+        /** @var array<\Cake\Http\Cookie\Cookie> $cookies */
         $cookies = $this->_cookies;
         foreach ($cookies as $cookie) {
             $out[$cookie->getName()] = $cookie->toArray();

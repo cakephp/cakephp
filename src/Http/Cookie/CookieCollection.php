@@ -38,14 +38,14 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Cookie objects
      *
-     * @var \Cake\Http\Cookie\CookieInterface[]
+     * @var array<\Cake\Http\Cookie\CookieInterface>
      */
     protected $cookies = [];
 
     /**
      * Constructor
      *
-     * @param \Cake\Http\Cookie\CookieInterface[] $cookies Array of cookie objects
+     * @param array<\Cake\Http\Cookie\CookieInterface> $cookies Array of cookie objects
      */
     public function __construct(array $cookies = [])
     {
@@ -187,7 +187,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Checks if only valid cookie objects are in the array
      *
-     * @param \Cake\Http\Cookie\CookieInterface[] $cookies Array of cookie objects
+     * @param array<\Cake\Http\Cookie\CookieInterface> $cookies Array of cookie objects
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -210,7 +210,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Gets the iterator
      *
-     * @return \Cake\Http\Cookie\CookieInterface[]
+     * @return array<\Cake\Http\Cookie\CookieInterface>
      * @psalm-return \Traversable<string, \Cake\Http\Cookie\CookieInterface>
      */
     public function getIterator(): Traversable

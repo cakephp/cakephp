@@ -868,8 +868,8 @@ class Message implements JsonSerializable, Serializable
      * - `bcc`
      * - `subject`
      *
-     * @param string[] $include List of headers.
-     * @return string[]
+     * @param array<string> $include List of headers.
+     * @return array<string>
      */
     public function getHeaders(array $include = []): array
     {
@@ -953,7 +953,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Get headers as string.
      *
-     * @param string[] $include List of headers.
+     * @param array<string> $include List of headers.
      * @param string $eol End of line string for concatenating headers.
      * @param \Closure $callback Callback to run each header value through before stringifying.
      * @return string
@@ -1290,7 +1290,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Generate full message.
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function generateMessage(): array
     {
@@ -1383,7 +1383,7 @@ class Message implements JsonSerializable, Serializable
      * Attach non-embedded files by adding file contents inside boundaries.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return string[] An array of lines to add to the message
+     * @return array<string> An array of lines to add to the message
      */
     protected function attachFiles(?string $boundary = null): array
     {
@@ -1423,7 +1423,7 @@ class Message implements JsonSerializable, Serializable
      * Attach inline/embedded files to the message.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return string[] An array of lines to add to the message
+     * @return array<string> An array of lines to add to the message
      */
     protected function attachInlineFiles(?string $boundary = null): array
     {

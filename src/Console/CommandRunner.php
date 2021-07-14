@@ -64,7 +64,7 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * Alias mappings.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $aliases = [];
 
@@ -103,7 +103,7 @@ class CommandRunner implements EventDispatcherInterface
      * $runner->setAliases(['--version' => 'version']);
      * ```
      *
-     * @param string[] $aliases The map of aliases to replace.
+     * @param array<string> $aliases The map of aliases to replace.
      * @return $this
      */
     public function setAliases(array $aliases)

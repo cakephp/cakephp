@@ -95,7 +95,7 @@ class ConsoleOptionParser
      * Option definitions.
      *
      * @see \Cake\Console\ConsoleOptionParser::addOption()
-     * @var \Cake\Console\ConsoleInputOption[]
+     * @var array<\Cake\Console\ConsoleInputOption>
      */
     protected $_options = [];
 
@@ -110,7 +110,7 @@ class ConsoleOptionParser
      * Positional argument definitions.
      *
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
-     * @var \Cake\Console\ConsoleInputArgument[]
+     * @var array<\Cake\Console\ConsoleInputArgument>
      */
     protected $_args = [];
 
@@ -118,7 +118,7 @@ class ConsoleOptionParser
      * Subcommands for this Command.
      *
      * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
-     * @var \Cake\Console\ConsoleInputSubcommand[]
+     * @var array<\Cake\Console\ConsoleInputSubcommand>
      */
     protected $_subcommands = [];
 
@@ -629,7 +629,7 @@ class ConsoleOptionParser
     /**
      * Gets the arguments defined in the parser.
      *
-     * @return \Cake\Console\ConsoleInputArgument[]
+     * @return array<\Cake\Console\ConsoleInputArgument>
      */
     public function arguments()
     {
@@ -639,7 +639,7 @@ class ConsoleOptionParser
     /**
      * Get the list of argument names.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function argumentNames()
     {
@@ -654,7 +654,7 @@ class ConsoleOptionParser
     /**
      * Get the defined options in the parser.
      *
-     * @return \Cake\Console\ConsoleInputOption[]
+     * @return array<\Cake\Console\ConsoleInputOption>
      */
     public function options()
     {
@@ -664,7 +664,7 @@ class ConsoleOptionParser
     /**
      * Get the array of defined subcommands
      *
-     * @return \Cake\Console\ConsoleInputSubcommand[]
+     * @return array<\Cake\Console\ConsoleInputSubcommand>
      */
     public function subcommands()
     {
@@ -929,7 +929,7 @@ class ConsoleOptionParser
      *
      * @param string $argument The argument to append
      * @param array $args The array of parsed args to append to.
-     * @return string[] Args
+     * @return array<string> Args
      * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseArg(string $argument, array $args): array

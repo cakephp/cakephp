@@ -97,7 +97,7 @@ class ArrayContext implements ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getPrimaryKey(): array
     {

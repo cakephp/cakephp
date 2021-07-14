@@ -121,7 +121,7 @@ class BelongsToMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,
@@ -774,7 +774,7 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity the entity from source table in this
      * association
-     * @param \Cake\Datasource\EntityInterface[] $targetEntities list of entities to link to link to the source entity using the
+     * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities to link to link to the source entity using the
      * junction table
      * @param array $options list of options accepted by `Table::save()`
      * @return bool success
@@ -848,7 +848,7 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
      *   of this association
-     * @param \Cake\Datasource\EntityInterface[] $targetEntities list of entities belonging to the `target` side
+     * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities belonging to the `target` side
      *   of this association
      * @param array $options list of options to be passed to the internal `save` call
      * @throws \InvalidArgumentException when any of the values in $targetEntities is
@@ -898,7 +898,7 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity An entity persisted in the source table for
      *   this association.
-     * @param \Cake\Datasource\EntityInterface[] $targetEntities List of entities persisted in the target table for
+     * @param array<\Cake\Datasource\EntityInterface> $targetEntities List of entities persisted in the target table for
      *   this association.
      * @param array|bool $options List of options to be passed to the internal `delete` call,
      *   or a `boolean` as `cleanProperty` key shortcut.
@@ -1240,7 +1240,7 @@ class BelongsToMany extends Association
      * `$targetEntities` that were not deleted from calculating the difference.
      *
      * @param \Cake\ORM\Query $existing a query for getting existing links
-     * @param \Cake\Datasource\EntityInterface[] $jointEntities link entities that should be persisted
+     * @param array<\Cake\Datasource\EntityInterface> $jointEntities link entities that should be persisted
      * @param array $targetEntities entities in target table that are related to
      * the `$jointEntities`
      * @param array $options list of options accepted by `Table::delete()`
@@ -1311,7 +1311,7 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
      *   of this association
-     * @param \Cake\Datasource\EntityInterface[] $targetEntities list of entities belonging to the `target` side
+     * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities belonging to the `target` side
      *   of this association
      * @return bool
      * @throws \InvalidArgumentException
@@ -1343,7 +1343,7 @@ class BelongsToMany extends Association
      *   association.
      * @throws \InvalidArgumentException if any of the entities is lacking a primary
      *   key value
-     * @return \Cake\Datasource\EntityInterface[]
+     * @return array<\Cake\Datasource\EntityInterface>
      */
     protected function _collectJointEntities(EntityInterface $sourceEntity, array $targetEntities): array
     {
