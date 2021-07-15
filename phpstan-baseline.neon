@@ -162,7 +162,7 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\.$#"
-			count: 2
+			count: 3
 			path: src/Core/ObjectRegistry.php
 
 		-

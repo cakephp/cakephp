@@ -35,7 +35,7 @@ interface CacheEngineInterface
      * @return bool True if the data was successfully cached, false on failure.
      *   Or if the key existed already.
      */
-    public function add(string $key, $value): bool;
+    public function add(string $key, mixed $value): bool;
 
     /**
      * Increment a number under the key and return incremented value
@@ -44,7 +44,7 @@ interface CacheEngineInterface
      * @param int $offset How much to add
      * @return int|false New incremented value, false otherwise
      */
-    public function increment(string $key, int $offset = 1);
+    public function increment(string $key, int $offset = 1): int|false;
 
     /**
      * Decrement a number under the key and return decremented value
@@ -53,7 +53,7 @@ interface CacheEngineInterface
      * @param int $offset How much to subtract
      * @return int|false New incremented value, false otherwise
      */
-    public function decrement(string $key, int $offset = 1);
+    public function decrement(string $key, int $offset = 1): int|false;
 
     /**
      * Clear all values belonging to the named group.

@@ -256,7 +256,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param int $offset How much to add
      * @return int|false New incremented value, false otherwise
      */
-    abstract public function increment(string $key, int $offset = 1);
+    abstract public function increment(string $key, int $offset = 1): int|false;
 
     /**
      * Decrement a number under the key and return decremented value
@@ -265,7 +265,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param int $offset How much to subtract
      * @return int|false New incremented value, false otherwise
      */
-    abstract public function decrement(string $key, int $offset = 1);
+    abstract public function decrement(string $key, int $offset = 1): int|false;
 
     /**
      * Delete a key from the cache
@@ -292,7 +292,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
      */
-    public function add(string $key, $value): bool
+    public function add(string $key, mixed $value): bool
     {
         $cachedValue = $this->get($key);
         if ($cachedValue === null) {
@@ -334,7 +334,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return string Prefixed key with potentially unsafe characters replaced.
      * @throws \Cake\Cache\InvalidArgumentException If key's value is invalid.
      */
-    protected function _key($key): string
+    protected function _key(string $key): string
     {
         $this->ensureValidKey($key);
 
@@ -370,7 +370,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *   driver's default duration will be used.
      * @return int
      */
-    protected function duration($ttl): int
+    protected function duration(DateInterval|int|null $ttl): int
     {
         if ($ttl === null) {
             return $this->_config['duration'];
@@ -378,10 +378,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
         if (is_int($ttl)) {
             return $ttl;
         }
-        if ($ttl instanceof DateInterval) {
-            return (int)$ttl->format('%s');
-        }
 
-        throw new InvalidArgumentException('TTL values must be one of null, int, \DateInterval');
+        return (int)$ttl->format('%s');
     }
 }

@@ -287,7 +287,7 @@ class MemcachedEngine extends CacheEngine
      * @return string|int|bool|null
      * @see https://secure.php.net/manual/en/memcached.getoption.php
      */
-    public function getOption(int $name)
+    public function getOption(int $name): string|int|bool|null
     {
         return $this->_Memcached->getOption($name);
     }
@@ -383,7 +383,7 @@ class MemcachedEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return int|false New incremented value, false otherwise
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
         return $this->_Memcached->increment($this->_key($key), $offset);
     }
@@ -395,7 +395,7 @@ class MemcachedEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return int|false New decremented value, false otherwise
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
         return $this->_Memcached->decrement($this->_key($key), $offset);
     }
@@ -457,7 +457,7 @@ class MemcachedEngine extends CacheEngine
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
      */
-    public function add(string $key, $value): bool
+    public function add(string $key, mixed $value): bool
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
