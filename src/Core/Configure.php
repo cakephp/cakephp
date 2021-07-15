@@ -329,9 +329,13 @@ class Configure
     {
         $engine = static::_getEngine($config);
         if (!$engine) {
-            throw new CakeException(sprintf(
-                'Config %s engine not found when attempting to load %s.', $config, $key
-            ));
+            throw new CakeException(
+                sprintf(
+                    'Config %s engine not found when attempting to load %s.',
+                    $config,
+                    $key
+                )
+            );
         }
 
         $values = $engine->read($key);
