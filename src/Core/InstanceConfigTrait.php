@@ -70,7 +70,7 @@ trait InstanceConfigTrait
      * @return $this
      * @throws \Cake\Core\Exception\CakeException When trying to set a key that is invalid.
      */
-    public function setConfig($key, $value = null, $merge = true)
+    public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
@@ -115,7 +115,7 @@ trait InstanceConfigTrait
      * @param mixed $default The return value when the key does not exist.
      * @return mixed Configuration data at the named key or null if the key does not exist.
      */
-    public function getConfig(?string $key = null, $default = null)
+    public function getConfig(?string $key = null, mixed $default = null): mixed
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
@@ -136,7 +136,7 @@ trait InstanceConfigTrait
      * @return mixed Configuration data at the named key
      * @throws \InvalidArgumentException
      */
-    public function getConfigOrFail(string $key)
+    public function getConfigOrFail(string $key): mixed
     {
         $config = $this->getConfig($key);
         if ($config === null) {
@@ -172,7 +172,7 @@ trait InstanceConfigTrait
      * @param mixed|null $value The value to set.
      * @return $this
      */
-    public function configShallow($key, $value = null)
+    public function configShallow(array|string $key, mixed $value = null)
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
@@ -190,7 +190,7 @@ trait InstanceConfigTrait
      * @param string|null $key Key to read.
      * @return mixed
      */
-    protected function _configRead(?string $key)
+    protected function _configRead(?string $key): mixed
     {
         if ($key === null) {
             return $this->_config;
@@ -224,7 +224,7 @@ trait InstanceConfigTrait
      * @return void
      * @throws \Cake\Core\Exception\CakeException if attempting to clobber existing config
      */
-    protected function _configWrite($key, $value, $merge = false): void
+    protected function _configWrite(array|string $key, mixed $value, string|bool $merge = false): void
     {
         if (is_string($key) && $value === null) {
             $this->_configDelete($key);

@@ -57,7 +57,7 @@ class CakeException extends RuntimeException
      * @param int|null $code The error code
      * @param \Throwable|null $previous the previous exception.
      */
-    public function __construct($message = '', ?int $code = null, ?Throwable $previous = null)
+    public function __construct(array|string $message = '', ?int $code = null, ?Throwable $previous = null)
     {
         if (is_array($message)) {
             $this->_attributes = $message;

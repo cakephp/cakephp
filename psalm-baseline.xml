@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.x-dev@">
+  <file src="src/Cache/Engine/RedisEngine.php">
+    <UndefinedClass occurrences="2">
+      <code>$e</code>
+      <code>RedisException</code>
+    </UndefinedClass>
+  </file>
   <file src="src/Collection/CollectionTrait.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$iterator</code>
@@ -53,6 +59,11 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Core/Retry/CommandRetry.php">
+    <InvalidReturnType occurrences="1">
+      <code>mixed</code>
+    </InvalidReturnType>
+  </file>
   <file src="src/Database/Driver.php">
     <InvalidScalarArgument occurrences="2">
       <code>$value</code>
@@ -68,6 +79,11 @@
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$_statement</code>
     </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Datasource/ConnectionRegistry.php">
+    <LessSpecificImplementedReturnType occurrences="1">
+      <code>object</code>
+    </LessSpecificImplementedReturnType>
   </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">

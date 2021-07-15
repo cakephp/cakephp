@@ -68,12 +68,12 @@ class ConnectionRegistry extends ObjectRegistry
      * If a callable is passed as first argument, The returned value of this
      * function will be the result of the callable.
      *
-     * @param \Cake\Datasource\ConnectionInterface|callable|string $class The classname or object to make.
+     * @param callable|object|string $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array $config An array of settings to use for the datasource.
-     * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.
+     * @return object A connection with the correct settings.
      */
-    protected function _create($class, string $alias, array $config)
+    protected function _create(callable|object|string $class, string $alias, array $config): object
     {
         if (is_callable($class)) {
             return $class($alias);
@@ -85,7 +85,6 @@ class ConnectionRegistry extends ObjectRegistry
 
         unset($config['className']);
 
-        /** @var \Cake\Datasource\ConnectionInterface */
         return new $class($config);
     }
 

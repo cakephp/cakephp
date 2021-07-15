@@ -755,7 +755,6 @@ class MailerTest extends TestCase
         $this->mailer->setFrom('cake@cakephp.org');
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
-        $this->mailer->setConfig(['empty']);
         $this->mailer->viewBuilder()
             ->setTemplate('default')
             ->setVar('content', 'message body.')

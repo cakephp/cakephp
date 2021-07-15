@@ -93,7 +93,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->services($this->getContainer());
     }

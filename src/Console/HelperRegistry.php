@@ -92,14 +92,18 @@ class HelperRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string $class The classname to create.
+     * @param \Cake\Console\Helper|string $class The classname to create.
      * @param string $alias The alias of the helper.
      * @param array $config An array of settings to use for the helper.
      * @return \Cake\Console\Helper The constructed helper class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    protected function _create($class, string $alias, array $config): Helper
+    protected function _create(object|string $class, string $alias, array $config): Helper
     {
+        if (is_object($class)) {
+            return $class;
+        }
+
         /** @var \Cake\Console\Helper */
         return new $class($this->_io, $config);
     }
