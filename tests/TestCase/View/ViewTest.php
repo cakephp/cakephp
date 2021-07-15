@@ -24,7 +24,7 @@ use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\TestSuite\Fixture\TransactionStrategy;
+use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use RuntimeException;
@@ -44,7 +44,7 @@ class ViewTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected $stateResetStrategy = TransactionStrategy::class;
+    protected $stateResetStrategy = TransactionResetStrategy::class;
 
     /**
      * Fixtures used in this test.

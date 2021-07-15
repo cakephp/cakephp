@@ -27,7 +27,7 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\Fixture\ResetStrategyInterface;
-use Cake\TestSuite\Fixture\TruncationStrategy;
+use Cake\TestSuite\Fixture\TruncationResetStrategy;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
 use RuntimeException;
@@ -427,7 +427,7 @@ class TestCaseTest extends TestCase
     {
         $instance = $this->getResetStrategy();
         $this->assertInstanceOf(ResetStrategyInterface::class, $instance);
-        $this->assertInstanceOf(TruncationStrategy::class, $instance);
+        $this->assertInstanceOf(TruncationResetStrategy::class, $instance);
     }
 
     /**

@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\ORM\TableRegistry;
-use Cake\TestSuite\Fixture\TransactionStrategy;
+use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 
-class TransactionStrategyTest extends TestCase
+class TransactionResetStrategyTest extends TestCase
 {
     public $fixtures = ['core.Users'];
 
@@ -31,7 +31,7 @@ class TransactionStrategyTest extends TestCase
     {
         $users = TableRegistry::get('Users');
 
-        $strategy = new TransactionStrategy($this->fixtureManager);
+        $strategy = new TransactionResetStrategy($this->fixtureManager);
         $strategy->setupTest();
         $user = $users->newEntity(['username' => 'testing', 'password' => 'secrets']);
 

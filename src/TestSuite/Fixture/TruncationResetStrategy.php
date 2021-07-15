@@ -24,7 +24,7 @@ use Cake\Datasource\ConnectionManager;
 /**
  * Fixture state strategy that truncates tables before a test.
  *
- * This strategy is slower than the TransactionStrategy, but
+ * This strategy is slower than the TransactionResetStrategy, but
  * allows tests to reset state when applications require operations
  * that cannot be executed in a transaction. An example
  * of this is DDL operations in MySQL which auto-commit any open
@@ -34,7 +34,7 @@ use Cake\Datasource\ConnectionManager;
  * with the schema + data fixture system. Only tables that have
  * fixture data 'loaded' will be truncated.
  */
-class TruncationStrategy implements ResetStrategyInterface
+class TruncationResetStrategy implements ResetStrategyInterface
 {
     /**
      * A map of connections to the tables they contain.
