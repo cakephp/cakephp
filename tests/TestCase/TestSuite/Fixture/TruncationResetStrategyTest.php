@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\ORM\TableRegistry;
-use Cake\TestSuite\Fixture\TruncationStrategy;
+use Cake\TestSuite\Fixture\TruncationResetStrategy;
 use Cake\TestSuite\TestCase;
 
 /**
  * TruncationStrategy test
  */
-class TruncationStrategyTest extends TestCase
+class TruncationResetStrategyTest extends TestCase
 {
     public $fixtures = ['core.Articles', 'core.Tags', 'core.ArticlesTags'];
 
@@ -40,7 +40,7 @@ class TruncationStrategyTest extends TestCase
         $rowCount = $articlesTags->find()->count();
         $this->assertGreaterThan(0, $rowCount);
 
-        $strategy = new TruncationStrategy($this->fixtureManager);
+        $strategy = new TruncationResetStrategy($this->fixtureManager);
         $strategy->teardownTest();
 
         $rowCount = $articles->find()->count();

@@ -28,7 +28,7 @@ use RuntimeException;
  * of not being able to query data in fixtures from another
  * process.
  */
-class TransactionStrategy implements ResetStrategyInterface
+class TransactionResetStrategy implements ResetStrategyInterface
 {
     /**
      * Constructor.
@@ -57,7 +57,7 @@ class TransactionStrategy implements ResetStrategyInterface
                     throw new RuntimeException(
                         "Could not enable save points for the `{$name}` connection. " .
                             'Your database needs to support savepoints in order to use the ' .
-                            'TransactionStrategy for fixtures.'
+                            'TransactionResetStrategy for fixtures.'
                     );
                 }
             }

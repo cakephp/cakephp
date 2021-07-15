@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Session;
-use Cake\TestSuite\Fixture\TransactionStrategy;
+use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use RuntimeException;
@@ -32,7 +32,7 @@ class SessionTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected $stateResetStrategy = TransactionStrategy::class;
+    protected $stateResetStrategy = TransactionResetStrategy::class;
 
     /**
      * Fixtures used in the SessionTest

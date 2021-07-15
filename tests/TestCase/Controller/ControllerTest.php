@@ -23,7 +23,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
-use Cake\TestSuite\Fixture\TransactionStrategy;
+use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Uri;
 use ReflectionFunction;
@@ -41,7 +41,7 @@ class ControllerTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected $stateResetStrategy = TransactionStrategy::class;
+    protected $stateResetStrategy = TransactionResetStrategy::class;
 
     /**
      * fixtures property
