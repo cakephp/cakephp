@@ -28,7 +28,6 @@ use NoRewindIterator;
 use stdClass;
 use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
-use TestApp\Collection\TestIterator;
 
 /**
  * Collection Test
@@ -2551,30 +2550,6 @@ class CollectionTest extends TestCase
     protected function datePeriod($start, $end): DatePeriod
     {
         return new \DatePeriod(new \DateTime($start), new \DateInterval('P1D'), new \DateTime($end));
-    }
-
-    /**
-     * Tests to ensure that collection classes extending ArrayIterator work as expected.
-     */
-    public function testArrayIteratorExtend(): void
-    {
-        $iterator = new TestIterator(range(0, 10));
-
-        $this->assertTrue(method_exists($iterator, 'checkValues'));
-        $this->assertTrue($iterator->checkValues());
-
-        //We need to perform at least two collection operation to trigger the issue.
-        $newIterator = $iterator
-            ->filter(function ($item) {
-                return $item < 5;
-            })
-            ->reject(function ($item) {
-                return $item > 2;
-            });
-
-        $this->assertTrue(method_exists($newIterator, 'checkValues'), 'Our method has gone missing!');
-        $this->assertTrue($newIterator->checkValues());
-        $this->assertCount(3, $newIterator->toArray());
     }
 
     /**
