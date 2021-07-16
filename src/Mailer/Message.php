@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -26,7 +25,6 @@ use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
 use Psr\Http\Message\UploadedFileInterface;
-use Serializable;
 use SimpleXMLElement;
 
 /**
@@ -35,7 +33,7 @@ use SimpleXMLElement;
  * This class is used for sending Internet Message Format based
  * on the standard outlined in https://www.rfc-editor.org/rfc/rfc2822.txt
  */
-class Message implements JsonSerializable, Serializable
+class Message implements JsonSerializable
 {
     /**
      * Line length - no should more - RFC 2822 - 2.1.1
@@ -1889,18 +1887,6 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Serializes the Email object.
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        $array = $this->__serialize();
-
-        return serialize($array);
-    }
-
-    /**
      * Magic method used for serializing the Message object.
      *
      * @return array
@@ -1915,22 +1901,6 @@ class Message implements JsonSerializable, Serializable
         });
 
         return $array;
-    }
-
-    /**
-     * Unserializes the Message object.
-     *
-     * @param string $data Serialized string.
-     * @return void
-     */
-    public function unserialize($data)
-    {
-        $array = unserialize($data);
-        if (!is_array($array)) {
-            throw new CakeException('Unable to unserialize message.');
-        }
-
-        $this->createFromArray($array);
     }
 
     /**

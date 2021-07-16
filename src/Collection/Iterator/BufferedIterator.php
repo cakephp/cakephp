@@ -18,14 +18,13 @@ namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
 use Countable;
-use Serializable;
 use SplDoublyLinkedList;
 
 /**
  * Creates an iterator from another iterator that will keep the results of the inner
  * iterator in memory, so that results don't have to be re-calculated.
  */
-class BufferedIterator extends Collection implements Countable, Serializable
+class BufferedIterator extends Collection implements Countable
 {
     /**
      * The in-memory cache containing results from previous iterators
@@ -187,21 +186,6 @@ class BufferedIterator extends Collection implements Countable, Serializable
     }
 
     /**
-     * Returns a string representation of this object that can be used
-     * to reconstruct it
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        if (!$this->_finished) {
-            $this->count();
-        }
-
-        return serialize($this->_buffer);
-    }
-
-    /**
      * Magic method used for serializing the iterator instance.
      *
      * @return array
@@ -213,20 +197,6 @@ class BufferedIterator extends Collection implements Countable, Serializable
         }
 
         return iterator_to_array($this->_buffer);
-    }
-
-    /**
-     * Unserializes the passed string and rebuilds the BufferedIterator instance
-     *
-     * @param string $collection The serialized buffer iterator
-     * @return void
-     */
-    public function unserialize($collection): void
-    {
-        $this->__construct([]);
-        $this->_buffer = unserialize($collection);
-        $this->_started = true;
-        $this->_finished = true;
     }
 
     /**

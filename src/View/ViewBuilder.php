@@ -26,7 +26,6 @@ use Exception;
 use JsonSerializable;
 use PDO;
 use RuntimeException;
-use Serializable;
 
 /**
  * Provides an API for iteratively building a view up.
@@ -34,7 +33,7 @@ use Serializable;
  * Once you have configured the view and established all the context
  * you can create a view instance with `build()`.
  */
-class ViewBuilder implements JsonSerializable, Serializable
+class ViewBuilder implements JsonSerializable
 {
     /**
      * The subdirectory to the template.
@@ -651,18 +650,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Serializes the view builder object.
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        $array = $this->jsonSerialize();
-
-        return serialize($array);
-    }
-
-    /**
      * Magic method used for serializing the view builder object.
      *
      * @return array
@@ -670,17 +657,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function __serialize(): array
     {
         return $this->jsonSerialize();
-    }
-
-    /**
-     * Unserializes the view builder object.
-     *
-     * @param string $data Serialized string.
-     * @return void
-     */
-    public function unserialize($data): void
-    {
-        $this->createFromArray(unserialize($data));
     }
 
     /**
