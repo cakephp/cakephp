@@ -317,7 +317,7 @@ class Text
      * @param array|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
-    public static function wrap(string $text, $options = []): string
+    public static function wrap(string $text, array|int $options = []): string
     {
         if (is_numeric($options)) {
             $options = ['width' => $options];
@@ -354,7 +354,7 @@ class Text
      * @param array|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
-    public static function wrapBlock(string $text, $options = []): string
+    public static function wrapBlock(string $text, array|int $options = []): string
     {
         if (is_numeric($options)) {
             $options = ['width' => $options];
@@ -481,7 +481,7 @@ class Text
      * @return string The highlighted text
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#highlighting-substrings
      */
-    public static function highlight(string $text, $phrase, array $options = []): string
+    public static function highlight(string $text, array|string $phrase, array $options = []): string
     {
         if (empty($phrase)) {
             return $text;
@@ -1011,7 +1011,7 @@ class Text
      * @throws \InvalidArgumentException On invalid Unit type.
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#Cake\Utility\Text::parseFileSize
      */
-    public static function parseFileSize(string $size, $default = false)
+    public static function parseFileSize(string $size, mixed $default = false): mixed
     {
         if (ctype_digit($size)) {
             return (int)$size;
@@ -1102,7 +1102,7 @@ class Text
      * @return string
      * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
-    public static function transliterate(string $string, $transliterator = null): string
+    public static function transliterate(string $string, Transliterator|string|null $transliterator = null): string
     {
         if (empty($transliterator)) {
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
@@ -1137,7 +1137,7 @@ class Text
      * @see setTransliterator()
      * @see setTransliteratorId()
      */
-    public static function slug(string $string, $options = []): string
+    public static function slug(string $string, array|string $options = []): string
     {
         if (is_string($options)) {
             $options = ['replacement' => $options];

@@ -60,7 +60,7 @@ class Security
      * @throws \RuntimeException
      * @link https://book.cakephp.org/4/en/core-libraries/security.html#hashing-data
      */
-    public static function hash(string $string, ?string $algorithm = null, $salt = false): string
+    public static function hash(string $string, ?string $algorithm = null, mixed $salt = false): string
     {
         if (empty($algorithm)) {
             $algorithm = static::$hashType;
@@ -160,7 +160,7 @@ class Security
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
      * @psalm-suppress MoreSpecificReturnType
      */
-    public static function engine($instance = null)
+    public static function engine(?OpenSsl $instance = null): OpenSsl
     {
         if ($instance === null && static::$_instance === null) {
             if (extension_loaded('openssl')) {
@@ -274,7 +274,7 @@ class Security
      * @return bool
      * @since 3.6.2
      */
-    public static function constantEquals($original, $compare): bool
+    public static function constantEquals(mixed $original, mixed $compare): bool
     {
         return is_string($original) && is_string($compare) && hash_equals($original, $compare);
     }
