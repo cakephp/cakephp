@@ -206,7 +206,7 @@ abstract class BaseLog extends AbstractLogger
                 }
             }
 
-            $replacements['{' . $key . '}'] = sprintf('[unhandled value of type %s]', getTypeName($value));
+            $replacements['{' . $key . '}'] = sprintf('[unhandled value of type %s]', get_debug_type($value));
         }
 
         /** @psalm-suppress InvalidArgument */

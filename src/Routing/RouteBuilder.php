@@ -923,7 +923,7 @@ class RouteBuilder
         if (!is_callable($callback)) {
             throw new InvalidArgumentException(sprintf(
                 'Need a valid callable to connect routes. Got `%s` instead.',
-                getTypeName($callback)
+                get_debug_type($callback)
             ));
         }
 

@@ -1685,7 +1685,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         } else {
             throw new InvalidArgumentException(sprintf(
                 'Search criteria must be an array, callable or Query. Got "%s"',
-                getTypeName($search)
+                get_debug_type($search)
             ));
         }
 
@@ -1943,7 +1943,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if ($result !== false && !($result instanceof EntityInterface)) {
                 throw new RuntimeException(sprintf(
                     'The beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
-                    getTypeName($result)
+                    get_debug_type($result)
                 ));
             }
 

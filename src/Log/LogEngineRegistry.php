@@ -90,7 +90,7 @@ class LogEngineRegistry extends ObjectRegistry
         throw new RuntimeException(sprintf(
             'Loggers must implement %s. Found `%s` instance instead.',
             LoggerInterface::class,
-            getTypeName($instance)
+            get_debug_type($instance)
         ));
     }
 

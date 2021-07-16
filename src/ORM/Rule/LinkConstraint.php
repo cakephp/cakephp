@@ -68,7 +68,7 @@ class LinkConstraint
         ) {
             throw new \InvalidArgumentException(sprintf(
                 'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
-                getTypeName($association)
+                get_debug_type($association)
             ));
         }
 

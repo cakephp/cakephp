@@ -45,7 +45,7 @@ class FactoryLocator
             throw new InvalidArgumentException(sprintf(
                 '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
                 . ' Got type `%s` instead.',
-                getTypeName($factory)
+                get_debug_type($factory)
             ));
         }
 

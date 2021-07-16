@@ -106,7 +106,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         if (!$errorHandler instanceof ErrorHandler) {
             throw new InvalidArgumentException(sprintf(
                 '$errorHandler argument must be a config array or ErrorHandler instance. Got `%s` instead.',
-                getTypeName($errorHandler)
+                get_debug_type($errorHandler)
             ));
         }
 

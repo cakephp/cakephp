@@ -127,7 +127,7 @@ class WidgetLocator
                 throw new RuntimeException(sprintf(
                     'Widget objects must implement `%s`. Got `%s` instance instead.',
                     WidgetInterface::class,
-                    getTypeName($widget)
+                    get_debug_type($widget)
                 ));
             }
 

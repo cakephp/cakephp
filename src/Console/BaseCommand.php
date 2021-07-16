@@ -260,7 +260,7 @@ abstract class BaseCommand implements CommandInterface
             $command = new $command();
         }
         if (!$command instanceof CommandInterface) {
-            $commandType = getTypeName($command);
+            $commandType = get_debug_type($command);
             throw new InvalidArgumentException(
                 "Command '{$commandType}' is not a subclass of Cake\Console\CommandInterface."
             );

@@ -310,7 +310,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         if (!is_string($object) && !is_object($object)) {
             deprecationWarning(sprintf(
                 'The provider must be an object or class name string. Got `%s` instead.',
-                getTypeName($object)
+                get_debug_type($object)
             ));
         }
 
@@ -365,7 +365,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         if (!is_string($object) && !is_object($object)) {
             deprecationWarning(sprintf(
                 'The provider must be an object or class name string. Got `%s` instead.',
-                getTypeName($object)
+                get_debug_type($object)
             ));
         }
 

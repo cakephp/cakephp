@@ -128,7 +128,7 @@ class PDOStatement extends StatementDecorator
         if (!is_int($type)) {
             throw new CakeException(sprintf(
                 'Fetch type for PDOStatement must be an integer, found `%s` instead',
-                getTypeName($type)
+                get_debug_type($type)
             ));
         }
 
@@ -165,7 +165,7 @@ class PDOStatement extends StatementDecorator
         if (!is_int($type)) {
             throw new CakeException(sprintf(
                 'Fetch type for PDOStatement must be an integer, found `%s` instead',
-                getTypeName($type)
+                get_debug_type($type)
             ));
         }
 

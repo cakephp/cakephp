@@ -335,7 +335,7 @@ abstract class BaseErrorHandler
                 $this->logger = new ErrorLogger($this->_config);
 
                 $interface = ErrorLoggerInterface::class;
-                $type = getTypeName($logger);
+                $type = get_debug_type($logger);
                 throw new RuntimeException("Cannot create logger. `{$type}` does not implement `{$interface}`.");
             }
             $this->logger = $logger;

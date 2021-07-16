@@ -84,7 +84,7 @@ class LinkConstraintTest extends TestCase
      */
     public function invalidConstructorArgumentOneDataProvider(): array
     {
-        return [[null, 'NULL'], [1, 'integer'], [[], 'array'], [new \stdClass(), 'stdClass']];
+        return [[null, 'null'], [1, 'int'], [[], 'array'], [new \stdClass(), 'stdClass']];
     }
 
     /**
