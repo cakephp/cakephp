@@ -321,15 +321,23 @@ class Configure
      * @param string $key name of configuration resource to load.
      * @param string $config Name of the configured engine to use to read the resource identified by $key.
      * @param bool $merge if config files should be merged instead of simply overridden
-     * @return bool False if file not found, true if load successful.
+     * @return bool True if load successful.
+     * @throws \Cake\Core\Exception\CakeException if the $config engine is not found
      * @link https://book.cakephp.org/4/en/development/configuration.html#reading-and-writing-configuration-files
      */
     public static function load(string $key, string $config = 'default', bool $merge = true): bool
     {
         $engine = static::_getEngine($config);
         if (!$engine) {
-            return false;
+            throw new CakeException(
+                sprintf(
+                    'Config %s engine not found when attempting to load %s.',
+                    $config,
+                    $key
+                )
+            );
         }
+
         $values = $engine->read($key);
 
         if ($merge) {

@@ -260,6 +260,15 @@ class ConfigureTest extends TestCase
     }
 
     /**
+     * test load() with invalid config engine
+     */
+    public function testLoadExceptionOnNonExistentEngine(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        Configure::load('nonexistent_configuration_file', 'nonexistent_configuration_engine');
+    }
+
+    /**
      * test load method for default config creation
      */
     public function testLoadDefaultConfig(): void
