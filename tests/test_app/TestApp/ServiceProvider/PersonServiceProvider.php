@@ -19,14 +19,4 @@ class PersonServiceProvider extends ServiceProvider
     {
         $container->add('sally', json_decode('{"name":"sally"}'));
     }
-
-    public function provides(string $id): bool
-    {
-        $services = [
-            'boot',
-            'sally',
-        ];
-
-        return in_array($id, $services, true);
-    }
 }

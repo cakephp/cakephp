@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use League\Container\DefinitionContainerInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
 use RuntimeException;
@@ -34,6 +35,14 @@ use RuntimeException;
 abstract class ServiceProvider extends AbstractServiceProvider implements BootableServiceProviderInterface
 {
     /**
+     * List of ids of services this provider provides.
+     *
+     * @var array<string>
+     * @see ServiceProvider::provides()
+     */
+    protected $provides = [];
+
+    /**
      * Get the container.
      *
      * This method's actual return type and documented return type differ
@@ -41,7 +50,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      *
      * @return \Cake\Core\ContainerInterface
      */
-    public function getContainer(): ContainerInterface
+    public function getContainer(): DefinitionContainerInterface
     {
         $container = parent::getContainer();
 
@@ -96,6 +105,21 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
     public function register(): void
     {
         $this->services($this->getContainer());
+    }
+
+    /**
+     * The provides method is a way to let the container know that a service
+     * is provided by this service provider.
+     *
+     * Every service that is registered via this service provider must have an
+     * alias added to this array or it will be ignored.
+     *
+     * @param string $id Identifier.
+     * @return bool
+     */
+    public function provides(string $id): bool
+    {
+        return in_array($id, $this->provides, true);
     }
 
     /**
