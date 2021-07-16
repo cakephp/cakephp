@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Core\Exception\CakeException;
+
 /**
  * App is responsible for resource location, and path management.
  *
@@ -159,10 +161,9 @@ class App
     }
 
     /**
-     * Used to read information stored path.
+     * Used to read information of stored path.
      *
-     * The 1st character of $type argument should be lower cased and will return the
-     * value of `App.paths.$type` config.
+     * When called without the `$plugin` argument it will return the value of `App.paths.$type` config.
      *
      * Default types:
      * - plugins
@@ -177,8 +178,7 @@ class App
      *
      * Will return the value of `App.paths.plugins` config.
      *
-     * Deprecated: 4.0 App::path() is deprecated for class path (inside src/ directory).
-     *   Use \Cake\Core\App::classPath() instead or directly the method on \Cake\Core\Plugin class.
+     * For plugins it can be used to get paths for types `templates` or `locales`.
      *
      * @param string $type Type of path
      * @param string|null $plugin Plugin name
@@ -187,26 +187,19 @@ class App
      */
     public static function path(string $type, ?string $plugin = null): array
     {
-        if ($plugin === null && $type[0] === strtolower($type[0])) {
+        if ($plugin === null) {
             return (array)Configure::read('App.paths.' . $type);
         }
 
         if ($type === 'templates') {
-            /** @psalm-suppress PossiblyNullArgument */
             return [Plugin::templatePath($plugin)];
         }
 
         if ($type === 'locales') {
-            /** @psalm-suppress PossiblyNullArgument */
             return [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
         }
 
-        deprecationWarning(
-            'App::path() is deprecated for class path.'
-            . ' Use \Cake\Core\App::classPath() or \Cake\Core\Plugin::classPath() instead.'
-        );
-
-        return static::classPath($type, $plugin);
+        throw new CakeException('Only path types `templates` and `locales` are supported for plugins.');
     }
 
     /**
