@@ -16,8 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use League\Container\Definition\DefinitionInterface;
-use Psr\Container\ContainerInterface as PsrInterface;
+use League\Container\DefinitionContainerInterface;
 
 /**
  * Interface for the Dependency Injection Container in CakePHP applications
@@ -31,33 +30,6 @@ use Psr\Container\ContainerInterface as PsrInterface;
  * @experimental This interface is not final and can have additional
  *   methods and parameters added in future minor releases.
  */
-interface ContainerInterface extends PsrInterface
+interface ContainerInterface extends DefinitionContainerInterface
 {
-    /**
-     * Add an item to the container.
-     *
-     * @param string $id The class name or name of the service being registered.
-     * @param mixed $concrete Either the classname an interface or name resolves to.
-     *   Can also be a constructed object, Closure, or null. When null, the `$id` parameter will
-     *   be used as the concrete class name.
-     * @param bool $shared Set to true to make a service shared.
-     * @return \League\Container\Definition\DefinitionInterface
-     */
-    public function add(string $id, $concrete = null, bool $shared = false): DefinitionInterface;
-
-    /**
-     * Add a service provider to the container
-     *
-     * @param \League\Container\ServiceProvider\ServiceProviderInterface $provider The service provider to add.
-     * @return $this
-     */
-    public function addServiceProvider($provider);
-
-    /**
-     * Modify an existing definition
-     *
-     * @param string $id The class name or name of the service being modified.
-     * @return \League\Container\Definition\DefinitionInterface
-     */
-    public function extend(string $id): DefinitionInterface;
 }
