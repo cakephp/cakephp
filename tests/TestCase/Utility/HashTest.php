@@ -404,25 +404,6 @@ class HashTest extends TestCase
     }
 
     /**
-     * Test get() for invalid $data type
-     */
-    public function testGetInvalidData(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
-        Hash::get('string', 'path');
-    }
-
-    /**
-     * Test get() with an invalid path
-     */
-    public function testGetInvalidPath(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        Hash::get(['one' => 'two'], true);
-    }
-
-    /**
      * Test dimensions.
      */
     public function testDimensions(): void
@@ -904,16 +885,6 @@ class HashTest extends TestCase
 
         $data = [2.4, 1, 0, -1, -2];
         $this->assertTrue(Hash::numeric($data));
-    }
-
-    /**
-     * Test passing invalid argument type
-     */
-    public function testExtractInvalidArgument(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
-        Hash::extract('foo', '');
     }
 
     /**

@@ -50,7 +50,7 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return string Encoded values
      */
-    protected function _encrypt($value, $encrypt, ?string $key = null): string
+    protected function _encrypt(array|string $value, string|false $encrypt, ?string $key = null): string
     {
         if (is_array($value)) {
             $value = $this->_implode($value);
@@ -97,7 +97,7 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return array|string Decrypted values
      */
-    protected function _decrypt($values, $mode, ?string $key = null)
+    protected function _decrypt(array|string $values, string|false $mode, ?string $key = null): array|string
     {
         if (is_string($values)) {
             return $this->_decode($values, $mode, $key);
@@ -119,7 +119,7 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return array|string Decoded values.
      */
-    protected function _decode(string $value, $encrypt, ?string $key)
+    protected function _decode(string $value, string|false $encrypt, ?string $key): array|string
     {
         if (!$encrypt) {
             return $this->_explode($value);
@@ -170,7 +170,7 @@ trait CookieCryptTrait
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return array|string Map of key and values
      */
-    protected function _explode(string $string)
+    protected function _explode(string $string): array|string
     {
         $first = substr($string, 0, 1);
         if ($first === '{' || $first === '[') {
