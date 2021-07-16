@@ -43,14 +43,14 @@ class TestPluginCacheEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
     }
 

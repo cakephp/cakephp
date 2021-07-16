@@ -181,7 +181,7 @@ class RedisEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return int|false New incremented value, false otherwise
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
@@ -201,7 +201,7 @@ class RedisEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return int|false New decremented value, false otherwise
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
@@ -265,7 +265,7 @@ class RedisEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure.
      * @link https://github.com/phpredis/phpredis#set
      */
-    public function add(string $key, $value): bool
+    public function add(string $key, mixed $value): bool
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
@@ -322,7 +322,7 @@ class RedisEngine extends CacheEngine
      * @return string
      * @link https://github.com/phpredis/phpredis/issues/81
      */
-    protected function serialize($value): string
+    protected function serialize(mixed $value): string
     {
         if (is_int($value)) {
             return (string)$value;
@@ -337,7 +337,7 @@ class RedisEngine extends CacheEngine
      * @param string $value Value to unserialize.
      * @return mixed
      */
-    protected function unserialize(string $value)
+    protected function unserialize(string $value): mixed
     {
         if (preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;

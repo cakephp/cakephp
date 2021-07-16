@@ -92,7 +92,7 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return int|false New incremented value, false otherwise
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
         if ($this->get($key) === null) {
             $this->set($key, 0);
@@ -110,7 +110,7 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return int|false New decremented value, false otherwise
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
         if ($this->get($key) === null) {
             $this->set($key, 0);

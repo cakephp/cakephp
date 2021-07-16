@@ -239,7 +239,7 @@ class Cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True if the data was successfully cached, false on failure
      */
-    public static function write(string $key, $value, string $config = 'default'): bool
+    public static function write(string $key, mixed $value, string $config = 'default'): bool
     {
         if (is_resource($value)) {
             return false;
@@ -311,7 +311,7 @@ class Cache
      * @return mixed The cached data, or null if the data doesn't exist, has expired,
      *  or if there was an error fetching it.
      */
-    public static function read(string $key, string $config = 'default')
+    public static function read(string $key, string $config = 'default'): mixed
     {
         return static::pool($config)->get($key);
     }
@@ -354,7 +354,7 @@ class Cache
      *    or if there was an error fetching it.
      * @throws \Cake\Cache\InvalidArgumentException When offset < 0
      */
-    public static function increment(string $key, int $offset = 1, string $config = 'default')
+    public static function increment(string $key, int $offset = 1, string $config = 'default'): int|false
     {
         if ($offset < 0) {
             throw new InvalidArgumentException('Offset cannot be less than 0.');
@@ -373,7 +373,7 @@ class Cache
      *   or if there was an error fetching it
      * @throws \Cake\Cache\InvalidArgumentException when offset < 0
      */
-    public static function decrement(string $key, int $offset = 1, string $config = 'default')
+    public static function decrement(string $key, int $offset = 1, string $config = 'default'): int|false
     {
         if ($offset < 0) {
             throw new InvalidArgumentException('Offset cannot be less than 0.');
@@ -566,7 +566,7 @@ class Cache
      *   missing/expired, or an error. If the key is not found: boolean of the
      *   success of the write
      */
-    public static function remember(string $key, callable $callable, string $config = 'default')
+    public static function remember(string $key, callable $callable, string $config = 'default'): mixed
     {
         $existing = self::read($key, $config);
         if ($existing !== null) {
@@ -601,7 +601,7 @@ class Cache
      * @return bool True if the data was successfully cached, false on failure.
      *   Or if the key existed already.
      */
-    public static function add(string $key, $value, string $config = 'default'): bool
+    public static function add(string $key, mixed $value, string $config = 'default'): bool
     {
         if (is_resource($value)) {
             return false;
