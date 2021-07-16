@@ -193,8 +193,6 @@ class XmlTest extends TestCase
     public static function invalidDataProvider(): array
     {
         return [
-            [null],
-            [false],
             [''],
             ['http://localhost/notthere.xml'],
         ];
@@ -589,9 +587,6 @@ XML;
     public static function invalidArrayDataProvider(): array
     {
         return [
-            [''],
-            [null],
-            [false],
             [[]],
             [['numeric key as root']],
             [['item1' => '', 'item2' => '']],
@@ -1173,31 +1168,6 @@ XML;
 
         $result = Xml::build($xml);
         $this->assertSame(' Mark ', (string)$result->name);
-    }
-
-    /**
-     * data provider for toArray() failures
-     *
-     * @return array
-     */
-    public static function invalidToArrayDataProvider(): array
-    {
-        return [
-            [new \DateTime()],
-            [[]],
-        ];
-    }
-
-    /**
-     * testToArrayFail method
-     *
-     * @dataProvider invalidToArrayDataProvider
-     * @param mixed $value
-     */
-    public function testToArrayFail($value): void
-    {
-        $this->expectException(\Cake\Utility\Exception\XmlException::class);
-        Xml::toArray($value);
     }
 
     /**

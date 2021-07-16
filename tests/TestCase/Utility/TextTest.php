@@ -721,7 +721,7 @@ HTML;
         $this->assertSame($expected, $result);
 
         $text = 'This is a test text';
-        $phrases = null;
+        $phrases = '';
         $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>']);
         $this->assertSame($text, $result);
 
