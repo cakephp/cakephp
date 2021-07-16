@@ -20,6 +20,7 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use MultipleIterator;
+use ReturnTypeWillChange;
 use Serializable;
 
 /**
@@ -90,6 +91,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      *
      * @return array
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         if ($this->_callback === null) {
