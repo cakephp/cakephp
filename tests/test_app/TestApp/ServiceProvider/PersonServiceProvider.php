@@ -8,7 +8,7 @@ use Cake\Core\ServiceProvider;
 
 class PersonServiceProvider extends ServiceProvider
 {
-    protected $provides = ['boot', 'sally'];
+    protected $services = ['boot', 'sally'];
 
     public function bootstrap(ContainerInterface $container): void
     {
@@ -18,15 +18,5 @@ class PersonServiceProvider extends ServiceProvider
     public function services(ContainerInterface $container): void
     {
         $container->add('sally', json_decode('{"name":"sally"}'));
-    }
-
-    public function provides(string $id): bool
-    {
-        $services = [
-            'boot',
-            'sally',
-        ];
-
-        return in_array($id, $services, true);
     }
 }
