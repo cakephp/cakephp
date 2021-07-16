@@ -18,13 +18,12 @@ namespace Cake\Collection;
 
 use ArrayIterator;
 use IteratorIterator;
-use Serializable;
 
 /**
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
  */
-class Collection extends IteratorIterator implements CollectionInterface, Serializable
+class Collection extends IteratorIterator implements CollectionInterface
 {
     use CollectionTrait;
 
@@ -44,17 +43,6 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     }
 
     /**
-     * Returns a string representation of this object that can be used
-     * to reconstruct it
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        return serialize($this->buffered());
-    }
-
-    /**
      * Returns an array for serializing this of this object.
      *
      * @return array
@@ -62,17 +50,6 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     public function __serialize(): array
     {
         return $this->buffered()->toArray();
-    }
-
-    /**
-     * Unserializes the passed string and rebuilds the Collection instance
-     *
-     * @param string $collection The serialized collection
-     * @return void
-     */
-    public function unserialize($collection): void
-    {
-        $this->__construct(unserialize($collection));
     }
 
     /**

@@ -396,10 +396,10 @@ class HasManyTest extends TestCase
         $stmt = $this->getMockBuilder(StatementInterface::class)->getMock();
         $results = new ResultSet($query, $stmt);
 
-        $results->unserialize(serialize([
+        $results->__unserialize([
             ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
-        ]));
+        ]);
         $query->method('all')
             ->will($this->returnValue($results));
 

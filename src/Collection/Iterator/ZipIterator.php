@@ -20,7 +20,6 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use MultipleIterator;
-use Serializable;
 
 /**
  * Creates an iterator that returns elements grouped in pairs
@@ -44,7 +43,7 @@ use Serializable;
  *  $iterator->toList(); // Returns [4, 6]
  * ```
  */
-class ZipIterator extends MultipleIterator implements CollectionInterface, Serializable
+class ZipIterator extends MultipleIterator implements CollectionInterface
 {
     use CollectionTrait;
 
@@ -100,17 +99,6 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
     }
 
     /**
-     * Returns a string representation of this object that can be used
-     * to reconstruct it
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        return serialize($this->_iterators);
-    }
-
-    /**
      * Magic method used for serializing the iterator instance.
      *
      * @return array
@@ -118,21 +106,6 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
     public function __serialize(): array
     {
         return $this->_iterators;
-    }
-
-    /**
-     * Unserializes the passed string and rebuilds the ZipIterator instance
-     *
-     * @param string $iterators The serialized iterators
-     * @return void
-     */
-    public function unserialize($iterators): void
-    {
-        parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
-        $this->_iterators = unserialize($iterators);
-        foreach ($this->_iterators as $it) {
-            $this->attachIterator($it);
-        }
     }
 
     /**

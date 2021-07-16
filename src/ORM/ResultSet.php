@@ -293,18 +293,6 @@ class ResultSet implements ResultSetInterface
     /**
      * Serializes a resultset.
      *
-     * Part of Serializable interface.
-     *
-     * @return string Serialized object
-     */
-    public function serialize(): string
-    {
-        return serialize($this->__serialize());
-    }
-
-    /**
-     * Serializes a resultset.
-     *
      * @return array
      */
     public function __serialize(): array
@@ -324,19 +312,6 @@ class ResultSet implements ResultSetInterface
         }
 
         return $this->_results;
-    }
-
-    /**
-     * Unserializes a resultset.
-     *
-     * Part of Serializable interface.
-     *
-     * @param string $serialized Serialized object
-     * @return void
-     */
-    public function unserialize($serialized)
-    {
-        $this->__unserialize((array)(unserialize($serialized) ?: []));
     }
 
     /**
