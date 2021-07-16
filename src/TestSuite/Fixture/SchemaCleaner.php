@@ -24,6 +24,8 @@ use Cake\Datasource\ConnectionManager;
 
 /**
  * This class will help dropping and truncating all tables of a given connection
+ *
+ * @internal
  */
 class SchemaCleaner
 {
