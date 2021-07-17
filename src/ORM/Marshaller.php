@@ -263,7 +263,7 @@ class Marshaller
 
         if ($validator === null) {
             throw new RuntimeException(sprintf(
-                'validate must be a boolean, a string or an object. Got %s.', 
+                'validate must be a boolean, a string or an object. Got %s.',
                 get_debug_type($options['validate'])
             ));
         }
