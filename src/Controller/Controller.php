@@ -57,7 +57,7 @@ use UnexpectedValueException;
  * possibly a redirection to another URL. In either case `$this->getResponse()`
  * allows you to manipulate all aspects of the response.
  *
- * Controllers are created by `ActionDispatcher` based on request parameters and
+ * Controllers are created based on request parameters and
  * routing. By default controllers and actions use conventional names.
  * For example `/posts/index` maps to `PostsController::index()`. You can re-map
  * URLs using Router::connect() or RouterBuilder::connect().

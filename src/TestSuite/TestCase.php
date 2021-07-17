@@ -29,7 +29,7 @@ use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureLoader;
 use Cake\TestSuite\Fixture\ResetStrategyInterface;
-use Cake\TestSuite\Fixture\TruncationStrategy;
+use Cake\TestSuite\Fixture\TruncationResetStrategy;
 use Cake\Utility\Inflector;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
@@ -87,7 +87,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * The classname for the fixture state reset strategy.
      *
-     * If null the TruncationStrategy will be used.
+     * If null, TruncationResetStrategy will be used.
      *
      * @var string|null
      * @psalm-var class-string|null
@@ -1058,7 +1058,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function getResetStrategy(): ResetStrategyInterface
     {
-        $strategyClass = $this->stateResetStrategy ?? TruncationStrategy::class;
+        $strategyClass = $this->stateResetStrategy ?? TruncationResetStrategy::class;
         try {
             $reflect = new ReflectionClass($strategyClass);
         } catch (ReflectionException $e) {

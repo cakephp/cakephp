@@ -25,6 +25,7 @@ use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
+use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
@@ -45,6 +46,11 @@ use TestApp\Model\Table\ValidateUsersTable;
  */
 class FormHelperTest extends TestCase
 {
+    /**
+     * @inheritDoc
+     */
+    protected $stateResetStrategy = TransactionResetStrategy::class;
+
     /**
      * Fixtures to be used
      *
