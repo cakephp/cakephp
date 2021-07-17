@@ -130,7 +130,7 @@ class XmlViewTest extends TestCase
                     ],
             ],
         ];
-        $xmlOptions = ['format' => ['format' => 'attributes', 'return' => 'domdocument']];
+        $xmlOptions = ['format' => 'attributes', 'return' => 'domdocument'];
 
         $Controller->set($data);
         $Controller->viewBuilder()
