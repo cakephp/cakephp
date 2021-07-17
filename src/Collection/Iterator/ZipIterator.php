@@ -20,6 +20,7 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use MultipleIterator;
+use ReturnTypeWillChange;
 
 /**
  * Creates an iterator that returns elements grouped in pairs
