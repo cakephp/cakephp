@@ -539,7 +539,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             throw new UnexpectedValueException(sprintf(
                 'Controller actions can only return ResponseInterface instance or null. '
                 . 'Got %s instead.',
-                getTypeName($result)
+                get_debug_type($result)
             ));
         }
         if ($result === null && $this->isAutoRenderEnabled()) {

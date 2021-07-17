@@ -1336,7 +1336,7 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testIsLinkedToInvalidArgumentOne(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
+        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `null` given.');
 
         $Comments = $this->getTableLocator()->get('Comments');
 
@@ -1351,7 +1351,7 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testIsNotLinkedToInvalidArgumentOne(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
+        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `null` given.');
 
         $Comments = $this->getTableLocator()->get('Comments');
 

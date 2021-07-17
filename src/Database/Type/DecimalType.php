@@ -72,7 +72,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
 
         throw new InvalidArgumentException(sprintf(
             'Cannot convert value of type `%s` to a decimal',
-            getTypeName($value)
+            get_debug_type($value)
         ));
     }
 

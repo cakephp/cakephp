@@ -29,7 +29,7 @@ class ContextFactoryTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
-            'No context provider found for value of type `boolean`.'
+            'No context provider found for value of type `bool`.'
             . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.'
         );
 

@@ -152,14 +152,4 @@ class FunctionsTest extends TestCase
             $this->assertTrue(true);
         });
     }
-
-    /**
-     * testing getTypeName()
-     */
-    public function testgetTypeName(): void
-    {
-        $this->assertSame('stdClass', getTypeName(new \stdClass()));
-        $this->assertSame('array', getTypeName([]));
-        $this->assertSame('string', getTypeName(''));
-    }
 }

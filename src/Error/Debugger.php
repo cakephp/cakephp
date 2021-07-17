@@ -274,7 +274,7 @@ class Debugger
     {
         $instance = static::getInstance();
         if (!is_string($template) && !($template instanceof Closure)) {
-            $type = getTypeName($template);
+            $type = get_debug_type($template);
             throw new RuntimeException("Invalid editor type of `{$type}`. Expected string or Closure.");
         }
         $instance->editors[$name] = $template;
@@ -668,16 +668,19 @@ class Debugger
     protected static function export($var, DebugContext $context): NodeInterface
     {
         $type = static::getType($var);
+
+        if (str_starts_with($type, 'resource ')) {
+            return new ScalarNode($type, $var);
+        }
+
         switch ($type) {
             case 'float':
             case 'string':
-            case 'resource':
-            case 'resource (closed)':
             case 'null':
                 return new ScalarNode($type, $var);
-            case 'boolean':
+            case 'bool':
                 return new ScalarNode('bool', $var);
-            case 'integer':
+            case 'int':
                 return new ScalarNode('int', $var);
             case 'array':
                 return static::exportArray($var, $context->withAddedDepth());
@@ -996,11 +999,7 @@ class Debugger
      */
     public static function getType($var): string
     {
-        $type = getTypeName($var);
-
-        if ($type === 'NULL') {
-            return 'null';
-        }
+        $type = get_debug_type($var);
 
         if ($type === 'double') {
             return 'float';

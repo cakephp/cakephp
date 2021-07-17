@@ -62,7 +62,7 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
         throw new \InvalidArgumentException(sprintf(
             'The `$value` argument must be an instance of `\%s`, or a string, `%s` given.',
             ColumnSchemaAwareTypeValueObject::class,
-            getTypeName($value)
+            get_debug_type($value)
         ));
     }
 
