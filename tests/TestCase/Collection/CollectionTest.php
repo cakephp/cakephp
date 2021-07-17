@@ -1930,12 +1930,12 @@ class CollectionTest extends TestCase
         $zipped = $collection->zipWith([3, 4], function ($a, $b) {
             return $a * $b;
         });
-        $this->assertEquals([3, 8], $zipped->toList());
+        $this->assertEquals([[3], [8]], $zipped->toList());
 
         $zipped = $collection->zipWith([3, 4], [5, 6, 7], function (...$args) {
             return array_sum($args);
         });
-        $this->assertEquals([9, 12], $zipped->toList());
+        $this->assertEquals([[9], [12]], $zipped->toList());
     }
 
     /**

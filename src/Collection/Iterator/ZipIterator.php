@@ -95,7 +95,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
             return parent::current();
         }
 
-        return call_user_func_array($this->_callback, parent::current());
+        return [call_user_func_array($this->_callback, parent::current())];
     }
 
     /**
