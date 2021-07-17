@@ -20,7 +20,6 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use MultipleIterator;
-use ReturnTypeWillChange;
 
 /**
  * Creates an iterator that returns elements grouped in pairs
@@ -90,8 +89,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
      *
      * @return array
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): array
     {
         if ($this->_callback === null) {
             return parent::current();
