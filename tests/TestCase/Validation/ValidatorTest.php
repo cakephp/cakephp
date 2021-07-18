@@ -317,16 +317,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the requirePresence failure case
-     */
-    public function testRequirePresenceAsArrayFailure(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $validator = new Validator();
-        $validator->requirePresence(['title' => 'derp', 'created' => false]);
-    }
-
-    /**
      * Tests the requirePresence method when passing a callback
      */
     public function testRequirePresenceCallback(): void
@@ -1529,15 +1519,6 @@ class ValidatorTest extends TestCase
         $this->assertSame($another, $validator->getProvider('bar'));
 
         $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
-    }
-
-    public function testProviderWarning(): void
-    {
-        $this->expectError();
-        $this->expectErrorMessage('The provider must be an object or class name string. Got `array` instead.');
-
-        $validator = new Validator();
-        $validator->setProvider('test', []);
     }
 
     /**

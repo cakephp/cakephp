@@ -737,8 +737,8 @@ class ValidationTest extends TestCase
      */
     public function testCustomRegexForCreditCard(): void
     {
-        $this->assertTrue(Validation::creditCard('370482756063980', null, false, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::creditCard('1233210593374358', null, false, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::creditCard('370482756063980', 'fast', false, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('1233210593374358', 'fast', false, '/123321\\d{11}/'));
     }
 
     /**
@@ -746,10 +746,10 @@ class ValidationTest extends TestCase
      */
     public function testCustomRegexForCreditCardWithLuhnCheck(): void
     {
-        $this->assertTrue(Validation::creditCard('12332110426226941', null, true, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::creditCard('12332105933743585', null, true, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::creditCard('12332105933743587', null, true, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::creditCard('12312305933743585', null, true, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::creditCard('12332110426226941', 'fast', true, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('12332105933743585', 'fast', true, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('12332105933743587', 'fast', true, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('12312305933743585', 'fast', true, '/123321\\d{11}/'));
     }
 
     /**
@@ -1777,8 +1777,8 @@ class ValidationTest extends TestCase
      */
     public function testDateCustomRegx(): void
     {
-        $this->assertTrue(Validation::date('2006-12-27', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
-        $this->assertFalse(Validation::date('12-27-2006', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
+        $this->assertTrue(Validation::date('2006-12-27', 'ymd', '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
+        $this->assertFalse(Validation::date('12-27-2006', 'ymd', '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
     }
 
     /**
@@ -1850,15 +1850,12 @@ class ValidationTest extends TestCase
      */
     public function testDecimalWithPlacesNumeric(): void
     {
-        $this->assertTrue(Validation::decimal('.27', '2'));
         $this->assertTrue(Validation::decimal(0.27, 2));
         $this->assertTrue(Validation::decimal(-0.27, 2));
         $this->assertTrue(Validation::decimal(0.27, 2));
-        $this->assertTrue(Validation::decimal('0.277', '3'));
         $this->assertTrue(Validation::decimal(0.277, 3));
         $this->assertTrue(Validation::decimal(-0.277, 3));
         $this->assertTrue(Validation::decimal(0.277, 3));
-        $this->assertTrue(Validation::decimal('1234.5678', '4'));
         $this->assertTrue(Validation::decimal(1234.5678, 4));
         $this->assertTrue(Validation::decimal(-1234.5678, 4));
         $this->assertTrue(Validation::decimal(1234.5678, 4));
@@ -1875,20 +1872,9 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::decimal((float)1234, 1));
         $this->assertFalse(Validation::decimal((float)1234, 1));
         $this->assertFalse(Validation::decimal((int)1234, 1));
-        $this->assertFalse(Validation::decimal('1234.5678', '3'));
         $this->assertFalse(Validation::decimal(1234.5678, 3));
         $this->assertFalse(Validation::decimal(-1234.5678, 3));
         $this->assertFalse(Validation::decimal(1234.5678, 3));
-    }
-
-    /**
-     * Test decimal() with invalid places parameter.
-     */
-    public function testDecimalWithInvalidPlaces(): void
-    {
-        $this->assertFalse(Validation::decimal('.27', 'string'));
-        $this->assertFalse(Validation::decimal(1234.5678, (array)true));
-        $this->assertFalse(Validation::decimal(-1234.5678, (object)true));
     }
 
     /**
