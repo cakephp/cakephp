@@ -410,9 +410,8 @@ SQL;
         if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
             $expected['created_with_precision']['default'] = 'current_timestamp(3)';
             $expected['created_with_precision']['comment'] = '';
-            if (!empty($expected['collate'])) {
-                $expected['collate'] = 'utf8mb3_general_ci';
-            }
+            $expected['title']['collate'] = 'utf8mb3_general_ci';
+            $expected['body']['collate'] = 'utf8mb3_general_ci';
         }
 
         $this->assertEquals(['id'], $result->getPrimaryKey());
