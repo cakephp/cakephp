@@ -19,7 +19,7 @@ namespace Cake\Console;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Filesystem;
+use Cake\Utility\Filesystem;
 use Cake\Utility\Inflector;
 
 /**

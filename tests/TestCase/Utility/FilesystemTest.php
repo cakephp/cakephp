@@ -14,16 +14,16 @@ declare(strict_types=1);
  * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Filesystem;
+namespace Cake\Test\TestCase\Utility;
 
-use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 use org\bovigo\vfs\vfsStream;
 
 /**
  * Filesystem class
  *
- * @coversDefaultClass \Cake\Filesystem\Filesystem
+ * @coversDefaultClass \Cake\Utility\Filesystem
  */
 class FilesystemTest extends TestCase
 {

@@ -45,7 +45,6 @@
         "cakephp/database": "self.version",
         "cakephp/datasource": "self.version",
         "cakephp/event": "self.version",
-        "cakephp/filesystem": "self.version",
         "cakephp/form": "self.version",
         "cakephp/http": "self.version",
         "cakephp/i18n": "self.version",

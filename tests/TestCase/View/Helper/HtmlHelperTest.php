@@ -18,13 +18,13 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Filesystem;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Date;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 

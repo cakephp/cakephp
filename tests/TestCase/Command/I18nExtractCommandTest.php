@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Core\Configure;
-use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 
 /**
  * I18nExtractCommandTest
