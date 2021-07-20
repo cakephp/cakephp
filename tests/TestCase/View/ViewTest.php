@@ -678,6 +678,8 @@ class ViewTest extends TestCase
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
         $this->expectExceptionMessage('Element file `TestPlugin.nope.php` could not be found');
+        $this->expectExceptionMessage(implode(DS, ['test_app', 'templates', 'plugin', 'TestPlugin', 'element', 'nope.php']));
+        $this->expectExceptionMessage(implode(DS, ['test_app', 'Plugin', 'TestPlugin', 'templates', 'element', 'nope.php']));
 
         $this->View->element('TestPlugin.nope');
     }
