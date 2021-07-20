@@ -11,8 +11,8 @@
     <projectFiles>
         <directory name="src"/>
         <ignoreFiles>
-            <directory name="src/Filesystem"/>
             <directory name="vendor"/>
+            <file name="src/Utility/Filesystem.php"/>
         </ignoreFiles>
     </projectFiles>
 

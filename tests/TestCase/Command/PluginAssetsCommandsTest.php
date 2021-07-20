@@ -20,10 +20,10 @@ use Cake\Command\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
-use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 
 /**
  * PluginAssetsCommandsTest class
@@ -38,7 +38,7 @@ class PluginAssetsCommandsTest extends TestCase
     protected $wwwRoot;
 
     /**
-     * @var \Cake\Filesystem\Filesystem
+     * @var \Cake\Utility\Filesystem
      */
     protected $fs;
 

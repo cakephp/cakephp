@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 
 /**
  * TestSuiteTest

@@ -18,7 +18,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Filesystem\Filesystem;
+use Cake\Utility\Filesystem;
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
 use SplFileInfo;
 
