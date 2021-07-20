@@ -23,6 +23,11 @@ use Throwable;
 class MissingTemplateException extends CakeException
 {
     /**
+     * @var string|null
+     */
+    protected $templateName;
+
+    /**
      * @var string
      */
     protected $filename;
@@ -47,7 +52,13 @@ class MissingTemplateException extends CakeException
      */
     public function __construct($file, array $paths = [], ?int $code = null, ?Throwable $previous = null)
     {
-        $this->filename = is_array($file) ? array_pop($file) : $file;
+        if (is_array($file)) {
+            $this->filename = array_pop($file);
+            $this->templateName = array_pop($file);
+        } else {
+            $this->filename = $file;
+            $this->templateName = null;
+        }
         $this->paths = $paths;
 
         parent::__construct($this->formatMessage(), $code, $previous);
@@ -60,7 +71,8 @@ class MissingTemplateException extends CakeException
      */
     public function formatMessage(): string
     {
-        $message = "{$this->type} file `{$this->filename}` could not be found.";
+        $name = $this->templateName ?? $this->filename;
+        $message = "{$this->type} file `{$name}` could not be found.";
         if ($this->paths) {
             $message .= "\n\nThe following paths were searched:\n\n";
             foreach ($this->paths as $path) {

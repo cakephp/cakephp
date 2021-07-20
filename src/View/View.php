@@ -623,9 +623,9 @@ class View implements EventDispatcherInterface
         }
 
         if (empty($options['ignoreMissing'])) {
-            [$plugin] = $this->pluginSplit($name, $pluginCheck);
+            [$plugin, $elementName] = $this->pluginSplit($name, $pluginCheck);
             $paths = iterator_to_array($this->getElementPaths($plugin));
-            throw new MissingElementException($name . $this->_ext, $paths);
+            throw new MissingElementException([$name . $this->_ext, $elementName . $this->_ext], $paths);
         }
 
         return '';
