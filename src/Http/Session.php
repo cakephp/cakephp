@@ -529,7 +529,7 @@ class Session
      */
     public function id(?string $id = null): string
     {
-        if ($id !== null && !headers_sent()) {
+        if ($id !== null && !headers_sent() && session_id() == '') {
             session_id($id);
         }
 
