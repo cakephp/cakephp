@@ -110,7 +110,7 @@ class ValidationRule
      * @throws \InvalidArgumentException when the supplied rule is not a valid
      * callable for the configured scope
      */
-    public function process($value, array $providers, array $context = [])
+    public function process(mixed $value, array $providers, array $context = []): array|string|bool
     {
         $context += ['data' => [], 'newRecord' => true, 'providers' => $providers];
 
@@ -209,7 +209,7 @@ class ValidationRule
      * @param string $property The name of the property to retrieve.
      * @return mixed
      */
-    public function get(string $property)
+    public function get(string $property): mixed
     {
         $property = '_' . $property;
 
