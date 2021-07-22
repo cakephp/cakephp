@@ -170,10 +170,6 @@ class ConfigureTest extends TestCase
      */
     public function testDebugSettingDisplayErrors()
     {
-        $this->skipIf(
-            defined('HHVM_VERSION'),
-            'Cannot change display_errors at runtime in HHVM'
-        );
         Configure::write('debug', false);
         $result = ini_get('display_errors');
         $this->assertSame('0', $result);
