@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\Configure;
-use RuntimeException;
 
 /**
  * A view class that is used for JSON responses.
@@ -140,21 +139,13 @@ class JsonView extends SerializedView
         } elseif ($jsonOptions === false) {
             $jsonOptions = 0;
         }
+        $jsonOptions |= JSON_THROW_ON_ERROR;
 
         if (Configure::read('debug')) {
             $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
-        if (defined('JSON_THROW_ON_ERROR')) {
-            $jsonOptions |= JSON_THROW_ON_ERROR;
-        }
-
-        $return = json_encode($data, $jsonOptions);
-        if ($return === false) {
-            throw new RuntimeException(json_last_error_msg(), json_last_error());
-        }
-
-        return $return;
+        return json_encode($data, $jsonOptions);
     }
 
     /**
