@@ -188,7 +188,7 @@ class ConsoleOptionParser
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
      */
-    public static function create(string $command, bool $defaultOptions = true)
+    public static function create(string $command, bool $defaultOptions = true): static
     {
         return new static($command, $defaultOptions);
     }
@@ -216,7 +216,7 @@ class ConsoleOptionParser
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
      */
-    public static function buildFromArray(array $spec, bool $defaultOptions = true)
+    public static function buildFromArray(array $spec, bool $defaultOptions = true): static
     {
         $parser = new static($spec['command'], $defaultOptions);
         if (!empty($spec['arguments'])) {
@@ -263,7 +263,7 @@ class ConsoleOptionParser
      * @param \Cake\Console\ConsoleOptionParser|array $spec ConsoleOptionParser or spec to merge with.
      * @return $this
      */
-    public function merge($spec)
+    public function merge(ConsoleOptionParser|array $spec)
     {
         if ($spec instanceof ConsoleOptionParser) {
             $spec = $spec->toArray();
@@ -317,7 +317,7 @@ class ConsoleOptionParser
      *   text will be imploded with "\n".
      * @return $this
      */
-    public function setDescription($text)
+    public function setDescription(array|string $text)
     {
         if (is_array($text)) {
             $text = implode("\n", $text);
@@ -345,7 +345,7 @@ class ConsoleOptionParser
      *   be imploded with "\n".
      * @return $this
      */
-    public function setEpilog($text)
+    public function setEpilog(array|string $text)
     {
         if (is_array($text)) {
             $text = implode("\n", $text);
@@ -412,7 +412,7 @@ class ConsoleOptionParser
      * @param array $options An array of parameters that define the behavior of the option
      * @return $this
      */
-    public function addOption($name, array $options = [])
+    public function addOption(ConsoleInputOption|string $name, array $options = [])
     {
         if ($name instanceof ConsoleInputOption) {
             $option = $name;
@@ -480,7 +480,7 @@ class ConsoleOptionParser
      * @param array $params Parameters for the argument, see above.
      * @return $this
      */
-    public function addArgument($name, array $params = [])
+    public function addArgument(ConsoleInputArgument|string $name, array $params = [])
     {
         if ($name instanceof ConsoleInputArgument) {
             $arg = $name;
@@ -570,7 +570,7 @@ class ConsoleOptionParser
      * @param array $options Array of params, see above.
      * @return $this
      */
-    public function addSubcommand($name, array $options = [])
+    public function addSubcommand(ConsoleInputSubcommand|string $name, array $options = [])
     {
         if ($name instanceof ConsoleInputSubcommand) {
             $command = $name;
@@ -631,7 +631,7 @@ class ConsoleOptionParser
      *
      * @return array<\Cake\Console\ConsoleInputArgument>
      */
-    public function arguments()
+    public function arguments(): array
     {
         return $this->_args;
     }
@@ -641,7 +641,7 @@ class ConsoleOptionParser
      *
      * @return array<string>
      */
-    public function argumentNames()
+    public function argumentNames(): array
     {
         $out = [];
         foreach ($this->_args as $arg) {
@@ -656,7 +656,7 @@ class ConsoleOptionParser
      *
      * @return array<\Cake\Console\ConsoleInputOption>
      */
-    public function options()
+    public function options(): array
     {
         return $this->_options;
     }
@@ -666,7 +666,7 @@ class ConsoleOptionParser
      *
      * @return array<\Cake\Console\ConsoleInputSubcommand>
      */
-    public function subcommands()
+    public function subcommands(): array
     {
         return $this->_subcommands;
     }

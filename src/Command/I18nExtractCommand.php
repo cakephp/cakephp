@@ -778,7 +778,7 @@ class I18nExtractCommand extends Command
      * @param int $count Count
      * @return void
      */
-    protected function _markerError($io, string $file, int $line, string $marker, int $count): void
+    protected function _markerError(ConsoleIo $io, string $file, int $line, string $marker, int $count): void
     {
         if (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
             $this->_countMarkerError++;
@@ -863,7 +863,7 @@ class I18nExtractCommand extends Command
      * @param string $path Path to folder
      * @return bool true if it exists and is writable, false otherwise
      */
-    protected function _isPathUsable($path): bool
+    protected function _isPathUsable(string $path): bool
     {
         if (!is_dir($path)) {
             mkdir($path, 0770, true);

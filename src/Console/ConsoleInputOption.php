@@ -90,7 +90,7 @@ class ConsoleInputOption
      * @param string $short The short alias for this option
      * @param string $help The help text for this option
      * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
-     * @param string|bool|null $default The default value for this option.
+     * @param mixed $default The default value for this option.
      * @param array<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
@@ -205,7 +205,7 @@ class ConsoleInputOption
      *
      * @return string|bool|null
      */
-    public function defaultValue()
+    public function defaultValue(): string|bool|null
     {
         return $this->_default;
     }
@@ -247,7 +247,7 @@ class ConsoleInputOption
      * @return true
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function validChoice($value): bool
+    public function validChoice(string|bool $value): bool
     {
         if (empty($this->_choices)) {
             return true;

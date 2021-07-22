@@ -313,18 +313,6 @@ class CommandTest extends TestCase
     }
 
     /**
-     * test executeCommand with an invalid instance
-     */
-    public function testExecuteCommandInstanceInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Command 'stdClass' is not a subclass");
-
-        $command = new Command();
-        $command->executeCommand(new \stdClass(), [], $this->getMockIo(new ConsoleOutput()));
-    }
-
-    /**
      * Test that noninteractive commands use defaults where applicable.
      */
     public function testExecuteCommandNonInteractive(): void

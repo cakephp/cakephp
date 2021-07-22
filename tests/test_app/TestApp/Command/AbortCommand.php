@@ -9,7 +9,7 @@ use Cake\Console\ConsoleIo;
 
 class AbortCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIo $io)
     {
         $io->error('Command aborted');
         $this->abort(127);

@@ -211,7 +211,7 @@ class HelpFormatter
      * @param bool $string Return the SimpleXml object or a string. Defaults to true.
      * @return \SimpleXMLElement|string See $string
      */
-    public function xml(bool $string = true)
+    public function xml(bool $string = true): SimpleXMLElement|string
     {
         $parser = $this->_parser;
         $xml = new SimpleXMLElement('<shell></shell>');

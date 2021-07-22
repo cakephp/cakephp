@@ -63,7 +63,7 @@ class ConsoleInputArgument
      * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
      * @param array<string> $choices Valid choices for this option.
      */
-    public function __construct($name, $help = '', $required = false, $choices = [])
+    public function __construct(array|string $name, string $help = '', bool $required = false, array $choices = [])
     {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
