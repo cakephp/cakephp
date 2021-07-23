@@ -4839,6 +4839,39 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('accept', [
+            'type' => 'radio',
+            'options' => [
+                1 => 'positive',
+                -1 => 'negative',
+            ],
+            'label' => false,
+        ]);
+        $expected = [
+            ['div' => ['class' => 'input radio']],
+                ['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => '']],
+                ['label' => ['for' => 'accept-1']],
+                ['input' => [
+                    'type' => 'radio',
+                    'name' => 'accept',
+                    'value' => '1',
+                    'id' => 'accept-1',
+                ]],
+                'positive',
+                '/label',
+                ['label' => ['for' => 'accept--1']],
+                ['input' => [
+                    'type' => 'radio',
+                    'name' => 'accept',
+                    'value' => '-1',
+                    'id' => 'accept--1',
+                ]],
+                'negative',
+                '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
