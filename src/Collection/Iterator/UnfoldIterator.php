@@ -77,7 +77,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      *
      * @return \RecursiveIterator
      */
-    public function getChildren()
+    public function getChildren(): RecursiveIterator
     {
         $current = $this->current();
         $key = $this->key();

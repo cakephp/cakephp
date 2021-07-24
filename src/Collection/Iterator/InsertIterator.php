@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use ReturnTypeWillChange;
 
 /**
  * This iterator will insert values into a property of each of the records returned.
@@ -101,6 +102,7 @@ class InsertIterator extends Collection
      *
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         $row = parent::current();
