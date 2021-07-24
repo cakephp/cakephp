@@ -49,15 +49,6 @@ class Number
     public const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
 
     /**
-     * ICU Constant for accounting format; not yet widely supported by INTL library.
-     * This will be able to go away once CakePHP minimum PHP requirement is 7.4.1 or higher.
-     * See UNUM_CURRENCY_ACCOUNTING in https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/unum_8h.html
-     *
-     * @var int
-     */
-    public const CURRENCY_ACCOUNTING = 12;
-
-    /**
      * A list of number formatters indexed by locale and type
      *
      * @var array
@@ -354,11 +345,7 @@ class Number
             if ($options['type'] === static::FORMAT_CURRENCY) {
                 $type = NumberFormatter::CURRENCY;
             } elseif ($options['type'] === static::FORMAT_CURRENCY_ACCOUNTING) {
-                if (defined('NumberFormatter::CURRENCY_ACCOUNTING')) {
-                    $type = NumberFormatter::CURRENCY_ACCOUNTING;
-                } else {
-                    $type = static::CURRENCY_ACCOUNTING;
-                }
+                $type = NumberFormatter::CURRENCY_ACCOUNTING;
             }
         }
 
