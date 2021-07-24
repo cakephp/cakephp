@@ -22,6 +22,7 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
+use ReturnTypeWillChange;
 use SplFixedArray;
 
 /**
@@ -184,6 +185,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return object|array
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         return $this->_current;
