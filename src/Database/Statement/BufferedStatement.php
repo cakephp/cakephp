@@ -20,6 +20,7 @@ use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Iterator;
+use ReturnTypeWillChange;
 
 /**
  * A statement decorator that implements buffered results.
@@ -281,6 +282,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         return $this->index;
@@ -291,6 +293,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         return $this->buffer[$this->index];
