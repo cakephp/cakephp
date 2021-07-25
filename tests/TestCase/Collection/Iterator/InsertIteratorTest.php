@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Iterator\InsertIterator;
 use Cake\TestSuite\TestCase;
 
@@ -52,7 +53,7 @@ class InsertIteratorTest extends TestCase
             'a' => ['name' => 'Derp', 'a' => ['deep' => ['thing' => 1]]],
             'b' => ['name' => 'Derpina', 'a' => ['deep' => ['thing' => 2]]],
         ];
-        $values = new \ArrayIterator([20, 21]);
+        $values = new ArrayIterator([20, 21]);
         $iterator = new InsertIterator($items, 'a.deep.path', $values);
         $result = $iterator->toArray();
         $expected = [

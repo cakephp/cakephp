@@ -18,6 +18,7 @@ namespace Cake\Event;
 
 use ArrayAccess;
 use Countable;
+use ReturnTypeWillChange;
 
 /**
  * The Event List
@@ -71,6 +72,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $offset The offset to retrieve.
      * @return mixed Can return all value types.
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if ($this->offsetExists($offset)) {

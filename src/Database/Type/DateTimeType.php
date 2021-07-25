@@ -321,7 +321,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                 return null;
             }
 
-            if (ctype_digit($value)) {
+            if (is_int($value) || (is_string($value) && ctype_digit($value))) {
                 /** @var \Datetime|\DateTimeImmutable $dateTime */
                 $dateTime = new $class('@' . $value);
 

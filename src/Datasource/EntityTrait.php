@@ -21,6 +21,7 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
+use ReturnTypeWillChange;
 use Traversable;
 
 /**
@@ -587,6 +588,7 @@ trait EntityTrait
      * @param string $offset The offset to get.
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         return $this->get($offset);
