@@ -141,14 +141,14 @@ class ArgumentsTest extends TestCase
         $options = [
             'verbose' => true,
             'off' => false,
-            'zero' => 0,
+            'zero' => '0',
             'empty' => '',
         ];
         $args = new Arguments([], $options, []);
         $this->assertTrue($args->getOption('verbose'));
         $this->assertFalse($args->getOption('off'));
         $this->assertSame('', $args->getOption('empty'));
-        $this->assertSame(0, $args->getOption('zero'));
+        $this->assertSame('0', $args->getOption('zero'));
         $this->assertNull($args->getOption('undef'));
     }
 }

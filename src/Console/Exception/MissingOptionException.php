@@ -90,7 +90,7 @@ class MissingOptionException extends ConsoleException
      * @param array<string> $haystack Suggestions to look through.
      * @return string The best match
      */
-    protected function findClosestItem($needle, $haystack): ?string
+    protected function findClosestItem(string $needle, array $haystack): ?string
     {
         $bestGuess = null;
         foreach ($haystack as $item) {

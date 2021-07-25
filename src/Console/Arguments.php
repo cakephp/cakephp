@@ -140,9 +140,9 @@ class Arguments
      * Get an option's value or null
      *
      * @param string $name The name of the option to check.
-     * @return string|int|bool|null The option value or null.
+     * @return string|bool|null The option value or null.
      */
-    public function getOption(string $name)
+    public function getOption(string $name): string|bool|null
     {
         return $this->options[$name] ?? null;
     }
