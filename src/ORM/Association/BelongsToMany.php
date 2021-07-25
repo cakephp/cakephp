@@ -721,10 +721,12 @@ class BelongsToMany extends Association
     protected function _saveTarget(EntityInterface $parentEntity, array $entities, $options)
     {
         $joinAssociations = false;
-        if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
-            $joinAssociations = $options['associated'][$this->_junctionProperty]['associated'];
+        if (isset($options['associated']) && is_array($options['associated'])) {
+            if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
+                $joinAssociations = $options['associated'][$this->_junctionProperty]['associated'];
+            }
+            unset($options['associated'][$this->_junctionProperty]);
         }
-        unset($options['associated'][$this->_junctionProperty]);
 
         $table = $this->getTarget();
         $original = $entities;
