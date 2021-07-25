@@ -88,7 +88,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $name The session name.
      * @return bool Success
      */
-    public function open($path, $name): bool
+    public function open(string $path, string $name): bool
     {
         return true;
     }
@@ -109,7 +109,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in database.
      * @return string|false Session data or false if it does not exist.
      */
-    public function read($id): string|false
+    public function read(string $id): string|false
     {
         /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
@@ -138,7 +138,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
-    public function write($id, $data): bool
+    public function write(string $id, string $data): bool
     {
         if (!$id) {
             return false;
@@ -161,7 +161,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in database.
      * @return bool True for successful delete, false otherwise.
      */
-    public function destroy($id): bool
+    public function destroy(string $id): bool
     {
         /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
@@ -176,7 +176,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false The number of deleted sessions on success, or false on failure.
      */
-    public function gc($maxlifetime): int|false
+    public function gc(int $maxlifetime): int|false
     {
         return $this->_table->deleteAll(['expires <' => time()]);
     }

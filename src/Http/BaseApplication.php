@@ -28,6 +28,7 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginCollection;
+use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
@@ -143,7 +144,7 @@ abstract class BaseApplication implements
      * @param array $config The configuration data for the plugin if using a string for $name
      * @return $this
      */
-    public function addOptionalPlugin($name, array $config = [])
+    public function addOptionalPlugin(PluginInterface|string $name, array $config = [])
     {
         try {
             $this->addPlugin($name, $config);

@@ -1558,7 +1558,7 @@ class ServerRequestTest extends TestCase
     public function testGetCookieCollection(): void
     {
         $cookies = [
-            'remember_me' => '1',
+            'remember_me' => 1,
             'color' => 'blue',
         ];
         $request = new ServerRequest(['cookies' => $cookies]);
@@ -1581,7 +1581,7 @@ class ServerRequestTest extends TestCase
         $this->assertNotSame($new, $request, 'Should clone');
 
         $this->assertSame(['bad' => 'goaway'], $request->getCookieParams());
-        $this->assertSame(['remember_me' => 1, 'color' => 'red'], $new->getCookieParams());
+        $this->assertSame(['remember_me' => '1', 'color' => 'red'], $new->getCookieParams());
         $cookies = $new->getCookieCollection();
         $this->assertCount(2, $cookies);
         $this->assertSame('red', $cookies->get('color')->getValue());

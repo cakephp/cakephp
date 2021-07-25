@@ -107,7 +107,7 @@ class CorsBuilder
      * @param array<string>|string $domains The allowed domains
      * @return $this
      */
-    public function allowOrigin($domains)
+    public function allowOrigin(array|string $domains)
     {
         $allowed = $this->_normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
@@ -205,7 +205,7 @@ class CorsBuilder
      * @param string|int $age The max-age for OPTIONS requests in seconds
      * @return $this
      */
-    public function maxAge($age)
+    public function maxAge(string|int $age)
     {
         $this->_headers['Access-Control-Max-Age'] = $age;
 

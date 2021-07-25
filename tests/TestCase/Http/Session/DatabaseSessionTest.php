@@ -82,7 +82,7 @@ class DatabaseSessionTest extends TestCase
      */
     public function testOpen(): void
     {
-        $this->assertTrue($this->storage->open(null, null));
+        $this->assertTrue($this->storage->open('', ''));
     }
 
     /**

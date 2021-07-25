@@ -638,7 +638,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
-        $this->assertCookie(1, 'remember_me');
+        $this->assertCookie('1', 'remember_me');
         $this->assertCookieNotSet('user_id');
     }
 
@@ -651,7 +651,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
         $this->assertCookieNotSet('user_id');
-        $this->assertCookie(1, 'remember_me');
+        $this->assertCookie('1', 'remember_me');
     }
 
     /**

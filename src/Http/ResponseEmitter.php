@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieInterface;
 use Laminas\Diactoros\RelativeStream;
 use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -225,7 +226,7 @@ class ResponseEmitter implements EmitterInterface
      * @param \Cake\Http\Cookie\CookieInterface|string $cookie Cookie.
      * @return bool
      */
-    protected function setCookie($cookie): bool
+    protected function setCookie(CookieInterface|string $cookie): bool
     {
         if (is_string($cookie)) {
             $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
@@ -280,7 +281,7 @@ class ResponseEmitter implements EmitterInterface
      * @return array|false [unit, first, last, length]; returns false if no
      *     content range or an invalid content range is provided
      */
-    protected function parseContentRange(string $header)
+    protected function parseContentRange(string $header): array|false
     {
         if (preg_match('/(?P<unit>[\w]+)\s+(?P<first>\d+)-(?P<last>\d+)\/(?P<length>\d+|\*)/', $header, $matches)) {
             return [

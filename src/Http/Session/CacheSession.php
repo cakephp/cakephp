@@ -59,7 +59,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $name The session name.
      * @return bool Success
      */
-    public function open($path, $name): bool
+    public function open(string $path, string $name): bool
     {
         return true;
     }
@@ -80,7 +80,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in cache.
      * @return string|false Session data or false if it does not exist.
      */
-    public function read($id): string|false
+    public function read(string $id): string|false
     {
         $value = Cache::read($id, $this->_options['config']);
 
@@ -98,7 +98,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
-    public function write($id, $data): bool
+    public function write(string $id, string $data): bool
     {
         if (!$id) {
             return false;
@@ -113,7 +113,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in cache.
      * @return bool Always true.
      */
-    public function destroy($id): bool
+    public function destroy(string $id): bool
     {
         Cache::delete($id, $this->_options['config']);
 
@@ -126,7 +126,7 @@ class CacheSession implements SessionHandlerInterface
      * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false
      */
-    public function gc($maxlifetime): int|false
+    public function gc(int $maxlifetime): int|false
     {
         return 0;
     }

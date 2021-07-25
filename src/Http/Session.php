@@ -21,6 +21,7 @@ use Cake\Utility\Hash;
 use InvalidArgumentException;
 use RuntimeException;
 use SessionHandlerInterface;
+use const PHP_SESSION_ACTIVE;
 
 /**
  * This class is a wrapper for the native PHP session functions. It provides
@@ -92,7 +93,7 @@ class Session
      * @return static
      * @see \Cake\Http\Session::__construct()
      */
-    public static function create(array $sessionConfig = [])
+    public static function create(array $sessionConfig = []): static
     {
         if (isset($sessionConfig['defaults'])) {
             $defaults = static::_defaultConfig($sessionConfig['defaults']);
@@ -133,7 +134,7 @@ class Session
      * @param string $name Config name.
      * @return array|false
      */
-    protected static function _defaultConfig(string $name)
+    protected static function _defaultConfig(string $name): array|false
     {
         $tmp = defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR;
         $defaults = [
@@ -255,8 +256,10 @@ class Session
      * @return \SessionHandlerInterface|null
      * @throws \InvalidArgumentException
      */
-    public function engine($class = null, array $options = []): ?SessionHandlerInterface
-    {
+    public function engine(
+        SessionHandlerInterface|string|null $class = null,
+        array $options = []
+    ): ?SessionHandlerInterface {
         if ($class === null) {
             return $this->_engine;
         }
@@ -289,7 +292,7 @@ class Session
      */
     protected function setEngine(SessionHandlerInterface $handler): SessionHandlerInterface
     {
-        if (!headers_sent() && session_status() !== \PHP_SESSION_ACTIVE) {
+        if (!headers_sent() && session_status() !== PHP_SESSION_ACTIVE) {
             session_set_save_handler($handler, false);
         }
 
@@ -312,7 +315,7 @@ class Session
      */
     public function options(array $options): void
     {
-        if (session_status() === \PHP_SESSION_ACTIVE || headers_sent()) {
+        if (session_status() === PHP_SESSION_ACTIVE || headers_sent()) {
             return;
         }
 
@@ -344,7 +347,7 @@ class Session
             return $this->_started = true;
         }
 
-        if (session_status() === \PHP_SESSION_ACTIVE) {
+        if (session_status() === PHP_SESSION_ACTIVE) {
             throw new RuntimeException('Session was already started');
         }
 
@@ -400,7 +403,7 @@ class Session
      */
     public function started(): bool
     {
-        return $this->_started || session_status() === \PHP_SESSION_ACTIVE;
+        return $this->_started || session_status() === PHP_SESSION_ACTIVE;
     }
 
     /**
@@ -434,7 +437,7 @@ class Session
      * @return mixed|null The value of the session variable, or default value if a session
      *   is not available, can't be started, or provided $name is not found in the session.
      */
-    public function read(?string $name = null, $default = null)
+    public function read(?string $name = null, mixed $default = null): mixed
     {
         if ($this->_hasSession() && !$this->started()) {
             $this->start();
@@ -458,7 +461,7 @@ class Session
      * @throws \RuntimeException
      * @return mixed|null
      */
-    public function readOrFail(string $name)
+    public function readOrFail(string $name): mixed
     {
         if (!$this->check($name)) {
             throw new RuntimeException(sprintf('Expected session key "%s" not found.', $name));
@@ -474,7 +477,7 @@ class Session
      * @return mixed|null The value of the session variable, null if session not available,
      *   session not started, or provided name not found in the session.
      */
-    public function consume(string $name)
+    public function consume(string $name): mixed
     {
         if (empty($name)) {
             return null;
@@ -494,7 +497,7 @@ class Session
      * @param mixed $value Value to write
      * @return void
      */
-    public function write($name, $value = null): void
+    public function write(array|string $name, mixed $value = null): void
     {
         if (!$this->started()) {
             $this->start();
@@ -581,7 +584,7 @@ class Session
             $this->start();
         }
 
-        if (!$this->_isCLI && session_status() === \PHP_SESSION_ACTIVE) {
+        if (!$this->_isCLI && session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 
