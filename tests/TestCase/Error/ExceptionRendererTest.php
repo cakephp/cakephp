@@ -678,7 +678,7 @@ class ExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->onlyMethods(['beforeRender'])
             ->getMock();
-        $controller->request = new ServerRequest();
+        $controller->setRequest(new ServerRequest());
         $controller->expects($this->any())
             ->method('beforeRender')
             ->will($this->throwException($exception));
@@ -760,7 +760,7 @@ class ExceptionRendererTest extends TestCase
             ->onlyMethods(['render'])
             ->getMock();
         $controller->setPlugin('TestPlugin');
-        $controller->request = new ServerRequest();
+        $controller->setRequest(new ServerRequest());
 
         $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
         $controller->expects($this->once())
@@ -790,7 +790,6 @@ class ExceptionRendererTest extends TestCase
             ->onlyMethods(['render'])
             ->getMock();
         $controller->setPlugin('TestPlugin');
-        $controller->request = new ServerRequest();
 
         $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
         $controller->expects($this->once())
