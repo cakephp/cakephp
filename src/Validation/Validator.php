@@ -493,19 +493,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 ];
             }
             if (!is_string($name)) {
-                /** @psalm-suppress PossiblyUndefinedMethod */
-                $name = $rule['rule'];
-                if (is_array($name)) {
-                    $name = array_shift($name);
-                }
-
-                if ($validationSet->offsetExists($name)) {
-                    $message = 'You cannot add a rule without a unique name, already existing rule found: ' . $name;
-                    throw new InvalidArgumentException($message);
-                }
-
-                deprecationWarning(
-                    'Adding validation rules without a name key is deprecated. Update rules array to have string keys.'
+                throw new InvalidArgumentException(
+                    'You cannot add validation rules without a `name` key. Update rules array to have string keys.'
                 );
             }
 

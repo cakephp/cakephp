@@ -68,24 +68,22 @@ class ControllerFactoryTest extends TestCase
     /**
      * Test building a prefixed app controller.
      */
-    public function testPrefixedAppControllerDeprecated(): void
+    public function testPrefixedAppController(): void
     {
-        $this->deprecated(function (): void {
-            $request = new ServerRequest([
-                'url' => 'admin/posts/index',
-                'params' => [
-                    'prefix' => 'Admin',
-                    'controller' => 'Posts',
-                    'action' => 'index',
-                ],
-            ]);
-            $result = $this->factory->create($request);
-            $this->assertInstanceOf(
-                'TestApp\Controller\Admin\PostsController',
-                $result
-            );
-            $this->assertSame($request, $result->getRequest());
-        });
+        $request = new ServerRequest([
+            'url' => 'admin/posts/index',
+            'params' => [
+                'prefix' => 'Admin',
+                'controller' => 'Posts',
+                'action' => 'index',
+            ],
+        ]);
+        $result = $this->factory->create($request);
+        $this->assertInstanceOf(
+            'TestApp\Controller\Admin\PostsController',
+            $result
+        );
+        $this->assertSame($request, $result->getRequest());
     }
 
     /**

@@ -23,7 +23,6 @@ use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
-use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -228,29 +227,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         }
         if ($request->getParam('prefix')) {
             $prefix = $request->getParam('prefix');
-
-            $firstChar = substr($prefix, 0, 1);
-            if ($firstChar !== strtoupper($firstChar)) {
-                deprecationWarning(
-                    "The `{$prefix}` prefix did not start with an upper case character. " .
-                    'Routing prefixes should be defined as CamelCase values. ' .
-                    'Prefix inflection will be removed in 5.0'
-                );
-
-                if (strpos($prefix, '/') === false) {
-                    $namespace .= '/' . Inflector::camelize($prefix);
-                } else {
-                    $prefixes = array_map(
-                        function ($val) {
-                            return Inflector::camelize($val);
-                        },
-                        explode('/', $prefix)
-                    );
-                    $namespace .= '/' . implode('/', $prefixes);
-                }
-            } else {
-                $namespace .= '/' . $prefix;
-            }
+            $namespace .= '/' . $prefix;
         }
         $firstChar = substr($controller, 0, 1);
 

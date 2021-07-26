@@ -84,15 +84,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     public function __construct($errorHandler = [])
     {
-        if (func_num_args() > 1) {
-            deprecationWarning(
-                'The signature of ErrorHandlerMiddleware::__construct() has changed. '
-                . 'Pass the config array as 1st argument instead.'
-            );
-
-            $errorHandler = func_get_arg(1);
-        }
-
         if (Configure::read('debug')) {
             ini_set('zend.exception_ignore_args', '0');
         }
