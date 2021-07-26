@@ -34,7 +34,7 @@ trait StaticConfigTrait
      *
      * @var array
      */
-    protected static $_config = [];
+    protected static array $_config = [];
 
     /**
      * This method can be used to define configuration adapters for an application.

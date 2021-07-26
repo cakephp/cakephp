@@ -24,5 +24,5 @@ class MissingComponentException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'Component class %s could not be found.';
+    protected string $_messageTemplate = 'Component class %s could not be found.';
 }

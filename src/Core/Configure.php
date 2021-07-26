@@ -39,7 +39,7 @@ class Configure
      *
      * @var array
      */
-    protected static $_values = [
+    protected static array $_values = [
         'debug' => false,
     ];
 
@@ -49,14 +49,14 @@ class Configure
      * @see \Cake\Core\Configure::load()
      * @var array<\Cake\Core\Configure\ConfigEngineInterface>
      */
-    protected static $_engines = [];
+    protected static array $_engines = [];
 
     /**
      * Flag to track whether or not ini_set exists.
      *
      * @var bool|null
      */
-    protected static $_hasIniSet;
+    protected static ?bool $_hasIniSet = null;
 
     /**
      * Used to store a dynamic variable in Configure.

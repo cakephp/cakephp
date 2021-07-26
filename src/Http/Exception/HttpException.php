@@ -29,7 +29,7 @@ class HttpException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_defaultCode = 500;
+    protected int $_defaultCode = 500;
 
     /**
      * @var array

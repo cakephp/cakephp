@@ -8,7 +8,7 @@ use Cake\Core\ServiceProvider;
 
 class PersonServiceProvider extends ServiceProvider
 {
-    protected $provides = ['boot', 'sally'];
+    protected array $provides = ['boot', 'sally'];
 
     public function bootstrap(ContainerInterface $container): void
     {

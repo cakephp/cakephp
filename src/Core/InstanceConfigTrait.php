@@ -32,14 +32,14 @@ trait InstanceConfigTrait
      *
      * @var array
      */
-    protected $_config = [];
+    protected array $_config = [];
 
     /**
      * Whether the config property has already been configured with defaults
      *
      * @var bool
      */
-    protected $_configInitialized = false;
+    protected bool $_configInitialized = false;
 
     /**
      * Sets the config.

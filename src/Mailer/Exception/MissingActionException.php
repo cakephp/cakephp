@@ -24,5 +24,5 @@ class MissingActionException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'Mail %s::%s() could not be found, or is not accessible.';
+    protected string $_messageTemplate = 'Mail %s::%s() could not be found, or is not accessible.';
 }

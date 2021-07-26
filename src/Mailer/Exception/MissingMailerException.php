@@ -26,5 +26,5 @@ class MissingMailerException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'Mailer class "%s" could not be found.';
+    protected string $_messageTemplate = 'Mailer class "%s" could not be found.';
 }
