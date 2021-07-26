@@ -379,10 +379,7 @@ class Route
         ];
         foreach ($keys as $key => $glue) {
             $value = null;
-            if (
-                strpos($this->template, '{' . $key . '}') !== false
-                || strpos($this->template, ':' . $key) !== false
-            ) {
+            if (strpos($this->template, '{' . $key . '}') !== false) {
                 $value = '_' . $key;
             } elseif (isset($this->defaults[$key])) {
                 $value = $this->defaults[$key];
