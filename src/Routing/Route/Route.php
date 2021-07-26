@@ -94,13 +94,6 @@ class Route
     protected $middleware = [];
 
     /**
-     * Track whether or not brace keys `{var}` were used.
-     *
-     * @var bool
-     */
-    protected $braceKeys = true;
-
-    /**
      * Valid HTTP methods.
      *
      * @var array
@@ -321,18 +314,8 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
-            preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements);
-        } else {
-            $hasMatches = preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
-            $this->braceKeys = false;
-            if ($hasMatches) {
-                deprecationWarning(
-                    'Colon prefixed route placeholders like `:foo` are deprecated.'
-                    . ' Use braced placeholders like `{foo}` instead.'
-                );
-            }
-        }
+        preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements);
+
         foreach ($namedElements[1] as $i => $name) {
             $search = preg_quote($namedElements[0][$i]);
             if (isset($this->options[$name])) {
@@ -803,11 +786,7 @@ class Route
                 throw new InvalidArgumentException("Missing required route key `{$key}`");
             }
             $string = $params[$key];
-            if ($this->braceKeys) {
-                $search[] = "{{$key}}";
-            } else {
-                $search[] = ':' . $key;
-            }
+            $search[] = "{{$key}}";
             $replace[] = $string;
         }
 
@@ -870,11 +849,6 @@ class Route
 
         if ($matched) {
             return substr($this->template, 0, $namedElements[0][1]);
-        }
-
-        $routeKey = strpos($this->template, ':');
-        if ($routeKey !== false) {
-            return substr($this->template, 0, $routeKey);
         }
 
         $star = strpos($this->template, '*');

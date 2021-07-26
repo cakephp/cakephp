@@ -37,16 +37,6 @@ class RouteTest extends TestCase
         Configure::write('Routing', ['prefixes' => []]);
     }
 
-    public function testDeprecatedPlaceholders(): void
-    {
-        $this->deprecated(function (): void {
-            $route = new Route('/:controller/:action/:id');
-            $route->compile();
-
-            $this->assertTrue($route->compiled());
-        });
-    }
-
     /**
      * Test the construction of a Route
      */
@@ -1575,23 +1565,6 @@ class RouteTest extends TestCase
             '_matchedRoute' => '/{section}',
         ];
         $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test getting the static path for a route.
-     *
-     * @deprecated
-     */
-    public function testStaticPath(): void
-    {
-        $route = new Route('/pages/:id/*', ['controller' => 'Pages', 'action' => 'display']);
-        $this->assertSame('/pages/', $route->staticPath());
-
-        $route = new Route('/:controller/:action/*');
-        $this->assertSame('/', $route->staticPath());
-
-        $route = new Route('/api/{/:action/*');
-        $this->assertSame('/api/{/', $route->staticPath());
     }
 
     /**
