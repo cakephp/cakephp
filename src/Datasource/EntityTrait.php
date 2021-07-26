@@ -815,12 +815,6 @@ trait EntityTrait
      */
     public function isNew(): bool
     {
-        if (func_num_args()) {
-            deprecationWarning('Using isNew() as setter is deprecated. Use setNew() instead.');
-
-            $this->setNew(func_get_arg(0));
-        }
-
         return $this->_new;
     }
 

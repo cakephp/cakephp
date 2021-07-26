@@ -1217,28 +1217,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * test allowEmptyDateTime with deprecated argument order
-     */
-    public function testAllowEmptyDateTimeDeprecated(): void
-    {
-        $validator = new Validator();
-        $this->deprecated(function () use ($validator): void {
-            $validator->allowEmptyDateTime('published', 'datetime required', 'update');
-        });
-        $this->assertFalse($validator->isEmptyAllowed('published', true));
-        $this->assertTrue($validator->isEmptyAllowed('published', false));
-
-        $data = [
-            'published' => null,
-        ];
-        $expected = [
-            'published' => ['_empty' => 'datetime required'],
-        ];
-        $this->assertSame($expected, $validator->validate($data, true));
-        $this->assertEmpty($validator->validate($data, false));
-    }
-
-    /**
      * Tests the notEmptyDateTime method
      */
     public function testNotEmptyDateTime(): void
@@ -1776,38 +1754,12 @@ class ValidatorTest extends TestCase
     /**
      * Tests adding rules via alternative syntax and numeric keys
      */
-    public function testAddMultipleNumericKeyArrays(): void
-    {
-        $validator = new Validator();
-
-        $this->deprecated(function () use ($validator): void {
-            $validator->add('title', [
-                [
-                    'rule' => 'notBlank',
-                ],
-                [
-                    'rule' => ['minLength', 10],
-                    'message' => 'Titles need to be at least 10 characters long',
-                ],
-            ]);
-        });
-
-        $set = $validator->field('title');
-        $this->assertInstanceOf(ValidationSet::class, $set);
-        $this->assertCount(2, $set);
-    }
-
-    /**
-     * Tests adding rules via alternative syntax and numeric keys
-     */
     public function testAddMultipleNumericKeyArraysInvalid(): void
     {
-        $validator = new Validator();
-        $validator->add('title', 'notBlank', ['rule' => 'notBlank']);
-
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('You cannot add a rule without a unique name, already existing rule found: notBlank');
+        $this->expectExceptionMessage('You cannot add validation rules without a `name` key. Update rules array to have string keys.');
 
+        $validator = new Validator();
         $validator->add('title', [
             [
                 'rule' => 'notBlank',

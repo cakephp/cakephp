@@ -106,11 +106,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function __construct(array $config = [])
     {
-        if (array_key_exists('httpOnly', $config)) {
-            $config['httponly'] = $config['httpOnly'];
-            deprecationWarning('Option `httpOnly` is deprecated. Use lowercased `httponly` instead.');
-        }
-
         $this->_config = $config + $this->_config;
     }
 

@@ -497,28 +497,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertSame(CookieInterface::SAMESITE_STRICT, $cookie['samesite'], 'samesite attribute missing');
     }
 
-    public function testUsingDeprecatedConfigKey(): void
-    {
-        $this->deprecated(function (): void {
-            $request = new ServerRequest([
-                'environment' => ['REQUEST_METHOD' => 'GET'],
-                'webroot' => '/dir/',
-            ]);
-
-            $middleware = new CsrfProtectionMiddleware([
-                'cookieName' => 'token',
-                'expiry' => '+1 hour',
-                'secure' => true,
-                'httpOnly' => true,
-                'samesite' => CookieInterface::SAMESITE_STRICT,
-            ]);
-            $response = $middleware->process($request, $this->_getRequestHandler());
-
-            $cookie = $response->getCookie('token');
-            $this->assertTrue($cookie['httponly'], 'cookie httponly flag missing');
-        });
-    }
-
     /**
      * Test that the configuration options work.
      *
