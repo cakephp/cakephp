@@ -174,10 +174,7 @@ class Session
         ];
 
         if (isset($defaults[$name])) {
-            if (
-                PHP_VERSION_ID >= 70300
-                && ($name !== 'php' || empty(ini_get('session.cookie_samesite')))
-            ) {
+            if ($name !== 'php' || empty(ini_get('session.cookie_samesite'))) {
                 $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
             }
 

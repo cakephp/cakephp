@@ -1807,11 +1807,7 @@ TEXT;
 
     protected function checkException(string $message): void
     {
-        if (version_compare(PHP_VERSION, '7.4', '>=')) {
-            $this->expectException(\Error::class);
-        } else {
-            $this->expectException(\PHPUnit\Framework\Error\Error::class);
-        }
+        $this->expectException(\Error::class);
         $this->expectExceptionMessage($message);
     }
 }

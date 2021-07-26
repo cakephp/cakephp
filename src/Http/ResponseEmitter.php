@@ -231,27 +231,7 @@ class ResponseEmitter implements EmitterInterface
             $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
         }
 
-        if (PHP_VERSION_ID >= 70300) {
-            return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
-        }
-
-        $path = $cookie->getPath();
-        $sameSite = $cookie->getSameSite();
-        if ($sameSite !== null) {
-            // Temporary hack for PHP 7.2 to set "SameSite" attribute
-            // https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
-            $path .= '; samesite=' . $sameSite;
-        }
-
-        return setcookie(
-            $cookie->getName(),
-            $cookie->getScalarValue(),
-            $cookie->getExpiresTimestamp() ?: 0,
-            $path,
-            $cookie->getDomain(),
-            $cookie->isSecure(),
-            $cookie->isHttpOnly()
-        );
+        return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
     }
 
     /**
