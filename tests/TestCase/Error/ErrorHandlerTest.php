@@ -120,15 +120,10 @@ class ErrorHandlerTest extends TestCase
         $result = ob_get_clean();
 
         $this->assertMatchesRegularExpression('/<pre class="cake-error">/', $result);
-        if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
-            $this->assertMatchesRegularExpression('/<b>Notice<\/b>/', $result);
-            $this->assertMatchesRegularExpression('/variable:\s+wrong/', $result);
-        } else {
-            $this->assertMatchesRegularExpression('/<b>Warning<\/b>/', $result);
-            $this->assertMatchesRegularExpression('/variable \$wrong/', $result);
-        }
+        $this->assertMatchesRegularExpression('/<b>Warning<\/b>/', $result);
+        $this->assertMatchesRegularExpression('/variable \$wrong/', $result);
         $this->assertStringContainsString(
-            'ErrorHandlerTest.php, line ' . (__LINE__ - 12),
+            'ErrorHandlerTest.php, line ' . (__LINE__ - 7),
             $result,
             'Should contain file and line reference'
         );
@@ -191,25 +186,6 @@ class ErrorHandlerTest extends TestCase
     }
 
     /**
-     * test error prepended by @
-     */
-    public function testErrorSuppressed(): void
-    {
-        $this->skipIf(version_compare(PHP_VERSION, '8.0.0-dev', '>='));
-
-        $errorHandler = new ErrorHandler();
-        $errorHandler->register();
-        $this->_restoreError = true;
-
-        ob_start();
-        // phpcs:disable
-        @include 'invalid.file';
-        // phpcs:enable
-        $result = ob_get_clean();
-        $this->assertEmpty($result);
-    }
-
-    /**
      * Test that errors go into Cake Log when debug = 0.
      */
     public function testHandleErrorDebugOff(): void
@@ -224,17 +200,10 @@ class ErrorHandlerTest extends TestCase
         $messages = $this->logger->read();
         $this->assertMatchesRegularExpression('/^(notice|debug|warning)/', $messages[0]);
 
-        if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
-            $this->assertStringContainsString(
-                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 7) . ']',
-                $messages[0]
-            );
-        } else {
-            $this->assertStringContainsString(
-                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 12) . ']',
-                $messages[0]
-            );
-        }
+        $this->assertStringContainsString(
+            'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 6) . ']',
+            $messages[0]
+        );
     }
 
     /**
@@ -251,17 +220,10 @@ class ErrorHandlerTest extends TestCase
 
         $messages = $this->logger->read();
         $this->assertMatchesRegularExpression('/^(notice|debug|warning)/', $messages[0]);
-        if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
-            $this->assertStringContainsString(
-                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 6) . ']',
-                $messages[0]
-            );
-        } else {
-            $this->assertStringContainsString(
-                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 11) . ']',
-                $messages[0]
-            );
-        }
+        $this->assertStringContainsString(
+            'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']',
+            $messages[0]
+        );
         $this->assertStringContainsString('Trace:', $messages[0]);
         $this->assertStringContainsString(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()', $messages[0]);
         $this->assertStringContainsString('Request URL:', $messages[0]);

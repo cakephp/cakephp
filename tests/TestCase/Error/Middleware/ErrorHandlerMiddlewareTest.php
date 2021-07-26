@@ -350,8 +350,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testExceptionArgs(): void
     {
-        $this->skipIf(PHP_VERSION_ID < 70400);
-
         // Force exception_ignore_args to true for test
         ini_set('zend.exception_ignore_args', '1');
 

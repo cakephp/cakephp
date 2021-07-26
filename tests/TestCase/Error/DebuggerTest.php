@@ -395,7 +395,6 @@ TEXT;
 
     public function testExportVarTypedProperty(): void
     {
-        $this->skipIf(version_compare(PHP_VERSION, '7.4.0', '<'), 'typed properties require PHP7.4');
         // This is gross but was simpler than adding a fixture file.
         // phpcs:ignore
         eval('class MyClass { private string $field; }');
