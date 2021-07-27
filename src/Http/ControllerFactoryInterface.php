@@ -34,7 +34,7 @@ interface ControllerFactoryInterface
      * @throws \Cake\Http\Exception\MissingControllerException
      * @psalm-return TController
      */
-    public function create(ServerRequestInterface $request);
+    public function create(ServerRequestInterface $request): mixed;
 
     /**
      * Invoke a controller's action and wrapping methods.
@@ -43,5 +43,5 @@ interface ControllerFactoryInterface
      * @return \Psr\Http\Message\ResponseInterface The response
      * @psalm-param TController $controller
      */
-    public function invoke($controller): ResponseInterface;
+    public function invoke(mixed $controller): ResponseInterface;
 }
