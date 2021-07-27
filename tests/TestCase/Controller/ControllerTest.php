@@ -79,17 +79,7 @@ class ControllerTest extends TestCase
     public function testTableAutoload(): void
     {
         $request = new ServerRequest(['url' => 'controller/posts/index']);
-        $Controller = new Controller($request, new Response());
-        $Controller->modelClass = 'SiteArticles';
-
-        $this->assertFalse(isset($Controller->Articles));
-        $this->assertInstanceOf(
-            'Cake\ORM\Table',
-            $Controller->SiteArticles
-        );
-        unset($Controller->SiteArticles);
-
-        $Controller->modelClass = 'Articles';
+        $Controller = new Controller($request, new Response(), 'Articles');
 
         $this->assertFalse(isset($Controller->SiteArticles));
         $this->assertInstanceOf(
@@ -550,8 +540,7 @@ class ControllerTest extends TestCase
         ]);
         $response = new Response();
 
-        $Controller = new Controller($request, $response);
-        $Controller->modelClass = 'Posts';
+        $Controller = new Controller($request, $response, 'Posts');
         $results = $Controller->paginate();
 
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
@@ -783,32 +772,6 @@ class ControllerTest extends TestCase
 
         $result = $controller->components();
         $this->assertSame($result, $controller->components());
-    }
-
-    /**
-     * Test the components property errors
-     */
-    public function testComponentsPropertyError(): void
-    {
-        $this->expectWarning();
-        $request = new ServerRequest(['url' => '/']);
-        $response = new Response();
-
-        $controller = new TestController($request, $response);
-        $controller->components = ['Flash'];
-    }
-
-    /**
-     * Test the helpers property errors
-     */
-    public function testHelpersPropertyError(): void
-    {
-        $this->expectWarning();
-        $request = new ServerRequest(['url' => '/']);
-        $response = new Response();
-
-        $controller = new TestController($request, $response);
-        $controller->helpers = ['Flash'];
     }
 
     /**

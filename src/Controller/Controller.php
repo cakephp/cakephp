@@ -216,20 +216,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->initialize();
 
-        if (isset($this->components)) {
-            triggerWarning(
-                'Support for loading components using $components property is removed. ' .
-                'Use $this->loadComponent() instead in initialize().'
-            );
-        }
-
-        if (isset($this->helpers)) {
-            triggerWarning(
-                'Support for loading helpers using $helpers property is removed. ' .
-                'Use $this->viewBuilder()->setHelpers() instead.'
-            );
-        }
-
         $this->getEventManager()->on($this);
     }
 
@@ -326,36 +312,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         );
 
         return null;
-    }
-
-    /**
-     * Magic setter for removed properties.
-     *
-     * @param string $name Property name.
-     * @param mixed $value Value to set.
-     * @return void
-     */
-    public function __set(string $name, $value): void
-    {
-        if ($name === 'components') {
-            triggerWarning(
-                'Support for loading components using $components property is removed. ' .
-                'Use $this->loadComponent() instead in initialize().'
-            );
-
-            return;
-        }
-
-        if ($name === 'helpers') {
-            triggerWarning(
-                'Support for loading helpers using $helpers property is removed. ' .
-                'Use $this->viewBuilder()->setHelpers() instead.'
-            );
-
-            return;
-        }
-
-        $this->{$name} = $value;
     }
 
     /**
