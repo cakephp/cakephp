@@ -39,7 +39,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * @var array<string>
      * @see ServiceProvider::provides()
      */
-    protected $provides = [];
+    protected array $provides = [];
 
     /**
      * Get the container.

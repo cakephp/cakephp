@@ -29,7 +29,7 @@ trait FileConfigTrait
      *
      * @var string
      */
-    protected $_path = '';
+    protected string $_path = '';
 
     /**
      * Get file path

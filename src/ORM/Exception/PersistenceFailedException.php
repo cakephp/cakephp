@@ -34,7 +34,7 @@ class PersistenceFailedException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'Entity %s failure.';
+    protected string $_messageTemplate = 'Entity %s failure.';
 
     /**
      * Constructor.

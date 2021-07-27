@@ -34,70 +34,70 @@ class BasePlugin implements PluginInterface
      *
      * @var bool
      */
-    protected $bootstrapEnabled = true;
+    protected bool $bootstrapEnabled = true;
 
     /**
      * Console middleware
      *
      * @var bool
      */
-    protected $consoleEnabled = true;
+    protected bool $consoleEnabled = true;
 
     /**
      * Enable middleware
      *
      * @var bool
      */
-    protected $middlewareEnabled = true;
+    protected bool $middlewareEnabled = true;
 
     /**
      * Register container services
      *
      * @var bool
      */
-    protected $servicesEnabled = true;
+    protected bool $servicesEnabled = true;
 
     /**
      * Load routes or not
      *
      * @var bool
      */
-    protected $routesEnabled = true;
+    protected bool $routesEnabled = true;
 
     /**
      * The path to this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $path;
+    protected ?string $path = null;
 
     /**
      * The class path for this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $classPath;
+    protected ?string $classPath = null;
 
     /**
      * The config path for this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $configPath;
+    protected ?string $configPath = null;
 
     /**
      * The templates path for this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $templatePath;
+    protected ?string $templatePath = null;
 
     /**
      * The name of this plugin
      *
-     * @var string
+     * @var string|null
      */
-    protected $name;
+    protected ?string $name = null;
 
     /**
      * Constructor
@@ -134,7 +134,7 @@ class BasePlugin implements PluginInterface
      */
     public function getName(): string
     {
-        if ($this->name) {
+        if ($this->name !== null) {
             return $this->name;
         }
         $parts = explode('\\', static::class);
@@ -149,7 +149,7 @@ class BasePlugin implements PluginInterface
      */
     public function getPath(): string
     {
-        if ($this->path) {
+        if ($this->path !== null) {
             return $this->path;
         }
         $reflection = new ReflectionClass($this);
@@ -169,7 +169,7 @@ class BasePlugin implements PluginInterface
      */
     public function getConfigPath(): string
     {
-        if ($this->configPath) {
+        if ($this->configPath !== null) {
             return $this->configPath;
         }
         $path = $this->getPath();
@@ -182,7 +182,7 @@ class BasePlugin implements PluginInterface
      */
     public function getClassPath(): string
     {
-        if ($this->classPath) {
+        if ($this->classPath !== null) {
             return $this->classPath;
         }
         $path = $this->getPath();
@@ -195,7 +195,7 @@ class BasePlugin implements PluginInterface
      */
     public function getTemplatePath(): string
     {
-        if ($this->templatePath) {
+        if ($this->templatePath !== null) {
             return $this->templatePath;
         }
         $path = $this->getPath();

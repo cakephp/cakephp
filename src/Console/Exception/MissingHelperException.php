@@ -22,5 +22,5 @@ class MissingHelperException extends ConsoleException
     /**
      * @var string
      */
-    protected $_messageTemplate = 'Helper class %s could not be found.';
+    protected string $_messageTemplate = 'Helper class %s could not be found.';
 }

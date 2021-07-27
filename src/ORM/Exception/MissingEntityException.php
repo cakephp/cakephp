@@ -28,5 +28,5 @@ class MissingEntityException extends CakeException
     /**
      * @var string
      */
-    protected $_messageTemplate = 'Entity class %s could not be found.';
+    protected string $_messageTemplate = 'Entity class %s could not be found.';
 }

@@ -42,28 +42,28 @@ class PluginCollection implements Iterator, Countable
      *
      * @var array<\Cake\Core\PluginInterface>
      */
-    protected $plugins = [];
+    protected array $plugins = [];
 
     /**
      * Names of plugins
      *
      * @var array<string>
      */
-    protected $names = [];
+    protected array $names = [];
 
     /**
      * Iterator position stack.
      *
      * @var array<int>
      */
-    protected $positions = [];
+    protected array $positions = [];
 
     /**
      * Loop depth
      *
      * @var int
      */
-    protected $loopDepth = -1;
+    protected int $loopDepth = -1;
 
     /**
      * Constructor

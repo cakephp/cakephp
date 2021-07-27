@@ -25,7 +25,7 @@ class DuplicateNamedRouteException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'A route named "%s" has already been connected to "%s".';
+    protected string $_messageTemplate = 'A route named "%s" has already been connected to "%s".';
 
     /**
      * Constructor.

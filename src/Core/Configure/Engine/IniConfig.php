@@ -62,14 +62,14 @@ class IniConfig implements ConfigEngineInterface
      *
      * @var string
      */
-    protected $_extension = '.ini';
+    protected string $_extension = '.ini';
 
     /**
      * The section to read, if null all sections will be read.
      *
      * @var string|null
      */
-    protected $_section;
+    protected ?string $_section = null;
 
     /**
      * Build and construct a new ini file parser. The parser can be used to read

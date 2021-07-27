@@ -49,7 +49,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @var array<object>
      * @psalm-var array<array-key, TObject>
      */
-    protected $_loaded = [];
+    protected array $_loaded = [];
 
     /**
      * Loads/constructs an object instance.

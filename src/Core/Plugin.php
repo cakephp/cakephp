@@ -30,7 +30,7 @@ class Plugin
      *
      * @var \Cake\Core\PluginCollection|null
      */
-    protected static $plugins;
+    protected static ?PluginCollection $plugins = null;
 
     /**
      * Returns the filesystem path for a plugin

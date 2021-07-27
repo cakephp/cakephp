@@ -24,5 +24,5 @@ class MissingHelperException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'Helper class %s could not be found.';
+    protected string $_messageTemplate = 'Helper class %s could not be found.';
 }

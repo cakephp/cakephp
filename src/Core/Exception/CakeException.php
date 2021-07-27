@@ -30,21 +30,21 @@ class CakeException extends RuntimeException
      *
      * @var array
      */
-    protected $_attributes = [];
+    protected array $_attributes = [];
 
     /**
      * Template string that has attributes sprintf()'ed into it.
      *
      * @var string
      */
-    protected $_messageTemplate = '';
+    protected string $_messageTemplate = '';
 
     /**
      * Default exception code
      *
      * @var int
      */
-    protected $_defaultCode = 0;
+    protected int $_defaultCode = 0;
 
     /**
      * Constructor.
