@@ -59,7 +59,7 @@ class DebugContext
      *
      * @return static
      */
-    public function withAddedDepth()
+    public function withAddedDepth(): static
     {
         $new = clone $this;
         $new->depth += 1;

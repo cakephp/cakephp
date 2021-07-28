@@ -23,7 +23,6 @@ use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use InvalidArgumentException;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -82,7 +81,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *  or config array.
      * @throws \InvalidArgumentException
      */
-    public function __construct($errorHandler = [])
+    public function __construct(ErrorHandler|array $errorHandler = [])
     {
         if (Configure::read('debug')) {
             ini_set('zend.exception_ignore_args', '0');
@@ -92,13 +91,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             $this->setConfig($errorHandler);
 
             return;
-        }
-
-        if (!$errorHandler instanceof ErrorHandler) {
-            throw new InvalidArgumentException(sprintf(
-                '$errorHandler argument must be a config array or ErrorHandler instance. Got `%s` instead.',
-                get_debug_type($errorHandler)
-            ));
         }
 
         $this->errorHandler = $errorHandler;
