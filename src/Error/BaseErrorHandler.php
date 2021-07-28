@@ -281,7 +281,7 @@ abstract class BaseErrorHandler
      * @param array $data Array of error data.
      * @return bool
      */
-    protected function _logError($level, array $data): bool
+    protected function _logError(string|int $level, array $data): bool
     {
         $message = sprintf(
             '%s (%s): %s in [%s, line %s]',
@@ -324,7 +324,7 @@ abstract class BaseErrorHandler
      *
      * @return \Cake\Error\ErrorLoggerInterface
      */
-    public function getLogger()
+    public function getLogger(): ErrorLoggerInterface
     {
         if ($this->logger === null) {
             /** @var \Cake\Error\ErrorLoggerInterface $logger */

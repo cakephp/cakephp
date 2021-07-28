@@ -881,15 +881,6 @@ EXPECTED;
     }
 
     /**
-     * test adding invalid editor
-     */
-    public function testAddEditorInvalid(): void
-    {
-        $this->expectException(RuntimeException::class);
-        Debugger::addEditor('nope', ['invalid']);
-    }
-
-    /**
      * test choosing an unknown editor
      */
     public function testSetEditorInvalid(): void
