@@ -253,7 +253,7 @@ class RequestHandlerComponent extends Component
      *   if the client accepts it. If an array is passed, returns true
      *   if the client accepts one or more elements in the array.
      */
-    public function accepts($type = null)
+    public function accepts(array|string|null $type = null): mixed
     {
         $controller = $this->getController();
         /** @var array $accepted */
@@ -274,11 +274,7 @@ class RequestHandlerComponent extends Component
             return false;
         }
 
-        if (is_string($type)) {
-            return in_array($this->mapAlias($type), $accepted, true);
-        }
-
-        return false;
+        return in_array($this->mapAlias($type), $accepted, true);
     }
 
     /**
@@ -289,7 +285,7 @@ class RequestHandlerComponent extends Component
      *   The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
      *   in the request content type will be returned.
      */
-    public function requestedWith($type = null)
+    public function requestedWith(array|string|null $type = null): mixed
     {
         $controller = $this->getController();
         $request = $controller->getRequest();
@@ -317,9 +313,7 @@ class RequestHandlerComponent extends Component
             return $controller->getResponse()->mapType($contentType);
         }
 
-        if (is_string($type)) {
-            return $type === $controller->getResponse()->mapType($contentType);
-        }
+        return $type === $controller->getResponse()->mapType($contentType);
     }
 
     /**
@@ -338,7 +332,7 @@ class RequestHandlerComponent extends Component
      *    If an array of types are provided then the first preferred type is returned.
      *    If no type is provided the first preferred type is returned.
      */
-    public function prefers($type = null)
+    public function prefers(array|string|null $type = null): string|bool|null
     {
         $controller = $this->getController();
 
@@ -454,7 +448,7 @@ class RequestHandlerComponent extends Component
      *    not exist in the type map, or if the Content-type header has
      *    already been set by this method.
      */
-    public function respondAs($type, array $options = []): bool
+    public function respondAs(string $type, array $options = []): bool
     {
         $defaults = ['index' => null, 'charset' => null, 'attachment' => false];
         $options += $defaults;
@@ -501,7 +495,7 @@ class RequestHandlerComponent extends Component
      *   alias maps to more than one content type, the first one will be returned. If an array is provided
      *   for $alias, an array of mapped types will be returned.
      */
-    public function mapAlias($alias)
+    public function mapAlias(array|string $alias): array|string|null
     {
         if (is_array($alias)) {
             return array_map([$this, 'mapAlias'], $alias);

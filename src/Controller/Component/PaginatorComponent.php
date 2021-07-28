@@ -324,7 +324,7 @@ class PaginatorComponent extends Component
      * @param array $args Method arguments.
      * @return mixed
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         return $this->_paginator->{$method}(...$args);
     }

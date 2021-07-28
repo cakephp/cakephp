@@ -66,7 +66,7 @@ class FlashComponent extends Component
      * @param array $options An array of options
      * @return void
      */
-    public function set($message, array $options = []): void
+    public function set(Throwable|string $message, array $options = []): void
     {
         if ($message instanceof Throwable) {
             $this->flash()->setExceptionMessage($message, $options);
@@ -161,7 +161,7 @@ class FlashComponent extends Component
      * @return void
      * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
-    public function __call(string $name, array $args)
+    public function __call(string $name, array $args): void
     {
         $element = Inflector::underscore($name);
 
