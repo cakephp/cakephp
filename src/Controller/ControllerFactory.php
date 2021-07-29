@@ -99,7 +99,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      * @psalm-param \Cake\Controller\Controller $controller
      */
-    public function invoke($controller): ResponseInterface
+    public function invoke(mixed $controller): ResponseInterface
     {
         $this->controller = $controller;
 
@@ -253,7 +253,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @param \Cake\Http\ServerRequest $request The request.
      * @return \Cake\Http\Exception\MissingControllerException
      */
-    protected function missingController(ServerRequest $request)
+    protected function missingController(ServerRequest $request): MissingControllerException
     {
         return new MissingControllerException([
             'class' => $request->getParam('controller'),
