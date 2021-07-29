@@ -35,7 +35,7 @@ interface EventInterface
      *
      * @return object
      */
-    public function getSubject();
+    public function getSubject(): object;
 
     /**
      * Stops the event from being used anymore.
@@ -56,7 +56,7 @@ interface EventInterface
      *
      * @return mixed
      */
-    public function getResult();
+    public function getResult(): mixed;
 
     /**
      * Listeners can attach a result value to the event.
@@ -64,7 +64,7 @@ interface EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setResult($value = null);
+    public function setResult(mixed $value = null);
 
     /**
      * Accesses the event data/payload.
@@ -82,5 +82,5 @@ interface EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setData(array|string $key, $value = null);
+    public function setData(array|string $key, mixed $value = null);
 }
