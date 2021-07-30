@@ -267,7 +267,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *   all fields.
      * @return mixed
      */
-    public function getData(?string $field = null)
+    public function getData(?string $field = null): mixed
     {
         if ($field === null) {
             return $this->_data;
@@ -284,7 +284,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param mixed $value Value to set for var
      * @return $this
      */
-    public function set($name, $value = null)
+    public function set(array|string $name, mixed $value = null)
     {
         $write = $name;
         if (!is_array($name)) {

@@ -63,7 +63,7 @@ class Schema
      *   as a string.
      * @return $this
      */
-    public function addField(string $name, $attrs)
+    public function addField(string $name, array|string $attrs)
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];

@@ -73,7 +73,7 @@ class FormProtector
      * @param string $sessionId Session id for hash generation.
      * @return bool
      */
-    public function validate($formData, string $url, string $sessionId): bool
+    public function validate(mixed $formData, string $url, string $sessionId): bool
     {
         $this->debugMessage = null;
 
@@ -114,7 +114,7 @@ class FormProtector
      * @param mixed $value Field value, if value should not be tampered with.
      * @return $this
      */
-    public function addField($field, bool $lock = true, $value = null)
+    public function addField(array|string $field, bool $lock = true, mixed $value = null)
     {
         if (is_string($field)) {
             $field = $this->getFieldNameArray($field);
@@ -187,7 +187,7 @@ class FormProtector
      * @param string $name The dot separated name for the field.
      * @return $this
      */
-    public function unlockField($name)
+    public function unlockField(string $name)
     {
         if (!in_array($name, $this->unlockedFields, true)) {
             $this->unlockedFields[] = $name;
@@ -218,7 +218,7 @@ class FormProtector
      * @param mixed $formData Data to validate.
      * @return string|null Fields token on success, null on failure.
      */
-    protected function extractToken($formData): ?string
+    protected function extractToken(mixed $formData): ?string
     {
         if (!is_array($formData)) {
             $this->debugMessage = 'Request data is not an array.';
@@ -427,7 +427,7 @@ class FormProtector
      * @param string $sessionId Session Id.
      * @return string
      */
-    protected function generateHash(array $fields, array $unlockedFields, string $url, string $sessionId)
+    protected function generateHash(array $fields, array $unlockedFields, string $url, string $sessionId): string
     {
         $hashParts = [
             $url,
