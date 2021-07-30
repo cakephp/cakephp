@@ -80,7 +80,7 @@ class Event implements EventInterface
      *   with this event to it can be read by listeners.
      * @psalm-param TSubject|null $subject
      */
-    public function __construct(string $name, $subject = null, array $data = [])
+    public function __construct(string $name, ?object $subject = null, array $data = [])
     {
         $this->_name = $name;
         $this->_subject = $subject;
@@ -107,7 +107,7 @@ class Event implements EventInterface
      * @psalm-return TSubject
      * @psalm-suppress LessSpecificImplementedReturnType
      */
-    public function getSubject()
+    public function getSubject(): object
     {
         if ($this->_subject === null) {
             throw new CakeException('No subject set for this event');
@@ -141,7 +141,7 @@ class Event implements EventInterface
      *
      * @return mixed
      */
-    public function getResult()
+    public function getResult(): mixed
     {
         return $this->result;
     }
@@ -152,7 +152,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setResult($value = null)
+    public function setResult(mixed $value = null)
     {
         $this->result = $value;
 

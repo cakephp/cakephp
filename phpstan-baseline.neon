@@ -161,6 +161,11 @@ parameters:
 			path: src/Core/ObjectRegistry.php
 
 		-
+			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
+			count: 2
+			path: src/Core/ObjectRegistry.php
+
+		-
 			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\.$#"
 			count: 3
 			path: src/Core/ObjectRegistry.php
@@ -168,11 +173,6 @@ parameters:
 		-
 			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\|null\\.$#"
 			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
-			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
-			count: 2
 			path: src/Core/ObjectRegistry.php
 
 		-
@@ -244,6 +244,21 @@ parameters:
 			message: "#^Cannot unset offset 'object' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
 			count: 1
 			path: src/Error/Debugger.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
+			count: 1
+			path: src/Event/Event.php
+
+		-
+			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\.$#"
+			count: 1
+			path: src/Event/Event.php
+
+		-
+			message: "#^Property Cake\\\\Event\\\\Event\\<TSubject\\>\\:\\:\\$_subject \\(TSubject\\|null\\) does not accept object\\|null\\.$#"
+			count: 1
+			path: src/Event/Event.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
