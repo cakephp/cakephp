@@ -25,6 +25,7 @@ use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 class CommonTableExpressionQueryTests extends TestCase
 {
@@ -251,6 +252,10 @@ class CommonTableExpressionQueryTests extends TestCase
             ->from('articles')
             ->where(['id' => 4])
             ->execute();
+        if ($result->errorCode() !== '00000') {
+            throw new RuntimeException($result->errorInfo()[2]);
+        }
+
         $this->assertEquals($expected, $result->fetch('assoc'));
         $result->closeCursor();
     }
