@@ -36,11 +36,6 @@ class CommonTableExpressionQueryTests extends TestCase
     ];
 
     /**
-     * @inheritDoc
-     */
-    public $autoFixtures = false;
-
-    /**
      * @var \Cake\Database\Connection
      */
     protected $connection;
@@ -199,8 +194,6 @@ class CommonTableExpressionQueryTests extends TestCase
             '`WITH ... INSERT INTO` syntax is not supported in MySQL.'
         );
 
-        $this->loadFixtures('Articles');
-
         // test initial state
         $result = $this->connection->newQuery()
             ->select('*')
@@ -265,8 +258,6 @@ class CommonTableExpressionQueryTests extends TestCase
             '`INSERT INTO ... WITH` syntax is not supported in SQL Server.'
         );
 
-        $this->loadFixtures('Articles');
-
         $query = $this->connection->newQuery()
             ->insert(['title', 'body'])
             ->into('articles')
@@ -319,8 +310,6 @@ class CommonTableExpressionQueryTests extends TestCase
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
             'MariaDB does not support CTEs in UPDATE query.'
         );
-
-        $this->loadFixtures('Articles');
 
         // test initial state
         $result = $this->connection->newQuery()
@@ -383,8 +372,6 @@ class CommonTableExpressionQueryTests extends TestCase
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
             'MariaDB does not support CTEs in DELETE query.'
         );
-
-        $this->loadFixtures('Articles');
 
         // test initial state
         $result = $this->connection
