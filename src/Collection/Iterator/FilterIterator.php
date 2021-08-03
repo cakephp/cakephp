@@ -48,7 +48,7 @@ class FilterIterator extends Collection
      * @param \Traversable|array $items The items to be filtered.
      * @param callable $callback Callback.
      */
-    public function __construct($items, callable $callback)
+    public function __construct(Traversable|array $items, callable $callback)
     {
         if (!$items instanceof Iterator) {
             $items = new Collection($items);

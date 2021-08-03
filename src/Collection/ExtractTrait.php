@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Collection;
 
+use ArrayAccess;
 use Closure;
 use Traversable;
 
@@ -34,7 +35,7 @@ trait ExtractTrait
      * of doing that.
      * @return callable
      */
-    protected function _propertyExtractor($path): callable
+    protected function _propertyExtractor(callable|string $path): callable
     {
         if (!is_string($path)) {
             return $path;
@@ -49,6 +50,10 @@ trait ExtractTrait
         }
 
         return function ($element) use ($parts) {
+            if (!is_array($element) && !$element instanceof ArrayAccess) {
+                return null;
+            }
+
             return $this->_simpleExtract($element, $parts);
         };
     }
@@ -62,7 +67,7 @@ trait ExtractTrait
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */
-    protected function _extract($data, array $parts)
+    protected function _extract(ArrayAccess|array $data, array $parts): mixed
     {
         $value = null;
         $collectionTransform = false;
@@ -108,7 +113,7 @@ trait ExtractTrait
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */
-    protected function _simpleExtract($data, array $parts)
+    protected function _simpleExtract(ArrayAccess|array $data, array $parts): mixed
     {
         $value = null;
         foreach ($parts as $column) {

@@ -279,7 +279,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return object|array|null
      */
-    public function first()
+    public function first(): object|array|null
     {
         foreach ($this as $result) {
             if ($this->_statement !== null && !$this->_useBuffering) {
