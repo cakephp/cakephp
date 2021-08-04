@@ -11,6 +11,7 @@
             <!-- Excludes are required in order to let DatabaseSuite decorate the tests -->
             <exclude>tests/TestCase/Database/</exclude>
             <exclude>tests/TestCase/ORM/</exclude>
+            <exclude>test/TestCase/Auth/</exclude>
         </testsuite>
         <testsuite name="database">
             <file>tests/TestCase/DatabaseSuite.php</file>
