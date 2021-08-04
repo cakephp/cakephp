@@ -18,7 +18,9 @@ namespace Cake\Datasource;
 
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Closure;
 use InvalidArgumentException;
+use Psr\SimpleCache\CacheInterface;
 use Traversable;
 
 /**
@@ -176,7 +178,7 @@ trait QueryTrait
      *   a cache engine instance.
      * @return $this
      */
-    public function cache($key, $config = 'default')
+    public function cache(Closure|string|false $key, CacheInterface|string $config = 'default')
     {
         if ($key === false) {
             $this->_cache = null;
@@ -444,7 +446,7 @@ trait QueryTrait
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function formatResults(?callable $formatter = null, $mode = self::APPEND)
+    public function formatResults(?callable $formatter = null, int|bool $mode = self::APPEND)
     {
         if ($mode === self::OVERWRITE) {
             $this->_formatters = [];
@@ -488,9 +490,9 @@ trait QueryTrait
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return \Cake\Datasource\EntityInterface|array|null The first result from the ResultSet.
+     * @return mixed The first result from the ResultSet.
      */
-    public function first()
+    public function first(): mixed
     {
         if ($this->_dirty) {
             $this->limit(1);
@@ -503,9 +505,9 @@ trait QueryTrait
      * Get the first result from the executing query or raise an exception.
      *
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
-     * @return \Cake\Datasource\EntityInterface|array The first result from the ResultSet.
+     * @return mixed The first result from the ResultSet.
      */
-    public function firstOrFail()
+    public function firstOrFail(): mixed
     {
         $entity = $this->first();
         if (!$entity) {

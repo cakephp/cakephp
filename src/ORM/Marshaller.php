@@ -612,6 +612,7 @@ class Marshaller
         }
 
         foreach ((array)$options['fields'] as $field) {
+            /** @var string $field */
             if (!array_key_exists($field, $properties)) {
                 continue;
             }

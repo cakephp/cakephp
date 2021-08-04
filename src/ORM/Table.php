@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use ArrayAccess;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -43,6 +45,7 @@ use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
+use Closure;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
@@ -1716,8 +1719,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function updateAll($fields, $conditions): int
-    {
+    public function updateAll(
+        QueryExpression|Closure|array|string $fields,
+        QueryExpression|Closure|array|string|null $conditions
+    ): int {
         $query = $this->query();
         $query->update()
             ->set($fields)
@@ -1731,7 +1736,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function deleteAll($conditions): int
+    public function deleteAll(QueryExpression|Closure|array|string|null $conditions): int
     {
         $query = $this->query()
             ->delete()
@@ -1745,7 +1750,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function exists($conditions): bool
+    public function exists(QueryExpression|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
             $this->find('all')
@@ -1843,8 +1848,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
-    public function save(EntityInterface $entity, $options = [])
-    {
+    public function save(
+        EntityInterface $entity,
+        SaveOptionsBuilder|ArrayAccess|array $options = []
+    ): EntityInterface|false {
         if ($options instanceof SaveOptionsBuilder) {
             $options = $options->toArray();
         }

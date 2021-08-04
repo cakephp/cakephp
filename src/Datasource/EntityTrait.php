@@ -21,7 +21,6 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use ReturnTypeWillChange;
 use Traversable;
 
 /**
@@ -125,7 +124,7 @@ trait EntityTrait
      * @param string $field Name of the field to access
      * @return mixed
      */
-    public function &__get(string $field)
+    public function &__get(string $field): mixed
     {
         return $this->get($field);
     }
@@ -137,7 +136,7 @@ trait EntityTrait
      * @param mixed $value The value to set to the field
      * @return void
      */
-    public function __set(string $field, $value): void
+    public function __set(string $field, mixed $value): void
     {
         $this->set($field, $value);
     }
@@ -220,7 +219,7 @@ trait EntityTrait
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function set($field, $value = null, array $options = [])
+    public function set(array|string $field, mixed $value = null, array $options = [])
     {
         if (is_string($field) && $field !== '') {
             $guard = false;
@@ -273,7 +272,7 @@ trait EntityTrait
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed
      */
-    public function &get(string $field)
+    public function &get(string $field): mixed
     {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
@@ -302,7 +301,7 @@ trait EntityTrait
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed.
      */
-    public function getOriginal(string $field)
+    public function getOriginal(string $field): mixed
     {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
@@ -359,7 +358,7 @@ trait EntityTrait
      * @param array<string>|string $field The field or fields to check.
      * @return bool
      */
-    public function has($field): bool
+    public function has(array|string $field): bool
     {
         foreach ((array)$field as $prop) {
             if ($this->get($prop) === null) {
@@ -439,7 +438,7 @@ trait EntityTrait
      * @param array<string>|string $field The field to unset.
      * @return $this
      */
-    public function unset($field)
+    public function unset(array|string $field)
     {
         $field = (array)$field;
         foreach ($field as $p) {
@@ -577,7 +576,7 @@ trait EntityTrait
      * @param string $offset The offset to check.
      * @return bool Success
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
@@ -588,8 +587,7 @@ trait EntityTrait
      * @param string $offset The offset to get.
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function &offsetGet($offset)
+    public function &offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
@@ -601,7 +599,7 @@ trait EntityTrait
      * @param mixed $value The value to set.
      * @return void
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
@@ -612,7 +610,7 @@ trait EntityTrait
      * @param string $offset The offset to remove.
      * @return void
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         $this->unset($offset);
     }
@@ -936,7 +934,7 @@ trait EntityTrait
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError(string $field, $errors, bool $overwrite = false)
+    public function setError(string $field, array|string $errors, bool $overwrite = false)
     {
         if (is_string($errors)) {
             $errors = [$errors];
@@ -955,7 +953,12 @@ trait EntityTrait
     {
         // Only one path element, check for nested entity with error.
         if (strpos($field, '.') === false) {
-            return $this->_readError($this->get($field));
+            $entity = $this->get($field);
+            if ($entity instanceof EntityInterface || is_iterable($entity)) {
+                return $this->_readError($entity);
+            }
+
+            return [];
         }
         // Try reading the errors data with field as a simple path
         $error = Hash::get($this->_errors, $field);
@@ -1002,7 +1005,7 @@ trait EntityTrait
      * @param \Cake\Datasource\EntityInterface|array $object The object to read errors from.
      * @return bool
      */
-    protected function _readHasErrors($object): bool
+    protected function _readHasErrors(mixed $object): bool
     {
         if ($object instanceof EntityInterface && $object->hasErrors()) {
             return true;
@@ -1026,7 +1029,7 @@ trait EntityTrait
      * @param string|null $path The field name for errors.
      * @return array
      */
-    protected function _readError($object, $path = null): array
+    protected function _readError(EntityInterface|iterable $object, ?string $path = null): array
     {
         if ($path !== null && $object instanceof EntityInterface) {
             return $object->getError($path);
@@ -1034,17 +1037,14 @@ trait EntityTrait
         if ($object instanceof EntityInterface) {
             return $object->getErrors();
         }
-        if (is_iterable($object)) {
-            $array = array_map(function ($val) {
-                if ($val instanceof EntityInterface) {
-                    return $val->getErrors();
-                }
-            }, (array)$object);
 
-            return array_filter($array);
-        }
+        $array = array_map(function ($val) {
+            if ($val instanceof EntityInterface) {
+                return $val->getErrors();
+            }
+        }, (array)$object);
 
-        return [];
+        return array_filter($array);
     }
 
     /**
@@ -1063,7 +1063,7 @@ trait EntityTrait
      * @param string $field The name of the field.
      * @return mixed|null
      */
-    public function getInvalidField(string $field)
+    public function getInvalidField(string $field): mixed
     {
         return $this->_invalid[$field] ?? null;
     }
@@ -1099,7 +1099,7 @@ trait EntityTrait
      * @param mixed $value The invalid value to be set for $field.
      * @return $this
      */
-    public function setInvalidField(string $field, $value)
+    public function setInvalidField(string $field, mixed $value)
     {
         $this->_invalid[$field] = $value;
 
@@ -1130,7 +1130,7 @@ trait EntityTrait
      * mark it as protected.
      * @return $this
      */
-    public function setAccess($field, bool $set)
+    public function setAccess(array|string $field, bool $set)
     {
         if ($field === '*') {
             $this->_accessible = array_map(function ($p) use ($set) {

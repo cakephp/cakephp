@@ -183,13 +183,15 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * all the fields in the schema of the table or the association will be added to
      * the select clause.
      *
-     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|callable|array|string $fields Fields
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|callable|array|string|float|int $fields Fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select($fields = [], bool $overwrite = false)
-    {
+    public function select(
+        ExpressionInterface|Table|Association|callable|array|string|float|int $fields = [],
+        bool $overwrite = false
+    ) {
         if ($fields instanceof Association) {
             $fields = $fields->getTarget();
         }
@@ -1200,7 +1202,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return static Returns a modified query.
      * @psalm-suppress MoreSpecificReturnType
      */
-    public function find(string $finder, array $options = [])
+    public function find(string $finder, array $options = []): static
     {
         $table = $this->getRepository();
 

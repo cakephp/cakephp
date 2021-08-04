@@ -125,7 +125,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError(string $field, $errors, bool $overwrite = false);
+    public function setError(string $field, array|string $errors, bool $overwrite = false);
 
     /**
      * Stores whether or not a field value can be changed or set in this entity.
@@ -135,7 +135,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * mark it as protected.
      * @return $this
      */
-    public function setAccess($field, bool $set);
+    public function setAccess(array|string $field, bool $set);
 
     /**
      * Checks if a field is accessible
@@ -189,7 +189,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * keys are `setter` and `guard`
      * @return $this
      */
-    public function set($field, $value = null, array $options = []);
+    public function set(array|string $field, mixed $value = null, array $options = []);
 
     /**
      * Returns the value of a field by name
@@ -197,7 +197,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $field the name of the field to retrieve
      * @return mixed
      */
-    public function &get(string $field);
+    public function &get(string $field): mixed;
 
     /**
      * Returns the original value of a field.
@@ -205,7 +205,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $field The name of the field.
      * @return mixed
      */
-    public function getOriginal(string $field);
+    public function getOriginal(string $field): mixed;
 
     /**
      * Gets all original values of the entity.
@@ -221,7 +221,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param array<string>|string $field The field to check.
      * @return bool
      */
-    public function has($field): bool;
+    public function has(array|string $field): bool;
 
     /**
      * Removes a field or list of fields from this entity
@@ -229,7 +229,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param array<string>|string $field The field to unset.
      * @return $this
      */
-    public function unset($field);
+    public function unset(array|string $field);
 
     /**
      * Get the list of visible fields.

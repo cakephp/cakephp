@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Cake\Datasource;
 
+use Closure;
+
 /**
  * The basis for every query object
  *
@@ -36,11 +38,11 @@ interface QueryInterface
      * If `true` is passed in the second argument, any previous selections will
      * be overwritten with the list passed in the first argument.
      *
-     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Association|\Cake\ORM\Table|callable|array|string $fields Fields.
+     * @param callable|array|string|float|int $fields Fields.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select($fields, bool $overwrite = false);
+    public function select(callable|array|string|float|int $fields, bool $overwrite = false);
 
     /**
      * Returns a key => value array representing a single aliased field
@@ -136,7 +138,7 @@ interface QueryInterface
      * @param array $options The options for the finder.
      * @return static Returns a modified query.
      */
-    public function find(string $finder, array $options = []);
+    public function find(string $finder, array $options = []): static;
 
     /**
      * Returns the first result out of executing this query, if the query has not been
@@ -148,9 +150,9 @@ interface QueryInterface
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return \Cake\Datasource\EntityInterface|array|null the first result from the ResultSet
+     * @return mixed the first result from the ResultSet
      */
-    public function first();
+    public function first(): mixed;
 
     /**
      * Returns the total amount of results for the query.
@@ -172,10 +174,10 @@ interface QueryInterface
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|int|null $num number of records to be returned
+     * @param int|null $num number of records to be returned
      * @return $this
      */
-    public function limit($num);
+    public function limit(int|null $num);
 
     /**
      * Sets the number of records that should be skipped from the original result set
@@ -192,10 +194,10 @@ interface QueryInterface
      *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|int|null $num number of records to be skipped
+     * @param int|null $num number of records to be skipped
      * @return $this
      */
-    public function offset($num);
+    public function offset(int|null $num);
 
     /**
      * Adds a single or multiple fields to be used in the ORDER clause for this query.
@@ -242,11 +244,11 @@ interface QueryInterface
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $fields fields to be added to the list
+     * @param \Closure|array|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
-    public function order($fields, $overwrite = false);
+    public function order(Closure|array|string $fields, bool $overwrite = false);
 
     /**
      * Set the page of results you want.
@@ -401,5 +403,5 @@ interface QueryInterface
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this
      */
-    public function where($conditions = null, array $types = [], bool $overwrite = false);
+    public function where(Closure|array|string|null $conditions = null, array $types = [], bool $overwrite = false);
 }
