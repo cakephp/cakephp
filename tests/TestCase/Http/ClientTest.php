@@ -979,4 +979,54 @@ class ClientTest extends TestCase
         ];
         $this->assertSame($expected, $config);
     }
+
+    /**
+     * Test adding and sending to a mocked URL.
+     */
+    public function testAddMockResponseSimpleMatch(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub);
+
+        $client = new Client();
+        $response = $client->post('http://example.com/path');
+        $this->assertSame($stub, $response);
+    }
+
+    /**
+     * Test adding and sending to a mocked URL.
+     */
+    public function testAddMockResponseMethodMatchFailure(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub);
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->will($this->throwException(new InvalidArgumentException('No match')));
+
+        $client = new Client(['adapter' => $mock]);
+        $this->expectException(InvalidArgumentException::class);
+        $client->get('http://example.com/path');
+    }
+
+    /**
+     * Test adding and sending to a mocked URL.
+     */
+    public function testAddMockResponseGlobMatch(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path/*', $stub);
+
+        $client = new Client();
+        $response = $client->post('http://example.com/path/more/thing');
+        $this->assertSame($stub, $response);
+
+        $client = new Client();
+        $response = $client->post('http://example.com/path/?query=value');
+        $this->assertSame($stub, $response);
+    }
 }

@@ -20,6 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\Adapter\Mock as MockAdapter;
 use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -133,6 +134,13 @@ class Client implements ClientInterface
      * @var \Cake\Http\Cookie\CookieCollection
      */
     protected $_cookies;
+
+    /**
+     * Mock adapter for stubbing requests in tests.
+     *
+     * @var \Cake\Http\Client\Adapter\Mock
+     */
+    protected static $_mockAdapter;
 
     /**
      * Adapter for sending requests.
@@ -489,6 +497,35 @@ class Client implements ClientInterface
     }
 
     /**
+     * Add a mocked response.
+     *
+     * Mocked responses are stored in an adapter that is called
+     * _before_ the network adapter is called.
+     *
+     * ### Matching Requests
+     *
+     * TODO finish this.
+     *
+     * ### Options
+     *
+     * - `match` An additional closure to match requests with.
+     *
+     * @param string $method The HTTP method being mocked.
+     * @param string $url The URL being matched. See above for examples.
+     * @param \Cake\Http\Client\Response $response The response that matches the request.
+     * @param array $options See above.
+     * @return void
+     */
+    public static function addMockResponse(string $method, string $url, Response $response, array $options = []): void
+    {
+        if (!static::$_mockAdapter) {
+            static::$_mockAdapter = new MockAdapter();
+        }
+        $request = new Request($url, $method);
+        static::$_mockAdapter->addResponse($request, $response, $options);
+    }
+
+    /**
      * Send a request without redirection.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to send.
@@ -497,7 +534,12 @@ class Client implements ClientInterface
      */
     protected function _sendRequest(RequestInterface $request, array $options): Response
     {
-        $responses = $this->_adapter->send($request, $options);
+        if (static::$_mockAdapter) {
+            $responses = static::$_mockAdapter->send($request, $options);
+        }
+        if (empty($responses)) {
+            $responses = $this->_adapter->send($request, $options);
+        }
         foreach ($responses as $response) {
             $this->_cookies = $this->_cookies->addFromResponse($response, $request);
         }
