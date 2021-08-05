@@ -306,8 +306,6 @@ class ResponseTest extends TestCase
      */
     public function testCompress(): void
     {
-        $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement ob_gzhandler');
-
         $response = new Response();
         if (ini_get('zlib.output_compression') === '1' || !extension_loaded('zlib')) {
             $this->assertFalse($response->compress());
@@ -373,8 +371,6 @@ class ResponseTest extends TestCase
         if (!extension_loaded('zlib')) {
             $this->markTestSkipped('Skipping further tests for outputCompressed as zlib extension is not loaded');
         }
-
-        $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement ob_gzhandler');
 
         if (ini_get('zlib.output_compression') !== '1') {
             ob_start('ob_gzhandler');

@@ -221,7 +221,6 @@ class Client implements ClientInterface
         }
 
         $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '', 'path' => '']);
-        $config = array_merge(['scheme' => '', 'host' => ''], $config);
 
         if (empty($config['scheme']) || empty($config['host'])) {
             throw new InvalidArgumentException('The URL was parsed but did not contain a scheme or host');
