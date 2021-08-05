@@ -17,6 +17,7 @@ namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Response;
+use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 
@@ -49,8 +50,9 @@ class Mock implements AdapterInterface
      */
     public function addResponse(RequestInterface $request, Response $response, array $options): void
     {
-        if (isset($mock['options']['match']) && !is_callable($mock['options']['match'])) {
-            throw new InvalidArgumentException('The `match` option must be a callable');
+        if (isset($options['match']) && !($options['match'] instanceof Closure)) {
+            $type = getTypeName($options['match']);
+            throw new InvalidArgumentException("The `match` option must be a `Closure`. Got `{$type}`.");
         }
         $this->responses[] = [
             'request' => $request,
@@ -69,7 +71,7 @@ class Mock implements AdapterInterface
     public function send(RequestInterface $request, array $options): array
     {
         $found = null;
-        foreach ($this->responses as $mock) {
+        foreach ($this->responses as $index => $mock) {
             if ($request->getMethod() !== $mock['request']->getMethod()) {
                 continue;
             }
@@ -79,17 +81,26 @@ class Mock implements AdapterInterface
             if (isset($mock['options']['match'])) {
                 $match = $mock['options']['match']($request);
                 if (!is_bool($match)) {
-                    throw new InvalidArgumentException('Match callback return a non-boolean value.');
+                    throw new InvalidArgumentException('Match callback must return a boolean value.');
                 }
                 if (!$match) {
                     continue;
                 }
             }
-            $found = $mock['response'];
+            $found = $index;
             break;
         }
+        if ($found !== null) {
+            // Move the current mock to the end so that when there are multiple
+            // matches for a URL the next match is used on subsequent requests.
+            $mock = $this->responses[$found];
+            unset($this->responses[$found]);
+            $this->responses[] = $mock;
 
-        return $found ? [$found] : [];
+            return [$mock['response']];
+        }
+
+        return [];
     }
 
     /**

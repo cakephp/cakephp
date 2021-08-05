@@ -138,7 +138,7 @@ class Client implements ClientInterface
     /**
      * Mock adapter for stubbing requests in tests.
      *
-     * @var \Cake\Http\Client\Adapter\Mock
+     * @var \Cake\Http\Client\Adapter\Mock|null
      */
     protected static $_mockAdapter;
 
@@ -494,6 +494,16 @@ class Client implements ClientInterface
         } while ($handleRedirect);
 
         return $response;
+    }
+
+    /**
+     * Clear all mocked responses
+     *
+     * @return void
+     */
+    public static function clearMockResponses(): void
+    {
+        static::$_mockAdapter = null;
     }
 
     /**
