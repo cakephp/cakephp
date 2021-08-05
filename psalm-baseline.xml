@@ -11,12 +11,11 @@
       <code>$iterator</code>
       <code>$iterator</code>
     </ArgumentTypeCoercion>
-    <MissingParamType occurrences="28">
+    <MissingParamType occurrences="27">
       <code>$callback</code>
       <code>$condition</code>
       <code>$groupPath</code>
       <code>$idPath</code>
-      <code>$initial</code>
       <code>$item</code>
       <code>$item</code>
       <code>$items</code>
