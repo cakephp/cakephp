@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\HelperRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Command\Helper\CommandHelper;
-use TestApp\Shell\Helper\SimpleHelper;
-use TestPlugin\Shell\Helper\ExampleHelper;
+use TestApp\Command\Helper\SimpleHelper;
+use TestPlugin\Command\Helper\ExampleHelper;
 
 /**
  * HelperRegistryTest

@@ -404,7 +404,7 @@ class I18nExtractCommand extends Command
      */
     protected function _extractTokens(Arguments $args, ConsoleIo $io): void
     {
-        /** @var \Cake\Shell\Helper\ProgressHelper $progress */
+        /** @var \Cake\Command\Helper\ProgressHelper $progress */
         $progress = $io->helper('progress');
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $args->getOption('verbose');
