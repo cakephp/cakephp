@@ -680,7 +680,9 @@ class TreeBehavior extends Behavior
         $this->_sync($shift, '+', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
         $this->_sync($nodeToHole, '-', "> {$edge}");
 
+        /** @var string $left */
         $node->set($left, $targetLeft);
+        /** @var string $right */
         $node->set($right, $targetLeft + $nodeRight - $nodeLeft);
 
         $node->setDirty($left, false);
@@ -772,7 +774,9 @@ class TreeBehavior extends Behavior
         $this->_sync($shift, '-', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
         $this->_sync($nodeToHole, '-', "> {$edge}");
 
+        /** @var string $left */
         $node->set($left, $targetRight - ($nodeRight - $nodeLeft));
+        /** @var string $right */
         $node->set($right, $targetRight);
 
         $node->setDirty($left, false);

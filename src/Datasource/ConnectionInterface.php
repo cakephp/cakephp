@@ -100,7 +100,7 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
-    public function transactional(callable $callback);
+    public function transactional(callable $callback): mixed;
 
     /**
      * Run an operation with constraints disabled.
@@ -120,7 +120,7 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
-    public function disableConstraints(callable $callback);
+    public function disableConstraints(callable $callback): mixed;
 
     /**
      * Enable/disable query logging

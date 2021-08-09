@@ -281,8 +281,8 @@ class TestCaseTest extends TestCase
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->once())
             ->method('save')
-            ->will($this->returnValue('mocked'));
-        $this->assertSame('mocked', $Posts->save($entity));
+            ->will($this->returnValue(false));
+        $this->assertSame(false, $Posts->save($entity));
         $this->assertSame('Cake\ORM\Entity', $Posts->getEntityClass());
         $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
         $this->assertSame('test', $Posts->getConnection()->configName());
@@ -333,15 +333,11 @@ class TestCaseTest extends TestCase
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
         $this->assertSame('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
-        $TestPluginComment->expects($this->exactly(2))
+        $TestPluginComment->expects($this->exactly(1))
             ->method('save')
-            ->will($this->onConsecutiveCalls(
-                $this->returnValue(true),
-                $this->returnValue(false)
-            ));
+            ->will($this->returnValue(false));
 
         $entity = new Entity([]);
-        $this->assertTrue($TestPluginComment->save($entity));
         $this->assertFalse($TestPluginComment->save($entity));
 
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['save']);
@@ -365,15 +361,11 @@ class TestCaseTest extends TestCase
         $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('Comments', $Mock->getAlias());
 
-        $Mock->expects($this->exactly(2))
+        $Mock->expects($this->exactly(1))
             ->method('save')
-            ->will($this->onConsecutiveCalls(
-                $this->returnValue(true),
-                $this->returnValue(false)
-            ));
+            ->will($this->returnValue(false));
 
         $entity = new Entity([]);
-        $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
 
         $allMethodsStubs = $this->getMockForModel(

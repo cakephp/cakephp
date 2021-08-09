@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use ArrayAccess;
+use Closure;
+
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
@@ -68,7 +71,7 @@ interface RepositoryInterface
      * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\Datasource\QueryInterface
      */
-    public function find(string $type = 'all', array $options = []);
+    public function find(string $type = 'all', array $options = []): QueryInterface;
 
     /**
      * Returns a single record after finding it by its primary key, if no record is
@@ -90,14 +93,14 @@ interface RepositoryInterface
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
-    public function get($primaryKey, array $options = []): EntityInterface;
+    public function get(mixed $primaryKey, array $options = []): EntityInterface;
 
     /**
      * Creates a new Query instance for this repository
      *
      * @return \Cake\Datasource\QueryInterface
      */
-    public function query();
+    public function query(): QueryInterface;
 
     /**
      * Update all matching records.
@@ -106,12 +109,12 @@ interface RepositoryInterface
      * This method will *not* trigger beforeSave/afterSave events. If you need those
      * first load a collection of records and update them.
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string $fields A hash of field => new value.
-     * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Closure|array|string $fields A hash of field => new value.
+     * @param \Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Count Returns the affected rows.
      */
-    public function updateAll($fields, $conditions): int;
+    public function updateAll(Closure|array|string $fields, Closure|array|string|null $conditions): int;
 
     /**
      * Deletes all records matching the provided conditions.
@@ -123,21 +126,21 @@ interface RepositoryInterface
      * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
      * with this method.
      *
-     * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Returns the number of affected rows.
      * @see \Cake\Datasource\RepositoryInterface::delete()
      */
-    public function deleteAll($conditions): int;
+    public function deleteAll(Closure|array|string|null $conditions): int;
 
     /**
      * Returns true if there is any record in this repository matching the specified
      * conditions.
      *
-     * @param array $conditions list of conditions to pass to the query
+     * @param \Closure|array|string|null $conditions list of conditions to pass to the query
      * @return bool
      */
-    public function exists($conditions): bool;
+    public function exists(Closure|array|string|null $conditions): bool;
 
     /**
      * Persists an entity based on the fields that are marked as dirty and
@@ -148,7 +151,7 @@ interface RepositoryInterface
      * @param \ArrayAccess|array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      */
-    public function save(EntityInterface $entity, $options = []);
+    public function save(EntityInterface $entity, ArrayAccess|array $options = []): EntityInterface|false;
 
     /**
      * Delete a single entity.
@@ -160,7 +163,7 @@ interface RepositoryInterface
      * @param \ArrayAccess|array $options The options for the delete.
      * @return bool success
      */
-    public function delete(EntityInterface $entity, $options = []): bool;
+    public function delete(EntityInterface $entity, ArrayAccess|array $options = []): bool;
 
     /**
      * This creates a new entity object.

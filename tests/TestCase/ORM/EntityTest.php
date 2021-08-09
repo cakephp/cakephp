@@ -1483,18 +1483,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that setting an empty property name does nothing
-     *
-     * @dataProvider emptyNamesProvider
-     */
-    public function testSetEmptyPropertyName(?string $property): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $entity = new Entity();
-        $entity->set($property, 'bar');
-    }
-
-    /**
      * Provides empty values
      */
     public function testIsDirtyFromClone(): void

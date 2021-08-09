@@ -39,16 +39,8 @@ class FactoryLocator
      * @param \Cake\Datasource\Locator\LocatorInterface|callable $factory The factory function used to create instances.
      * @return void
      */
-    public static function add(string $type, $factory): void
+    public static function add(string $type, LocatorInterface|callable $factory): void
     {
-        if (!$factory instanceof LocatorInterface && !is_callable($factory)) {
-            throw new InvalidArgumentException(sprintf(
-                '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
-                . ' Got type `%s` instead.',
-                get_debug_type($factory)
-            ));
-        }
-
         static::$_modelFactories[$type] = $factory;
     }
 
@@ -70,7 +62,7 @@ class FactoryLocator
      * @throws \InvalidArgumentException If the specified repository type has no factory.
      * @return \Cake\Datasource\Locator\LocatorInterface|callable The factory for the repository type.
      */
-    public static function get(string $type)
+    public static function get(string $type): LocatorInterface|callable
     {
         if (!isset(static::$_modelFactories['Table'])) {
             static::$_modelFactories['Table'] = new TableLocator();

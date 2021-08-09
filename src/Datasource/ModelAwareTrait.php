@@ -18,7 +18,6 @@ namespace Cake\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\Locator\LocatorInterface;
-use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
@@ -138,16 +137,8 @@ trait ModelAwareTrait
      * @param \Cake\Datasource\Locator\LocatorInterface|callable $factory The factory function used to create instances.
      * @return void
      */
-    public function modelFactory(string $type, $factory): void
+    public function modelFactory(string $type, LocatorInterface|callable $factory): void
     {
-        if (!$factory instanceof LocatorInterface && !is_callable($factory)) {
-            throw new InvalidArgumentException(sprintf(
-                '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
-                . ' Got type `%s` instead.',
-                get_debug_type($factory)
-            ));
-        }
-
         $this->_modelFactories[$type] = $factory;
     }
 

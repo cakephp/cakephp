@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Datasource;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 
 /**
  * FactoryLocatorTest test case
@@ -60,17 +59,6 @@ class FactoryLocatorTest extends TestCase
         $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         FactoryLocator::add('MyType', $locator);
         $this->assertInstanceOf(LocatorInterface::class, FactoryLocator::get('MyType'));
-    }
-
-    public function testFactoryAddException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
-            . ' Got type `string` instead.'
-        );
-
-        FactoryLocator::add('Test', 'fail');
     }
 
     /**

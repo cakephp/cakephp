@@ -753,9 +753,8 @@ class BelongsToMany extends Association
             if (!empty($options['atomic'])) {
                 $original[$k]->setErrors($entity->getErrors());
             }
-            if ($saved === false) {
-                return false;
-            }
+
+            return false;
         }
 
         $options['associated'] = $joinAssociations;
