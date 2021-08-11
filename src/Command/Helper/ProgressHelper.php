@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Helper;
+namespace Cake\Command\Helper;
 
 use Cake\Console\Helper;
 use RuntimeException;
