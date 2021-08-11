@@ -1199,6 +1199,29 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test that the type specified in function expressions takes priority over
+     * default types set for columns.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/13049
+     * @return void
+     */
+    public function testTypemapInFunctions3(): void
+    {
+        $this->loadFixtures('Comments');
+        $table = $this->getTableLocator()->get('Comments');
+        $query = $table->find();
+
+        $result = $query->select(['id' => $query->func()->min('id')])
+            ->first();
+        $this->assertSame(1.0, $result['id']);
+
+        $query = $table->find();
+        $result = $query->select(['id' => $query->func()->min('id', ['boolean'])])
+            ->first();
+        $this->assertTrue($result['id']);
+    }
+
+    /**
      * Test that contain queries map types correctly.
      */
     public function testBooleanConditionsInContain(): void

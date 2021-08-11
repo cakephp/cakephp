@@ -1215,15 +1215,16 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $types = [];
 
         foreach ($select as $alias => $value) {
+            if ($value instanceof TypedResultInterface) {
+                $types[$alias] = $value->getReturnType();
+                continue;
+            }
             if (isset($typeMap[$alias])) {
                 $types[$alias] = $typeMap[$alias];
                 continue;
             }
             if (is_string($value) && isset($typeMap[$value])) {
                 $types[$alias] = $typeMap[$value];
-            }
-            if ($value instanceof TypedResultInterface) {
-                $types[$alias] = $value->getReturnType();
             }
         }
         $this->getSelectTypeMap()->addDefaults($types);
