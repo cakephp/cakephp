@@ -78,7 +78,7 @@ class DateType extends DateTimeType
      * @param mixed $value Request data
      * @return \DateTimeInterface|null
      */
-    public function marshal($value): ?DateTimeInterface
+    public function marshal(mixed $value): ?DateTimeInterface
     {
         $date = parent::marshal($value);
         if ($date && !$date instanceof I18nDateTimeInterface) {

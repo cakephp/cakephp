@@ -19,6 +19,7 @@ namespace Cake\Database\Log;
 use Cake\Database\Statement\StatementDecorator;
 use Exception;
 use Psr\Log\LoggerInterface;
+use stdClass;
 
 /**
  * Statement decorator used to
@@ -92,7 +93,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * @inheritDoc
      */
-    public function fetch($type = self::FETCH_TYPE_NUM)
+    public function fetch(string|int $type = self::FETCH_TYPE_NUM): stdClass|array|false
     {
         $record = parent::fetch($type);
 
@@ -106,7 +107,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * @inheritDoc
      */
-    public function fetchAll($type = self::FETCH_TYPE_NUM)
+    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array|false
     {
         $results = parent::fetchAll($type);
 
@@ -159,7 +160,7 @@ class LoggingStatement extends StatementDecorator
      * @param string|int|null $type PDO type or name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string'): void
+    public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void
     {
         parent::bindValue($column, $value, $type);
 

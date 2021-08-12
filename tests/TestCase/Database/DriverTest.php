@@ -267,8 +267,7 @@ class DriverTest extends TestCase
      */
     public function testDestructor(): void
     {
-        $this->driver->setConnection(true);
-        $this->driver->__destruct();
+        $this->driver->disconnect();
 
         $this->expectException(MissingConnectionException::class);
         $this->driver->getConnection();

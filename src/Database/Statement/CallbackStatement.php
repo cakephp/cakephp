@@ -53,9 +53,9 @@ class CallbackStatement extends StatementDecorator
      * The result will be processed by the callback when it is not `false`.
      *
      * @param string|int $type Either 'num' or 'assoc' to indicate the result format you would like.
-     * @return array|false
+     * @return mixed
      */
-    public function fetch($type = parent::FETCH_TYPE_NUM)
+    public function fetch(string|int $type = parent::FETCH_TYPE_NUM): mixed
     {
         $callback = $this->_callback;
         $row = $this->_statement->fetch($type);
@@ -68,7 +68,7 @@ class CallbackStatement extends StatementDecorator
      *
      * Each row in the result will be processed by the callback when it is not `false.
      */
-    public function fetchAll($type = parent::FETCH_TYPE_NUM)
+    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): array|false
     {
         $results = $this->_statement->fetchAll($type);
 

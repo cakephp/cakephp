@@ -906,6 +906,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->_config;
 
+        /** @var \Cake\Database\Expression\IdentifierExpression $field */
         foreach ([$config['leftField'], $config['rightField']] as $field) {
             $query = $this->_scope($this->_table->query());
             $exp = $query->newExpr();

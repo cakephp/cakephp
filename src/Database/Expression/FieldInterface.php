@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\ExpressionInterface;
+
 /**
  * Describes a getter and a setter for the a field property. Useful for expressions
  * that contain an identifier to compare against.
@@ -28,12 +30,12 @@ interface FieldInterface
      * @param \Cake\Database\ExpressionInterface|array|string $field The field to compare with.
      * @return void
      */
-    public function setField($field): void;
+    public function setField(ExpressionInterface|array|string $field): void;
 
     /**
      * Returns the field name
      *
      * @return \Cake\Database\ExpressionInterface|array|string
      */
-    public function getField();
+    public function getField(): ExpressionInterface|array|string;
 }

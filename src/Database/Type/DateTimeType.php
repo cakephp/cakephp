@@ -138,7 +138,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, DriverInterface $driver): ?string
+    public function toDatabase(mixed $value, DriverInterface $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -171,7 +171,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \DateTimeZone|string|null $timezone Database timezone.
      * @return $this
      */
-    public function setDatabaseTimezone($timezone)
+    public function setDatabaseTimezone(DateTimeZone|string|null $timezone)
     {
         if (is_string($timezone)) {
             $timezone = new DateTimeZone($timezone);
@@ -189,7 +189,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \DateTimeZone|string|null $timezone User timezone.
      * @return $this
      */
-    public function setUserTimezone($timezone)
+    public function setUserTimezone(DateTimeZone|string|null $timezone)
     {
         if (is_string($timezone)) {
             $timezone = new DateTimeZone($timezone);
@@ -206,7 +206,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver Object from which database preferences and configuration will be extracted
      * @return \DateTimeInterface|null
      */
-    public function toPHP($value, DriverInterface $driver)
+    public function toPHP($value, DriverInterface $driver): ?DateTimeInterface
     {
         if ($value === null) {
             return null;
@@ -303,7 +303,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param mixed $value Request data
      * @return \DateTimeInterface|null
      */
-    public function marshal($value): ?DateTimeInterface
+    public function marshal(mixed $value): ?DateTimeInterface
     {
         if ($value instanceof DateTimeInterface) {
             if ($value instanceof DateTime) {
@@ -417,7 +417,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @see \Cake\I18n\Time::parseDateTime()
      * @return $this
      */
-    public function setLocaleFormat($format)
+    public function setLocaleFormat(array|string $format)
     {
         $this->_localeMarshalFormat = $format;
 
@@ -526,7 +526,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
-    public function toStatement($value, DriverInterface $driver)
+    public function toStatement(mixed $value, DriverInterface $driver): mixed
     {
         return PDO::PARAM_STR;
     }

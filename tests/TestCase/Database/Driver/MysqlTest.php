@@ -111,8 +111,9 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('StdClass')
-            ->addMethods(['exec'])
+        $connection = $this->getMockBuilder('PDO')
+            ->disableOriginalConstructor()
+            ->onlyMethods(['exec'])
             ->getMock();
         $connection->expects($this->exactly(3))
             ->method('exec')

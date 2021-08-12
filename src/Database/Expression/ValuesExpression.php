@@ -85,7 +85,7 @@ class ValuesExpression implements ExpressionInterface
      * @return void
      * @throws \Cake\Database\Exception\DatabaseException When mixing array + Query data types.
      */
-    public function add($values): void
+    public function add(Query|array $values): void
     {
         if (
             (

@@ -34,7 +34,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return bool|null
      */
-    public function toDatabase($value, DriverInterface $driver): ?bool
+    public function toDatabase(mixed $value, DriverInterface $driver): ?bool
     {
         if ($value === true || $value === false || $value === null) {
             return $value;
@@ -57,7 +57,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return bool|null
      */
-    public function toPHP($value, DriverInterface $driver): ?bool
+    public function toPHP(mixed $value, DriverInterface $driver): ?bool
     {
         if ($value === null || $value === true || $value === false) {
             return $value;
@@ -109,7 +109,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, DriverInterface $driver): int
+    public function toStatement(mixed $value, DriverInterface $driver): int
     {
         if ($value === null) {
             return PDO::PARAM_NULL;
@@ -124,7 +124,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return bool|null Converted value.
      */
-    public function marshal($value): ?bool
+    public function marshal(mixed $value): ?bool
     {
         if ($value === null || $value === '') {
             return null;

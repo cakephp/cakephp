@@ -20,6 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\DriverInterface;
 use PDO;
 use PDOStatement as Statement;
+use RuntimeException;
 
 /**
  * Decorator for \PDOStatement class mainly used for converting human readable
@@ -52,12 +53,14 @@ class PDOStatement extends StatementDecorator
      * @param string $property internal property to get
      * @return mixed
      */
-    public function __get(string $property)
+    public function __get(string $property): mixed
     {
-        if ($property === 'queryString' && isset($this->_statement->queryString)) {
+        if ($property === 'queryString') {
             /** @psalm-suppress NoInterfaceProperties */
-            return $this->_statement->queryString;
+            return $this->_statement->queryString ?? null;
         }
+
+        throw new RuntimeException("Cannot access undefined property `$property`.");
     }
 
     /**
@@ -85,7 +88,7 @@ class PDOStatement extends StatementDecorator
      * @param string|int|null $type PDO type or name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string'): void
+    public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void
     {
         if ($type === null) {
             $type = 'string';
@@ -113,7 +116,7 @@ class PDOStatement extends StatementDecorator
      * @return mixed Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = parent::FETCH_TYPE_NUM)
+    public function fetch(string|int $type = parent::FETCH_TYPE_NUM): mixed
     {
         if ($type === static::FETCH_TYPE_NUM) {
             return $this->_statement->fetch(PDO::FETCH_NUM);
@@ -150,7 +153,7 @@ class PDOStatement extends StatementDecorator
      * @return array|false list of all results from database for this statement, false on failure
      * @psalm-assert string $type
      */
-    public function fetchAll($type = parent::FETCH_TYPE_NUM)
+    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): array|false
     {
         if ($type === static::FETCH_TYPE_NUM) {
             return $this->_statement->fetchAll(PDO::FETCH_NUM);

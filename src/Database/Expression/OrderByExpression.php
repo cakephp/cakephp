@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use RuntimeException;
 
@@ -32,8 +33,11 @@ class OrderByExpression extends QueryExpression
      * @param \Cake\Database\TypeMap|array $types The types for each column.
      * @param string $conjunction The glue used to join conditions together.
      */
-    public function __construct($conditions = [], $types = [], $conjunction = '')
-    {
+    public function __construct(
+        ExpressionInterface|array|string $conditions = [],
+        TypeMap|array $types = [],
+        string $conjunction = ''
+    ) {
         parent::__construct($conditions, $types, $conjunction);
     }
 

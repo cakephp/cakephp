@@ -48,7 +48,7 @@ interface DriverInterface
      *
      * @return object Connection object used internally.
      */
-    public function getConnection();
+    public function getConnection(): object;
 
     /**
      * Set the internal connection object.
@@ -56,7 +56,7 @@ interface DriverInterface
      * @param object $connection The connection instance.
      * @return $this
      */
-    public function setConnection($connection);
+    public function setConnection(object $connection);
 
     /**
      * Returns whether php is able to use this driver for connecting to database.
@@ -71,7 +71,7 @@ interface DriverInterface
      * @param \Cake\Database\Query|string $query The query to turn into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($query): StatementInterface;
+    public function prepare(Query|string $query): StatementInterface;
 
     /**
      * Starts a transaction.
@@ -100,7 +100,7 @@ interface DriverInterface
      * @param string|int $name Save point name or id
      * @return string
      */
-    public function releaseSavePointSQL($name): string;
+    public function releaseSavePointSQL(string|int $name): string;
 
     /**
      * Get the SQL for creating a save point.
@@ -108,7 +108,7 @@ interface DriverInterface
      * @param string|int $name Save point name or id
      * @return string
      */
-    public function savePointSQL($name): string;
+    public function savePointSQL(string|int $name): string;
 
     /**
      * Get the SQL for rollingback a save point.
@@ -116,7 +116,7 @@ interface DriverInterface
      * @param string|int $name Save point name or id
      * @return string
      */
-    public function rollbackSavePointSQL($name): string;
+    public function rollbackSavePointSQL(string|int $name): string;
 
     /**
      * Get the SQL for disabling foreign keys.
@@ -154,7 +154,7 @@ interface DriverInterface
      * @param int $type Must be one of the \PDO::PARAM_* constants
      * @return string
      */
-    public function quote($value, $type): string;
+    public function quote(mixed $value, int $type): string;
 
     /**
      * Checks if the driver supports quoting.
@@ -202,7 +202,7 @@ interface DriverInterface
      * @param mixed $value The value to escape.
      * @return string String for use in schema definitions.
      */
-    public function schemaValue($value): string;
+    public function schemaValue(mixed $value): string;
 
     /**
      * Returns the schema name that's being used.
@@ -218,7 +218,7 @@ interface DriverInterface
      * @param string|null $column the name of the column representing the primary key.
      * @return string|int
      */
-    public function lastInsertId(?string $table = null, ?string $column = null);
+    public function lastInsertId(?string $table = null, ?string $column = null): string|int;
 
     /**
      * Checks whether or not the driver is connected.

@@ -61,7 +61,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
-    public function toStatement($value, DriverInterface $driver)
+    public function toStatement(mixed $value, DriverInterface $driver): mixed
     {
         if ($value === null) {
             return PDO::PARAM_NULL;
@@ -73,7 +73,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
-    public function newId()
+    public function newId(): mixed
     {
         return null;
     }

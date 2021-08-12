@@ -34,7 +34,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param mixed $value Value to check
      * @return void
      */
-    protected function checkNumeric($value): void
+    protected function checkNumeric(mixed $value): void
     {
         if (!is_numeric($value)) {
             throw new InvalidArgumentException(sprintf(
@@ -51,7 +51,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toDatabase($value, DriverInterface $driver): ?int
+    public function toDatabase(mixed $value, DriverInterface $driver): ?int
     {
         if ($value === null || $value === '') {
             return null;
@@ -103,7 +103,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, DriverInterface $driver): int
+    public function toStatement(mixed $value, DriverInterface $driver): int
     {
         return PDO::PARAM_INT;
     }
@@ -114,7 +114,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return int|null Converted value.
      */
-    public function marshal($value): ?int
+    public function marshal(mixed $value): ?int
     {
         if ($value === null || $value === '') {
             return null;

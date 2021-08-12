@@ -112,8 +112,12 @@ class SqlserverTest extends TestCase
             }))
             ->will($this->returnValue(true));
 
+        $connection = $this->getMockBuilder('PDO')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $driver->method('getConnection')
-            ->will($this->returnValue(null));
+            ->will($this->returnValue($connection));
 
         $driver->connect();
     }
@@ -153,8 +157,9 @@ class SqlserverTest extends TestCase
         $expected['multiSubnetFailover'] = null;
         $expected['port'] = null;
 
-        $connection = $this->getMockBuilder('stdClass')
-            ->addMethods(['exec', 'quote'])
+        $connection = $this->getMockBuilder('PDO')
+            ->disableOriginalConstructor()
+            ->onlyMethods(['exec', 'quote'])
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
