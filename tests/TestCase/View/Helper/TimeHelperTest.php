@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\I18n\FrozenTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -126,7 +125,7 @@ class TimeHelperTest extends TestCase
     public function testTimeAgoInWordsOutputTimezone(): void
     {
         $Time = new TimeHelper($this->View, ['outputTimezone' => 'America/Vancouver']);
-        $timestamp = new FrozenTime('+8 years, +4 months +2 weeks +3 days');
+        $timestamp = new Time('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
             'element' => 'span',
@@ -199,7 +198,7 @@ class TimeHelperTest extends TestCase
     public function testToAtomOutputTimezone(): void
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new FrozenTime();
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver = $vancouver->timezone('America/Vancouver');
         $this->assertSame($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
@@ -229,7 +228,7 @@ class TimeHelperTest extends TestCase
     public function testToRssOutputTimezone(): void
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new FrozenTime();
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver = $vancouver->timezone('America/Vancouver');
 
@@ -480,7 +479,7 @@ class TimeHelperTest extends TestCase
 
         I18n::setLocale('fr_FR');
         Time::setDefaultLocale('fr_FR');
-        $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
+        $time = new \Cake\I18n\Time('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
         $this->assertStringContainsString('jeudi 14 janvier 2010', $result);
         $this->assertStringContainsString('13:59:28', $result);
@@ -498,7 +497,7 @@ class TimeHelperTest extends TestCase
         $expected = '1/14/10, 12:59 AM';
         $this->assertTimeFormat($expected, $result);
 
-        $time = new FrozenTime('Thu Jan 14 8:59:28 2010', 'UTC');
+        $time = new Time('Thu Jan 14 8:59:28 2010', 'UTC');
         $result = $this->Time->format($time);
         $expected = '1/14/10, 12:59 AM';
         $this->assertTimeFormat($expected, $result);

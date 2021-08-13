@@ -79,16 +79,6 @@
       <code>$_statement</code>
     </NonInvariantDocblockPropertyType>
   </file>
-  <file src="src/Database/Type/DateTimeType.php">
-    <DeprecatedClass occurrences="1">
-      <code>Time::class</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Database/Type/DateType.php">
-    <DeprecatedClass occurrences="1">
-      <code>Date::class</code>
-    </DeprecatedClass>
-  </file>
   <file src="src/Datasource/ConnectionRegistry.php">
     <LessSpecificImplementedReturnType occurrences="1">
       <code>object</code>
@@ -140,13 +130,6 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
-    <DeprecatedClass occurrences="5">
-      <code>$time-&gt;timezone($timezone)</code>
-      <code>Time::UNIX_TIMESTAMP_FORMAT</code>
-      <code>static|null</code>
-      <code>static|null</code>
-      <code>static|null</code>
-    </DeprecatedClass>
     <MissingParamType occurrences="1">
       <code>$format</code>
     </MissingParamType>

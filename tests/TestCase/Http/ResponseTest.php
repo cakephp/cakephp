@@ -25,7 +25,7 @@ use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Stream;
 
@@ -829,7 +829,7 @@ class ResponseTest extends TestCase
         $new = $response->withExpiredCookie(new Cookie('testing'));
 
         $this->assertSame(0, $response->getCookie('testing')['expires']);
-        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$new->getCookie('testing')['expires']);
+        $this->assertLessThan(Time::createFromTimestamp(1), (string)$new->getCookie('testing')['expires']);
     }
 
     /**
@@ -865,7 +865,7 @@ class ResponseTest extends TestCase
         $expiredCookie = $response->withExpiredCookie($cookie);
 
         $this->assertSame($expected['expires'], (string)$response->getCookie('testing')['expires']);
-        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expires']);
+        $this->assertLessThan(Time::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expires']);
     }
 
     public function testWithExpiredCookieObject(): void

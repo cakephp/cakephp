@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\DriverInterface;
-use Cake\I18n\FrozenTime;
 use Cake\I18n\I18nDateTimeInterface;
 use Cake\I18n\Time;
 use DateTime;
@@ -86,7 +85,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * The classname to use when creating objects.
      *
      * @var string
-     * @psalm-var class-string<\DateTime>|class-string<\DateTimeImmutable>
+     * @psalm-var class-string<\DateTimeImmutable>
      */
     protected $_className;
 
@@ -128,7 +127,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         parent::__construct($name);
 
         $this->defaultTimezone = new DateTimeZone(date_default_timezone_get());
-        $this->_setClassName(FrozenTime::class, DateTimeImmutable::class);
+        $this->_className = class_exists(Time::class) ? Time::class : DateTimeImmutable::class;
     }
 
     /**
@@ -425,41 +424,6 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Change the preferred class name to the FrozenTime implementation.
-     *
-     * @return $this
-     * @deprecated 4.3.0 This method is no longer needed as using immutable datetime class is the default behavior.
-     */
-    public function useImmutable()
-    {
-        deprecationWarning(
-            'Configuring immutable or mutable classes is deprecated and immutable'
-            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
-        );
-
-        $this->_setClassName(FrozenTime::class, DateTimeImmutable::class);
-
-        return $this;
-    }
-
-    /**
-     * Set the classname to use when building objects.
-     *
-     * @param string $class The classname to use.
-     * @param string $fallback The classname to use when the preferred class does not exist.
-     * @return void
-     * @psalm-param class-string<\DateTime>|class-string<\DateTimeImmutable> $class
-     * @psalm-param class-string<\DateTime>|class-string<\DateTimeImmutable> $fallback
-     */
-    protected function _setClassName(string $class, string $fallback): void
-    {
-        if (!class_exists($class)) {
-            $class = $fallback;
-        }
-        $this->_className = $class;
-    }
-
-    /**
      * Get the classname used for building objects.
      *
      * @return string
@@ -468,24 +432,6 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     public function getDateTimeClassName(): string
     {
         return $this->_className;
-    }
-
-    /**
-     * Change the preferred class name to the mutable Time implementation.
-     *
-     * @return $this
-     * @deprecated 4.3.0 Using mutable datetime objects is deprecated.
-     */
-    public function useMutable()
-    {
-        deprecationWarning(
-            'Configuring immutable or mutable classes is deprecated and immutable'
-            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
-        );
-
-        $this->_setClassName(Time::class, DateTime::class);
-
-        return $this;
     }
 
     /**

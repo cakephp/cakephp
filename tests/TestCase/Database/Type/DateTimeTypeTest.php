@@ -16,9 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Core\Configure;
 use Cake\Database\Type\DateTimeType;
-use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
@@ -53,12 +51,6 @@ class DateTimeTypeTest extends TestCase
         parent::setUp();
         $this->type = new DateTimeType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-
-        Configure::write('Error.ignoredDeprecationPaths', [
-            'src/Database/Type/DateTimeType.php',
-            'tests/TestCase/Database/Type/DateTimeTypeTest.php',
-            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
-        ]);
     }
 
     /**
@@ -66,9 +58,6 @@ class DateTimeTypeTest extends TestCase
      */
     public function testGetDateTimeClassName(): void
     {
-        $this->assertSame(FrozenTime::class, $this->type->getDateTimeClassName());
-
-        $this->type->useMutable();
         $this->assertSame(Time::class, $this->type->getDateTimeClassName());
     }
 
@@ -87,7 +76,7 @@ class DateTimeTypeTest extends TestCase
     public function testToPHPString(): void
     {
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
-        $this->assertInstanceOf(FrozenTime::class, $result);
+        $this->assertInstanceOf(Time::class, $result);
         $this->assertSame('2001', $result->format('Y'));
         $this->assertSame('01', $result->format('m'));
         $this->assertSame('04', $result->format('d'));
@@ -97,7 +86,7 @@ class DateTimeTypeTest extends TestCase
 
         $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toPHP('2001-01-04 12:00:00', $this->driver);
-        $this->assertInstanceOf(FrozenTime::class, $result);
+        $this->assertInstanceOf(Time::class, $result);
         $this->assertSame('2001', $result->format('Y'));
         $this->assertSame('01', $result->format('m'));
         $this->assertSame('04', $result->format('d'));
@@ -149,7 +138,7 @@ class DateTimeTypeTest extends TestCase
     {
         $in = '2014-03-24 20:44:36.315113';
         $result = $this->type->toPHP($in, $this->driver);
-        $this->assertInstanceOf(FrozenTime::class, $result);
+        $this->assertInstanceOf(Time::class, $result);
     }
 
     /**
@@ -176,7 +165,7 @@ class DateTimeTypeTest extends TestCase
         $this->assertSame('2013-08-12 20:46:17', $result);
         $this->type->setDatabaseTimezone(null);
 
-        $date = new FrozenTime('2013-08-12 15:16:17');
+        $date = new Time('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 15:16:17', $result);
 
@@ -197,12 +186,7 @@ class DateTimeTypeTest extends TestCase
      */
     public function marshalProvider(): array
     {
-        Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/DateTimeTypeTest.php',
-            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
-        ]);
-
-        $data = [
+        return [
             // invalid types.
             [null, null],
             [false, null],
@@ -288,10 +272,6 @@ class DateTimeTypeTest extends TestCase
                 Time::now(),
             ],
         ];
-
-        Configure::delete('Error.ignoredDeprecationPaths');
-
-        return $data;
     }
 
     /**
@@ -400,12 +380,7 @@ class DateTimeTypeTest extends TestCase
      */
     public function testToImmutableAndToMutable(): void
     {
-        $this->type->useImmutable();
         $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01 11:23:00'));
         $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
-
-        $this->type->useMutable();
-        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01 11:23:00'));
-        $this->assertInstanceOf('DateTime', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
     }
 }

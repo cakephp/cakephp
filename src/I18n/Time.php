@@ -11,12 +11,12 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\MutableDateTime;
+use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -24,10 +24,8 @@ use IntlDateFormatter;
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
- *
- * @deprecated 4.3.0 Use the immutable alternative `FrozenTime` instead.
  */
-class Time extends MutableDateTime implements I18nDateTimeInterface
+class Time extends Chronos implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 
@@ -122,17 +120,13 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
     public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
-     * Create a new mutable time instance.
+     * Create a new immutable time instance.
      *
      * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
     public function __construct($time = null, $tz = null)
     {
-        deprecationWarning(
-            'The `Time` class has been deprecated. Use the immutable alternative `FrozenTime` instead'
-        );
-
         if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimezone();
             $time = $time->format('Y-m-d H:i:s.u');
@@ -141,90 +135,8 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
         if (is_numeric($time)) {
             $time = '@' . $time;
         }
+
         parent::__construct($time, $tz);
-    }
-
-    /**
-     * Returns a nicely formatted date string for this object.
-     *
-     * The format to be used is stored in the static property `Time::niceFormat`.
-     *
-     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
-     * in which the date will be displayed. The timezone stored for this object will not
-     * be changed.
-     * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
-     * @return string Formatted date string
-     */
-    public function nice($timezone = null, $locale = null): string
-    {
-        return (string)$this->i18nFormat(static::$niceFormat, $timezone, $locale);
-    }
-
-    /**
-     * Returns true if this object represents a date within the current week
-     *
-     * @return bool
-     */
-    public function isThisWeek(): bool
-    {
-        return static::now($this->getTimezone())->format('W o') === $this->format('W o');
-    }
-
-    /**
-     * Returns true if this object represents a date within the current month
-     *
-     * @return bool
-     */
-    public function isThisMonth(): bool
-    {
-        return static::now($this->getTimezone())->format('m Y') === $this->format('m Y');
-    }
-
-    /**
-     * Returns true if this object represents a date within the current year
-     *
-     * @return bool
-     */
-    public function isThisYear(): bool
-    {
-        return static::now($this->getTimezone())->format('Y') === $this->format('Y');
-    }
-
-    /**
-     * Returns the quarter
-     *
-     * @param bool $range Range.
-     * @return array<string>|int 1, 2, 3, or 4 quarter of year, or array if $range true
-     */
-    public function toQuarter(bool $range = false)
-    {
-        $quarter = (int)ceil((int)$this->format('m') / 3);
-        if ($range === false) {
-            return $quarter;
-        }
-
-        $year = $this->format('Y');
-        switch ($quarter) {
-            case 1:
-                return [$year . '-01-01', $year . '-03-31'];
-            case 2:
-                return [$year . '-04-01', $year . '-06-30'];
-            case 3:
-                return [$year . '-07-01', $year . '-09-30'];
-        }
-
-        // 4th quarter
-        return [$year . '-10-01', $year . '-12-31'];
-    }
-
-    /**
-     * Returns a UNIX timestamp.
-     *
-     * @return string UNIX timestamp
-     */
-    public function toUnixString(): string
-    {
-        return $this->format('U');
     }
 
     /**
@@ -244,8 +156,8 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      *     - minute => The format if minutes > 0 (default "minute")
      *     - second => The format if seconds > 0 (default "second")
      * - `end` => The end of relative time telling
-     * - `relativeString` => The `printf` compatible string when outputting relative time
-     * - `absoluteString` => The `printf` compatible string when outputting absolute time
+     * - `relativeString` => The printf compatible string when outputting relative time
+     * - `absoluteString` => The printf compatible string when outputting absolute time
      * - `timezone` => The user timezone the timestamp should be formatted in.
      *
      * Relative dates look something like this:

@@ -16,17 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\MutableDate;
+use Cake\Chronos\Date as ChronosDate;
 use IntlDateFormatter;
 
 /**
  * Extends the Date class provided by Chronos.
  *
  * Adds handy methods and locale-aware formatting helpers
- *
- * @deprecated 4.3.0 Use the immutable alternative `FrozenDate` instead.
  */
-class Date extends MutableDate implements I18nDateTimeInterface
+class Date extends ChronosDate implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 
@@ -114,7 +112,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
     public static $wordEnd = '+1 month';
 
     /**
-     * Create a new FrozenDate instance.
+     * Create a new Date instance.
      *
      * You can specify the timezone for the $time parameter. This timezone will
      * not be used in any future modifications to the Date instance.
@@ -133,10 +131,6 @@ class Date extends MutableDate implements I18nDateTimeInterface
      */
     public function __construct($time = 'now', $tz = null)
     {
-        deprecationWarning(
-            'The `Date` class has been deprecated. Use the immutable alternative `FrozenDate` instead'
-        );
-
         parent::__construct($time, $tz);
     }
 

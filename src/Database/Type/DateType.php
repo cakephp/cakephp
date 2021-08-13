@@ -17,9 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\I18n\Date;
-use Cake\I18n\FrozenDate;
 use Cake\I18n\I18nDateTimeInterface;
-use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 
@@ -55,43 +53,7 @@ class DateType extends DateTimeType
     {
         parent::__construct($name);
 
-        $this->_setClassName(FrozenDate::class, DateTimeImmutable::class);
-    }
-
-    /**
-     * Change the preferred class name to the FrozenDate implementation.
-     *
-     * @return $this
-     * @deprecated 4.3.0 This method is no longer needed as using immutable datetime class is the default behavior.
-     */
-    public function useImmutable()
-    {
-        deprecationWarning(
-            'Configuring immutable or mutable classes is deprecated and immutable'
-            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
-        );
-
-        $this->_setClassName(FrozenDate::class, DateTimeImmutable::class);
-
-        return $this;
-    }
-
-    /**
-     * Change the preferred class name to the mutable Date implementation.
-     *
-     * @return $this
-     * @deprecated 4.3.0 Using mutable datetime objects is deprecated.
-     */
-    public function useMutable()
-    {
-        deprecationWarning(
-            'Configuring immutable or mutable classes is deprecated and immutable'
-            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
-        );
-
-        $this->_setClassName(Date::class, DateTime::class);
-
-        return $this;
+        $this->_className = class_exists(Date::class) ? Date::class : DateTimeImmutable::class;
     }
 
     /**

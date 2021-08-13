@@ -99,7 +99,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      */
     public function timeAgoInWords(I18nDateTimeInterface $time, array $options = []): string
     {
-        $options = $this->_options($options, FrozenTime::class);
+        $options = $this->_options($options, Time::class);
         if ($options['timezone']) {
             $time = $time->timezone($options['timezone']);
         }
@@ -120,7 +120,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return __d('cake', 'just now', 'just now');
         }
 
-        if ($diff > abs($now - (new FrozenTime($options['end']))->format('U'))) {
+        if ($diff > abs($now - (new Time($options['end']))->format('U'))) {
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
@@ -321,7 +321,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      */
     public function dateAgoInWords(I18nDateTimeInterface $date, array $options = []): string
     {
-        $options = $this->_options($options, FrozenDate::class);
+        $options = $this->_options($options, Date::class);
         if ($options['timezone']) {
             $date = $date->timezone($options['timezone']);
         }
@@ -342,7 +342,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return __d('cake', 'today');
         }
 
-        if ($diff > abs($now - (new FrozenDate($options['end']))->format('U'))) {
+        if ($diff > abs($now - (new Date($options['end']))->format('U'))) {
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 
@@ -396,7 +396,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param array $options The options provided by the user.
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
-     * @psalm-param class-string<\Cake\I18n\FrozenDate>|class-string<\Cake\I18n\FrozenTime> $class
+     * @psalm-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\Time> $class
      */
     protected function _options(array $options, string $class): array
     {

@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
@@ -1839,7 +1839,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $tr = [
-            new FrozenDate('2020-08-27'),
+            new Date('2020-08-27'),
         ];
         $result = $this->Html->tableCells($tr);
         $expected = [

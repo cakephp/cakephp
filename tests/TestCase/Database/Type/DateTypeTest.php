@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\Date;
-use Cake\Core\Configure;
 use Cake\Database\Type\DateType;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -46,13 +45,6 @@ class DateTypeTest extends TestCase
         parent::setUp();
         $this->type = new DateType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-
-        Configure::write('Error.ignoredDeprecationPaths', [
-            'src/Database/Type/DateTimeType.php',
-            'src/I18n/DateFormatTrait.php',
-            'tests/TestCase/Database/Type/DateTypeTest.php',
-            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
-        ]);
     }
 
     /**
@@ -116,13 +108,9 @@ class DateTypeTest extends TestCase
      */
     public function marshalProvider(): array
     {
-        Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/DateTypeTest.php',
-        ]);
-
         $date = new Date('@1392387900');
 
-        $data = [
+        return [
             // invalid types.
             [null, null],
             [false, null],
@@ -186,10 +174,6 @@ class DateTypeTest extends TestCase
                 new Date('2014-02-14'),
             ],
         ];
-
-        Configure::delete('Error.ignoredDeprecationPaths');
-
-        return $data;
     }
 
     /**
@@ -201,10 +185,6 @@ class DateTypeTest extends TestCase
      */
     public function testMarshal($value, $expected): void
     {
-        $result = $this->type->marshal($value);
-        $this->assertEquals($expected, $result);
-
-        $this->type->useMutable();
         $result = $this->type->marshal($value);
         $this->assertEquals($expected, $result);
     }
@@ -220,10 +200,6 @@ class DateTypeTest extends TestCase
         $expected = new Date('13-10-2013');
         $result = $this->type->marshal('10/13/2013');
         $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
-
-        $this->type->useMutable();
-        $result = $this->type->marshal('10/13/2013');
-        $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }
 
     /**
@@ -237,10 +213,6 @@ class DateTypeTest extends TestCase
         $expected = new Date('13-10-2013');
         $result = $this->type->marshal('13 Oct, 2013');
         $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
-
-        $this->type->useMutable();
-        $result = $this->type->marshal('13 Oct, 2013');
-        $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }
 
     /**
@@ -248,12 +220,7 @@ class DateTypeTest extends TestCase
      */
     public function testToImmutableAndToMutable(): void
     {
-        $this->type->useImmutable();
         $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01'));
         $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01', $this->driver));
-
-        $this->type->useMutable();
-        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTime', $this->type->toPHP('2015-11-01', $this->driver));
     }
 }
