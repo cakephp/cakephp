@@ -22,9 +22,6 @@ use Closure;
 
 /**
  * Interface for database driver.
- *
- * @method int|null getMaxAliasLength() Returns the maximum alias length allowed.
- * @method int getConnectRetries() Returns the number of connection retry attempts made.
  */
 interface DriverInterface
 {
@@ -277,4 +274,18 @@ interface DriverInterface
      * @return \Cake\Database\Schema\TableSchema
      */
     public function newTableSchema(string $table, array $columns = []): TableSchema;
+
+    /**
+     * Returns the number of connection retry attempts made.
+     *
+     * @return int
+     */
+    public function getConnectRetries(): int;
+
+    /**
+     * Returns the maximum alias length allowed.
+     *
+     * @return int|null
+     */
+    public function getMaxAliasLength(): ?int;
 }

@@ -24,7 +24,6 @@ use JsonSerializable;
  * comply with.
  *
  * @property mixed $id Alias for commonly used primary key.
- * @method bool[] getAccessible() Accessible configuration for this entity.
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
@@ -136,6 +135,13 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @return $this
      */
     public function setAccess(array|string $field, bool $set);
+
+    /**
+     * Accessible configuration for this entity.
+     *
+     * @return array<bool>
+     */
+    public function getAccessible(): array;
 
     /**
      * Checks if a field is accessible
