@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\Date;
+use Cake\Core\Configure;
 use Cake\Database\Type\DateType;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -45,6 +46,13 @@ class DateTypeTest extends TestCase
         parent::setUp();
         $this->type = new DateType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/Database/Type/DateTimeType.php',
+            'src/I18n/DateFormatTrait.php',
+            'tests/TestCase/Database/Type/DateTypeTest.php',
+            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
+        ]);
     }
 
     /**
@@ -53,7 +61,6 @@ class DateTypeTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->type->useImmutable();
         $this->type->useLocaleParser(false)->setLocaleFormat(null);
     }
 
@@ -118,9 +125,13 @@ class DateTypeTest extends TestCase
      */
     public function marshalProvider(): array
     {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Database/Type/DateTypeTest.php',
+        ]);
+
         $date = new Date('@1392387900');
 
-        return [
+        $data = [
             // invalid types.
             [null, null],
             [false, null],
@@ -184,6 +195,10 @@ class DateTypeTest extends TestCase
                 new Date('2014-02-14'),
             ],
         ];
+
+        Configure::delete('Error.ignoredDeprecationPaths');
+
+        return $data;
     }
 
     /**

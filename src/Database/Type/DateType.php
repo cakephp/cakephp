@@ -49,12 +49,28 @@ class DateType extends DateTimeType
     protected $setToDateStart = true;
 
     /**
+     * @inheritDoc
+     */
+    public function __construct(?string $name = null)
+    {
+        parent::__construct($name);
+
+        $this->_setClassName(FrozenDate::class, DateTimeImmutable::class);
+    }
+
+    /**
      * Change the preferred class name to the FrozenDate implementation.
      *
      * @return $this
+     * @deprecated 4.3.0 This method is no longer needed as using immutable datetime class is the default behavior.
      */
     public function useImmutable()
     {
+        deprecationWarning(
+            'Configuring immutable or mutable classes is deprecated and immutable'
+            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
+        );
+
         $this->_setClassName(FrozenDate::class, DateTimeImmutable::class);
 
         return $this;
@@ -64,9 +80,15 @@ class DateType extends DateTimeType
      * Change the preferred class name to the mutable Date implementation.
      *
      * @return $this
+     * @deprecated 4.3.0 Using mutable datetime objects is deprecated.
      */
     public function useMutable()
     {
+        deprecationWarning(
+            'Configuring immutable or mutable classes is deprecated and immutable'
+            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
+        );
+
         $this->_setClassName(Date::class, DateTime::class);
 
         return $this;

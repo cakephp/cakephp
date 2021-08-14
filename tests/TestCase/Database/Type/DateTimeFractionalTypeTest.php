@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Core\Configure;
 use Cake\Database\Type\DateTimeFractionalType;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
@@ -45,6 +46,10 @@ class DateTimeFractionalTypeTest extends TestCase
         parent::setUp();
         $this->type = new DateTimeFractionalType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Database/Type/DateTimeFractionalTypeTest.php',
+        ]);
     }
 
     /**
@@ -213,7 +218,11 @@ class DateTimeFractionalTypeTest extends TestCase
      */
     public function marshalProvider(): array
     {
-        return [
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Database/Type/DateTimeFractionalTypeTest.php',
+        ]);
+
+        $data = [
             // invalid types.
             [null, null],
             [false, null],
@@ -274,6 +283,10 @@ class DateTimeFractionalTypeTest extends TestCase
                 new FrozenTime('2014-02-14 11:30:00.123456', 'UTC'),
             ],
         ];
+
+        Configure::delete('Error.ignoredDeprecationPaths');
+
+        return $data;
     }
 
     /**

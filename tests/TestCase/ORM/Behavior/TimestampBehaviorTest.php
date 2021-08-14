@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 use Cake\Database\TypeFactory;
 use Cake\Event\Event;
 use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -221,22 +220,24 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testUseImmutable(): void
     {
-        $table = $this->getTable();
-        $this->Behavior = new TimestampBehavior($table);
-        $entity = new Entity();
-        $event = new Event('Model.beforeSave');
+        $this->deprecated(function () {
+            $table = $this->getTable();
+            $this->Behavior = new TimestampBehavior($table);
+            $entity = new Entity();
+            $event = new Event('Model.beforeSave');
 
-        $entity->clean();
-        $this->Behavior->handleEvent($event, $entity);
-        $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->modified);
+            $entity->clean();
+            $this->Behavior->handleEvent($event, $entity);
+            $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->modified);
 
-        TypeFactory::build('timestamp')->useMutable();
-        $entity->clean();
-        $this->Behavior->handleEvent($event, $entity);
-        $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
-        // Revert back to using immutable class to avoid causing problems in
-        // other test cases when running full test suite.
-        TypeFactory::build('timestamp')->useImmutable();
+            TypeFactory::build('timestamp')->useMutable();
+            $entity->clean();
+            $this->Behavior->handleEvent($event, $entity);
+            $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
+            // Revert back to using immutable class to avoid causing problems in
+            // other test cases when running full test suite.
+            TypeFactory::build('timestamp')->useImmutable();
+        });
     }
 
     /**
@@ -290,12 +291,12 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $behavior->timestamp();
         $this->assertInstanceOf(
-            'DateTime',
+            'DateTimeImmutable',
             $return,
             'Should return a timestamp object'
         );
 
-        $now = Time::now();
+        $now = FrozenTime::now();
         $this->assertEquals($now, $return);
     }
 
@@ -445,7 +446,7 @@ class TimestampBehaviorTest extends TestCase
 
         $row = $table->find('all')->where(['id' => $entity->id])->first();
 
-        $now = Time::now();
+        $now = FrozenTime::now();
         $this->assertSame($now->toDateTimeString(), $row->created->toDateTimeString());
         $this->assertSame($now->toDateTimeString(), $row->updated->toDateTimeString());
     }

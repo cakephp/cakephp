@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 
@@ -244,7 +244,7 @@ class TextTest extends TestCase
         $result = Text::insert($string, [
             'user.email' => 'security@example.com',
             'user.id' => 2,
-            'user.created' => Time::parse('2016-01-01'),
+            'user.created' => FrozenTime::parse('2016-01-01'),
         ]);
         $this->assertSame($expected, $result);
 

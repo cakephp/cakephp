@@ -30,7 +30,6 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -585,14 +584,14 @@ class QueryTest extends TestCase
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 1],
                         'description' => 'A big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 2,
                         'name' => 'tag2',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 2],
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -608,14 +607,14 @@ class QueryTest extends TestCase
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 1],
                         'description' => 'A big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -655,7 +654,7 @@ class QueryTest extends TestCase
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -702,8 +701,8 @@ class QueryTest extends TestCase
                         'user_id' => 4,
                         'comment' => 'Second Comment for First Article',
                         'published' => 'Y',
-                        'created' => new Time('2007-03-18 10:47:23'),
-                        'updated' => new Time('2007-03-18 10:49:31'),
+                        'created' => new FrozenTime('2007-03-18 10:47:23'),
+                        'updated' => new FrozenTime('2007-03-18 10:49:31'),
                     ],
                 ],
             ],
@@ -764,7 +763,7 @@ class QueryTest extends TestCase
                         'id' => 3,
                         'name' => 'tag3',
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3],
                 ],
@@ -791,7 +790,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2],
                 ],
@@ -827,7 +826,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     'articles' => [
                         'id' => 1,
@@ -1297,7 +1296,7 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[0]->created);
@@ -1307,7 +1306,7 @@ class QueryTest extends TestCase
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
             'description' => 'Another big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[1]->created);
@@ -1359,7 +1358,7 @@ class QueryTest extends TestCase
                 'beforeFind' => true,
             ],
             'description' => 'A big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[0]->created);
@@ -1373,7 +1372,7 @@ class QueryTest extends TestCase
                 'beforeFind' => true,
             ],
             'description' => 'Another big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[0]->created);
