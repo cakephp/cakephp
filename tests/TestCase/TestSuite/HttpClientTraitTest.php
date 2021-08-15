@@ -1,0 +1,59 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         4.3.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Test\TestCase\TestSuite;
+
+use Cake\Http\Client;
+use Cake\TestSuite\HttpClientTrait;
+use Cake\TestSuite\TestCase;
+
+class HttpClientTraitTest extends TestCase
+{
+    use HttpClientTrait;
+
+    /**
+     * Provider for http methods.
+     *
+     * @return void
+     */
+    public static function methodProvider(): array
+    {
+        return [
+            ['Get'],
+            ['Post'],
+            ['Put'],
+            ['Patch'],
+            ['Delete'],
+        ];
+    }
+
+    /**
+     * @dataProvider methodProvider
+     * @param string $httpMethod Http Method name.
+     */
+    public function testRequestMethods($httpMethod)
+    {
+        $traitMethod = "mockClient{$httpMethod}";
+        $clientMethod = strtolower($httpMethod);
+
+        $response = $this->newResponse(200, ['Content-Type: application/json'], '{"ok":true}');
+        $this->{$traitMethod}('http://example.com', $response);
+
+        $client = new Client();
+        $result = $client->{$clientMethod}('http://example.com');
+        $this->assertSame($response, $result);
+    }
+}
