@@ -15,22 +15,15 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client\Exception;
 
-use RuntimeException;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used to indicate that a request did not have a matching mock response.
  */
-class MissingResponseException extends RuntimeException
+class MissingResponseException extends CakeException
 {
     /**
-     * Constructor
-     *
-     * @param string $method The HTTP method used.
-     * @param string $url The request URL.
+     * @var string
      */
-    public function __construct(string $method, string $url)
-    {
-        $message = "Unable to find a mocked response for {$method} to {$url}.";
-        parent::__construct($message);
-    }
+    protected $_messageTemplate = 'Unable to find a mocked response for `%s` to `%s`.';
 }

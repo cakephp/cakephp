@@ -106,7 +106,7 @@ class Mock implements AdapterInterface
             return [$mock['response']];
         }
 
-        throw new MissingResponseException($method, $requestUri);
+        throw new MissingResponseException(['method' => $method, 'url' => $requestUri]);
     }
 
     /**

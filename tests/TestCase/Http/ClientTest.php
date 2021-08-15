@@ -1083,6 +1083,9 @@ class ClientTest extends TestCase
 
     /**
      * Custom match methods must be closures
+     *
+     *    
+     * @return
      */
     public function testAddMockResponseInvalidMatch(): void
     {
