@@ -27,7 +27,7 @@ class HttpClientTraitTest extends TestCase
     /**
      * Provider for http methods.
      *
-     * @return void
+     * @return array<array>
      */
     public static function methodProvider(): array
     {
@@ -48,7 +48,7 @@ class HttpClientTraitTest extends TestCase
         $traitMethod = "mockClient{$httpMethod}";
         $clientMethod = strtolower($httpMethod);
 
-        $response = $this->newResponse(200, ['Content-Type: application/json'], '{"ok":true}');
+        $response = $this->newClientResponse(200, ['Content-Type: application/json'], '{"ok":true}');
         $this->{$traitMethod}('http://example.com', $response);
 
         $client = new Client();

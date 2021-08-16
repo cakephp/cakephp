@@ -43,7 +43,7 @@ trait HttpClientTrait
      * @param string $body The body for the response.
      * @return \Cake\Http\Client\Response
      */
-    public function newResponse(int $code = 200, array $headers = [], string $body = ''): Response
+    public function newClientResponse(int $code = 200, array $headers = [], string $body = ''): Response
     {
         $headers = array_merge(["HTTP/1.1 {$code}"], $headers);
 
