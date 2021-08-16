@@ -42,9 +42,8 @@ class HttpClientTraitTest extends TestCase
 
     /**
      * @dataProvider methodProvider
-     * @param string $httpMethod Http Method name.
      */
-    public function testRequestMethods($httpMethod)
+    public function testRequestMethods(string $httpMethod)
     {
         $traitMethod = "mockClient{$httpMethod}";
         $clientMethod = strtolower($httpMethod);
