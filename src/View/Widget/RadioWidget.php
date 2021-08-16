@@ -167,7 +167,7 @@ class RadioWidget extends BasicWidget
 
         if (empty($radio['id'])) {
             if (isset($data['id'])) {
-                $radio['id'] = $data['id'] . '-' . rtrim(
+                $radio['id'] = $data['id'] . '-' . trim(
                     $this->_idSuffix((string)$radio['value']),
                     '-'
                 );

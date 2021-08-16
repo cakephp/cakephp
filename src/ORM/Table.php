@@ -1319,7 +1319,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *  'valueField' => ['first_name', 'last_name'],
      *  'valueSeparator' => ' | ',
      * ]);
-     * ```
+     *
      *
      * The results of this finder will be in the following form:
      *
