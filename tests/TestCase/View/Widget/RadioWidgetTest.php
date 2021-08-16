@@ -802,7 +802,7 @@ class RadioWidgetTest extends TestCase
         $input = new RadioWidget($this->templates, $label);
         $data = [
             'name' => 'field',
-            'options' => ['value1', 'value2'],
+            'options' => ['value1', 'value2', -1 => 'negative'],
             'id' => 'alternative-id',
             'idPrefix' => 'willBeIgnored',
         ];
@@ -819,6 +819,12 @@ class RadioWidgetTest extends TestCase
                 'input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'alternative-id-1'],
             ],
             'value2',
+            '/label',
+            [
+                'label' => ['for' => 'alternative-id--1'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '-1', 'id' => 'alternative-id--1'],
+            ],
+            'negative',
             '/label',
         ];
         $this->assertHtml($expected, $result);

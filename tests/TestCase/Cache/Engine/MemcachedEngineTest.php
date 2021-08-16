@@ -613,7 +613,6 @@ class MemcachedEngineTest extends TestCase
      */
     public function testDeleteMany(): void
     {
-        $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement deleteMulti');
         $this->_configCache();
         $data = [
             'App.falseTest' => false,
