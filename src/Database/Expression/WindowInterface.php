@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\ExpressionInterface;
+use Closure;
+
 /**
  * This defines the functions used for building window expressions.
  */
@@ -52,7 +55,7 @@ interface WindowInterface
      * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $partitions Partition expressions
      * @return $this
      */
-    public function partition($partitions);
+    public function partition(ExpressionInterface|Closure|array|string $partitions);
 
     /**
      * Adds one or more order clauses to the window.
@@ -60,7 +63,7 @@ interface WindowInterface
      * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $fields Order expressions
      * @return $this
      */
-    public function order($fields);
+    public function order(ExpressionInterface|Closure|array|string $fields);
 
     /**
      * Adds a simple range frame to the window.
@@ -83,7 +86,7 @@ interface WindowInterface
      *  If not passed in, only frame start SQL will be generated.
      * @return $this
      */
-    public function range($start, $end = 0);
+    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0);
 
     /**
      * Adds a simple rows frame to the window.
@@ -134,9 +137,9 @@ interface WindowInterface
      */
     public function frame(
         string $type,
-        $startOffset,
+        ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
-        $endOffset,
+        ExpressionInterface|string|int|null $endOffset,
         string $endDirection
     );
 

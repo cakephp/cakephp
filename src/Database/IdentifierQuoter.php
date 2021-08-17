@@ -224,7 +224,7 @@ class IdentifierQuoter
                 $quoted[] = $this->_driver->quoteIdentifier($f);
             }
             $expression->setField($quoted);
-        } elseif ($field instanceof ExpressionInterface) {
+        } else {
             $this->quoteExpression($field);
         }
     }

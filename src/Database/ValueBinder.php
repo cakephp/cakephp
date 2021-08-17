@@ -49,7 +49,7 @@ class ValueBinder
      * to database
      * @return void
      */
-    public function bind($param, $value, $type = null): void
+    public function bind(string|int $param, mixed $value, string|int|null $type = null): void
     {
         $this->_bindings[$param] = compact('value', 'type') + [
             'placeholder' => is_int($param) ? $param : substr($param, 1),
@@ -83,7 +83,7 @@ class ValueBinder
      * @param string|int|null $type The type with which all values will be bound
      * @return array with the placeholders to insert in the query
      */
-    public function generateManyNamed(iterable $values, $type = null): array
+    public function generateManyNamed(iterable $values, string|int|null $type = null): array
     {
         $placeholders = [];
         foreach ($values as $k => $value) {

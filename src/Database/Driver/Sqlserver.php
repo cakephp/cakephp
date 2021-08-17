@@ -194,7 +194,7 @@ class Sqlserver extends Driver
      * @param \Cake\Database\Query|string $query The query to prepare.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($query): StatementInterface
+    public function prepare(Query|string $query): StatementInterface
     {
         $this->connect();
 

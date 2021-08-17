@@ -54,8 +54,9 @@ class PostgresTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('stdClass')
-            ->addMethods(['exec', 'quote'])
+        $connection = $this->getMockBuilder('PDO')
+            ->disableOriginalConstructor()
+            ->onlyMethods(['exec', 'quote'])
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
@@ -111,8 +112,9 @@ class PostgresTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('stdClass')
-            ->addMethods(['exec', 'quote'])
+        $connection = $this->getMockBuilder('PDO')
+            ->disableOriginalConstructor()
+            ->onlyMethods(['exec', 'quote'])
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')

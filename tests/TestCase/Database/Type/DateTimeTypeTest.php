@@ -377,8 +377,6 @@ class DateTimeTypeTest extends TestCase
         $expected = new Time('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
-
-        $this->type->useLocaleParser(false)->setLocaleFormat(null);
     }
 
     /**

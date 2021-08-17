@@ -76,8 +76,12 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param string|null $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value
      */
-    public function __construct($field, $value, ?string $type = null, string $operator = '=')
-    {
+    public function __construct(
+        ExpressionInterface|string $field,
+        mixed $value,
+        ?string $type = null,
+        string $operator = '='
+    ) {
         $this->_type = $type;
         $this->setField($field);
         $this->setValue($value);
@@ -90,7 +94,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param mixed $value The value to compare
      * @return void
      */
-    public function setValue($value): void
+    public function setValue(mixed $value): void
     {
         $value = $this->_castToExpression($value, $this->_type);
 
@@ -108,7 +112,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      *
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->_value;
     }
@@ -243,7 +247,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param string|null $type The type of $value
      * @return string generated placeholder
      */
-    protected function _bindValue($value, ValueBinder $binder, ?string $type = null): string
+    protected function _bindValue(mixed $value, ValueBinder $binder, ?string $type = null): string
     {
         $placeholder = $binder->placeholder('c');
         $binder->bind($placeholder, $value, $type);
@@ -285,7 +289,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ExpressionInterface|iterable $values The rows to insert
      * @return array
      */
-    protected function _collectExpressions($values): array
+    protected function _collectExpressions(ExpressionInterface|iterable $values): array
     {
         if ($values instanceof ExpressionInterface) {
             return [$values, []];

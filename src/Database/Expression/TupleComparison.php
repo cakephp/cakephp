@@ -43,8 +43,12 @@ class TupleComparison extends ComparisonExpression
      * one type per position in the value array in needed
      * @param string $conjunction the operator used for comparing field and value
      */
-    public function __construct($fields, $values, array $types = [], string $conjunction = '=')
-    {
+    public function __construct(
+        ExpressionInterface|array|string $fields,
+        ExpressionInterface|array $values,
+        array $types = [],
+        string $conjunction = '='
+    ) {
         $this->_type = $types;
         $this->setField($fields);
         $this->setValue($values);
@@ -67,7 +71,7 @@ class TupleComparison extends ComparisonExpression
      * @param mixed $value The value to compare
      * @return void
      */
-    public function setValue($value): void
+    public function setValue(mixed $value): void
     {
         $this->_value = $value;
     }
@@ -195,7 +199,7 @@ class TupleComparison extends ComparisonExpression
      * @param \Closure $callback The callable to use when traversing
      * @return void
      */
-    protected function _traverseValue($value, Closure $callback): void
+    protected function _traverseValue(mixed $value, Closure $callback): void
     {
         if ($value instanceof ExpressionInterface) {
             $callback($value);

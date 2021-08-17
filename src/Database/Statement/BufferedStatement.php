@@ -20,7 +20,7 @@ use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Iterator;
-use ReturnTypeWillChange;
+use RuntimeException;
 
 /**
  * A statement decorator that implements buffered results.
@@ -92,12 +92,14 @@ class BufferedStatement implements Iterator, StatementInterface
      * @param string $property internal property to get
      * @return mixed
      */
-    public function __get(string $property)
+    public function __get(string $property): mixed
     {
         if ($property === 'queryString') {
             /** @psalm-suppress NoInterfaceProperties */
             return $this->statement->queryString;
         }
+
+        throw new RuntimeException("Cannot access undefined property `$property`.");
     }
 
     /**
@@ -127,7 +129,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function errorCode()
+    public function errorCode(): string|int
     {
         return $this->statement->errorCode();
     }
@@ -154,7 +156,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchColumn(int $position)
+    public function fetchColumn(int $position): mixed
     {
         $result = $this->fetch(static::FETCH_TYPE_NUM);
         if ($result !== false && isset($result[$position])) {
@@ -186,18 +188,15 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function lastInsertId(?string $table = null, ?string $column = null)
+    public function lastInsertId(?string $table = null, ?string $column = null): string|int
     {
         return $this->statement->lastInsertId($table, $column);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string|int $type The type to fetch.
-     * @return array|false
+     * @inheritDoc
      */
-    public function fetch($type = self::FETCH_TYPE_NUM)
+    public function fetch(string|int $type = self::FETCH_TYPE_NUM): mixed
     {
         if ($this->_allFetched) {
             $row = false;
@@ -238,7 +237,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchAll($type = self::FETCH_TYPE_NUM)
+    public function fetchAll($type = self::FETCH_TYPE_NUM): array|false
     {
         if ($this->_allFetched) {
             return $this->buffer;
@@ -282,8 +281,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function key()
+    public function key(): mixed
     {
         return $this->index;
     }
@@ -293,8 +291,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         return $this->buffer[$this->index];
     }

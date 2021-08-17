@@ -2894,17 +2894,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test update with type checking
-     * by passing an array as table arg
-     */
-    public function testUpdateArgTypeChecking(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $query = new Query($this->connection);
-        $query->update(['Articles']);
-    }
-
-    /**
      * Test update with multiple fields.
      */
     public function testUpdateMultipleFields(): void

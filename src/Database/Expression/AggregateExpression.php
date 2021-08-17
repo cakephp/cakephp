@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
 
@@ -46,7 +47,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      * @return $this
      * @see \Cake\Database\Query::where()
      */
-    public function filter($conditions, array $types = [])
+    public function filter(ExpressionInterface|Closure|array|string $conditions, array $types = [])
     {
         if ($this->filter === null) {
             $this->filter = new QueryExpression();

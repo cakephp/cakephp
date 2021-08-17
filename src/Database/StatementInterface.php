@@ -65,7 +65,7 @@ interface StatementInterface
      * @param string|int|null $type name of configured Type class, or PDO type constant.
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string'): void;
+    public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void;
 
     /**
      * Closes a cursor in the database, freeing up any resources and memory
@@ -96,7 +96,7 @@ interface StatementInterface
      *
      * @return string|int
      */
-    public function errorCode();
+    public function errorCode(): string|int;
 
     /**
      * Returns the error information for the last error that occurred when executing
@@ -134,7 +134,7 @@ interface StatementInterface
      * @return mixed Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = 'num');
+    public function fetch(string|int $type = 'num'): mixed;
 
     /**
      * Returns an array with all rows resulting from executing this statement
@@ -150,7 +150,7 @@ interface StatementInterface
      * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array|false list of all results from database for this statement or false on failure.
      */
-    public function fetchAll($type = 'num');
+    public function fetchAll(string|int $type = 'num'): array|false;
 
     /**
      * Returns the value of the result at position.
@@ -158,7 +158,7 @@ interface StatementInterface
      * @param int $position The numeric position of the column to retrieve in the result
      * @return mixed Returns the specific value of the column designated at $position
      */
-    public function fetchColumn(int $position);
+    public function fetchColumn(int $position): mixed;
 
     /**
      * Returns the number of rows affected by this SQL statement
@@ -199,5 +199,5 @@ interface StatementInterface
      * @param string|null $column the name of the column representing the primary key
      * @return string|int
      */
-    public function lastInsertId(?string $table = null, ?string $column = null);
+    public function lastInsertId(?string $table = null, ?string $column = null): string|int;
 }

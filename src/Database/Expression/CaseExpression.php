@@ -56,14 +56,17 @@ class CaseExpression implements ExpressionInterface
      *
      * @param \Cake\Database\ExpressionInterface|array $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param \Cake\Database\ExpressionInterface|array $values associative array of values to be associated with the
+     * @param \Cake\Database\ExpressionInterface|array|string|float|int|bool|null $values associative array of values to be associated with the
      * conditions passed in $conditions. If there are more $values than $conditions,
      * the last $value is used as the `ELSE` value.
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      */
-    public function __construct($conditions = [], $values = [], $types = [])
-    {
+    public function __construct(
+        ExpressionInterface|array $conditions = [],
+        ExpressionInterface|array|string|float|int|bool|null $values = [],
+        array|string $types = []
+    ) {
         if (!empty($conditions)) {
             $this->add($conditions, $values, $types);
         }
@@ -82,12 +85,15 @@ class CaseExpression implements ExpressionInterface
      *
      * @param \Cake\Database\ExpressionInterface|array $conditions Must be a ExpressionInterface instance,
      *   or an array of ExpressionInterface instances.
-     * @param \Cake\Database\ExpressionInterface|array $values associative array of values of each condition
-     * @param array $types associative array of types to be associated with the values
+     * @param \Cake\Database\ExpressionInterface|array|string|float|int|bool|null $values associative array of values of each condition
+     * @param array|string $types associative array of types to be associated with the values
      * @return $this
      */
-    public function add($conditions = [], $values = [], $types = [])
-    {
+    public function add(
+        ExpressionInterface|array $conditions = [],
+        ExpressionInterface|array|string|float|int|bool|null $values = [],
+        array|string $types = []
+    ) {
         if (!is_array($conditions)) {
             $conditions = [$conditions];
         }
@@ -161,12 +167,14 @@ class CaseExpression implements ExpressionInterface
     /**
      * Sets the default value
      *
-     * @param \Cake\Database\ExpressionInterface|array|string|null $value Value to set
+     * @param \Cake\Database\ExpressionInterface|array|string|float|int|bool|null $value Value to set
      * @param string|null $type Type of value
      * @return void
      */
-    public function elseValue($value = null, ?string $type = null): void
-    {
+    public function elseValue(
+        ExpressionInterface|array|string|float|int|bool|null $value = null,
+        ?string $type = null
+    ): void {
         if (is_array($value)) {
             end($value);
             $value = key($value);
@@ -190,7 +198,7 @@ class CaseExpression implements ExpressionInterface
      * @param \Cake\Database\ValueBinder $binder Sql generator
      * @return string
      */
-    protected function _compile($part, ValueBinder $binder): string
+    protected function _compile(ExpressionInterface|array|string $part, ValueBinder $binder): string
     {
         if ($part instanceof ExpressionInterface) {
             $part = $part->sql($binder);

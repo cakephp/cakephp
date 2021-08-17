@@ -300,8 +300,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * @param string $direction Frame offset direction
      * @return string
      */
-    protected function buildOffsetSql(ValueBinder $binder, $offset, string $direction): string
-    {
+    protected function buildOffsetSql(
+        ValueBinder $binder,
+        ExpressionInterface|string|int|null $offset,
+        string $direction
+    ): string {
         if ($offset === 0) {
             return 'CURRENT ROW';
         }
