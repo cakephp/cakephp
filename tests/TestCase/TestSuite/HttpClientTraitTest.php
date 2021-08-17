@@ -46,13 +46,12 @@ class HttpClientTraitTest extends TestCase
     public function testRequestMethods(string $httpMethod)
     {
         $traitMethod = "mockClient{$httpMethod}";
-        $clientMethod = strtolower($httpMethod);
 
         $response = $this->newClientResponse(200, ['Content-Type: application/json'], '{"ok":true}');
         $this->{$traitMethod}('http://example.com', $response);
 
         $client = new Client();
-        $result = $client->{$clientMethod}('http://example.com');
+        $result = $client->{$httpMethod}('http://example.com');
         $this->assertSame($response, $result);
     }
 }
