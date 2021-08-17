@@ -19,6 +19,7 @@ namespace Cake\ORM\Behavior\Translate;
 use ArrayObject;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
@@ -82,7 +83,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function groupTranslations($results): CollectionInterface;
+    public function groupTranslations(ResultSetInterface $results): CollectionInterface;
 
     /**
      * Callback method that listens to the `beforeFind` event in the bound
@@ -94,7 +95,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options);
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void;
 
     /**
      * Modifies the entity before it is saved so that translated fields are persisted
@@ -105,7 +106,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options);
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void;
 
     /**
      * Unsets the temporary `_i18n` property after the entity has been saved
@@ -114,5 +115,5 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity);
+    public function afterSave(EventInterface $event, EntityInterface $entity): void;
 }

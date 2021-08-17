@@ -19,6 +19,8 @@ namespace Cake\ORM\Rule;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Checks whether links to a given association exist / do not exist.
@@ -60,20 +62,10 @@ class LinkConstraint
      * @param string $requiredLinkStatus The link status that is required to be present in order for the check to
      *  succeed.
      */
-    public function __construct($association, string $requiredLinkStatus)
+    public function __construct(Association|string $association, string $requiredLinkStatus)
     {
-        if (
-            !is_string($association) &&
-            !($association instanceof Association)
-        ) {
-            throw new \InvalidArgumentException(sprintf(
-                'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
-                get_debug_type($association)
-            ));
-        }
-
         if (!in_array($requiredLinkStatus, [static::STATUS_LINKED, static::STATUS_NOT_LINKED], true)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.'
             );
         }
@@ -95,7 +87,7 @@ class LinkConstraint
     {
         $table = $options['repository'] ?? null;
         if (!($table instanceof Table)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`.'
             );
         }
@@ -149,7 +141,7 @@ class LinkConstraint
     protected function _buildConditions(array $fields, array $values): array
     {
         if (count($fields) !== count($values)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'The number of fields is expected to match the number of values, got %d field(s) and %d value(s).',
                 count($fields),
                 count($values)
@@ -172,7 +164,7 @@ class LinkConstraint
 
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'LinkConstraint rule on `%s` requires all primary key values for building the counting ' .
                 'conditions, expected values for `(%s)`, got `(%s)`.',
                 $source->getAlias(),

@@ -135,7 +135,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @since 4.0.0
      * @psalm-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
      */
-    public static function setDefaultStrategyClass(string $class)
+    public static function setDefaultStrategyClass(string $class): void
     {
         static::$defaultStrategyClass = $class;
     }
@@ -173,7 +173,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
      * @since 4.0.0
      */
-    protected function createStrategy()
+    protected function createStrategy(): TranslateStrategyInterface
     {
         $config = array_diff_key(
             $this->_config,
@@ -333,7 +333,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param array $args Method arguments.
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         return $this->strategy->{$method}(...$args);
     }

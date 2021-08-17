@@ -3749,18 +3749,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that given the wrong first parameter, Invalid argument exception is thrown
-     */
-    public function testSelectAllExceptThrowsInvalidArgument(): void
-    {
-        $table = $this->getTableLocator()->get('Articles');
-        $this->expectException(\InvalidArgumentException::class);
-            $table
-                ->find()
-                ->selectAllExcept([], ['body']);
-    }
-
-    /**
      * Tests that using Having on an aggregated field returns the correct result
      * model in the query
      */

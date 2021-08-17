@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use RuntimeException;
+
 /**
  * Represents a single level in the associations tree to be eagerly loaded
  * for a specific query. This contains all the information required to
@@ -173,7 +175,7 @@ class EagerLoadable
     public function instance(): Association
     {
         if ($this->_instance === null) {
-            throw new \RuntimeException('No instance set.');
+            throw new RuntimeException('No instance set.');
         }
 
         return $this->_instance;
