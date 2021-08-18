@@ -23,6 +23,8 @@ use IntlDateFormatter;
  * Extends the Date class provided by Chronos.
  *
  * Adds handy methods and locale-aware formatting helpers
+ *
+ * @deprecated 4.3.0 Use the immutable alternative `FrozenDate` instead.
  */
 class Date extends MutableDate implements I18nDateTimeInterface
 {
@@ -131,6 +133,10 @@ class Date extends MutableDate implements I18nDateTimeInterface
      */
     public function __construct($time = 'now', $tz = null)
     {
+        deprecationWarning(
+            'The `Date` class has been deprecated. Use the immutable alternative `FrozenDate` instead'
+        );
+
         parent::__construct($time, $tz);
     }
 

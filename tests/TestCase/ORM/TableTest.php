@@ -27,7 +27,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -483,15 +483,15 @@ class TableTest extends TestCase
                 'id' => 1,
                 'username' => 'mariano',
                 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
-                'created' => new Time('2007-03-17 01:16:23'),
-                'updated' => new Time('2007-03-17 01:18:31'),
+                'created' => new FrozenTime('2007-03-17 01:16:23'),
+                'updated' => new FrozenTime('2007-03-17 01:18:31'),
             ],
             [
                 'id' => 2,
                 'username' => 'nate',
                 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
-                'created' => new Time('2008-03-17 01:18:23'),
-                'updated' => new Time('2008-03-17 01:20:31'),
+                'created' => new FrozenTime('2008-03-17 01:18:23'),
+                'updated' => new FrozenTime('2008-03-17 01:20:31'),
             ],
         ];
         $this->assertEquals($expected, $results);
@@ -544,7 +544,7 @@ class TableTest extends TestCase
         ]);
         $query = $table->find('all')
             ->select(['id', 'username'])
-            ->where(['created >=' => new Time('2010-01-22 00:00')])
+            ->where(['created >=' => new FrozenTime('2010-01-22 00:00')])
             ->enableHydration(false)
             ->order('id');
         $expected = [
@@ -557,8 +557,8 @@ class TableTest extends TestCase
             ->enableHydration(false)
             ->select(['id', 'username'])
             ->where(['OR' => [
-                'created >=' => new Time('2010-01-22 00:00'),
-                'users.created' => new Time('2008-03-17 01:18:23'),
+                'created >=' => new FrozenTime('2010-01-22 00:00'),
+                'users.created' => new FrozenTime('2008-03-17 01:18:23'),
             ]])
             ->order('id');
         $expected = [
@@ -1862,8 +1862,8 @@ class TableTest extends TestCase
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -1969,8 +1969,8 @@ class TableTest extends TestCase
             'username' => 'superuser',
             'password' => 'root',
             'crazyness' => 'super crazy value',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -1991,8 +1991,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $listener = function ($event, EntityInterface $entity, $options) use ($data): void {
             $this->assertSame($data, $entity);
@@ -2016,8 +2016,8 @@ class TableTest extends TestCase
         $data = new Entity([
             'username' => 'superuser',
             'password' => 'foo',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $listener1 = function ($event, $entity, $options): void {
             $options['crazy'] = true;
@@ -2045,8 +2045,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
@@ -2071,8 +2071,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
@@ -2092,8 +2092,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
@@ -2146,8 +2146,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $called = false;
@@ -2177,8 +2177,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $called = false;
@@ -2201,8 +2201,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $called = false;
@@ -2236,8 +2236,8 @@ class TableTest extends TestCase
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $table->expects($this->once())->method('query')
@@ -2350,8 +2350,8 @@ class TableTest extends TestCase
         $connection->expects($this->any())->method('inTransaction')->will($this->returnValue(true));
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $this->assertSame($data, $table->save($data));
     }
@@ -2391,8 +2391,8 @@ class TableTest extends TestCase
 
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table->save($data);
     }
@@ -2437,8 +2437,8 @@ class TableTest extends TestCase
 
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table->save($data);
     }
@@ -2454,8 +2454,8 @@ class TableTest extends TestCase
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $entity->clean();
         $entity->setDirty('username', true);
@@ -2481,8 +2481,8 @@ class TableTest extends TestCase
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -2502,8 +2502,8 @@ class TableTest extends TestCase
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -6178,8 +6178,8 @@ class TableTest extends TestCase
     {
         $entity = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ], ['markNew' => true]);
 
         $table = $this->getTableLocator()->get('Users');

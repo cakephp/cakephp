@@ -20,7 +20,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
-use Cake\I18n\Date;
+use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -5814,7 +5814,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->date('start_day', [
-            'value' => new Date('2014-03-08'),
+            'value' => new FrozenDate('2014-03-08'),
         ]);
         $this->assertHtml($expected, $result);
     }
@@ -6029,7 +6029,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->year('published', [
             'empty' => false,
-            'value' => new Date('2008-01-12'),
+            'value' => new FrozenDate('2008-01-12'),
             'min' => 2007,
             'max' => 2009,
         ]);

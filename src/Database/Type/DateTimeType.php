@@ -128,7 +128,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         parent::__construct($name);
 
         $this->defaultTimezone = new DateTimeZone(date_default_timezone_get());
-        $this->useImmutable();
+        $this->_setClassName(FrozenTime::class, DateTimeImmutable::class);
     }
 
     /**
@@ -442,9 +442,15 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * Change the preferred class name to the FrozenTime implementation.
      *
      * @return $this
+     * @deprecated 4.3.0 This method is no longer needed as using immutable datetime class is the default behavior.
      */
     public function useImmutable()
     {
+        deprecationWarning(
+            'Configuring immutable or mutable classes is deprecated and immutable'
+            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
+        );
+
         $this->_setClassName(FrozenTime::class, DateTimeImmutable::class);
 
         return $this;
@@ -482,9 +488,15 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * Change the preferred class name to the mutable Time implementation.
      *
      * @return $this
+     * @deprecated 4.3.0 Using mutable datetime objects is deprecated.
      */
     public function useMutable()
     {
+        deprecationWarning(
+            'Configuring immutable or mutable classes is deprecated and immutable'
+            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
+        );
+
         $this->_setClassName(Time::class, DateTime::class);
 
         return $this;

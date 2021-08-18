@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility;
 
 use ArrayObject;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -1387,7 +1387,7 @@ class HashTest extends TestCase
             ['value' => 0],
             ['value' => 3],
             ['value' => 'string-value'],
-            ['value' => new Time('2010-01-05 01:23:45')],
+            ['value' => new FrozenTime('2010-01-05 01:23:45')],
         ];
 
         // check _matches does not work as `0 == 'string-value'`
@@ -1482,7 +1482,7 @@ class HashTest extends TestCase
                 'array' => new ArrayObject([
                     'foo' => 'bar',
                 ]),
-                'created' => new Time('2010-01-05'),
+                'created' => new FrozenTime('2010-01-05'),
             ],
         ];
 

@@ -20,7 +20,7 @@ use Cake\Auth\FormAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use TestApp\Auth\CallCounterPasswordHasher;
@@ -218,8 +218,8 @@ class FormAuthenticateTest extends TestCase
         $expected = [
             'id' => 1,
             'username' => 'mariano',
-            'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31'),
+            'created' => new FrozenTime('2007-03-17 01:16:23'),
+            'updated' => new FrozenTime('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -244,8 +244,8 @@ class FormAuthenticateTest extends TestCase
             'id' => 1,
             'username' => 'mariano',
             'bonus' => 'bonus',
-            'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31'),
+            'created' => new FrozenTime('2007-03-17 01:16:23'),
+            'updated' => new FrozenTime('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -277,8 +277,8 @@ class FormAuthenticateTest extends TestCase
         $expected = [
             'id' => 1,
             'username' => 'gwoo',
-            'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31'),
+            'created' => new FrozenTime('2007-03-17 01:16:23'),
+            'updated' => new FrozenTime('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
         $this->clearPlugins();
@@ -317,7 +317,7 @@ class FormAuthenticateTest extends TestCase
         $expected = [
             'id' => 1,
             'username' => 'mariano',
-            'created' => new Time('2007-03-17 01:16:23'),
+            'created' => new FrozenTime('2007-03-17 01:16:23'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -392,8 +392,8 @@ class FormAuthenticateTest extends TestCase
         $expected = [
             'id' => 1,
             'username' => 'mariano',
-            'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31'),
+            'created' => new FrozenTime('2007-03-17 01:16:23'),
+            'updated' => new FrozenTime('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
 

@@ -21,7 +21,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 
@@ -59,8 +58,8 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Users');
         $table = $this->getTableLocator()->get('users');
         $user = $table->find()->where(['id' => 1])->first();
-        $this->assertEquals(new Time('2007-03-17 01:16:23'), $user->created);
-        $this->assertEquals(new Time('2007-03-17 01:18:31'), $user->updated);
+        $this->assertEquals(new FrozenTime('2007-03-17 01:16:23'), $user->created);
+        $this->assertEquals(new FrozenTime('2007-03-17 01:18:31'), $user->updated);
     }
 
     /**
@@ -477,7 +476,7 @@ class QueryRegressionTest extends TestCase
         $this->assertSame('First top article', $highlights->top_articles[0]->title);
         $this->assertSame('Second top article', $highlights->top_articles[1]->title);
         $this->assertEquals(
-            new Time('2014-06-01 10:10:00'),
+            new FrozenTime('2014-06-01 10:10:00'),
             $highlights->_joinData->highlighted_time
         );
     }
@@ -1195,7 +1194,7 @@ class QueryRegressionTest extends TestCase
             'max' => $query->func()->max('created', ['datetime']),
         ]);
         $result = $query->all()->first();
-        $this->assertEquals(new Time('2007-03-18 10:55:23'), $result['max']);
+        $this->assertEquals(new FrozenTime('2007-03-18 10:55:23'), $result['max']);
     }
 
     /**
@@ -1235,7 +1234,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->contain(['Tags' => function ($q) {
-                return $q->where(['SpecialTags.highlighted_time >' => new Time('2014-06-01 00:00:00')]);
+                return $q->where(['SpecialTags.highlighted_time >' => new FrozenTime('2014-06-01 00:00:00')]);
             }])
             ->where(['Articles.id' => 2]);
 
@@ -1570,7 +1569,7 @@ class QueryRegressionTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
-        $table->updateAll(['updated' => Time::now()->addDays(2)], ['id' => 6]);
+        $table->updateAll(['updated' => FrozenTime::now()->addDays(2)], ['id' => 6]);
         $query = $table->find();
         $result = $query->where(['updated >' => $query->func()->now('datetime')])->first();
         $this->assertSame(6, $result->id);
