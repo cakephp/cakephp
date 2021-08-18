@@ -493,7 +493,8 @@ class I18nExtractCommand extends Command
                 if ($mapCount === count($strings)) {
                     $singular = '';
                     $plural = $context = null;
-                    extract(array_combine($map, $strings));
+                    $vars = array_combine($map, $strings);
+                    extract($vars);
                     $domain = $domain ?? 'default';
                     $details = [
                         'file' => $this->_file,

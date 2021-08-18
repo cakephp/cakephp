@@ -459,6 +459,7 @@ class Debugger
             return $back;
         }
 
+        /** @psalm-suppress InvalidArgument */
         return implode("\n", $back);
     }
 

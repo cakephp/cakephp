@@ -101,11 +101,6 @@ parameters:
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function extract is passed by reference, so it expects variables only\\.$#"
-			count: 1
-			path: src/Command/I18nExtractCommand.php
-
-		-
 			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
 			count: 2
 			path: src/Command/I18nExtractCommand.php
@@ -281,6 +276,31 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
+			message: "#^Array \\(array\\<non\\-empty\\-string, non\\-empty\\-string\\>\\) does not accept \\(int\\|string\\)\\.$#"
+			count: 1
+			path: src/Http/Client/Request.php
+
+		-
+			message: "#^Array \\(array\\<string, string\\>\\) does not accept key string\\.$#"
+			count: 1
+			path: src/Http/Client/Request.php
+
+		-
+			message: "#^Array \\(array\\<non\\-empty\\-string, non\\-empty\\-string\\>\\) does not accept string\\.$#"
+			count: 1
+			path: src/Http/Client/Response.php
+
+		-
+			message: "#^Array \\(array\\<string, array\\<int, string\\>\\>\\) does not accept key string\\.$#"
+			count: 1
+			path: src/Http/Client/Response.php
+
+		-
+			message: "#^Array \\(array\\<string, string\\>\\) does not accept key string\\.$#"
+			count: 1
+			path: src/Http/Client/Response.php
+
+		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 3
 			path: src/Http/Cookie/Cookie.php
@@ -294,6 +314,21 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Http/Cookie/CookieCollection.php
+
+		-
+			message: "#^Array \\(array\\<non\\-empty\\-string, non\\-empty\\-string\\>\\) does not accept string\\.$#"
+			count: 1
+			path: src/Http/Response.php
+
+		-
+			message: "#^Array \\(array\\<string, array\\<int, string\\>\\>\\) does not accept key string\\.$#"
+			count: 1
+			path: src/Http/Response.php
+
+		-
+			message: "#^Array \\(array\\<string, string\\>\\) does not accept key string\\.$#"
+			count: 1
+			path: src/Http/Response.php
 
 		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
@@ -321,11 +356,6 @@ parameters:
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
-			count: 1
-			path: src/I18n/Date.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Date.php
@@ -336,22 +366,12 @@ parameters:
 			path: src/I18n/FrozenDate.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/FrozenTime.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
@@ -367,11 +387,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/Time.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between IntlDateFormatter\\|null and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
@@ -489,6 +504,16 @@ parameters:
 			message: "#^Constructor of class Cake\\\\TestSuite\\\\Fixture\\\\TransactionResetStrategy has an unused parameter \\$loader\\.$#"
 			count: 1
 			path: src/TestSuite/Fixture/TransactionResetStrategy.php
+
+		-
+			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
+			count: 1
+			path: src/Utility/Hash.php
+
+		-
+			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
+			count: 1
+			path: src/Utility/Text.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

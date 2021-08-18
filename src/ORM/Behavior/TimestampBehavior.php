@@ -20,7 +20,7 @@ use Cake\Database\Type\DateTimeType;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Behavior;
 use DateTimeInterface;
 use RuntimeException;
@@ -64,7 +64,7 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \Cake\I18n\Time|null
+     * @var \Cake\I18n\FrozenTime|null
      */
     protected $_ts;
 
@@ -147,7 +147,7 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTimeInterface|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \Cake\I18n\Time
+     * @return \Cake\I18n\FrozenTime
      */
     public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTimeInterface
     {
@@ -155,9 +155,9 @@ class TimestampBehavior extends Behavior
             if ($this->_config['refreshTimestamp']) {
                 $this->_config['refreshTimestamp'] = false;
             }
-            $this->_ts = new Time($ts);
+            $this->_ts = new FrozenTime($ts);
         } elseif ($this->_ts === null || $refreshTimestamp) {
-            $this->_ts = new Time();
+            $this->_ts = new FrozenTime();
         }
 
         return $this->_ts;

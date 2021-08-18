@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Cake\Core\Configure;
 use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use Cake\TestSuite\TestCase;
@@ -40,6 +41,11 @@ class DateTest extends TestCase
     {
         parent::setUp();
         $this->locale = Date::getDefaultLocale();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/DateFormatTrait.php',
+            'tests/TestCase/I18n/DateTest.php',
+        ]);
     }
 
     /**

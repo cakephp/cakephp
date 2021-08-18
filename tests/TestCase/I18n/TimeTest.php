@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\I18n;
 
 use Cake\Chronos\Chronos;
+use Cake\Core\Configure;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
@@ -38,6 +39,12 @@ class TimeTest extends TestCase
         $this->locale = Time::getDefaultLocale();
         Time::setDefaultLocale('en_US');
         FrozenTime::setDefaultLocale('en_US');
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/DateFormatTrait.php',
+            'tests/TestCase/I18n/TimeTest.php',
+            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
+        ]);
     }
 
     /**

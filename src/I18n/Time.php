@@ -24,6 +24,8 @@ use IntlDateFormatter;
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
+ *
+ * @deprecated 4.3.0 Use the immutable alternative `FrozenTime` instead.
  */
 class Time extends MutableDateTime implements I18nDateTimeInterface
 {
@@ -127,6 +129,10 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      */
     public function __construct($time = null, $tz = null)
     {
+        deprecationWarning(
+            'The `Time` class has been deprecated. Use the immutable alternative `FrozenTime` instead'
+        );
+
         if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimezone();
             $time = $time->format('Y-m-d H:i:s.u');

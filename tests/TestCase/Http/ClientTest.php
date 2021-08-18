@@ -29,6 +29,13 @@ use InvalidArgumentException;
  */
 class ClientTest extends TestCase
 {
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        Client::clearMockResponses();
+    }
+
     /**
      * Test storing config options and modifying them.
      */
@@ -978,5 +985,187 @@ class ClientTest extends TestCase
             'protocolVersion' => '1.1',
         ];
         $this->assertSame($expected, $config);
+    }
+
+    /**
+     * Test adding and sending to a mocked URL.
+     */
+    public function testAddMockResponseSimpleMatch(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub);
+
+        $client = new Client();
+        $response = $client->post('http://example.com/path');
+        $this->assertSame($stub, $response);
+    }
+
+    /**
+     * When there are multiple matches for a URL the responses should
+     * be used in a cycle.
+     */
+    public function testAddMockResponseMultipleMatches(): void
+    {
+        $one = new Response(['HTTP/1.0 200'], 'one');
+        Client::addMockResponse('GET', 'http://example.com/info', $one);
+
+        $two = new Response(['HTTP/1.0 200'], 'two');
+        Client::addMockResponse('GET', 'http://example.com/info', $two);
+
+        $client = new Client();
+
+        $response = $client->get('http://example.com/info');
+        $this->assertSame($one, $response);
+
+        $response = $client->get('http://example.com/info');
+        $this->assertSame($two, $response);
+
+        $response = $client->get('http://example.com/info');
+        $this->assertSame($one, $response);
+    }
+
+    /**
+     * When there are multiple matches with custom match functions
+     */
+    public function testAddMockResponseMultipleMatchesCustom(): void
+    {
+        $one = new Response(['HTTP/1.0 200'], 'one');
+        Client::addMockResponse('GET', 'http://example.com/info', $one, [
+            'match' => function ($request) {
+                return false;
+            },
+        ]);
+
+        $two = new Response(['HTTP/1.0 200'], 'two');
+        Client::addMockResponse('GET', 'http://example.com/info', $two);
+
+        $client = new Client();
+
+        $response = $client->get('http://example.com/info');
+        $this->assertSame($two, $response);
+
+        $response = $client->get('http://example.com/info');
+        $this->assertSame($two, $response);
+    }
+
+    /**
+     * Mock match failures should result in the request being sent
+     */
+    public function testAddMockResponseMethodMatchFailure(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub);
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->will($this->throwException(new InvalidArgumentException('No match')));
+
+        $client = new Client(['adapter' => $mock]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('No match');
+
+        $client->get('http://example.com/path');
+    }
+
+    /**
+     * Trailing /* patterns should work
+     */
+    public function testAddMockResponseGlobMatch(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path/*', $stub);
+
+        $client = new Client();
+        $response = $client->post('http://example.com/path/more/thing');
+        $this->assertSame($stub, $response);
+
+        $client = new Client();
+        $response = $client->post('http://example.com/path/?query=value');
+        $this->assertSame($stub, $response);
+    }
+
+    /**
+     * Custom match methods must be closures
+     */
+    public function testAddMockResponseInvalidMatch(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `match` option must be a `Closure`.');
+
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub, [
+            'match' => 'oops',
+        ]);
+    }
+
+    /**
+     * Custom matchers should get a request.
+     */
+    public function testAddMockResponseCustomMatch(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub, [
+            'match' => function ($request) {
+                $this->assertInstanceOf(Request::class, $request);
+                $uri = $request->getUri();
+                $this->assertEquals('/path', $uri->getPath());
+                $this->assertEquals('example.com', $uri->getHost());
+
+                return true;
+            },
+        ]);
+
+        $client = new Client();
+        $response = $client->post('http://example.com/path');
+
+        $this->assertSame($stub, $response);
+    }
+
+    /**
+     * Custom matchers can fail the match
+     */
+    public function testAddMockResponseCustomNoMatch(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub, [
+            'match' => function ($request) {
+                return false;
+            },
+        ]);
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->will($this->throwException(new InvalidArgumentException('No match')));
+
+        $client = new Client(['adapter' => $mock]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('No match');
+
+        $client->post('http://example.com/path');
+    }
+
+    /**
+     * Custom matchers must return a boolean
+     */
+    public function testAddMockResponseCustomInvalidDecision(): void
+    {
+        $stub = new Response(['HTTP/1.0 200'], 'hello world');
+        Client::addMockResponse('POST', 'http://example.com/path', $stub, [
+            'match' => function ($request) {
+                return 'invalid';
+            },
+        ]);
+
+        $client = new Client();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Match callback must');
+
+        $client->post('http://example.com/path');
     }
 }

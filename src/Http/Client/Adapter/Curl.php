@@ -198,6 +198,7 @@ class Curl implements AdapterInterface
      */
     protected function createResponse(CurlHandle $handle, string $responseData): array
     {
+        /** @psalm-suppress PossiblyInvalidArgument */
         $headerSize = curl_getinfo($handle, CURLINFO_HEADER_SIZE);
         $headers = trim(substr($responseData, 0, $headerSize));
         $body = substr($responseData, $headerSize);
@@ -214,6 +215,7 @@ class Curl implements AdapterInterface
      */
     protected function exec(CurlHandle $ch): string|bool
     {
+        /** @psalm-suppress PossiblyInvalidArgument */
         return curl_exec($ch);
     }
 }

@@ -1535,13 +1535,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|int|null $num number of records to be returned
+     * @param \Cake\Database\ExpressionInterface|int|null $limit number of records to be returned
      * @return $this
      */
-    public function limit(ExpressionInterface|int|null $num)
+    public function limit(ExpressionInterface|int|null $limit)
     {
         $this->_dirty();
-        $this->_parts['limit'] = $num;
+        $this->_parts['limit'] = $limit;
 
         return $this;
     }
@@ -1561,13 +1561,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|int|null $num number of records to be skipped
+     * @param \Cake\Database\ExpressionInterface|int|null $offset number of records to be skipped
      * @return $this
      */
-    public function offset(ExpressionInterface|int|null $num)
+    public function offset(ExpressionInterface|int|null $offset)
     {
         $this->_dirty();
-        $this->_parts['offset'] = $num;
+        $this->_parts['offset'] = $offset;
 
         return $this;
     }

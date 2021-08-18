@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.x-dev@">
-  <file src="src/Cache/Engine/RedisEngine.php">
-    <UndefinedClass occurrences="2">
-      <code>$e</code>
-      <code>RedisException</code>
-    </UndefinedClass>
-  </file>
   <file src="src/Collection/CollectionTrait.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$iterator</code>
@@ -69,6 +63,12 @@
       <code>$value</code>
     </InvalidScalarArgument>
   </file>
+  <file src="src/Database/Query.php">
+    <ParamNameMismatch occurrences="2">
+      <code>$limit</code>
+      <code>$offset</code>
+    </ParamNameMismatch>
+  </file>
   <file src="src/Database/Schema/MysqlSchemaDialect.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$_driver</code>
@@ -79,6 +79,16 @@
       <code>$_statement</code>
     </NonInvariantDocblockPropertyType>
   </file>
+  <file src="src/Database/Type/DateTimeType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Time::class</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Database/Type/DateType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Date::class</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/Datasource/ConnectionRegistry.php">
     <LessSpecificImplementedReturnType occurrences="1">
       <code>object</code>
@@ -88,6 +98,11 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Http/Client/Adapter/Mock.php">
+    <UndefinedFunction occurrences="1">
+      <code>getTypeName($options['match'])</code>
+    </UndefinedFunction>
   </file>
   <file src="src/Http/Client/Request.php">
     <PropertyTypeCoercion occurrences="1">
@@ -125,6 +140,13 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
+    <DeprecatedClass occurrences="5">
+      <code>$time-&gt;timezone($timezone)</code>
+      <code>Time::UNIX_TIMESTAMP_FORMAT</code>
+      <code>static|null</code>
+      <code>static|null</code>
+      <code>static|null</code>
+    </DeprecatedClass>
     <MissingParamType occurrences="1">
       <code>$format</code>
     </MissingParamType>
@@ -248,9 +270,12 @@
     </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/TestCase.php">
-    <DeprecatedProperty occurrences="2">
+    <DeprecatedProperty occurrences="5">
       <code>$this-&gt;autoFixtures</code>
       <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;dropTables</code>
     </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/TestSuite.php">

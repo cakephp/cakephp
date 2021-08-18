@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Core\Configure;
 use Cake\Database\Type\DateTimeType;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
@@ -52,6 +53,12 @@ class DateTimeTypeTest extends TestCase
         parent::setUp();
         $this->type = new DateTimeType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/Database/Type/DateTimeType.php',
+            'tests/TestCase/Database/Type/DateTimeTypeTest.php',
+            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
+        ]);
     }
 
     /**
@@ -190,7 +197,12 @@ class DateTimeTypeTest extends TestCase
      */
     public function marshalProvider(): array
     {
-        return [
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Database/Type/DateTimeTypeTest.php',
+            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
+        ]);
+
+        $data = [
             // invalid types.
             [null, null],
             [false, null],
@@ -276,6 +288,10 @@ class DateTimeTypeTest extends TestCase
                 Time::now(),
             ],
         ];
+
+        Configure::delete('Error.ignoredDeprecationPaths');
+
+        return $data;
     }
 
     /**
