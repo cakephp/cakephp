@@ -191,12 +191,14 @@ class Curl implements AdapterInterface
     /**
      * Convert the raw curl response into an Http\Client\Response
      *
-     * @param resource $handle Curl handle
+     * @param resource|\CurlHandle $handle Curl handle
      * @param string $responseData string The response data from curl_exec
      * @return \Cake\Http\Client\Response[]
+     * @psalm-suppress UndefinedDocblockClass
      */
     protected function createResponse($handle, $responseData): array
     {
+        /** @psalm-suppress PossiblyInvalidArgument */
         $headerSize = curl_getinfo($handle, CURLINFO_HEADER_SIZE);
         $headers = trim(substr($responseData, 0, $headerSize));
         $body = substr($responseData, $headerSize);
@@ -208,11 +210,13 @@ class Curl implements AdapterInterface
     /**
      * Execute the curl handle.
      *
-     * @param resource $ch Curl Resource handle
+     * @param resource|\CurlHandle $ch Curl Resource handle
      * @return string|bool
+     * @psalm-suppress UndefinedDocblockClass
      */
     protected function exec($ch)
     {
+        /** @psalm-suppress PossiblyInvalidArgument */
         return curl_exec($ch);
     }
 }
