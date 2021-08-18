@@ -56,15 +56,6 @@ class DateTypeTest extends TestCase
     }
 
     /**
-     * Teardown
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        $this->type->useLocaleParser(false)->setLocaleFormat(null);
-    }
-
-    /**
      * Test toPHP
      */
     public function testToPHP(): void
