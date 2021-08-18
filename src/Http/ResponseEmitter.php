@@ -232,6 +232,7 @@ class ResponseEmitter implements EmitterInterface
         }
 
         if (PHP_VERSION_ID >= 70300) {
+            /** @psalm-suppress InvalidArgument */
             return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
         }
 
