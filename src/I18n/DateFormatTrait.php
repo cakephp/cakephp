@@ -252,7 +252,7 @@ trait DateFormatTrait
                 $calendar,
                 $pattern
             );
-            if ($formatter === false) {
+            if (empty($formatter)) {
                 throw new RuntimeException(
                     'Your version of icu does not support creating a date formatter for ' .
                     "`$key`. You should try to upgrade libicu and the intl extension."
