@@ -206,17 +206,23 @@ class FixtureDataManager extends FixtureLoader
         $dbs = $this->fixtureConnections($fixtures);
         foreach ($dbs as $connection => $fixtures) {
             $db = ConnectionManager::get($connection);
-            if ($db->getDriver() instanceof Postgres) {
-                // disabling foreign key constraints is only valid in a transaction
-                $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
-                    $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+            if (
+                method_exists($db, 'transactional') &&
+                method_exists($db, 'disableConstraints') &&
+                $db->getDriver() instanceof Postgres
+            ) {
+                // disabling foreign key constraints is only valid in a transaction for postgres
+                $db->transactional(function () use ($db, $fixtures, $operation): void {
+                    $db->disableConstraints(function () use ($db, $fixtures, $operation): void {
                         $operation($db, $fixtures);
                     });
                 });
-            } else {
-                $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+            } elseif (method_exists($db, 'disableConstraints')) {
+                $db->disableConstraints(function () use ($db, $fixtures, $operation): void {
                     $operation($db, $fixtures);
                 });
+            } else {
+                $operation($db, $fixtures);
             }
         }
     }

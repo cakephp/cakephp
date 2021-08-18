@@ -131,9 +131,11 @@ class SchemaCleaner
      */
     protected function executeStatements(ConnectionInterface $connection, array $commands): void
     {
+        /** @var \Cake\Database\Connection $connection */
         $connection->disableConstraints(function ($connection) use ($commands): void {
             $connection->transactional(function (ConnectionInterface $connection) use ($commands): void {
                 foreach ($commands as $sql) {
+                    /** @var \Cake\Database\Connection $connection */
                     $connection->execute($sql);
                 }
             });
@@ -157,7 +159,10 @@ class SchemaCleaner
      */
     protected function getSchema(string $connectionName): CollectionInterface
     {
-        return ConnectionManager::get($connectionName)->getSchemaCollection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get($connectionName);
+
+        return $connection->getSchemaCollection();
     }
 
     /**
@@ -166,6 +171,9 @@ class SchemaCleaner
      */
     protected function getDialect(string $connectionName): SchemaDialect
     {
-        return ConnectionManager::get($connectionName)->getDriver()->schemaDialect();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get($connectionName);
+
+        return $connection->getDriver()->schemaDialect();
     }
 }

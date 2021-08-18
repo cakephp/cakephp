@@ -461,28 +461,8 @@ parameters:
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
 
 		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:addConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TestFixture.php
-
-		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:createSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TestFixture.php
-
-		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:dropConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TestFixture.php
-
-		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:dropSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TestFixture.php
-
-		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:truncateSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
-			count: 1
+			message: "#^Property Cake\\\\TestSuite\\\\Fixture\\\\TestFixture\\:\\:\\$_schema \\(Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface&Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\) does not accept Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\.$#"
+			count: 2
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
