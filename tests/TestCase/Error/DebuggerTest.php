@@ -313,7 +313,7 @@ object(Cake\View\View) id:0 {
     (int) 1 => 'Form'
   ]
   [protected] templatePath => ''
-  [protected] template => null
+  [protected] template => ''
   [protected] layout => 'default'
   [protected] layoutPath => ''
   [protected] autoLayout => true
