@@ -43,6 +43,7 @@ abstract class ResponseBase extends Constraint
         }
 
         $this->response = $response;
+        parent::__construct();
     }
 
     /**
