@@ -95,7 +95,7 @@ class FormHelper extends Helper
             // Wrapper container for checkboxes.
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Error message wrapper elements.
-            'error' => '<div class="error-message">{{content}}</div>',
+            'error' => '<div class="error-message" id="{{id}}">{{content}}</div>',
             // Container for error items.
             'errorList' => '<ul>{{content}}</ul>',
             // Error item wrapper.
@@ -766,7 +766,10 @@ class FormHelper extends Helper
             }
         }
 
-        return $this->formatTemplate('error', ['content' => $error]);
+        return $this->formatTemplate('error', [
+            'content' => $error,
+            'id' => $field . '-aria',
+        ]);
     }
 
     /**
@@ -1040,6 +1043,10 @@ class FormHelper extends Helper
             'templates' => [],
             'templateVars' => [],
             'labelOptions' => true,
+            'aria-label' => empty($options['placeholder']) ? $options['label'] : $options['placeholder'],
+            'aria-required' => $options['required'] == true ? 'true' : null,
+            'aria-invalid' => $this->isFieldError($fieldName) ? 'true' : null,
+            'aria-describedby' => $this->isFieldError($fieldName) ? $fieldName . '-aria' : null,
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
