@@ -45,9 +45,8 @@ class BlowfishPasswordHasher extends AbstractPasswordHasher {
 		if (function_exists('hash_equals')) {
 			// Use hash_equals to mitigate timing attacks
 			return hash_equals($hashedPassword, Security::hash($password, 'blowfish', $hashedPassword));
-		} else {
-			return $hashedPassword === Security::hash($password, 'blowfish', $hashedPassword);
 		}
+		return $hashedPassword === Security::hash($password, 'blowfish', $hashedPassword);
 	}
 
 }
