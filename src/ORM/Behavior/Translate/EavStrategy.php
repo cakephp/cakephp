@@ -97,7 +97,7 @@ class EavStrategy implements TranslateStrategyInterface
      *
      * @return void
      */
-    protected function setupAssociations()
+    protected function setupAssociations(): void
     {
         $fields = $this->_config['fields'];
         $table = $this->_config['translationTable'];
@@ -165,7 +165,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options)
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
     {
         $locale = Hash::get($options, 'locale', $this->getLocale());
 
@@ -230,7 +230,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         $locale = $entity->get('_locale') ?: $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];
@@ -351,11 +351,11 @@ class EavStrategy implements TranslateStrategyInterface
      * Modifies the results from a table find in order to merge the translated fields
      * into each entity for a given locale.
      *
-     * @param \Cake\Datasource\ResultSetInterface $results Results to map.
+     * @param \Cake\Collection\CollectionInterface $results Results to map.
      * @param string $locale Locale string
      * @return \Cake\Collection\CollectionInterface
      */
-    protected function rowMapper($results, $locale)
+    protected function rowMapper(CollectionInterface $results, string $locale): CollectionInterface
     {
         return $results->map(function ($row) use ($locale) {
             /** @var \Cake\Datasource\EntityInterface|array|null $row */
@@ -395,10 +395,10 @@ class EavStrategy implements TranslateStrategyInterface
      * Modifies the results from a table find in order to merge full translation
      * records into each entity under the `_translations` key.
      *
-     * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
+     * @param \Cake\Collection\CollectionInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function groupTranslations($results): CollectionInterface
+    public function groupTranslations(CollectionInterface $results): CollectionInterface
     {
         return $results->map(function ($row) {
             if (!$row instanceof EntityInterface) {
@@ -438,7 +438,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @return void
      */
-    protected function bundleTranslatedFields($entity)
+    protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         $translations = (array)$entity->get('_translations');
 
@@ -492,7 +492,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param array $ruleSet An array of array of conditions to be used for finding each
      * @return array
      */
-    protected function findExistingTranslations($ruleSet)
+    protected function findExistingTranslations(array $ruleSet): array
     {
         $association = $this->table->getAssociation($this->translationTable->getAlias());
 

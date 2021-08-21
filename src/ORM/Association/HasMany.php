@@ -143,7 +143,7 @@ class HasMany extends Association
      * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
      */
-    public function saveAssociated(EntityInterface $entity, array $options = [])
+    public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntities = $entity->get($this->getProperty());
 
@@ -165,6 +165,7 @@ class HasMany extends Association
             throw new InvalidArgumentException($message);
         }
 
+        /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
         $foreignKeyReference = array_combine(
             (array)$this->getForeignKey(),
             $entity->extract((array)$this->getBindingKey())
@@ -341,7 +342,7 @@ class HasMany extends Association
      * any of them is lacking a primary key value
      * @return void
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = []): void
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, array|bool $options = []): void
     {
         if (is_bool($options)) {
             $options = [
@@ -363,6 +364,7 @@ class HasMany extends Association
             'OR' => (new Collection($targetEntities))
                 ->map(function ($entity) use ($targetPrimaryKey) {
                     /** @var \Cake\Datasource\EntityInterface $entity */
+                    /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
                     return $entity->extract($targetPrimaryKey);
                 })
                 ->toList(),
@@ -585,11 +587,9 @@ class HasMany extends Association
     }
 
     /**
-     * Gets the name of the field representing the foreign key to the source table.
-     *
-     * @return array<string>|string
+     * @inheritDoc
      */
-    public function getForeignKey()
+    public function getForeignKey(): array|string|false
     {
         if ($this->_foreignKey === null) {
             $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
@@ -604,7 +604,7 @@ class HasMany extends Association
      * @param mixed $sort A find() compatible order clause
      * @return $this
      */
-    public function setSort($sort)
+    public function setSort(mixed $sort)
     {
         $this->_sort = $sort;
 
@@ -616,7 +616,7 @@ class HasMany extends Association
      *
      * @return mixed
      */
-    public function getSort()
+    public function getSort(): mixed
     {
         return $this->_sort;
     }

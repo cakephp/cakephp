@@ -22,7 +22,6 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
-use ReturnTypeWillChange;
 use SplFixedArray;
 
 /**
@@ -52,7 +51,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Last record fetched from the statement
      *
-     * @var object|array
+     * @var \Cake\Datasource\EntityInterface|array
      */
     protected $_current;
 
@@ -183,10 +182,9 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @return object|array
+     * @return \Cake\Datasource\EntityInterface|array
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): EntityInterface|array
     {
         return $this->_current;
     }
@@ -414,7 +412,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return mixed
      */
-    protected function _fetchResult()
+    protected function _fetchResult(): mixed
     {
         if ($this->_statement === null) {
             return false;
@@ -434,7 +432,7 @@ class ResultSet implements ResultSetInterface
      * @param array $row Array containing columns and values or false if there is no results
      * @return \Cake\Datasource\EntityInterface|array Results
      */
-    protected function _groupResult(array $row)
+    protected function _groupResult(array $row): EntityInterface|array
     {
         $defaultAlias = $this->_defaultAlias;
         $results = $presentAliases = [];
@@ -546,7 +544,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'items' => $this->toArray(),

@@ -20,6 +20,8 @@ use Cake\Collection\Collection;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -113,7 +115,7 @@ abstract class Association
     /**
      * The name of the field representing the foreign key to the table to load
      *
-     * @var array<string>|string
+     * @var array<string>|string|false
      */
     protected $_foreignKey;
 
@@ -424,9 +426,9 @@ abstract class Association
      *
      * @param \Closure|array $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return \Cake\ORM\Association
+     * @return $this
      */
-    public function setConditions($conditions)
+    public function setConditions(Closure|array $conditions)
     {
         $this->_conditions = $conditions;
 
@@ -440,7 +442,7 @@ abstract class Association
      * @see \Cake\Database\Query::where() for examples on the format of the array
      * @return \Closure|array
      */
-    public function getConditions()
+    public function getConditions(): Closure|array
     {
         return $this->_conditions;
     }
@@ -452,7 +454,7 @@ abstract class Association
      * @param array<string>|string $key the table field or fields to be used to link both tables together
      * @return $this
      */
-    public function setBindingKey($key)
+    public function setBindingKey(array|string $key)
     {
         $this->_bindingKey = $key;
 
@@ -465,7 +467,7 @@ abstract class Association
      *
      * @return array<string>|string
      */
-    public function getBindingKey()
+    public function getBindingKey(): array|string
     {
         if ($this->_bindingKey === null) {
             $this->_bindingKey = $this->isOwningSide($this->getSource()) ?
@@ -479,9 +481,9 @@ abstract class Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return array<string>|string
+     * @return array<string>|string|false
      */
-    public function getForeignKey()
+    public function getForeignKey(): array|string|false
     {
         return $this->_foreignKey;
     }
@@ -492,7 +494,7 @@ abstract class Association
      * @param array<string>|string $key the key or keys to be used to link both tables together
      * @return $this
      */
-    public function setForeignKey($key)
+    public function setForeignKey(array|string $key)
     {
         $this->_foreignKey = $key;
 
@@ -655,7 +657,7 @@ abstract class Association
      *
      * @return array|string
      */
-    public function getFinder()
+    public function getFinder(): array|string
     {
         return $this->_finder;
     }
@@ -666,7 +668,7 @@ abstract class Association
      * @param array|string $finder the finder name to use or array of finder name and option.
      * @return $this
      */
-    public function setFinder($finder)
+    public function setFinder(array|string $finder)
     {
         $this->_finder = $finder;
 
@@ -856,7 +858,7 @@ abstract class Association
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
      */
-    public function find($type = null, array $options = []): Query
+    public function find(array|string|null $type = null, array $options = []): Query
     {
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
@@ -875,7 +877,7 @@ abstract class Association
      * @see \Cake\ORM\Table::exists()
      * @return bool
      */
-    public function exists($conditions): bool
+    public function exists(ExpressionInterface|Closure|array $conditions): bool
     {
         $conditions = $this->find()
             ->where($conditions)
@@ -885,16 +887,17 @@ abstract class Association
     }
 
     /**
-     * Proxies the update operation to the target table's updateAll method
+     * Proxies the update operation to the target `Table::updateAll()` method
      *
-     * @param array $fields A hash of field => new value.
-     * @param mixed $conditions Conditions to be used, accepts anything Query::where()
-     * can take.
-     * @see \Cake\ORM\Table::updateAll()
+     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string $fields A hash of field => new value.
+     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * @return int Count Returns the affected rows.
+     * @see \Cake\ORM\Table::updateAll()
      */
-    public function updateAll(array $fields, $conditions): int
-    {
+    public function updateAll(
+        QueryExpression|Closure|array|string $fields,
+        QueryExpression|Closure|array|string|null $conditions
+    ): int {
         $expression = $this->find()
             ->where($conditions)
             ->clause('where');
@@ -903,14 +906,14 @@ abstract class Association
     }
 
     /**
-     * Proxies the delete operation to the target table's deleteAll method
+     * Proxies the delete operation to the target `Table::deleteAll()` method
      *
-     * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Returns the number of affected rows.
      * @see \Cake\ORM\Table::deleteAll()
      */
-    public function deleteAll($conditions): int
+    public function deleteAll(QueryExpression|Closure|array|string|null $conditions): int
     {
         $expression = $this->find()
             ->where($conditions)
@@ -1130,7 +1133,7 @@ abstract class Association
      * and options as value.
      * @return array
      */
-    protected function _extractFinder($finderData): array
+    protected function _extractFinder(array|string $finderData): array
     {
         $finderData = (array)$finderData;
 
@@ -1146,10 +1149,10 @@ abstract class Association
      * association's associations
      *
      * @param string $property the property name
-     * @return \Cake\ORM\Association
+     * @return self
      * @throws \RuntimeException if no association with such name exists
      */
-    public function __get($property)
+    public function __get(string $property): Association
     {
         return $this->getTarget()->{$property};
     }
@@ -1161,7 +1164,7 @@ abstract class Association
      * @param string $property the property name
      * @return bool true if the property exists
      */
-    public function __isset($property)
+    public function __isset(string $property): bool
     {
         return isset($this->getTarget()->{$property});
     }
@@ -1174,7 +1177,7 @@ abstract class Association
      * @return mixed
      * @throws \BadMethodCallException
      */
-    public function __call($method, $argument)
+    public function __call(string $method, array $argument): mixed
     {
         return $this->getTarget()->$method(...$argument);
     }
@@ -1250,5 +1253,5 @@ abstract class Association
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */
-    abstract public function saveAssociated(EntityInterface $entity, array $options = []);
+    abstract public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false;
 }

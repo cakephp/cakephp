@@ -303,7 +303,7 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null
      */
-    protected function _marshalAssociation(Association $assoc, $value, array $options)
+    protected function _marshalAssociation(Association $assoc, mixed $value, array $options): EntityInterface|array|null
     {
         if (!is_array($value)) {
             return null;
@@ -734,14 +734,18 @@ class Marshaller
     /**
      * Creates a new sub-marshaller and merges the associated data.
      *
-     * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> $original The original entity
+     * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null $original The original entity
      * @param \Cake\ORM\Association $assoc The association to merge
      * @param mixed $value The array of data to hydrate. If not an array, this method will return null.
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null
      */
-    protected function _mergeAssociation($original, Association $assoc, $value, array $options)
-    {
+    protected function _mergeAssociation(
+        EntityInterface|array|null $original,
+        Association $assoc,
+        mixed $value,
+        array $options
+    ): EntityInterface|array|null {
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);
         }
