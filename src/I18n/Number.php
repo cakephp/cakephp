@@ -76,27 +76,27 @@ class Number
      *
      * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
      *
-     * @param string|float $value A floating point number.
+     * @param string|float|int $value A floating point number.
      * @param int $precision The precision of the returned number.
      * @param array $options Additional options
      * @return string Formatted float.
      * @link https://book.cakephp.org/4/en/core-libraries/number.html#formatting-floating-point-numbers
      */
-    public static function precision($value, int $precision = 3, array $options = []): string
+    public static function precision(string|float|int $value, int $precision = 3, array $options = []): string
     {
         $formatter = static::formatter(['precision' => $precision, 'places' => $precision] + $options);
 
-        return $formatter->format($value);
+        return $formatter->format((float)$value);
     }
 
     /**
      * Returns a formatted-for-humans file size.
      *
-     * @param string|int $size Size in bytes
+     * @param string|float|int $size Size in bytes
      * @return string Human readable size
      * @link https://book.cakephp.org/4/en/core-libraries/number.html#interacting-with-human-readable-values
      */
-    public static function toReadableSize($size): string
+    public static function toReadableSize(string|float|int $size): string
     {
         $size = (int)$size;
 
@@ -122,13 +122,13 @@ class Number
      * - `multiply`: Multiply the input value by 100 for decimal percentages.
      * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
      *
-     * @param string|float $value A floating point number
+     * @param string|float|int $value A floating point number
      * @param int $precision The precision of the returned number
      * @param array $options Options
      * @return string Percentage string
      * @link https://book.cakephp.org/4/en/core-libraries/number.html#formatting-percentages
      */
-    public static function toPercentage($value, int $precision = 2, array $options = []): string
+    public static function toPercentage(string|float|int $value, int $precision = 2, array $options = []): string
     {
         $options += ['multiply' => false, 'type' => NumberFormatter::PERCENT];
         if (!$options['multiply']) {
@@ -150,11 +150,11 @@ class Number
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
-     * @param string|float $value A floating point number.
+     * @param string|float|int $value A floating point number.
      * @param array $options An array with options.
      * @return string Formatted number
      */
-    public static function format($value, array $options = []): string
+    public static function format(string|float|int $value, array $options = []): string
     {
         $formatter = static::formatter($options);
         $options += ['before' => '', 'after' => ''];
@@ -193,11 +193,11 @@ class Number
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
-     * @param string|float $value A floating point number
+     * @param string|float|int $value A floating point number
      * @param array $options Options list.
      * @return string formatted delta
      */
-    public static function formatDelta($value, array $options = []): string
+    public static function formatDelta(string|float|int $value, array $options = []): string
     {
         $options += ['places' => 0];
         $value = number_format((float)$value, $options['places'], '.', '');
@@ -225,12 +225,12 @@ class Number
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
-     * @param string|float $value Value to format.
+     * @param string|float|int $value Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
      * @param array $options Options list.
      * @return string Number formatted as a currency.
      */
-    public static function currency($value, ?string $currency = null, array $options = []): string
+    public static function currency(string|float|int $value, ?string $currency = null, array $options = []): string
     {
         $value = (float)$value;
         $currency = $currency ?: static::getDefaultCurrency();
@@ -306,7 +306,7 @@ class Number
      * currently stored value
      * @return void
      */
-    public static function setDefaultCurrencyFormat($currencyFormat = null): void
+    public static function setDefaultCurrencyFormat(?string $currencyFormat = null): void
     {
         static::$_defaultCurrencyFormat = $currencyFormat;
     }
@@ -437,7 +437,7 @@ class Number
      * @param array $options An array with options.
      * @return string
      */
-    public static function ordinal($value, array $options = []): string
+    public static function ordinal(float|int $value, array $options = []): string
     {
         return static::formatter(['type' => NumberFormatter::ORDINAL] + $options)->format($value);
     }

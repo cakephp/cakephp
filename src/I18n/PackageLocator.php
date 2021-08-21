@@ -68,7 +68,7 @@ class PackageLocator
      * @param \Cake\I18n\Package|callable $spec A callable that returns a package or Package instance.
      * @return void
      */
-    public function set(string $name, string $locale, $spec): void
+    public function set(string $name, string $locale, Package|callable $spec): void
     {
         $this->registry[$name][$locale] = $spec;
         $this->converted[$name][$locale] = $spec instanceof Package;

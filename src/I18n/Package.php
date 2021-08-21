@@ -79,7 +79,7 @@ class Package
      * @param array|string $message the actual message
      * @return void
      */
-    public function addMessage(string $key, $message): void
+    public function addMessage(string $key, array|string $message): void
     {
         $this->messages[$key] = $message;
     }
@@ -111,7 +111,7 @@ class Package
      * @param string $key the key of the message to return
      * @return array|string|false The message translation, or false if not found.
      */
-    public function getMessage(string $key)
+    public function getMessage(string $key): array|string|false
     {
         return $this->messages[$key] ?? false;
     }
