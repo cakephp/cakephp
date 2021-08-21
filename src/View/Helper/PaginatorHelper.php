@@ -727,12 +727,12 @@ class PaginatorHelper extends Helper
                 $this->templater()->add([$template => $format]);
         }
         $map = array_map([$this->Number, 'format'], [
-            'page' => $paging['page'],
-            'pages' => $paging['pageCount'],
-            'current' => $paging['current'],
-            'count' => $paging['count'],
-            'start' => $paging['start'],
-            'end' => $paging['end'],
+            'page' => (int)$paging['page'],
+            'pages' => (int)$paging['pageCount'],
+            'current' => (int)$paging['current'],
+            'count' => (int)$paging['count'],
+            'start' => (int)$paging['start'],
+            'end' => (int)$paging['end'],
         ]);
 
         $map += [

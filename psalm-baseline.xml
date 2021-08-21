@@ -140,9 +140,12 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
-    <DeprecatedClass occurrences="5">
+    <DeprecatedClass occurrences="8">
       <code>$time-&gt;timezone($timezone)</code>
       <code>Time::UNIX_TIMESTAMP_FORMAT</code>
+      <code>?static</code>
+      <code>?static</code>
+      <code>?static</code>
       <code>static|null</code>
       <code>static|null</code>
       <code>static|null</code>
