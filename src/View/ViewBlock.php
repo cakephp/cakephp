@@ -139,7 +139,7 @@ class ViewBlock
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
      */
-    public function concat(string $name, $value = null, $mode = ViewBlock::APPEND): void
+    public function concat(string $name, mixed $value = null, string $mode = ViewBlock::APPEND): void
     {
         if ($value === null) {
             $this->start($name, $mode);
@@ -166,7 +166,7 @@ class ViewBlock
      *   to string.
      * @return void
      */
-    public function set(string $name, $value): void
+    public function set(string $name, mixed $value): void
     {
         $this->_blocks[$name] = (string)$value;
     }

@@ -79,7 +79,7 @@ class UrlHelper extends Helper
      * @param array $options Array of options.
      * @return string Full translated URL with base path.
      */
-    public function build($url = null, array $options = []): string
+    public function build(array|string|null $url = null, array $options = []): string
     {
         $defaults = [
             'fullBase' => false,
@@ -229,7 +229,7 @@ class UrlHelper extends Helper
      * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public function assetTimestamp(string $path, $timestamp = null): string
+    public function assetTimestamp(string $path, string|bool|null $timestamp = null): string
     {
         return h($this->_assetUrlClassName::assetTimestamp($path, $timestamp));
     }

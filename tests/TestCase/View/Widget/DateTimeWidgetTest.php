@@ -38,39 +38,6 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
-     * Data provider for testing various types of invalid selected values.
-     *
-     * @return array
-     */
-    public static function invalidSelectedValuesProvider(): array
-    {
-        return [
-            'false' => [false],
-            'true' => [true],
-            'string' => ['Bag of poop'],
-            'array' => [[
-                'derp' => 'hurt',
-            ]],
-        ];
-    }
-
-    /**
-     * test rendering selected values.
-     *
-     * @dataProvider invalidSelectedValuesProvider
-     * @param mixed $selected
-     */
-    public function testRenderInvalid($selected): void
-    {
-        $result = $this->DateTime->render(['val' => $selected, 'type' => 'month'], $this->context);
-        $now = new \DateTime();
-        $expected = [
-            'input' => ['type' => 'month', 'name' => '', 'value' => $now->format('Y-m')],
-        ];
-        $this->assertHtml($expected, $result);
-    }
-
-    /**
      * Data provider for testing various acceptable selected values.
      *
      * @return array

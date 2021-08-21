@@ -282,17 +282,6 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test registering an invalid widget class.
-     */
-    public function testAddWidgetInvalid(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $mock = new \stdClass();
-        $this->Form->addWidget('test', $mock);
-        $this->Form->widget('test');
-    }
-
-    /**
      * Test adding a new context class.
      */
     public function testAddContextProvider(): void

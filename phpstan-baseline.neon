@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			count: 1
+			path: src/View/Widget/DateTimeWidget.php
+
+		-
 			message: "#^Access to undefined constant Memcached\\:\\:DYNAMIC_CLIENT_MODE\\.$#"
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use ArrayAccess;
 use Cake\View\Form\ContextInterface;
 use Traversable;
 
@@ -180,19 +181,16 @@ class SelectBoxWidget extends BasicWidget
      * @param array|string|bool $value The provided empty value.
      * @return array The generated option key/value.
      */
-    protected function _emptyValue($value): array
+    protected function _emptyValue(array|string|bool $value): array
     {
         if ($value === true) {
             return ['' => ''];
-        }
-        if (is_scalar($value)) {
-            return ['' => $value];
         }
         if (is_array($value)) {
             return $value;
         }
 
-        return [];
+        return ['' => $value];
     }
 
     /**
@@ -201,18 +199,18 @@ class SelectBoxWidget extends BasicWidget
      * @param string $label The optgroup label text
      * @param \ArrayAccess|array $optgroup The opt group data.
      * @param array|null $disabled The options to disable.
-     * @param array|string|null $selected The options to select.
+     * @param array|string|bool|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
      */
     protected function _renderOptgroup(
         string $label,
-        $optgroup,
+        ArrayAccess|array $optgroup,
         ?array $disabled,
-        $selected,
-        $templateVars,
-        $escape
+        array|string|bool|null $selected,
+        array $templateVars,
+        bool $escape
     ): string {
         $opts = $optgroup;
         $attrs = [];
@@ -238,13 +236,18 @@ class SelectBoxWidget extends BasicWidget
      *
      * @param iterable $options The options to render.
      * @param array|null $disabled The options to disable.
-     * @param array|string|null $selected The options to select.
+     * @param array|string|bool|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
      * @return array<string> Option elements.
      */
-    protected function _renderOptions(iterable $options, ?array $disabled, $selected, $templateVars, $escape): array
-    {
+    protected function _renderOptions(
+        iterable $options,
+        ?array $disabled,
+        array|string|int|bool|null $selected,
+        array $templateVars,
+        bool $escape
+    ): array {
         $out = [];
         foreach ($options as $key => $val) {
             // Option groups
@@ -307,7 +310,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array<string>|string|int|false|null $selected The selected values.
      * @return bool
      */
-    protected function _isSelected(string $key, $selected): bool
+    protected function _isSelected(string $key, array|string|int|false|null $selected): bool
     {
         if ($selected === null) {
             return false;
