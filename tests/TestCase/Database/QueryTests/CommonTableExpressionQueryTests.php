@@ -249,7 +249,7 @@ class CommonTableExpressionQueryTests extends TestCase
             ->select('*')
             ->from('articles')
             ->execute();
-        var_dump($allRows->fetch('assoc'));
+        var_dump($allRows->fetchAll('assoc'));
         $allRows->closeCursor();
 
         // test updated state
