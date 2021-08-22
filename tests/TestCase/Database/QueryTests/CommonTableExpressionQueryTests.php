@@ -245,6 +245,13 @@ class CommonTableExpressionQueryTests extends TestCase
             'published' => 'N',
         ];
 
+        $allRows = $this->connection->newQuery()
+            ->select('*')
+            ->from('articles')
+            ->execute();
+        var_dump($allRows->fetch('assoc'));
+        $allRows->closeCursor();
+
         // test updated state
         $result = $this->connection->newQuery()
             ->select('*')
