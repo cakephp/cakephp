@@ -140,7 +140,7 @@ class FixtureDataManager extends FixtureLoader
     /**
      * @inheritDoc
      */
-    public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
+    public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = false): void
     {
         if (!isset($this->nameMap[$name])) {
             throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));

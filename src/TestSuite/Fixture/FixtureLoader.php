@@ -65,7 +65,7 @@ abstract class FixtureLoader
     abstract public function loadSingle(
         string $name,
         ?ConnectionInterface $connection = null,
-        bool $dropTables = true
+        bool $dropTables = false
     ): void;
 
     /**
