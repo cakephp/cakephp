@@ -1058,7 +1058,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function getResetStrategy(): ResetStrategyInterface
     {
-        $strategyClass = $this->stateResetStrategy ?? TruncationResetStrategy::class;
+        $strategyClass = TruncationResetStrategy::class;
         try {
             $reflect = new ReflectionClass($strategyClass);
         } catch (ReflectionException $e) {
