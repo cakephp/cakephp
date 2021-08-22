@@ -1043,13 +1043,22 @@ class FormHelper extends Helper
             'templates' => [],
             'templateVars' => [],
             'labelOptions' => true,
-            'aria-label' => empty($options['placeholder']) ? $options['label'] : $options['placeholder'],
-            'aria-required' => $options['required'] == true ? 'true' : null,
-            'aria-invalid' => $this->isFieldError($fieldName) ? 'true' : null,
-            'aria-describedby' => $this->isFieldError($fieldName) ? $fieldName . '-aria' : null,
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
+
+        if (
+            !empty($options['label']) && $options['type'] != 'hidden' ||
+            !empty($options['placeholder']) && $options['type'] != 'hidden'
+        ) {
+            $isFieldError = $this->isFieldError($fieldName);
+            $options += [
+                'aria-label' => !empty($options['label']) ? $options['label'] : $options['placeholder'],
+                'aria-required' => $options['required'] == true ? 'true' : null,
+                'aria-invalid' => $isFieldError ? 'true' : null,
+                'aria-describedby' => $isFieldError ? $options['id'] . '-aria' : null,
+            ];
+        }
 
         $templater = $this->templater();
         $newTemplates = $options['templates'];
