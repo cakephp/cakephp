@@ -1053,7 +1053,7 @@ class FormHelper extends Helper
         ) {
             $isFieldError = $this->isFieldError($fieldName);
             $options += [
-                'aria-label' => !empty($options['label']) ? $options['label'] : $options['placeholder'],
+                'aria-label' => isset($options['label']) && is_string($options['label']) ? $options['label'] : $options['placeholder'],
                 'aria-required' => $options['required'] == true ? 'true' : null,
                 'aria-invalid' => $isFieldError ? 'true' : null,
                 'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
