@@ -608,7 +608,7 @@ TEXT;
         Log::setConfig('test', [
             'className' => 'Array',
         ]);
-        $val = [
+        $veryRandomName = [
             'test' => ['key' => 'val'],
         ];
         Debugger::log($val, 'debug', 0);
@@ -616,7 +616,7 @@ TEXT;
         $messages = Log::engine('test')->read();
         $this->assertStringContainsString('DebuggerTest::testLogDepth', $messages[0]);
         $this->assertStringContainsString('test', $messages[0]);
-        $this->assertStringNotContainsString('val', $messages[0]);
+        $this->assertStringNotContainsString('veryRandomName', $messages[0]);
     }
 
     /**
