@@ -1047,10 +1047,7 @@ class FormHelper extends Helper
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
 
-        if (
-            !empty($options['label']) && $options['type'] != 'hidden' ||
-            !empty($options['placeholder']) && $options['type'] != 'hidden'
-        ) {
+        if ($options['type'] != 'hidden') {
             $isFieldError = $this->isFieldError($fieldName);
             $options += [
                 'aria-label' => isset($options['label']) && is_string($options['label']) ? $options['label'] : $options['placeholder'],
