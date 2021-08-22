@@ -611,7 +611,7 @@ TEXT;
         $veryRandomName = [
             'test' => ['key' => 'val'],
         ];
-        Debugger::log($val, 'debug', 0);
+        Debugger::log($veryRandomName, 'debug', 0);
 
         $messages = Log::engine('test')->read();
         $this->assertStringContainsString('DebuggerTest::testLogDepth', $messages[0]);
