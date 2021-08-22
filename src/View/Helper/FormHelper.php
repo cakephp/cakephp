@@ -768,7 +768,7 @@ class FormHelper extends Helper
 
         return $this->formatTemplate('error', [
             'content' => $error,
-            'id' => $field . '-aria',
+            'id' => $field . '-error',
         ]);
     }
 
@@ -1056,7 +1056,7 @@ class FormHelper extends Helper
                 'aria-label' => !empty($options['label']) ? $options['label'] : $options['placeholder'],
                 'aria-required' => $options['required'] == true ? 'true' : null,
                 'aria-invalid' => $isFieldError ? 'true' : null,
-                'aria-describedby' => $isFieldError ? $options['id'] . '-aria' : null,
+                'aria-describedby' => $isFieldError ? $options['id'] . '-error' : null,
             ];
         }
 
