@@ -285,7 +285,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, $options)
-            ->will($this->returnValue(true));
+            ->will($this->returnValue($entity));
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');
@@ -333,7 +333,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, ['atomic' => true, 'associated' => ['Others']])
-            ->will($this->returnValue(true));
+            ->will($this->returnValue($entity));
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');
@@ -381,7 +381,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, $options + ['associated' => ['Other']])
-            ->will($this->returnValue(true));
+            ->will($this->returnValue($entity));
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');

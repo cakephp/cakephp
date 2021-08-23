@@ -313,7 +313,7 @@ object(Cake\View\View) id:0 {
     (int) 1 => 'Form'
   ]
   [protected] templatePath => ''
-  [protected] template => null
+  [protected] template => ''
   [protected] layout => 'default'
   [protected] layoutPath => ''
   [protected] autoLayout => true
@@ -607,15 +607,15 @@ TEXT;
         Log::setConfig('test', [
             'className' => 'Array',
         ]);
-        $val = [
+        $veryRandomName = [
             'test' => ['key' => 'val'],
         ];
-        Debugger::log($val, 'debug', 0);
+        Debugger::log($veryRandomName, 'debug', 0);
 
         $messages = Log::engine('test')->read();
         $this->assertStringContainsString('DebuggerTest::testLogDepth', $messages[0]);
         $this->assertStringContainsString('test', $messages[0]);
-        $this->assertStringNotContainsString('val', $messages[0]);
+        $this->assertStringNotContainsString('veryRandomName', $messages[0]);
     }
 
     /**

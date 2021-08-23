@@ -120,7 +120,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -178,7 +178,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)
+    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -219,6 +219,7 @@ class CounterCacheBehavior extends Behavior
         array $settings
     ): void {
         $foreignKeys = (array)$assoc->getForeignKey();
+        /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
         $countConditions = $entity->extract($foreignKeys);
 
         foreach ($countConditions as $field => $value) {
@@ -231,6 +232,7 @@ class CounterCacheBehavior extends Behavior
         $primaryKeys = (array)$assoc->getBindingKey();
         $updateConditions = array_combine($primaryKeys, $countConditions);
 
+        /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
@@ -279,7 +281,7 @@ class CounterCacheBehavior extends Behavior
      * @param array $conditions Conditions to update count.
      * @return bool True if the count update should happen, false otherwise.
      */
-    protected function _shouldUpdateCount(array $conditions)
+    protected function _shouldUpdateCount(array $conditions): bool
     {
         return !empty(array_filter($conditions, function ($value) {
             return $value !== null;

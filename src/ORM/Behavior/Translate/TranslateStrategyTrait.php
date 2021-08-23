@@ -104,7 +104,7 @@ trait TranslateStrategyTrait
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for empty translations fields inside.
      * @return void
      */
-    protected function unsetEmptyFields($entity)
+    protected function unsetEmptyFields(EntityInterface $entity): void
     {
         /** @var array<\Cake\ORM\Entity> $translations */
         $translations = (array)$entity->get('_translations');
@@ -193,7 +193,7 @@ trait TranslateStrategyTrait
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity)
+    public function afterSave(EventInterface $event, EntityInterface $entity): void
     {
         $entity->unset('_i18n');
     }

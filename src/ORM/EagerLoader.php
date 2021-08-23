@@ -132,7 +132,7 @@ class EagerLoader
      * @return array Containments.
      * @throws \InvalidArgumentException When using $queryBuilder with an array of $associations
      */
-    public function contain($associations, ?callable $queryBuilder = null): array
+    public function contain(array|string $associations, ?callable $queryBuilder = null): array
     {
         if ($queryBuilder) {
             if (!is_string($associations)) {
@@ -782,7 +782,7 @@ class EagerLoader
      * @param \Cake\Database\StatementInterface $statement The statement to work on
      * @return array
      */
-    protected function _collectKeys(array $external, Query $query, $statement): array
+    protected function _collectKeys(array $external, Query $query, StatementInterface $statement): array
     {
         $collectKeys = [];
         foreach ($external as $meta) {
@@ -799,6 +799,7 @@ class EagerLoader
             $alias = $source->getAlias();
             $pkFields = [];
             foreach ($keys as $key) {
+                /** @psalm-suppress PossiblyFalseArgument getForeignKey() returns false */
                 $pkFields[] = key($query->aliasField($key, $alias));
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];

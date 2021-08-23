@@ -144,7 +144,7 @@ class SelectWithPivotLoader extends SelectLoader
      * @param array $options the options to use for getting the link field.
      * @return array<string>|string
      */
-    protected function _linkField(array $options)
+    protected function _linkField(array $options): array|string
     {
         $links = [];
         $name = $this->junctionAssociationName;

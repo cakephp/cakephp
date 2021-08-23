@@ -247,7 +247,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @return mixed The return value depends on the underlying behavior method.
      * @throws \BadMethodCallException When the method is unknown.
      */
-    public function call(string $method, array $args = [])
+    public function call(string $method, array $args = []): mixed
     {
         $method = strtolower($method);
         if ($this->hasMethod($method) && $this->has($this->_methodMap[$method][0])) {

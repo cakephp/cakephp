@@ -67,7 +67,7 @@ class AssociationProxyTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
         $table->hasMany('Articles', [
             'foreignKey' => 'author_id',
-            'conditions' => '',
+            'conditions' => [],
         ]);
         $query = $table->Articles->find('list', ['limit' => 2]);
         $this->assertCount(2, $query->all());

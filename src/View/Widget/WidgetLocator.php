@@ -181,18 +181,14 @@ class WidgetLocator
     /**
      * Resolves a widget spec into an instance.
      *
-     * @param mixed $config The widget config.
+     * @param array|string $config The widget config.
      * @return \Cake\View\Widget\WidgetInterface Widget instance.
      * @throws \ReflectionException
      */
-    protected function _resolveWidget($config): WidgetInterface
+    protected function _resolveWidget(array|string $config): WidgetInterface
     {
         if (is_string($config)) {
             $config = [$config];
-        }
-
-        if (!is_array($config)) {
-            throw new RuntimeException('Widget config must be a string or array.');
         }
 
         $class = array_shift($config);

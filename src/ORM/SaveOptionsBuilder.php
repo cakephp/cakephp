@@ -83,7 +83,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param array|string $associated String or array of associations.
      * @return $this
      */
-    public function associated($associated)
+    public function associated(array|string $associated)
     {
         $associated = $this->_normalizeAssociations($associated);
         $this->_associated($this->_table, $associated);
@@ -214,7 +214,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param mixed $value Option value.
      * @return $this
      */
-    public function set(string $option, $value)
+    public function set(string $option, mixed $value)
     {
         if (method_exists($this, $option)) {
             return $this->{$option}($value);

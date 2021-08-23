@@ -6282,7 +6282,7 @@ class TableTest extends TestCase
         $articles = $table->hasMany('Articles');
         $articles->belongsToMany('Tags');
 
-        $entities = $table->find()->all()->compile();
+        $entities = $table->find()->toArray();
         $contain = ['SiteArticles', 'Articles.Tags'];
         $result = $table->loadInto($entities, $contain);
 

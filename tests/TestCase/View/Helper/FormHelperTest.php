@@ -25,7 +25,6 @@ use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
-use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
@@ -46,11 +45,6 @@ use TestApp\Model\Table\ValidateUsersTable;
  */
 class FormHelperTest extends TestCase
 {
-    /**
-     * @inheritDoc
-     */
-    protected $stateResetStrategy = TransactionResetStrategy::class;
-
     /**
      * Fixtures to be used
      *
@@ -279,17 +273,6 @@ class FormHelperTest extends TestCase
         $this->assertSame('<select name="0"></select>', $result);
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(['0'], $result);
-    }
-
-    /**
-     * Test registering an invalid widget class.
-     */
-    public function testAddWidgetInvalid(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $mock = new \stdClass();
-        $this->Form->addWidget('test', $mock);
-        $this->Form->widget('test');
     }
 
     /**

@@ -192,7 +192,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param array $options An array of options.
      * @return array An array of values.
      */
-    protected function _diffData($futureTime, $pastTime, bool $backwards, $options): array
+    protected function _diffData(string|int $futureTime, string|int $pastTime, bool $backwards, array $options): array
     {
         $futureTime = (int)$futureTime;
         $pastTime = (int)$pastTime;

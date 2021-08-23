@@ -19,6 +19,7 @@ namespace Cake\View\Widget;
 use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
@@ -118,7 +119,7 @@ class DateTimeWidget extends BasicWidget
 
         $data = $this->setStep($data, $context, $data['fieldName'] ?? '');
 
-        $data['value'] = $this->formatDateTime($data['val'], $data);
+        $data['value'] = $this->formatDateTime($data['val'] === true ? new DateTimeImmutable() : $data['val'], $data);
         unset($data['val'], $data['timezone'], $data['format']);
 
         return $this->_templates->format('input', [
@@ -173,12 +174,12 @@ class DateTimeWidget extends BasicWidget
     /**
      * Formats the passed date/time value into required string format.
      *
-     * @param \DateTime|string|int|null $value Value to deconstruct.
+     * @param \DateTimeInterface|string|int|null $value Value to deconstruct.
      * @param array $options Options for conversion.
      * @return string
      * @throws \InvalidArgumentException If invalid input type is passed.
      */
-    protected function formatDateTime($value, array $options): string
+    protected function formatDateTime(DateTimeInterface|string|int|null $value, array $options): string
     {
         if ($value === '' || $value === null) {
             return '';
@@ -204,6 +205,7 @@ class DateTimeWidget extends BasicWidget
                 $timezone = new DateTimeZone($timezone);
             }
 
+            /** @psalm-suppress PossiblyUndefinedMethod */
             $dateTime = $dateTime->setTimezone($timezone);
         }
 

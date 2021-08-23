@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Exception\MissingResponseException;
 use Cake\Http\Client\Response;
 use Closure;
 use InvalidArgumentException;
@@ -26,6 +27,8 @@ use Psr\Http\Message\RequestInterface;
  *
  * This adapter is not intended for production use. Instead
  * it is the backend used by `Client::addMockResponse()`
+ *
+ * @internal
  */
 class Mock implements AdapterInterface
 {
@@ -71,11 +74,14 @@ class Mock implements AdapterInterface
     public function send(RequestInterface $request, array $options): array
     {
         $found = null;
+        $method = $request->getMethod();
+        $requestUri = (string)$request->getUri();
+
         foreach ($this->responses as $index => $mock) {
-            if ($request->getMethod() !== $mock['request']->getMethod()) {
+            if ($method !== $mock['request']->getMethod()) {
                 continue;
             }
-            if (!$this->urlMatches($request, $mock['request'])) {
+            if (!$this->urlMatches($requestUri, $mock['request'])) {
                 continue;
             }
             if (isset($mock['options']['match'])) {
@@ -100,19 +106,18 @@ class Mock implements AdapterInterface
             return [$mock['response']];
         }
 
-        return [];
+        throw new MissingResponseException(['method' => $method, 'url' => $requestUri]);
     }
 
     /**
      * Check if the request URI matches the mock URI.
      *
-     * @param \Psr\Http\Message\RequestInterface $request The request being sent.
+     * @param string $requestUri The request being sent.
      * @param \Psr\Http\Message\RequestInterface $mock The request being mocked.
      * @return bool
      */
-    protected function urlMatches(RequestInterface $request, RequestInterface $mock): bool
+    protected function urlMatches(string $requestUri, RequestInterface $mock): bool
     {
-        $requestUri = (string)$request->getUri();
         $mockUri = (string)$mock->getUri();
         if ($requestUri === $mockUri) {
             return true;

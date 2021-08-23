@@ -27,6 +27,7 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
+use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use RuntimeException;
@@ -362,7 +363,7 @@ class FormHelper extends Helper
      * @return string An formatted opening FORM tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
      */
-    public function create($context = null, array $options = []): string
+    public function create(mixed $context = null, array $options = []): string
     {
         $append = '';
 
@@ -484,7 +485,7 @@ class FormHelper extends Helper
      * @param array $options An array of options from create()
      * @return array|string The action attribute for the form.
      */
-    protected function _formUrl(ContextInterface $context, array $options)
+    protected function _formUrl(ContextInterface $context, array $options): array|string
     {
         $request = $this->_View->getRequest();
 
@@ -517,7 +518,7 @@ class FormHelper extends Helper
      * @param array|string|null $url The URL of the last form.
      * @return void
      */
-    protected function _lastAction($url = null): void
+    protected function _lastAction(array|string|null $url = null): void
     {
         $action = Router::url($url, true);
         $query = parse_url($action, PHP_URL_QUERY);
@@ -716,7 +717,7 @@ class FormHelper extends Helper
      * @return string Formatted errors or ''.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#displaying-and-checking-errors
      */
-    public function error(string $field, $text = null, array $options = []): string
+    public function error(string $field, array|string|null $text = null, array $options = []): string
     {
         if (substr($field, -5) === '._ids') {
             $field = substr($field, 0, -5);
@@ -1168,7 +1169,7 @@ class FormHelper extends Helper
      * @return array|string The generated input element string
      *  or array if checkbox() is called with option 'hiddenField' set to '_split'.
      */
-    protected function _getInput(string $fieldName, array $options)
+    protected function _getInput(string $fieldName, array $options): array|string
     {
         $label = $options['labelOptions'];
         unset($options['labelOptions']);
@@ -1338,7 +1339,7 @@ class FormHelper extends Helper
      * @param array $options Options list.
      * @return array Modified options list.
      */
-    protected function setRequiredAndCustomValidity(string $fieldName, array $options)
+    protected function setRequiredAndCustomValidity(string $fieldName, array $options): array
     {
         $context = $this->_getContext();
 
@@ -1370,7 +1371,7 @@ class FormHelper extends Helper
      * @param array $options Options list.
      * @return string|false Generated label element or false.
      */
-    protected function _getLabel(string $fieldName, array $options)
+    protected function _getLabel(string $fieldName, array $options): string|false
     {
         if ($options['type'] === 'hidden') {
             return false;
@@ -1396,7 +1397,7 @@ class FormHelper extends Helper
      * @param mixed $default The default option value
      * @return mixed the contents of the option or default
      */
-    protected function _extractOption(string $name, array $options, $default = null)
+    protected function _extractOption(string $name, array $options, mixed $default = null): mixed
     {
         if (array_key_exists($name, $options)) {
             return $options[$name];
@@ -1416,7 +1417,7 @@ class FormHelper extends Helper
      * @param array $options Options for the label element.
      * @return string Generated label element
      */
-    protected function _inputLabel(string $fieldName, $label = null, array $options = []): string
+    protected function _inputLabel(string $fieldName, array|string|null $label = null, array $options = []): string
     {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
         $labelAttributes = ['templateVars' => $options['templateVars']];
@@ -1464,7 +1465,7 @@ class FormHelper extends Helper
      * @return array<string>|string An HTML text input element.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-checkboxes
      */
-    public function checkbox(string $fieldName, array $options = [])
+    public function checkbox(string $fieldName, array $options = []): array|string
     {
         $options += ['hiddenField' => true, 'value' => 1];
 
@@ -1568,7 +1569,7 @@ class FormHelper extends Helper
      * @return string Formatted input method.
      * @throws \Cake\Core\Exception\CakeException When there are no params for the method call.
      */
-    public function __call(string $method, array $params)
+    public function __call(string $method, array $params): string
     {
         if (empty($params)) {
             throw new CakeException(sprintf('Missing field name for FormHelper::%s', $method));
@@ -1712,7 +1713,7 @@ class FormHelper extends Helper
      * @return string A HTML button tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postButton(string $title, $url, array $options = []): string
+    public function postButton(string $title, array|string $url, array $options = []): string
     {
         $formOptions = ['url' => $url];
         if (isset($options['method'])) {
@@ -1765,7 +1766,7 @@ class FormHelper extends Helper
      * @return string An `<a />` element.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postLink(string $title, $url = null, array $options = []): string
+    public function postLink(string $title, array|string|null $url = null, array $options = []): string
     {
         $options += ['block' => null, 'confirm' => null];
 
@@ -2390,7 +2391,7 @@ class FormHelper extends Helper
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */
-    protected function _getContext($data = []): ContextInterface
+    protected function _getContext(mixed $data = []): ContextInterface
     {
         if (isset($this->_context) && empty($data)) {
             return $this->_context;
@@ -2407,11 +2408,11 @@ class FormHelper extends Helper
      * Allows you to add or replace widget instances with custom code.
      *
      * @param string $name The name of the widget. e.g. 'text'.
-     * @param \Cake\View\Widget\WidgetInterface|array $spec Either a string class
+     * @param \Cake\View\Widget\WidgetInterface|array|string $spec Either a string class
      *   name or an object implementing the WidgetInterface.
      * @return void
      */
-    public function addWidget(string $name, $spec): void
+    public function addWidget(string $name, WidgetInterface|array|string $spec): void
     {
         $this->_locator->add([$name => $spec]);
     }
@@ -2516,7 +2517,7 @@ class FormHelper extends Helper
      * @return $this
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */
-    public function setValueSources($sources)
+    public function setValueSources(array|string $sources)
     {
         $sources = (array)$sources;
 
@@ -2533,7 +2534,7 @@ class FormHelper extends Helper
      * @param array $options The options containing default values.
      * @return mixed Field value derived from sources or defaults.
      */
-    public function getSourceValue(string $fieldname, array $options = [])
+    public function getSourceValue(string $fieldname, array $options = []): mixed
     {
         $valueMap = [
             'data' => 'getData',

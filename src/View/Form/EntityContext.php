@@ -229,7 +229,7 @@ class EntityContext implements ContextInterface
      *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
      */
-    public function val(string $field, array $options = [])
+    public function val(string $field, array $options = []): mixed
     {
         $options += [
             'default' => null,
@@ -285,7 +285,7 @@ class EntityContext implements ContextInterface
      * @param array<string> $parts Each one of the parts in a path for a field name
      * @return mixed
      */
-    protected function _schemaDefault(array $parts)
+    protected function _schemaDefault(array $parts): mixed
     {
         $table = $this->_getTable($parts);
         if ($table === null) {
@@ -308,7 +308,7 @@ class EntityContext implements ContextInterface
      * @param array<string> $path Each one of the parts in a path for a field name
      * @return array|null
      */
-    protected function _extractMultiple($values, array $path): ?array
+    protected function _extractMultiple(mixed $values, array $path): ?array
     {
         if (!is_iterable($values)) {
             return null;
@@ -332,7 +332,7 @@ class EntityContext implements ContextInterface
      * @return \Cake\Datasource\EntityInterface|iterable|null
      * @throws \RuntimeException When properties cannot be read.
      */
-    public function entity(?array $path = null)
+    public function entity(?array $path = null): EntityInterface|iterable|null
     {
         if ($path === null) {
             return $this->_context['entity'];
@@ -391,7 +391,7 @@ class EntityContext implements ContextInterface
      * @return array Containing the found entity, and remaining un-matched path.
      * @throws \RuntimeException When properties cannot be read.
      */
-    protected function leafEntity($path = null)
+    protected function leafEntity(?array $path = null): array
     {
         if ($path === null) {
             return $this->_context['entity'];
@@ -453,7 +453,7 @@ class EntityContext implements ContextInterface
      * @param string $field The next field to fetch.
      * @return mixed
      */
-    protected function _getProp($target, $field)
+    protected function _getProp(mixed $target, string $field): mixed
     {
         if (is_array($target) && isset($target[$field])) {
             return $target[$field];
@@ -470,6 +470,8 @@ class EntityContext implements ContextInterface
 
             return false;
         }
+
+        return null;
     }
 
     /**
@@ -620,7 +622,7 @@ class EntityContext implements ContextInterface
      *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null
      */
-    protected function _getTable($parts, $fallback = true): ?Table
+    protected function _getTable(EntityInterface|array|string $parts, bool $fallback = true): ?Table
     {
         if (!is_array($parts) || count($parts) === 1) {
             return $this->_tables[$this->_rootName];
