@@ -129,7 +129,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $template;
+    protected $template = '';
 
     /**
      * The name of the layout file to render the template inside of. The name specified

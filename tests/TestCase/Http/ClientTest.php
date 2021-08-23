@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\Exception\MissingResponseException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\Cookie;
@@ -1056,16 +1057,9 @@ class ClientTest extends TestCase
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub);
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->will($this->throwException(new InvalidArgumentException('No match')));
-
-        $client = new Client(['adapter' => $mock]);
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No match');
+        $client = new Client();
+        $this->expectException(MissingResponseException::class);
+        $this->expectExceptionMessage('Unable to find a mock');
 
         $client->get('http://example.com/path');
     }
@@ -1131,21 +1125,14 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function ($request) {
+            'match' => function () {
                 return false;
             },
         ]);
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->will($this->throwException(new InvalidArgumentException('No match')));
-
-        $client = new Client(['adapter' => $mock]);
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No match');
+        $client = new Client();
+        $this->expectException(MissingResponseException::class);
+        $this->expectExceptionMessage('Unable to find a mock');
 
         $client->post('http://example.com/path');
     }
