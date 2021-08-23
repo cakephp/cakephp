@@ -60,7 +60,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
-    public function val(string $field, array $options = [])
+    public function val(string $field, array $options = []): mixed
     {
         return null;
     }

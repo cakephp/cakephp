@@ -78,7 +78,7 @@ abstract class SerializedView extends View
      *   need(s) to be serialized
      * @return string The serialized data.
      */
-    abstract protected function _serialize($serialize): string;
+    abstract protected function _serialize(array|string $serialize): string;
 
     /**
      * Render view template or return serialized data.
@@ -88,7 +88,7 @@ abstract class SerializedView extends View
      * @return string The rendered view.
      * @throws \Cake\View\Exception\SerializationFailureException When serialization fails.
      */
-    public function render(?string $template = null, $layout = null): string
+    public function render(?string $template = null, string|false|null $layout = null): string
     {
         $serialize = $this->getConfig('serialize', false);
 

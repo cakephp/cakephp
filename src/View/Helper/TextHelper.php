@@ -99,7 +99,7 @@ class TextHelper extends Helper
      * @param array $params Array of params for the method.
      * @return mixed Whatever is returned by called method, or false on failure
      */
-    public function __call(string $method, array $params)
+    public function __call(string $method, array $params): mixed
     {
         return $this->_engine->{$method}(...$params);
     }
@@ -418,7 +418,7 @@ class TextHelper extends Helper
      * @see \Cake\Utility\Text::setTransliterator()
      * @see \Cake\Utility\Text::setTransliteratorId()
      */
-    public function slug(string $string, $options = []): string
+    public function slug(string $string, array|string $options = []): string
     {
         return $this->_engine->slug($string, $options);
     }

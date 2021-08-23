@@ -108,7 +108,7 @@ class JsonView extends SerializedView
      * @param string|false|null $layout The layout being rendered.
      * @return string The rendered view.
      */
-    public function render(?string $template = null, $layout = null): string
+    public function render(?string $template = null, string|false|null $layout = null): string
     {
         $return = parent::render($template, $layout);
 
@@ -154,7 +154,7 @@ class JsonView extends SerializedView
      * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized.
      * @return mixed The data to serialize.
      */
-    protected function _dataToSerialize($serialize)
+    protected function _dataToSerialize(array|string $serialize): mixed
     {
         if (is_array($serialize)) {
             $data = [];

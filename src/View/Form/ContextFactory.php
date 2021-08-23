@@ -54,7 +54,7 @@ class ContextFactory
      *   be of form `['type' => 'a-string', 'callable' => ..]`
      * @return static
      */
-    public static function createWithDefaults(array $providers = [])
+    public static function createWithDefaults(array $providers = []): static
     {
         $providers = [
             [

@@ -309,11 +309,11 @@ class StringTemplate
      * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
      *
      * @param string $key The name of the attribute to create
-     * @param array<string>|string $value The value of the attribute to create.
+     * @param mixed $value The value of the attribute to create.
      * @param bool $escape Define if the value must be escaped
      * @return string The composed attribute.
      */
-    protected function _formatAttribute(string $key, $value, $escape = true): string
+    protected function _formatAttribute(string $key, mixed $value, bool $escape = true): string
     {
         if (is_array($value)) {
             $value = implode(' ', $value);
@@ -339,13 +339,16 @@ class StringTemplate
     /**
      * Adds a class and returns a unique list either in array or space separated
      *
-     * @param array|string $input The array or string to add the class to
-     * @param array|string $newClass the new class or classes to add
+     * @param mixed $input The array or string to add the class to
+     * @param array|string|bool|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array<string>|string
+     * @return array<string>|string|null
      */
-    public function addClass($input, $newClass, string $useIndex = 'class')
-    {
+    public function addClass(
+        mixed $input,
+        array|string|bool|null $newClass,
+        string $useIndex = 'class'
+    ): array|string|null {
         // NOOP
         if (empty($newClass)) {
             return $input;
@@ -371,6 +374,7 @@ class StringTemplate
             $newClass = explode(' ', $newClass);
         }
 
+        /** @psalm-suppress PossiblyInvalidArgument */
         $class = array_unique(array_merge($class, $newClass));
 
         $input = Hash::insert($input, $useIndex, $class);
