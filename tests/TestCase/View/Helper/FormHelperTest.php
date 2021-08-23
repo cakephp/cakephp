@@ -2411,10 +2411,14 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-title-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-title-error']],
             'error message',
             '/div',
             '/div',
@@ -2433,8 +2437,13 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                // TODO this seems wrong as the id doesn't exist.
+                'aria-describedby' => 'article-title-error',
             ],
             '/div',
         ];
@@ -2447,10 +2456,14 @@ class FormHelperTest extends TestCase
             'Content',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[content]',
-                'id' => 'article-content', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[content]',
+                'id' => 'article-content',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-content-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-content-error']],
             'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
             '/div',
             '/div',
@@ -2464,10 +2477,14 @@ class FormHelperTest extends TestCase
             'Content',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[content]',
-                'id' => 'article-content', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[content]',
+                'id' => 'article-content',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-content-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-content-error']],
             'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
             '/div',
             '/div',
@@ -2481,10 +2498,14 @@ class FormHelperTest extends TestCase
             'Content',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[content]',
-                'id' => 'article-content', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[content]',
+                'id' => 'article-content',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-content-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-content-error']],
             'some <strong>test</strong> data with <a href="#">HTML</a> chars',
             '/div',
             '/div',
@@ -2511,10 +2532,14 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-title-error'
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-title-error']],
             [],
             '/div',
             '/div',
@@ -2541,10 +2566,14 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-title-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-title-error']],
             [],
             '/div',
             '/div',
@@ -2573,14 +2602,19 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'title',
-                'id' => 'title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'title',
+                'id' => 'title',
+                'class' => 'form-error',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                'aria-required' => 'true',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'title-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'title-error']],
             'Custom error!',
             '/div',
             '/div',
@@ -2599,13 +2633,16 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
+                'aria-required' => 'true',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'title-error',
                 'class' => 'form-error',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'title-error']],
             'Custom error!',
             '/div',
             '/div',
@@ -2626,7 +2663,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 
         $result = $this->Form->error('nested.foo');
-        $this->assertSame('<div class="error-message">not a valid bar</div>', $result);
+        $this->assertSame('<div class="error-message" id="nested-foo-error">not a valid bar</div>', $result);
     }
 
     /**
@@ -2642,7 +2679,7 @@ class FormHelperTest extends TestCase
         $inner->setError('bar', ['not a valid one']);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
         $result = $this->Form->error('nested.foo.bar');
-        $this->assertSame('<div class="error-message">not a valid one</div>', $result);
+        $this->assertSame('<div class="error-message" id="nested-foo-bar-error">not a valid one</div>', $result);
     }
 
     /**
@@ -2671,10 +2708,16 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
-                'type' => 'email', 'name' => '0[email]', 'id' => '0-email',
-                'class' => 'form-error', 'maxlength' => 255, 'value' => '',
+                'type' => 'email',
+                'name' => '0[email]',
+                'id' => '0-email',
+                'class' => 'form-error',
+                'maxlength' => 255,
+                'value' => '',
+                'aria-invalid' => 'true',
+                'aria-describedby' => '0-email-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => '0-email-error']],
             'invalid email',
             '/div',
             '/div',
@@ -2688,10 +2731,16 @@ class FormHelperTest extends TestCase
             'Name',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => '1[name]', 'id' => '1-name',
-                'class' => 'form-error', 'maxlength' => 255, 'value' => '',
+                'type' => 'text',
+                'name' => '1[name]',
+                'id' => '1-name',
+                'class' => 'form-error',
+                'maxlength' => 255,
+                'value' => '',
+                'aria-invalid' => 'true',
+                'aria-describedby' => '1-name-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => '1-name-error']],
             'This is wrong',
             '/div',
             '/div',
@@ -2890,10 +2939,14 @@ class FormHelperTest extends TestCase
             'Field',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'field',
-                'id' => 'field', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'field-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'field-error']],
             'Badness!',
             '/div',
             '/div',
@@ -2911,8 +2964,13 @@ class FormHelperTest extends TestCase
             'Field',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'field',
-                'id' => 'field', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                // TODO this seems bad as the id doesn't exist.
+                'aria-describedby' => 'field-error',
             ],
             ['span' => ['class' => 'error-message']],
             'Badness!',
@@ -2932,8 +2990,15 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'field'],
             'Field',
             '/label',
-            'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field', 'class' => 'form-error'],
-            ['div' => ['class' => 'error-message']],
+            'input' => [
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'field-error',
+            ],
+            ['div' => ['class' => 'error-message', 'id' => 'field-error']],
             'Le login doit contenir au moins 2 caractères',
             '/div',
             '/div',
@@ -2952,8 +3017,15 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'field'],
             'Field',
             '/label',
-            'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field', 'class' => 'form-error'],
-            ['div' => ['class' => 'error-message']],
+            'input' => [
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'field-error',
+            ],
+            ['div' => ['class' => 'error-message', 'id' => 'field-error']],
             'login too large',
             '/div',
             '/div',
@@ -3185,6 +3257,7 @@ class FormHelperTest extends TestCase
             'input' => ['type' => 'hidden', 'name' => 'Articles[disabled]', 'value' => '0'],
             'label' => ['for' => 'articles-disabled'],
             ['input' => [
+                'aria-label' => 'Disabled',
                 'type' => 'checkbox',
                 'name' => 'Articles[disabled]',
                 'value' => '1',
@@ -3211,6 +3284,7 @@ class FormHelperTest extends TestCase
                 'name' => 'Articles[confirm]',
                 'value' => '1',
                 'id' => 'articles-confirm',
+                'aria-label' => 'Confirm <b>me</b>!',
             ]],
             'Confirm <b>me</b>!',
             '/label',
@@ -4223,7 +4297,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field');
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'email',
             '/div',
         ];
@@ -4231,7 +4305,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', '<strong>Badness!</strong>');
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             '&lt;strong&gt;Badness!&lt;/strong&gt;',
             '/div',
         ];
@@ -4239,7 +4313,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', '<strong>Badness!</strong>', ['escape' => false]);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             '<strong', 'Badness!', '/strong',
             '/div',
         ];
@@ -4262,7 +4336,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field');
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Your email was not good',
             '/div',
         ];
@@ -4270,7 +4344,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', ['email' => 'Email in use']);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Email in use',
             '/div',
         ];
@@ -4278,7 +4352,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', ['Your email was not good' => 'Email in use']);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Email in use',
             '/div',
         ];
@@ -4289,7 +4363,7 @@ class FormHelperTest extends TestCase
             'Your email was not good' => 'Email in use',
         ]);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Key is preferred',
             '/div',
         ];
@@ -4312,7 +4386,7 @@ class FormHelperTest extends TestCase
             'email' => 'No good!',
         ]);
         $expected = [
-            'div' => ['class' => 'error-message'],
+            'div' => ['class' => 'error-message', 'id' => 'article-field-error'],
             'No good!',
             '/div',
         ];
@@ -4336,7 +4410,7 @@ class FormHelperTest extends TestCase
             'email' => 'No good!',
         ]);
         $expected = [
-            'div' => ['class' => 'error-message'],
+            'div' => ['class' => 'error-message', 'id' => 'field-error'],
             'ul' => [],
             '<li', 'Cannot be empty', '/li',
             '<li', 'No good!', '/li',
@@ -5193,7 +5267,8 @@ class FormHelperTest extends TestCase
             '/label',
             'input' => ['type' => 'hidden', 'name' => 'spacecraft[_ids]', 'value' => ''],
             'select' => [
-                'name' => 'spacecraft[_ids][]', 'id' => 'spacecraft-ids',
+                'name' => 'spacecraft[_ids][]',
+                'id' => 'spacecraft-ids',
                 'multiple' => 'multiple',
             ],
             ['option' => ['value' => '1']],
@@ -5203,7 +5278,7 @@ class FormHelperTest extends TestCase
             'Helios',
             '/option',
             '/select',
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'spacecraft-error']],
             'Invalid',
             '/div',
             '/div',
@@ -6136,6 +6211,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'div' => ['class' => 'input text required'],
             'input' => [
+                'aria-required' => 'true',
                 'type' => 'text',
                 'required' => 'required',
                 'id' => 'title',
@@ -7263,8 +7339,11 @@ class FormHelperTest extends TestCase
             'My label',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Contacts[name]',
-                'id' => 'contacts-name', 'maxlength' => '255',
+                'type' => 'text',
+                'name' => 'Contacts[name]',
+                'id' => 'contacts-name',
+                'maxlength' => '255',
+                'aria-label' => 'My label',
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -7403,11 +7482,13 @@ class FormHelperTest extends TestCase
                     'name',
                     'class' => 'form-error',
                     'id' => '0-comments-0-comment',
+                    'aria-invalid' => 'true',
+                    'aria-describedby' => '0-comments-0-comment-error',
                     'rows' => 5
                 ],
                 'Value',
                 '/textarea',
-                ['div' => ['class' => 'error-message']],
+                ['div' => ['class' => 'error-message', 'id' => '0-comments-0-comment-error']],
                 'Not valid',
                 '/div',
             '/div'
@@ -7427,6 +7508,7 @@ class FormHelperTest extends TestCase
                 '/label',
                 'textarea' => [
                     'name',
+                    'aria-required' => 'true',
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
@@ -7532,6 +7614,7 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7550,6 +7633,7 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -7569,6 +7653,7 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -7613,6 +7698,7 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7629,6 +7715,7 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -7650,6 +7737,7 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -7688,6 +7776,7 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
+                'aria-required' => 'true',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
@@ -8568,6 +8657,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8612,6 +8702,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8648,6 +8739,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8684,6 +8776,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8726,6 +8819,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8760,6 +8854,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
