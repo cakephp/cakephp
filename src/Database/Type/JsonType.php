@@ -112,10 +112,10 @@ class JsonType extends BaseType implements BatchCastingInterface
      * Set json_encode options.
      *
      * @param  int $jsonOptions Options. Use JSON_* flags. Set `0` to reset.
-     * @return self
+     * @return $this
      * @see https://www.php.net/manual/en/function.json-encode.php
      */
-    public function setJsonOptions(int $jsonOptions): self
+    public function setJsonOptions(int $jsonOptions)
     {
         $this->_jsonOptions = $jsonOptions;
 
