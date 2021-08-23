@@ -144,7 +144,7 @@ class JsonTypeTest extends TestCase
     {
         // New instance to prevent others tests breaking
         $instance = new JsonType();
-        $instance->setJsonOptions(JSON_UNESCAPED_UNICODE + JSON_UNESCAPED_SLASHES);
+        $instance->setJsonOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         $result = $instance->toDatabase(['é', 'https://cakephp.org/'], $this->driver);
         $this->assertSame('["é","https://cakephp.org/"]', $result);
