@@ -17,8 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\Date as ChronosDate;
-use DateTime;
-use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
 
@@ -128,12 +127,12 @@ class Date extends ChronosDate implements I18nDateTimeInterface
      * timezone will always be the server local time. Normalizing the timezone allows for
      * subtraction/addition to have deterministic results.
      *
-     * @param \DateTime|\DateTimeImmutable|string|int|null $time Fixed or relative time
+     * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone in which the date is taken.
      *                                  Ignored if `$time` is a DateTimeInterface instance.
      */
     public function __construct(
-        DateTime|DateTimeImmutable|string|int|null $time = 'now',
+        DateTimeInterface|string|int|null $time = 'now',
         DateTimeZone|string|null $tz = null
     ) {
         parent::__construct($time, $tz);

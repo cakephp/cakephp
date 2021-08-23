@@ -19,7 +19,7 @@ namespace Cake\I18n;
 use Cake\Chronos\DifferenceFormatterInterface;
 use Closure;
 use DateTime;
-use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
 use RuntimeException;
@@ -205,13 +205,13 @@ trait DateFormatTrait
      * Returns a translated and localized date string.
      * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
      *
-     * @param \DateTime|\DateTimeImmutable $date Date.
+     * @param \DateTimeInterface $date Date.
      * @param array<int>|string|int $format Format.
      * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
     protected function _formatObject(
-        DateTime|DateTimeImmutable $date,
+        DateTimeInterface $date,
         array|string|int $format,
         ?string $locale
     ): string {
