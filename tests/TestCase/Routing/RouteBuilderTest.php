@@ -348,22 +348,6 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test error on invalid route class
-     */
-    public function testConnectErrorInvalidRouteClass(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Route class not found, or route class is not a subclass of');
-        $routes = new RouteBuilder(
-            $this->collection,
-            '/l',
-            [],
-            ['extensions' => ['json']]
-        );
-        $routes->connect('/{controller}', [], ['routeClass' => '\stdClass']);
-    }
-
-    /**
      * Test conflicting parameters raises an exception.
      */
     public function testConnectConflictingParameters(): void
@@ -897,10 +881,10 @@ class RouteBuilderTest extends TestCase
     public function testScopeException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Need a valid callable to connect routes. Got `string` instead.');
+        $this->expectExceptionMessage('Need a valid callable to connect routes. Got `null` instead.');
 
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->scope('/v1', 'fail');
+        $routes->scope('/v1', ['fail'], null);
     }
 
     /**
