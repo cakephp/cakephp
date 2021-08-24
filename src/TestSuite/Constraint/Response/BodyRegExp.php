@@ -47,7 +47,7 @@ class BodyRegExp extends ResponseBase
      * @param mixed $other Expected
      * @return string
      */
-    public function failureDescription($other): string
+    public function failureDescription(mixed $other): string
     {
         return '`' . $other . '`' . ' ' . $this->toString();
     }

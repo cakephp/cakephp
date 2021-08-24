@@ -30,7 +30,7 @@ final class TestConnectionManager
     /**
      * @return void
      */
-    public static function aliasConnections()
+    public static function aliasConnections(): void
     {
         if (!self::$aliasConnectionIsLoaded) {
             (new self())->_aliasConnections();
@@ -46,7 +46,7 @@ final class TestConnectionManager
      *
      * @return void
      */
-    protected function _aliasConnections()
+    protected function _aliasConnections(): void
     {
         $connections = ConnectionManager::configured();
         ConnectionManager::alias('test', 'default');

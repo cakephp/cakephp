@@ -56,7 +56,7 @@ class MiddlewareDispatcher
      * @param array|string $url The URL array/string to resolve.
      * @return string
      */
-    public function resolveUrl($url): string
+    public function resolveUrl(array|string $url): string
     {
         // If we need to resolve a Route URL but there are no routes, load routes.
         if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {

@@ -79,7 +79,7 @@ class SchemaGenerator
             return;
         }
 
-        $connection->disableConstraints(function ($connection) use ($config) {
+        $connection->disableConstraints(function ($connection) use ($config): void {
             foreach ($config as $metadata) {
                 $table = new TableSchema($metadata['table'], $metadata['columns']);
                 if (isset($metadata['indexes'])) {

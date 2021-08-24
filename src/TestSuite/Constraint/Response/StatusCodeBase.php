@@ -67,7 +67,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         /** @psalm-suppress InternalMethod */
         return $this->toString();

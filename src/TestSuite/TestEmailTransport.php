@@ -70,7 +70,7 @@ class TestEmailTransport extends DebugTransport
      *
      * @return array<\Cake\Mailer\Message>
      */
-    public static function getMessages()
+    public static function getMessages(): array
     {
         return static::$messages;
     }
