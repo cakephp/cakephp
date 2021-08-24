@@ -23,7 +23,9 @@ use Cake\Core\Plugin;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
+use Closure;
 use InvalidArgumentException;
+use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 
 /**
@@ -177,7 +179,7 @@ class RouteBuilder
      * @param array<string>|string $extensions The extensions to set.
      * @return $this
      */
-    public function setExtensions($extensions)
+    public function setExtensions(array|string $extensions)
     {
         $this->_extensions = (array)$extensions;
 
@@ -200,7 +202,7 @@ class RouteBuilder
      * @param array<string>|string $extensions One or more extensions to add
      * @return $this
      */
-    public function addExtensions($extensions)
+    public function addExtensions(array|string $extensions)
     {
         $extensions = array_merge($this->_extensions, (array)$extensions);
         $this->_extensions = array_unique($extensions);
@@ -354,7 +356,7 @@ class RouteBuilder
      *   scopes inherit the existing path and 'id' parameter.
      * @return $this
      */
-    public function resources(string $name, $options = [], $callback = null)
+    public function resources(string $name, callable|array $options = [], ?callable $callback = null)
     {
         if (!is_array($options)) {
             $callback = $options;
@@ -442,7 +444,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    public function get(string $template, $target, ?string $name = null): Route
+    public function get(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('GET', $template, $target, $name);
     }
@@ -456,7 +458,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    public function post(string $template, $target, ?string $name = null): Route
+    public function post(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('POST', $template, $target, $name);
     }
@@ -470,7 +472,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    public function put(string $template, $target, ?string $name = null): Route
+    public function put(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('PUT', $template, $target, $name);
     }
@@ -484,7 +486,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    public function patch(string $template, $target, ?string $name = null): Route
+    public function patch(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('PATCH', $template, $target, $name);
     }
@@ -498,7 +500,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    public function delete(string $template, $target, ?string $name = null): Route
+    public function delete(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('DELETE', $template, $target, $name);
     }
@@ -512,7 +514,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    public function head(string $template, $target, ?string $name = null): Route
+    public function head(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('HEAD', $template, $target, $name);
     }
@@ -526,7 +528,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    public function options(string $template, $target, ?string $name = null): Route
+    public function options(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('OPTIONS', $template, $target, $name);
     }
@@ -541,7 +543,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    protected function _methodRoute(string $method, string $template, $target, ?string $name): Route
+    protected function _methodRoute(string $method, string $template, array|string $target, ?string $name): Route
     {
         if ($name !== null) {
             $name = $this->_namePrefix . $name;
@@ -666,7 +668,7 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect($route, $defaults = [], array $options = []): Route
+    public function connect(Route|string $route, array|string $defaults = [], array $options = []): Route
     {
         $defaults = $this->parseDefaults($defaults);
         if (empty($options['_ext'])) {
@@ -694,7 +696,7 @@ class RouteBuilder
      * @param array|string $defaults Defaults array from the connect() method.
      * @return array
      */
-    protected function parseDefaults($defaults): array
+    protected function parseDefaults(array|string $defaults): array
     {
         if (!is_string($defaults)) {
             return $defaults;
@@ -713,9 +715,10 @@ class RouteBuilder
      * @throws \InvalidArgumentException when route class or route object is invalid.
      * @throws \BadMethodCallException when the route to make conflicts with the current scope
      */
-    protected function _makeRoute($route, $defaults, $options): Route
+    protected function _makeRoute(Route|string $route, array $defaults, array $options): Route
     {
         if (is_string($route)) {
+            /** @var class-string<\Cake\Routing\Route\Route>|null $routeClass */
             $routeClass = App::className($options['routeClass'], 'Routing/Route');
             if ($routeClass === null) {
                 throw new InvalidArgumentException(sprintf(
@@ -750,12 +753,7 @@ class RouteBuilder
             $route = new $routeClass($route, $defaults, $options);
         }
 
-        if ($route instanceof Route) {
-            return $route;
-        }
-        throw new InvalidArgumentException(
-            'Route class not found, or route class is not a subclass of Cake\Routing\Route\Route'
-        );
+        return $route;
     }
 
     /**
@@ -793,7 +791,7 @@ class RouteBuilder
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return \Cake\Routing\Route\Route|\Cake\Routing\Route\RedirectRoute
      */
-    public function redirect(string $route, $url, array $options = []): Route
+    public function redirect(string $route, array|string $url, array $options = []): Route
     {
         $options['routeClass'] = $options['routeClass'] ?? RedirectRoute::class;
         if (is_string($url)) {
@@ -835,7 +833,7 @@ class RouteBuilder
      * @return $this
      * @throws \InvalidArgumentException If a valid callback is not passed
      */
-    public function prefix(string $name, $params = [], $callback = null)
+    public function prefix(string $name, callable|array $params = [], ?callable $callback = null)
     {
         if (!is_array($params)) {
             $callback = $params;
@@ -880,7 +878,7 @@ class RouteBuilder
      *   Only required when $options is defined.
      * @return $this
      */
-    public function plugin(string $name, $options = [], $callback = null)
+    public function plugin(string $name, callable|array $options = [], ?callable $callback = null)
     {
         if (!is_array($options)) {
             $callback = $options;
@@ -914,9 +912,9 @@ class RouteBuilder
      * @return $this
      * @throws \InvalidArgumentException when there is no callable parameter.
      */
-    public function scope(string $path, $params, $callback = null)
+    public function scope(string $path, callable|array $params, ?callable $callback = null)
     {
-        if (!is_array($params)) {
+        if (is_callable($params)) {
             $callback = $params;
             $params = [];
         }
@@ -977,7 +975,7 @@ class RouteBuilder
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */
-    public function registerMiddleware(string $name, $middleware)
+    public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {
         $this->_collection->registerMiddleware($name, $middleware);
 

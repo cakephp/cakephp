@@ -182,7 +182,7 @@ class Route
      * @return array<string>|string
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
-    protected function normalizeAndValidateMethods($methods)
+    protected function normalizeAndValidateMethods(array|string $methods): array|string
     {
         $methods = is_array($methods)
             ? array_map('strtoupper', $methods)
@@ -891,7 +891,7 @@ class Route
      * @param array $fields Key/Value of object attributes
      * @return static A new instance of the route
      */
-    public static function __set_state(array $fields)
+    public static function __set_state(array $fields): static
     {
         $class = static::class;
         $obj = new $class('');

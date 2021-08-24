@@ -234,7 +234,7 @@ class Asset
      * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public static function assetTimestamp(string $path, $timestamp = null): string
+    public static function assetTimestamp(string $path, string|bool|null $timestamp = null): string
     {
         if (strpos($path, '?') !== false) {
             return $path;

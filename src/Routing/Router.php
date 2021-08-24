@@ -19,8 +19,10 @@ namespace Cake\Routing;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
+use Psr\Http\Message\UriInterface;
 use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
@@ -45,7 +47,7 @@ class Router
      *
      * @var string
      */
-    protected static $_defaultRouteClass = Route\Route::class;
+    protected static $_defaultRouteClass = Route::class;
 
     /**
      * Contains the base string that will be applied to all generated URLs
@@ -207,7 +209,7 @@ class Router
      * @see \Cake\Routing\RouteBuilder::connect()
      * @see \Cake\Routing\Router::scope()
      */
-    public static function connect($route, $defaults = [], $options = []): void
+    public static function connect(Route|string $route, array|string $defaults = [], array $options = []): void
     {
         static::scope('/', function ($routes) use ($route, $defaults, $options): void {
             /** @var \Cake\Routing\RouteBuilder $routes */
@@ -409,7 +411,7 @@ class Router
      * @return string Full translated URL with base path.
      * @throws \Cake\Core\Exception\CakeException When the route name is not found
      */
-    public static function url($url = null, bool $full = false): string
+    public static function url(UriInterface|array|string|null $url = null, bool $full = false): string
     {
         $context = static::$_requestContext;
         $request = static::getRequest();
@@ -558,7 +560,7 @@ class Router
      *   Default is false.
      * @return bool
      */
-    public static function routeExists($url = null, bool $full = false): bool
+    public static function routeExists(array|string|null $url = null, bool $full = false): bool
     {
         try {
             static::url($url, $full);
@@ -636,7 +638,7 @@ class Router
      *     Cake\Http\ServerRequest object that needs to be reversed.
      * @return array The URL array ready to be used for redirect or HTML link.
      */
-    public static function reverseToArray($params): array
+    public static function reverseToArray(ServerRequest|array $params): array
     {
         if ($params instanceof ServerRequest) {
             $queryString = $params->getQueryParams();
@@ -668,7 +670,7 @@ class Router
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array
      */
-    public static function reverse($params, $full = false): string
+    public static function reverse(ServerRequest|array $params, bool $full = false): string
     {
         $params = static::reverseToArray($params);
 
@@ -684,7 +686,7 @@ class Router
      * @param array|string $url URL to normalize Either an array or a string URL.
      * @return string Normalized URL
      */
-    public static function normalize($url = '/'): string
+    public static function normalize(array|string $url = '/'): string
     {
         if (is_array($url)) {
             $url = static::url($url);
@@ -734,7 +736,7 @@ class Router
      *   Defaults to `true`.
      * @return array<string> Array of extensions Router is configured to parse.
      */
-    public static function extensions($extensions = null, $merge = true): array
+    public static function extensions(array|string|null $extensions = null, bool $merge = true): array
     {
         $collection = static::$_collection;
         if ($extensions === null) {
@@ -811,7 +813,7 @@ class Router
      * @throws \InvalidArgumentException When an invalid callable is provided.
      * @return void
      */
-    public static function scope(string $path, $params = [], $callback = null): void
+    public static function scope(string $path, callable|array $params = [], ?callable $callback = null): void
     {
         $options = [];
         if (is_array($params)) {
@@ -845,7 +847,7 @@ class Router
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
      */
-    public static function prefix(string $name, $params = [], $callback = null): void
+    public static function prefix(string $name, callable|array $params = [], ?callable $callback = null): void
     {
         if (!is_array($params)) {
             $callback = $params;
@@ -877,7 +879,7 @@ class Router
      *   Only required when $options is defined
      * @return void
      */
-    public static function plugin(string $name, $options = [], $callback = null): void
+    public static function plugin(string $name, callable|array $options = [], ?callable $callback = null): void
     {
         if (!is_array($options)) {
             $callback = $options;
@@ -928,7 +930,7 @@ class Router
      * @param array $url Route array with `_path` key
      * @return array
      */
-    protected static function unwrapShortString(array $url)
+    protected static function unwrapShortString(array $url): array
     {
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (array_key_exists($key, $url)) {

@@ -2726,15 +2726,6 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test the scope() method
-     */
-    public function testScopeError(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        Router::scope('/path', 'derpy');
-    }
-
-    /**
      * Test to ensure that extensions defined in scopes don't leak.
      * And that global extensions are propagated.
      */
