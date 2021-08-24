@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Log\Engine;
 
 use Cake\Log\Formatter\DefaultFormatter;
+use Stringable;
 
 /**
  * Syslog stream for Logging. Writes logs to the system logger
@@ -92,12 +93,12 @@ class SyslogLog extends BaseLog
      * log messages, pass all messages through the format defined in the configuration
      *
      * @param mixed $level The severity level of log you are making.
-     * @param string $message The message you want to log.
+     * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void
      * @see Cake\Log\Log::$_levels
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, Stringable|string $message, array $context = []): void
     {
         if (!$this->_open) {
             $config = $this->_config;
@@ -110,7 +111,7 @@ class SyslogLog extends BaseLog
             $priority = $this->_levelMap[$level];
         }
 
-        $lines = explode("\n", $this->_format($message, $context));
+        $lines = explode("\n", $this->resolve($message, $context));
         foreach ($lines as $line) {
             $this->_write($priority, $this->formatter->format($level, $line, $context));
         }

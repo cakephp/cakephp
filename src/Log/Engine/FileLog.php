@@ -19,6 +19,7 @@ namespace Cake\Log\Engine;
 use Cake\Core\Configure;
 use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Utility\Text;
+use Stringable;
 
 /**
  * File Storage stream for Logging. Writes logs to different files
@@ -113,14 +114,14 @@ class FileLog extends BaseLog
      * Implements writing to log files.
      *
      * @param mixed $level The severity level of the message being written.
-     * @param string $message The message you want to log.
+     * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void
      * @see Cake\Log\Log::$_levels
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, Stringable|string $message, array $context = []): void
     {
-        $message = $this->_format($message, $context);
+        $message = $this->resolve($message, $context);
         $message = $this->formatter->format($level, $message, $context);
 
         $filename = $this->_getFilename($level);

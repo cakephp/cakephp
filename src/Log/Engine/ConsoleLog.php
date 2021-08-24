@@ -19,6 +19,7 @@ namespace Cake\Log\Engine;
 use Cake\Console\ConsoleOutput;
 use Cake\Log\Formatter\DefaultFormatter;
 use InvalidArgumentException;
+use Stringable;
 
 /**
  * Console logging. Writes logs to console output.
@@ -84,14 +85,14 @@ class ConsoleLog extends BaseLog
      * Implements writing to console.
      *
      * @param mixed $level The severity level of log you are making.
-     * @param string $message The message you want to log.
+     * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void success of write.
      * @see Cake\Log\Log::$_levels
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, Stringable|string $message, array $context = []): void
     {
-        $message = $this->_format($message, $context);
+        $message = $this->resolve($message, $context);
         $this->_output->write($this->formatter->format($level, $message, $context));
     }
 }
