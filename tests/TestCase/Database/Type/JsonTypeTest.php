@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Type\JsonType;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -118,5 +119,20 @@ class JsonTypeTest extends TestCase
     public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
+    }
+
+    /**
+     * Test encoding options
+     *
+     * @return void
+     */
+    public function testEncodingOptions()
+    {
+        // New instance to prevent others tests breaking
+        $instance = new JsonType();
+        $instance->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        $result = $instance->toDatabase(['é', 'https://cakephp.org/'], $this->driver);
+        $this->assertSame('["é","https://cakephp.org/"]', $result);
     }
 }
