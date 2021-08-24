@@ -46,5 +46,5 @@ abstract class AbstractFormatter
      * @param array $context Mesage context
      * @return string Formatted message
      */
-    abstract public function format($level, string $message, array $context = []): string;
+    abstract public function format(mixed $level, string $message, array $context = []): string;
 }
