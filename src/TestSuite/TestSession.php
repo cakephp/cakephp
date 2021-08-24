@@ -64,7 +64,7 @@ class TestSession
      * @return mixed The value of the session variable, null if session not available,
      *   session not started, or provided name not found in the session.
      */
-    public function read(?string $name = null)
+    public function read(?string $name = null): mixed
     {
         if ($this->session === null) {
             return null;

@@ -43,7 +43,7 @@ class EventFiredWith extends Constraint
      * @param string $dataKey Data key
      * @param mixed $dataValue Data value
      */
-    public function __construct(EventManager $eventManager, string $dataKey, $dataValue)
+    public function __construct(EventManager $eventManager, string $dataKey, mixed $dataValue)
     {
         $this->_eventManager = $eventManager;
         $this->_dataKey = $dataKey;
@@ -63,7 +63,7 @@ class EventFiredWith extends Constraint
      * @return bool
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         $firedEvents = [];
         $list = $this->_eventManager->getEventList();

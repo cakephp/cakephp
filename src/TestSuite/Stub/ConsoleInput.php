@@ -81,7 +81,7 @@ class ConsoleInput extends ConsoleInputBase
      * @param int $timeout An optional time to wait for data
      * @return bool True for data available, false otherwise
      */
-    public function dataAvailable($timeout = 0): bool
+    public function dataAvailable(int $timeout = 0): bool
     {
         return true;
     }

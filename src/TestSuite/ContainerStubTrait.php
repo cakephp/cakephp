@@ -16,7 +16,9 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerInterface;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Event\EventInterface;
 use Closure;
 use LogicException;
@@ -74,7 +76,7 @@ trait ContainerStubTrait
      *
      * @return \Cake\Core\HttpApplicationInterface|\Cake\Core\ConsoleApplicationInterface
      */
-    protected function createApp()
+    protected function createApp(): HttpApplicationInterface|ConsoleApplicationInterface
     {
         if ($this->_appClass) {
             $appClass = $this->_appClass;

@@ -45,7 +45,7 @@ class TemplateFileEquals extends Constraint
      * @param mixed $other Expected filename
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return strpos($this->filename, $other) !== false;
     }

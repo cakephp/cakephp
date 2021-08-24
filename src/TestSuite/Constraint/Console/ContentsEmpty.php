@@ -28,7 +28,7 @@ class ContentsEmpty extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return $this->contents === '';
     }
@@ -49,7 +49,7 @@ class ContentsEmpty extends ContentsBase
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         return $this->toString();
     }

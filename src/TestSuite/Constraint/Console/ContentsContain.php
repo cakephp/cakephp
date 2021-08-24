@@ -28,7 +28,7 @@ class ContentsContain extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return mb_strpos($this->contents, $other) !== false;
     }

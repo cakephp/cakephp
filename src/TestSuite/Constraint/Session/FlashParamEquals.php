@@ -75,7 +75,7 @@ class FlashParamEquals extends Constraint
      * @param mixed $other Value to compare with
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         // Server::run calls Session::close at the end of the request.
         // Which means, that we cannot use Session object here to access the session data.
