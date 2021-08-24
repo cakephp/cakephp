@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type\DateTimeType;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
 
@@ -58,7 +58,7 @@ class DateTimeTypeTest extends TestCase
      */
     public function testGetDateTimeClassName(): void
     {
-        $this->assertSame(Time::class, $this->type->getDateTimeClassName());
+        $this->assertSame(DateTime::class, $this->type->getDateTimeClassName());
     }
 
     /**
@@ -76,7 +76,7 @@ class DateTimeTypeTest extends TestCase
     public function testToPHPString(): void
     {
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
-        $this->assertInstanceOf(Time::class, $result);
+        $this->assertInstanceOf(DateTime::class, $result);
         $this->assertSame('2001', $result->format('Y'));
         $this->assertSame('01', $result->format('m'));
         $this->assertSame('04', $result->format('d'));
@@ -86,7 +86,7 @@ class DateTimeTypeTest extends TestCase
 
         $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toPHP('2001-01-04 12:00:00', $this->driver);
-        $this->assertInstanceOf(Time::class, $result);
+        $this->assertInstanceOf(DateTime::class, $result);
         $this->assertSame('2001', $result->format('Y'));
         $this->assertSame('01', $result->format('m'));
         $this->assertSame('04', $result->format('d'));
@@ -106,7 +106,7 @@ class DateTimeTypeTest extends TestCase
         ];
         $expected = [
             'a' => null,
-            'b' => new Time('2001-01-04 12:13:14'),
+            'b' => new DateTime('2001-01-04 12:13:14'),
         ];
         $this->assertEquals(
             $expected,
@@ -120,7 +120,7 @@ class DateTimeTypeTest extends TestCase
         ];
         $expected = [
             'a' => null,
-            'b' => new Time('2001-01-04 06:43:14'),
+            'b' => new DateTime('2001-01-04 06:43:14'),
         ];
         $this->assertEquals(
             $expected,
@@ -138,7 +138,7 @@ class DateTimeTypeTest extends TestCase
     {
         $in = '2014-03-24 20:44:36.315113';
         $result = $this->type->toPHP($in, $this->driver);
-        $this->assertInstanceOf(Time::class, $result);
+        $this->assertInstanceOf(DateTime::class, $result);
     }
 
     /**
@@ -150,7 +150,7 @@ class DateTimeTypeTest extends TestCase
         $result = $this->type->toDatabase($value, $this->driver);
         $this->assertSame($value, $result);
 
-        $date = new Time('2013-08-12 15:16:17');
+        $date = new DateTime('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 15:16:17', $result);
 
@@ -165,7 +165,7 @@ class DateTimeTypeTest extends TestCase
         $this->assertSame('2013-08-12 20:46:17', $result);
         $this->type->setDatabaseTimezone(null);
 
-        $date = new Time('2013-08-12 15:16:17');
+        $date = new DateTime('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 15:16:17', $result);
 
@@ -196,14 +196,14 @@ class DateTimeTypeTest extends TestCase
             ['2013-nope!', null],
 
             // valid string types
-            ['1392387900', new Time('@1392387900')],
-            [1392387900, new Time('@1392387900')],
-            ['2014-02-14 12:02', new Time('2014-02-14 12:02')],
-            ['2014-02-14 00:00:00', new Time('2014-02-14 00:00:00')],
-            ['2014-02-14 13:14:15', new Time('2014-02-14 13:14:15')],
-            ['2014-02-14T13:14', new Time('2014-02-14T13:14:00')],
-            ['2014-02-14T13:14:15', new Time('2014-02-14T13:14:15')],
-            ['2017-04-05T17:18:00+00:00', new Time('2017-04-05T17:18:00+00:00')],
+            ['1392387900', new DateTime('@1392387900')],
+            [1392387900, new DateTime('@1392387900')],
+            ['2014-02-14 12:02', new DateTime('2014-02-14 12:02')],
+            ['2014-02-14 00:00:00', new DateTime('2014-02-14 00:00:00')],
+            ['2014-02-14 13:14:15', new DateTime('2014-02-14 13:14:15')],
+            ['2014-02-14T13:14', new DateTime('2014-02-14T13:14:00')],
+            ['2014-02-14T13:14:15', new DateTime('2014-02-14T13:14:15')],
+            ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
 
             // valid array types
             [
@@ -212,7 +212,7 @@ class DateTimeTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('2014-02-14 13:14:15'),
+                new DateTime('2014-02-14 13:14:15'),
             ],
             [
                 [
@@ -220,7 +220,7 @@ class DateTimeTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am',
                 ],
-                new Time('2014-02-14 01:14:15'),
+                new DateTime('2014-02-14 01:14:15'),
             ],
             [
                 [
@@ -228,7 +228,7 @@ class DateTimeTypeTest extends TestCase
                     'hour' => 12, 'minute' => 04, 'second' => 15,
                     'meridian' => 'pm',
                 ],
-                new Time('2014-02-14 12:04:15'),
+                new DateTime('2014-02-14 12:04:15'),
             ],
             [
                 [
@@ -236,40 +236,40 @@ class DateTimeTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm',
                 ],
-                new Time('2014-02-14 13:14:15'),
+                new DateTime('2014-02-14 13:14:15'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new Time('2014-02-14 00:00:00'),
+                new DateTime('2014-02-14 00:00:00'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris',
                 ],
-                new Time('2014-02-14 11:30:00', 'UTC'),
+                new DateTime('2014-02-14 11:30:00', 'UTC'),
             ],
 
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new Time(date('Y-m-d 00:00:00')),
+                new DateTime(date('Y-m-d 00:00:00')),
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Time(date('Y-m-d 00:00:00')),
+                new DateTime(date('Y-m-d 00:00:00')),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new Time('2014-02-14 00:00:00'),
+                new DateTime('2014-02-14 00:00:00'),
             ],
             [
-                Time::now(),
-                Time::now(),
+                DateTime::now(),
+                DateTime::now(),
             ],
         ];
     }
@@ -296,7 +296,7 @@ class DateTimeTypeTest extends TestCase
      */
     public function testMarshalDateTimeInstance(): void
     {
-        $expected = new Time('2020-05-01 23:28:00', 'Europe/Paris');
+        $expected = new DateTime('2020-05-01 23:28:00', 'Europe/Paris');
 
         $result = $this->type->marshal($expected);
         $this->assertEquals('UTC', $result->getTimezone()->getName());
@@ -309,13 +309,13 @@ class DateTimeTypeTest extends TestCase
         $this->type->setUserTimezone('+0200');
 
         $value = '2020-05-01 23:28:00';
-        $expected = new Time($value);
+        $expected = new DateTime($value);
 
         $result = $this->type->marshal($value);
         $this->assertEquals('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result->addHours(2));
 
-        $expected = new Time('2020-05-01 21:28:00', 'UTC');
+        $expected = new DateTime('2020-05-01 21:28:00', 'UTC');
         $result = $this->type->marshal([
             'year' => 2020, 'month' => 5, 'day' => 1,
             'hour' => 23, 'minute' => 28, 'second' => 0,
@@ -331,7 +331,7 @@ class DateTimeTypeTest extends TestCase
      */
     public function testLocaleParserDisable(): void
     {
-        $expected = new Time('13-10-2013 23:28:00');
+        $expected = new DateTime('13-10-2013 23:28:00');
         $this->type->useLocaleParser();
         $result = $this->type->marshal('10/13/2013 11:28pm');
         $this->assertEquals($expected, $result);
@@ -348,7 +348,7 @@ class DateTimeTypeTest extends TestCase
     {
         $this->type->useLocaleParser();
 
-        $expected = new Time('13-10-2013 23:28:00');
+        $expected = new DateTime('13-10-2013 23:28:00');
         $result = $this->type->marshal('10/13/2013 11:28pm');
         $this->assertEquals($expected, $result);
 
@@ -370,7 +370,7 @@ class DateTimeTypeTest extends TestCase
     {
         $this->type->useLocaleParser()->setLocaleFormat('dd MMM, y hh:mma');
 
-        $expected = new Time('13-10-2013 13:54:00');
+        $expected = new DateTime('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
     }

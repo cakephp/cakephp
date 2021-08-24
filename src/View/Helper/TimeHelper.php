@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Helper;
 
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use DateTimeInterface;
@@ -66,13 +66,13 @@ class TimeHelper extends Helper
      *
      * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
-     * @return \Cake\I18n\Time
+     * @return \Cake\I18n\DateTime
      */
     public function fromString(
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
-    ): Time {
-        $time = new Time($dateString);
+    ): DateTime {
+        $time = new DateTime($dateString);
         if ($timezone !== null) {
             $time = $time->timezone($timezone);
         }
@@ -95,7 +95,7 @@ class TimeHelper extends Helper
     ): string {
         $timezone = $this->_getTimezone($timezone);
 
-        return (new Time($dateString))->nice($timezone, $locale);
+        return (new DateTime($dateString))->nice($timezone, $locale);
     }
 
     /**
@@ -107,7 +107,7 @@ class TimeHelper extends Helper
      */
     public function isToday(DateTimeInterface|string|int $dateString, DateTimeZone|string|null $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isToday();
+        return (new DateTime($dateString, $timezone))->isToday();
     }
 
     /**
@@ -119,7 +119,7 @@ class TimeHelper extends Helper
      */
     public function isFuture(DateTimeInterface|string|int $dateString, DateTimeZone|string|null $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isFuture();
+        return (new DateTime($dateString, $timezone))->isFuture();
     }
 
     /**
@@ -131,7 +131,7 @@ class TimeHelper extends Helper
      */
     public function isPast(DateTimeInterface|string|int $dateString, DateTimeZone|string|null $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isPast();
+        return (new DateTime($dateString, $timezone))->isPast();
     }
 
     /**
@@ -145,7 +145,7 @@ class TimeHelper extends Helper
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
     ): bool {
-        return (new Time($dateString, $timezone))->isThisWeek();
+        return (new DateTime($dateString, $timezone))->isThisWeek();
     }
 
     /**
@@ -159,7 +159,7 @@ class TimeHelper extends Helper
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
     ): bool {
-        return (new Time($dateString, $timezone))->isThisMonth();
+        return (new DateTime($dateString, $timezone))->isThisMonth();
     }
 
     /**
@@ -173,7 +173,7 @@ class TimeHelper extends Helper
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
     ): bool {
-        return (new Time($dateString, $timezone))->isThisYear();
+        return (new DateTime($dateString, $timezone))->isThisYear();
     }
 
     /**
@@ -187,7 +187,7 @@ class TimeHelper extends Helper
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
     ): bool {
-        return (new Time($dateString, $timezone))->isYesterday();
+        return (new DateTime($dateString, $timezone))->isYesterday();
     }
 
     /**
@@ -201,7 +201,7 @@ class TimeHelper extends Helper
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
     ): bool {
-        return (new Time($dateString, $timezone))->isTomorrow();
+        return (new DateTime($dateString, $timezone))->isTomorrow();
     }
 
     /**
@@ -214,7 +214,7 @@ class TimeHelper extends Helper
      */
     public function toQuarter(DateTimeInterface|string|int $dateString, bool $range = false): array|int
     {
-        return (new Time($dateString))->toQuarter($range);
+        return (new DateTime($dateString))->toQuarter($range);
     }
 
     /**
@@ -227,7 +227,7 @@ class TimeHelper extends Helper
      */
     public function toUnix(DateTimeInterface|string|int $dateString, DateTimeZone|string|null $timezone = null): string
     {
-        return (new Time($dateString, $timezone))->toUnixString();
+        return (new DateTime($dateString, $timezone))->toUnixString();
     }
 
     /**
@@ -242,7 +242,7 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new Time($dateString))->timezone($timezone)->toAtomString();
+        return (new DateTime($dateString))->timezone($timezone)->toAtomString();
     }
 
     /**
@@ -256,7 +256,7 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new Time($dateString))->timezone($timezone)->toRssString();
+        return (new DateTime($dateString))->timezone($timezone)->toRssString();
     }
 
     /**
@@ -304,7 +304,7 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-        $relativeDate = (new Time($dateTime))->timeAgoInWords($options);
+        $relativeDate = (new DateTime($dateTime))->timeAgoInWords($options);
 
         if ($element) {
             $relativeDate = sprintf(
@@ -334,7 +334,7 @@ class TimeHelper extends Helper
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
     ): bool {
-        return (new Time($dateString, $timezone))->wasWithinLast($timeInterval);
+        return (new DateTime($dateString, $timezone))->wasWithinLast($timeInterval);
     }
 
     /**
@@ -352,7 +352,7 @@ class TimeHelper extends Helper
         DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null
     ): bool {
-        return (new Time($dateString, $timezone))->isWithinNext($timeInterval);
+        return (new DateTime($dateString, $timezone))->isWithinNext($timeInterval);
     }
 
     /**
@@ -364,7 +364,7 @@ class TimeHelper extends Helper
      */
     public function gmt(DateTimeInterface|string|int|null $string = null): string
     {
-        return (new Time($string))->toUnixString();
+        return (new DateTime($string))->toUnixString();
     }
 
     /**
@@ -415,7 +415,7 @@ class TimeHelper extends Helper
         $timezone = $this->_getTimezone($timezone);
 
         try {
-            $time = new Time($date);
+            $time = new DateTime($date);
 
             return $time->i18nFormat($format, $timezone);
         } catch (Exception $e) {

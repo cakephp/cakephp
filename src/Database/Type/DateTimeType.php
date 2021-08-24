@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\DriverInterface;
+use Cake\I18n\DateTime;
 use Cake\I18n\I18nDateTimeInterface;
-use Cake\I18n\Time;
-use DateTime;
+use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -127,7 +127,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         parent::__construct($name);
 
         $this->defaultTimezone = new DateTimeZone(date_default_timezone_get());
-        $this->_className = class_exists(Time::class) ? Time::class : DateTimeImmutable::class;
+        $this->_className = class_exists(DateTime::class) ? DateTime::class : DateTimeImmutable::class;
     }
 
     /**
@@ -305,7 +305,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     public function marshal(mixed $value): ?DateTimeInterface
     {
         if ($value instanceof DateTimeInterface) {
-            if ($value instanceof DateTime) {
+            if ($value instanceof NativeDateTime) {
                 $value = clone $value;
             }
 

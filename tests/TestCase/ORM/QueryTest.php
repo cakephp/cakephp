@@ -28,7 +28,7 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventInterface;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -583,14 +583,14 @@ class QueryTest extends TestCase
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 1],
                         'description' => 'A big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 2,
                         'name' => 'tag2',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 2],
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -606,14 +606,14 @@ class QueryTest extends TestCase
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 1],
                         'description' => 'A big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -653,7 +653,7 @@ class QueryTest extends TestCase
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -700,8 +700,8 @@ class QueryTest extends TestCase
                         'user_id' => 4,
                         'comment' => 'Second Comment for First Article',
                         'published' => 'Y',
-                        'created' => new Time('2007-03-18 10:47:23'),
-                        'updated' => new Time('2007-03-18 10:49:31'),
+                        'created' => new DateTime('2007-03-18 10:47:23'),
+                        'updated' => new DateTime('2007-03-18 10:49:31'),
                     ],
                 ],
             ],
@@ -726,7 +726,7 @@ class QueryTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->_matchingData['Comments']);
         $this->assertIsInt($result->_matchingData['Comments']->id);
-        $this->assertInstanceOf(Time::class, $result->_matchingData['Comments']->created);
+        $this->assertInstanceOf(DateTime::class, $result->_matchingData['Comments']->created);
     }
 
     /**
@@ -762,7 +762,7 @@ class QueryTest extends TestCase
                         'id' => 3,
                         'name' => 'tag3',
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3],
                 ],
@@ -789,7 +789,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2],
                 ],
@@ -825,7 +825,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new DateTime('2016-01-01 00:00'),
                     ],
                     'articles' => [
                         'id' => 1,
@@ -1295,20 +1295,20 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new DateTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
-        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
+        $this->assertInstanceOf(DateTime::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
             'description' => 'Another big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new DateTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
-        $this->assertInstanceOf(Time::class, $first->tags[1]->created);
+        $this->assertInstanceOf(DateTime::class, $first->tags[1]->created);
     }
 
     /**
@@ -1357,10 +1357,10 @@ class QueryTest extends TestCase
                 'beforeFind' => true,
             ],
             'description' => 'A big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new DateTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
-        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
+        $this->assertInstanceOf(DateTime::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
@@ -1371,10 +1371,10 @@ class QueryTest extends TestCase
                 'beforeFind' => true,
             ],
             'description' => 'Another big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new DateTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
-        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
+        $this->assertInstanceOf(DateTime::class, $first->tags[0]->created);
     }
 
     /**
@@ -3219,8 +3219,8 @@ class QueryTest extends TestCase
             ->find()
             ->select(['created', 'updated_time' => 'updated'])
             ->first();
-        $this->assertInstanceOf(Time::class, $result->created);
-        $this->assertInstanceOf(Time::class, $result->updated_time);
+        $this->assertInstanceOf(DateTime::class, $result->created);
+        $this->assertInstanceOf(DateTime::class, $result->updated_time);
     }
 
     /**

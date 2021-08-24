@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Event\EventInterface;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\TestSuite\TestCase;
@@ -152,8 +152,8 @@ class MarshallerTest extends TestCase
             'id' => '',
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new DateTime('2013-10-10 00:00'),
+            'updated' => new DateTime('2013-10-10 00:00'),
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
@@ -178,7 +178,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->comments);
         $result = $marshall->one($data, []);
 
-        $this->assertEquals(new Time('2014-02-14 00:00:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 00:00:00'), $result->created);
 
         $data['created'] = [
             'year' => '2014',
@@ -189,7 +189,7 @@ class MarshallerTest extends TestCase
             'meridian' => 'pm',
         ];
         $result = $marshall->one($data, []);
-        $this->assertEquals(new Time('2014-02-14 21:25:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 21:25:00'), $result->created);
 
         $data['created'] = [
             'year' => '2014',
@@ -199,11 +199,11 @@ class MarshallerTest extends TestCase
             'minute' => 25,
         ];
         $result = $marshall->one($data, []);
-        $this->assertEquals(new Time('2014-02-14 09:25:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 09:25:00'), $result->created);
 
         $data['created'] = '2014-02-14 09:25:00';
         $result = $marshall->one($data, []);
-        $this->assertEquals(new Time('2014-02-14 09:25:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 09:25:00'), $result->created);
 
         $data['created'] = 1392387900;
         $result = $marshall->one($data, []);
@@ -1300,7 +1300,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeWithSameObjectValue(): void
     {
-        $created = new Time('2020-10-29');
+        $created = new DateTime('2020-10-29');
         $entity = new Entity([
             'comment' => 'foo',
             'created' => $created,
@@ -2400,7 +2400,7 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->comments);
         $result = $marshall->merge($entity, $data);
-        $this->assertInstanceOf(Time::class, $entity->created);
+        $this->assertInstanceOf(DateTime::class, $entity->created);
         $this->assertSame('2014-02-14', $entity->created->format('Y-m-d'));
     }
 
@@ -3282,13 +3282,13 @@ class MarshallerTest extends TestCase
                     'id' => 1,
                     'name' => 'tag1',
                     'description' => 'A big description',
-                    'created' => new Time('2016-01-01 00:00'),
+                    'created' => new DateTime('2016-01-01 00:00'),
                 ],
                 [
                     'id' => 2,
                     'name' => 'tag2',
                     'description' => 'Another big description',
-                    'created' => new Time('2016-01-01 00:00'),
+                    'created' => new DateTime('2016-01-01 00:00'),
                 ],
             ],
         ];

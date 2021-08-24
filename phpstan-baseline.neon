@@ -373,12 +373,12 @@ parameters:
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
 			count: 1
-			path: src/I18n/Time.php
+			path: src/I18n/DateTime.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
-			path: src/I18n/Time.php
+			path: src/I18n/DateTime.php
 
 		-
 			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"

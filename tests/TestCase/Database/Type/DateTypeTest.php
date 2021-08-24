@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\Date;
 use Cake\Database\Type\DateType;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 
@@ -92,11 +92,11 @@ class DateTypeTest extends TestCase
         $result = $this->type->toDatabase($value, $this->driver);
         $this->assertSame($value, $result);
 
-        $date = new Time('2013-08-12');
+        $date = new DateTime('2013-08-12');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12', $result);
 
-        $date = new Time('2013-08-12 15:16:18');
+        $date = new DateTime('2013-08-12 15:16:18');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12', $result);
     }

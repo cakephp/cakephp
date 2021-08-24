@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\Utility\Text;
 use Countable;
 use DateTimeInterface;
@@ -669,7 +669,7 @@ class Validation
         }
         $method = $methods[$type];
 
-        return Time::$method($check, $format) !== null;
+        return DateTime::$method($check, $format) !== null;
     }
 
     /**

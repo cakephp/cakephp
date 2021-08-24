@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Event\Event;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -100,7 +100,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(Time::class, $entity->created);
+        $this->assertInstanceOf(DateTime::class, $entity->created);
         $this->assertSame($ts->format('c'), $entity->created->format('c'), 'Created timestamp is not the same');
     }
 
@@ -164,7 +164,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(Time::class, $entity->modified);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
         $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is not the same');
     }
 
@@ -188,7 +188,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(Time::class, $entity->modified);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
         $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is expected to be updated');
     }
 
@@ -226,7 +226,7 @@ class TimestampBehaviorTest extends TestCase
 
         $entity->clean();
         $this->Behavior->handleEvent($event, $entity);
-        $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
     }
 
     /**
@@ -285,7 +285,7 @@ class TimestampBehaviorTest extends TestCase
             'Should return a timestamp object'
         );
 
-        $now = Time::now();
+        $now = DateTime::now();
         $this->assertEquals($now, $return);
     }
 
@@ -435,7 +435,7 @@ class TimestampBehaviorTest extends TestCase
 
         $row = $table->find('all')->where(['id' => $entity->id])->first();
 
-        $now = Time::now();
+        $now = DateTime::now();
         $this->assertSame($now->toDateTimeString(), $row->created->toDateTimeString());
         $this->assertSame($now->toDateTimeString(), $row->updated->toDateTimeString());
     }

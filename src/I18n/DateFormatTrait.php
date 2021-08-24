@@ -18,7 +18,7 @@ namespace Cake\I18n;
 
 use Cake\Chronos\DifferenceFormatterInterface;
 use Closure;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -183,7 +183,7 @@ trait DateFormatTrait
         DateTimeZone|string|null $timezone = null,
         ?string $locale = null
     ): string|int {
-        if ($format === Time::UNIX_TIMESTAMP_FORMAT) {
+        if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
             return $this->getTimestamp();
         }
 
@@ -373,12 +373,12 @@ trait DateFormatTrait
 
         $time = $formatter->parse($time);
         if ($time !== false) {
-            $dateTime = new DateTime('@' . $time);
+            $dateTime = new DateTimeImmutable('@' . $time);
 
             if (!($tz instanceof DateTimeZone)) {
                 $tz = new DateTimeZone($tz ?? date_default_timezone_get());
             }
-            $dateTime->setTimezone($tz);
+            $dateTime = $dateTime->setTimezone($tz);
 
             return new static($dateTime);
         }

@@ -99,7 +99,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      */
     public function timeAgoInWords(I18nDateTimeInterface $time, array $options = []): string
     {
-        $options = $this->_options($options, Time::class);
+        $options = $this->_options($options, DateTime::class);
         if ($options['timezone']) {
             $time = $time->timezone($options['timezone']);
         }
@@ -120,7 +120,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return __d('cake', 'just now', 'just now');
         }
 
-        if ($diff > abs($now - (new Time($options['end']))->format('U'))) {
+        if ($diff > abs($now - (new DateTime($options['end']))->format('U'))) {
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
@@ -396,7 +396,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param array $options The options provided by the user.
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
-     * @psalm-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\Time> $class
+     * @psalm-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\DateTime> $class
      */
     protected function _options(array $options, string $class): array
     {
