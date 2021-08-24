@@ -37,7 +37,7 @@ class FlashComponent extends Component
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'key' => 'flash',
         'element' => 'default',
         'params' => [],

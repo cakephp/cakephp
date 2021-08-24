@@ -7,8 +7,6 @@ use Cake\Controller\Component\RequestHandlerComponent;
 
 class RequestHandlerExtComponent extends RequestHandlerComponent
 {
-    public $ext;
-
     public function getExt(): ?string
     {
         return $this->ext;

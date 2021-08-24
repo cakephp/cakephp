@@ -26,14 +26,14 @@ class SecurityException extends BadRequestException
      *
      * @var string
      */
-    protected $_type = 'secure';
+    protected string $_type = 'secure';
 
     /**
      * Reason for request blackhole
      *
      * @var string|null
      */
-    protected $_reason;
+    protected ?string $_reason = null;
 
     /**
      * Getter for type

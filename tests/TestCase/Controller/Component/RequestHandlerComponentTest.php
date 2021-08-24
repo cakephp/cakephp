@@ -121,10 +121,10 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeCallback(): void
     {
-        $this->assertNull($this->RequestHandler->ext);
+        $this->assertNull($this->RequestHandler->getExt());
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'rss'));
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertSame('rss', $this->RequestHandler->ext);
+        $this->assertSame('rss', $this->RequestHandler->getExt());
     }
 
     /**
@@ -153,7 +153,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions('json', false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertSame('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->getExt());
     }
 
     /**
@@ -180,7 +180,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['rss', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertSame('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->getExt());
     }
 
     /**
@@ -190,10 +190,10 @@ class RequestHandlerComponentTest extends TestCase
     {
         Router::reload();
         $_SERVER['HTTP_ACCEPT'] = 'application/json, text/html, */*; q=0.01';
-        $this->assertNull($this->RequestHandler->ext);
+        $this->assertNull($this->RequestHandler->getExt());
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertNull($this->RequestHandler->ext);
+        $this->assertNull($this->RequestHandler->getExt());
     }
 
     /**
@@ -212,13 +212,13 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['xml', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertSame('xml', $this->RequestHandler->ext);
+        $this->assertSame('xml', $this->RequestHandler->getExt());
 
         $this->RequestHandler->setExt(null);
         Router::extensions(['json', 'xml'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertSame('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->getExt());
     }
 
     /**
@@ -234,7 +234,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->setExt(null);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertSame('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->getExt());
     }
 
     /**
@@ -250,7 +250,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->setExt(null);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertNull($this->RequestHandler->ext);
+        $this->assertNull($this->RequestHandler->getExt());
     }
 
     /**
@@ -262,7 +262,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['xml', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertNull($this->RequestHandler->ext);
+        $this->assertNull($this->RequestHandler->getExt());
     }
 
     /**
@@ -270,7 +270,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeContentTypeAndExtensionMismatch(): void
     {
-        $this->assertNull($this->RequestHandler->ext);
+        $this->assertNull($this->RequestHandler->getExt());
         $extensions = Router::extensions();
         Router::extensions('xml', false);
 
@@ -280,7 +280,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->setRequest($request);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertNull($this->RequestHandler->ext);
+        $this->assertNull($this->RequestHandler->getExt());
 
         Router::extensions($extensions, false);
     }
@@ -385,7 +385,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->RequestHandler->beforeRender(new Event('Controller.beforeRender', $this->Controller));
 
-        $this->assertSame($extension, $this->RequestHandler->ext);
+        $this->assertSame($extension, $this->RequestHandler->getExt());
         $this->assertSame('text/html', $this->Controller->getResponse()->getType());
 
         $view = $this->Controller->createView();
@@ -412,7 +412,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->RequestHandler->beforeRender(new Event('Controller.beforeRender', $this->Controller));
 
-        $this->assertSame('xml', $this->RequestHandler->ext);
+        $this->assertSame('xml', $this->RequestHandler->getExt());
         $this->assertSame('application/xml', $this->Controller->getResponse()->getType());
 
         $view = $this->Controller->createView();

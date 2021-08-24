@@ -52,7 +52,7 @@ class PaginatorComponent extends Component
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
@@ -64,7 +64,7 @@ class PaginatorComponent extends Component
      *
      * @var \Cake\Datasource\Paginator
      */
-    protected $_paginator;
+    protected Paginator $_paginator;
 
     /**
      * @inheritDoc
