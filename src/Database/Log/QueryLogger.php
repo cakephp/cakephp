@@ -43,7 +43,7 @@ class QueryLogger extends BaseLog
     /**
      * @inheritDoc
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $context['scope'] = $this->scopes() ?: ['queriesLog'];
         $context['connection'] = $this->getConfig('connection');

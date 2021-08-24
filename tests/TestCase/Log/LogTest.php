@@ -188,28 +188,6 @@ class LogTest extends TestCase
     }
 
     /**
-     * Test that config() throws an exception when adding an
-     * adapter with the wrong type.
-     */
-    public function testConfigInjectErrorOnWrongType(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \stdClass());
-        Log::info('testing');
-    }
-
-    /**
-     * Test that setConfig() throws an exception when adding an
-     * adapter with the wrong type.
-     */
-    public function testSetConfigInjectErrorOnWrongType(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \stdClass());
-        Log::info('testing');
-    }
-
-    /**
      * Test that config() can read data back
      */
     public function testConfigRead(): void
