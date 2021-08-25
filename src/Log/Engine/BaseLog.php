@@ -24,6 +24,7 @@ use InvalidArgumentException;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
 use Serializable;
+use Stringable;
 
 /**
  * Base log engine class.
@@ -116,30 +117,16 @@ abstract class BaseLog extends AbstractLogger
     }
 
     /**
-     * Formats the message to be logged.
-     *
-     * The context can optionally be used by log engines to interpolate variables
-     * or add additional info to the logged message.
-     *
-     * @param string $message The message to be formatted.
-     * @param array $context Additional logging information for the message.
-     * @return string
-     * @deprecated 4.3.0 Call `resolve()` directly from your log engine and format the message in a formatter.
-     */
-    protected function _format(string $message, array $context = []): string
-    {
-        return $this->resolve($message, $context);
-    }
-
-    /**
      * Resolves interpolation expressions in message string.
      *
-     * @param string $message Interpolated message
+     * @param \Stringable|string $message Interpolated message
      * @param array $context Interpolation expression values
      * @return string
      */
-    protected function resolve(string $message, array $context = []): string
+    protected function resolve(Stringable|string $message, array $context = []): string
     {
+        $message = (string)$message;
+
         if (strpos($message, '{') === false && strpos($message, '}') === false) {
             return $message;
         }

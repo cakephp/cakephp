@@ -166,26 +166,6 @@
       <code>translate</code>
     </InternalMethod>
   </file>
-  <file src="src/Log/Engine/ArrayLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/ConsoleLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/FileLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/SyslogLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
   <file src="src/ORM/Locator/TableLocator.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$instances</code>

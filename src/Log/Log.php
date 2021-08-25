@@ -20,6 +20,7 @@ use Cake\Log\Engine\BaseLog;
 use Closure;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Stringable;
 
 /**
  * Logs messages to configured Log adapters. One or more adapters
@@ -343,7 +344,7 @@ class Log
      *
      * @param string|int $level The severity level of the message being written.
      *    The value must be an integer or string matching a known level.
-     * @param string $message Message content to log
+     * @param \Stringable|string $message Message content to log
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -352,7 +353,7 @@ class Log
      * @return bool Success
      * @throws \InvalidArgumentException If invalid level is passed.
      */
-    public static function write(string|int $level, string $message, array|string $context = []): bool
+    public static function write(string|int $level, Stringable|string $message, array|string $context = []): bool
     {
         static::_init();
         if (is_int($level) && in_array($level, static::$_levelMap, true)) {
@@ -396,7 +397,7 @@ class Log
     /**
      * Convenience method to log emergency messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -404,7 +405,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function emergency(string $message, array|string $context = []): bool
+    public static function emergency(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -412,7 +413,7 @@ class Log
     /**
      * Convenience method to log alert messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -420,7 +421,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function alert(string $message, array|string $context = []): bool
+    public static function alert(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -428,7 +429,7 @@ class Log
     /**
      * Convenience method to log critical messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -436,7 +437,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function critical(string $message, array|string $context = []): bool
+    public static function critical(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -444,7 +445,7 @@ class Log
     /**
      * Convenience method to log error messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -452,7 +453,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function error(string $message, array|string $context = []): bool
+    public static function error(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -460,7 +461,7 @@ class Log
     /**
      * Convenience method to log warning messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -468,7 +469,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function warning(string $message, array|string $context = []): bool
+    public static function warning(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -476,7 +477,7 @@ class Log
     /**
      * Convenience method to log notice messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -484,7 +485,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function notice(string $message, array|string $context = []): bool
+    public static function notice(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -492,7 +493,7 @@ class Log
     /**
      * Convenience method to log debug messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -500,7 +501,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function debug(string $message, array|string $context = []): bool
+    public static function debug(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -508,7 +509,7 @@ class Log
     /**
      * Convenience method to log info messages
      *
-     * @param string $message log message
+     * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
@@ -516,7 +517,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function info(string $message, array|string $context = []): bool
+    public static function info(Stringable|string $message, array|string $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }

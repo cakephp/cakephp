@@ -439,7 +439,8 @@ class ResultSetTest extends TestCase
         $queryLogging = $this->connection->isQueryLoggingEnabled();
 
         $logger = new QueryLogger();
-        $this->connection->setLogger($logger)->enableQueryLogging(true);
+        $this->connection->setLogger($logger);
+        $this->connection->enableQueryLogging(true);
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(0, $messages);
@@ -455,7 +456,8 @@ class ResultSetTest extends TestCase
         $message = array_pop($messages);
         $this->assertStringContainsString('SELECT', $message);
 
-        $this->connection->setLogger($defaultLogger)->enableQueryLogging($queryLogging);
+        $this->connection->setLogger($defaultLogger);
+        $this->connection->enableQueryLogging($queryLogging);
         Log::reset();
     }
 }
