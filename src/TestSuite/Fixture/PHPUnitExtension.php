@@ -14,19 +14,17 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite;
+namespace Cake\TestSuite\Fixture;
 
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
-use Cake\TestSuite\Fixture\FixtureDataManager;
-use Cake\TestSuite\Fixture\FixtureLoader;
 use PHPUnit\Runner\BeforeFirstTestHook;
 
 /**
  * PHPUnit extension to integrate CakePHP's data-only fixtures.
  */
-class FixtureSchemaExtension implements BeforeFirstTestHook
+class PHPUnitExtension implements BeforeFirstTestHook
 {
     /**
      * Constructor. Set the record only fixture manager as the singleton.
