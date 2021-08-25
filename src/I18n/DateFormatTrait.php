@@ -18,8 +18,8 @@ namespace Cake\I18n;
 
 use Cake\Chronos\DifferenceFormatterInterface;
 use Closure;
-use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
 use RuntimeException;
@@ -183,7 +183,7 @@ trait DateFormatTrait
         DateTimeZone|string|null $timezone = null,
         ?string $locale = null
     ): string|int {
-        if ($format === Time::UNIX_TIMESTAMP_FORMAT) {
+        if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
             return $this->getTimestamp();
         }
 
@@ -205,13 +205,13 @@ trait DateFormatTrait
      * Returns a translated and localized date string.
      * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
      *
-     * @param \DateTime|\DateTimeImmutable $date Date.
+     * @param \DateTimeInterface $date Date.
      * @param array<int>|string|int $format Format.
      * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
     protected function _formatObject(
-        DateTime|DateTimeImmutable $date,
+        DateTimeInterface $date,
         array|string|int $format,
         ?string $locale
     ): string {
@@ -373,12 +373,12 @@ trait DateFormatTrait
 
         $time = $formatter->parse($time);
         if ($time !== false) {
-            $dateTime = new DateTime('@' . $time);
+            $dateTime = new DateTimeImmutable('@' . $time);
 
             if (!($tz instanceof DateTimeZone)) {
                 $tz = new DateTimeZone($tz ?? date_default_timezone_get());
             }
-            $dateTime->setTimezone($tz);
+            $dateTime = $dateTime->setTimezone($tz);
 
             return new static($dateTime);
         }

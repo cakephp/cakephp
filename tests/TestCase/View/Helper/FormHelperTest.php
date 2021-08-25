@@ -20,8 +20,8 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
@@ -3236,7 +3236,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->control('prueba', [
             'type' => 'datetime',
-            'value' => new FrozenTime('2019-09-27 02:52:43'),
+            'value' => new DateTime('2019-09-27 02:52:43'),
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
@@ -3293,7 +3293,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->control('prueba', [
             'type' => 'datetime',
-            'value' => new FrozenTime('2019-09-27 02:52:43'),
+            'value' => new DateTime('2019-09-27 02:52:43'),
             'step' => '0.5',
         ]);
         $expected = [
@@ -5797,7 +5797,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->date('start_day', [
-            'value' => new FrozenDate('2014-03-08'),
+            'value' => new Date('2014-03-08'),
         ]);
         $this->assertHtml($expected, $result);
     }
@@ -6012,7 +6012,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->year('published', [
             'empty' => false,
-            'value' => new FrozenDate('2008-01-12'),
+            'value' => new Date('2008-01-12'),
             'min' => 2007,
             'max' => 2009,
         ]);
@@ -7130,7 +7130,7 @@ class FormHelperTest extends TestCase
             ],
         ]);
         $result = $this->Form->datetime('created', [
-            'val' => new FrozenTime('2019-09-27 02:52:43.123'),
+            'val' => new DateTime('2019-09-27 02:52:43.123'),
         ]);
         $expected = [
             'input' => [
@@ -7159,7 +7159,7 @@ class FormHelperTest extends TestCase
             ],
         ]);
         $result = $this->Form->control('created', [
-            'val' => new FrozenTime('2019-09-27 02:52:43.123'),
+            'val' => new DateTime('2019-09-27 02:52:43.123'),
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],

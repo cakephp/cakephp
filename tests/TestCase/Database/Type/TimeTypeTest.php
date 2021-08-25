@@ -16,10 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Core\Configure;
 use Cake\Database\Type\TimeType;
+use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
-use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 
@@ -52,12 +51,6 @@ class TimeTypeTest extends TestCase
         $this->type = new TimeType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->locale = I18n::getLocale();
-
-        Configure::write('Error.ignoredDeprecationPaths', [
-            'src/Database/Type/DateTimeType.php',
-            'tests/TestCase/Database/Type/TimeTypeTest.php',
-            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
-        ]);
     }
 
     /**
@@ -100,7 +93,7 @@ class TimeTypeTest extends TestCase
         ];
         $expected = [
             'a' => null,
-            'b' => new Time('01:30:13'),
+            'b' => new DateTime('01:30:13'),
         ];
         $this->assertEquals(
             $expected,
@@ -117,11 +110,11 @@ class TimeTypeTest extends TestCase
         $result = $this->type->toDatabase($value, $this->driver);
         $this->assertSame($value, $result);
 
-        $date = new Time('16:30:15');
+        $date = new DateTime('16:30:15');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('16:30:15', $result);
 
-        $date = new Time('2013-08-12 15:16:18');
+        $date = new DateTime('2013-08-12 15:16:18');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('15:16:18', $result);
     }
@@ -133,13 +126,9 @@ class TimeTypeTest extends TestCase
      */
     public function marshalProvider(): array
     {
-        Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/TimeTypeTest.php',
-        ]);
+        $date = new DateTime('@1392387900');
 
-        $date = new Time('@1392387900');
-
-        $data = [
+        return [
             // invalid types.
             [null, null],
             [false, null],
@@ -152,8 +141,8 @@ class TimeTypeTest extends TestCase
             // valid string types
             ['1392387900', $date],
             [1392387900, $date],
-            ['13:10:10', new Time('13:10:10')],
-            ['14:15', new Time('14:15:00')],
+            ['13:10:10', new DateTime('13:10:10')],
+            ['14:15', new DateTime('14:15:00')],
 
             // valid array types
             [
@@ -166,7 +155,7 @@ class TimeTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('2014-02-14 13:14:15'),
+                new DateTime('2014-02-14 13:14:15'),
             ],
             [
                 [
@@ -174,7 +163,7 @@ class TimeTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am',
                 ],
-                new Time('2014-02-14 01:14:15'),
+                new DateTime('2014-02-14 01:14:15'),
             ],
             [
                 [
@@ -182,32 +171,28 @@ class TimeTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm',
                 ],
-                new Time('2014-02-14 13:14:15'),
+                new DateTime('2014-02-14 13:14:15'),
             ],
             [
                 [
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                 ],
-                new Time('01:14:15'),
+                new DateTime('01:14:15'),
             ],
 
             // Invalid array types
             [
                 ['hour' => 'nope', 'minute' => 14, 'second' => 15],
-                new Time(date('Y-m-d 00:14:15')),
+                new DateTime(date('Y-m-d 00:14:15')),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'nope', 'minute' => 'nope',
                 ],
-                new Time('2014-02-14 00:00:00'),
+                new DateTime('2014-02-14 00:00:00'),
             ],
         ];
-
-        Configure::delete('Error.ignoredDeprecationPaths');
-
-        return $data;
     }
 
     /**
@@ -235,7 +220,7 @@ class TimeTypeTest extends TestCase
     {
         $this->type->useLocaleParser();
 
-        $expected = new Time('23:23:00');
+        $expected = new DateTime('23:23:00');
         $result = $this->type->marshal('11:23pm');
         $this->assertSame($expected->format('H:i'), $result->format('H:i'));
         $this->assertNull($this->type->marshal('derp:23'));
@@ -248,13 +233,15 @@ class TimeTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsingDanishLocale(): void
     {
+        $this->markTestSkipped('Temporarily skip test with Danish locale');
+
         $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
         $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
 
         $this->type->useLocaleParser();
 
         I18n::setLocale('da_DK');
-        $expected = new Time('03:20:00');
+        $expected = new DateTime('03:20:00');
         $result = $this->type->marshal('03.20');
         $this->assertSame($expected->format('H:i'), $result->format('H:i'));
 
@@ -266,12 +253,7 @@ class TimeTypeTest extends TestCase
      */
     public function testToImmutableAndToMutable(): void
     {
-        $this->type->useImmutable();
         $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('11:23:12'));
         $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('11:23:12', $this->driver));
-
-        $this->type->useMutable();
-        $this->assertInstanceOf('DateTime', $this->type->marshal('11:23:12'));
-        $this->assertInstanceOf('DateTime', $this->type->toPHP('11:23:12', $this->driver));
     }
 }

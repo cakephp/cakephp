@@ -16,9 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\Database\TypeFactory;
 use Cake\Event\Event;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -101,7 +100,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(FrozenTime::class, $entity->created);
+        $this->assertInstanceOf(DateTime::class, $entity->created);
         $this->assertSame($ts->format('c'), $entity->created->format('c'), 'Created timestamp is not the same');
     }
 
@@ -165,7 +164,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(FrozenTime::class, $entity->modified);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
         $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is not the same');
     }
 
@@ -189,7 +188,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(FrozenTime::class, $entity->modified);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
         $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is expected to be updated');
     }
 
@@ -214,30 +213,20 @@ class TimestampBehaviorTest extends TestCase
     }
 
     /**
-     * testUseImmutable
+     * testTimeInstanceCreation
      *
      * @triggers Model.beforeSave
      */
-    public function testUseImmutable(): void
+    public function testTimeInstanceCreation(): void
     {
-        $this->deprecated(function () {
-            $table = $this->getTable();
-            $this->Behavior = new TimestampBehavior($table);
-            $entity = new Entity();
-            $event = new Event('Model.beforeSave');
+        $table = $this->getTable();
+        $this->Behavior = new TimestampBehavior($table);
+        $entity = new Entity();
+        $event = new Event('Model.beforeSave');
 
-            $entity->clean();
-            $this->Behavior->handleEvent($event, $entity);
-            $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->modified);
-
-            TypeFactory::build('timestamp')->useMutable();
-            $entity->clean();
-            $this->Behavior->handleEvent($event, $entity);
-            $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
-            // Revert back to using immutable class to avoid causing problems in
-            // other test cases when running full test suite.
-            TypeFactory::build('timestamp')->useImmutable();
-        });
+        $entity->clean();
+        $this->Behavior->handleEvent($event, $entity);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
     }
 
     /**
@@ -296,7 +285,7 @@ class TimestampBehaviorTest extends TestCase
             'Should return a timestamp object'
         );
 
-        $now = FrozenTime::now();
+        $now = DateTime::now();
         $this->assertEquals($now, $return);
     }
 
@@ -446,7 +435,7 @@ class TimestampBehaviorTest extends TestCase
 
         $row = $table->find('all')->where(['id' => $entity->id])->first();
 
-        $now = FrozenTime::now();
+        $now = DateTime::now();
         $this->assertSame($now->toDateTimeString(), $row->created->toDateTimeString());
         $this->assertSame($now->toDateTimeString(), $row->updated->toDateTimeString());
     }

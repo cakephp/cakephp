@@ -24,15 +24,13 @@ use IntlDateFormatter;
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
- *
- * This object provides an immutable variant of Cake\I18n\Time
  */
-class FrozenTime extends Chronos implements I18nDateTimeInterface
+class DateTime extends Chronos implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\FrozenTime::i18nFormat()`
+     * The format to use when formatting a time using `Cake\I18n\Time::i18nFormat()`
      * and `__toString`. This format is also used by `parseDateTime()`.
      *
      * The format should be either the formatting constants from IntlDateFormatter as
@@ -44,7 +42,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used to format the time part.
      *
      * @var array<int>|string|int
-     * @see \Cake\I18n\FrozenTime::i18nFormat()
+     * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
 
@@ -65,7 +63,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\FrozenTime::nice()`
+     * The format to use when formatting a time using `Cake\I18n\Time::nice()`
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -76,16 +74,16 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used to format the time part.
      *
      * @var array<int>|string|int
-     * @see \Cake\I18n\FrozenTime::nice()
+     * @see \Cake\I18n\Time::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\FrozenTime::timeAgoInWords()`
-     * and the difference is more than `Cake\I18n\FrozenTime::$wordEnd`
+     * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
+     * and the difference is more than `Cake\I18n\Time::$wordEnd`
      *
      * @var array<int>|string|int
-     * @see \Cake\I18n\FrozenTime::timeAgoInWords()
+     * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
 
@@ -94,7 +92,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * and the difference is less than `Time::$wordEnd`
      *
      * @var array<string>
-     * @see \Cake\I18n\FrozenTime::timeAgoInWords()
+     * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordAccuracy = [
         'year' => 'day',
@@ -110,7 +108,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * The end of relative time telling
      *
      * @var string
-     * @see \Cake\I18n\FrozenTime::timeAgoInWords()
+     * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordEnd = '+1 month';
 
