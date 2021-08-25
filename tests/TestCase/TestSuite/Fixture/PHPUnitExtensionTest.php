@@ -19,10 +19,10 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\FixtureSchemaExtension;
+use Cake\TestSuite\Fixture\PHPUnitExtension;
 use Cake\TestSuite\TestCase;
 
-class FixtureSchemaExtensionTest extends TestCase
+class PHPUnitExtensionTest extends TestCase
 {
     /**
      * Test connection aliasing during construction.
@@ -36,7 +36,7 @@ class FixtureSchemaExtensionTest extends TestCase
             'database' => TMP . 'fixture_schema.sqlite',
         ]);
         $this->assertNotContains('fixture_schema', ConnectionManager::configured());
-        $extension = new FixtureSchemaExtension();
+        $extension = new PHPUnitExtension();
 
         $this->assertContains('test_fixture_schema', ConnectionManager::configured());
         $this->assertSame(
