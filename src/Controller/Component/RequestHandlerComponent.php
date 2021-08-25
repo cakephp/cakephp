@@ -47,14 +47,14 @@ class RequestHandlerComponent extends Component
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
-    protected $ext;
+    protected ?string $ext = null;
 
     /**
      * The template type to use when rendering the given content type.
      *
      * @var string|null
      */
-    protected $_renderType;
+    protected ?string $_renderType = null;
 
     /**
      * Default config
@@ -67,7 +67,7 @@ class RequestHandlerComponent extends Component
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'checkHttpCache' => true,
         'viewClassMap' => [],
     ];

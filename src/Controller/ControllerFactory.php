@@ -42,12 +42,12 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * @var \Cake\Core\ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * @var \Cake\Controller\Controller
      */
-    protected $controller;
+    protected Controller $controller;
 
     /**
      * Constructor

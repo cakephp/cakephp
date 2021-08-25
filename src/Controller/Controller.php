@@ -106,7 +106,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    protected $name;
+    protected string $name = '';
 
     /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
@@ -116,7 +116,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @var \Cake\Http\ServerRequest
      * @link https://book.cakephp.org/4/en/controllers/request-response.html#request
      */
-    protected $request;
+    protected ServerRequest $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
@@ -124,14 +124,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @var \Cake\Http\Response
      * @link https://book.cakephp.org/4/en/controllers/request-response.html#response
      */
-    protected $response;
+    protected Response $response;
 
     /**
      * The class name to use for creating the response object.
      *
      * @var string
      */
-    protected $_responseClass = Response::class;
+    protected string $_responseClass = Response::class;
 
     /**
      * Settings for pagination.
@@ -142,7 +142,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @var array
      * @see \Cake\Controller\Component\PaginatorComponent
      */
-    public $paginate = [];
+    public array $paginate = [];
 
     /**
      * Set to true to automatically render the view
@@ -150,21 +150,21 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var bool
      */
-    protected $autoRender = true;
+    protected bool $autoRender = true;
 
     /**
      * Instance of ComponentRegistry used to create Components
      *
      * @var \Cake\Controller\ComponentRegistry|null
      */
-    protected $_components;
+    protected ?ComponentRegistry $_components = null;
 
     /**
      * Automatically set to the name of a plugin.
      *
      * @var string|null
      */
-    protected $plugin;
+    protected ?string $plugin = null;
 
     /**
      * Middlewares list.
@@ -172,7 +172,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @var array
      * @psalm-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
      */
-    protected $middlewares = [];
+    protected array $middlewares = [];
 
     /**
      * Constructor.
@@ -196,11 +196,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     ) {
         if ($name !== null) {
             $this->name = $name;
-        } elseif ($this->name === null && $request) {
-            $this->name = $request->getParam('controller');
+        } elseif (!$this->name && $request) {
+            $controller = $request->getParam('controller');
+            if ($controller) {
+                $this->name = $controller;
+            }
         }
 
-        if ($this->name === null) {
+        if (!$this->name) {
             [, $name] = namespaceSplit(static::class);
             $this->name = substr($name, 0, -10);
         }

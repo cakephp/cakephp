@@ -68,14 +68,14 @@ class Component implements EventListenerInterface
      *
      * @var \Cake\Controller\ComponentRegistry
      */
-    protected $_registry;
+    protected ComponentRegistry $_registry;
 
     /**
      * Other Components this component uses.
      *
      * @var array
      */
-    protected $components = [];
+    protected array $components = [];
 
     /**
      * Default config
@@ -84,14 +84,14 @@ class Component implements EventListenerInterface
      *
      * @var array
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * A component lookup table used to lazy load component objects.
      *
      * @var array
      */
-    protected $_componentMap = [];
+    protected array $_componentMap = [];
 
     /**
      * Constructor
