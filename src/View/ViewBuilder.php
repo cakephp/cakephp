@@ -556,6 +556,12 @@ class ViewBuilder implements JsonSerializable, Serializable
             throw new MissingViewException(['class' => $this->_className]);
         }
 
+        if (!empty($vars)) {
+            deprecationWarning(
+                'The $vars argument is deprecated. Use the setVar()/setVar() methods instead.'
+            );
+        }
+
         $data = [
             'name' => $this->_name,
             'templatePath' => $this->_templatePath,
