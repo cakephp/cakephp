@@ -69,7 +69,6 @@ trait ViewVarsTrait
 
         /** @psalm-suppress RedundantPropertyInitializationCheck */
         return $builder->build(
-            [],
             $this->request ?? null,
             $this->response ?? null,
             $this instanceof EventDispatcherInterface ? $this->getEventManager() : null
