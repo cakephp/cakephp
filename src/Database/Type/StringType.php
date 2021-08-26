@@ -19,6 +19,7 @@ namespace Cake\Database\Type;
 use Cake\Database\DriverInterface;
 use InvalidArgumentException;
 use PDO;
+use Stringable;
 
 /**
  * String type converter.
@@ -40,8 +41,8 @@ class StringType extends BaseType implements OptionalConvertInterface
             return $value;
         }
 
-        if (is_object($value) && method_exists($value, '__toString')) {
-            return $value->__toString();
+        if ($value instanceof Stringable) {
+            return (string)$value;
         }
 
         if (is_scalar($value)) {

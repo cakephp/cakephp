@@ -50,8 +50,8 @@ if (!function_exists('h')) {
 
             return $texts;
         } elseif (is_object($text)) {
-            if (method_exists($text, '__toString')) {
-                $text = $text->__toString();
+            if ($text instanceof Stringable) {
+                $text = (string)$text;
             } else {
                 $text = '(object)' . get_class($text);
             }

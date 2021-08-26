@@ -182,7 +182,7 @@ abstract class BaseLog extends AbstractLogger
                     continue;
                 }
 
-                if (method_exists($value, '__toString')) {
+                if ($value instanceof Stringable) {
                     $replacements['{' . $key . '}'] = (string)$value;
                     continue;
                 }

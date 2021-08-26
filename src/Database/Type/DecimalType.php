@@ -21,6 +21,7 @@ use Cake\I18n\Number;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
+use Stringable;
 
 /**
  * Decimal type converter.
@@ -62,12 +63,12 @@ class DecimalType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
-        if (
-            is_object($value)
-            && method_exists($value, '__toString')
-            && is_numeric(strval($value))
-        ) {
-            return strval($value);
+        if ($value instanceof Stringable) {
+            $str = (string)$value;
+
+            if (is_numeric($str)) {
+                return $str;
+            }
         }
 
         throw new InvalidArgumentException(sprintf(
