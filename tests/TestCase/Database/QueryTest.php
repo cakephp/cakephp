@@ -2850,7 +2850,7 @@ class QueryTest extends TestCase
             'DELETE FROM <authors> WHERE \(' .
                 '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
                     '<name> not in \(:c1,:c2\) AND \(' .
-                        '\(<name>\) = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
+                        '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
                     '\)' .
                 '\)' .
             '\)',
@@ -2972,7 +2972,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
 
         $this->assertQuotedQuery(
-            'UPDATE <comments> SET <article_id> = \(<user_id>\) WHERE <id> = :',
+            'UPDATE <comments> SET <article_id> = <user_id> WHERE <id> = :',
             $result,
             !$this->autoQuote
         );
@@ -3070,7 +3070,7 @@ class QueryTest extends TestCase
             'UPDATE <authors> SET <name> = :c0 WHERE \(' .
                 '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
                     '<name> not in \(:c2,:c3\) AND \(' .
-                        '\(<name>\) = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
+                        '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
                     '\)' .
                 '\)' .
             '\)',
