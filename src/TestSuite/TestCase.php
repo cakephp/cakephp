@@ -75,18 +75,6 @@ abstract class TestCase extends BaseTestCase
     public $autoFixtures = true;
 
     /**
-     * Control table create/drops on each test method.
-     *
-     * If true, tables will still be dropped at the
-     * end of each test runner execution.
-     *
-     * @var bool
-     * @deprecated 4.3.0 dropTables is only used by deprecated fixture features.
-     *   This property will be removed in 5.0
-     */
-    public $dropTables = false;
-
-    /**
      * The classname for the fixture state reset strategy.
      *
      * If null, TruncationResetStrategy will be used.
@@ -232,9 +220,6 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         $this->fixtureManager = FixtureLoader::getInstance();
         if ($this->fixtureManager) {
-            if ($this->dropTables) {
-                deprecationWarning('`$dropTables` is deprecated and will be removed in 5.0.');
-            }
             $this->fixtureManager->setupTest($this);
         }
 
@@ -291,7 +276,7 @@ abstract class TestCase extends BaseTestCase
 
         $args = func_get_args();
         foreach ($args as $class) {
-            $this->fixtureManager->loadSingle($class, null, $this->dropTables);
+            $this->fixtureManager->loadSingle($class, null);
         }
 
         if (empty($args)) {

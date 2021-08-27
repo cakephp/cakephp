@@ -22,7 +22,7 @@ use Cake\Datasource\ConnectionInterface;
  * Defines the interface for a fixture that needs to manage constraints.
  *
  * If an implementation of `Cake\Datasource\FixtureInterface` also implements
- * this interface, the FixtureManager will use these methods to manage
+ * this interface, the FixtureDataManager will use these methods to manage
  * a fixtures constraints.
  */
 interface ConstraintsInterface
