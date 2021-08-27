@@ -2983,6 +2983,41 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests update with subquery that references itself
+     */
+    public function testUpdateSubquery(): void
+    {
+        $this->skipIf($this->connection->getDriver() instanceof Mysql);
+
+        $this->loadFixtures('Comments');
+
+        $subquery = new Query($this->connection);
+        $subquery
+            ->select('created')
+            ->from(['c' => 'comments'])
+            ->where(['c.id' => new IdentifierExpression('comments.id')]);
+
+        $query = new Query($this->connection);
+        $query->update('comments')
+            ->set('updated', $subquery);
+
+        $this->assertEqualsSql(
+            'UPDATE comments SET updated = (SELECT created FROM comments c WHERE c.id = comments.id)',
+            $query->sql(new ValueBinder())
+        );
+
+        $result = $query->execute();
+        $this->assertCount(6, $result);
+        $result->closeCursor();
+
+        $result = (new Query($this->connection))->select(['created', 'updated'])->from('comments')->execute();
+        foreach ($result->fetchAll('assoc') as $row) {
+            $this->assertSame($row['created'], $row['updated']);
+        }
+        $result->closeCursor();
+    }
+
+    /**
      * Test update with array fields and types.
      */
     public function testUpdateArrayFields(): void
