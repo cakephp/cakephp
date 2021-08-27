@@ -2850,7 +2850,7 @@ class QueryTest extends TestCase
             'DELETE FROM <authors> WHERE \(' .
                 '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
                     '<name> not in \(:c1,:c2\) AND \(' .
-                        '\(<name>\) = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
+                        '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
                     '\)' .
                 '\)' .
             '\)',
@@ -2961,13 +2961,48 @@ class QueryTest extends TestCase
         $result = $query->sql();
 
         $this->assertQuotedQuery(
-            'UPDATE <comments> SET <article_id> = \(<user_id>\) WHERE <id> = :',
+            'UPDATE <comments> SET <article_id> = <user_id> WHERE <id> = :',
             $result,
             !$this->autoQuote
         );
 
         $result = $query->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests update with subquery that references itself
+     */
+    public function testUpdateSubquery(): void
+    {
+        $this->skipIf($this->connection->getDriver() instanceof Mysql);
+
+        $this->loadFixtures('Comments');
+
+        $subquery = new Query($this->connection);
+        $subquery
+            ->select('created')
+            ->from(['c' => 'comments'])
+            ->where(['c.id' => new IdentifierExpression('comments.id')]);
+
+        $query = new Query($this->connection);
+        $query->update('comments')
+            ->set('updated', $subquery);
+
+        $this->assertEqualsSql(
+            'UPDATE comments SET updated = (SELECT created FROM comments c WHERE c.id = comments.id)',
+            $query->sql(new ValueBinder())
+        );
+
+        $result = $query->execute();
+        $this->assertCount(6, $result);
+        $result->closeCursor();
+
+        $result = (new Query($this->connection))->select(['created', 'updated'])->from('comments')->execute();
+        foreach ($result->fetchAll('assoc') as $row) {
+            $this->assertSame($row['created'], $row['updated']);
+        }
         $result->closeCursor();
     }
 
@@ -3059,7 +3094,7 @@ class QueryTest extends TestCase
             'UPDATE <authors> SET <name> = :c0 WHERE \(' .
                 '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
                     '<name> not in \(:c2,:c3\) AND \(' .
-                        '\(<name>\) = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
+                        '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
                     '\)' .
                 '\)' .
             '\)',

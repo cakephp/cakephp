@@ -150,7 +150,10 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
             $field = $field->sql($binder);
         }
 
-        if ($this->_value instanceof ExpressionInterface) {
+        if ($this->_value instanceof IdentifierExpression) {
+            $template = '%s %s %s';
+            $value = $this->_value->sql($binder);
+        } elseif ($this->_value instanceof ExpressionInterface) {
             $template = '%s %s (%s)';
             $value = $this->_value->sql($binder);
         } else {
@@ -210,7 +213,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     {
         $template = '%s ';
 
-        if ($this->_field instanceof ExpressionInterface) {
+        if ($this->_field instanceof ExpressionInterface && !$this->_field instanceof IdentifierExpression) {
             $template = '(%s) ';
         }
 

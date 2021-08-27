@@ -233,11 +233,12 @@
     </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/TestCase.php">
-    <DeprecatedProperty occurrences="5">
+    <DeprecatedProperty occurrences="6">
       <code>$this-&gt;autoFixtures</code>
       <code>$this-&gt;autoFixtures</code>
       <code>$this-&gt;autoFixtures</code>
       <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;dropTables</code>
       <code>$this-&gt;dropTables</code>
     </DeprecatedProperty>
   </file>

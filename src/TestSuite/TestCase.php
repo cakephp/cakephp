@@ -232,6 +232,9 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         $this->fixtureManager = FixtureLoader::getInstance();
         if ($this->fixtureManager) {
+            if ($this->dropTables) {
+                deprecationWarning('`$dropTables` is deprecated and will be removed in 5.0.');
+            }
             $this->fixtureManager->setupTest($this);
         }
 
