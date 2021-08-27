@@ -38,11 +38,11 @@ class SessionTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
-        unset($_SESSION);
         parent::tearDown();
         $this->clearPlugins();
+        unset($_SESSION);
     }
 
     /**

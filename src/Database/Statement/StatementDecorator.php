@@ -21,6 +21,7 @@ use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Countable;
 use IteratorAggregate;
+use ReturnTypeWillChange;
 use RuntimeException;
 
 /**
@@ -285,6 +286,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return \Cake\Database\StatementInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
+    #[ReturnTypeWillChange]
     public function getIterator(): StatementInterface
     {
         if (!$this->_hasExecuted) {
