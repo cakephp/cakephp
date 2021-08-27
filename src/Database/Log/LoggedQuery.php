@@ -18,6 +18,7 @@ namespace Cake\Database\Log;
 
 use Cake\Database\Driver\Sqlserver;
 use JsonSerializable;
+use Stringable;
 
 /**
  * Contains a query string, the params used to executed it, time taken to do it
@@ -25,7 +26,7 @@ use JsonSerializable;
  *
  * @internal
  */
-class LoggedQuery implements JsonSerializable
+class LoggedQuery implements JsonSerializable, Stringable
 {
     /**
      * Driver executing the query

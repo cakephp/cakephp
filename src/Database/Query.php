@@ -30,6 +30,7 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use ReturnTypeWillChange;
 use RuntimeException;
+use Stringable;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -37,7 +38,7 @@ use RuntimeException;
  * for dynamically constructing each query part, execute it and transform it
  * to a specific SQL dialect.
  */
-class Query implements ExpressionInterface, IteratorAggregate
+class Query implements ExpressionInterface, IteratorAggregate, Stringable
 {
     use TypeMapTrait;
 

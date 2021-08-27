@@ -32,11 +32,12 @@ use Error;
 use Exception;
 use ReflectionException;
 use ReflectionMethod;
+use Stringable;
 
 /**
  * Cell base.
  */
-abstract class Cell implements EventDispatcherInterface
+abstract class Cell implements EventDispatcherInterface, Stringable
 {
     use EventDispatcherTrait;
     use LocatorAwareTrait;
