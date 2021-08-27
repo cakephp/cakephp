@@ -558,7 +558,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
         if (!empty($vars)) {
             deprecationWarning(
-                'The $vars argument is deprecated. Use the setVar()/setVar() methods instead.'
+                'The $vars argument is deprecated. Use the setVar()/setVars() methods instead.'
             );
         }
 
