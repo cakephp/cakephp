@@ -53,7 +53,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
     {
         $f = (new AggregateExpression('MyFunction'))->filter(['this' => new IdentifierExpression('that')]);
         $this->assertEqualsSql(
-            'MyFunction() FILTER (WHERE this = (that))',
+            'MyFunction() FILTER (WHERE this = that)',
             $f->sql(new ValueBinder())
         );
 
@@ -61,13 +61,13 @@ class AggregateExpressionTest extends FunctionExpressionTest
             return $q->add(['this2' => new IdentifierExpression('that2')]);
         });
         $this->assertEqualsSql(
-            'MyFunction() FILTER (WHERE (this = (that) AND this2 = (that2)))',
+            'MyFunction() FILTER (WHERE (this = that AND this2 = that2))',
             $f->sql(new ValueBinder())
         );
 
         $f->over();
         $this->assertEqualsSql(
-            'MyFunction() FILTER (WHERE (this = (that) AND this2 = (that2))) OVER ()',
+            'MyFunction() FILTER (WHERE (this = that AND this2 = that2)) OVER ()',
             $f->sql(new ValueBinder())
         );
     }
