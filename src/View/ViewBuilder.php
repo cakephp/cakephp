@@ -530,7 +530,6 @@ class ViewBuilder implements JsonSerializable
      * If className() is null, App\View\AppView will be used.
      * If that class does not exist, then Cake\View\View will be used.
      *
-     * @param array $vars The view variables/context to use.
      * @param \Cake\Http\ServerRequest|null $request The request to use.
      * @param \Cake\Http\Response|null $response The response to use.
      * @param \Cake\Event\EventManagerInterface|null $events The event manager to use.
@@ -538,7 +537,6 @@ class ViewBuilder implements JsonSerializable
      * @throws \Cake\View\Exception\MissingViewException
      */
     public function build(
-        array $vars = [],
         ?ServerRequest $request = null,
         ?Response $response = null,
         ?EventManagerInterface $events = null
@@ -555,12 +553,6 @@ class ViewBuilder implements JsonSerializable
             throw new MissingViewException(['class' => $this->_className]);
         }
 
-        if (!empty($vars)) {
-            deprecationWarning(
-                'The $vars argument is deprecated. Use the setVar()/setVars() methods instead.'
-            );
-        }
-
         $data = [
             'name' => $this->_name,
             'templatePath' => $this->_templatePath,
@@ -571,7 +563,7 @@ class ViewBuilder implements JsonSerializable
             'autoLayout' => $this->_autoLayout,
             'layoutPath' => $this->_layoutPath,
             'helpers' => $this->_helpers,
-            'viewVars' => $vars + $this->_vars,
+            'viewVars' => $this->_vars,
         ];
         $data += $this->_options;
 

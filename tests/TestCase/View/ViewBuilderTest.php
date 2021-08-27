@@ -189,44 +189,40 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildComplete(): void
     {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-            $response = new Response();
-            $events = new EventManager();
+        $request = new ServerRequest();
+        $response = new Response();
+        $events = new EventManager();
 
-            $builder = new ViewBuilder();
-            $builder->setName('Articles')
-                ->setClassName('Ajax')
-                ->setTemplate('edit')
-                ->setLayout('default')
-                ->setTemplatePath('Articles/')
-                ->setHelpers(['Form', 'Html'])
-                ->setLayoutPath('Admin/')
-                ->setTheme('TestTheme')
-                ->setPlugin('TestPlugin')
-                ->setVars(['foo' => 'bar', 'x' => 'old']);
-            $view = $builder->build(
-                ['one' => 'value', 'x' => 'new'],
-                $request,
-                $response,
-                $events
-            );
-            $this->assertInstanceOf('Cake\View\AjaxView', $view);
-            $this->assertSame('edit', $view->getTemplate());
-            $this->assertSame('default', $view->getLayout());
-            $this->assertSame('Articles/', $view->getTemplatePath());
-            $this->assertSame('Admin/', $view->getLayoutPath());
-            $this->assertSame('TestPlugin', $view->getPlugin());
-            $this->assertSame('TestTheme', $view->getTheme());
-            $this->assertSame($request, $view->getRequest());
-            $this->assertInstanceOf(Response::class, $view->getResponse());
-            $this->assertSame($events, $view->getEventManager());
-            $this->assertSame(['one', 'x', 'foo'], $view->getVars());
-            $this->assertSame('value', $view->get('one'));
-            $this->assertSame('bar', $view->get('foo'));
-            $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
-            $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
-        });
+        $builder = new ViewBuilder();
+        $builder->setName('Articles')
+            ->setClassName('Ajax')
+            ->setTemplate('edit')
+            ->setLayout('default')
+            ->setTemplatePath('Articles/')
+            ->setHelpers(['Form', 'Html'])
+            ->setLayoutPath('Admin/')
+            ->setTheme('TestTheme')
+            ->setPlugin('TestPlugin')
+            ->setVars(['foo' => 'bar', 'x' => 'old']);
+        $view = $builder->build(
+            $request,
+            $response,
+            $events
+        );
+        $this->assertInstanceOf('Cake\View\AjaxView', $view);
+        $this->assertSame('edit', $view->getTemplate());
+        $this->assertSame('default', $view->getLayout());
+        $this->assertSame('Articles/', $view->getTemplatePath());
+        $this->assertSame('Admin/', $view->getLayoutPath());
+        $this->assertSame('TestPlugin', $view->getPlugin());
+        $this->assertSame('TestTheme', $view->getTheme());
+        $this->assertSame($request, $view->getRequest());
+        $this->assertInstanceOf(Response::class, $view->getResponse());
+        $this->assertSame($events, $view->getEventManager());
+        $this->assertSame(['foo', 'x'], $view->getVars());
+        $this->assertSame('bar', $view->get('foo'));
+        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
+        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
     }
 
     /**
