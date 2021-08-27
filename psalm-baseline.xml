@@ -222,19 +222,6 @@
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
-  <file src="src/TestSuite/Fixture/FixtureDataManager.php">
-    <DeprecatedProperty occurrences="1">
-      <code>$test-&gt;autoFixtures</code>
-    </DeprecatedProperty>
-  </file>
-  <file src="src/TestSuite/TestCase.php">
-    <DeprecatedProperty occurrences="4">
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;autoFixtures</code>
-    </DeprecatedProperty>
-  </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">
       <code>BaseTestSuite</code>
