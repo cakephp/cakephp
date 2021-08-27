@@ -91,6 +91,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var string|null
      * @psalm-var class-string|null
+     * @experimental
      */
     protected $stateResetStrategy;
 

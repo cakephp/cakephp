@@ -27,6 +27,8 @@ use RuntimeException;
  * This strategy aims to gives good performance at the cost
  * of not being able to query data in fixtures from another
  * process.
+ *
+ * @experimental
  */
 class TransactionResetStrategy implements ResetStrategyInterface
 {
