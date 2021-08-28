@@ -28,19 +28,11 @@ use DateTimeZone;
 class DateTest extends TestCase
 {
     /**
-     * Backup the locale property
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * setup
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->locale = Date::getDefaultLocale();
 
         Configure::write('Error.ignoredDeprecationPaths', [
             'src/I18n/DateFormatTrait.php',
@@ -54,8 +46,8 @@ class DateTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Date::setDefaultLocale($this->locale);
-        FrozenDate::setDefaultLocale($this->locale);
+        Date::setDefaultLocale(null);
+        FrozenDate::setDefaultLocale(null);
         date_default_timezone_set('UTC');
     }
 
