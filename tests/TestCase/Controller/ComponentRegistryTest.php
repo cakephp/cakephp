@@ -20,6 +20,7 @@ use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\MissingComponentException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -117,7 +118,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadMissingComponent(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectException(MissingComponentException::class);
         $this->Components->load('ThisComponentShouldAlwaysBeMissing');
     }
 
@@ -209,7 +210,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectException(MissingComponentException::class);
         $this->expectExceptionMessage('Component class FooComponent could not be found.');
         $this->Components->unload('Foo');
     }

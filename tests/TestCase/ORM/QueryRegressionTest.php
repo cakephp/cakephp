@@ -16,13 +16,18 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Contains regression test for the Query builder
@@ -148,7 +153,7 @@ class QueryRegressionTest extends TestCase
             'finder' => 'list',
         ]);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"_joinData" is missing from the belongsToMany results');
         $table->find()->contain('Tags')->toArray();
     }
@@ -621,7 +626,7 @@ class QueryRegressionTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $this->skipIf(
-            $tags->getConnection()->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
+            $tags->getConnection()->getDriver() instanceof Sqlserver,
             'SQL server is temporarily weird in this test, will investigate later'
         );
         $tags = $this->getTableLocator()->get('Tags');
@@ -960,7 +965,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testQueryNotFatalError(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->loadFixtures('Comments');
         $comments = $this->getTableLocator()->get('Comments');
         $comments->find()->contain('Deprs')->all();
@@ -1234,7 +1239,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->contain(['Tags' => function ($q) {
-                return $q->where(['SpecialTags.highlighted_time >' => new \Cake\I18n\DateTime('2014-06-01 00:00:00')]);
+                return $q->where(['SpecialTags.highlighted_time >' => new DateTime('2014-06-01 00:00:00')]);
             }])
             ->where(['Articles.id' => 2]);
 
@@ -1257,7 +1262,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->contain('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
+                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1284,7 +1289,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->contain('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
+                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1311,7 +1316,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->matching('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
+                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1321,7 +1326,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->matching('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
+                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1343,7 +1348,7 @@ class QueryRegressionTest extends TestCase
                 return $q ->where(['ArticlesTags.tag_id !=' => 3 ]);
             })
             ->where([
-                'Tags.created <' => new \DateTime('2016-01-02 00:00:00'),
+                'Tags.created <' => new NativeDateTime('2016-01-02 00:00:00'),
             ]);
 
         $result = $query->first();
@@ -1371,7 +1376,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->innerJoinWith('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
+                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1381,7 +1386,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->innerJoinWith('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
+                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1408,7 +1413,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->leftJoinWith('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
+                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1418,7 +1423,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->leftJoinWith('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
+                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1610,7 +1615,7 @@ class QueryRegressionTest extends TestCase
 
         $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             return $query->formatResults(function ($results) {
-                return $results->map(function (\Cake\ORM\Entity $tag) {
+                return $results->map(function (Entity $tag) {
                     $tag->name .= ' - visited';
 
                     return $tag;

@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
+use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
+use Cake\View\Exception\MissingCellException;
 use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
@@ -282,7 +284,7 @@ class CellTest extends TestCase
      */
     public function testNonExistentCell(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingCellException::class);
+        $this->expectException(MissingCellException::class);
         $cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
         $cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
     }
@@ -292,7 +294,7 @@ class CellTest extends TestCase
      */
     public function testCellMissingMethod(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.');
         $cell = $this->View->cell('Articles::nope');
         $cell->render();

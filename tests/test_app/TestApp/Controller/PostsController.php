@@ -18,6 +18,7 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
+use OutOfBoundsException;
 
 /**
  * PostsController class
@@ -198,6 +199,6 @@ class PostsController extends AppController
     public function throw_exception()
     {
         $this->Flash->error('Error 1');
-        throw new \OutOfBoundsException('oh no!');
+        throw new OutOfBoundsException('oh no!');
     }
 }

@@ -43,7 +43,7 @@ class TestCaseTest extends TestCase
      */
     public function testEventFiredMisconfiguredEventList(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFired('my.event', $manager);
     }
@@ -53,7 +53,7 @@ class TestCaseTest extends TestCase
      */
     public function testEventFiredWithMisconfiguredEventList(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFiredWith('my.event', 'some', 'data', $manager);
     }

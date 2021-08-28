@@ -170,7 +170,7 @@ class CookieCollectionTest extends TestCase
      */
     public function testConstructorWithInvalidCookieObjects(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1');
         $array = [
             new Cookie('one', 'one'),

@@ -19,6 +19,12 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 use ArrayObject;
 use Cake\Collection\Iterator\SortIterator;
 use Cake\TestSuite\TestCase;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
+use const SORT_ASC;
+use const SORT_DESC;
+use const SORT_NUMERIC;
 
 /**
  * SortIterator Test
@@ -75,7 +81,7 @@ class SortIteratorTest extends TestCase
         $callback = function ($a) {
             return $a['foo'];
         };
-        $sorted = new SortIterator($items, $callback, \SORT_DESC, \SORT_NUMERIC);
+        $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NUMERIC);
         $expected = [
             ['foo' => 13, 'bar' => 'a'],
             ['foo' => 10, 'bar' => 'a'],
@@ -84,7 +90,7 @@ class SortIteratorTest extends TestCase
         ];
         $this->assertEquals($expected, $sorted->toList());
 
-        $sorted = new SortIterator($items, $callback, \SORT_ASC, \SORT_NUMERIC);
+        $sorted = new SortIterator($items, $callback, SORT_ASC, SORT_NUMERIC);
         $expected = [
             ['foo' => 1, 'bar' => 'a'],
             ['foo' => 2, 'bar' => 'a'],
@@ -186,34 +192,34 @@ class SortIteratorTest extends TestCase
     public function testSortDateTime(): void
     {
         $items = new ArrayObject([
-            new \DateTime('2014-07-21'),
-            new \DateTime('2015-06-30'),
-            new \DateTimeImmutable('2013-08-12'),
+            new DateTime('2014-07-21'),
+            new DateTime('2015-06-30'),
+            new DateTimeImmutable('2013-08-12'),
         ]);
 
         $callback = function ($a) {
-            return $a->add(new \DateInterval('P1Y'));
+            return $a->add(new DateInterval('P1Y'));
         };
         $sorted = new SortIterator($items, $callback);
         $expected = [
-            new \DateTime('2016-06-30'),
-            new \DateTime('2015-07-21'),
-            new \DateTimeImmutable('2013-08-12'),
+            new DateTime('2016-06-30'),
+            new DateTime('2015-07-21'),
+            new DateTimeImmutable('2013-08-12'),
 
         ];
         $this->assertEquals($expected, $sorted->toList());
 
         $items = new ArrayObject([
-            new \DateTime('2014-07-21'),
-            new \DateTime('2015-06-30'),
-            new \DateTimeImmutable('2013-08-12'),
+            new DateTime('2014-07-21'),
+            new DateTime('2015-06-30'),
+            new DateTimeImmutable('2013-08-12'),
         ]);
 
         $sorted = new SortIterator($items, $callback, SORT_ASC);
         $expected = [
-            new \DateTimeImmutable('2013-08-12'),
-            new \DateTime('2015-07-21'),
-            new \DateTime('2016-06-30'),
+            new DateTimeImmutable('2013-08-12'),
+            new DateTime('2015-07-21'),
+            new DateTime('2016-06-30'),
         ];
         $this->assertEquals($expected, $sorted->toList());
     }

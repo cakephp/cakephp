@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use stdClass;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
 
@@ -1477,7 +1479,7 @@ class EntityTest extends TestCase
      */
     public function testEmptyProperties(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $entity = new Entity();
         $entity->get('');
     }
@@ -1571,7 +1573,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'array' => ['foo' => 'bar'],
             'emptyArray' => [],
-            'object' => new \stdClass(),
+            'object' => new stdClass(),
             'string' => 'string',
             'stringZero' => '0',
             'emptyString' => '',
@@ -1603,7 +1605,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'array' => ['foo' => 'bar'],
             'emptyArray' => [],
-            'object' => new \stdClass(),
+            'object' => new stdClass(),
             'string' => 'string',
             'stringZero' => '0',
             'emptyString' => '',

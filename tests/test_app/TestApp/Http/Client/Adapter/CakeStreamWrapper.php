@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Http\Client\Adapter;
 
 use ArrayAccess;
+use Exception;
 use ReturnTypeWillChange;
 
 class CakeStreamWrapper implements ArrayAccess
@@ -21,7 +22,7 @@ class CakeStreamWrapper implements ArrayAccess
     public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
         if ($path === 'http://throw_exception/') {
-            throw new \Exception();
+            throw new Exception();
         }
 
         $query = parse_url($path, PHP_URL_QUERY);

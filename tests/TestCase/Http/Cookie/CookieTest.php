@@ -19,6 +19,7 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\TestSuite\TestCase;
 use DateTimeInterface;
+use InvalidArgumentException;
 
 /**
  * HTTP cookies test.
@@ -49,7 +50,7 @@ class CookieTest extends TestCase
      */
     public function testValidateNameInvalidChars(string $name): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('contains invalid characters.');
         new Cookie($name, 'value');
     }
@@ -59,7 +60,7 @@ class CookieTest extends TestCase
      */
     public function testValidateNameEmptyName(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The cookie name cannot be empty.');
         new Cookie('', '');
     }
@@ -154,7 +155,7 @@ class CookieTest extends TestCase
      */
     public function testWithSameSiteException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
@@ -458,7 +459,7 @@ class CookieTest extends TestCase
 
     public function testInvalidExpiresForDefaults(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid type `array` for expire');
 
         Cookie::setDefaults(['expires' => ['ompalompa']]);
@@ -467,7 +468,7 @@ class CookieTest extends TestCase
 
     public function testInvalidSameSiteForDefaults(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
 
         Cookie::setDefaults(['samesite' => 'ompalompa']);

@@ -16,8 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
+use RuntimeException;
+use stdClass;
 
 class StringTemplateTest extends TestCase
 {
@@ -151,7 +154,7 @@ class StringTemplateTest extends TestCase
      */
     public function testFormatMissingTemplate(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot find template named \'missing\'');
         $templates = [
             'text' => '{{text}}',
@@ -188,7 +191,7 @@ class StringTemplateTest extends TestCase
      */
     public function testLoadErrorNoFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Could not load configuration file');
         $this->template->load('no_such_file');
     }
@@ -329,7 +332,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->addClass(false, 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass(new \stdClass(), 'new_class');
+        $result = $this->template->addClass(new stdClass(), 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
     }
 

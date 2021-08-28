@@ -21,6 +21,7 @@ use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Tests the Cake\Event\Event class functionality
@@ -94,7 +95,7 @@ class ConditionDecoratorTest extends TestCase
      */
     public function testCallableRuntimeException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cake\Event\Decorator\ConditionDecorator the `if` condition is not a callable!');
         $callable = function (EventInterface $event) {
             return 'success';

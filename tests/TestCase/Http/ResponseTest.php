@@ -27,6 +27,10 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
+use DateTimeImmutable;
+use DateTimeZone;
+use InvalidArgumentException;
 use Laminas\Diactoros\Stream;
 
 /**
@@ -196,7 +200,7 @@ class ResponseTest extends TestCase
      */
     public function testWithTypeInvalidType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('"beans" is an invalid content type');
         $response = new Response();
         $response->withType('beans');
@@ -427,19 +431,19 @@ class ResponseTest extends TestCase
     public function testWithExpires(): void
     {
         $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
 
         $new = $response->withExpires($now);
         $this->assertFalse($response->hasHeader('Expires'));
 
-        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $now->setTimeZone(new DateTimeZone('UTC'));
         $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
 
         $now = time();
         $new = $response->withExpires($now);
         $this->assertSame(gmdate(DATE_RFC7231), $new->getHeaderLine('Expires'));
 
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withExpires('+1 day');
         $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
     }
@@ -450,22 +454,22 @@ class ResponseTest extends TestCase
     public function testWithModified(): void
     {
         $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
         $new = $response->withModified($now);
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
-        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $now->setTimeZone(new DateTimeZone('UTC'));
         $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
 
         $now = time();
         $new = $response->withModified($now);
         $this->assertSame(gmdate(DATE_RFC7231, $now), $new->getHeaderLine('Last-Modified'));
 
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
         $new = $response->withModified($now);
         $this->assertSame(gmdate(DATE_RFC7231, $now->getTimestamp()), $new->getHeaderLine('Last-Modified'));
 
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withModified('+1 day');
         $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
     }
@@ -775,7 +779,7 @@ class ResponseTest extends TestCase
      */
     public function testWithDuplicateCookie(): void
     {
-        $expiry = new \DateTimeImmutable('+24 hours');
+        $expiry = new DateTimeImmutable('+24 hours');
 
         $response = new Response();
         $cookie = new Cookie(
@@ -845,7 +849,7 @@ class ResponseTest extends TestCase
                 'path' => '/custompath/',
                 'secure' => true,
                 'httponly' => true,
-                'expires' => new \DateTimeImmutable('+14 days'),
+                'expires' => new DateTimeImmutable('+14 days'),
             ],
         ];
 
@@ -990,7 +994,7 @@ class ResponseTest extends TestCase
      */
     public function testWithFileNotFound(): void
     {
-        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('The requested file /some/missing/folder/file.jpg was not found');
 
         $response = new Response();
@@ -1004,7 +1008,7 @@ class ResponseTest extends TestCase
     {
         Configure::write('debug', 0);
 
-        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('The requested file was not found');
         $response = new Response();
         $response->withFile('/some/missing/folder/file.jpg');
@@ -1362,7 +1366,7 @@ class ResponseTest extends TestCase
      */
     public function testWithStatusInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
         $response = new Response();
         $response->withStatus(1001);

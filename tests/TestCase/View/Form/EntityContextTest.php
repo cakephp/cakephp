@@ -23,6 +23,8 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use RuntimeException;
+use stdClass;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
 use TestApp\Model\Entity\Tag;
@@ -140,9 +142,9 @@ class EntityContextTest extends TestCase
      */
     public function testInvalidTable(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to find table class for current entity');
-        $row = new \stdClass();
+        $row = new stdClass();
         $context = new EntityContext([
             'entity' => $row,
         ]);
@@ -153,7 +155,7 @@ class EntityContextTest extends TestCase
      */
     public function testDefaultEntityError(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to find table class for current entity');
         $context = new EntityContext([
             'entity' => new Entity(),

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\I18n;
 use Cake\I18n\Date;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
+use IntlDateFormatter;
 
 /**
  * DateTest class
@@ -72,7 +73,7 @@ class DateTest extends TestCase
         $expected = '1/14/10';
         $this->assertSame($expected, $result);
 
-        $format = [\IntlDateFormatter::NONE, \IntlDateFormatter::SHORT];
+        $format = [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
         $result = $time->i18nFormat($format);
         $expected = '12:00 AM';
         $this->assertSame($expected, $result);
@@ -82,16 +83,16 @@ class DateTest extends TestCase
         $this->assertSame($expected, $result);
 
         Date::setDefaultLocale('fr-FR');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
         $expected = 'jeudi 14 janvier 2010 00:00:00';
         $this->assertStringStartsWith($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'es-ES');
         $this->assertStringContainsString('14 de enero de 2010', $result, 'Default locale should not be used');
 
         $time = new Date('2014-01-01T00:00:00Z');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-US');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'en-US');
         $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM';
         $this->assertStringStartsWith($expected, $result);
     }

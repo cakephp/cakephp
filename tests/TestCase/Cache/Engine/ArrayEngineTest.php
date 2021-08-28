@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Cache\Engine;
 
+use ArrayObject;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ArrayEngine;
 use Cake\Cache\InvalidArgumentException;
@@ -262,7 +263,7 @@ class ArrayEngineTest extends TestCase
      */
     public function testWriteManyTraversable(): void
     {
-        $data = new \ArrayObject([
+        $data = new ArrayObject([
             'a' => 1,
             'b' => 'foo',
         ]);

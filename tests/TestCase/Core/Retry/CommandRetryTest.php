@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Core\Retry;
 use Cake\Core\Retry\CommandRetry;
 use Cake\TestSuite\TestCase;
 use Exception;
+use TestApp\Database\Retry\TestRetryStrategy;
 
 /**
  * Tests for the CommandRetry class
@@ -39,7 +40,7 @@ class CommandRetryTest extends TestCase
             return $count;
         };
 
-        $strategy = new \TestApp\Database\Retry\TestRetryStrategy(true);
+        $strategy = new TestRetryStrategy(true);
         $retry = new CommandRetry($strategy, 2);
         $this->assertSame(2, $retry->run($action));
     }
@@ -59,7 +60,7 @@ class CommandRetryTest extends TestCase
             return $count;
         };
 
-        $strategy = new \TestApp\Database\Retry\TestRetryStrategy(true);
+        $strategy = new TestRetryStrategy(true);
         $retry = new CommandRetry($strategy, 1);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('this is failing');
@@ -75,7 +76,7 @@ class CommandRetryTest extends TestCase
             throw new Exception('this is failing');
         };
 
-        $strategy = new \TestApp\Database\Retry\TestRetryStrategy(false);
+        $strategy = new TestRetryStrategy(false);
         $retry = new CommandRetry($strategy, 2);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('this is failing');

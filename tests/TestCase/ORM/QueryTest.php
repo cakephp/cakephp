@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Cache\Engine\FileEngine;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
@@ -33,6 +34,7 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use ReflectionProperty;
 use RuntimeException;
 
@@ -1798,7 +1800,7 @@ class QueryTest extends TestCase
      */
     public function testCacheErrorOnNonSelect(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
         $query->insert(['test']);
@@ -1866,7 +1868,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = new Query($this->connection, $table);
-        $cacher = new \Cake\Cache\Engine\FileEngine();
+        $cacher = new FileEngine();
         $cacher->init();
 
         $query
@@ -1957,7 +1959,7 @@ class QueryTest extends TestCase
      */
     public function testContainWithQueryBuilderHasManyError(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
         $query = new Query($this->connection, $table);
@@ -3425,7 +3427,7 @@ class QueryTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results->toList());
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `Tags` association is not defined on `Articles`.');
         $table
             ->find()

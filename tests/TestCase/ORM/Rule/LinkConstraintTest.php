@@ -25,6 +25,9 @@ use Cake\ORM\Query;
 use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use RuntimeException;
+use stdClass;
 
 /**
  * Tests the LinkConstraint rule.
@@ -84,7 +87,7 @@ class LinkConstraintTest extends TestCase
      */
     public function invalidConstructorArgumentOneDataProvider(): array
     {
-        return [[null, 'null'], [1, 'int'], [[], 'array'], [new \stdClass(), 'stdClass']];
+        return [[null, 'null'], [1, 'int'], [[], 'array'], [new stdClass(), 'stdClass']];
     }
 
     /**
@@ -92,7 +95,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testInvalidConstructorArgumentTwo(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.');
 
         new LinkConstraint('Association', 'invalid');
@@ -103,7 +106,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testNonExistentAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `NonExistent` association is not defined on `Articles`.');
 
         $Articles = $this->getTableLocator()->get('Articles');
@@ -122,7 +125,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testMissingPrimaryKeyValues(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'LinkConstraint rule on `Articles` requires all primary key values for building the counting ' .
             'conditions, expected values for `(id, nonexistent)`, got `(1, )`.'
@@ -150,7 +153,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testNonMatchingKeyFields(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The number of fields is expected to match the number of values, got 0 field(s) and 1 value(s).'
         );
@@ -185,7 +188,7 @@ class LinkConstraintTest extends TestCase
     {
         return [
             [['repository' => null]],
-            [['repository' => new \stdClass()]],
+            [['repository' => new stdClass()]],
             [[]],
         ];
     }
@@ -198,7 +201,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testInvalidRepository($options): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`');
 
         $Articles = $this->getMockForModel('Articles', ['buildRules'], ['table' => 'articles']);

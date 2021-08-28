@@ -400,7 +400,7 @@ class AssociationCollectionTest extends TestCase
      */
     public function testErrorOnUnknownAlias(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot save Profiles, it is not associated to Users');
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->onlyMethods(['save'])

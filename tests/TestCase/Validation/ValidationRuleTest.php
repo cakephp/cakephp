@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;
+use InvalidArgumentException;
 
 /**
  * ValidationRuleTest
@@ -90,7 +91,7 @@ class ValidationRuleTest extends TestCase
      */
     public function testCustomMethodMissingError(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to call method "totallyMissing" in "default" provider for field "test"');
         $def = ['rule' => ['totallyMissing']];
         $data = 'some data';

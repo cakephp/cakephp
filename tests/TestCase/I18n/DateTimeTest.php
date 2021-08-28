@@ -20,6 +20,8 @@ use Cake\Chronos\Chronos;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
+use DateTimeZone;
 use IntlDateFormatter;
 
 /**
@@ -68,7 +70,7 @@ class DateTimeTest extends TestCase
         $subject = new DateTime($mut);
         $this->assertSame($time, $subject->format('Y-m-d H:i:s.u'), 'time construction');
 
-        $mut = new \DateTime($time, new \DateTimeZone('America/Chicago'));
+        $mut = new NativeDateTime($time, new DateTimeZone('America/Chicago'));
         $subject = new DateTime($mut);
         $this->assertSame($time, $subject->format('Y-m-d H:i:s.u'), 'time construction');
     }
@@ -387,24 +389,24 @@ class DateTimeTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         // Test using a time-specific format
-        $format = [\IntlDateFormatter::NONE, \IntlDateFormatter::SHORT];
+        $format = [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
         $result = $time->i18nFormat($format);
         $expected = '1:59 PM';
         $this->assertTimeFormat($expected, $result);
 
         // Test using a specific format, timezone and locale
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'es-ES');
         $expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
         $this->assertTimeFormat($expected, $result);
 
         // Test with custom default locale
         DateTime::setDefaultLocale('fr-FR');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
         $this->assertTimeFormat($expected, $result);
 
         // Test with a non-gregorian calendar in locale
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
         $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
         $this->assertTimeFormat($expected, $result);
     }
@@ -436,22 +438,22 @@ class DateTimeTest extends TestCase
     public function testI18nFormatWithOffsetTimezone(): void
     {
         $time = new DateTime('2014-01-01T00:00:00+00');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00:00+09');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00:00-01:30');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00Z');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
         $this->assertTimeFormat($expected, $result);
     }
@@ -491,11 +493,11 @@ class DateTimeTest extends TestCase
         $this->assertArrayHasKey('America/Argentina/Buenos_Aires', $return);
         $this->assertArrayHasKey('Pacific/Tahiti', $return);
 
-        $return = DateTime::listTimezones(\DateTimeZone::ASIA);
+        $return = DateTime::listTimezones(DateTimeZone::ASIA);
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
         $this->assertArrayNotHasKey('Pacific', $return);
 
-        $return = DateTime::listTimezones(\DateTimeZone::PER_COUNTRY, 'US', false);
+        $return = DateTime::listTimezones(DateTimeZone::PER_COUNTRY, 'US', false);
         $this->assertArrayHasKey('Pacific/Honolulu', $return);
         $this->assertArrayNotHasKey('Asia/Bangkok', $return);
     }
@@ -507,7 +509,7 @@ class DateTimeTest extends TestCase
     {
         $time = new DateTime('2014-04-20 22:10');
         DateTime::setDefaultLocale('fr-FR');
-        DateTime::setToStringFormat(\IntlDateFormatter::FULL);
+        DateTime::setToStringFormat(IntlDateFormatter::FULL);
         $this->assertTimeFormat('dimanche 20 avril 2014 22:10:00 UTC', (string)$time);
     }
 
@@ -821,7 +823,7 @@ class DateTimeTest extends TestCase
         DateTime::setDefaultLocale('fr-FR');
         $result = DateTime::parseDate('12/03/2015');
         $this->assertSame('2015-03-12', $result->format('Y-m-d'));
-        $this->assertEquals(new \DateTimeZone('Europe/Paris'), $result->tz);
+        $this->assertEquals(new DateTimeZone('Europe/Paris'), $result->tz);
     }
 
     /**

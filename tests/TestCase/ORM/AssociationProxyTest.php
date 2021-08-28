@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Tests the features related to proxying methods from the Association
@@ -53,7 +54,7 @@ class AssociationProxyTest extends TestCase
      */
     public function testGetBadAssociation(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('You have not defined');
         $articles = $this->getTableLocator()->get('articles');
         $articles->posts;

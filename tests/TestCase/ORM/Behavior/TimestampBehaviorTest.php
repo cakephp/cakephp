@@ -22,7 +22,9 @@ use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
 use RuntimeException;
+use UnexpectedValueException;
 
 /**
  * Behavior test case
@@ -92,7 +94,7 @@ class TimestampBehaviorTest extends TestCase
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -113,11 +115,11 @@ class TimestampBehaviorTest extends TestCase
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
-        $existingValue = new \DateTime('2011-11-11');
+        $existingValue = new NativeDateTime('2011-11-11');
         $entity = new Entity(['name' => 'Foo', 'created' => $existingValue]);
 
         $return = $this->Behavior->handleEvent($event, $entity);
@@ -134,7 +136,7 @@ class TimestampBehaviorTest extends TestCase
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -155,7 +157,7 @@ class TimestampBehaviorTest extends TestCase
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -177,11 +179,11 @@ class TimestampBehaviorTest extends TestCase
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
-        $existingValue = new \DateTime('2011-11-11');
+        $existingValue = new NativeDateTime('2011-11-11');
         $entity = new Entity(['name' => 'Foo', 'modified' => $existingValue]);
         $entity->clean();
         $entity->setNew(false);
@@ -200,7 +202,7 @@ class TimestampBehaviorTest extends TestCase
         $table = $this->getTable();
         $table->getSchema()->removeColumn('created')->removeColumn('modified');
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -259,7 +261,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testInvalidEventConfig(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid');
         $table = $this->getTable();
         $settings = ['events' => ['Model.beforeSave' => ['created' => 'fat fingers']]];
@@ -333,7 +335,7 @@ class TimestampBehaviorTest extends TestCase
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
 
-        $ts = new \DateTime();
+        $ts = new NativeDateTime();
         $this->Behavior->timestamp($ts);
         $return = $this->Behavior->timestamp();
 
@@ -351,7 +353,7 @@ class TimestampBehaviorTest extends TestCase
     {
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $entity = new Entity(['username' => 'timestamp test']);
@@ -380,7 +382,7 @@ class TimestampBehaviorTest extends TestCase
         ];
 
         $this->Behavior = new TimestampBehavior($table, $config);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $entity = new Entity(['username' => 'timestamp test']);
@@ -398,7 +400,7 @@ class TimestampBehaviorTest extends TestCase
         $table = $this->getTable();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $entity = new Entity(['username' => 'timestamp test']);

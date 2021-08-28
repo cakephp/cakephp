@@ -21,6 +21,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\BreadcrumbsHelper;
 use Cake\View\View;
+use LogicException;
 
 class BreadcrumbsHelperTest extends TestCase
 {
@@ -266,7 +267,7 @@ class BreadcrumbsHelperTest extends TestCase
      */
     public function testInsertAtIndexOutOfBounds(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
             ->insertAt(2, 'Insert At Again', ['controller' => 'Insert', 'action' => 'at_again']);

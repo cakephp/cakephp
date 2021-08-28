@@ -19,6 +19,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\SchemaCleaner;
 use Cake\TestSuite\TestCase;
+use Throwable;
 
 class SchemaCleanerTest extends TestCase
 {
@@ -33,7 +34,7 @@ class SchemaCleanerTest extends TestCase
         $exceptionThrown = false;
         try {
             $connection->delete($table);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $exceptionThrown = true;
         } finally {
             $this->assertTrue($exceptionThrown);

@@ -27,7 +27,9 @@ use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Exception;
 use RuntimeException;
+use stdClass;
 use TestApp\Error\TestErrorHandler;
 
 /**
@@ -103,7 +105,7 @@ class ErrorHandlerTest extends TestCase
         $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
 
         $errorHandler = new ErrorHandler(['exceptionRenderer' => 'TotallyInvalid']);
-        $errorHandler->getRenderer(new \Exception('Something bad'));
+        $errorHandler->getRenderer(new Exception('Something bad'));
     }
 
     /**
@@ -477,7 +479,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testGetLoggerInvalid(): void
     {
-        $errorHandler = new TestErrorHandler(['errorLogger' => \stdClass::class]);
+        $errorHandler = new TestErrorHandler(['errorLogger' => stdClass::class]);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot create logger');
         $errorHandler->getLogger();

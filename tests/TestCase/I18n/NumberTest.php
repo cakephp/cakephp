@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\I18n;
 use Cake\I18n\I18n;
 use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
+use NumberFormatter;
 
 /**
  * NumberTest class
@@ -566,7 +567,7 @@ class NumberTest extends TestCase
         $result = $this->Number->currency(150000, 'USD', ['locale' => 'en_US']);
         $this->assertSame('$150,000.00', $result);
 
-        Number::config('en_US', \NumberFormatter::CURRENCY, [
+        Number::config('en_US', NumberFormatter::CURRENCY, [
             'pattern' => '¤ #,##,##0',
         ]);
 

@@ -28,6 +28,8 @@ use Cake\Error\Debugger;
 use Cake\Form\Form;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use MyClass;
 use RuntimeException;
 use SplFixedArray;
 use stdClass;
@@ -150,7 +152,7 @@ class DebuggerTest extends TestCase
      */
     public function testSetOutputAsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Debugger::setOutputFormat('Invalid junk');
     }
 
@@ -398,7 +400,7 @@ TEXT;
         // This is gross but was simpler than adding a fixture file.
         // phpcs:ignore
         eval('class MyClass { private string $field; }');
-        $obj = new \MyClass();
+        $obj = new MyClass();
         $out = Debugger::exportVar($obj);
         $this->assertTextContains('field => [uninitialized]', $out);
     }
