@@ -34,18 +34,10 @@ class PaginatorTest extends TestCase
     ];
 
     /**
-     * Don't load data for fixtures for all tests
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
      * test paginate() and custom find, to make sure the correct count is returned.
      */
     public function testPaginateCustomFind(): void
     {
-        $this->loadFixtures('Posts');
         $titleExtractor = function ($result) {
             $ids = [];
             foreach ($result as $record) {
@@ -107,7 +99,6 @@ class PaginatorTest extends TestCase
      */
     public function testPaginateCustomFindFieldsArray(): void
     {
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
         $table->save(new Entity($data));
@@ -147,7 +138,6 @@ class PaginatorTest extends TestCase
             ],
         ];
 
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $table->updateAll(['published' => 'N'], ['id' => 2]);
 
@@ -171,7 +161,6 @@ class PaginatorTest extends TestCase
             ],
         ];
 
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $this->Paginator->paginate($table, [], $settings);

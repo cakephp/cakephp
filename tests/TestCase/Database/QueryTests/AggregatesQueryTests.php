@@ -30,8 +30,6 @@ class AggregatesQueryTests extends TestCase
         'core.Comments',
     ];
 
-    public $autoFixtures = false;
-
     /**
      * @var \Cake\Database\Connection
      */
@@ -63,7 +61,6 @@ class AggregatesQueryTests extends TestCase
             $skip = version_compare($this->connection->getDriver()->version(), '3.30.0', '<');
         }
         $this->skipif($skip);
-        $this->loadFixtures('Comments');
 
         $query = new Query($this->connection);
         $result = $query

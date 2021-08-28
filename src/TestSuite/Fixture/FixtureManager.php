@@ -19,6 +19,7 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\ConstraintsInterface;
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Datasource\ConnectionInterface;
@@ -417,11 +418,18 @@ class FixtureManager extends FixtureLoader
             if ($logQueries && !$this->_debug) {
                 $db->disableQueryLogging();
             }
-            $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+            if ($db->getDriver() instanceof Postgres) {
+                // disabling foreign key constraints is only valid in a transaction
+                $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+                    $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+                        $operation($db, $fixtures);
+                    });
+                });
+            } else {
                 $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
                     $operation($db, $fixtures);
                 });
-            });
+            }
             if ($logQueries) {
                 $db->enableQueryLogging(true);
             }

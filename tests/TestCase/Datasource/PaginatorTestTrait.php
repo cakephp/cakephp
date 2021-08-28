@@ -122,7 +122,6 @@ trait PaginatorTestTrait
      */
     public function testPaginateCustomFinderOptions(): void
     {
-        $this->loadFixtures('Posts');
         $settings = [
             'PaginatorPosts' => [
                 'finder' => ['author' => ['author_id' => 1]],
@@ -147,7 +146,6 @@ trait PaginatorTestTrait
      */
     public function testPaginateNestedEagerLoader(): void
     {
-        $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags');
         $tags = $this->getTableLocator()->get('Tags');
@@ -763,7 +761,6 @@ trait PaginatorTestTrait
      */
     public function testOutOfRangePageNumberGetsClamped(): void
     {
-        $this->loadFixtures('Posts');
         $params['page'] = 3000;
 
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -792,7 +789,6 @@ trait PaginatorTestTrait
     public function testOutOfVeryBigPageNumberGetsClamped(): void
     {
         $this->expectException(PageOutOfBoundsException::class);
-        $this->loadFixtures('Posts');
         $params = [
             'page' => '3000000000000000000000000',
         ];
@@ -1148,7 +1144,6 @@ trait PaginatorTestTrait
      */
     public function testPaginateMaxLimit(): void
     {
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $settings = [
@@ -1242,7 +1237,6 @@ trait PaginatorTestTrait
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $query = $table->find()
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])

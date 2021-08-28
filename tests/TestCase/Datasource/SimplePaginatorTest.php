@@ -36,7 +36,6 @@ class SimplePaginatorTest extends PaginatorTest
      */
     public function testPaginateCustomFind(): void
     {
-        $this->loadFixtures('Posts');
         $titleExtractor = function ($result) {
             $ids = [];
             foreach ($result as $record) {
@@ -98,7 +97,6 @@ class SimplePaginatorTest extends PaginatorTest
      */
     public function testPaginateCustomFindFieldsArray(): void
     {
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
         $table->save(new Entity($data));
@@ -138,7 +136,6 @@ class SimplePaginatorTest extends PaginatorTest
             ],
         ];
 
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $table->updateAll(['published' => 'N'], ['id' => 2]);
 

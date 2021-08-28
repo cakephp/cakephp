@@ -48,27 +48,12 @@ class LinkConstraintTest extends TestCase
     ];
 
     /**
-     * Do not load fixtures by default.
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
      * Setup
      */
     public function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
-
-        $this->loadFixtures(
-            'Articles',
-            'Comments',
-            'Attachments',
-            'Tags',
-            'ArticlesTags'
-        );
     }
 
     /**
