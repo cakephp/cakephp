@@ -77,9 +77,10 @@ class PaginatorHelperTest extends TestCase
         $this->Paginator = new PaginatorHelper($this->View);
 
         Router::reload();
-        Router::connect('/', ['controller' => 'Articles', 'action' => 'index']);
-        Router::connect('/{controller}/{action}/*');
-        Router::connect('/{plugin}/{controller}/{action}/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/', ['controller' => 'Articles', 'action' => 'index']);
+        $builder->connect('/{controller}/{action}/*');
+        $builder->connect('/{plugin}/{controller}/{action}/*');
         Router::setRequest($request);
 
         $this->locale = I18n::getLocale();
@@ -731,7 +732,7 @@ class PaginatorHelperTest extends TestCase
     public function testSortAdminLinks(): void
     {
         Router::reload();
-        Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
+        Router::createRouteBuilder('/')->connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'url' => '/admin/users',
@@ -929,8 +930,9 @@ class PaginatorHelperTest extends TestCase
     public function testGenerateUrlWithPrefixes(): void
     {
         Router::reload();
-        Router::connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
-        Router::connect('/{controller}/{action}/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
+        $builder->connect('/{controller}/{action}/*');
 
         $request = new ServerRequest([
             'url' => '/Posts/index',
@@ -1004,8 +1006,9 @@ class PaginatorHelperTest extends TestCase
     public function testGenerateUrlWithPrefixesLeavePrefix(): void
     {
         Router::reload();
-        Router::connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
-        Router::connect('/{controller}/{action}/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/members/{controller}/{action}/*', ['prefix' => 'Members']);
+        $builder->connect('/{controller}/{action}/*');
 
         $request = new ServerRequest([
             'params' => [
@@ -1817,7 +1820,7 @@ class PaginatorHelperTest extends TestCase
     public function testRoutePlaceholder(): void
     {
         Router::reload();
-        Router::connect('/{controller}/{action}/{page}');
+        Router::createRouteBuilder('/')->connect('/{controller}/{action}/{page}');
         $request = $this->View
             ->getRequest()
             ->withAttribute('params', [
@@ -1855,7 +1858,7 @@ class PaginatorHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         Router::reload();
-        Router::connect('/{controller}/{action}/{sort}/{direction}');
+        Router::createRouteBuilder('/')->connect('/{controller}/{action}/{sort}/{direction}');
         Router::setRequest($request);
 
         $this->Paginator->options(['routePlaceholders' => ['sort', 'direction']]);
