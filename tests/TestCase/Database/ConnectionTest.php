@@ -22,7 +22,11 @@ use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Exception\MissingDriverException;
+use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -31,7 +35,10 @@ use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use DateTime;
 use Exception;
+use InvalidArgumentException;
+use PDO;
 use ReflectionMethod;
 use ReflectionProperty;
 
@@ -127,7 +134,7 @@ class ConnectionTest extends TestCase
      */
     public function testNoDriver(): void
     {
-        $this->expectException(\Cake\Database\Exception\MissingDriverException::class);
+        $this->expectException(MissingDriverException::class);
         $this->expectExceptionMessage('Database driver  could not be found.');
         $connection = new Connection([]);
     }
@@ -137,7 +144,7 @@ class ConnectionTest extends TestCase
      */
     public function testEmptyDriver(): void
     {
-        $this->expectException(\Cake\Database\Exception\MissingDriverException::class);
+        $this->expectException(MissingDriverException::class);
         $this->expectExceptionMessage('Database driver  could not be found.');
         $connection = new Connection(['driver' => false]);
     }
@@ -147,7 +154,7 @@ class ConnectionTest extends TestCase
      */
     public function testMissingDriver(): void
     {
-        $this->expectException(\Cake\Database\Exception\MissingDriverException::class);
+        $this->expectException(MissingDriverException::class);
         $this->expectExceptionMessage('Database driver \Foo\InvalidDriver could not be found.');
         $connection = new Connection(['driver' => '\Foo\InvalidDriver']);
     }
@@ -157,7 +164,7 @@ class ConnectionTest extends TestCase
      */
     public function testDisabledDriver(): void
     {
-        $this->expectException(\Cake\Database\Exception\MissingExtensionException::class);
+        $this->expectException(MissingExtensionException::class);
         $this->expectExceptionMessage('Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency');
         $mock = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['enabled'])
@@ -210,7 +217,7 @@ class ConnectionTest extends TestCase
 
     public function testConnectRetry(): void
     {
-        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof \Cake\Database\Driver\Sqlserver);
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
 
         $connection = new Connection(['driver' => 'RetryDriver']);
         $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
@@ -273,7 +280,7 @@ class ConnectionTest extends TestCase
     public function testExecuteWithArgumentsAndTypes(): void
     {
         $sql = "SELECT '2012-01-01' = ?";
-        $statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
+        $statement = $this->connection->execute($sql, [new DateTime('2012-01-01')], ['date']);
         $result = $statement->fetch();
         $statement->closeCursor();
         $this->assertTrue((bool)$result[0]);
@@ -285,7 +292,7 @@ class ConnectionTest extends TestCase
     public function testBufferedStatementCollectionWrappingStatement(): void
     {
         $this->skipIf(
-            !($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite),
+            !($this->connection->getDriver() instanceof Sqlite),
             'Only required for SQLite driver which does not support buffered results natively'
         );
 
@@ -308,9 +315,9 @@ class ConnectionTest extends TestCase
      */
     public function testExecuteWithMissingType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $sql = 'SELECT ?';
-        $statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['bar']);
+        $statement = $this->connection->execute($sql, [new DateTime('2012-01-01')], ['bar']);
     }
 
     /**
@@ -404,7 +411,7 @@ class ConnectionTest extends TestCase
     public function testStatementFetchObject(): void
     {
         $statement = $this->connection->execute('SELECT title, body  FROM things');
-        $row = $statement->fetch(\PDO::FETCH_OBJ);
+        $row = $statement->fetch(PDO::FETCH_OBJ);
         $this->assertSame('a title', $row->title);
         $this->assertSame('a body', $row->body);
         $statement->closeCursor();
@@ -455,7 +462,7 @@ class ConnectionTest extends TestCase
     public function testUpdateWithTypes(): void
     {
         $title = 'changed the title!';
-        $body = new \DateTime('2012-01-01');
+        $body = new DateTime('2012-01-01');
         $values = compact('title', 'body');
         $this->connection->update('things', $values, [], ['body' => 'date']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
@@ -473,7 +480,7 @@ class ConnectionTest extends TestCase
     public function testUpdateWithConditionsAndTypes(): void
     {
         $title = 'changed the title!';
-        $body = new \DateTime('2012-01-01');
+        $body = new DateTime('2012-01-01');
         $values = compact('title', 'body');
         $this->connection->update('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
@@ -706,7 +713,7 @@ class ConnectionTest extends TestCase
     public function testInTransactionWithSavePoints(): void
     {
         $this->skipIf(
-            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
+            $this->connection->getDriver() instanceof Sqlserver,
             'SQLServer fails when this test is included.'
         );
         $this->skipIf(!$this->connection->enableSavePoints(true));
@@ -740,7 +747,7 @@ class ConnectionTest extends TestCase
     {
         $this->skipIf(!$this->connection->supportsQuoting());
         $expected = "'2012-01-01'";
-        $result = $this->connection->quote(new \DateTime('2012-01-01'), 'date');
+        $result = $this->connection->quote(new DateTime('2012-01-01'), 'date');
         $this->assertEquals($expected, $result);
 
         $expected = "'1'";
@@ -1067,7 +1074,7 @@ class ConnectionTest extends TestCase
      */
     public function testTransactionalWithException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
             ->onlyMethods(['connect', 'commit', 'begin', 'rollback'])
@@ -1078,7 +1085,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->never())->method('commit');
         $connection->transactional(function ($conn) use ($connection): void {
             $this->assertSame($connection, $conn);
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException();
         });
     }
 

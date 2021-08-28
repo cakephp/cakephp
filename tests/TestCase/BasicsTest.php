@@ -23,6 +23,7 @@ use Cake\Error\Debugger;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 require_once CAKE . 'basics.php';
 
@@ -199,7 +200,7 @@ class BasicsTest extends TestCase
         $this->assertFalse($result['foo']);
         $this->assertTrue($result['bar']);
 
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $result = h($obj);
         $this->assertSame('(object)stdClass', $result);
 

@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\Exception\MissingHelperException;
 use Cake\Console\HelperRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Command\Helper\CommandHelper;
@@ -94,7 +95,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMissingHelper(): void
     {
-        $this->expectException(\Cake\Console\Exception\MissingHelperException::class);
+        $this->expectException(MissingHelperException::class);
         $this->helpers->load('ThisTaskShouldAlwaysBeMissing');
     }
 

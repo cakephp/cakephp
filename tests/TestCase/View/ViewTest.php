@@ -20,12 +20,20 @@ use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingElementException;
+use Cake\View\Exception\MissingLayoutException;
+use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
+use Exception;
+use InvalidArgumentException;
+use LogicException;
+use PDOException;
 use RuntimeException;
 use TestApp\Controller\ThemePostsController;
 use TestApp\Controller\ViewPostsController;
@@ -174,7 +182,7 @@ class ViewTest extends TestCase
      */
     public function testPluginGetTemplateAbsoluteFail(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
+        $this->expectException(MissingTemplateException::class);
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
@@ -377,7 +385,7 @@ class ViewTest extends TestCase
      */
     public function testGetViewFileNameDirectoryTraversal(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
@@ -529,7 +537,7 @@ class ViewTest extends TestCase
      */
     public function testGetLayoutFileNameDirectoryTraversal(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
@@ -546,7 +554,7 @@ class ViewTest extends TestCase
      */
     public function testMissingTemplate(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
+        $this->expectException(MissingTemplateException::class);
         $this->expectExceptionMessage('Template file `does_not_exist.php` could not be found');
         $this->expectExceptionMessage('The following paths were searched');
         $this->expectExceptionMessage('- `' . ROOT . DS . 'templates' . DS . 'does_not_exist.php`');
@@ -567,7 +575,7 @@ class ViewTest extends TestCase
      */
     public function testMissingLayout(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingLayoutException::class);
+        $this->expectException(MissingLayoutException::class);
         $this->expectExceptionMessage('Layout file `whatever.php` could not be found');
         $this->expectExceptionMessage('The following paths were searched');
         $this->expectExceptionMessage('- `' . ROOT . DS . 'templates' . DS . 'layout' . DS . 'whatever.php`');
@@ -659,7 +667,7 @@ class ViewTest extends TestCase
      */
     public function testElementMissing(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingElementException::class);
+        $this->expectException(MissingElementException::class);
         $this->expectExceptionMessage('Element file `nonexistent_element.php` could not be found');
 
         $this->View->element('nonexistent_element');
@@ -670,7 +678,7 @@ class ViewTest extends TestCase
      */
     public function testElementMissingPluginElement(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingElementException::class);
+        $this->expectException(MissingElementException::class);
         $this->expectExceptionMessage('Element file `TestPlugin.nope.php` could not be found');
         $this->expectExceptionMessage(implode(DS, ['test_app', 'templates', 'plugin', 'TestPlugin', 'element', 'nope.php']));
         $this->expectExceptionMessage(implode(DS, ['test_app', 'Plugin', 'TestPlugin', 'templates', 'element', 'nope.php']));
@@ -849,7 +857,7 @@ class ViewTest extends TestCase
         try {
             $View->loadHelper('Html', ['test' => 'value']);
             $this->fail('No exception');
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->assertStringContainsString('The "Html" alias has already been loaded', $e->getMessage());
         }
     }
@@ -1052,7 +1060,7 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingLayoutArgument(): void
     {
-        $error = new \PDOException();
+        $error = new PDOException();
         $error->queryString = 'this is sql string';
         $message = 'it works';
         $trace = $error->getTrace();
@@ -1439,7 +1447,7 @@ class ViewTest extends TestCase
             $this->View->start('first');
             $this->View->start('first');
             $this->fail('No exception');
-        } catch (\Cake\Core\Exception\CakeException $e) {
+        } catch (CakeException $e) {
             ob_end_clean();
             $this->assertTrue(true);
         }
@@ -1454,7 +1462,7 @@ class ViewTest extends TestCase
         try {
             $this->View->render('open_block');
             $this->fail('No exception');
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
             ob_end_clean();
             $this->assertStringContainsString('The "no_close" block was left open', $e->getMessage());
         }
@@ -1483,7 +1491,7 @@ TEXT;
         try {
             $this->View->render('extend_self', false);
             $this->fail('No exception');
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
             $this->assertStringContainsString('cannot have templates extend themselves', $e->getMessage());
         }
     }
@@ -1496,7 +1504,7 @@ TEXT;
         try {
             $this->View->render('extend_loop', false);
             $this->fail('No exception');
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
             $this->assertStringContainsString('cannot have templates extend in a loop', $e->getMessage());
         }
     }
@@ -1542,7 +1550,7 @@ TEXT;
         try {
             $this->View->render('extend_missing_element', false);
             $this->fail('No exception');
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
             $this->assertStringContainsString('element', $e->getMessage());
         }
     }
@@ -1588,7 +1596,7 @@ TEXT;
         $e = null;
         try {
             $this->View->element('exception_with_open_buffers');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         $this->assertNotNull($e);
@@ -1618,12 +1626,12 @@ TEXT;
             $this->View->cache(function (): void {
                 ob_start();
 
-                throw new \Exception('Exception with open buffers');
+                throw new Exception('Exception with open buffers');
             }, [
                 'key' => __FUNCTION__,
                 'config' => 'test_view',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         Cache::clear('test_view');

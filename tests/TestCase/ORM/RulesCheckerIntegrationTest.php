@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use ArrayObject;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -25,6 +26,9 @@ use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Closure;
+use RuntimeException;
+use stdClass;
 
 /**
  * Tests the integration between the ORM and the domain checker
@@ -572,7 +576,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testExistsInInvalidAssociation(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('ExistsIn rule for \'author_id\' is invalid. \'NotValid\' is not associated with \'Cake\ORM\Table\'.');
         $entity = new Entity([
             'title' => 'An Article',
@@ -680,7 +684,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.beforeRules',
-            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -719,7 +723,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.afterRules',
-            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $result, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -1317,7 +1321,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity->tags = null;
         $this->assertFalse($table->save($entity));
 
-        $entity->tags = new \stdClass();
+        $entity->tags = new stdClass();
         $this->assertFalse($table->save($entity));
 
         $entity->tags = 'string';
@@ -1763,7 +1767,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
 
-        \Closure::bind(
+        Closure::bind(
             function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
@@ -1808,7 +1812,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
 
-        \Closure::bind(
+        Closure::bind(
             function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },

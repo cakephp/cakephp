@@ -34,6 +34,7 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use DateTime;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use ReflectionProperty;
@@ -288,7 +289,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:45:23');
+        $time = new DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
         $result = $query
             ->select(['title', 'comment' => 'c.comment'])
@@ -329,7 +330,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:45:23');
+        $time = new DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
         $result = $query
             ->select(['title', 'name' => 'c.comment'])
@@ -347,7 +348,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:45:23');
+        $time = new DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
         $result = $query
             ->select(['title', 'name' => 'c.comment'])
@@ -378,7 +379,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:45:23');
+        $time = new DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
         $statement = $query
             ->select(['title', 'name' => 'c.comment'])
@@ -396,11 +397,11 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
-            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite,
+            $this->connection->getDriver() instanceof Sqlite,
             'SQLite does not support RIGHT joins'
         );
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:45:23');
+        $time = new DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
         $result = $query
             ->select(['title', 'name' => 'c.comment'])
@@ -428,7 +429,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->innerJoin(['c' => 'comments'], function ($exp, $q) use ($query, $types) {
                 $this->assertSame($q, $query);
-                $exp->add(['created <' => new \DateTime('2007-03-18 10:45:23')], $types);
+                $exp->add(['created <' => new DateTime('2007-03-18 10:45:23')], $types);
 
                 return $exp;
             })
@@ -450,7 +451,7 @@ class QueryTest extends TestCase
             ->from('authors')
             ->innerJoin('comments', function ($exp, $q) use ($query, $types) {
                 $this->assertSame($q, $query);
-                $exp->add(['created' => new \DateTime('2007-03-18 10:47:23')], $types);
+                $exp->add(['created' => new DateTime('2007-03-18 10:47:23')], $types);
 
                 return $exp;
             })
@@ -651,7 +652,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+            ->where(['created' => new DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -661,7 +662,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(['created >' => new \DateTime('2007-03-18 10:46:00')], ['created' => 'datetime'])
+            ->where(['created >' => new DateTime('2007-03-18 10:46:00')], ['created' => 'datetime'])
             ->execute();
         $this->assertCount(5, $result);
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
@@ -674,8 +675,8 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(
                 [
-                    'created >' => new \DateTime('2007-03-18 10:40:00'),
-                    'created <' => new \DateTime('2007-03-18 10:46:00'),
+                    'created >' => new DateTime('2007-03-18 10:40:00'),
+                    'created <' => new DateTime('2007-03-18 10:46:00'),
                 ],
                 ['created' => 'datetime']
             )
@@ -691,7 +692,7 @@ class QueryTest extends TestCase
             ->where(
                 [
                     'id' => '3',
-                    'created <' => new \DateTime('2013-01-01 12:00'),
+                    'created <' => new DateTime('2013-01-01 12:00'),
                 ],
                 ['created' => 'datetime', 'id' => 'integer']
             )
@@ -707,7 +708,7 @@ class QueryTest extends TestCase
             ->where(
                 [
                     'id' => '1',
-                    'created <' => new \DateTime('2013-01-01 12:00'),
+                    'created <' => new DateTime('2013-01-01 12:00'),
                 ],
                 ['created' => 'datetime', 'id' => 'integer']
             )
@@ -851,7 +852,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+            ->where(['created' => new DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
             ->andWhere(['id' => 1])
             ->execute();
         $this->assertCount(1, $result);
@@ -862,7 +863,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(['created' => new \DateTime('2007-03-18 10:50:55')], ['created' => 'datetime'])
+            ->where(['created' => new DateTime('2007-03-18 10:50:55')], ['created' => 'datetime'])
             ->andWhere(['id' => 2])
             ->execute();
         $this->assertCount(0, $result);
@@ -879,7 +880,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->andWhere(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+            ->andWhere(['created' => new DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
             ->andWhere(['id' => 1])
             ->execute();
         $this->assertCount(1, $result);
@@ -913,7 +914,7 @@ class QueryTest extends TestCase
             ->where(function ($exp) {
                 return $exp
                     ->eq('id', 1)
-                    ->eq('created', new \DateTime('2007-03-18 10:45:23'), 'datetime');
+                    ->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
             })
             ->execute();
         $this->assertCount(1, $result);
@@ -927,7 +928,7 @@ class QueryTest extends TestCase
             ->where(function ($exp) {
                 return $exp
                     ->eq('id', 1)
-                    ->eq('created', new \DateTime('2021-12-30 15:00'), 'datetime');
+                    ->eq('created', new DateTime('2021-12-30 15:00'), 'datetime');
             })
             ->execute();
         $this->assertCount(0, $result);
@@ -973,7 +974,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(['id' => '1'])
             ->andWhere(function ($exp) {
-                return $exp->eq('created', new \DateTime('2007-03-18 10:45:23'), 'datetime');
+                return $exp->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
             })
             ->execute();
         $this->assertCount(1, $result);
@@ -986,7 +987,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(['id' => '1'])
             ->andWhere(function ($exp) {
-                return $exp->eq('created', new \DateTime('2022-12-21 12:00'), 'datetime');
+                return $exp->eq('created', new DateTime('2022-12-21 12:00'), 'datetime');
             })
             ->execute();
         $this->assertCount(0, $result);
@@ -1163,7 +1164,7 @@ class QueryTest extends TestCase
             ->where(function ($exp) {
                 return $exp->in(
                     'created',
-                    [new \DateTime('2007-03-18 10:45:23'), new \DateTime('2007-03-18 10:47:23')],
+                    [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
                     'datetime'
                 );
             })
@@ -1180,7 +1181,7 @@ class QueryTest extends TestCase
             ->where(function ($exp) {
                 return $exp->notIn(
                     'created',
-                    [new \DateTime('2007-03-18 10:45:23'), new \DateTime('2007-03-18 10:47:23')],
+                    [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
                     'datetime'
                 );
             })
@@ -1373,8 +1374,8 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp) {
-                $from = new \DateTime('2007-03-18 10:51:00');
-                $to = new \DateTime('2007-03-18 10:54:00');
+                $from = new DateTime('2007-03-18 10:51:00');
+                $to = new DateTime('2007-03-18 10:54:00');
 
                 return $exp->between('created', $from, $to, 'datetime');
             })
@@ -1540,7 +1541,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(function ($exp) {
                 return $exp->not(
-                    $exp->and(['id' => 2, 'created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
+                    $exp->and(['id' => 2, 'created' => new DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
                 );
             })
             ->execute();
@@ -1555,7 +1556,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(function ($exp) {
                 return $exp->not(
-                    $exp->and(['id' => 2, 'created' => new \DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
+                    $exp->and(['id' => 2, 'created' => new DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
                 );
             })
             ->execute();
@@ -2454,7 +2455,7 @@ class QueryTest extends TestCase
         $subquery = (new Query($this->connection))
             ->select(['id', 'comment'])
             ->from('comments')
-            ->where(['created >' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
+            ->where(['created >' => new DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
         $result = $query
             ->select(['say' => 'comment'])
             ->from(['b' => $subquery])
@@ -2500,7 +2501,7 @@ class QueryTest extends TestCase
         $subquery = (new Query($this->connection))
             ->select(['id'])
             ->from('comments')
-            ->where(['created >' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
+            ->where(['created >' => new DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
         $result = $query
             ->select(['name'])
             ->from(['authors'])
@@ -2632,8 +2633,8 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
-            ($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite ||
-            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver),
+            ($this->connection->getDriver() instanceof Sqlite ||
+            $this->connection->getDriver() instanceof Sqlserver),
             'Driver does not support ORDER BY in UNIONed queries.'
         );
         $union = (new Query($this->connection))
@@ -2806,7 +2807,7 @@ class QueryTest extends TestCase
      */
     public function testDeleteRemovingAliasesCanBreakJoins(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
         $query = new Query($this->connection);
 
@@ -3024,7 +3025,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $date = new \DateTime();
+        $date = new DateTime();
         $query->update('comments')
             ->set(['comment' => 'mark', 'created' => $date], ['created' => 'date'])
             ->where(['id' => 1]);
@@ -3053,7 +3054,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $date = new \DateTime();
+        $date = new DateTime();
         $query->update('comments')
             ->set(function ($exp) use ($date) {
                 return $exp
@@ -3121,7 +3122,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateRemovingAliasesCanBreakJoins(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
         $query = new Query($this->connection);
 
@@ -3218,7 +3219,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof Sqlserver) {
             $this->assertCount(1, $result, '1 row should be inserted');
         }
 
@@ -3280,7 +3281,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof Sqlserver) {
             $this->assertCount(1, $result, '1 row should be inserted');
         }
 
@@ -3316,7 +3317,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof Sqlserver) {
             $this->assertCount(2, $result, '2 rows should be inserted');
         }
 
@@ -3372,7 +3373,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof Sqlserver) {
             $this->assertCount(1, $result);
         }
 
@@ -3434,7 +3435,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof Sqlserver) {
             $this->assertCount(1, $result);
         }
 
@@ -3464,7 +3465,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $result->closeCursor();
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof Sqlserver) {
             $this->assertCount(1, $result);
         }
 
@@ -3565,7 +3566,7 @@ class QueryTest extends TestCase
 
         $this->assertWithinRange(
             date('U'),
-            (new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
+            (new DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
             5
         );
 
@@ -3575,7 +3576,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertWithinRange(
             date('U'),
-            (new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
+            (new DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
             5
         );
 
@@ -3718,7 +3719,7 @@ class QueryTest extends TestCase
 
         $results = $query->select(['id', 'comment'])
             ->from('comments')
-            ->where(['created >=' => new \DateTime('2007-03-18 10:55:00')])
+            ->where(['created >=' => new DateTime('2007-03-18 10:55:00')])
             ->execute();
         $expected = [['id' => '6', 'comment' => 'Second Comment for Second Article']];
         $this->assertEquals($expected, $results->fetchAll('assoc'));
@@ -3726,7 +3727,7 @@ class QueryTest extends TestCase
         // Now test default can be overridden
         $types = ['created' => 'date'];
         $results = $query
-            ->where(['created >=' => new \DateTime('2007-03-18 10:50:00')], $types, true)
+            ->where(['created >=' => new DateTime('2007-03-18 10:50:00')], $types, true)
             ->execute();
         $this->assertCount(6, $results, 'All 6 rows should match.');
     }
@@ -3741,8 +3742,8 @@ class QueryTest extends TestCase
         $results = $query->select(['id', 'comment'])
             ->from('comments')
             ->where(['created BETWEEN :foo AND :bar'])
-            ->bind(':foo', new \DateTime('2007-03-18 10:50:00'), 'datetime')
-            ->bind(':bar', new \DateTime('2007-03-18 10:52:00'), 'datetime')
+            ->bind(':foo', new DateTime('2007-03-18 10:50:00'), 'datetime')
+            ->bind(':bar', new DateTime('2007-03-18 10:52:00'), 'datetime')
             ->execute();
         $expected = [['id' => '4', 'comment' => 'Fourth Comment for First Article']];
         $this->assertEquals($expected, $results->fetchAll('assoc'));
@@ -4122,7 +4123,7 @@ class QueryTest extends TestCase
      */
     public function testIsNullInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expression `name` is missing operator (IS, IS NOT) with `null` value.');
 
         $this->loadFixtures('Authors');
@@ -4139,7 +4140,7 @@ class QueryTest extends TestCase
      */
     public function testIsNotNullInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->loadFixtures('Authors');
         (new Query($this->connection))
@@ -4235,7 +4236,7 @@ class QueryTest extends TestCase
             );
 
         // Postgres requires the case statement to be cast to a integer
-        if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres) {
+        if ($this->connection->getDriver() instanceof Postgres) {
             $publishedCase = $query->func()->cast($publishedCase, 'integer');
             $notPublishedCase = $query->func()->cast($notPublishedCase, 'integer');
         }
@@ -4466,8 +4467,8 @@ class QueryTest extends TestCase
             ->from('comments')
             ->setDefaultTypes(['created' => 'datetime'])
             ->where(function ($expr) {
-                $from = new \DateTime('2007-03-18 10:45:00');
-                $to = new \DateTime('2007-03-18 10:48:00');
+                $from = new DateTime('2007-03-18 10:45:00');
+                $to = new DateTime('2007-03-18 10:48:00');
 
                 return $expr->between('created', $from, $to);
             });
@@ -4671,7 +4672,7 @@ class QueryTest extends TestCase
      */
     public function testClauseUndefined(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The \'nope\' clause is not defined. Valid clauses are: delete, update');
         $query = new Query($this->connection);
         $this->assertEmpty($query->clause('where'));

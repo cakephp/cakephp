@@ -360,7 +360,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenNonStringCookies(): void
     {
-        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',

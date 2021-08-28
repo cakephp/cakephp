@@ -20,6 +20,7 @@ use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -574,7 +575,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testRenderAsCalledTwice(): void
     {
-        $this->Controller->getEventManager()->on('Controller.beforeRender', function (\Cake\Event\EventInterface $e) {
+        $this->Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
             return $e->getSubject()->getResponse();
         });
         $this->Controller->render();

@@ -98,7 +98,7 @@ class RunnerTest extends TestCase
      */
     public function testRunExceptionInMiddleware(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A bad thing');
         $this->queue->add($this->ok)->add($this->fail);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();

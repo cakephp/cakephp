@@ -22,6 +22,9 @@ use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TimeHelper;
 use Cake\View\View;
+use DateTime as NativeDateTime;
+use DateTimeZone;
+use IntlDateFormatter;
 
 /**
  * TimeHelperTest class
@@ -182,7 +185,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToAtom(): void
     {
-        $dateTime = new \DateTime();
+        $dateTime = new NativeDateTime();
         $this->assertSame($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
@@ -209,8 +212,8 @@ class TimeHelperTest extends TestCase
 
         $timezones = ['Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu'];
         foreach ($timezones as $timezone) {
-            $yourTimezone = new \DateTimeZone($timezone);
-            $yourTime = new \DateTime($date, $yourTimezone);
+            $yourTimezone = new DateTimeZone($timezone);
+            $yourTime = new NativeDateTime($date, $yourTimezone);
             $time = $yourTime->format('U');
             $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
         }
@@ -463,7 +466,7 @@ class TimeHelperTest extends TestCase
         $expected = '1/14/10, 1:59 PM';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $this->Time->format($time, \IntlDateFormatter::FULL);
+        $result = $this->Time->format($time, IntlDateFormatter::FULL);
         $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
         $this->assertStringStartsWith($expected, $result);
 
@@ -505,7 +508,7 @@ class TimeHelperTest extends TestCase
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
-        $result = $this->Time->i18nFormat($time, [\IntlDateFormatter::SHORT, \IntlDateFormatter::FULL]);
+        $result = $this->Time->i18nFormat($time, [IntlDateFormatter::SHORT, IntlDateFormatter::FULL]);
         $expected = '1/14/10, 12:59:28 AM';
         $this->assertStringStartsWith($expected, $result);
     }
@@ -563,7 +566,7 @@ class TimeHelperTest extends TestCase
         $this->assertFalse($result);
 
         $fallback = 'Date invalid or not set';
-        $result = $this->Time->format(null, \IntlDateFormatter::FULL, $fallback);
+        $result = $this->Time->format(null, IntlDateFormatter::FULL, $fallback);
         $this->assertSame($fallback, $result);
     }
 }

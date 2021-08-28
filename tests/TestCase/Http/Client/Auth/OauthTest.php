@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Client\Auth;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Auth\Oauth;
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
@@ -62,7 +63,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
     public function testExceptionUnknownSigningMethod(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $auth = new Oauth();
         $creds = [
             'consumerSecret' => 'it is secret',

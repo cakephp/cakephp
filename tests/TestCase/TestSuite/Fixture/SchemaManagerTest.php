@@ -20,6 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\SchemaCleaner;
 use Cake\TestSuite\Fixture\SchemaManager;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 class SchemaManagerTest extends TestCase
 {
@@ -76,7 +77,7 @@ class SchemaManagerTest extends TestCase
 
     public function testCreateFromNonExistentFile(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         SchemaManager::create('test', 'foo');
     }
 
@@ -86,7 +87,7 @@ class SchemaManagerTest extends TestCase
         $tmpFile = tempnam(sys_get_temp_dir(), 'SchemaManagerTest');
         file_put_contents($tmpFile, $query);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         SchemaManager::create('test', $tmpFile, false, false);
     }
 

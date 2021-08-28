@@ -16,8 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use Cake\I18n\FrozenDate;
@@ -32,7 +34,9 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use InvalidArgumentException;
 use ReflectionProperty;
+use RuntimeException;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
@@ -346,7 +350,7 @@ class FormHelperTest extends TestCase
         $entity = new Article();
         $collection = new Collection([$entity]);
         $emptyCollection = new Collection([]);
-        $arrayObject = new \ArrayObject([]);
+        $arrayObject = new ArrayObject([]);
         $data = [
             'schema' => [
                 'title' => ['type' => 'string'],
@@ -3465,7 +3469,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->control('email', [
             'type' => 'select',
-            'options' => new \ArrayObject(['First', 'Second']),
+            'options' => new ArrayObject(['First', 'Second']),
             'empty' => true,
         ]);
         $this->assertHtml($expected, $result);
@@ -3746,7 +3750,7 @@ class FormHelperTest extends TestCase
      */
     public function testInvalidControlTypeOption(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid type \'input\' used for field \'text\'');
         $this->Form->control('text', ['type' => 'input']);
     }
@@ -7494,7 +7498,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ControlException(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->Form->email();
     }
 
@@ -7505,7 +7509,7 @@ class FormHelperTest extends TestCase
     {
         $this->Form->setConfig('autoSetCustomValidity', true);
 
-        $validator = (new \Cake\Validation\Validator())
+        $validator = (new Validator())
             ->notEmptyString('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
@@ -7582,7 +7586,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ErrorMessageInTemplateVars(): void
     {
-        $validator = (new \Cake\Validation\Validator())
+        $validator = (new Validator())
             ->notEmptyString('email', 'Custom error "message" & entities')
             ->requirePresence('password')
             ->alphaNumeric('password')
@@ -7979,7 +7983,7 @@ class FormHelperTest extends TestCase
 
     public function testValueSourcesValidation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value source(s): invalid, foo. Valid values are: context, data, query');
 
         $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);

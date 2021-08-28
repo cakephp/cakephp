@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 use TestApp\Database\Type\BarType;
 use TestApp\Database\Type\FooType;
@@ -89,7 +90,7 @@ class TypeFactoryTest extends TestCase
      */
     public function testBuildUnknownType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         TypeFactory::build('foo');
     }
 

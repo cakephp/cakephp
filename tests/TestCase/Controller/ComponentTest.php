@@ -18,9 +18,11 @@ namespace Cake\Test\TestCase\Controller;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TestApp\Controller\Component\AppleComponent;
 use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
@@ -106,7 +108,7 @@ class ComponentTest extends TestCase
      */
     public function testDuplicateComponentInitialize(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The "Banana" alias has already been loaded. The `property` key');
         $Collection = new ComponentRegistry();
         $Collection->load('Banana', ['property' => ['closure' => function (): void {
@@ -192,7 +194,7 @@ class ComponentTest extends TestCase
      */
     public function testLazyLoadingDoesNotExists(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectException(MissingComponentException::class);
         $this->expectExceptionMessage('Component class YouHaveNoBananasComponent could not be found.');
         $Component = new ConfiguredComponent(new ComponentRegistry(), [], ['YouHaveNoBananas']);
         $bananas = $Component->YouHaveNoBananas;

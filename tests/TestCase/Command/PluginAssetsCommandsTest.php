@@ -24,6 +24,7 @@ use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use SplFileInfo;
 
 /**
  * PluginAssetsCommandsTest class
@@ -152,7 +153,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->exec('plugin assets symlink TestPlugin');
 
         $path = $this->wwwRoot . 'test_plugin';
-        $link = new \SplFileInfo($path);
+        $link = new SplFileInfo($path);
         $this->assertFileExists($path . DS . 'root.js');
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
@@ -190,7 +191,7 @@ class PluginAssetsCommandsTest extends TestCase
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot';
 
         $path = $this->wwwRoot . 'test_plugin';
-        $dir = new \SplFileInfo($path);
+        $dir = new SplFileInfo($path);
         $this->assertTrue($dir->isDir());
         $this->assertFileExists($path . DS . 'root.js');
 

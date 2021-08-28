@@ -21,6 +21,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Routing\Route\ProtectedRoute;
 
 /**
@@ -62,7 +63,7 @@ class RouteTest extends TestCase
 
     public function testConstructionWithInvalidMethod(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index', '_method' => 'nope']);
     }
@@ -1667,7 +1668,7 @@ class RouteTest extends TestCase
      */
     public function testSetMethodsInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $route->setMethods(['nope']);

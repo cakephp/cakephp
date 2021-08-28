@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -66,7 +67,7 @@ class BinaryTypeTest extends TestCase
      */
     public function testToPHPFailure(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to convert array into binary.');
         $this->type->toPHP([], $this->driver);
     }

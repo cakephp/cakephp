@@ -791,7 +791,7 @@ trait PaginatorTestTrait
      */
     public function testOutOfVeryBigPageNumberGetsClamped(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\PageOutOfBoundsException::class);
+        $this->expectException(PageOutOfBoundsException::class);
         $this->loadFixtures('Posts');
         $params = [
             'page' => '3000000000000000000000000',

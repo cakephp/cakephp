@@ -27,7 +27,8 @@ use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Response as LaminasResponse;
+use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
 use TestApp\Http\MiddlewareApplication;
 
 require_once __DIR__ . '/server_mocks.php';
@@ -216,7 +217,7 @@ class ServerTest extends TestCase
      */
     public function testRunDoesNotCloseSessionIfServerRequestNotUsed(): void
     {
-        $request = new \Laminas\Diactoros\ServerRequest();
+        $request = new LaminasServerRequest();
 
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
@@ -261,7 +262,7 @@ class ServerTest extends TestCase
     public function testEmitCallbackStream(): void
     {
         $GLOBALS['mockedHeadersSent'] = false;
-        $response = new Response('php://memory', 200, ['x-testing' => 'source header']);
+        $response = new LaminasResponse('php://memory', 200, ['x-testing' => 'source header']);
         $response = $response->withBody(new CallbackStream(function (): void {
             echo 'body content';
         }));

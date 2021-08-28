@@ -21,6 +21,7 @@ use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -204,7 +205,7 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testMissingRouteNotCaught(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
         $middleware = new RoutingMiddleware($this->app());
         $middleware->process($request, new TestRequestHandler());

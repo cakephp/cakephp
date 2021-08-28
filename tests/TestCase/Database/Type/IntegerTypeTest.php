@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -95,7 +96,7 @@ class IntegerTypeTest extends TestCase
      */
     public function testInvalidManyToPHP(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $values = [
             'a' => null,
             'b' => '2.3',
@@ -154,7 +155,7 @@ class IntegerTypeTest extends TestCase
      */
     public function testToDatabaseInvalid($value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase($value, $this->driver);
     }
 

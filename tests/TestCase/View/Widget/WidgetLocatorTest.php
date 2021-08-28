@@ -20,6 +20,8 @@ use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use RuntimeException;
+use stdClass;
 use TestApp\View\Widget\TestUsingViewWidget;
 
 /**
@@ -133,13 +135,13 @@ class WidgetLocatorTest extends TestCase
      */
     public function testAddInvalidType(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'Widget objects must implement `Cake\View\Widget\WidgetInterface`. Got `stdClass` instance instead.'
         );
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            'text' => new \stdClass(),
+            'text' => new stdClass(),
         ]);
     }
 
@@ -178,7 +180,7 @@ class WidgetLocatorTest extends TestCase
      */
     public function testGetNoFallbackError(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unknown widget `foo`');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
@@ -205,7 +207,7 @@ class WidgetLocatorTest extends TestCase
      */
     public function testGetResolveDependencyMissingClass(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to locate widget class "TestApp\View\DerpWidget"');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add(['test' => ['TestApp\View\DerpWidget']]);
@@ -217,7 +219,7 @@ class WidgetLocatorTest extends TestCase
      */
     public function testGetResolveDependencyMissingDependency(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unknown widget `label`');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();

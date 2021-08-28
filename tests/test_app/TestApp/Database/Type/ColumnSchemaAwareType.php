@@ -11,6 +11,7 @@ use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\BaseType;
 use Cake\Database\Type\ColumnSchemaAwareInterface;
 use Cake\Database\Type\ExpressionTypeInterface;
+use InvalidArgumentException;
 use TestApp\Database\ColumnSchemaAwareTypeValueObject;
 
 class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface, ColumnSchemaAwareInterface
@@ -59,7 +60,7 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
             );
         }
 
-        throw new \InvalidArgumentException(sprintf(
+        throw new InvalidArgumentException(sprintf(
             'The `$value` argument must be an instance of `\%s`, or a string, `%s` given.',
             ColumnSchemaAwareTypeValueObject::class,
             getTypeName($value)

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -369,7 +370,7 @@ class TableSchemaTest extends TestCase
      */
     public function testAddConstraintError(array $props): void
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer');
         $table->addConstraint('author_idx', $props);
@@ -420,7 +421,7 @@ class TableSchemaTest extends TestCase
      */
     public function testAddIndexError(array $props): void
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer');
         $table->addIndex('author_idx', $props);
@@ -598,7 +599,7 @@ class TableSchemaTest extends TestCase
      */
     public function testAddConstraintForeignKeyBadData(array $data): void
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer')
             ->addConstraint('author_id_idx', $data);

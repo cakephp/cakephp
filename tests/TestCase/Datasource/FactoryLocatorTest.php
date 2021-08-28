@@ -19,6 +19,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use stdClass;
 
 /**
  * FactoryLocatorTest test case
@@ -39,7 +40,7 @@ class FactoryLocatorTest extends TestCase
      */
     public function testGetNonExistent(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::get('Test');
     }
@@ -50,7 +51,7 @@ class FactoryLocatorTest extends TestCase
     public function testAdd(): void
     {
         FactoryLocator::add('Test', function ($name) {
-            $mock = new \stdClass();
+            $mock = new stdClass();
             $mock->name = $name;
 
             return $mock;
@@ -78,7 +79,7 @@ class FactoryLocatorTest extends TestCase
      */
     public function testDrop(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::drop('Test');
 

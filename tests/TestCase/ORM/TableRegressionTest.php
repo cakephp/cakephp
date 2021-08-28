@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -41,7 +42,7 @@ class TableRegressionTest extends TestCase
      */
     public function testAfterSaveRollbackTransaction(): void
     {
-        $this->expectException(\Cake\ORM\Exception\RolledbackTransactionException::class);
+        $this->expectException(RolledbackTransactionException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',
