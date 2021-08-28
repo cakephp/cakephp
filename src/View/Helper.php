@@ -199,7 +199,8 @@ class Helper implements EventListenerInterface
      *
      * Implement this method to avoid having to overwrite the constructor and call parent.
      *
-     * @param array $config The configuration settings provided to this helper.
+     * @param array $config The original config array passed to constructor.
+     *  It is not merged with defaults.
      * @return void
      */
     public function initialize(array $config): void

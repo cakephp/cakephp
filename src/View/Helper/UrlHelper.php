@@ -45,10 +45,7 @@ class UrlHelper extends Helper
     protected $_assetUrlClassName;
 
     /**
-     * Check proper configuration
-     *
-     * @param array $config The configuration settings provided to this helper.
-     * @return void
+     * @inheritDoc
      */
     public function initialize(array $config): void
     {

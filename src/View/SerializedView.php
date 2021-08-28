@@ -51,9 +51,9 @@ abstract class SerializedView extends View
     /**
      * @inheritDoc
      */
-    public function initialize(): void
+    public function initialize(array $config): void
     {
-        parent::initialize();
+        parent::initialize($config);
         $this->setResponse($this->getResponse()->withType($this->_responseType));
     }
 

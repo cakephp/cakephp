@@ -348,7 +348,7 @@ class View implements EventDispatcherInterface
         $this->request = $request;
         $this->response = $response ?: new Response();
         $this->Blocks = new $this->_viewBlockClass();
-        $this->initialize();
+        $this->initialize($viewOptions);
         $this->loadHelpers();
     }
 
@@ -360,9 +360,11 @@ class View implements EventDispatcherInterface
      * So this method allows you to manipulate them as required after view instance
      * is constructed.
      *
+     * @param array $config The original config array passed to constructor.
+     *  It is not merged with defaults.
      * @return void
      */
-    public function initialize(): void
+    public function initialize(array $config): void
     {
     }
 

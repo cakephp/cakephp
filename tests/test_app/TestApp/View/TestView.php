@@ -5,7 +5,7 @@ namespace TestApp\View;
 
 class TestView extends AppView
 {
-    public function initialize(): void
+    public function initialize(array $config): void
     {
         $this->loadHelper('Html', ['mykey' => 'myval']);
     }

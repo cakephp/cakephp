@@ -74,7 +74,8 @@ class TimestampBehavior extends Behavior
      * If events are specified - do *not* merge them with existing events,
      * overwrite the events to listen on
      *
-     * @param array $config The config for this behavior.
+     * @param array $config The original config array passed to constructor.
+     *  It is not merged with defaults.
      * @return void
      */
     public function initialize(array $config): void

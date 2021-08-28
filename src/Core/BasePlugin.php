@@ -117,15 +117,16 @@ class BasePlugin implements PluginInterface
             }
         }
 
-        $this->initialize();
+        $this->initialize($options);
     }
 
     /**
      * Initialization hook called from constructor.
      *
+     * @param array $config The original config array passed to constructor.
      * @return void
      */
-    public function initialize(): void
+    public function initialize(array $config): void
     {
     }
 

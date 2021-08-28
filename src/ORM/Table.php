@@ -357,7 +357,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *  }
      * ```
      *
-     * @param array $config Configuration options passed to the constructor
+     * @param array $config The original config array passed to constructor.
      * @return void
      */
     public function initialize(array $config): void

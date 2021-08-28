@@ -136,7 +136,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $this->_cache = $cellOptions['cache'];
         }
 
-        $this->initialize();
+        $this->initialize($cellOptions);
     }
 
     /**
@@ -145,9 +145,11 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * Implement this method to avoid having to overwrite
      * the constructor and calling parent::__construct().
      *
+     * @param array $config The original config array passed to constructor.
+     *  It is not merged with defaults.
      * @return void
      */
-    public function initialize(): void
+    public function initialize(array $config): void
     {
     }
 
