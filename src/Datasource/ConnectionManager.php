@@ -45,7 +45,7 @@ class ConnectionManager
      *
      * @var array<string>
      */
-    protected static $_aliasMap = [];
+    protected static array $_aliasMap = [];
 
     /**
      * An array mapping url schemes to fully qualified driver class names
@@ -53,7 +53,7 @@ class ConnectionManager
      * @var array<string>
      * @psalm-var array<string, class-string>
      */
-    protected static $_dsnClassMap = [
+    protected static array $_dsnClassMap = [
         'mysql' => Mysql::class,
         'postgres' => Postgres::class,
         'sqlite' => Sqlite::class,
@@ -63,9 +63,9 @@ class ConnectionManager
     /**
      * The ConnectionRegistry used by the manager.
      *
-     * @var \Cake\Datasource\ConnectionRegistry
+     * @var \Cake\Datasource\ConnectionRegistry|null
      */
-    protected static $_registry;
+    protected static ?ConnectionRegistry $_registry = null;
 
     /**
      * Configure a new connection object.
@@ -202,7 +202,7 @@ class ConnectionManager
         if (empty(static::$_config[$name])) {
             throw new MissingDatasourceConfigException(['name' => $name]);
         }
-        if (empty(static::$_registry)) {
+        if (static::$_registry === null) {
             static::$_registry = new ConnectionRegistry();
         }
 

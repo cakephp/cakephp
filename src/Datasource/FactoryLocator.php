@@ -30,7 +30,7 @@ class FactoryLocator
      *
      * @var array<callable|\Cake\Datasource\Locator\LocatorInterface>
      */
-    protected static $_modelFactories = [];
+    protected static array $_modelFactories = [];
 
     /**
      * Register a callable to generate repositories of a given type.

@@ -32,14 +32,14 @@ class RuleInvoker
      *
      * @var string|null
      */
-    protected $name;
+    protected ?string $name = null;
 
     /**
      * Rule options
      *
      * @var array
      */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * Rule callable

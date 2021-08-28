@@ -34,9 +34,9 @@ trait RulesAwareTrait
     /**
      * The domain rules to be applied to entities saved by this table
      *
-     * @var \Cake\Datasource\RulesChecker
+     * @var \Cake\Datasource\RulesChecker|null
      */
-    protected $_rulesChecker;
+    protected ?RulesChecker $_rulesChecker = null;
 
     /**
      * Returns whether or not the passed entity complies with all the rules stored in

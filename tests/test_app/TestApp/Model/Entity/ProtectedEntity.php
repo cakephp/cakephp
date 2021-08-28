@@ -7,7 +7,7 @@ use Cake\ORM\Entity;
 
 class ProtectedEntity extends Entity
 {
-    protected $_accessible = [
+    protected array $_accessible = [
         'id' => true,
         'title' => false,
     ];
