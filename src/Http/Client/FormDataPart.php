@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Http\Client;
 
 use Cake\Utility\Text;
+use Stringable;
 
 /**
  * Contains the data and behavior for a single
@@ -26,7 +27,7 @@ use Cake\Utility\Text;
  *
  * @internal
  */
-class FormDataPart
+class FormDataPart implements Stringable
 {
     /**
      * Name of the value.

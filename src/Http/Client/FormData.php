@@ -17,6 +17,7 @@ namespace Cake\Http\Client;
 
 use Countable;
 use finfo;
+use Stringable;
 
 /**
  * Provides an interface for building
@@ -25,7 +26,7 @@ use finfo;
  * Used by Http\Client to upload POST/PUT data
  * and files.
  */
-class FormData implements Countable
+class FormData implements Countable, Stringable
 {
     /**
      * Boundary marker.

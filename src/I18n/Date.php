@@ -20,13 +20,14 @@ use Cake\Chronos\Date as ChronosDate;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
+use Stringable;
 
 /**
  * Extends the Date class provided by Chronos.
  *
  * Adds handy methods and locale-aware formatting helpers
  */
-class Date extends ChronosDate implements I18nDateTimeInterface
+class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
 {
     use DateFormatTrait;
 

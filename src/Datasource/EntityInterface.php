@@ -18,6 +18,7 @@ namespace Cake\Datasource;
 
 use ArrayAccess;
 use JsonSerializable;
+use Stringable;
 
 /**
  * Describes the methods that any class representing a data storage should
@@ -25,7 +26,7 @@ use JsonSerializable;
  *
  * @property mixed $id Alias for commonly used primary key.
  */
-interface EntityInterface extends ArrayAccess, JsonSerializable
+interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
 {
     /**
      * Sets hidden fields.

@@ -29,6 +29,7 @@ use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SplFileInfo;
+use Stringable;
 
 /**
  * Responses contain the response text, status and headers of a HTTP response.
@@ -39,7 +40,7 @@ use SplFileInfo;
  * include status codes that are now allowed which will throw an
  * `\InvalidArgumentException`.
  */
-class Response implements ResponseInterface
+class Response implements ResponseInterface, Stringable
 {
     use MessageTrait;
 
