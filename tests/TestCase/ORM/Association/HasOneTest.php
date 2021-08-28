@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Tests HasOne class
@@ -170,7 +172,7 @@ class HasOneTest extends TestCase
      */
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['join', 'select'])
@@ -275,7 +277,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
         ];
         $this->listenerCalled = false;
-        $opts = new \ArrayObject(['something' => 'more']);
+        $opts = new ArrayObject(['something' => 'more']);
         $this->profile->getEventManager()->on(
             'Model.beforeFind',
             function ($event, $query, $options, $primary) use ($opts): void {

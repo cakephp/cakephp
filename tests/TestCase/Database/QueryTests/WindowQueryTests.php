@@ -15,6 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\QueryTests;
 
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query;
@@ -56,8 +59,8 @@ class WindowQueryTests extends TestCase
 
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof \Cake\Database\Driver\Mysql ||
-            $driver instanceof \Cake\Database\Driver\Sqlite
+            $driver instanceof Mysql ||
+            $driver instanceof Sqlite
         ) {
             $this->skipTests = !$this->connection->getDriver()->supportsWindowFunctions();
         } else {
@@ -145,7 +148,7 @@ class WindowQueryTests extends TestCase
     {
         $skip = $this->skipTests;
         if (!$skip) {
-            $skip = $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver;
+            $skip = $this->connection->getDriver() instanceof Sqlserver;
         }
         $this->skipIf($skip);
 
@@ -167,8 +170,8 @@ class WindowQueryTests extends TestCase
         $skip = $this->skipTests;
         if (!$skip) {
             $driver = $this->connection->getDriver();
-            $skip = $driver instanceof \Cake\Database\Driver\Sqlserver;
-            if ($driver instanceof \Cake\Database\Driver\Sqlite) {
+            $skip = $driver instanceof Sqlserver;
+            if ($driver instanceof Sqlite) {
                 $skip = version_compare($driver->version(), '3.28.0', '<');
             }
         }

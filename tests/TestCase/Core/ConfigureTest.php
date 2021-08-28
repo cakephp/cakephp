@@ -19,7 +19,10 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
+use Exception;
+use RuntimeException;
 
 /**
  * ConfigureTest
@@ -79,7 +82,7 @@ class ConfigureTest extends TestCase
      */
     public function testReadOrFailThrowingException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
         Configure::readOrFail('This.Key.Does.Not.exist');
     }
@@ -250,7 +253,7 @@ class ConfigureTest extends TestCase
      */
     public function testLoadExceptionOnNonExistentFile(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Configure::config('test', new PhpConfig());
         Configure::load('nonexistent_configuration_file', 'test');
     }
@@ -260,7 +263,7 @@ class ConfigureTest extends TestCase
      */
     public function testLoadExceptionOnNonExistentEngine(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Configure::load('nonexistent_configuration_file', 'nonexistent_configuration_engine');
     }
 
@@ -271,7 +274,7 @@ class ConfigureTest extends TestCase
     {
         try {
             Configure::load('nonexistent_configuration_file');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertTrue(Configure::isConfigured('default'));
             $this->assertFalse(Configure::isConfigured('nonexistent_configuration_file'));
         }
@@ -483,7 +486,7 @@ class ConfigureTest extends TestCase
 
     public function testDumpNoAdapter(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         Configure::dump(TMP . 'test.php', 'does_not_exist');
     }
 
@@ -571,7 +574,7 @@ class ConfigureTest extends TestCase
      */
     public function testConsumeOrFailThrowingException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
         Configure::consumeOrFail('This.Key.Does.Not.exist');
     }

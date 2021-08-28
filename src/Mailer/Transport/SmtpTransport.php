@@ -21,6 +21,7 @@ use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
+use RuntimeException;
 
 /**
  * Send mail using SMTP protocol
@@ -539,7 +540,7 @@ class SmtpTransport extends AbstractTransport
     protected function _socket(): Socket
     {
         if ($this->_socket === null) {
-            throw new \RuntimeException('Socket is null, but must be set.');
+            throw new RuntimeException('Socket is null, but must be set.');
         }
 
         return $this->_socket;

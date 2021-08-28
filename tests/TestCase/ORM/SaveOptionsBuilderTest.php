@@ -20,6 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * SaveOptionsBuilder test case.
@@ -97,7 +98,7 @@ class SaveOptionsBuilderTest extends TestCase
                 'Comments.DoesNotExist'
             );
             $this->fail('No \RuntimeException throw for invalid association!');
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
         }
 
         $expected = [

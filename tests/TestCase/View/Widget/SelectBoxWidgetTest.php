@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Widget;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
@@ -109,7 +110,7 @@ class SelectBoxWidgetTest extends TestCase
     public function testRenderSimpleIterator(): void
     {
         $select = new SelectBoxWidget($this->templates);
-        $options = new \ArrayObject(['a' => 'Albatross', 'b' => 'Budgie']);
+        $options = new ArrayObject(['a' => 'Albatross', 'b' => 'Budgie']);
         $data = [
             'name' => 'Birds[name]',
             'options' => $options,
@@ -479,7 +480,7 @@ class SelectBoxWidgetTest extends TestCase
     public function testRenderOptionGroupsTraversable(): void
     {
         $select = new SelectBoxWidget($this->templates);
-        $mammals = new \ArrayObject(['beaver' => 'Beaver', 'elk' => 'Elk']);
+        $mammals = new ArrayObject(['beaver' => 'Beaver', 'elk' => 'Elk']);
         $data = [
             'name' => 'Birds[name]',
             'options' => [

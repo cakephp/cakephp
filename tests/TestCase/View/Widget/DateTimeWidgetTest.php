@@ -20,6 +20,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\DateTimeWidget;
+use DateTime;
 
 /**
  * DateTimeWidget test case
@@ -44,7 +45,7 @@ class DateTimeWidgetTest extends TestCase
      */
     public static function selectedValuesProvider(): array
     {
-        $date = new \DateTime('2014-01-20 12:30:45');
+        $date = new DateTime('2014-01-20 12:30:45');
 
         return [
             'DateTime' => [$date],
@@ -208,7 +209,7 @@ class DateTimeWidgetTest extends TestCase
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Invalid type `foo` for input tag, expected datetime-local, date, time, month or week');
-        $result = $this->DateTime->render(['type' => 'foo', 'val' => new \DateTime()], $this->context);
+        $result = $this->DateTime->render(['type' => 'foo', 'val' => new DateTime()], $this->context);
     }
 
     /**

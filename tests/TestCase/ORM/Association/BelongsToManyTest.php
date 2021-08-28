@@ -32,6 +32,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Tests BelongsToMany class
@@ -137,7 +138,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testStrategyFailure(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid strategy "join" was provided');
         $assoc = new BelongsToMany('Test');
         $assoc->setStrategy(BelongsToMany::STRATEGY_JOIN);
@@ -313,7 +314,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveStrategyInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid save strategy "depsert"');
         new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
     }
@@ -461,7 +462,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testLinkWithNotPersistedSource(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
             'sourceTable' => $this->article,
@@ -479,7 +480,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testLinkWithNotPersistedTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted yet');
         $config = [
             'sourceTable' => $this->article,
@@ -660,7 +661,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkWithNotPersistedSource(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
             'sourceTable' => $this->article,
@@ -678,7 +679,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkWithNotPersistedTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted');
         $config = [
             'sourceTable' => $this->article,
@@ -753,7 +754,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceWithMissingPrimaryKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find primary key value for source entity');
         $config = [
             'sourceTable' => $this->article,
@@ -1295,7 +1296,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testEagerLoadingRequiresPrimaryKey(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The "tags" table does not define a primary key');
         $table = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');

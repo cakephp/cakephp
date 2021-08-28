@@ -21,6 +21,7 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
+use Exception;
 
 /**
  * Tests LoggedQuery class
@@ -167,7 +168,7 @@ class LoggedQueryTest extends TestCase
         $query->query = 'SELECT a FROM b where a = :p1';
         $query->params = ['p1' => '$2y$10$dUAIj'];
         $query->numRows = 4;
-        $query->error = new \Exception('You fail!');
+        $query->error = new Exception('You fail!');
 
         $expected = json_encode([
             'query' => $query->query,

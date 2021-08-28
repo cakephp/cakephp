@@ -19,12 +19,14 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use PDO;
+use RuntimeException;
 use TestApp\Model\Entity\OpenArticleEntity;
 
 /**
@@ -106,7 +108,7 @@ class CompositeKeysTest extends TestCase
      */
     public function testSaveNewErrorCompositeKeyNoIncrement(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing');
         $articles = $this->getTableLocator()->get('SiteArticles');
         $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
@@ -421,7 +423,7 @@ class CompositeKeysTest extends TestCase
      */
     public function testSaveNewEntityMissingKey(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)');
         $entity = new Entity([
             'id' => 5,
@@ -571,7 +573,7 @@ class CompositeKeysTest extends TestCase
             ->setConstructorArgs([$table->getConnection(), $table])
             ->getMock();
 
-        $items = new \Cake\Datasource\ResultSetDecorator([
+        $items = new ResultSetDecorator([
             ['id' => 1, 'name' => 'a', 'site_id' => 1, 'parent_id' => null],
             ['id' => 2, 'name' => 'a', 'site_id' => 2, 'parent_id' => null],
             ['id' => 3, 'name' => 'a', 'site_id' => 1, 'parent_id' => 1],

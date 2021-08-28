@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\Http\Session;
 use Cake\Cache\Cache;
 use Cake\Http\Session\CacheSession;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * CacheSessionTest
@@ -97,7 +98,7 @@ class CacheSessionTest extends TestCase
      */
     public function testMissingConfig(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The cache configuration name to use is required');
         new CacheSession(['foo' => 'bar']);
     }

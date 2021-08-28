@@ -23,6 +23,8 @@ use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
+use RuntimeException;
 use TestApp\Model\Entity\OpenArticleEntity;
 use TestApp\Model\Entity\OpenTag;
 use TestApp\Model\Entity\ProtectedArticle;
@@ -282,7 +284,7 @@ class MarshallerTest extends TestCase
      */
     public function testOneInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
         $data = [
             'title' => 'My title',
@@ -1116,7 +1118,7 @@ class MarshallerTest extends TestCase
      */
     public function testManyInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $data = [
             [
                 'comment' => 'First post',
@@ -1354,7 +1356,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
         $data = [
             'title' => 'My title',
@@ -2752,7 +2754,7 @@ class MarshallerTest extends TestCase
      */
     public function testValidateInvalidType(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $data = ['title' => 'foo'];
         $marshaller = new Marshaller($this->articles);
         $marshaller->one($data, [
@@ -3300,7 +3302,7 @@ class MarshallerTest extends TestCase
      */
     public function testInvalidTypesWhenLoadingAssociatedByIds(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
 
         $data = [
@@ -3320,7 +3322,7 @@ class MarshallerTest extends TestCase
      */
     public function testInvalidTypesWhenLoadingAssociatedByCompositeIds(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
 
         $data = [

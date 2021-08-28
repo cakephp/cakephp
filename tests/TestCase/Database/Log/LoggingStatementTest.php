@@ -22,6 +22,7 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use DateTime;
 use LogicException;
 
 /**
@@ -95,7 +96,7 @@ class LoggingStatementTest extends TestCase
         $inner->method('rowCount')->will($this->returnValue(4));
         $inner->method('execute')->will($this->returnValue(true));
 
-        $date = new \DateTime('2013-01-01');
+        $date = new DateTime('2013-01-01');
         $inner->expects($this->atLeast(2))
               ->method('bindValue')
               ->withConsecutive(['a', 1], ['b', $date]);
@@ -109,7 +110,7 @@ class LoggingStatementTest extends TestCase
         $st->execute();
         $st->fetchAll();
 
-        $st->bindValue('b', new \DateTime('2014-01-01'), 'date');
+        $st->bindValue('b', new DateTime('2014-01-01'), 'date');
         $st->execute();
         $st->fetchAll();
 

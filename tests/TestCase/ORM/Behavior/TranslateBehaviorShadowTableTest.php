@@ -24,6 +24,7 @@ use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\Utility\Hash;
+use Cake\Validation\Validator;
 use TestApp\Model\Entity\TranslateArticle;
 use TestApp\Model\Entity\TranslateBakedArticle;
 
@@ -854,7 +855,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
+            'validator' => (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass(TranslateArticle::class);
 

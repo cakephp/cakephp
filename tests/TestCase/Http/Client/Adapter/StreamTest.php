@@ -15,10 +15,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Client\Adapter;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
+use Exception;
 use TestApp\Http\Client\Adapter\CakeStreamWrapper;
 
 /**
@@ -60,7 +63,7 @@ class StreamTest extends TestCase
 
         try {
             $responses = $stream->send($request, []);
-        } catch (\Cake\Core\Exception\CakeException $e) {
+        } catch (CakeException $e) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
         $this->assertInstanceOf(Response::class, $responses[0]);
@@ -95,7 +98,7 @@ class StreamTest extends TestCase
 
         try {
             $stream->send($request, []);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         $newHandler = set_error_handler(function (): void {
@@ -365,7 +368,7 @@ class StreamTest extends TestCase
 
         $stream = new Stream();
 
-        $this->expectException(\Cake\Http\Client\Exception\NetworkException::class);
+        $this->expectException(NetworkException::class);
         $this->expectExceptionMessage('Connection timed out http://dummy/?sleep');
 
         $stream->send($request, $options);

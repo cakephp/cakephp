@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core\Configure\Engine;
 
 use Cake\Core\Configure\Engine\PhpConfig;
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -74,7 +75,7 @@ class PhpConfigTest extends TestCase
      */
     public function testReadWithExistentFileWithoutExtension(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new PhpConfig($this->path);
         $engine->read('no_php_extension');
     }
@@ -84,7 +85,7 @@ class PhpConfigTest extends TestCase
      */
     public function testReadWithNonExistentFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new PhpConfig($this->path);
         $engine->read('fake_values');
     }
@@ -94,7 +95,7 @@ class PhpConfigTest extends TestCase
      */
     public function testReadEmptyFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new PhpConfig($this->path);
         $engine->read('empty');
     }
@@ -104,7 +105,7 @@ class PhpConfigTest extends TestCase
      */
     public function testReadWithDots(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new PhpConfig($this->path);
         $engine->read('../empty');
     }

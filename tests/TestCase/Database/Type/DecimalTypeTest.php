@@ -20,7 +20,9 @@ use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
+use RuntimeException;
 
 /**
  * Test for the Decimal type.
@@ -143,7 +145,7 @@ class DecimalTypeTest extends TestCase
      */
     public function testToDatabaseInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
@@ -152,7 +154,7 @@ class DecimalTypeTest extends TestCase
      */
     public function testToDatabaseInvalid2(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase('some data', $this->driver);
     }
 
@@ -235,7 +237,7 @@ class DecimalTypeTest extends TestCase
      */
     public function testUseLocaleParsingInvalid(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         DecimalType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }

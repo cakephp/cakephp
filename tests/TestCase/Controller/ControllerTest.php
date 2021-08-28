@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
@@ -26,11 +27,16 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Uri;
 use ReflectionFunction;
-use TestApp\Controller\Admin\PostsController;
+use RuntimeException;
+use TestApp\Controller\Admin\PostsController as AdminPostsController;
 use TestApp\Controller\ArticlesController;
+use TestApp\Controller\PagesController;
+use TestApp\Controller\PostsController;
 use TestApp\Controller\TestController;
 use TestApp\Model\Table\ArticlesTable;
+use TestPlugin\Controller\Admin\CommentsController;
 use TestPlugin\Controller\TestPluginController;
+use UnexpectedValueException;
 
 /**
  * ControllerTest class
@@ -167,16 +173,16 @@ class ControllerTest extends TestCase
 
         $request = new ServerRequest();
         $response = new Response();
-        $controller = new \TestApp\Controller\PostsController($request, $response);
+        $controller = new PostsController($request, $response);
         $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
-        $controller = new \TestApp\Controller\Admin\PostsController($request, $response);
+        $controller = new AdminPostsController($request, $response);
         $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
         $request = $request->withParam('plugin', 'TestPlugin');
-        $controller = new \TestPlugin\Controller\Admin\CommentsController($request, $response);
+        $controller = new CommentsController($request, $response);
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->loadModel());
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
     }
@@ -545,7 +551,7 @@ class ControllerTest extends TestCase
      */
     public function testGetActionMissingAction(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectException(MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/missing',
@@ -562,7 +568,7 @@ class ControllerTest extends TestCase
      */
     public function testGetActionPrivate(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectException(MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/private_m/',
@@ -579,7 +585,7 @@ class ControllerTest extends TestCase
      */
     public function testGetActionProtected(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectException(MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/protected_m/',
@@ -596,7 +602,7 @@ class ControllerTest extends TestCase
      */
     public function testGetActionBaseMethods(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectException(MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/redirect/',
@@ -613,7 +619,7 @@ class ControllerTest extends TestCase
      */
     public function testGetActionMethodCasing(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectException(MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::RETURNER() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/RETURNER/',
@@ -693,7 +699,7 @@ class ControllerTest extends TestCase
      */
     public function testInvokeActionException(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(
             'Controller actions can only return ResponseInterface instance or null. '
                 . 'Got string instead.'
@@ -723,7 +729,7 @@ class ControllerTest extends TestCase
             'params' => ['prefix' => 'Admin'],
         ]);
         $response = new Response();
-        $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
+        $Controller = new AdminPostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
             return $e->getSubject()->getResponse();
         });
@@ -732,7 +738,7 @@ class ControllerTest extends TestCase
 
         $request = $request->withParam('prefix', 'admin/super');
         $response = new Response();
-        $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
+        $Controller = new AdminPostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
             return $e->getSubject()->getResponse();
         });
@@ -745,7 +751,7 @@ class ControllerTest extends TestCase
                 'prefix' => false,
             ],
         ]);
-        $Controller = new \TestApp\Controller\PagesController($request, $response);
+        $Controller = new PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
             return $e->getSubject()->getResponse();
         });
@@ -817,7 +823,7 @@ class ControllerTest extends TestCase
         try {
             $controller->loadComponent('Paginator', ['bad' => 'settings']);
             $this->fail('No exception');
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->assertStringContainsString('The "Paginator" alias has already been loaded', $e->getMessage());
         }
     }
@@ -841,7 +847,7 @@ class ControllerTest extends TestCase
      */
     public function testBeforeRenderViewVariables(): void
     {
-        $controller = new PostsController();
+        $controller = new AdminPostsController();
 
         $controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
             /** @var \Cake\Controller\Controller $controller */
@@ -886,7 +892,7 @@ class ControllerTest extends TestCase
      */
     public function testName(): void
     {
-        $controller = new PostsController();
+        $controller = new AdminPostsController();
         $this->assertSame('Posts', $controller->getName());
 
         $this->assertSame($controller, $controller->setName('Articles'));
@@ -898,7 +904,7 @@ class ControllerTest extends TestCase
      */
     public function testPlugin(): void
     {
-        $controller = new PostsController();
+        $controller = new AdminPostsController();
         $this->assertNull($controller->getPlugin());
 
         $this->assertSame($controller, $controller->setPlugin('Articles'));
@@ -910,7 +916,7 @@ class ControllerTest extends TestCase
      */
     public function testRequest(): void
     {
-        $controller = new PostsController();
+        $controller = new AdminPostsController();
         $this->assertInstanceOf(ServerRequest::class, $controller->getRequest());
 
         $request = new ServerRequest([
@@ -934,7 +940,7 @@ class ControllerTest extends TestCase
      */
     public function testResponse(): void
     {
-        $controller = new PostsController();
+        $controller = new AdminPostsController();
         $this->assertInstanceOf(Response::class, $controller->getResponse());
 
         $response = new Response();
@@ -947,7 +953,7 @@ class ControllerTest extends TestCase
      */
     public function testAutoRender(): void
     {
-        $controller = new PostsController();
+        $controller = new AdminPostsController();
         $this->assertTrue($controller->isAutoRenderEnabled());
 
         $this->assertSame($controller, $controller->disableAutoRender());

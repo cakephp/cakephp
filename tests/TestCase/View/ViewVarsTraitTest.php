@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingViewException;
 
 /**
  * ViewVarsTrait test case
@@ -114,7 +115,7 @@ class ViewVarsTraitTest extends TestCase
      */
     public function testCreateViewException(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingViewException::class);
+        $this->expectException(MissingViewException::class);
         $this->expectExceptionMessage('View class "Foo" is missing.');
         $this->subject->createView('Foo');
     }

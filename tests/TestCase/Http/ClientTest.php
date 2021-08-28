@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Exception\MissingResponseException;
@@ -24,6 +25,7 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Laminas\Diactoros\Request as LaminasRequest;
 
 /**
  * HTTP client test.
@@ -401,7 +403,7 @@ class ClientTest extends TestCase
      */
     public function testInvalidAuthenticationType(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $mock = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
             ->getMock();
@@ -588,7 +590,7 @@ class ClientTest extends TestCase
      */
     public function testExceptionOnUnknownType(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $mock = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
             ->getMock();
@@ -665,7 +667,7 @@ class ClientTest extends TestCase
      */
     public function testAddCookieWithoutDomain(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '/', '');
@@ -681,7 +683,7 @@ class ClientTest extends TestCase
      */
     public function testAddCookieWithoutPath(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '', 'example.com');
@@ -836,7 +838,7 @@ class ClientTest extends TestCase
             ->will($this->returnValue([$response]));
 
         $http = new Client(['adapter' => $mock]);
-        $request = new \Laminas\Diactoros\Request(
+        $request = new LaminasRequest(
             'http://cakephp.org/test.html',
             Request::METHOD_GET,
             'php://temp',

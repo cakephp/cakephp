@@ -17,12 +17,14 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
+use Cake\Validation\RulesProvider;
 use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
+use stdClass;
 
 /**
  * Tests Validator class
@@ -1487,16 +1489,16 @@ class ValidatorTest extends TestCase
     public function testProvider(): void
     {
         $validator = new Validator();
-        $object = new \stdClass();
+        $object = new stdClass();
         $this->assertSame($validator, $validator->setProvider('foo', $object));
         $this->assertSame($object, $validator->getProvider('foo'));
         $this->assertNull($validator->getProvider('bar'));
 
-        $another = new \stdClass();
+        $another = new stdClass();
         $this->assertSame($validator, $validator->setProvider('bar', $another));
         $this->assertSame($another, $validator->getProvider('bar'));
 
-        $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
+        $this->assertEquals(new RulesProvider(), $validator->getProvider('default'));
     }
 
     /**
@@ -1538,7 +1540,7 @@ class ValidatorTest extends TestCase
             ->will($this->returnCallback(function ($data, $context) use ($thing) {
                 $this->assertSame('bar', $data);
                 $expected = [
-                    'default' => new \Cake\Validation\RulesProvider(),
+                    'default' => new RulesProvider(),
                     'thing' => $thing,
                 ];
                 $expected = [
@@ -1584,7 +1586,7 @@ class ValidatorTest extends TestCase
                 $this->assertSame('and', $a);
                 $this->assertSame('awesome', $b);
                 $expected = [
-                    'default' => new \Cake\Validation\RulesProvider(),
+                    'default' => new RulesProvider(),
                     'thing' => $thing,
                 ];
                 $expected = [
@@ -1924,7 +1926,7 @@ class ValidatorTest extends TestCase
      */
     public function testLengthBetweenFailure(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $validator = new Validator();
         $validator->lengthBetween('username', [7]);
     }
@@ -2249,7 +2251,7 @@ class ValidatorTest extends TestCase
      */
     public function testRangeFailure(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $validator = new Validator();
         $validator->range('username', [1]);
     }

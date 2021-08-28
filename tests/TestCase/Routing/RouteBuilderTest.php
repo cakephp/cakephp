@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Routing;
 
+use BadMethodCallException;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
@@ -25,6 +27,7 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * RouteBuilder test case
@@ -352,7 +355,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testConnectConflictingParameters(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('You cannot define routes that conflict with the scope.');
         $routes = new RouteBuilder($this->collection, '/admin', ['plugin' => 'TestPlugin']);
         $routes->connect('/', ['plugin' => 'TestPlugin2', 'controller' => 'Dashboard', 'action' => 'view']);
@@ -880,7 +883,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testScopeException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Need a valid callable to connect routes. Got `null` instead.');
 
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
@@ -961,7 +964,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testMiddlewareGroupOverlap(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot add middleware group \'test\'. A middleware by this name has already been registered.');
         $func = function (): void {
         };
@@ -975,7 +978,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testApplyMiddlewareInvalidName(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot apply \'bad\' middleware or middleware group. Use registerMiddleware() to register middleware');
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->applyMiddleware('bad');
@@ -1134,7 +1137,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testLoadPluginBadPlugin(): void
     {
-        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
+        $this->expectException(MissingPluginException::class);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('Nope');
     }

@@ -21,6 +21,7 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Log\Log;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * ConsoleErrorHandler Test case.
@@ -111,7 +112,7 @@ class ConsoleErrorHandlerTest extends TestCase
      */
     public function testNonCakeExceptions(): void
     {
-        $exception = new \InvalidArgumentException('Too many parameters.');
+        $exception = new InvalidArgumentException('Too many parameters.');
 
         $this->Error->expects($this->once())
             ->method('_stop')
