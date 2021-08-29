@@ -178,6 +178,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     protected function _schemaFromFields(): void
     {
+        /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($this->connection());
         $this->_schema = $connection->getDriver()->newTableSchema($this->table);
         foreach ($this->fields as $field => $data) {
@@ -231,10 +232,12 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
 
         $this->table = $import['table'];
 
+        /** @var \Cake\Database\Connection $db */
         $db = ConnectionManager::get($import['connection'], false);
         $schemaCollection = $db->getSchemaCollection();
-        $table = $schemaCollection->describe($import['table']);
-        $this->_schema = $table;
+        $tableSchema = $schemaCollection->describe($import['table']);
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
+        $this->_schema = $tableSchema;
     }
 
     /**
@@ -245,6 +248,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     protected function _schemaFromReflection(): void
     {
+        /** @var \Cake\Database\Connection $db */
         $db = ConnectionManager::get($this->connection());
         $schemaCollection = $db->getSchemaCollection();
         $tables = $schemaCollection->listTables();
@@ -259,6 +263,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             );
         }
 
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->_schema = $schemaCollection->describe($this->table);
     }
 
@@ -276,7 +281,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         }
 
         try {
-            /** @psalm-suppress ArgumentTypeCoercion */
+            /** @var \Cake\Database\Connection $connection */
             $queries = $this->_schema->createSql($connection);
             foreach ($queries as $query) {
                 $stmt = $connection->prepare($query);
@@ -312,7 +317,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         }
 
         try {
-            /** @psalm-suppress ArgumentTypeCoercion */
+            /** @var \Cake\Database\Connection $connection */
             $sql = $this->_schema->dropSql($connection);
             foreach ($sql as $stmt) {
                 $connection->execute($stmt)->closeCursor();
@@ -331,6 +336,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     {
         if (isset($this->records) && !empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
+            /** @var \Cake\Database\Connection $connection */
             $query = $connection->newQuery()
                 ->insert($fields, $types)
                 ->into($this->sourceName());
@@ -360,7 +366,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             $this->_schema->addConstraint($name, $data);
         }
 
-        /** @psalm-suppress ArgumentTypeCoercion */
+        /** @var \Cake\Database\Connection $connection */
         $sql = $this->_schema->addConstraintSql($connection);
 
         if (empty($sql)) {
@@ -383,7 +389,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             return true;
         }
 
-        /** @psalm-suppress ArgumentTypeCoercion */
+        /** @var \Cake\Database\Connection $connection */
         $sql = $this->_schema->dropConstraintSql($connection);
 
         if (empty($sql)) {
@@ -432,7 +438,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     public function truncate(ConnectionInterface $connection): bool
     {
-        /** @psalm-suppress ArgumentTypeCoercion */
+        /** @var \Cake\Database\Connection $connection */
         $sql = $this->_schema->truncateSql($connection);
         foreach ($sql as $stmt) {
             $connection->execute($stmt)->closeCursor();

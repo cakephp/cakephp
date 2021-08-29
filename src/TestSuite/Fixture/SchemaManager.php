@@ -83,7 +83,9 @@ class SchemaManager
         }
 
         foreach ($stmts as $stmt) {
-            ConnectionManager::get($connectionName)->execute($stmt);
+            /** @var \Cake\Database\Connection $connection */
+            $connection = ConnectionManager::get($connectionName);
+            $connection->execute($stmt);
         }
         $migrator->io->success(
             'Dump of schema in file ' . $file . ' for connection ' . $connectionName . ' successful.'

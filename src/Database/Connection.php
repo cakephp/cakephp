@@ -874,7 +874,6 @@ class Connection implements ConnectionInterface
      *
      * @param \Psr\Log\LoggerInterface $logger Logger object
      * @return void
-     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function setLogger(LoggerInterface $logger): void
     {
