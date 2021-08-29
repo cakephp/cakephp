@@ -37,14 +37,14 @@ class QueryCacher
      *
      * @var \Closure|string
      */
-    protected $_key;
+    protected Closure|string $_key;
 
     /**
      * Config for cache engine.
      *
      * @var \Psr\SimpleCache\CacheInterface|string
      */
-    protected $_config;
+    protected CacheInterface|string $_config;
 
     /**
      * Constructor.

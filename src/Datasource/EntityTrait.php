@@ -34,14 +34,14 @@ trait EntityTrait
      *
      * @var array
      */
-    protected $_fields = [];
+    protected array $_fields = [];
 
     /**
      * Holds all fields that have been changed and their original values for this entity.
      *
      * @var array
      */
-    protected $_original = [];
+    protected array $_original = [];
 
     /**
      * List of field names that should **not** be included in JSON or Array
@@ -49,7 +49,7 @@ trait EntityTrait
      *
      * @var array<string>
      */
-    protected $_hidden = [];
+    protected array $_hidden = [];
 
     /**
      * List of computed or virtual fields that **should** be included in JSON or array
@@ -58,7 +58,7 @@ trait EntityTrait
      *
      * @var array<string>
      */
-    protected $_virtual = [];
+    protected array $_virtual = [];
 
     /**
      * Holds a list of the fields that were modified or added after this object
@@ -66,14 +66,14 @@ trait EntityTrait
      *
      * @var array<bool>
      */
-    protected $_dirty = [];
+    protected array $_dirty = [];
 
     /**
      * Holds a cached list of getters/setters per class
      *
      * @var array
      */
-    protected static $_accessors = [];
+    protected static array $_accessors = [];
 
     /**
      * Indicates whether or not this entity is yet to be persisted.
@@ -82,21 +82,21 @@ trait EntityTrait
      *
      * @var bool
      */
-    protected $_new = true;
+    protected bool $_new = true;
 
     /**
      * List of errors per field as stored in this object.
      *
      * @var array
      */
-    protected $_errors = [];
+    protected array $_errors = [];
 
     /**
      * List of invalid fields and their data for errors upon validation/patching.
      *
      * @var array
      */
-    protected $_invalid = [];
+    protected array $_invalid = [];
 
     /**
      * Map of fields in this entity that can be safely assigned, each
@@ -109,14 +109,14 @@ trait EntityTrait
      *
      * @var array<bool>
      */
-    protected $_accessible = ['*' => true];
+    protected array $_accessible = ['*' => true];
 
     /**
      * The alias of the repository this entity came from
      *
      * @var string
      */
-    protected $_registryAlias = '';
+    protected string $_registryAlias = '';
 
     /**
      * Magic getter to access fields that have been set in this entity

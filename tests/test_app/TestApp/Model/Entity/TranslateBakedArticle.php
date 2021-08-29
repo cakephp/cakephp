@@ -10,7 +10,7 @@ class TranslateBakedArticle extends Entity
 {
     use TranslateTrait;
 
-    protected $_accessible = [
+    protected array $_accessible = [
         'title' => true,
         'body' => true,
     ];

@@ -27,9 +27,9 @@ class RequestActionController extends AppController
     /**
      * The default model to use.
      *
-     * @var string
+     * @var string|null
      */
-    protected $modelClass = 'Posts';
+    protected ?string $modelClass = 'Posts';
 
     /**
      * test_request_action method

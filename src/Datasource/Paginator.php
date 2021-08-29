@@ -42,7 +42,7 @@ class Paginator implements PaginatorInterface
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
@@ -54,7 +54,7 @@ class Paginator implements PaginatorInterface
      *
      * @var array
      */
-    protected $_pagingParams = [];
+    protected array $_pagingParams = [];
 
     /**
      * Handles automatic pagination of model records.

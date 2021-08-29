@@ -50,7 +50,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @var array<string, \Cake\ORM\Table>
      */
-    protected $instances = [];
+    protected array $instances = [];
 
     /**
      * Contains a list of Table objects that were created out of the

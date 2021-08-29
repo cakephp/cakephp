@@ -42,21 +42,21 @@ trait ModelAwareTrait
      *
      * @var string|null
      */
-    protected $modelClass;
+    protected ?string $modelClass = null;
 
     /**
      * A list of overridden model factory functions.
      *
      * @var array<callable|\Cake\Datasource\Locator\LocatorInterface>
      */
-    protected $_modelFactories = [];
+    protected array $_modelFactories = [];
 
     /**
      * The model type to use.
      *
      * @var string
      */
-    protected $_modelType = 'Table';
+    protected string $_modelType = 'Table';
 
     /**
      * Set the modelClass property based on conventions.

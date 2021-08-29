@@ -141,10 +141,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         parent::__construct($connection);
         $this->repository($table);
-
-        if ($this->_repository !== null) {
-            $this->addDefaultTypes($this->_repository);
-        }
+        $this->addDefaultTypes($table);
     }
 
     /**
