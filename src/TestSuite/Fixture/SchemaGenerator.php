@@ -23,6 +23,10 @@ use RuntimeException;
 /**
  * Create database schema from the provided metadata file.
  *
+ * This class is only intended for use by CakePHP's testsuite
+ * as we need to test against many database platforms and can't
+ * leverage migrations, or other dependencies to manage schema.
+ *
  * @internal
  */
 class SchemaGenerator
@@ -66,8 +70,7 @@ class SchemaGenerator
      */
     public function reload(?array $tables = null): void
     {
-        // Don't reload schema when we are in a separate process
-        // state.
+        // Don't reload schema when we are in a separate process state.
         if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
             return;
         }

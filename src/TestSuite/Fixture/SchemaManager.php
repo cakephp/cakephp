@@ -19,7 +19,15 @@ use Cake\Console\ConsoleIo;
 use Cake\Datasource\ConnectionManager;
 
 /**
- * This class will create the schema of the test DB
+ * Create test database schema from one or more SQL dump files.
+ *
+ * This class can be useful to create test database schema when
+ * your schema is managed by tools external to your CakePHP
+ * application.
+ *
+ * It is not well suited for applications/plugins that need to
+ * support multiple database platforms. You should use migrations
+ * for that instead.
  */
 class SchemaManager
 {
@@ -42,6 +50,9 @@ class SchemaManager
     /**
      * Import the schema from a file, or an array of files.
      *
+     * This function will drop all tables in the database and then
+     * load the provided schema file(s).
+     *
      * @param string $connectionName Connection
      * @param array<string>|string $file File to dump
      * @param bool|null $verbose Set to true to display messages
@@ -58,7 +69,8 @@ class SchemaManager
     ): void {
         $files = (array)$file;
 
-        if (empty($files)) {
+        // Don't create schema if we are in a phpunit separate process test method.
+        if (empty($files) || isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
             return;
         }
 
