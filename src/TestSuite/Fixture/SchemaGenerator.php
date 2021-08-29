@@ -66,6 +66,11 @@ class SchemaGenerator
      */
     public function reload(?array $tables = null): void
     {
+        // Don't reload schema when we are in a separate process
+        // state.
+        if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
+            return;
+        }
         $cleaner = new SchemaCleaner();
         $cleaner->dropTables($this->connection, $tables);
 
