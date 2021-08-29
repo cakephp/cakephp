@@ -1047,24 +1047,6 @@ class FormHelper extends Helper
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
 
-        // Hidden inputs don't need aria.
-        // Multiple checkboxes can't have aria generated for them at this layer.
-        if ($options['type'] !== 'hidden' && ($options['type'] !== 'select' && !isset($options['multiple']))) {
-            $isFieldError = $this->isFieldError($fieldName);
-            $labelText = null;
-            if (isset($options['label']) && is_string($options['label'])) {
-                $labelText = $options['label'];
-            } elseif (isset($options['placeholder'])) {
-                $labelText = $options['placeholder'];
-            }
-            $options += [
-                'aria-label' => $labelText,
-                'aria-required' => $options['required'] == true ? 'true' : null,
-                'aria-invalid' => $isFieldError ? 'true' : null,
-                'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
-            ];
-        }
-
         $templater = $this->templater();
         $newTemplates = $options['templates'];
 
@@ -1074,6 +1056,26 @@ class FormHelper extends Helper
             $templater->{$templateMethod}($options['templates']);
         }
         unset($options['templates']);
+
+        // Hidden inputs don't need aria.
+        // Multiple checkboxes can't have aria generated for them at this layer.
+        if ($options['type'] !== 'hidden' && ($options['type'] !== 'select' && !isset($options['multiple']))) {
+            $isFieldError = $this->isFieldError($fieldName);
+            $options += [
+                'aria-required' => $options['required'] == true ? 'true' : null,
+                'aria-invalid' => $isFieldError ? 'true' : null,
+            ];
+            // Don't include aria-describedby unless we have a good chance of
+            // having error message show up.
+            if (
+                strpos($templater->get('error'), '{{id}}') !== false &&
+                strpos($templater->get('inputContainerError'), '{{error}}') !== false
+            ) {
+                $options += [
+                   'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
+                ];
+            }
+        }
 
         $error = null;
         $errorSuffix = '';

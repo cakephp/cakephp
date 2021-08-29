@@ -2441,9 +2441,8 @@ class FormHelperTest extends TestCase
                 'name' => 'Article[title]',
                 'id' => 'article-title',
                 'class' => 'form-error',
+                // No aria-describedby because error template is custom
                 'aria-invalid' => 'true',
-                // TODO this seems wrong as the id doesn't exist.
-                'aria-describedby' => 'article-title-error',
             ],
             '/div',
         ];
@@ -2968,9 +2967,8 @@ class FormHelperTest extends TestCase
                 'name' => 'field',
                 'id' => 'field',
                 'class' => 'form-error',
+                // No aria-describedby because error template is custom
                 'aria-invalid' => 'true',
-                // TODO this seems bad as the id doesn't exist.
-                'aria-describedby' => 'field-error',
             ],
             ['span' => ['class' => 'error-message']],
             'Badness!',
@@ -3257,7 +3255,6 @@ class FormHelperTest extends TestCase
             'input' => ['type' => 'hidden', 'name' => 'Articles[disabled]', 'value' => '0'],
             'label' => ['for' => 'articles-disabled'],
             ['input' => [
-                'aria-label' => 'Disabled',
                 'type' => 'checkbox',
                 'name' => 'Articles[disabled]',
                 'value' => '1',
@@ -3284,7 +3281,6 @@ class FormHelperTest extends TestCase
                 'name' => 'Articles[confirm]',
                 'value' => '1',
                 'id' => 'articles-confirm',
-                'aria-label' => 'Confirm <b>me</b>!',
             ]],
             'Confirm <b>me</b>!',
             '/label',
@@ -7343,7 +7339,6 @@ class FormHelperTest extends TestCase
                 'name' => 'Contacts[name]',
                 'id' => 'contacts-name',
                 'maxlength' => '255',
-                'aria-label' => 'My label',
             ],
         ];
         $this->assertHtml($expected, $result);
