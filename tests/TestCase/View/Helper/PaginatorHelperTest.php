@@ -31,11 +31,6 @@ use Cake\View\View;
 class PaginatorHelperTest extends TestCase
 {
     /**
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * @var \Cake\View\View
      */
     protected $View;
@@ -81,8 +76,6 @@ class PaginatorHelperTest extends TestCase
         Router::connect('/{controller}/{action}/*');
         Router::connect('/{plugin}/{controller}/{action}/*');
         Router::setRequest($request);
-
-        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -93,7 +86,7 @@ class PaginatorHelperTest extends TestCase
         parent::tearDown();
         unset($this->View, $this->Paginator);
 
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**

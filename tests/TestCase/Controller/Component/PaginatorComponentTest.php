@@ -46,13 +46,6 @@ class PaginatorComponentTest extends TestCase
     ];
 
     /**
-     * Don't load data for fixtures for all tests
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
      * @var \Cake\Controller\Controller
      */
     protected $controller;
@@ -183,7 +176,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateCustomFinderOptions(): void
     {
-        $this->loadFixtures('Posts');
         $settings = [
             'PaginatorPosts' => [
                 'finder' => ['author' => ['author_id' => 1]],
@@ -210,8 +202,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testRequestParamsSetting(): void
     {
-        $this->loadFixtures('Posts');
-
         $settings = [
             'PaginatorPosts' => [
                 'limit' => 10,
@@ -256,7 +246,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateNestedEagerLoader(): void
     {
-        $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags');
         $tags = $this->getTableLocator()->get('Tags');
@@ -683,8 +672,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testEmptyPaginationResult(): void
     {
-        $this->loadFixtures('Posts');
-
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $table->deleteAll('1=1');
 
@@ -713,7 +700,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testOutOfRangePageNumberGetsClamped(): void
     {
-        $this->loadFixtures('Posts');
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams(['page' => 3000]));
 
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -740,7 +726,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testOutOfRangePageNumberStillProvidesPageCount(): void
     {
-        $this->loadFixtures('Posts');
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'limit' => 1,
             'page' => '4',
@@ -771,7 +756,6 @@ class PaginatorComponentTest extends TestCase
     public function testOutOfVeryBigPageNumberGetsClamped(): void
     {
         $this->expectException(NotFoundException::class);
-        $this->loadFixtures('Posts');
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => '3000000000000000000000000',
         ]));
@@ -1055,7 +1039,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateMaxLimit(): void
     {
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $settings = [
@@ -1083,7 +1066,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateCustomFind(): void
     {
-        $this->loadFixtures('Posts');
         $titleExtractor = function ($result) {
             $ids = [];
             foreach ($result as $record) {
@@ -1145,7 +1127,6 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateCustomFindFieldsArray(): void
     {
-        $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
         $table->save(new Entity($data));
@@ -1243,7 +1224,7 @@ class PaginatorComponentTest extends TestCase
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
-        $this->loadFixtures('Posts');
+
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $query = $table->find()
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])

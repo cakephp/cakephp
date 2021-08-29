@@ -34,20 +34,12 @@ class NumberTest extends TestCase
     protected $Number;
 
     /**
-     * Backup the locale property
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->Number = new Number();
-        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -57,7 +49,7 @@ class NumberTest extends TestCase
     {
         parent::tearDown();
         unset($this->Number);
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
         Number::setDefaultCurrency();
         Number::setDefaultCurrencyFormat();
     }

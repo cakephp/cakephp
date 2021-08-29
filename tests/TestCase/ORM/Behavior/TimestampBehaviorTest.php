@@ -32,15 +32,6 @@ use UnexpectedValueException;
 class TimestampBehaviorTest extends TestCase
 {
     /**
-     * autoFixtures
-     *
-     * Don't load fixtures for all tests
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
      * fixtures
      *
      * @var array
@@ -419,8 +410,6 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testSaveTriggersInsert(): void
     {
-        $this->loadFixtures('Users');
-
         $table = $this->getTableLocator()->get('users');
         $table->addBehavior('Timestamp', [
             'events' => [

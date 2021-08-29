@@ -57,13 +57,6 @@ class FormHelperTest extends TestCase
     protected $fixtures = ['core.Articles', 'core.Comments'];
 
     /**
-     * Do not load the fixtures by default
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
      * @var array
      */
     protected $article = [];
@@ -367,7 +360,6 @@ class FormHelperTest extends TestCase
      */
     public function testCreateContextSelectionBuiltIn($data, string $class): void
     {
-        $this->loadFixtures('Articles');
         $this->Form->create($data);
         $this->assertInstanceOf($class, $this->Form->context());
     }
@@ -4900,7 +4892,6 @@ class FormHelperTest extends TestCase
 
     public function testSelectEmptyWithRequiredFalse(): void
     {
-        $this->loadFixtures();
         $Articles = $this->getTableLocator()->get('Articles');
         $validator = $Articles->getValidator('default');
         $validator->allowEmptyString('user_id');
@@ -5048,7 +5039,6 @@ class FormHelperTest extends TestCase
      */
     public function testHabtmSelectBox(): void
     {
-        $this->loadFixtures('Articles');
         $options = [
             1 => 'blue',
             2 => 'red',
@@ -5159,8 +5149,6 @@ class FormHelperTest extends TestCase
      */
     public function testErrorsForBelongsToManySelect(): void
     {
-        $this->loadFixtures();
-
         $spacecraft = [
             1 => 'Orion',
             2 => 'Helios',
@@ -7334,7 +7322,6 @@ class FormHelperTest extends TestCase
      */
     public function testMultiRecordForm(): void
     {
-        $this->loadFixtures('Articles', 'Comments');
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments');
 
@@ -7983,7 +7970,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesSingleSwitchRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
@@ -8038,7 +8024,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesListSwitchRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
@@ -8082,7 +8067,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesSwitchViaOptionsRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
@@ -8137,7 +8121,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesSwitchViaOptionsAndSetterRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);

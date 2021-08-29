@@ -34,8 +34,6 @@ class WindowQueryTests extends TestCase
         'core.Comments',
     ];
 
-    public $autoFixtures = false;
-
     /**
      * @var \Cake\Database\Connection
      */
@@ -110,7 +108,6 @@ class WindowQueryTests extends TestCase
     public function testPartitions(): void
     {
         $this->skipIf($this->skipTests);
-        $this->loadFixtures('Comments');
 
         $query = new Query($this->connection);
         $result = $query
@@ -152,8 +149,6 @@ class WindowQueryTests extends TestCase
         }
         $this->skipIf($skip);
 
-        $this->loadFixtures('Comments');
-
         $query = new Query($this->connection);
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->over('window1')])
@@ -176,8 +171,6 @@ class WindowQueryTests extends TestCase
             }
         }
         $this->skipIf($skip);
-
-        $this->loadFixtures('Comments');
 
         $query = new Query($this->connection);
         $result = $query

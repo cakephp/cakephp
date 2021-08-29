@@ -41,11 +41,6 @@ class TimeHelperTest extends TestCase
     protected $View;
 
     /**
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * setUp method
      */
     public function setUp(): void
@@ -53,8 +48,6 @@ class TimeHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
-        DateTime::setDefaultLocale('en_US');
-        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -63,8 +56,8 @@ class TimeHelperTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        DateTime::setDefaultLocale('en_US');
-        I18n::setLocale($this->locale);
+        DateTime::setDefaultLocale(null);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**

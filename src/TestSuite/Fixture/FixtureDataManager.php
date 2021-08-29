@@ -18,6 +18,7 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver\Postgres;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -205,11 +206,18 @@ class FixtureDataManager extends FixtureLoader
         $dbs = $this->fixtureConnections($fixtures);
         foreach ($dbs as $connection => $fixtures) {
             $db = ConnectionManager::get($connection);
-            $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+            if ($db->getDriver() instanceof Postgres) {
+                // disabling foreign key constraints is only valid in a transaction
+                $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+                    $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+                        $operation($db, $fixtures);
+                    });
+                });
+            } else {
                 $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
                     $operation($db, $fixtures);
                 });
-            });
+            }
         }
     }
 

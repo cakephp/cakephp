@@ -36,8 +36,6 @@ class DateTimeTest extends TestCase
     {
         parent::setUp();
         $this->now = DateTime::getTestNow();
-        $this->locale = DateTime::getDefaultLocale();
-        DateTime::setDefaultLocale('en_US');
     }
 
     /**
@@ -47,12 +45,12 @@ class DateTimeTest extends TestCase
     {
         parent::tearDown();
         DateTime::setTestNow($this->now);
-        DateTime::setDefaultLocale($this->locale);
+        DateTime::setDefaultLocale(null);
         DateTime::resetToStringFormat();
         DateTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 
         date_default_timezone_set('UTC');
-        I18n::setLocale(I18n::DEFAULT_LOCALE);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**
@@ -416,18 +414,12 @@ class DateTimeTest extends TestCase
      */
     public function testI18nFormatUsingSystemLocale(): void
     {
-        // Unset default locale for the Time class to ensure system's locale is used.
-        DateTime::setDefaultLocale();
-        $locale = I18n::getLocale();
-
         $time = new DateTime(1556864870);
         I18n::setLocale('ar');
         $this->assertSame('٢٠١٩-٠٥-٠٣', $time->i18nFormat('yyyy-MM-dd'));
 
         I18n::setLocale('en');
         $this->assertSame('2019-05-03', $time->i18nFormat('yyyy-MM-dd'));
-
-        I18n::setLocale($locale);
     }
 
     /**

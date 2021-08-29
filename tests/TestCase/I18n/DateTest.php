@@ -27,19 +27,11 @@ use IntlDateFormatter;
 class DateTest extends TestCase
 {
     /**
-     * Backup the locale property
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * setup
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->locale = Date::getDefaultLocale();
     }
 
     /**
@@ -48,7 +40,7 @@ class DateTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Date::setDefaultLocale($this->locale);
+        Date::setDefaultLocale(null);
         date_default_timezone_set('UTC');
     }
 
