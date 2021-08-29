@@ -24,6 +24,7 @@ use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PDO;
 use PDOStatement;
 
@@ -56,7 +57,7 @@ class DriverTest extends TestCase
         $arg = ['login' => 'Bear'];
         try {
             $this->getMockForAbstractClass(Driver::class, [$arg]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
                 $e->getMessage()

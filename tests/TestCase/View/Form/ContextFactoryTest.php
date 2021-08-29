@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\View\Form;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\ContextFactory;
+use RuntimeException;
 
 /**
  * ContextFactory test case.
@@ -27,7 +28,7 @@ class ContextFactoryTest extends TestCase
 {
     public function testGetException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'No context provider found for value of type `boolean`.'
             . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.'

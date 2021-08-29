@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Cache;
 
+use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
@@ -23,6 +24,7 @@ use Cake\Cache\Engine\NullEngine;
 use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
+use stdClass;
 
 /**
  * CacheTest class
@@ -386,7 +388,7 @@ class CacheTest extends TestCase
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         Cache::pool('test');
     }
@@ -396,11 +398,11 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidObject(): void
     {
-        $this->getMockBuilder(\stdClass::class)
+        $this->getMockBuilder(stdClass::class)
             ->setMockClassName('RubbishEngine')
             ->getMock();
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         Cache::setConfig('test', [
             'engine' => '\RubbishEngine',
@@ -414,7 +416,7 @@ class CacheTest extends TestCase
     {
         Cache::setConfig('tests', ['engine' => 'File', 'path' => CACHE]);
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         Cache::setConfig('tests', ['engine' => 'Apc']);
     }

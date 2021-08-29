@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\I18n\Formatter;
 
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\TestSuite\TestCase;
+use Exception;
 
 /**
  * IcuFormatter tests
@@ -82,7 +83,7 @@ class IcuFormatterTest extends TestCase
      */
     public function testBadMessageFormat(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
 
         $formatter = new IcuFormatter();
         $formatter->format('en_US', '{crazy format', ['some', 'vars']);

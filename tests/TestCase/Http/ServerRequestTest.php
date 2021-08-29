@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
@@ -24,6 +25,7 @@ use Cake\Http\FlashMessage;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
 
@@ -325,7 +327,7 @@ class ServerRequestTest extends TestCase
      */
     public function testWithUploadedFilesInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid file at \'avatar\'');
         $request = new ServerRequest();
         $request->withUploadedFiles(['avatar' => 'not a file']);
@@ -336,7 +338,7 @@ class ServerRequestTest extends TestCase
      */
     public function testWithUploadedFilesInvalidFileNested(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid file at \'user.avatar\'');
         $request = new ServerRequest();
         $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
@@ -570,7 +572,7 @@ class ServerRequestTest extends TestCase
      */
     public function testWithMethodInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported HTTP method "no good" provided');
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete'],
@@ -610,7 +612,7 @@ class ServerRequestTest extends TestCase
      */
     public function testWithProtocolVersionInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported protocol version \'no good\' provided');
         $request = new ServerRequest();
         $request->withProtocolVersion('no good');
@@ -717,7 +719,7 @@ class ServerRequestTest extends TestCase
      */
     public function testMagicCallExceptionOnUnknownMethod(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $request = new ServerRequest();
         $request->IamABanana();
     }
@@ -1962,7 +1964,7 @@ XML;
      */
     public function testWithoutAttributesDenyEmulatedProperties(string $prop): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $request = new ServerRequest([]);
         $request->withoutAttribute($prop);
     }

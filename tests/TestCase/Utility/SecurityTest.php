@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Utility;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -139,7 +140,7 @@ class SecurityTest extends TestCase
      */
     public function testEncryptInvalidKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
@@ -165,7 +166,7 @@ class SecurityTest extends TestCase
      */
     public function testDecryptInvalidKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
@@ -177,7 +178,7 @@ class SecurityTest extends TestCase
      */
     public function testDecryptInvalidData(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The data to decrypt cannot be empty.');
         $txt = '';
         $key = 'This is a key that is long enough to be ok.';

@@ -20,6 +20,8 @@ use Cake\Core\Configure;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use RuntimeException;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TestTable;
 
@@ -97,7 +99,7 @@ class AssociationTest extends TestCase
      */
     public function testSetNameAfterTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Association name "Bar" does not match target table alias');
         $this->association->getTarget();
         $this->association->setName('Bar');
@@ -142,7 +144,7 @@ class AssociationTest extends TestCase
      */
     public function testSetClassNameAfterTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The class name "' . AuthorsTable::class . '" doesn\'t match the target table class name of');
         $this->association->getTarget();
         $this->association->setClassName(AuthorsTable::class);
@@ -153,7 +155,7 @@ class AssociationTest extends TestCase
      */
     public function testSetClassNameWithShortSyntaxAfterTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The class name "Authors" doesn\'t match the target table class name of');
         $this->association->getTarget();
         $this->association->setClassName('Authors');
@@ -208,7 +210,7 @@ class AssociationTest extends TestCase
      */
     public function testInvalidTableFetchedFromRegistry(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->getTableLocator()->get('Test');
 
         $config = [
@@ -475,7 +477,7 @@ class AssociationTest extends TestCase
      */
     public function testInvalidStrategy(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->association->setStrategy('anotherThing');
     }
 

@@ -20,6 +20,7 @@ use Cake\Database\Type\FloatType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;
+use RuntimeException;
 
 /**
  * Test for the Float type.
@@ -178,7 +179,7 @@ class FloatTypeTest extends TestCase
      */
     public function testUseLocaleParsingInvalid(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         FloatType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }

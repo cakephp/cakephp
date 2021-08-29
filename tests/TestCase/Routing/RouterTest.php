@@ -19,11 +19,14 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Exception\DuplicateNamedRouteException;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -993,7 +996,7 @@ class RouterTest extends TestCase
      */
     public function testNamedRouteException(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         Router::connect(
             '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
@@ -1007,7 +1010,7 @@ class RouterTest extends TestCase
      */
     public function testDuplicateNamedRouteException(): void
     {
-        $this->expectException(\Cake\Routing\Exception\DuplicateNamedRouteException::class);
+        $this->expectException(DuplicateNamedRouteException::class);
         Router::connect(
             '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
@@ -1566,7 +1569,7 @@ class RouterTest extends TestCase
      */
     public function testParseError(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         Router::connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
         Router::parseRequest($this->makeRequest('/nope', 'GET'));
     }
@@ -1958,14 +1961,14 @@ class RouterTest extends TestCase
         try {
             Router::url(['controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertTrue(true, 'Exception was raised');
         }
 
         try {
             Router::url(['prefix' => '1', 'controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertTrue(true, 'Exception was raised');
         }
     }
@@ -2084,7 +2087,7 @@ class RouterTest extends TestCase
      */
     public function testParsingWithPatternOnAction(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         Router::connect(
             '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
@@ -2215,7 +2218,7 @@ class RouterTest extends TestCase
      */
     public function testUrlPatternOnAction(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         Router::connect(
             '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
@@ -2395,7 +2398,7 @@ class RouterTest extends TestCase
      */
     public function testRegexRouteMatchUrl(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         Router::connect('/{locale}/{controller}/{action}/*', [], ['locale' => 'dan|eng']);
 
         $request = new ServerRequest([
@@ -2461,7 +2464,7 @@ class RouterTest extends TestCase
      */
     public function testCustomRouteException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Router::connect('/{controller}', [], ['routeClass' => 'Object']);
     }
 

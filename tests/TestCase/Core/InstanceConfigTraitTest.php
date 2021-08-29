@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\TestSuite\TestCase;
+use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 use TestApp\Config\ReadOnlyTestInstanceConfig;
@@ -397,7 +398,7 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testReadOnlyConfig(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('This Instance is readonly');
         $object = new ReadOnlyTestInstanceConfig();
 
@@ -505,7 +506,7 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDeleteClobber(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot unset a.nested.value.whoops');
         $this->object->setConfig('a.nested.value.whoops', null);
     }

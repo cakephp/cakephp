@@ -15,13 +15,16 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
+use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use stdClass;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
+use UnexpectedValueException;
 
 /**
  * ModelAwareTrait test case
@@ -69,7 +72,7 @@ class ModelAwareTraitTest extends TestCase
      */
     public function testLoadModelException(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Default modelClass is empty');
 
         $stub = new Stub();
@@ -154,7 +157,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->setProps('Articles');
 
         FactoryLocator::add('Test', function ($name) {
-            $mock = new \stdClass();
+            $mock = new stdClass();
             $mock->name = $name;
 
             return $mock;
@@ -168,7 +171,7 @@ class ModelAwareTraitTest extends TestCase
      */
     public function testMissingModelException(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\MissingModelException::class);
+        $this->expectException(MissingModelException::class);
         $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 

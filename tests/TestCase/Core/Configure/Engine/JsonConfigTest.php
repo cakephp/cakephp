@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core\Configure\Engine;
 
 use Cake\Core\Configure\Engine\JsonConfig;
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -74,7 +75,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithExistentFileWithoutExtension(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new JsonConfig($this->path);
         $engine->read('no_json_extension');
     }
@@ -84,7 +85,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithNonExistentFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new JsonConfig($this->path);
         $engine->read('fake_values');
     }
@@ -94,7 +95,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadEmptyFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('config file "empty.json"');
         $engine = new JsonConfig($this->path);
         $config = $engine->read('empty');
@@ -105,7 +106,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithInvalidJson(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Error parsing JSON string fetched from config file "invalid.json"');
         $engine = new JsonConfig($this->path);
         $engine->read('invalid');
@@ -116,7 +117,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithDots(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new JsonConfig($this->path);
         $engine->read('../empty');
     }

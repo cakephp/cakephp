@@ -33,6 +33,8 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Laminas\Diactoros\UploadedFile;
+use LogicException;
+use OutOfBoundsException;
 use PHPUnit\Framework\AssertionFailedError;
 use stdClass;
 
@@ -357,7 +359,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testConfigApplication(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot load `TestApp\MissingApp` for use in integration');
         $this->configApplication('TestApp\MissingApp', []);
         $this->get('/request_action/test_request_action');
@@ -1385,7 +1387,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testDisableErrorHandlerMiddleware(): void
     {
-        $this->expectException(\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('oh no!');
         $this->disableErrorHandlerMiddleware();
         $this->get('/posts/throw_exception');

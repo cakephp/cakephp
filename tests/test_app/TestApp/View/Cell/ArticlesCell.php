@@ -15,10 +15,12 @@ declare(strict_types=1);
  */
 namespace TestApp\View\Cell;
 
+use Cake\View\Cell;
+
 /**
  * TagCloudCell class
  */
-class ArticlesCell extends \Cake\View\Cell
+class ArticlesCell extends Cell
 {
     /**
      * valid cell options.

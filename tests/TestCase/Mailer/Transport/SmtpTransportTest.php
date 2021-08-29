@@ -149,7 +149,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnectEhloNoTlsOnRequiredTlsServer(): void
     {
-        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectException(SocketException::class);
         $this->expectExceptionMessage('SMTP authentication method not allowed, check if SMTP server requires TLS.');
         $this->SmtpTransport->setConfig(['tls' => false] + $this->credentials);
 
@@ -268,7 +268,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testAuthNotRecognized(): void
     {
-        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectException(SocketException::class);
         $this->expectExceptionMessage('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
 
         $this->socket->expects($this->exactly(2))
@@ -293,7 +293,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testAuthNotImplemented(): void
     {
-        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectException(SocketException::class);
         $this->expectExceptionMessage('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
 
         $this->socket->expects($this->exactly(2))
@@ -317,7 +317,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testAuthBadSequence(): void
     {
-        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectException(SocketException::class);
         $this->expectExceptionMessage('SMTP Error: 503 5.5.1 Already authenticated');
 
         $this->socket->expects($this->exactly(2))

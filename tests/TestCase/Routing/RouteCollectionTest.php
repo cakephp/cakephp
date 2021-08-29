@@ -17,11 +17,13 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Http\ServerRequest;
+use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 class RouteCollectionTest extends TestCase
 {
@@ -44,7 +46,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testParseMissingRoute(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
@@ -59,7 +61,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testParseMissingRouteMethod(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $this->expectExceptionMessage('A "POST" route matching "/b" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles', '_method' => ['GET']]);
@@ -241,7 +243,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testParseRequestMissingRoute(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
@@ -324,7 +326,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testParseRequestCheckHostConditionFail(string $host): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "/fallback" could not be found');
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect(
@@ -432,7 +434,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testMatchError(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $this->expectExceptionMessage('A route matching "array (');
         $context = [
             '_base' => '/',
@@ -495,7 +497,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testMatchNamedError(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $this->expectExceptionMessage('A named route was found for `fail`, but matching failed');
         $context = [
             '_base' => '/',
@@ -513,7 +515,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testMatchNamedMissingError(): void
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectException(MissingRouteException::class);
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -613,7 +615,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testAddingDuplicateNamedRoutes(): void
     {
-        $this->expectException(\Cake\Routing\Exception\DuplicateNamedRouteException::class);
+        $this->expectException(DuplicateNamedRouteException::class);
         $one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
         $two = new Route('/', ['controller' => 'Dashboards', 'action' => 'display']);
         $this->collection->add($one, ['_name' => 'test']);
@@ -698,7 +700,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
         $this->collection->middlewareGroup('group', ['bad']);
     }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Cache\Cache;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -67,7 +68,7 @@ class CollectionTest extends TestCase
      */
     public function testDescribeIncorrectTable(): void
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $schema = new Collection($this->connection);
         $this->assertNull($schema->describe('derp'));
     }

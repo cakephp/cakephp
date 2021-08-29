@@ -23,6 +23,7 @@ use Cake\Core\PluginInterface;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Plugin as TestPluginThree;
 use InvalidArgumentException;
+use ParentPlugin\Plugin;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -95,7 +96,7 @@ class PluginCollectionTest extends TestCase
     {
         $plugins = new PluginCollection();
         $plugin = $plugins->get('ParentPlugin');
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $this->assertInstanceOf(Plugin::class, $plugin);
     }
 
     public function testGetInvalid(): void
@@ -111,14 +112,14 @@ class PluginCollectionTest extends TestCase
         $plugins = new PluginCollection();
 
         $plugin = $plugins->create('ParentPlugin');
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $this->assertInstanceOf(Plugin::class, $plugin);
 
         $plugin = $plugins->create('ParentPlugin', ['name' => 'Granpa']);
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $this->assertInstanceOf(Plugin::class, $plugin);
         $this->assertSame('Granpa', $plugin->getName());
 
-        $plugin = $plugins->create(\ParentPlugin\Plugin::class);
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $plugin = $plugins->create(Plugin::class);
+        $this->assertInstanceOf(Plugin::class, $plugin);
 
         $plugin = $plugins->create('TestTheme');
         $this->assertInstanceOf(BasePlugin::class, $plugin);

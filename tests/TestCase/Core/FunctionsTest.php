@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * Test cases for functions in Core\functions.php
@@ -71,7 +72,7 @@ class FunctionsTest extends TestCase
             [null, null],
             [1, 1],
             [1.1, 1.1],
-            [new \stdClass(), '(object)stdClass'],
+            [new stdClass(), '(object)stdClass'],
             [new Response(), ''],
             [['clean', '"clean-me'], ['clean', '&quot;clean-me']],
         ];

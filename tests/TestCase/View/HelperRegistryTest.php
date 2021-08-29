@@ -17,10 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingHelperException;
 use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\HelperRegistry;
 use Cake\View\View;
+use RuntimeException;
 use TestApp\View\Helper\HtmlAliasHelper;
 use TestPlugin\View\Helper\OtherHelperHelper;
 
@@ -100,7 +102,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLazyLoadException(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
+        $this->expectException(MissingHelperException::class);
         $this->Helpers->NotAHelper;
     }
 
@@ -161,7 +163,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMissingHelper(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
+        $this->expectException(MissingHelperException::class);
         $this->Helpers->load('ThisHelperShouldAlwaysBeMissing');
     }
 
@@ -246,7 +248,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
+        $this->expectException(MissingHelperException::class);
         $this->expectExceptionMessage('Helper class FooHelper could not be found.');
         $this->Helpers->unload('Foo');
     }
@@ -292,7 +294,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMultipleTimesDifferentConfigured(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The "Html" alias has already been loaded');
         $this->Helpers->load('Html');
         $this->Helpers->load('Html', ['same' => 'stuff']);
@@ -303,7 +305,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMultipleTimesDifferentConfigValues(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The "Html" alias has already been loaded');
         $this->Helpers->load('Html', ['key' => 'value']);
         $this->Helpers->load('Html', ['key' => 'new value']);

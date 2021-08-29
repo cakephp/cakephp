@@ -29,6 +29,7 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use stdClass;
 use TestApp\Datasource\CustomPaginator;
 
@@ -112,7 +113,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testInvalidPaginatorOption(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paginator');
         new PaginatorComponent($this->registry, [
             'paginator' => new stdClass(),
@@ -789,7 +790,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testOutOfVeryBigPageNumberGetsClamped(): void
     {
-        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->loadFixtures('Posts');
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => '3000000000000000000000000',

@@ -15,9 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Log;
 
+use BadMethodCallException;
 use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * LogTest class
@@ -70,7 +73,7 @@ class LogTest extends TestCase
      */
     public function testImportingLoggerFailure(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Log::setConfig('fail', []);
         Log::engine('fail');
     }
@@ -105,7 +108,7 @@ class LogTest extends TestCase
     {
         Log::setConfig('fail', ['engine' => '\stdClass']);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         Log::engine('fail');
     }
@@ -134,7 +137,7 @@ class LogTest extends TestCase
      */
     public function testInvalidLevel(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Log::setConfig('myengine', ['engine' => 'File']);
         Log::write('invalid', 'This will not be logged');
     }
@@ -231,7 +234,7 @@ class LogTest extends TestCase
      */
     public function testConfigErrorOnReconfigure(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         Log::setConfig('tests', ['engine' => 'File', 'path' => TMP]);
         Log::setConfig('tests', ['engine' => 'Apc']);
     }

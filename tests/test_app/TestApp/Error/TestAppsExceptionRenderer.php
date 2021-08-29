@@ -8,6 +8,7 @@ use Cake\Error\ExceptionRenderer;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
+use Exception;
 use TestApp\Controller\TestAppsErrorController;
 
 class TestAppsExceptionRenderer extends ExceptionRenderer
@@ -25,7 +26,7 @@ class TestAppsExceptionRenderer extends ExceptionRenderer
         try {
             $controller = new TestAppsErrorController($request, $response);
             $controller->viewBuilder()->setLayout('banana');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $controller = new Controller($request, $response);
             $controller->viewBuilder()->setTemplatePath('Error');
         }

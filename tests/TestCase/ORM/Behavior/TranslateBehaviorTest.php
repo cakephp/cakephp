@@ -1389,7 +1389,7 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
+            'validator' => (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass(TranslateArticle::class);
 
@@ -1436,7 +1436,7 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Sections');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
+            'validator' => (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
 
         $data = [

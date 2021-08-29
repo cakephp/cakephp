@@ -41,11 +41,14 @@ use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
+use OutOfBoundsException;
+use PDOException;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
 use TestApp\Error\Exception\MissingWidgetThingException;
 use TestApp\Error\MyCustomExceptionRenderer;
+use TestApp\Error\TestAppsExceptionRenderer;
 
 class ExceptionRendererTest extends TestCase
 {
@@ -238,7 +241,7 @@ class ExceptionRendererTest extends TestCase
     {
         static::setAppNamespace();
         $exception = new NotFoundException();
-        $renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
+        $renderer = new TestAppsExceptionRenderer($exception);
 
         $result = $renderer->render();
         $this->assertStringContainsString('<b>peeled</b>', (string)$result->getBody());
@@ -263,7 +266,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testUnknownExceptionTypeWithNoCodeIsA500(): void
     {
-        $exception = new \OutOfBoundsException('foul ball.');
+        $exception = new OutOfBoundsException('foul ball.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
         $result = $ExceptionRenderer->render();
 
@@ -278,7 +281,7 @@ class ExceptionRendererTest extends TestCase
     {
         Configure::write('debug', false);
 
-        $exception = new \OutOfBoundsException('foul ball.');
+        $exception = new OutOfBoundsException('foul ball.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $response = $ExceptionRenderer->render();
@@ -914,7 +917,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testPDOException(): void
     {
-        $exception = new \PDOException('There was an error in the SQL query');
+        $exception = new PDOException('There was an error in the SQL query');
         $exception->queryString = 'SELECT * from poo_query < 5 and :seven';
         $exception->params = ['seven' => 7];
         $ExceptionRenderer = new ExceptionRenderer($exception);
