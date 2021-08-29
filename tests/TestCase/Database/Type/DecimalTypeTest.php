@@ -43,11 +43,6 @@ class DecimalTypeTest extends TestCase
     protected $numberClass;
 
     /**
-     * @var string
-     */
-    protected $localeString;
-
-    /**
      * Setup
      */
     public function setUp(): void
@@ -55,10 +50,7 @@ class DecimalTypeTest extends TestCase
         parent::setUp();
         $this->type = new DecimalType();
         $this->driver = $this->getMockBuilder(Driver::class)->getMock();
-        $this->localeString = I18n::getLocale();
         $this->numberClass = DecimalType::$numberClass;
-
-        I18n::setLocale($this->localeString);
     }
 
     /**
@@ -67,7 +59,7 @@ class DecimalTypeTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        I18n::setLocale($this->localeString);
+        I18n::setLocale(I18n::getDefaultLocale());
         DecimalType::$numberClass = $this->numberClass;
     }
 

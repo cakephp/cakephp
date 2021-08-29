@@ -36,9 +36,6 @@ class TimeTest extends TestCase
     {
         parent::setUp();
         $this->now = Time::getTestNow();
-        $this->locale = Time::getDefaultLocale();
-        Time::setDefaultLocale('en_US');
-        FrozenTime::setDefaultLocale('en_US');
 
         Configure::write('Error.ignoredDeprecationPaths', [
             'src/I18n/DateFormatTrait.php',
@@ -54,16 +51,16 @@ class TimeTest extends TestCase
     {
         parent::tearDown();
         Time::setTestNow($this->now);
-        Time::setDefaultLocale($this->locale);
+        Time::setDefaultLocale(null);
         Time::resetToStringFormat();
         Time::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 
-        FrozenTime::setDefaultLocale($this->locale);
+        FrozenTime::setDefaultLocale(null);
         FrozenTime::resetToStringFormat();
         FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 
         date_default_timezone_set('UTC');
-        I18n::setLocale(I18n::DEFAULT_LOCALE);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**
@@ -468,18 +465,12 @@ class TimeTest extends TestCase
      */
     public function testI18nFormatUsingSystemLocale(): void
     {
-        // Unset default locale for the Time class to ensure system's locale is used.
-        Time::setDefaultLocale();
-        $locale = I18n::getLocale();
-
         $time = new Time(1556864870);
         I18n::setLocale('ar');
         $this->assertSame('٢٠١٩-٠٥-٠٣', $time->i18nFormat('yyyy-MM-dd'));
 
         I18n::setLocale('en');
         $this->assertSame('2019-05-03', $time->i18nFormat('yyyy-MM-dd'));
-
-        I18n::setLocale($locale);
     }
 
     /**

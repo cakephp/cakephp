@@ -35,11 +35,6 @@ class ValidationTest extends TestCase
     /**
      * @var string
      */
-    protected $locale;
-
-    /**
-     * @var string
-     */
     protected $_appEncoding;
 
     /**
@@ -49,8 +44,6 @@ class ValidationTest extends TestCase
     {
         parent::setUp();
         $this->_appEncoding = Configure::read('App.encoding');
-        $this->locale = Locale::getDefault();
-        Locale::setDefault('en_US');
     }
 
     /**
@@ -60,7 +53,7 @@ class ValidationTest extends TestCase
     {
         parent::tearDown();
         Configure::write('App.encoding', $this->_appEncoding);
-        Locale::setDefault($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**
@@ -1645,8 +1638,6 @@ class ValidationTest extends TestCase
      */
     public function testLocalizedTime(): void
     {
-        $locale = I18n::getLocale();
-
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
         $this->assertFalse(Validation::localizedTime(1, 'date'));
@@ -1675,8 +1666,6 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
 
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
-
-        I18n::setLocale($locale);
     }
 
     /**

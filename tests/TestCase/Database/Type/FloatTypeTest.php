@@ -42,11 +42,6 @@ class FloatTypeTest extends TestCase
     protected $numberClass;
 
     /**
-     * @var string
-     */
-    protected $localeString;
-
-    /**
      * Setup
      */
     public function setUp(): void
@@ -54,10 +49,7 @@ class FloatTypeTest extends TestCase
         parent::setUp();
         $this->type = new FloatType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->localeString = I18n::getLocale();
         $this->numberClass = FloatType::$numberClass;
-
-        I18n::setLocale($this->localeString);
     }
 
     /**
@@ -66,7 +58,7 @@ class FloatTypeTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        I18n::setLocale($this->localeString);
+        I18n::setLocale(I18n::getDefaultLocale());
         FloatType::$numberClass = $this->numberClass;
     }
 
