@@ -3521,10 +3521,6 @@ class QueryTest extends TestCase
             'This test fails sporadically in SQLServer'
         );
 
-        // Load with force dropping tables to avoid identities not being reset properly
-        // in SQL Server when reseeding is applied directly after table creation.
-        $this->fixtureManager->loadSingle('Profiles', null, true);
-
         $profiles = $this->getTableLocator()->get('Profiles');
 
         $query = $profiles
@@ -3565,9 +3561,6 @@ class QueryTest extends TestCase
             $this->connection->getDriver() instanceof Sqlserver,
             'This test fails sporadically in SQLServer'
         );
-        // Load with force dropping tables to avoid identities not being reset properly
-        // in SQL Server when reseeding is applied directly after table creation.
-        $this->fixtureManager->loadSingle('Profiles', null, true);
 
         $profiles = $this->getTableLocator()->get('Profiles');
 

@@ -28,9 +28,8 @@ use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
-use Cake\TestSuite\Fixture\FixtureLoader;
-use Cake\TestSuite\Fixture\ResetStrategyInterface;
-use Cake\TestSuite\Fixture\TruncationResetStrategy;
+use Cake\TestSuite\Fixture\FixtureStrategyInterface;
+use Cake\TestSuite\Fixture\TruncateFixtureStrategy;
 use Cake\Utility\Inflector;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
@@ -41,7 +40,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
-use RuntimeException;
 
 /**
  * Cake TestCase class
@@ -51,13 +49,6 @@ abstract class TestCase extends BaseTestCase
     use LocatorAwareTrait;
 
     /**
-     * The class responsible for managing the creation, loading and removing of fixtures
-     *
-     * @var \Cake\TestSuite\Fixture\FixtureLoader|null
-     */
-    public $fixtureManager;
-
-    /**
      * Fixtures used by this test case.
      *
      * @var array<string>
@@ -65,24 +56,9 @@ abstract class TestCase extends BaseTestCase
     protected $fixtures = [];
 
     /**
-     * By default, all fixtures attached to this class will be truncated and reloaded after each test.
-     * Set this to false to handle manually
-     *
-     * @var bool
-     * @deprecated 4.3.0 autoFixtures is only used by deprecated fixture features.
-     *   This property will be removed in 5.0
+     * @var \Cake\TestSuite\Fixture\FixtureStrategyInterface|null
      */
-    public $autoFixtures = true;
-
-    /**
-     * The classname for the fixture state reset strategy.
-     *
-     * If null, TruncationResetStrategy will be used.
-     *
-     * @var string|null
-     * @psalm-var class-string|null
-     */
-    protected $stateResetStrategy;
+    protected ?FixtureStrategyInterface $fixtureStrategy = null;
 
     /**
      * Configure values to restore at end of test.
@@ -218,10 +194,7 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->fixtureManager = FixtureLoader::getInstance();
-        if ($this->fixtureManager) {
-            $this->fixtureManager->setupTest($this);
-        }
+        $this->setupFixtures();
 
         if (!$this->_configure) {
             $this->_configure = Configure::read();
@@ -241,6 +214,8 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        $this->teardownFixtures();
+
         if ($this->_configure) {
             Configure::clear();
             Configure::write($this->_configure);
@@ -248,43 +223,45 @@ abstract class TestCase extends BaseTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
+    }
 
-        if ($this->fixtureManager) {
-            $this->fixtureManager->teardownTest($this);
-            $this->fixtureManager = null;
+    /**
+     * Initialized and loads any use fixtures.
+     *
+     * @return void
+     */
+    protected function setupFixtures(): void
+    {
+        $fixtureNames = $this->getFixtures();
+        if (empty($fixtureNames)) {
+            return;
+        }
+
+        $this->fixtureStrategy = $this->getFixtureStrategy();
+        $this->fixtureStrategy->setupTest($fixtureNames);
+    }
+
+    /**
+     * Unloads any use fixtures.
+     *
+     * @return void
+     */
+    protected function teardownFixtures(): void
+    {
+        if ($this->fixtureStrategy) {
+            $this->fixtureStrategy->teardownTest();
+            $this->fixtureStrategy = null;
         }
     }
 
     /**
-     * Chooses which fixtures to load for a given test
+     * Returns fixture strategy used by these tests.
      *
-     * Each parameter is a model name that corresponds to a fixture, i.e. 'Posts', 'Authors', etc.
-     * Passing no parameters will cause all fixtures on the test case to load.
-     *
-     * @return void
-     * @see \Cake\TestSuite\TestCase::$autoFixtures
-     * @throws \RuntimeException when no fixture manager is available.
+     * @return \Cake\TestSuite\Fixture\FixtureStrategyInterface
      */
-    public function loadFixtures(): void
+    protected function getFixtureStrategy(): FixtureStrategyInterface
     {
-        if ($this->autoFixtures) {
-            throw new RuntimeException('Cannot use `loadFixtures()` with `$autoFixtures` enabled.');
-        }
-        if ($this->fixtureManager === null) {
-            throw new RuntimeException('No fixture manager to load the test fixture');
-        }
-
-        $args = func_get_args();
-        foreach ($args as $class) {
-            $this->fixtureManager->loadSingle($class, null);
-        }
-
-        if (empty($args)) {
-            $autoFixtures = $this->autoFixtures;
-            $this->autoFixtures = true;
-            $this->fixtureManager->load($this);
-            $this->autoFixtures = $autoFixtures;
-        }
+        return new TruncateFixtureStrategy();
     }
 
     /**
@@ -1039,33 +1016,5 @@ abstract class TestCase extends BaseTestCase
     public function getFixtures(): array
     {
         return $this->fixtures;
-    }
-
-    /**
-     * Get the strategy used to reset fixture state.
-     *
-     * Offers basic class construction, if you need more complex
-     * state manager configuration, or multiple state managers,
-     * override this method.
-     *
-     * @return \Cake\TestSuite\Fixture\ResetStrategyInterface
-     */
-    public function getResetStrategy(): ResetStrategyInterface
-    {
-        $strategyClass = $this->stateResetStrategy ?? TruncationResetStrategy::class;
-        try {
-            $reflect = new ReflectionClass($strategyClass);
-        } catch (ReflectionException $e) {
-            throw new RuntimeException("Cannot find class `{$strategyClass}`");
-        }
-        $interface = ResetStrategyInterface::class;
-        if (!$reflect->implementsInterface($interface)) {
-            throw new RuntimeException(
-                "The `{$strategyClass}` does not implement the required `{$interface}` interface."
-            );
-        }
-
-        /** @var \Cake\TestSuite\Fixture\ResetStrategyInterface */
-        return $reflect->newInstance($this->fixtureManager);
     }
 }

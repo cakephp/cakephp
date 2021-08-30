@@ -466,11 +466,6 @@ parameters:
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Constructor of class Cake\\\\TestSuite\\\\Fixture\\\\TransactionResetStrategy has an unused parameter \\$loader\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TransactionResetStrategy.php
-
-		-
 			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
 			count: 1
 			path: src/Utility/Hash.php
