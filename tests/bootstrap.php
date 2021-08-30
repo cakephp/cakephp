@@ -91,7 +91,7 @@ Cache::setConfig([
         'serialize' => true,
     ],
     '_cake_model_' => [
-        'engine' => 'File',
+        'engine' => 'Array',
         'prefix' => 'cake_model_',
         'serialize' => true,
     ],
@@ -102,7 +102,7 @@ if (!getenv('DB_URL')) {
     putenv('DB_URL=sqlite:///:memory:');
 }
 
-ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
+ConnectionManager::setConfig('test', ['url' => getenv('DB_URL'), 'cacheMetadata' => true]);
 
 Configure::write('Session', [
     'defaults' => 'php',
