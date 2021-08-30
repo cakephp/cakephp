@@ -136,5 +136,7 @@ ini_set('session.gc_divisor', '1');
 session_id('cli');
 
 // Create test database schema
-$schema = new SchemaGenerator(env('FIXTURE_SCHEMA_METADATA', ''), 'test');
-$schema->reload();
+if (env('FIXTURE_SCHEMA_METADATA')) {
+    $schema = new SchemaGenerator(env('FIXTURE_SCHEMA_METADATA'), 'test');
+    $schema->reload();
+}
