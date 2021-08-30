@@ -124,8 +124,9 @@ class FormHelperTest extends TestCase
         ];
 
         Security::setSalt('foo!');
-        Router::connect('/{controller}', ['action' => 'index']);
-        Router::connect('/{controller}/{action}/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/{controller}', ['action' => 'index']);
+        $builder->connect('/{controller}/{action}/*');
     }
 
     /**
@@ -737,7 +738,8 @@ class FormHelperTest extends TestCase
      */
     public function testCreateCustomRoute(): void
     {
-        Router::connect('/login', ['controller' => 'Users', 'action' => 'login']);
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/login', ['controller' => 'Users', 'action' => 'login']);
         $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
@@ -752,7 +754,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        Router::connect(
+        $builder->connect(
             '/new-article',
             ['controller' => 'Articles', 'action' => 'myAction'],
             ['_name' => 'my-route']

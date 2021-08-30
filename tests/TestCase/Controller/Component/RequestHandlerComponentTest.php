@@ -24,7 +24,6 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\AjaxView;
@@ -62,6 +61,11 @@ class RequestHandlerComponentTest extends TestCase
     protected $server = [];
 
     /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -83,10 +87,9 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler = $this->Controller->components()->load(RequestHandlerExtComponent::class);
         $this->request = $request;
 
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->setExtensions('json');
-            $routes->fallbacks('InflectedRoute');
-        });
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->setExtensions('json');
+        $this->builder->fallbacks('InflectedRoute');
     }
 
     /**

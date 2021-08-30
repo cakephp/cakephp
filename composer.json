@@ -86,6 +86,7 @@
             "Cake\\PHPStan\\": "tests/PHPStan/",
             "Cake\\Test\\": "tests/",
             "TestApp\\": "tests/test_app/TestApp/",
+            "TestApp\\Test\\": "tests/test_app/TestApp/tests/",
             "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src/",
             "TestPlugin\\Test\\": "tests/test_app/Plugin/TestPlugin/tests/",
             "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src/",

@@ -52,6 +52,11 @@ class IntegrationTestTraitTest extends TestCase
     protected $key = 'abcdabcdabcdabcdabcdabcdabcdabcdabcd';
 
     /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
+    /**
      * Setup method
      */
     public function setUp(): void
@@ -60,23 +65,23 @@ class IntegrationTestTraitTest extends TestCase
         static::setAppNamespace();
 
         Router::reload();
-        Router::extensions(['json']);
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
-            $routes->applyMiddleware('cookie');
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->setExtensions(['json']);
+        $this->builder->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
+        $this->builder->applyMiddleware('cookie');
 
-            $routes->setRouteClass(InflectedRoute::class);
-            $routes->get('/get/{controller}/{action}', []);
-            $routes->head('/head/{controller}/{action}', []);
-            $routes->options('/options/{controller}/{action}', []);
-            $routes->connect('/{controller}/{action}/*', []);
-        });
-        Router::scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        $this->builder->setRouteClass(InflectedRoute::class);
+        $this->builder->get('/get/{controller}/{action}', []);
+        $this->builder->head('/head/{controller}/{action}', []);
+        $this->builder->options('/options/{controller}/{action}', []);
+        $this->builder->connect('/{controller}/{action}/*', []);
+
+        $this->builder->scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
             $routes->applyMiddleware('cookieCsrf');
             $routes->connect('/posts/{action}', ['controller' => 'Posts']);
         });
-        Router::scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
+        $this->builder->scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
             $routes->applyMiddleware('sessionCsrf');
             $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
@@ -284,7 +289,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testExceptionsInMiddlewareJsonView(): void
     {
         Router::reload();
-        Router::connect('/json_response/api_get_data', [
+        $this->builder->connect('/json_response/api_get_data', [
             'controller' => 'JsonResponse',
             'action' => 'apiGetData',
         ]);
@@ -951,7 +956,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfSuccessWithSetCookieName(): void
     {
-        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        $this->builder->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                 [
                     'cookieName' => 'customCsrfToken',
@@ -974,7 +979,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfFailureWithSetCookieName(): void
     {
-        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        $this->builder->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                 [
                     'cookieName' => 'customCsrfToken',

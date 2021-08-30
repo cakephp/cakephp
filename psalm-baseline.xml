@@ -162,6 +162,12 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Routing/Router.php">
+    <DeprecatedMethod occurrences="3">
+      <code>static::scope($path, $params, $callback)</code>
+      <code>static::scope($path, $params, $callback)</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
     <InternalMethod occurrences="1"/>

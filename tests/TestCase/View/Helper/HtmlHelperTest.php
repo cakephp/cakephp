@@ -21,7 +21,6 @@ use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Date;
 use Cake\Routing\Route\DashedRoute;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
@@ -84,9 +83,8 @@ class HtmlHelperTest extends TestCase
         static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
 
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(DashedRoute::class);
-        });
+        $builder = Router::createRouteBuilder('/');
+        $builder->fallbacks(DashedRoute::class);
     }
 
     /**
@@ -105,8 +103,9 @@ class HtmlHelperTest extends TestCase
     public function testLink(): void
     {
         Router::reload();
-        Router::connect('/{controller}', ['action' => 'index']);
-        Router::connect('/{controller}/{action}/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/{controller}', ['action' => 'index']);
+        $builder->connect('/{controller}/{action}/*');
         Router::setRequest(new ServerRequest());
 
         $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', ''));
@@ -347,8 +346,9 @@ class HtmlHelperTest extends TestCase
      */
     public function testImageTag(): void
     {
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/:controller', ['action' => 'index']);
+        $builder->connect('/:controller/:action/*');
 
         $result = $this->Html->image('test.gif');
         $expected = ['img' => ['src' => 'img/test.gif', 'alt' => '']];
@@ -1489,7 +1489,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testMeta(): void
     {
-        Router::connect('/:controller', ['action' => 'index']);
+        Router::createRouteBuilder('/')->connect('/:controller', ['action' => 'index']);
 
         $result = $this->Html->meta('this is an rss feed', ['controller' => 'Posts', '_ext' => 'rss']);
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed']];

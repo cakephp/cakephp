@@ -41,6 +41,11 @@ class RouterTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/Routing/Router.php',
+            'tests/TestCase/Routing/RouterTest.php',
+        ]);
         Configure::write('Routing', ['prefixes' => []]);
         Router::reload();
     }

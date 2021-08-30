@@ -208,9 +208,14 @@ class Router
      * @throws \Cake\Core\Exception\CakeException
      * @see \Cake\Routing\RouteBuilder::connect()
      * @see \Cake\Routing\Router::scope()
+     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::connect()` instead.
      */
     public static function connect(Route|string $route, array|string $defaults = [], array $options = []): void
     {
+        deprecationWarning(
+            '`Router::connect()` is deprecated, use the non-static method `RouterBuilder::connect()` instead.'
+        );
+
         static::scope('/', function ($routes) use ($route, $defaults, $options): void {
             /** @var \Cake\Routing\RouteBuilder $routes */
             $routes->connect($route, $defaults, $options);
@@ -742,6 +747,7 @@ class Router
         if ($extensions === null) {
             return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
         }
+
         $extensions = (array)$extensions;
         if ($merge) {
             $extensions = array_unique(array_merge(static::$_defaultExtensions, $extensions));
@@ -812,9 +818,14 @@ class Router
      * @param callable|null $callback The callback to invoke with the scoped collection.
      * @throws \InvalidArgumentException When an invalid callable is provided.
      * @return void
+     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::scope()` instead.
      */
     public static function scope(string $path, callable|array $params = [], ?callable $callback = null): void
     {
+        deprecationWarning(
+            '`Router::scope()` is deprecated, use the non-static method `RouterBuilder::scope()` instead.'
+        );
+
         $options = [];
         if (is_array($params)) {
             $options = $params;
@@ -846,9 +857,14 @@ class Router
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
+     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::prefix()` instead.
      */
     public static function prefix(string $name, callable|array $params = [], ?callable $callback = null): void
     {
+        deprecationWarning(
+            '`Router::prefix()` is deprecated, use the non-static method `RouterBuilder::prefix()` instead.'
+        );
+
         if (!is_array($params)) {
             $callback = $params;
             $params = [];
@@ -878,9 +894,14 @@ class Router
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $options is defined
      * @return void
+     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::plugin()` instead.
      */
     public static function plugin(string $name, callable|array $options = [], ?callable $callback = null): void
     {
+        deprecationWarning(
+            '`Router::plugin()` is deprecated, use the non-static method `RouterBuilder::plugin()` instead.'
+        );
+
         if (!is_array($options)) {
             $callback = $options;
             $options = [];

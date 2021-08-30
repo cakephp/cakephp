@@ -40,13 +40,20 @@ class RoutingMiddlewareTest extends TestCase
     protected $log = [];
 
     /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
+    /**
      * Setup method
      */
     public function setUp(): void
     {
         parent::setUp();
+
         Router::reload();
-        Router::connect('/articles', ['controller' => 'Articles', 'action' => 'index']);
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->connect('/articles', ['controller' => 'Articles', 'action' => 'index']);
         $this->log = [];
 
         Configure::write('App.base', '');
@@ -57,9 +64,7 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponse(): void
     {
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->redirect('/testpath', '/pages');
-        });
+        $this->builder->redirect('/testpath', '/pages');
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $request = $request->withAttribute('base', '/subdir');
 
@@ -76,7 +81,7 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponseWithHeaders(): void
     {
-        Router::scope('/', function (RouteBuilder $routes): void {
+        $this->builder->scope('/', function (RouteBuilder $routes): void {
             $routes->redirect('/testpath', '/pages');
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
@@ -216,7 +221,7 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testFakedRequestMethodParsed(): void
     {
-        Router::connect('/articles-patch', [
+        $this->builder->connect('/articles-patch', [
             'controller' => 'Articles',
             'action' => 'index',
             '_method' => 'PATCH',
@@ -253,7 +258,7 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddleware(): void
     {
-        Router::scope('/api', function (RouteBuilder $routes): void {
+        $this->builder->scope('/api', function (RouteBuilder $routes): void {
             $routes->registerMiddleware('first', function ($request, $handler) {
                 $this->log[] = 'first';
 
@@ -294,25 +299,23 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddlewareReturnResponse(): void
     {
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('first', function ($request, $handler) {
-                $this->log[] = 'first';
+        $this->builder->registerMiddleware('first', function ($request, $handler) {
+            $this->log[] = 'first';
 
-                return $handler->handle($request);
-            });
-            $routes->registerMiddleware('second', function ($request, $handler) {
-                $this->log[] = 'second';
+            return $handler->handle($request);
+        });
+        $this->builder->registerMiddleware('second', function ($request, $handler) {
+            $this->log[] = 'second';
 
-                return new Response();
-            });
+            return new Response();
+        });
 
-            $routes->applyMiddleware('first');
-            $routes->connect('/', ['controller' => 'Home']);
+        $this->builder->applyMiddleware('first');
+        $this->builder->connect('/', ['controller' => 'Home']);
 
-            $routes->scope('/api', function (RouteBuilder $routes): void {
-                $routes->applyMiddleware('second');
-                $routes->connect('/articles', ['controller' => 'Articles']);
-            });
+        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+            $routes->applyMiddleware('second');
+            $routes->connect('/articles', ['controller' => 'Articles']);
         });
 
         $request = ServerRequestFactory::fromGlobals([
@@ -333,25 +336,23 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddlewareReturnResponseMainScope(): void
     {
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('first', function ($request, $handler) {
-                $this->log[] = 'first';
+        $this->builder->registerMiddleware('first', function ($request, $handler) {
+            $this->log[] = 'first';
 
-                return new Response();
-            });
-            $routes->registerMiddleware('second', function ($request, $handler) {
-                $this->log[] = 'second';
+            return new Response();
+        });
+        $this->builder->registerMiddleware('second', function ($request, $handler) {
+            $this->log[] = 'second';
 
-                return $handler->handle($request);
-            });
+            return $handler->handle($request);
+        });
 
-            $routes->applyMiddleware('first');
-            $routes->connect('/', ['controller' => 'Home']);
+        $this->builder->applyMiddleware('first');
+        $this->builder->connect('/', ['controller' => 'Home']);
 
-            $routes->scope('/api', function (RouteBuilder $routes): void {
-                $routes->applyMiddleware('second');
-                $routes->connect('/articles', ['controller' => 'Articles']);
-            });
+        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+            $routes->applyMiddleware('second');
+            $routes->connect('/articles', ['controller' => 'Articles']);
         });
 
         $request = ServerRequestFactory::fromGlobals([
@@ -377,27 +378,25 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddlewareIsolatedScopes(string $url, array $expected): void
     {
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('first', function ($request, $handler) {
-                $this->log[] = 'first';
+        $this->builder->registerMiddleware('first', function ($request, $handler) {
+            $this->log[] = 'first';
 
-                return $handler->handle($request);
-            });
-            $routes->registerMiddleware('second', function ($request, $handler) {
-                $this->log[] = 'second';
+            return $handler->handle($request);
+        });
+        $this->builder->registerMiddleware('second', function ($request, $handler) {
+            $this->log[] = 'second';
 
-                return $handler->handle($request);
-            });
+            return $handler->handle($request);
+        });
 
-            $routes->scope('/api', function (RouteBuilder $routes): void {
-                $routes->applyMiddleware('first');
-                $routes->connect('/ping', ['controller' => 'Pings']);
-            });
+        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+            $routes->applyMiddleware('first');
+            $routes->connect('/ping', ['controller' => 'Pings']);
+        });
 
-            $routes->scope('/api', function (RouteBuilder $routes): void {
-                $routes->applyMiddleware('second');
-                $routes->connect('/version', ['controller' => 'Version']);
-            });
+        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+            $routes->applyMiddleware('second');
+            $routes->connect('/version', ['controller' => 'Version']);
         });
 
         $request = ServerRequestFactory::fromGlobals([

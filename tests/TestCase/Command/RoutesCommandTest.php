@@ -137,7 +137,7 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteListSorted(): void
     {
-        Router::connect(
+        Router::createRouteBuilder('/')->connect(
             new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
         );
 
