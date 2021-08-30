@@ -153,7 +153,7 @@ jobs:
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
-        ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
+        ini-values: opcache.enable_cli=1, opcache.jit=disable, apc.enable_cli = 1, extension = php_fileinfo.dll
         coverage: none
 
     - name: Setup SQLServer
