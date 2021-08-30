@@ -24,6 +24,24 @@ use RuntimeException;
 
 class SchemaManagerTest extends TestCase
 {
+    /**
+     * @var bool|null
+     */
+    protected $restore;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->restore = $GLOBALS['__PHPUNIT_BOOTSTRAP'];
+        unset($GLOBALS['__PHPUNIT_BOOTSTRAP']);
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $GLOBALS['__PHPUNIT_BOOTSTRAP'] = $this->restore;
+    }
+
     public function testCreateFromOneFile(): void
     {
         $connection = ConnectionManager::get('test');
