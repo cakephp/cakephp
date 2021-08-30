@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Asset;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -28,6 +27,11 @@ use Cake\TestSuite\TestCase;
  */
 class AssetTest extends TestCase
 {
+    /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
     /**
      * setUp method
      */
@@ -43,9 +47,8 @@ class AssetTest extends TestCase
 
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks();
-        });
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->fallbacks();
     }
 
     /**
@@ -101,7 +104,7 @@ class AssetTest extends TestCase
      */
     public function testAssetUrl(): void
     {
-        Router::connect('/{controller}/{action}/*');
+        $this->builder->connect('/{controller}/{action}/*');
 
         $result = Asset::url('js/post.js', ['fullBase' => true]);
         $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
@@ -249,7 +252,7 @@ class AssetTest extends TestCase
      */
     public function testScript(): void
     {
-        Router::connect('/{controller}/{action}/*');
+        $this->builder->connect('/{controller}/{action}/*');
 
         $result = Asset::scriptUrl('post.js', ['fullBase' => true]);
         $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);

@@ -68,9 +68,7 @@ class AuthComponentTest extends TestCase
         Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
         static::setAppNamespace();
 
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(InflectedRoute::class);
-        });
+        Router::createRouteBuilder('/')->fallbacks(InflectedRoute::class);
 
         $request = new ServerRequest([
             'url' => '/auth_test',
@@ -1073,12 +1071,12 @@ class AuthComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
-        Router::prefix('admin', function (RouteBuilder $routes): void {
+        $builder = Router::createRouteBuilder('/');
+        $builder->prefix('admin', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(InflectedRoute::class);
-        });
+        $builder->fallbacks(InflectedRoute::class);
+
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'GET',
@@ -1142,12 +1140,11 @@ class AuthComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
-        Router::prefix('admin', function (RouteBuilder $routes): void {
+        $builder = Router::createRouteBuilder('/');
+        $builder->prefix('admin', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(InflectedRoute::class);
-        });
+        $builder->fallbacks(InflectedRoute::class);
 
         $url = '/admin/auth_test/login';
         $request = new ServerRequest([

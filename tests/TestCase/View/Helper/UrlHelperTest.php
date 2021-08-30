@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Route\DashedRoute;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\UrlHelper;
@@ -43,6 +42,11 @@ class UrlHelperTest extends TestCase
     protected $View;
 
     /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -58,9 +62,8 @@ class UrlHelperTest extends TestCase
 
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(DashedRoute::class);
-        });
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->fallbacks(DashedRoute::class);
     }
 
     /**
@@ -79,7 +82,7 @@ class UrlHelperTest extends TestCase
      */
     public function testBuildUrlConversion(): void
     {
-        Router::connect('/:controller/:action/*');
+        $this->builder->connect('/:controller/:action/*');
 
         $result = $this->Helper->build('/controller/action/1');
         $this->assertSame('/controller/action/1', $result);
@@ -117,7 +120,7 @@ class UrlHelperTest extends TestCase
      */
     public function testBuildBasePath(): void
     {
-        Router::connect('/:controller/:action/*');
+        $this->builder->connect('/:controller/:action/*');
         $request = new ServerRequest([
             'params' => [
                 'action' => 'index',

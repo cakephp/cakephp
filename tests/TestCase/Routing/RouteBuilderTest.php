@@ -696,7 +696,8 @@ class RouteBuilderTest extends TestCase
      */
     public function testResourcesInScope(): void
     {
-        Router::scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
+        $builder = Router::createRouteBuilder('/');
+        $builder->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
         });
