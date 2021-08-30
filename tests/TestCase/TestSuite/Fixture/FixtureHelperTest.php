@@ -22,6 +22,7 @@ use Cake\TestSuite\Fixture\FixtureHelper;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Test\Fixture\ArticlesFixture as CompanyArticlesFixture;
+use TestApp\Test\Fixture\ArticlesFixture as AppArticlesFixture;
 use TestPlugin\Test\Fixture\ArticlesFixture as PluginArticlesFixture;
 use TestPlugin\Test\Fixture\Blog\CommentsFixture as PluginCommentsFixture;
 use UnexpectedValueException;
@@ -53,12 +54,14 @@ class FixtureHelperTest extends TestCase
             'plugin.TestPlugin.Articles',
             'plugin.TestPlugin.Blog/Comments',
             'plugin.Company/TestPluginThree.Articles',
+            'app.Articles',
         ]);
         $this->assertNotEmpty($fixtures);
         $this->assertInstanceOf(ArticlesFixture::class, $fixtures[ArticlesFixture::class]);
         $this->assertInstanceOf(PluginArticlesFixture::class, $fixtures[PluginArticlesFixture::class]);
         $this->assertInstanceOf(PluginCommentsFixture::class, $fixtures[PluginCommentsFixture::class]);
         $this->assertInstanceOf(CompanyArticlesFixture::class, $fixtures[CompanyArticlesFixture::class]);
+        $this->assertInstanceOf(AppArticlesFixture::class, $fixtures[AppArticlesFixture::class]);
     }
 
     /**
