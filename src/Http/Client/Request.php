@@ -49,7 +49,7 @@ class Request extends Message implements RequestInterface
         $this->uri = $this->createUri($url);
         $headers += [
             'Connection' => 'close',
-            'User-Agent' => 'CakePHP',
+            'User-Agent' => ini_get('user_agent') ?: 'CakePHP',
         ];
         $this->addHeaders($headers);
 
