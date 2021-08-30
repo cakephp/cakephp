@@ -17,27 +17,20 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 /**
- * Interface for fixture state management.
- *
- * This interface exposes hooks that run before and
- * after tests. This allows test database state to be 'prepared'
- * and 'cleaned up'.
+ * Base interface for strategies used to manage fixtures for TestCase.
  */
-interface ResetStrategyInterface
+interface FixtureStrategyInterface
 {
     /**
-     * Before test hook
+     * Called before each test run in each TestCase.
      *
-     * Fired before each test is started.
-     *
+     * @param array<string> $fixtureNames Name of fixtures used by test.
      * @return void
      */
-    public function setupTest(): void;
+    public function setupTest(array $fixtureNames): void;
 
     /**
-     * After test hook
-     *
-     * Fired after each test is complete.
+     * Called after each test run in each TestCase.
      *
      * @return void
      */

@@ -33,7 +33,7 @@ use UnexpectedValueException;
 /**
  * A factory class to manage the life cycle of test fixtures
  */
-class FixtureManager extends FixtureLoader
+class FixtureManager
 {
     /**
      * Was this instance already initialized?
@@ -87,36 +87,6 @@ class FixtureManager extends FixtureLoader
     public function setDebug(bool $debug): void
     {
         $this->_debug = $debug;
-    }
-
-    /**
-     * Implemented to satisfy the abstract base class.
-     *
-     * For backwards compatibility reasons fixtures are loaded
-     * via `fixturize` which is called by the TestListener.
-     * While this method could call `fixturize()` it would duplicate
-     * work and impact test suite performance.
-     *
-     * @param \Cake\TestSuite\TestCase $test The test case.
-     * @return void
-     */
-    public function setupTest(TestCase $test): void
-    {
-        // Do nothing
-    }
-
-    /**
-     * Implemented to satisfy the abstract base class.
-     *
-     * For backwards compatibility reasons fixtures are reset
-     * via `shutdown` which is called by the TestListener.
-     *
-     * @param \Cake\TestSuite\TestCase $test The test case.
-     * @return void
-     */
-    public function teardownTest(TestCase $test): void
-    {
-        // Do nothing
     }
 
     /**

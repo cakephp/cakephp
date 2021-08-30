@@ -26,11 +26,8 @@ use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
-use Cake\TestSuite\Fixture\ResetStrategyInterface;
-use Cake\TestSuite\Fixture\TruncationResetStrategy;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
-use RuntimeException;
 use TestApp\Model\Table\SecondaryPostsTable;
 
 /**
@@ -418,37 +415,5 @@ class TestCaseTest extends TestCase
 
         $result = Router::url($url);
         $this->assertSame('/app/articles', $result);
-    }
-
-    /**
-     * Test getting the state reset manager.
-     */
-    public function testGetResetStrategySuccess(): void
-    {
-        $instance = $this->getResetStrategy();
-        $this->assertInstanceOf(ResetStrategyInterface::class, $instance);
-        $this->assertInstanceOf(TruncationResetStrategy::class, $instance);
-    }
-
-    /**
-     * Test getting the state reset manager when class is invalid
-     */
-    public function testGetResetStrategyMissingClass(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot find class `NotThere`');
-        $this->stateResetStrategy = 'NotThere';
-        $this->getResetStrategy();
-    }
-
-    /**
-     * Test getting the state reset manager when class is invalid
-     */
-    public function testGetStateResetInvalidClass(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('does not implement the required');
-        $this->stateResetStrategy = static::class;
-        $this->getResetStrategy();
     }
 }

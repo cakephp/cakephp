@@ -31,8 +31,6 @@ class PHPUnitExtension implements BeforeFirstTestHook
      */
     public function __construct()
     {
-        FixtureLoader::setInstance(new FixtureDataManager());
-
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
         $this->aliasConnections($enableLogging);
         if ($enableLogging) {
