@@ -23,10 +23,10 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Exception;
-use TestApp\Fixture\ArticlesFixture;
-use TestApp\Fixture\ImportsFixture;
-use TestApp\Fixture\LettersFixture;
-use TestApp\Fixture\StringsTestsFixture;
+use TestApp\Test\Fixture\ArticlesFixture;
+use TestApp\Test\Fixture\ImportsFixture;
+use TestApp\Test\Fixture\LettersFixture;
+use TestApp\Test\Fixture\StringsTestsFixture;
 
 /**
  * Test case for TestFixture
