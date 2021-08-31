@@ -571,7 +571,7 @@ trait QueryTrait
      * Populates or adds parts to current query clauses using an array.
      * This is handy for passing all query clauses at once.
      *
-     * @param array $options the options to be applied
+     * @param array<string, mixed> $options the options to be applied
      * @return $this
      */
     abstract public function applyOptions(array $options);

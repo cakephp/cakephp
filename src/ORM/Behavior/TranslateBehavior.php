@@ -222,7 +222,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -306,7 +306,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * for each record.
      *
      * @param \Cake\ORM\Query $query The original query to modify
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @return \Cake\ORM\Query
      */
     public function findTranslations(Query $query, array $options): Query

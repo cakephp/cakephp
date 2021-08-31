@@ -1070,7 +1070,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string $field Field
      * @param array $values Array of values
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @return $this
      */
     public function whereInList(string $field, array $values, array $options = [])
@@ -1097,7 +1097,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string $field Field
      * @param array $values Array of values
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @return $this
      */
     public function whereNotInList(string $field, array $values, array $options = [])
@@ -1125,7 +1125,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string $field Field
      * @param array $values Array of values
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @return $this
      */
     public function whereNotInListOrNull(string $field, array $values, array $options = [])

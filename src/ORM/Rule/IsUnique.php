@@ -48,7 +48,7 @@ class IsUnique
      * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
      *
      * @param array<string> $fields The list of fields to check uniqueness for
-     * @param array $options The options for unique checks.
+     * @param array<string, mixed> $options The options for unique checks.
      */
     public function __construct(array $fields, array $options = [])
     {
@@ -61,7 +61,7 @@ class IsUnique
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      *   where the `repository` key is required.
-     * @param array $options Options passed to the check,
+     * @param array<string, mixed> $options Options passed to the check,
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options): bool

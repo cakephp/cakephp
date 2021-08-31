@@ -2184,7 +2184,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * For options see Cake\Validation\Validation::uploadedFile()
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @param string|null $message The error message when the rule fails.
      * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -2398,7 +2398,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a validation rule for a multiple select. Comparison is case sensitive by default.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array $options The options for the validator. Includes the options defined in
+     * @param array<string, mixed> $options The options for the validator. Includes the options defined in
      *   \Cake\Validation\Validation::multiple() and the `caseInsensitive` parameter.
      * @param string|null $message The error message when the rule fails.
      * @param callable|string|null $when Either 'create' or 'update' or a callable that returns

@@ -88,7 +88,7 @@ class LinkConstraint
      * Performs the actual link check.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity involved in the operation.
-     * @param array $options Options passed from the rules checker.
+     * @param array<string, mixed> $options Options passed from the rules checker.
      * @return bool Whether the check was successful.
      */
     public function __invoke(EntityInterface $entity, array $options): bool

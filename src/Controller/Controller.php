@@ -554,7 +554,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Register middleware for the controller.
      *
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware Middleware.
-     * @param array $options Valid options:
+     * @param array<string, mixed> $options Valid options:
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void

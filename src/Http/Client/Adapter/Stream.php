@@ -117,7 +117,7 @@ class Stream implements AdapterInterface
      * Build the stream context out of the request object.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to build context from.
-     * @param array $options Additional request options.
+     * @param array<string, mixed> $options Additional request options.
      * @return void
      */
     protected function _buildContext(RequestInterface $request, array $options): void
@@ -143,7 +143,7 @@ class Stream implements AdapterInterface
      * Creates cookies & headers.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildHeaders(RequestInterface $request, array $options): void
@@ -162,7 +162,7 @@ class Stream implements AdapterInterface
      * Array data will be processed with Cake\Http\Client\FormData
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildContent(RequestInterface $request, array $options): void
@@ -181,7 +181,7 @@ class Stream implements AdapterInterface
      * Build miscellaneous options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildOptions(RequestInterface $request, array $options): void
@@ -206,7 +206,7 @@ class Stream implements AdapterInterface
      * Build SSL options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildSslContext(RequestInterface $request, array $options): void

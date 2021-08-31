@@ -33,7 +33,7 @@ class DependentDeleteHelper
      *
      * @param \Cake\ORM\Association $association The association callbacks are being cascaded on.
      * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
-     * @param array $options The options for the original delete.
+     * @param array<string, mixed> $options The options for the original delete.
      * @return bool Success.
      */
     public function cascadeDelete(Association $association, EntityInterface $entity, array $options = []): bool

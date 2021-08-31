@@ -189,7 +189,7 @@ class BelongsToMany extends Association
     /**
      * Whether this association can be expressed directly in a query join
      *
-     * @param array $options custom options key that could alter the return value
+     * @param array<string, mixed> $options custom options key that could alter the return value
      * @return bool if the 'matching' key in $option is true then this function
      * will return true, false otherwise
      */
@@ -446,7 +446,7 @@ class BelongsToMany extends Association
      * - type: The type of join to be used (e.g. INNER)
      *
      * @param \Cake\ORM\Query $query the query to be altered to include the target table data
-     * @param array $options Any extra options or overrides to be taken in account
+     * @param array<string, mixed> $options Any extra options or overrides to be taken in account
      * @return void
      */
     public function attachTo(Query $query, array $options = []): void
@@ -535,7 +535,7 @@ class BelongsToMany extends Association
     /**
      * Return false as join conditions are defined in the junction table
      *
-     * @param array $options list of options passed to attachTo method
+     * @param array<string, mixed> $options list of options passed to attachTo method
      * @return array
      */
     protected function _joinCondition(array $options): array
@@ -574,7 +574,7 @@ class BelongsToMany extends Association
      * Clear out the data in the junction table for a given entity.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascading delete.
-     * @param array $options The options for the original delete.
+     * @param array<string, mixed> $options The options for the original delete.
      * @return bool Success.
      */
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
@@ -672,7 +672,7 @@ class BelongsToMany extends Association
      * not deleted.
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array $options options to be passed to the save method in the target table
+     * @param array<string, mixed> $options options to be passed to the save method in the target table
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
      * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
@@ -712,7 +712,7 @@ class BelongsToMany extends Association
      * entities to be saved.
      * @param array $entities list of entities to persist in target table and to
      * link to the parent entity
-     * @param array $options list of options accepted by `Table::save()`
+     * @param array<string, mixed> $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
      * @return \Cake\Datasource\EntityInterface|false The parent entity after all links have been
@@ -778,7 +778,7 @@ class BelongsToMany extends Association
      * association
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities to link to link to the source entity using the
      * junction table
-     * @param array $options list of options accepted by `Table::save()`
+     * @param array<string, mixed> $options list of options accepted by `Table::save()`
      * @return bool success
      */
     protected function _saveLinks(EntityInterface $sourceEntity, array $targetEntities, array $options): bool
@@ -852,7 +852,7 @@ class BelongsToMany extends Association
      *   of this association
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities belonging to the `target` side
      *   of this association
-     * @param array $options list of options to be passed to the internal `save` call
+     * @param array<string, mixed> $options list of options to be passed to the internal `save` call
      * @throws \InvalidArgumentException when any of the values in $targetEntities is
      *   detected to not be already persisted
      * @return bool true on success, false otherwise
@@ -1061,7 +1061,7 @@ class BelongsToMany extends Association
      *
      * @param array|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
-     * @param array $options The options to for the find
+     * @param array<string, mixed> $options The options to for the find
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
      */
@@ -1160,7 +1160,7 @@ class BelongsToMany extends Association
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
      *   this association
      * @param array $targetEntities list of entities from the target table to be linked
-     * @param array $options list of options to be passed to the internal `save`/`delete` calls
+     * @param array<string, mixed> $options list of options to be passed to the internal `save`/`delete` calls
      *   when persisting/updating new links, or deleting existing ones
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      *   any of them is lacking a primary key value
@@ -1245,7 +1245,7 @@ class BelongsToMany extends Association
      * @param array<\Cake\Datasource\EntityInterface> $jointEntities link entities that should be persisted
      * @param array $targetEntities entities in target table that are related to
      * the `$jointEntities`
-     * @param array $options list of options accepted by `Table::delete()`
+     * @param array<string, mixed> $options list of options accepted by `Table::delete()`
      * @return array|false Array of entities not deleted or false in case of deletion failure for atomic saves.
      */
     protected function _diffLinks(
@@ -1450,7 +1450,7 @@ class BelongsToMany extends Association
     /**
      * Parse extra options passed in the constructor.
      *
-     * @param array $options original list of options passed in constructor
+     * @param array<string, mixed> $options original list of options passed in constructor
      * @return void
      */
     protected function _options(array $options): void

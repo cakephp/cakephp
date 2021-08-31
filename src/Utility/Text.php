@@ -189,7 +189,7 @@ class Text
      * @param string $str A string containing variable placeholders
      * @param array $data A key => val array where each key stands for a placeholder variable name
      *     to be replaced with val
-     * @param array $options An array of options, see description above
+     * @param array<string, mixed> $options An array of options, see description above
      * @return string
      */
     public static function insert(string $str, array $data, array $options = []): string
@@ -259,7 +259,7 @@ class Text
      * by Text::insert().
      *
      * @param string $str String to clean.
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return string
      * @see \Cake\Utility\Text::insert()
      */
@@ -493,7 +493,7 @@ class Text
      *
      * @param string $text Text to search the phrase in.
      * @param array|string $phrase The phrase or phrases that will be searched.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#highlighting-substrings
      */
@@ -554,7 +554,7 @@ class Text
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return string Trimmed string.
      */
     public static function tail(string $text, int $length = 100, array $options = []): string
@@ -593,7 +593,7 @@ class Text
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#truncating-text
      */
@@ -696,7 +696,7 @@ class Text
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::truncate()
      */
@@ -714,7 +714,7 @@ class Text
      * - `trimWidth` If true, the width will return.
      *
      * @param string $text The string being checked for length
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return int
      */
     protected static function _strlen(string $text, array $options): int
@@ -754,7 +754,7 @@ class Text
      * @param string $text The input string.
      * @param int $start The position to begin extracting.
      * @param int|null $length The desired length.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return string
      */
     protected static function _substr(string $text, int $start, ?int $length, array $options): string

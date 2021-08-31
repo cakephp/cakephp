@@ -394,7 +394,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller A reference to a controller object
      * @param string $type Type of response to send (e.g: 'ajax')
-     * @param array $options Array of options to use
+     * @param array<string, mixed> $options Array of options to use
      * @return void
      * @see \Cake\Controller\Component\RequestHandlerComponent::respondAs()
      */
@@ -448,7 +448,7 @@ class RequestHandlerComponent extends Component
      *
      * @param string $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
      *    like 'application/x-shockwave'.
-     * @param array $options If $type is a friendly type name that is associated with
+     * @param array<string, mixed> $options If $type is a friendly type name that is associated with
      *    more than one type of content, $index is used to select which content-type to use.
      * @return bool Returns false if the friendly type name given in $type does
      *    not exist in the type map, or if the Content-type header has

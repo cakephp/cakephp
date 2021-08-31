@@ -256,7 +256,7 @@ class TimeHelper extends Helper
      *
      * @param \DateTimeInterface|string|int $dateTime UNIX timestamp, strtotime() valid
      *   string or DateTime object.
-     * @param array $options Default format if timestamp is used in $dateString
+     * @param array<string, mixed> $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */

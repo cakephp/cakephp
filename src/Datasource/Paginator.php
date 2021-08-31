@@ -379,7 +379,7 @@ class Paginator implements PaginatorInterface
     /**
      * Extracts the finder name and options out of the provided pagination options.
      *
-     * @param array $options the pagination options.
+     * @param array<string, mixed> $options the pagination options.
      * @return array An array containing in the first position the finder name
      *   and in the second the options to be passed to it.
      */
@@ -529,7 +529,7 @@ class Paginator implements PaginatorInterface
      * requested sorting field/direction.
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
-     * @param array $options The pagination options being used for this request.
+     * @param array<string, mixed> $options The pagination options being used for this request.
      * @return array An array of options with sort + direction removed and
      *   replaced with order if possible.
      */
@@ -663,7 +663,7 @@ class Paginator implements PaginatorInterface
     /**
      * Check the limit parameter and ensure it's within the maxLimit bounds.
      *
-     * @param array $options An array of options with a limit key to be checked.
+     * @param array<string, mixed> $options An array of options with a limit key to be checked.
      * @return array An array of options for pagination.
      */
     public function checkLimit(array $options): array

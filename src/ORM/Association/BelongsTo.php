@@ -63,7 +63,7 @@ class BelongsTo extends Association
      * BelongsTo associations are never cleared in a cascading delete scenario.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
-     * @param array $options The options for the original delete.
+     * @param array<string, mixed> $options The options for the original delete.
      * @return bool Success.
      */
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
@@ -113,7 +113,7 @@ class BelongsTo extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array $options options to be passed to the save method in the target table
+     * @param array<string, mixed> $options options to be passed to the save method in the target table
      * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
@@ -144,7 +144,7 @@ class BelongsTo extends Association
      * Returns a single or multiple conditions to be appended to the generated join
      * clause for getting the results on the target table.
      *
-     * @param array $options list of options passed to attachTo method
+     * @param array<string, mixed> $options list of options passed to attachTo method
      * @return array<\Cake\Database\Expression\IdentifierExpression>
      * @throws \RuntimeException if the number of columns in the foreignKey do not
      * match the number of columns in the target table primaryKey

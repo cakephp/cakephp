@@ -149,7 +149,7 @@ interface SchemaInterface
      * Table options allow you to set platform specific table level options.
      * For example the engine type in MySQL.
      *
-     * @param array $options The options to set, or null to read options.
+     * @param array<string, mixed> $options The options to set, or null to read options.
      * @return $this
      */
     public function setOptions(array $options);

@@ -198,7 +198,7 @@ class Router
      * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
      * @param array|string $defaults An array describing the default route parameters.
      *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
-     * @param array $options An array matching the named elements in the route to regular expressions which that
+     * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
      *   custom routing class.
@@ -758,7 +758,7 @@ class Router
      * Create a RouteBuilder for the provided path.
      *
      * @param string $path The path to set the builder to.
-     * @param array $options The options for the builder
+     * @param array<string, mixed> $options The options for the builder
      * @return \Cake\Routing\RouteBuilder
      */
     public static function createRouteBuilder(string $path, array $options = []): RouteBuilder

@@ -61,7 +61,7 @@ interface ContextInterface
      *     context's schema should be used if it's not explicitly provided.
      *
      * @param string $field A dot separated path to the field a value
-     * @param array $options Options.
+     * @param array<string, mixed> $options Options.
      *   is needed for.
      * @return mixed
      */

@@ -78,7 +78,7 @@ class RouteCollection
      * Add a route to the collection.
      *
      * @param \Cake\Routing\Route\Route $route The route object to add.
-     * @param array $options Additional options for the route. Primarily for the
+     * @param array<string, mixed> $options Additional options for the route. Primarily for the
      *   `_name` option, which enables named routes.
      * @return void
      */

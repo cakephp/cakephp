@@ -174,7 +174,7 @@ class DateTimeWidget extends BasicWidget
      * Formats the passed date/time value into required string format.
      *
      * @param \DateTime|string|int|null $value Value to deconstruct.
-     * @param array $options Options for conversion.
+     * @param array<string, mixed> $options Options for conversion.
      * @return string
      * @throws \InvalidArgumentException If invalid input type is passed.
      */

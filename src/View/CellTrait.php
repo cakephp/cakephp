@@ -51,7 +51,7 @@ trait CellTrait
      *  invoke `View\Cell\TagCloudCell::smallList()`, `display` action will be invoked by default when none is provided.
      * @param array $data Additional arguments for cell method. e.g.:
      *    `cell('TagCloud::smallList', ['a1' => 'v1', 'a2' => 'v2'])` maps to `View\Cell\TagCloud::smallList(v1, v2)`
-     * @param array $options Options for Cell's constructor
+     * @param array<string, mixed> $options Options for Cell's constructor
      * @return \Cake\View\Cell The cell instance
      * @throws \Cake\View\Exception\MissingCellException If Cell class was not found.
      * @throws \BadMethodCallException If Cell class does not specified cell action.
@@ -88,7 +88,7 @@ trait CellTrait
      * @param string $className The cell classname.
      * @param string $action The action name.
      * @param string|null $plugin The plugin name.
-     * @param array $options The constructor options for the cell.
+     * @param array<string, mixed> $options The constructor options for the cell.
      * @return \Cake\View\Cell
      */
     protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell

@@ -202,7 +202,7 @@ abstract class Association
      * list of passed options if expecting any other special key
      *
      * @param string $alias The name given to the association
-     * @param array $options A list of properties to be set on this object
+     * @param array<string, mixed> $options A list of properties to be set on this object
      */
     public function __construct(string $alias, array $options = [])
     {
@@ -533,7 +533,7 @@ abstract class Association
     /**
      * Whether this association can be expressed directly in a query join
      *
-     * @param array $options custom options key that could alter the return value
+     * @param array<string, mixed> $options custom options key that could alter the return value
      * @return bool
      */
     public function canBeJoined(array $options = []): bool
@@ -677,7 +677,7 @@ abstract class Association
      * Override this function to initialize any concrete association class, it will
      * get passed the original list of options used in the constructor
      *
-     * @param array $options List of options used for initialization
+     * @param array<string, mixed> $options List of options used for initialization
      * @return void
      */
     protected function _options(array $options): void
@@ -706,7 +706,7 @@ abstract class Association
      *   with this association.
      *
      * @param \Cake\ORM\Query $query the query to be altered to include the target table data
-     * @param array $options Any extra options or overrides to be taken in account
+     * @param array<string, mixed> $options Any extra options or overrides to be taken in account
      * @return void
      * @throws \RuntimeException Unable to build the query or associations.
      */
@@ -783,7 +783,7 @@ abstract class Association
      * records where there is no match with this association.
      *
      * @param \Cake\ORM\Query $query The query to modify
-     * @param array $options Options array containing the `negateMatch` key.
+     * @param array<string, mixed> $options Options array containing the `negateMatch` key.
      * @return void
      */
     protected function _appendNotMatching(Query $query, array $options): void
@@ -852,7 +852,7 @@ abstract class Association
      *
      * @param array|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
-     * @param array $options The options to for the find
+     * @param array<string, mixed> $options The options to for the find
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
      */
@@ -923,7 +923,7 @@ abstract class Association
      * Returns true if the eager loading process will require a set of the owning table's
      * binding keys in order to use them as a filter in the finder query.
      *
-     * @param array $options The options containing the strategy to be used.
+     * @param array<string, mixed> $options The options containing the strategy to be used.
      * @return bool true if a list of keys will be required
      */
     public function requiresKeys(array $options = []): bool
@@ -951,7 +951,7 @@ abstract class Association
      *
      * @param \Cake\ORM\Query $query the query that will get the fields appended to
      * @param \Cake\ORM\Query $surrogate the query having the fields to be copied from
-     * @param array $options options passed to the method `attachTo`
+     * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
     protected function _appendFields(Query $query, Query $surrogate, array $options): void
@@ -983,7 +983,7 @@ abstract class Association
      * @param \Cake\ORM\Query $query the query that will get the formatter applied to
      * @param \Cake\ORM\Query $surrogate the query having formatters for the associated
      * target table.
-     * @param array $options options passed to the method `attachTo`
+     * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
     protected function _formatAssociationResults(Query $query, Query $surrogate, array $options): void
@@ -1037,7 +1037,7 @@ abstract class Association
      *
      * @param \Cake\ORM\Query $query the query that will get the associations attached to
      * @param \Cake\ORM\Query $surrogate the query having the containments to be attached
-     * @param array $options options passed to the method `attachTo`
+     * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
     protected function _bindNewAssociations(Query $query, Query $surrogate, array $options): void
@@ -1073,7 +1073,7 @@ abstract class Association
      * Returns a single or multiple conditions to be appended to the generated join
      * clause for getting the results on the target table.
      *
-     * @param array $options list of options passed to attachTo method
+     * @param array<string, mixed> $options list of options passed to attachTo method
      * @return array
      * @throws \RuntimeException if the number of columns in the foreignKey do not
      * match the number of columns in the source table primaryKey
@@ -1213,7 +1213,7 @@ abstract class Association
      * - strategy: The name of strategy to use for finding target table records
      * - nestKey: The array key under which results will be found when transforming the row
      *
-     * @param array $options The options for eager loading.
+     * @param array<string, mixed> $options The options for eager loading.
      * @return \Closure
      */
     abstract public function eagerLoader(array $options): Closure;
@@ -1225,7 +1225,7 @@ abstract class Association
      * required.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
-     * @param array $options The options for the original delete.
+     * @param array<string, mixed> $options The options for the original delete.
      * @return bool Success
      */
     abstract public function cascadeDelete(EntityInterface $entity, array $options = []): bool;
@@ -1245,7 +1245,7 @@ abstract class Association
      * the saving operation to the target table.
      *
      * @param \Cake\Datasource\EntityInterface $entity the data to be saved
-     * @param array $options The options for saving associated data.
+     * @param array<string, mixed> $options The options for saving associated data.
      * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()

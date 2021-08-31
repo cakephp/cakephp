@@ -1003,7 +1003,7 @@ class Validation
      * - min => minimum number of non-zero choices that can be made
      *
      * @param mixed $check Value to check
-     * @param array $options Options for the check.
+     * @param array<string, mixed> $options Options for the check.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success
      */
@@ -1361,7 +1361,7 @@ class Validation
      *   If true a missing file will pass the validator regardless of other constraints.
      *
      * @param mixed $file The uploaded file data from PHP.
-     * @param array $options An array of options for the validation.
+     * @param array<string, mixed> $options An array of options for the validation.
      * @return bool
      */
     public static function uploadedFile($file, array $options = []): bool
@@ -1419,7 +1419,7 @@ class Validation
      * Validates the size of an uploaded image.
      *
      * @param mixed $file The uploaded file data from PHP.
-     * @param array $options Options to validate width and height.
+     * @param array<string, mixed> $options Options to validate width and height.
      * @return bool
      * @throws \InvalidArgumentException
      */
@@ -1509,7 +1509,7 @@ class Validation
      *   only a part of the coordinate.
      *
      * @param mixed $value Geographic location as string
-     * @param array $options Options for the validation logic.
+     * @param array<string, mixed> $options Options for the validation logic.
      * @return bool
      */
     public static function geoCoordinate($value, array $options = []): bool
@@ -1543,7 +1543,7 @@ class Validation
      * Convenience method for latitude validation.
      *
      * @param mixed $value Latitude as string
-     * @param array $options Options for the validation logic.
+     * @param array<string, mixed> $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Latitude
      * @see \Cake\Validation\Validation::geoCoordinate()
@@ -1559,7 +1559,7 @@ class Validation
      * Convenience method for longitude validation.
      *
      * @param mixed $value Latitude as string
-     * @param array $options Options for the validation logic.
+     * @param array<string, mixed> $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Longitude
      * @see \Cake\Validation\Validation::geoCoordinate()
@@ -1600,7 +1600,7 @@ class Validation
      *   the basic multilingual plane. Defaults to false.
      *
      * @param mixed $value The value to check
-     * @param array $options An array of options. See above for the supported options.
+     * @param array<string, mixed> $options An array of options. See above for the supported options.
      * @return bool
      */
     public static function utf8($value, array $options = []): bool

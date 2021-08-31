@@ -620,7 +620,7 @@ class View implements EventDispatcherInterface
      *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
-     * @param array $options Array of options. Possible keys are:
+     * @param array<string, mixed> $options Array of options. Possible keys are:
      *
      * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
      *   If an array, the following keys can be used:
@@ -674,7 +674,7 @@ class View implements EventDispatcherInterface
      * is empty, the $block will be run and the output stored.
      *
      * @param callable $block The block of code that you want to cache the output of.
-     * @param array $options The options defining the cache key etc.
+     * @param array<string, mixed> $options The options defining the cache key etc.
      * @return string The rendered content.
      * @throws \RuntimeException When $options is lacking a 'key' option.
      */
@@ -1599,7 +1599,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Element name
      * @param array $data Data
-     * @param array $options Element options
+     * @param array<string, mixed> $options Element options
      * @return array Element Cache configuration.
      * @psalm-param array{cache:(array{key:string, config:string}|string|null), callbacks:mixed, plugin:mixed} $options
      * @psalm-return array{key:string, config:string}
@@ -1646,7 +1646,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $file Element file path
      * @param array $data Data to render
-     * @param array $options Element options
+     * @param array<string, mixed> $options Element options
      * @return string
      * @triggers View.beforeRender $this, [$file]
      * @triggers View.afterRender $this, [$file, $element]

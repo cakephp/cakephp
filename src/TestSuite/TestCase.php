@@ -925,7 +925,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param string $alias The model to get a mock for.
      * @param array<string> $methods The list of methods to mock
-     * @param array $options The config data for the mock's constructor.
+     * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -985,7 +985,7 @@ abstract class TestCase extends BaseTestCase
      * Gets the class name for the table.
      *
      * @param string $alias The model to get a mock for.
-     * @param array $options The config data for the mock's constructor.
+     * @param array<string, mixed> $options The config data for the mock's constructor.
      * @return string
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @psalm-return class-string<\Cake\ORM\Table>

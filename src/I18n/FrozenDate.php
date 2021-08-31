@@ -167,7 +167,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      *
      * NOTE: If the difference is one week or more, the lowest level of accuracy is day.
      *
-     * @param array $options Array of options.
+     * @param array<string, mixed> $options Array of options.
      * @return string Relative time string.
      */
     public function timeAgoInWords(array $options = []): string

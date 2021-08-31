@@ -436,7 +436,7 @@ class Response implements ResponseInterface
     /**
      * Constructor
      *
-     * @param array $options list of parameters to setup the response. Possible values are:
+     * @param array<string, mixed> $options list of parameters to setup the response. Possible values are:
      *
      *  - body: the response text that should be sent to the client
      *  - status: the HTTP status code to respond with
@@ -1168,7 +1168,7 @@ class Response implements ResponseInterface
      * ```
      *
      * @param string $url The LinkHeader url.
-     * @param array $options The LinkHeader params.
+     * @param array<string, mixed> $options The LinkHeader params.
      * @return static
      * @since 3.6.0
      */
@@ -1406,7 +1406,7 @@ class Response implements ResponseInterface
      *   be downloaded rather than displayed inline.
      *
      * @param string $path Absolute path to file.
-     * @param array $options Options See above.
+     * @param array<string, mixed> $options Options See above.
      * @return static
      * @throws \Cake\Http\Exception\NotFoundException
      */

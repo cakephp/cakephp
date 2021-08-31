@@ -783,7 +783,7 @@ class Folder
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
      * @param string $to The directory to copy to.
-     * @param array $options Array of options (see above).
+     * @param array<string, mixed> $options Array of options (see above).
      * @return bool Success.
      */
     public function copy(string $to, array $options = []): bool
@@ -884,7 +884,7 @@ class Folder
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
      * @param string $to The directory to move to.
-     * @param array $options Array of options (see above).
+     * @param array<string, mixed> $options Array of options (see above).
      * @return bool Success
      */
     public function move(string $to, array $options = []): bool
