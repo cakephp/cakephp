@@ -105,20 +105,20 @@ class SocketTest extends TestCase
      */
     public function testSocketConnection(): void
     {
-        $this->assertFalse($this->Socket->connected);
+        $this->assertFalse($this->Socket->isConnected());
         $this->Socket->disconnect();
-        $this->assertFalse($this->Socket->connected);
+        $this->assertFalse($this->Socket->isConnected());
         try {
             $this->Socket->connect();
-            $this->assertTrue($this->Socket->connected);
+            $this->assertTrue($this->Socket->isConnected());
             $this->Socket->connect();
-            $this->assertTrue($this->Socket->connected);
+            $this->assertTrue($this->Socket->isConnected());
 
             $this->Socket->disconnect();
             $config = ['persistent' => true];
             $this->Socket = new Socket($config);
             $this->Socket->connect();
-            $this->assertTrue($this->Socket->connected);
+            $this->assertTrue($this->Socket->isConnected());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
@@ -400,9 +400,9 @@ class SocketTest extends TestCase
     public function testEnableCryptoEnableTls12(): void
     {
         $this->_connectSocketToSslTls();
-        $this->assertFalse($this->Socket->encrypted);
+        $this->assertFalse($this->Socket->isEncrypted());
         $this->Socket->enableCrypto('tlsv12', 'client', true);
-        $this->assertTrue($this->Socket->encrypted);
+        $this->assertTrue($this->Socket->isEncrypted());
     }
 
     /**
@@ -411,9 +411,9 @@ class SocketTest extends TestCase
     public function testEnableCryptoEnableStatus(): void
     {
         $this->_connectSocketToSslTls();
-        $this->assertFalse($this->Socket->encrypted);
+        $this->assertFalse($this->Socket->isEncrypted());
         $this->Socket->enableCrypto('tls', 'client', true);
-        $this->assertTrue($this->Socket->encrypted);
+        $this->assertTrue($this->Socket->isEncrypted());
     }
 
     /**
@@ -491,5 +491,17 @@ class SocketTest extends TestCase
             'persistent' => true,
         ]);
         $socket->connect();
+    }
+
+    /**
+     * @return void
+     * @deprecated
+     */
+    public function testDeprecatedProps()
+    {
+        $this->deprecated(function () {
+            $this->assertFalse($this->Socket->connected);
+            $this->assertFalse($this->Socket->encrypted);
+        });
     }
 }

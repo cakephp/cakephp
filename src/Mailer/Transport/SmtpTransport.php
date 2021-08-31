@@ -115,7 +115,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function connected(): bool
     {
-        return $this->_socket !== null && $this->_socket->connected;
+        return $this->_socket !== null && $this->_socket->isConnected();
     }
 
     /**
