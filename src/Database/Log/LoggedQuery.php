@@ -123,7 +123,7 @@ class LoggedQuery implements JsonSerializable
     /**
      * Get the logging context data for a query.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getContext(): array
     {
@@ -136,7 +136,7 @@ class LoggedQuery implements JsonSerializable
     /**
      * Returns data that will be serialized as JSON
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {

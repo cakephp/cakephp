@@ -52,7 +52,7 @@ class CheckboxWidget extends BasicWidget
      *
      * Any other attributes passed in will be treated as HTML attributes.
      *
-     * @param array $data The data to create a checkbox with.
+     * @param array<string, mixed> $data The data to create a checkbox with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string Generated HTML string.
      */
@@ -79,9 +79,9 @@ class CheckboxWidget extends BasicWidget
     }
 
     /**
-     * Check whether or not the checkbox should be checked.
+     * Checks whether the checkbox should be checked.
      *
-     * @param array $data Data to look at and determine checked state.
+     * @param array<string, mixed> $data Data to look at and determine checked state.
      * @return bool
      */
     protected function _isChecked(array $data): bool

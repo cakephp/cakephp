@@ -123,7 +123,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * - Form.buildValidator => buildValidator
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -344,7 +344,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Get the printable version of a Form instance.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

@@ -256,7 +256,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *   function should have signature like `logout(EventInterface $event, array $user)`
      *   where `$user` is the user about to be logged out.
      *
-     * @return array List of events this class listens to. Defaults to `[]`.
+     * @return array<string, mixed> List of events this class listens to. Defaults to `[]`.
      */
     public function implementedEvents(): array
     {

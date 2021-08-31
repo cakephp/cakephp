@@ -2738,7 +2738,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the printable version of this object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

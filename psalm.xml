@@ -20,6 +20,7 @@
 
     <issueHandlers>
         <RedundantConditionGivenDocblockType errorLevel="suppress"/>
+        <RedundantCastGivenDocblockType errorLevel="suppress"/>
         <DocblockTypeContradiction errorLevel="suppress"/>
         <MissingClosureParamType errorLevel="suppress"/>
         <MissingClosureReturnType errorLevel="suppress"/>

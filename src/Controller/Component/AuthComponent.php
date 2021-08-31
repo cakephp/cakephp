@@ -308,7 +308,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Events supported by this component.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

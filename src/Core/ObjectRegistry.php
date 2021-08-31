@@ -405,7 +405,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Debug friendly object properties.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

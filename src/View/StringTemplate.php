@@ -227,7 +227,7 @@ class StringTemplate
      * Format a template string with $data
      *
      * @param string $name The template name.
-     * @param array $data The data to insert.
+     * @param array<string, mixed> $data The data to insert.
      * @return string Formatted string
      * @throws \RuntimeException If template not found.
      */
@@ -276,8 +276,8 @@ class StringTemplate
      * these templates uses the `name` and `value` variables. You can modify these
      * templates to change how attributes are formatted.
      *
-     * @param array|null $options Array of options.
-     * @param array|null $exclude Array of options to be excluded, the options here will not be part of the return.
+     * @param array<string, mixed>|null $options Array of options.
+     * @param array<string>|null $exclude Array of options to be excluded, the options here will not be part of the return.
      * @return string Composed attributes.
      */
     public function formatAttributes(?array $options, ?array $exclude = null): string
@@ -340,7 +340,7 @@ class StringTemplate
      * Adds a class and returns a unique list either in array or space separated
      *
      * @param array|string $input The array or string to add the class to
-     * @param array|string $newClass the new class or classes to add
+     * @param array<string>|string $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
      * @return array<string>|string
      */

@@ -605,7 +605,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Returns a list of all events that will fire in the controller during its lifecycle.
      * You can override this function to add your own listener callbacks
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

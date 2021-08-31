@@ -128,7 +128,7 @@ class Schema
     /**
      * Get the printable version of this object
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

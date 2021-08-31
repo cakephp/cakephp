@@ -241,7 +241,7 @@ class ConsoleOptionParser
     /**
      * Returns an array representation of this parser.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

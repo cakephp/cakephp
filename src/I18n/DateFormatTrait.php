@@ -483,7 +483,7 @@ trait DateFormatTrait
     /**
      * Returns the data that should be displayed when debugging this object
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

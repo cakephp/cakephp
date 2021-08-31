@@ -91,7 +91,7 @@ class RadioWidget extends BasicWidget
      *   on all generated radios.
      * - `idPrefix` Prefix for generated ID attributes.
      *
-     * @param array $data The data to build radio buttons with.
+     * @param array<string, mixed> $data The data to build radio buttons with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
@@ -146,7 +146,7 @@ class RadioWidget extends BasicWidget
      *
      * @param string|int $val The value of the radio input.
      * @param array|string $text The label text, or complex radio type.
-     * @param array $data Additional options for input generation.
+     * @param array<string, mixed> $data Additional options for input generation.
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
      */

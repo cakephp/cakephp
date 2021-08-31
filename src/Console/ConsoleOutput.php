@@ -138,7 +138,7 @@ class ConsoleOutput
      * Styles that are available as tags in console output.
      * You can modify these styles with ConsoleOutput::styles()
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static $_styles = [
         'emergency' => ['text' => 'red'],
@@ -158,7 +158,7 @@ class ConsoleOutput
      * Construct the output object.
      *
      * Checks for a pretty console environment. Ansicon and ConEmu allows
-     *  pretty consoles on windows, and is supported.
+     *  pretty consoles on Windows, and is supported.
      *
      * @param string $stream The identifier of the stream to write output to.
      */
@@ -312,7 +312,7 @@ class ConsoleOutput
     /**
      * Gets all the style definitions.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function styles(): array
     {

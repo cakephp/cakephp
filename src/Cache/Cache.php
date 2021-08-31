@@ -466,7 +466,7 @@ class Cache
     /**
      * Delete all keys from the cache from all configurations.
      *
-     * @return array<bool> Status code. For each configuration, it reports the status of the operation
+     * @return array<string, bool> Status code. For each configuration, it reports the status of the operation
      */
     public static function clearAll(): array
     {

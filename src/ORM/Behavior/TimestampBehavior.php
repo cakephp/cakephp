@@ -131,7 +131,7 @@ class TimestampBehavior extends Behavior
      *
      * The implemented events of this behavior depend on configuration
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

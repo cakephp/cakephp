@@ -113,7 +113,7 @@ class MultiCheckboxWidget extends BasicWidget
      * This form **requires** that both the `value` and `text` keys be defined.
      * If either is not set options will not be generated correctly.
      *
-     * @param array $data The data to generate a checkbox set with.
+     * @param array<string, mixed> $data The data to generate a checkbox set with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
@@ -130,7 +130,7 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Render the checkbox inputs.
      *
-     * @param array $data The data array defining the checkboxes.
+     * @param array<string, mixed> $data The data array defining the checkboxes.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return array<string> An array of rendered inputs.
      */
