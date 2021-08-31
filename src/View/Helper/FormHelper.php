@@ -2244,7 +2244,7 @@ class FormHelper extends Helper
      * can be passed to a form widget to generate the actual input.
      *
      * @param string $field Name of the field to initialize options for.
-     * @param array<string, mixed> $options Array of options to append options into.
+     * @param array<string, mixed>|array<string> $options Array of options to append options into.
      * @return array Array of options for the input.
      */
     protected function _initInputField(string $field, array $options = []): array
