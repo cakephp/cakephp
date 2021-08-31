@@ -79,7 +79,7 @@ class SchemaLoader
         $files = (array)$files;
 
         // Don't create schema if we are in a phpunit separate process test method.
-        if (empty($files) || isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
+        if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
             return;
         }
 
@@ -95,10 +95,6 @@ class SchemaLoader
             }
 
             $sql = file_get_contents($file);
-            if ($sql === false) {
-                throw new InvalidArgumentException("Unable to load schema file `$file`.");
-            }
-
             $connection->execute($sql)->closeCursor();
         }
 
