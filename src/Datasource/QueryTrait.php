@@ -30,7 +30,7 @@ use Traversable;
 trait QueryTrait
 {
     /**
-     * Instance of a table object this query is bound to
+     * Instance of a repository object this query is bound to.
      *
      * @var \Cake\Datasource\RepositoryInterface
      */
@@ -85,10 +85,9 @@ trait QueryTrait
     protected bool $_eagerLoaded = false;
 
     /**
-     * Set the default Table object that will be used by this query
-     * and form the `FROM` clause.
+     * Set the default repository object that will be used by this query.
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table $repository The default table object to use
+     * @param \Cake\Datasource\RepositoryInterface $repository The default repository object to use.
      * @return $this
      */
     public function repository(RepositoryInterface $repository)
@@ -99,7 +98,7 @@ trait QueryTrait
     }
 
     /**
-     * Returns the default table object that will be used by this query,
+     * Returns the default repository object that will be used by this query,
      * that is, the table that will appear in the from clause.
      *
      * @return \Cake\Datasource\RepositoryInterface

@@ -25,7 +25,9 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
+use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
 use Traversable;
@@ -37,8 +39,6 @@ use Traversable;
  * required.
  *
  * @property \Cake\ORM\Table $_repository Instance of a table object this query is bound to.
- * @method \Cake\ORM\Table getRepository() Returns the default table object that will be used by this query,
- *   that is, the table that will appear in the from clause.
  */
 class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 {
@@ -142,6 +142,36 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         parent::__construct($connection);
         $this->repository($table);
         $this->addDefaultTypes($table);
+    }
+
+    /**
+     * Set the default Table object that will be used by this query
+     * and form the `FROM` clause.
+     *
+     * @param \Cake\ORM\Table $repository The default table object to use.
+     * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
+     */
+    public function repository(RepositoryInterface $repository)
+    {
+        if (!$repository instanceof Table) {
+            throw new InvalidArgumentException('$repository must be an instance of Cake\ORM\Table.');
+        }
+
+        $this->_repository = $repository;
+
+        return $this;
+    }
+
+    /**
+     * Returns the default table object that will be used by this query,
+     * that is, the table that will appear in the from clause.
+     *
+     * @return \Cake\ORM\Table
+     */
+    public function getRepository(): Table
+    {
+        return $this->_repository;
     }
 
     /**
