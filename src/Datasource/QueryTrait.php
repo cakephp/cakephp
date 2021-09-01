@@ -557,7 +557,7 @@ trait QueryTrait
                 'Calling result set method `%s()` directly on query instance is deprecated. ' .
                 'You must call `all()` to retrieve the results first.',
                 $method
-            ));
+            ), 2);
             $results = $this->all();
 
             return $results->$method(...$arguments);
