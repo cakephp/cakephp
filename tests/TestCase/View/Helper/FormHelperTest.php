@@ -6196,6 +6196,34 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test control placeholder + label
+     */
+    public function testControlLabelAndPlaceholder(): void
+    {
+        $this->Form->create($this->article);
+        $result = $this->Form->control('title', ['label' => 'Title', 'placeholder' => 'Add title']);
+        $expected = [
+            'div' => ['class' => 'input text required'],
+            'label' => ['for' => 'title'],
+            'Title',
+            '/label',
+            'input' => [
+                'aria-required' => 'true',
+                'type' => 'text',
+                'required' => 'required',
+                'placeholder' => 'Add title',
+                'id' => 'title',
+                'name' => 'title',
+                'data-validity-message' => 'This field cannot be left empty',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
+                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+            ],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testControlLabelFalse method
      *
      * Test the label option being set to false.
@@ -6217,6 +6245,14 @@ class FormHelperTest extends TestCase
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->create($this->article);
+        $result = $this->Form->control('title', ['label' => false, 'placeholder' => 'Add title']);
+        $expected['input'] += [
+            'placeholder' => 'Add title',
+            'aria-label' => 'Add title',
         ];
         $this->assertHtml($expected, $result);
     }

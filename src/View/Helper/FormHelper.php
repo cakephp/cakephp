@@ -1075,6 +1075,11 @@ class FormHelper extends Helper
                    'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
                 ];
             }
+            if (isset($options['placeholder']) && $options['label'] === false) {
+                $options += [
+                    'aria-label' => $options['placeholder'],
+                ];
+            }
         }
 
         $error = null;
