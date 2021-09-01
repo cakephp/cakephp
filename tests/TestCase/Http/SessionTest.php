@@ -29,13 +29,6 @@ use TestApp\Http\Session\TestWebSession;
 class SessionTest extends TestCase
 {
     /**
-     * Fixtures used in the SessionTest
-     *
-     * @var array
-     */
-    protected $fixtures = ['core.CakeSessions', 'core.Sessions'];
-
-    /**
      * tearDown method
      */
     public function tearDown(): void

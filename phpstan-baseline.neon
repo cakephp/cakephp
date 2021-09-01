@@ -16,11 +16,6 @@ parameters:
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
-			message: "#^Constructor of class Cake\\\\TestSuite\\\\Fixture\\\\TransactionResetStrategy has an unused parameter \\$loader\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TransactionResetStrategy.php
-
-		-
 			message: "#^Method Cake\\\\Auth\\\\Storage\\\\SessionStorage\\:\\:redirectUrl\\(\\) should return array\\|string\\|null but return statement is missing\\.$#"
 			count: 1
 			path: src/Auth/Storage/SessionStorage.php
