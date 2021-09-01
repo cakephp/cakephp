@@ -97,10 +97,10 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
         $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectDeprecationMessageMatches('/This is going away too - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This is going away');
+            deprecationWarning('This is going away too');
         });
     }
 
@@ -113,7 +113,7 @@ class FunctionsTest extends TestCase
 
         Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
         $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This is going away');
+            deprecationWarning('This will be gone soon');
         });
     }
 
@@ -125,7 +125,7 @@ class FunctionsTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function (): void {
-            deprecationWarning('This is going away');
+            deprecationWarning('This is leaving');
         });
     }
 
@@ -135,10 +135,10 @@ class FunctionsTest extends TestCase
     public function testTriggerWarningEnabled(): void
     {
         $this->expectWarning();
-        $this->expectWarningMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function (): void {
-            triggerWarning('This is going away');
+            triggerWarning('This will be gone one day');
             $this->assertTrue(true);
         });
     }
@@ -149,7 +149,7 @@ class FunctionsTest extends TestCase
     public function testTriggerWarningLevelDisabled(): void
     {
         $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {
-            triggerWarning('This is going away');
+            triggerWarning('This was a mistake.');
             $this->assertTrue(true);
         });
     }
