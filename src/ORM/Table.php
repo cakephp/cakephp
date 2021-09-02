@@ -1276,7 +1276,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to use for the find
      * @return \Cake\ORM\Query The query builder
      */
-    public function findAll(Query $query, array $options): Query
+    protected function findAll(Query $query, array $options): Query
     {
         return $query;
     }
@@ -1357,7 +1357,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options for the find
      * @return \Cake\ORM\Query The query builder
      */
-    public function findList(Query $query, array $options): Query
+    protected function findList(Query $query, array $options): Query
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -1422,7 +1422,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
-    public function findThreaded(Query $query, array $options): Query
+    protected function findThreaded(Query $query, array $options): Query
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
