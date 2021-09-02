@@ -309,6 +309,13 @@ if (!function_exists('deprecationWarning')) {
             );
         }
 
+        static $errors = [];
+        $checksum = md5($message);
+        if (isset($errors[$checksum])) {
+            return;
+        }
+        $errors[$checksum] = true;
+
         trigger_error($message, E_USER_DEPRECATED);
     }
 }

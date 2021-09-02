@@ -18,6 +18,7 @@ namespace Cake\Core;
 use Cake\Console\CommandCollection;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
+use Closure;
 use InvalidArgumentException;
 use ReflectionClass;
 
@@ -258,7 +259,10 @@ class BasePlugin implements PluginInterface
     {
         $path = $this->getConfigPath() . 'routes.php';
         if (is_file($path)) {
-            require $path;
+            $return = require $path;
+            if ($return instanceof Closure) {
+                $return($routes);
+            }
         }
     }
 

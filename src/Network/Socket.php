@@ -34,13 +34,6 @@ class Socket
     use InstanceConfigTrait;
 
     /**
-     * Object description
-     *
-     * @var string
-     */
-    public $description = 'Remote DataSource Network Socket Interface';
-
-    /**
      * Default configuration settings for the socket connection
      *
      * @var array
@@ -58,28 +51,28 @@ class Socket
      *
      * @var resource|null
      */
-    public $connection;
+    protected $connection;
 
     /**
      * This boolean contains the current state of the Socket class
      *
      * @var bool
      */
-    public $connected = false;
+    protected $connected = false;
 
     /**
      * This variable contains an array with the last error number (num) and string (str)
      *
      * @var array
      */
-    public $lastError = [];
+    protected $lastError = [];
 
     /**
      * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
      *
      * @var bool
      */
-    public $encrypted = false;
+    protected $encrypted = false;
 
     /**
      * Contains all the encryption methods available
@@ -87,7 +80,6 @@ class Socket
      * @var array
      */
     protected $_encryptMethods = [
-        // phpcs:disable
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
         'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
         'tlsv10_client' => STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT,
@@ -97,8 +89,7 @@ class Socket
         'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER,
         'tlsv10_server' => STREAM_CRYPTO_METHOD_TLSv1_0_SERVER,
         'tlsv11_server' => STREAM_CRYPTO_METHOD_TLSv1_1_SERVER,
-        'tlsv12_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER
-        // phpcs:enable
+        'tlsv12_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER,
     ];
 
     /**
@@ -113,7 +104,7 @@ class Socket
      * Constructor.
      *
      * @param array $config Socket configuration, which will be merged with the base configuration
-     * @see \Cake\Network\Socket::$_baseConfig
+     * @see \Cake\Network\Socket::$_defaultConfig
      */
     public function __construct(array $config = [])
     {
@@ -189,6 +180,16 @@ class Socket
             stream_set_timeout($this->connection, (int)$this->_config['timeout']);
         }
 
+        return $this->connected;
+    }
+
+    /**
+     * Check the connection status after calling `connect()`.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool
+    {
         return $this->connected;
     }
 
@@ -506,5 +507,68 @@ class Socket
         $errorMessage = 'Unable to perform enableCrypto operation on the current socket';
         $this->setLastError(null, $errorMessage);
         throw new SocketException($errorMessage);
+    }
+
+    /**
+     * Check the encryption status after calling `enableCrypto()`.
+     *
+     * @return bool
+     */
+    public function isEncrypted(): bool
+    {
+        return $this->encrypted;
+    }
+
+    /**
+     * Temporary magic method to allow accessing protected properties.
+     *
+     * Will be removed in 5.0.
+     *
+     * @param string $name Property name.
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        switch ($name) {
+            case 'connected':
+                deprecationWarning('The property `$connected` is deprecated, use `isConnected()` instead.');
+
+                return $this->connected;
+
+            case 'encrypted':
+                deprecationWarning('The property `$encrypted` is deprecated, use `isEncrypted()` instead.');
+
+                return $this->encrypted;
+
+            case 'lastError':
+                deprecationWarning('The property `$lastError` is deprecated, use `lastError()` instead.');
+
+                return $this->lastError;
+
+            case 'connection':
+                deprecationWarning('The property `$connection` is deprecated.');
+
+                return $this->connection;
+
+            case 'description':
+                deprecationWarning('The CakePHP team would love to know your use case for this property.');
+
+                return 'Remote DataSource Network Socket Interface';
+        }
+
+        $trace = debug_backtrace();
+        $parts = explode('\\', static::class);
+        trigger_error(
+            sprintf(
+                'Undefined property: %s::$%s in %s on line %s',
+                array_pop($parts),
+                $name,
+                $trace[0]['file'],
+                $trace[0]['line']
+            ),
+            E_USER_NOTICE
+        );
+
+        return null;
     }
 }

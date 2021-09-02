@@ -25,6 +25,24 @@ use Cake\TestSuite\TestCase;
 class SchemaGeneratorTest extends TestCase
 {
     /**
+     * @var bool|null
+     */
+    protected $restore;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->restore = $GLOBALS['__PHPUNIT_BOOTSTRAP'];
+        unset($GLOBALS['__PHPUNIT_BOOTSTRAP']);
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $GLOBALS['__PHPUNIT_BOOTSTRAP'] = $this->restore;
+    }
+
+    /**
      * test reload on a table subset.
      */
     public function testReload(): void

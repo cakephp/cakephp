@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Mailer\Transport;
 
 use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
+use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 use ReflectionProperty;
 use TestApp\Mailer\Transport\SmtpTestTransport;
@@ -56,8 +57,8 @@ class SmtpTransportTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->socket = $this->getMockBuilder('Cake\Network\Socket')
-            ->onlyMethods(['read', 'write', 'connect', 'disconnect', 'enableCrypto'])
+        $this->socket = $this->getMockBuilder(Socket::class)
+            ->onlyMethods(['read', 'write', 'connect', 'disconnect', 'enableCrypto', 'isConnected'])
             ->getMock();
 
         $this->SmtpTransport = new SmtpTestTransport();
@@ -512,7 +513,8 @@ class SmtpTransportTest extends TestCase
     public function testQuit(): void
     {
         $this->socket->expects($this->once())->method('write')->with("QUIT\r\n");
-        $this->socket->connected = true;
+        $this->socket->expects($this->once())->method('isConnected')->willReturn(true);
+
         $this->SmtpTransport->disconnect();
     }
 
@@ -636,7 +638,8 @@ class SmtpTransportTest extends TestCase
     public function testExplicitConnectAlreadyConnected(): void
     {
         $this->socket->expects($this->never())->method('connect');
-        $this->socket->connected = true;
+        $this->socket->expects($this->once())->method('isConnected')->willReturn(true);
+
         $this->SmtpTransport->connect();
     }
 
@@ -645,10 +648,14 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnected(): void
     {
-        $this->socket->connected = true;
-        $this->assertTrue($this->SmtpTransport->connected());
+        $this->socket->expects($this->exactly(2))
+            ->method('isConnected')
+            ->will($this->onConsecutiveCalls(
+                true,
+                false
+            ));
 
-        $this->socket->connected = false;
+        $this->assertTrue($this->SmtpTransport->connected());
         $this->assertFalse($this->SmtpTransport->connected());
     }
 
@@ -659,7 +666,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->once())->method('write')->with("QUIT\r\n");
         $this->socket->expects($this->once())->method('disconnect');
-        $this->socket->connected = true;
+        $this->socket->expects($this->once())->method('isConnected')->willReturn(true);
         unset($this->SmtpTransport);
     }
 
@@ -670,7 +677,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->once())->method('write')->with("QUIT\r\n");
         $this->socket->expects($this->once())->method('disconnect');
-        $this->socket->connected = true;
+        $this->socket->expects($this->once())->method('isConnected')->willReturn(true);
         $this->SmtpTransport->disconnect();
     }
 
@@ -745,7 +752,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
         $this->SmtpTransport->send($message);
-        $this->socket->connected = true;
+        $this->socket->expects($this->once())->method('isConnected')->willReturn(true);
         $this->SmtpTransport->send($message);
     }
 

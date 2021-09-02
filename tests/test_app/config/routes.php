@@ -15,18 +15,20 @@
 
 use Cake\Routing\RouteBuilder;
 
-$routes->setExtensions('json');
-$routes->scope('/', function (RouteBuilder $routes): void {
-    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
-    $routes->connect(
-        '/some_alias',
-        [
-            'controller' => 'tests_apps',
-            'action' => 'some_method'],
-        [
-            '_name' => 'some_alias',
-            'routeClass' => 'InflectedRoute',
-        ]
-    );
-    $routes->fallbacks();
-});
+return function (RouteBuilder $routes) {
+    $routes->setExtensions('json');
+    $routes->scope('/', function (RouteBuilder $routes): void {
+        $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+        $routes->connect(
+            '/some_alias',
+            [
+                'controller' => 'tests_apps',
+                'action' => 'some_method'],
+            [
+                '_name' => 'some_alias',
+                'routeClass' => 'InflectedRoute',
+            ]
+        );
+        $routes->fallbacks();
+    });
+};
