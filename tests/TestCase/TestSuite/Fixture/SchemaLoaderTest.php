@@ -17,9 +17,7 @@ namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Console\ConsoleIo;
 use Cake\Database\Connection;
-use Cake\Database\DriverInterface;
-use Cake\Database\Schema\Collection;
-use Cake\Database\Schema\SchemaDialect;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\SchemaCleaner;
@@ -39,6 +37,8 @@ class SchemaLoaderTest extends TestCase
      */
     protected $loader;
 
+    protected $truncateDbFile = TMP . 'schema_loader_test.sqlite';
+
     public function setUp(): void
     {
         parent::setUp();
@@ -55,6 +55,10 @@ class SchemaLoaderTest extends TestCase
 
         (new SchemaCleaner())->dropTables('test', ['schema_loader_test_one', 'schema_loader_test_two']);
         ConnectionManager::drop('schema_test');
+
+        if (file_exists($this->truncateDbFile)) {
+            unlink($this->truncateDbFile);
+        }
     }
 
     /**
@@ -89,32 +93,29 @@ class SchemaLoaderTest extends TestCase
      */
     public function testDropTruncateTables(): void
     {
-        $connection = $this->createMock(Connection::class);
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        ConnectionManager::setConfig('test_schema_loader', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'database' => $this->truncateDbFile,
+        ]);
 
-        $tableSchema = $this->createMock(TableSchema::class);
-        $schemaDialect = $this->createMock(SchemaDialect::class);
-        $schemaDialect
-            ->expects($this->atLeastOnce())->method('dropConstraintSql')->with($tableSchema)->willReturn(['']);
-        $schemaDialect
-            ->expects($this->atLeastOnce())->method('dropTableSql')->with($tableSchema)->willReturn(['']);
-        $schemaDialect
-            ->expects($this->atLeastOnce())->method('truncateTableSql')->with($tableSchema)->willReturn(['']);
-        $driver = $this->createMock(DriverInterface::class);
-        $driver
-            ->expects($this->atLeastOnce())->method('schemaDialect')->willReturn($schemaDialect);
-        $connection
-            ->expects($this->atLeastOnce())->method('getDriver')->willReturn($driver);
+        $schemaFile = $this->createSchemaFile('schema_loader_first');
+        $this->loader->loadFiles($schemaFile, 'test_schema_loader');
+        $connection = ConnectionManager::get('test_schema_loader');
 
-        $schemaCollection = $this->createMock(Collection::class);
-        $schemaCollection
-            ->expects($this->atLeastOnce())->method('listTables')->willReturn(['schema_test']);
-        $schemaCollection
-            ->expects($this->atLeastOnce())->method('describe')->willReturn($tableSchema);
-        $connection
-            ->expects($this->atLeastOnce())->method('getSchemaCollection')->willReturn($schemaCollection);
+        $result = $connection->getSchemaCollection()->listTables();
+        $this->assertEquals(['schema_loader_first'], $result);
 
-        ConnectionManager::setConfig('schema_test', $connection);
-        $this->loader->loadFiles([], 'schema_test', true, true);
+        $schemaFile = $this->createSchemaFile('schema_loader_second');
+        $this->loader->loadFiles($schemaFile, 'test_schema_loader');
+
+        $result = $connection->getSchemaCollection()->listTables();
+        $this->assertEquals(['schema_loader_second'], $result);
+
+        $statement = $connection->query('SELECT * FROM schema_loader_second');
+        $result = $statement->fetchAll();
+        $this->assertCount(0, $result, 'Table should be empty.');
     }
 
     protected function createSchemaFile(string $tableName): string
@@ -126,7 +127,8 @@ class SchemaLoaderTest extends TestCase
             ->addColumn('id', 'integer')
             ->addColumn('name', 'string');
 
-        $query = $schema->createSql($connection)[0];
+        $query = $schema->createSql($connection)[0] . ';';
+        $query .= "\nINSERT INTO {$tableName} (id, name) VALUES (1, 'testing');";
         $tmpFile = tempnam(sys_get_temp_dir(), 'SchemaLoaderTest');
         file_put_contents($tmpFile, $query);
 

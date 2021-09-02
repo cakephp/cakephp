@@ -88,14 +88,18 @@ class SchemaLoader
             $cleaner->dropTables($connectionName);
         }
 
+        /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
         foreach ($files as $file) {
             if (!file_exists($file)) {
                 throw new InvalidArgumentException("Unable to load schema file `$file`.");
             }
-
             $sql = file_get_contents($file);
-            $connection->execute($sql)->closeCursor();
+
+            // Use the underlying PDO connection so we can avoid prepared statements
+            // which don't support multiple queries in postgres.
+            $driver = $connection->getDriver();
+            $driver->getConnection()->exec($sql);
         }
 
         if ($truncateTables) {
