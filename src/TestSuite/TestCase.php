@@ -28,7 +28,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
-use Cake\TestSuite\Fixture\TruncateFixtureStrategy;
+use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
@@ -297,7 +297,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getFixtureStrategy(): FixtureStrategyInterface
     {
-        return new TruncateFixtureStrategy();
+        return new TruncateStrategy();
     }
 
     /**

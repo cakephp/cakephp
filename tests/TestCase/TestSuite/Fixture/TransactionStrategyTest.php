@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\Fixture\TruncateFixtureStrategy;
+use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\TestCase;
 
-class TruncateFixtureStrategyTest extends TestCase
+class TransactionStrategyTest extends TestCase
 {
     protected $fixtures = ['core.Articles'];
 
@@ -38,7 +38,7 @@ class TruncateFixtureStrategyTest extends TestCase
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
 
-        $strategy = new TruncateFixtureStrategy();
+        $strategy = new TransactionStrategy();
         $strategy->setupTest(['core.Articles']);
         $rows = $connection->newQuery()->select('*')->from('articles')->execute();
         $this->assertNotEmpty($rows->fetchAll());
