@@ -23,6 +23,7 @@ use Cake\Event\EventManager;
 use Cake\Utility\Hash;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
+use RuntimeException;
 
 /**
  * Form abstraction used to create forms not tied to ORM backed models,
@@ -209,11 +210,22 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * Used to check if $data passes this form's validation.
      *
      * @param array $data The data to check.
+     * @param array $options The validate options
      * @return bool Whether or not the data is valid.
      */
-    public function validate(array $data): bool
+    public function validate(array $data, array $options = []): bool
     {
-        $validator = $this->getValidator();
+        $options += [
+            'validate' => true,
+        ];
+
+        $validator = null;
+        if ($options['validate'] === true) {
+            $validator = $this->getValidator();
+        } elseif (is_string($options['validate'])) {
+            $validator = $this->getValidator($options['validate']);
+        }
+
         $this->_errors = $validator->validate($data);
 
         return count($this->_errors) === 0;
