@@ -140,9 +140,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Set the schema for this form.
      *
+     * @since 4.1.0
      * @param \Cake\Form\Schema $schema The schema to set
      * @return $this
-     * @since 4.1.0
      */
     public function setSchema(Schema $schema)
     {
@@ -158,8 +158,8 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * is first built. This hook method lets you configure the
      * schema or load a pre-defined one.
      *
-     * @return \Cake\Form\Schema the schema instance.
      * @since 4.1.0
+     * @return \Cake\Form\Schema the schema instance.
      */
     public function getSchema(): Schema
     {
@@ -177,9 +177,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * is first built. This hook method lets you configure the
      * schema or load a pre-defined one.
      *
+     * @deprecated 4.1.0 Use {@link setSchema()}/{@link getSchema()} instead.
      * @param \Cake\Form\Schema|null $schema The schema to set, or null.
      * @return \Cake\Form\Schema the schema instance.
-     * @deprecated 4.1.0 Use {@link setSchema()}/{@link getSchema()} instead.
      */
     public function schema(?Schema $schema = null): Schema
     {
