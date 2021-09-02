@@ -25,7 +25,7 @@ use RuntimeException;
  *
  * Any test that calls Connection::rollback(true) will break this strategy.
  */
-class TransactionFixtureStrategy implements FixtureStrategyInterface
+class TransactionStrategy implements FixtureStrategyInterface
 {
     /**
      * @var \Cake\TestSuite\Fixture\FixtureHelper
@@ -64,7 +64,7 @@ class TransactionFixtureStrategy implements FixtureStrategyInterface
                     throw new RuntimeException(
                         "Could not enable save points for the `{$connection->configName()}` connection. " .
                             'Your database needs to support savepoints in order to use ' .
-                            'TransactionFixtureStrategy.'
+                            'TransactionStrategy.'
                     );
                 }
 

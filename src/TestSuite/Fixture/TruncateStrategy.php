@@ -19,7 +19,7 @@ namespace Cake\TestSuite\Fixture;
 /**
  * Fixture strategy that truncates all fixture ables at the end of test.
  */
-class TruncateFixtureStrategy implements FixtureStrategyInterface
+class TruncateStrategy implements FixtureStrategyInterface
 {
     /**
      * @var \Cake\TestSuite\Fixture\FixtureHelper
