@@ -34,6 +34,7 @@ use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -194,7 +195,10 @@ abstract class BaseApplication implements
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
-            require $this->configDir . 'routes.php';
+            $return = require $this->configDir . 'routes.php';
+            if ($return instanceof Closure) {
+                $return($routes);
+            }
         }
     }
 
