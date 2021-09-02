@@ -2198,12 +2198,14 @@ class FormHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()->withAttribute('formTokenData', []));
         $this->Form->create();
 
-        $this->Form->select('Model.select', [1, 2], ['disabled']);
-        $this->Form->checkbox('Model.checkbox', ['disabled']);
-        $this->Form->text('Model.text', ['disabled']);
-        $this->Form->textarea('Model.textarea', ['disabled']);
-        $this->Form->password('Model.password', ['disabled']);
-        $this->Form->radio('Model.radio', [1, 2], ['disabled']);
+        $this->deprecated(function () {
+            $this->Form->select('Model.select', [1, 2], ['disabled']);
+            $this->Form->checkbox('Model.checkbox', ['disabled']);
+            $this->Form->text('Model.text', ['disabled']);
+            $this->Form->textarea('Model.textarea', ['disabled']);
+            $this->Form->password('Model.password', ['disabled']);
+            $this->Form->radio('Model.radio', [1, 2], ['disabled']);
+        });
 
         $expected = [
             'Model.radio' => '',
