@@ -224,6 +224,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
             $validator = $this->getValidator();
         } elseif (is_string($options['validate'])) {
             $validator = $this->getValidator($options['validate']);
+        } elseif (is_object($options['validate'])) {
+            /** @var \Cake\Validation\Validator $validator */
+            $validator = $options['validate'];
         }
 
         $this->_errors = $validator->validate($data);

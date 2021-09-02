@@ -140,6 +140,21 @@ class FormTest extends TestCase
     }
 
     /**
+     * Test validate with object validator
+     */
+    public function testValidateObjectValidator(): void
+    {
+        $form = new Form();
+
+        $validator = clone $form->getValidator();
+        $validator->add('email', 'format', ['rule' => 'email']);
+
+        $data = ['email' => 'wrong'];
+
+        $this->assertFalse($form->validate($data, ['validate' => $validator]));
+    }
+
+    /**
      * Test the get errors methods.
      */
     public function testGetErrors(): void
