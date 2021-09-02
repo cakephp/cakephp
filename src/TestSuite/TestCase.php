@@ -261,7 +261,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getFixtureStrategy(): FixtureStrategyInterface
     {
-        return new TruncateFixtureStrategy();
+        return new TruncateStrategy();
     }
 
     /**
