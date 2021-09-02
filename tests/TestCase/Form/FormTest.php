@@ -20,6 +20,7 @@ use Cake\Form\Form;
 use Cake\Form\Schema;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use RuntimeException;
 use TestApp\Form\AppForm;
 use TestApp\Form\FormSchema;
 
@@ -153,6 +154,19 @@ class FormTest extends TestCase
 
         $this->assertFalse($form->validate($data, ['validate' => $validator]));
     }
+
+    /**
+     * Test that invalid validate options raise exceptions
+     */
+    public function testValidateInvalidType(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('validate must be a boolean, a string or an object. Got NULL.');
+        $data = ['email' => 'wrong'];
+        $form = new Form();
+        $form->validate($data, ['validate' => null]);
+    }
+
 
     /**
      * Test the get errors methods.
