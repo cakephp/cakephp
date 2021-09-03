@@ -41,7 +41,7 @@ class MailTransport extends AbstractTransport
         $to = $message->getHeaders(['to'])['To'];
         $to = str_replace("\r\n", '', $to);
 
-        $eol = $this->getConfig('eol', PHP_EOL);
+        $eol = $this->getConfig('eol', version_compare(PHP_VERSION, '8.0', '>=') ? "\r\n" : "\n");
         $headers = $message->getHeadersString(
             [
                 'from',
