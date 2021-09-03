@@ -62,7 +62,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param string $name the name of the function to be constructed
      * @param array $params list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
-     * @param array<string, string> $types Associative array of types to be associated with the
+     * @param array<string, string>|array<string|null> $types Associative array of types to be associated with the
      * passed arguments
      * @param string $returnType The return type of this expression
      */

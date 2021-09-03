@@ -109,7 +109,7 @@ class CaseExpression implements ExpressionInterface
      *
      * @param array $conditions Array of ExpressionInterface instances.
      * @param array<string, mixed> $values Associative array of values of each condition
-     * @param array<string, string> $types Associative array of types to be associated with the values
+     * @param array<string, string>|array<string> $types Associative array of types to be associated with the values
      * @return void
      */
     protected function _addExpressions(array $conditions, array $values, array $types): void

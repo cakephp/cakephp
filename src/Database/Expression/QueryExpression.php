@@ -58,7 +58,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param \Cake\Database\ExpressionInterface|array|string $conditions Tree like array structure
      * containing all the conditions to be added or nested inside this expression object.
-     * @param \Cake\Database\TypeMap|array<string, string> $types Associative array of types to be associated with the values
+     * @param \Cake\Database\TypeMap|array $types Associative array of types to be associated with the values
      * passed in $conditions.
      * @param string $conjunction the glue that will join all the string conditions at this
      * level of the expression tree. For example "AND", "OR", "XOR"...
