@@ -34,7 +34,7 @@ class CaseExpression implements ExpressionInterface
      *
      * @var array
      */
-    protected $_conditions = [];
+    protected array $_conditions = [];
 
     /**
      * Values that are associated with the conditions in the $_conditions array.
@@ -42,14 +42,14 @@ class CaseExpression implements ExpressionInterface
      *
      * @var array
      */
-    protected $_values = [];
+    protected array $_values = [];
 
     /**
      * The `ELSE` value for the case statement. If null then no `ELSE` will be included.
      *
      * @var \Cake\Database\ExpressionInterface|array|string|null
      */
-    protected $_elseValue;
+    protected ExpressionInterface|array|string|null $_elseValue = null;
 
     /**
      * Constructs the case expression

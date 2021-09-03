@@ -44,7 +44,7 @@ class Postgres extends Driver
      *
      * @var array
      */
-    protected $_baseConfig = [
+    protected array $_baseConfig = [
         'persistent' => true,
         'host' => 'localhost',
         'username' => 'root',
@@ -63,26 +63,26 @@ class Postgres extends Driver
      *
      * @var \Cake\Database\Schema\PostgresSchemaDialect|null
      */
-    protected $_schemaDialect;
+    protected ?PostgresSchemaDialect $_schemaDialect = null;
 
     /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_startQuote = '"';
+    protected string $_startQuote = '"';
 
     /**
      * String used to end a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_endQuote = '"';
+    protected string $_endQuote = '"';
 
     /**
      * @inheritDoc
      */
-    protected $supportsCTEs = true;
+    protected ?bool $supportsCTEs = true;
 
     /**
      * Establishes a connection to the database server

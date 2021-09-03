@@ -29,7 +29,7 @@ class TypeMap
      *
      * @var array<string>
      */
-    protected $_defaults = [];
+    protected array $_defaults = [];
 
     /**
      * Associative array with the fields and the related types that override defaults this query might contain
@@ -39,7 +39,7 @@ class TypeMap
      *
      * @var array<string>
      */
-    protected $_types = [];
+    protected array $_types = [];
 
     /**
      * Creates an instance with the given defaults

@@ -30,7 +30,7 @@ abstract class BaseType implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name;
+    protected ?string $_name = null;
 
     /**
      * Constructor

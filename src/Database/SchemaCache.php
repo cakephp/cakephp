@@ -35,7 +35,7 @@ class SchemaCache
      *
      * @var \Cake\Database\Schema\CachedCollection
      */
-    protected $_schema;
+    protected CachedCollection $_schema;
 
     /**
      * Constructor

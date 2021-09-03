@@ -32,7 +32,7 @@ class IdentifierQuoter
      *
      * @var \Cake\Database\Driver
      */
-    protected $_driver;
+    protected Driver $_driver;
 
     /**
      * Constructor

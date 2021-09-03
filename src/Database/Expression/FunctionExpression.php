@@ -39,7 +39,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * Constructor. Takes a name for the function to be invoked and a list of params

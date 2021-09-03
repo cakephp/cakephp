@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
-use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -153,7 +152,7 @@ class DriverTest extends TestCase
      */
     public function testLastInsertId(): void
     {
-        $connection = $this->getMockBuilder(Mysql::class)
+        $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['lastInsertId'])
             ->getMock();

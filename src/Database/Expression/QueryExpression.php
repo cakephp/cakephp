@@ -40,7 +40,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @var string
      */
-    protected $_conjunction;
+    protected string $_conjunction;
 
     /**
      * A list of strings or other expression objects that represent the "branches" of
@@ -48,7 +48,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @var array
      */
-    protected $_conditions = [];
+    protected array $_conditions = [];
 
     /**
      * Constructor. A new expression object can be created without any params and

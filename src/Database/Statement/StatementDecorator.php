@@ -52,14 +52,14 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @var \Cake\Database\DriverInterface
      */
-    protected $_driver;
+    protected DriverInterface $_driver;
 
     /**
      * Whether or not this statement has already been executed
      *
      * @var bool
      */
-    protected $_hasExecuted = false;
+    protected bool $_hasExecuted = false;
 
     /**
      * Constructor

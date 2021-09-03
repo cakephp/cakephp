@@ -31,7 +31,7 @@ class TypeFactory
      * @var array<string, string>
      * @psalm-var array<string, class-string<\Cake\Database\TypeInterface>>
      */
-    protected static $_types = [
+    protected static array $_types = [
         'tinyinteger' => Type\IntegerType::class,
         'smallinteger' => Type\IntegerType::class,
         'integer' => Type\IntegerType::class,
@@ -60,7 +60,7 @@ class TypeFactory
      *
      * @var array<\Cake\Database\TypeInterface>
      */
-    protected static $_builtTypes = [];
+    protected static array $_builtTypes = [];
 
     /**
      * Returns a Type object capable of converting a type identified by name.

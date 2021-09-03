@@ -34,7 +34,7 @@ abstract class SchemaDialect
      *
      * @var \Cake\Database\DriverInterface
      */
-    protected $_driver;
+    protected DriverInterface $_driver;
 
     /**
      * Constructor

@@ -28,27 +28,27 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @var \Cake\Database\Expression\IdentifierExpression
      */
-    protected $name;
+    protected IdentifierExpression $name;
 
     /**
      * @var array<\Cake\Database\ExpressionInterface>
      */
-    protected $partitions = [];
+    protected array $partitions = [];
 
     /**
      * @var \Cake\Database\Expression\OrderByExpression|null
      */
-    protected $order;
+    protected ?OrderByExpression $order = null;
 
     /**
      * @var array|null
      */
-    protected $frame;
+    protected ?array $frame = null;
 
     /**
      * @var string|null
      */
-    protected $exclusion;
+    protected ?string $exclusion = null;
 
     /**
      * @param string $name Window name

@@ -49,7 +49,7 @@ class Connection implements ConnectionInterface
      *
      * @var array
      */
-    protected $_config;
+    protected array $_config;
 
     /**
      * Driver object, responsible for creating the real connection
@@ -57,21 +57,21 @@ class Connection implements ConnectionInterface
      *
      * @var \Cake\Database\DriverInterface
      */
-    protected $_driver;
+    protected DriverInterface $_driver;
 
     /**
      * Contains how many nested transactions have been started.
      *
      * @var int
      */
-    protected $_transactionLevel = 0;
+    protected int $_transactionLevel = 0;
 
     /**
      * Whether a transaction is active in this connection.
      *
      * @var bool
      */
-    protected $_transactionStarted = false;
+    protected bool $_transactionStarted = false;
 
     /**
      * Whether this connection can and should use savepoints for nested
@@ -79,35 +79,35 @@ class Connection implements ConnectionInterface
      *
      * @var bool
      */
-    protected $_useSavePoints = false;
+    protected bool $_useSavePoints = false;
 
     /**
      * Whether to log queries generated during this connection.
      *
      * @var bool
      */
-    protected $_logQueries = false;
+    protected bool $_logQueries = false;
 
     /**
      * Logger object instance.
      *
      * @var \Psr\Log\LoggerInterface|null
      */
-    protected $_logger;
+    protected ?LoggerInterface $_logger = null;
 
     /**
      * Cacher object instance.
      *
      * @var \Psr\SimpleCache\CacheInterface|null
      */
-    protected $cacher;
+    protected ?CacheInterface $cacher = null;
 
     /**
      * The schema collection object
      *
      * @var \Cake\Database\Schema\CollectionInterface|null
      */
-    protected $_schemaCollection;
+    protected ?SchemaCollectionInterface $_schemaCollection = null;
 
     /**
      * NestedTransactionRollbackException object instance, will be stored if
@@ -115,7 +115,7 @@ class Connection implements ConnectionInterface
      *
      * @var \Cake\Database\Exception\NestedTransactionRollbackException|null
      */
-    protected $nestedTransactionRollbackException;
+    protected ?NestedTransactionRollbackException $nestedTransactionRollbackException = null;
 
     /**
      * Constructor.

@@ -27,7 +27,7 @@ trait TypeMapTrait
     /**
      * @var \Cake\Database\TypeMap|null
      */
-    protected $_typeMap;
+    protected ?TypeMap $_typeMap = null;
 
     /**
      * Creates a new TypeMap if $typeMap is an array, otherwise exchanges it for the given one.

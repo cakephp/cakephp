@@ -28,21 +28,21 @@ class CachedCollection implements CollectionInterface
      *
      * @var \Psr\SimpleCache\CacheInterface
      */
-    protected $cacher;
+    protected CacheInterface $cacher;
 
     /**
      * The decorated schema collection
      *
      * @var \Cake\Database\Schema\CollectionInterface
      */
-    protected $collection;
+    protected CollectionInterface $collection;
 
     /**
      * The cache key prefix
      *
      * @var string
      */
-    protected $prefix;
+    protected string $prefix;
 
     /**
      * Constructor.

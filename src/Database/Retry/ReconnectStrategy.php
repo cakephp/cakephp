@@ -35,7 +35,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      *
      * @var array
      */
-    protected static $causes = [
+    protected static array $causes = [
         'gone away',
         'Lost connection',
         'Transaction() on null',
@@ -57,7 +57,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      *
      * @var \Cake\Database\Connection
      */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Creates the ReconnectStrategy object by storing a reference to the

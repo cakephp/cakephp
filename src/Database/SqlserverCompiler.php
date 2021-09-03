@@ -32,12 +32,12 @@ class SqlserverCompiler extends QueryCompiler
      *
      * @var bool
      */
-    protected $_orderedUnion = false;
+    protected bool $_orderedUnion = false;
 
     /**
      * @inheritDoc
      */
-    protected $_templates = [
+    protected array $_templates = [
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s',
@@ -49,7 +49,7 @@ class SqlserverCompiler extends QueryCompiler
     /**
      * @inheritDoc
      */
-    protected $_selectParts = [
+    protected array $_selectParts = [
         'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
         'offset', 'limit', 'union', 'epilog',
     ];

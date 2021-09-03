@@ -43,21 +43,21 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      *
      * @var bool
      */
-    protected $setToDateStart = false;
+    protected bool $setToDateStart = false;
 
     /**
      * The DateTime format used when converting to string.
      *
      * @var string
      */
-    protected $_format = 'Y-m-d H:i:s';
+    protected string $_format = 'Y-m-d H:i:s';
 
     /**
      * The DateTime formats allowed by `marshal()`.
      *
      * @var array
      */
-    protected $_marshalFormats = [
+    protected array $_marshalFormats = [
         'Y-m-d H:i',
         'Y-m-d H:i:s',
         'Y-m-d\TH:i',
@@ -70,16 +70,16 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      *
      * @var bool
      */
-    protected $_useLocaleMarshal = false;
+    protected bool $_useLocaleMarshal = false;
 
     /**
      * The locale-aware format `marshal()` uses when `_useLocaleParser` is true.
      *
      * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
-     * @var array|string|int
+     * @var array|string|int|null
      */
-    protected $_localeMarshalFormat;
+    protected array|string|int|null $_localeMarshalFormat = null;
 
     /**
      * The classname to use when creating objects.
@@ -87,35 +87,35 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @var string
      * @psalm-var class-string<\DateTimeImmutable>
      */
-    protected $_className;
+    protected string $_className;
 
     /**
      * Database time zone.
      *
      * @var \DateTimeZone|null
      */
-    protected $dbTimezone;
+    protected ?DateTimeZone $dbTimezone = null;
 
     /**
      * User time zone.
      *
      * @var \DateTimeZone|null
      */
-    protected $userTimezone;
+    protected ?DateTimeZone $userTimezone = null;
 
     /**
      * Default time zone.
      *
      * @var \DateTimeZone
      */
-    protected $defaultTimezone;
+    protected DateTimeZone $defaultTimezone;
 
     /**
      * Whether database time zone is kept when converting
      *
      * @var bool
      */
-    protected $keepDatabaseTimezone = false;
+    protected bool $keepDatabaseTimezone = false;
 
     /**
      * {@inheritDoc}

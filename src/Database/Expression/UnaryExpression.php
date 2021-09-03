@@ -44,21 +44,21 @@ class UnaryExpression implements ExpressionInterface
      *
      * @var string
      */
-    protected $_operator;
+    protected string $_operator;
 
     /**
      * Holds the value which the unary expression operates
      *
      * @var mixed
      */
-    protected $_value;
+    protected mixed $_value;
 
     /**
      * Where to place the operator
      *
      * @var int
      */
-    protected $position;
+    protected int $position;
 
     /**
      * Constructor

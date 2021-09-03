@@ -55,7 +55,7 @@ class Mysql extends Driver
      *
      * @var array
      */
-    protected $_baseConfig = [
+    protected array $_baseConfig = [
         'persistent' => true,
         'host' => 'localhost',
         'username' => 'root',
@@ -73,35 +73,35 @@ class Mysql extends Driver
      *
      * @var \Cake\Database\Schema\MysqlSchemaDialect|null
      */
-    protected $_schemaDialect;
+    protected ?MysqlSchemaDialect $_schemaDialect = null;
 
     /**
      * Whether or not the server supports native JSON
      *
      * @var bool|null
      */
-    protected $_supportsNativeJson;
+    protected ?bool $_supportsNativeJson = null;
 
     /**
      * Whether or not the connected server supports window functions.
      *
      * @var bool|null
      */
-    protected $_supportsWindowFunctions;
+    protected ?bool $_supportsWindowFunctions = null;
 
     /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_startQuote = '`';
+    protected string $_startQuote = '`';
 
     /**
      * String used to end a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_endQuote = '`';
+    protected string $_endQuote = '`';
 
     /**
      * Server type.
@@ -111,14 +111,14 @@ class Mysql extends Driver
      *
      * @var string
      */
-    protected $serverType = self::SERVER_TYPE_MYSQL;
+    protected string $serverType = self::SERVER_TYPE_MYSQL;
 
     /**
      * Mapping of feature to db server version for feature availability checks.
      *
      * @var array
      */
-    protected $featuresToVersionMap = [
+    protected array $featuresToVersionMap = [
         'mysql' => [
             'json' => '5.7.0',
             'cte' => '8.0.0',
