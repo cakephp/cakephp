@@ -37,7 +37,7 @@ class ArrayEngine extends CacheEngine
      *
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Write data for key into cache

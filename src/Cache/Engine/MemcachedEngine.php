@@ -37,7 +37,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @var \Memcached
      */
-    protected $_Memcached;
+    protected Memcached $_Memcached;
 
     /**
      * The default config used unless overridden by runtime configuration
@@ -62,7 +62,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'compress' => false,
         'duration' => 3600,
         'groups' => [],
@@ -84,12 +84,12 @@ class MemcachedEngine extends CacheEngine
      *
      * @var array
      */
-    protected $_serializers = [];
+    protected array $_serializers = [];
 
     /**
      * @var array<string>
      */
-    protected $_compiledGroupNames = [];
+    protected array $_compiledGroupNames = [];
 
     /**
      * Initialize the Cache Engine

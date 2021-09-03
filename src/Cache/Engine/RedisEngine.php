@@ -33,7 +33,7 @@ class RedisEngine extends CacheEngine
      *
      * @var \Redis
      */
-    protected $_Redis;
+    protected Redis $_Redis;
 
     /**
      * The default config used unless overridden by runtime configuration
@@ -53,7 +53,7 @@ class RedisEngine extends CacheEngine
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'database' => 0,
         'duration' => 3600,
         'groups' => [],
@@ -351,7 +351,7 @@ class RedisEngine extends CacheEngine
      */
     public function __destruct()
     {
-        if (empty($this->_config['persistent']) && $this->_Redis instanceof Redis) {
+        if (empty($this->_config['persistent'])) {
             $this->_Redis->close();
         }
     }

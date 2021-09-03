@@ -72,7 +72,7 @@ class Cache
      * @var array<string>
      * @psalm-var array<string, class-string>
      */
-    protected static $_dsnClassMap = [
+    protected static array $_dsnClassMap = [
         'array' => Engine\ArrayEngine::class,
         'apcu' => Engine\ApcuEngine::class,
         'file' => Engine\FileEngine::class,
@@ -86,21 +86,21 @@ class Cache
      *
      * @var bool
      */
-    protected static $_enabled = true;
+    protected static bool $_enabled = true;
 
     /**
      * Group to Config mapping
      *
      * @var array
      */
-    protected static $_groups = [];
+    protected static array $_groups = [];
 
     /**
      * Cache Registry used for creating and using cache adapters.
      *
      * @var \Cake\Cache\CacheRegistry|null
      */
-    protected static $_registry;
+    protected static ?CacheRegistry $_registry = null;
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
