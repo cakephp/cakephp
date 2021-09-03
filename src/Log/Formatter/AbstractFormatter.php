@@ -25,13 +25,13 @@ abstract class AbstractFormatter
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
     ];
 
     /**
-     * @param array $config Config options
+     * @param array<string, mixed> $config Config options
      */
     public function __construct(array $config = [])
     {

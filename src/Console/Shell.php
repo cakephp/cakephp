@@ -900,12 +900,12 @@ class Shell
      * object has not already been loaded, it will be loaded and constructed.
      *
      * @param string $name The name of the helper to render
-     * @param array $settings Configuration data for the helper.
+     * @param array<string, mixed> $config Configuration data for the helper.
      * @return \Cake\Console\Helper The created helper instance.
      */
-    public function helper(string $name, array $settings = []): Helper
+    public function helper(string $name, array $config = []): Helper
     {
-        return $this->_io->helper($name, $settings);
+        return $this->_io->helper($name, $config);
     }
 
     /**

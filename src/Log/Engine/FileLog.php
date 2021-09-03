@@ -43,7 +43,7 @@ class FileLog extends BaseLog
      *   is made.
      * - `dateFormat` PHP date() format.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'path' => null,
@@ -83,7 +83,7 @@ class FileLog extends BaseLog
     /**
      * Sets protected properties based on config provided
      *
-     * @param array $config Configuration array
+     * @param array<string, mixed> $config Configuration array
      */
     public function __construct(array $config = [])
     {

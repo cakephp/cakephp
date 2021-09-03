@@ -87,7 +87,7 @@ class StringTemplate
     /**
      * The default templates this instance holds.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
@@ -108,7 +108,7 @@ class StringTemplate
     /**
      * Constructor.
      *
-     * @param array $config A set of templates to add.
+     * @param array<string, mixed> $config A set of templates to add.
      */
     public function __construct(array $config = [])
     {

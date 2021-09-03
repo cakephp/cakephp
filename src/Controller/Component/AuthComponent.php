@@ -156,7 +156,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *   Defaults to 'Controller.startup'. You can set it to 'Controller.initialize'
      *   if you want the check to be done before controller's beforeFilter() is run.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'authenticate' => null,
@@ -227,7 +227,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Initialize properties.
      *
-     * @param array $config The config data.
+     * @param array<string, mixed> $config The config data.
      * @return void
      */
     public function initialize(array $config): void

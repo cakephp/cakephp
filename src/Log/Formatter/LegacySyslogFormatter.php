@@ -24,14 +24,14 @@ class LegacySyslogFormatter extends AbstractFormatter
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'format' => '%s: %s',
     ];
 
     /**
-     * @param array $config Formatter config
+     * @param array<string, mixed> $config Formatter config
      */
     public function __construct(array $config = [])
     {

@@ -124,7 +124,7 @@ class RadioWidget extends BasicWidget
     /**
      * Disabled attribute detection.
      *
-     * @param array $radio Radio info.
+     * @param array<string, mixed> $radio Radio info.
      * @param array|true|null $disabled The disabled values.
      * @return bool
      */
@@ -234,11 +234,11 @@ class RadioWidget extends BasicWidget
      * In the future this might be refactored into a separate widget as other
      * input types (multi-checkboxes) will also need labels generated.
      *
-     * @param array $radio The input properties.
-     * @param array|string|false $label The properties for a label.
+     * @param array<string, mixed> $radio The input properties.
+     * @param array<string, mixed>|string|false $label The properties for a label.
      * @param string $input The input widget.
      * @param \Cake\View\Form\ContextInterface $context The form context.
-     * @param bool $escape Whether or not to HTML escape the label.
+     * @param bool $escape Whether to HTML escape the label.
      * @return string|false Generated label.
      */
     protected function _renderLabel(array $radio, $label, $input, $context, $escape)

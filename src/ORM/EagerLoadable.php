@@ -126,7 +126,7 @@ class EagerLoadable
      * The keys maps to the settable properties in this class.
      *
      * @param string $name The Association name.
-     * @param array $config The list of properties to set.
+     * @param array<string, mixed> $config The list of properties to set.
      */
     public function __construct(string $name, array $config = [])
     {
@@ -236,7 +236,7 @@ class EagerLoadable
      * Sets the list of options to pass to the association object for loading
      * the records.
      *
-     * @param array $config The value to set.
+     * @param array<string, mixed> $config The value to set.
      * @return $this
      */
     public function setConfig(array $config)

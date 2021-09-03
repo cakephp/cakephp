@@ -166,7 +166,7 @@ class SelectWithPivotLoader extends SelectLoader
      *
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
      * @param array<string, mixed> $options The options passed to the eager loader
-     * @return array
+     * @return array<string, mixed>
      * @throws \RuntimeException when the association property is not part of the results set.
      */
     protected function _buildResultMap(Query $fetchQuery, array $options): array

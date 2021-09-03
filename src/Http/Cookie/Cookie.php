@@ -271,9 +271,9 @@ class Cookie implements CookieInterface
      * Create Cookie instance from "set-cookie" header string.
      *
      * @param string $cookie Cookie header string.
-     * @param array $defaults Default attributes.
+     * @param array<string, mixed> $defaults Default attributes.
      * @return static
-     * @see \Cake\Cookie\Cookie::setDefaults()
+     * @see \Cake\Http\Cookie\Cookie::setDefaults()
      */
     public static function createFromHeaderString(string $cookie, array $defaults = [])
     {

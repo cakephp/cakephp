@@ -27,7 +27,7 @@ class TableHelper extends Helper
     /**
      * Default config for this helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'headers' => true,

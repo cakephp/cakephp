@@ -70,7 +70,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array|false Either false or an array of user information
+     * @return array<string, mixed>|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {

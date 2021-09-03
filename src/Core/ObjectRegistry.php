@@ -72,7 +72,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * All calls to the `Email` component would use `AliasedEmail` instead.
      *
      * @param string $name The name/class of the object to load.
-     * @param array $config Additional settings to use when loading the object.
+     * @param array<string, mixed> $config Additional settings to use when loading the object.
      * @return mixed
      * @psalm-return TObject
      * @throws \Exception If the class cannot be found.
@@ -125,7 +125,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * logic dependent on the configuration.
      *
      * @param string $name The name of the alias in the registry.
-     * @param array $config The config data for the new instance.
+     * @param array<string, mixed> $config The config data for the new instance.
      * @return void
      * @throws \RuntimeException When a duplicate is found.
      */
@@ -191,7 +191,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param object|string $class The class to build.
      * @param string $alias The alias of the object.
-     * @param array $config The Configuration settings for construction
+     * @param array<string, mixed> $config The Configuration settings for construction
      * @return object
      * @psalm-param TObject|string $class
      * @psalm-return TObject

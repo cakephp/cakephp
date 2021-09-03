@@ -578,14 +578,14 @@ class ConsoleIo
      * object has not already been loaded, it will be loaded and constructed.
      *
      * @param string $name The name of the helper to render
-     * @param array $settings Configuration data for the helper.
+     * @param array<string, mixed> $config Configuration data for the helper.
      * @return \Cake\Console\Helper The created helper instance.
      */
-    public function helper(string $name, array $settings = []): Helper
+    public function helper(string $name, array $config = []): Helper
     {
         $name = ucfirst($name);
 
-        return $this->_helpers->load($name, $settings);
+        return $this->_helpers->load($name, $config);
     }
 
     /**
@@ -600,11 +600,11 @@ class ConsoleIo
      *
      * @param string $path The path to create the file at.
      * @param string $contents The contents to put into the file.
-     * @param bool $forceOverwrite Whether or not the file should be overwritten.
-     *   If true, no question will be asked about whether or not to overwrite existing files.
+     * @param bool $forceOverwrite Whether the file should be overwritten.
+     *   If true, no question will be asked about whether to overwrite existing files.
      * @return bool Success.
      * @throws \Cake\Console\Exception\StopException When `q` is given as an answer
-     *   to whether or not a file should be overwritten.
+     *   to whether a file should be overwritten.
      */
     public function createFile(string $path, string $contents, bool $forceOverwrite = false): bool
     {

@@ -188,7 +188,7 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Render a single checkbox & wrapper.
      *
-     * @param array $checkbox An array containing checkbox key/value option pairs
+     * @param array<string, mixed> $checkbox An array containing checkbox key/value option pairs
      * @param \Cake\View\Form\ContextInterface $context Context object.
      * @return string
      */

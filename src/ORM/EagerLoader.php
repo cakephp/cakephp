@@ -476,7 +476,7 @@ class EagerLoader
      * @param \Cake\ORM\Table $parent owning side of the association
      * @param string $alias name of the association to be loaded
      * @param array<string, mixed> $options list of extra options to use for this association
-     * @param array $paths An array with two values, the first one is a list of dot
+     * @param array<string, mixed> $paths An array with two values, the first one is a list of dot
      * separated strings representing associations that lead to this `$alias` in the
      * chain of associations to be loaded. The second value is the path to follow in
      * entities' properties to fetch a record of the corresponding association.

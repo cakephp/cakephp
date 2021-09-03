@@ -52,7 +52,7 @@ class SessionStorage implements StorageInterface
      * - `key` - Session key used to store user record.
      * - `redirect` - Session key used to store redirect URL.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'key' => 'Auth.User',
@@ -64,7 +64,7 @@ class SessionStorage implements StorageInterface
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @param \Cake\Http\Response $response Response instance.
-     * @param array $config Configuration list.
+     * @param array<string, mixed> $config Configuration list.
      */
     public function __construct(ServerRequest $request, Response $response, array $config = [])
     {

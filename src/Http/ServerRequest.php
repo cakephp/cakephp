@@ -222,7 +222,7 @@ class ServerRequest implements ServerRequestInterface
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
      *
-     * @param array $config An array of request data to create a request with.
+     * @param array<string, mixed> $config An array of request data to create a request with.
      */
     public function __construct(array $config = [])
     {
@@ -246,7 +246,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Process the config/settings data into properties.
      *
-     * @param array $config The config data to use.
+     * @param array<string, mixed> $config The config data to use.
      * @return void
      */
     protected function _setConfig(array $config): void
@@ -303,7 +303,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * `query` option is also updated based on URL's querystring.
      *
-     * @param array $config Config array.
+     * @param array<string, mixed> $config Config array.
      * @return array Update config.
      */
     protected function processUrlOption(array $config): array

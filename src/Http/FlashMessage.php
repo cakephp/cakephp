@@ -30,7 +30,7 @@ class FlashMessage
     /**
      * Default configuration
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'key' => 'flash',
@@ -50,7 +50,7 @@ class FlashMessage
      * Constructor
      *
      * @param \Cake\Http\Session $session Session instance.
-     * @param array $config Config array.
+     * @param array<string, mixed> $config Config array.
      * @see FlashMessage::set() For list of valid config keys.
      */
     public function __construct(Session $session, array $config = [])

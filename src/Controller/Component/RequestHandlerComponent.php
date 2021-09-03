@@ -65,7 +65,7 @@ class RequestHandlerComponent extends Component
      * - `viewClassMap` - Mapping between type and view classes. If undefined
      *   JSON, XML, and AJAX will be mapped. Defining any types will omit the defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'checkHttpCache' => true,
@@ -76,7 +76,7 @@ class RequestHandlerComponent extends Component
      * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
      *
      * @param \Cake\Controller\ComponentRegistry $registry ComponentRegistry object.
-     * @param array $config Array of config.
+     * @param array<string, mixed> $config Array of config.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {

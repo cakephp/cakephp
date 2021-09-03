@@ -41,7 +41,7 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function authenticate(ServerRequest $request, Response $response): array
     {

@@ -230,7 +230,7 @@ class ConsoleOutput
     /**
      * Replace tags with color codes.
      *
-     * @param array $matches An array of matches to replace.
+     * @param array<string, string> $matches An array of matches to replace.
      * @return string
      */
     protected function _replaceTags(array $matches): string

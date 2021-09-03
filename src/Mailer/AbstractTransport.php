@@ -29,7 +29,7 @@ abstract class AbstractTransport
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
@@ -45,7 +45,7 @@ abstract class AbstractTransport
     /**
      * Constructor
      *
-     * @param array $config Configuration options.
+     * @param array<string, mixed> $config Configuration options.
      */
     public function __construct(array $config = [])
     {

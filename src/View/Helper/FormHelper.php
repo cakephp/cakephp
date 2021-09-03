@@ -60,7 +60,7 @@ class FormHelper extends Helper
     /**
      * Default config for the helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'idPrefix' => null,
@@ -256,7 +256,7 @@ class FormHelper extends Helper
      * Construct the widgets and binds the default context providers
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper.
+     * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
     {

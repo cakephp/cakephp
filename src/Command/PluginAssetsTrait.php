@@ -95,7 +95,7 @@ trait PluginAssetsTrait
     /**
      * Process plugins
      *
-     * @param array $plugins List of plugins to process
+     * @param array<string, mixed> $plugins List of plugins to process
      * @param bool $copy Force copy mode. Default false.
      * @param bool $overwrite Overwrite existing files.
      * @return void
@@ -153,7 +153,7 @@ trait PluginAssetsTrait
     /**
      * Remove folder/symlink.
      *
-     * @param array $config Plugin config.
+     * @param array<string, mixed> $config Plugin config.
      * @return bool
      */
     protected function _remove(array $config): bool
