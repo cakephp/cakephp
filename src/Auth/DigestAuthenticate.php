@@ -82,7 +82,7 @@ class DigestAuthenticate extends BasicAuthenticate
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry
      *   used on this request.
-     * @param array $config Array of config to use.
+     * @param array<string, mixed> $config Array of config to use.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -101,7 +101,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array|false Either false or an array of user information
+     * @return array<string, mixed>|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {

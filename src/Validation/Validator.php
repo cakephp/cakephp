@@ -1143,8 +1143,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Converts validator to fieldName => $settings array
      *
      * @param string|int $fieldName name of field
-     * @param array $defaults default settings
-     * @param array|string $settings settings from data
+     * @param array<string, mixed> $defaults default settings
+     * @param array<string, mixed>|string $settings settings from data
      * @return array<array>
      * @throws \InvalidArgumentException
      */
@@ -1743,7 +1743,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array $formats A list of accepted date formats.
+     * @param array<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -1763,7 +1763,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date time format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array $formats A list of accepted date formats.
+     * @param array<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.

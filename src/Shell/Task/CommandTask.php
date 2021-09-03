@@ -65,7 +65,7 @@ class CommandTask extends Shell
     /**
      * Find shells in $path and add them to $shellList
      *
-     * @param array $shellList The shell listing array.
+     * @param array<string, mixed> $shellList The shell listing array.
      * @param string $path The path to look in.
      * @param string $key The key to add shells to
      * @param array<string> $skip A list of commands to exclude.
@@ -83,7 +83,7 @@ class CommandTask extends Shell
      *
      * @param string $type The type of object.
      * @param array<string> $shells The shell names.
-     * @param array $shellList List of shells.
+     * @param array<string, mixed> $shellList List of shells.
      * @param array<string> $skip List of command names to skip.
      * @return array The updated $shellList
      */

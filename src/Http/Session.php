@@ -201,7 +201,7 @@ class Session
      *   the configuration array for the engine. You can set the `engine` key to an already
      *   instantiated session handler object.
      *
-     * @param array $config The Configuration to apply to this session object
+     * @param array<string, mixed> $config The Configuration to apply to this session object
      */
     public function __construct(array $config = [])
     {

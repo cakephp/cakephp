@@ -40,7 +40,7 @@ class Paginator implements PaginatorInterface
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'page' => 1,
@@ -430,7 +430,7 @@ class Paginator implements PaginatorInterface
     /**
      * Shim method for reading the deprecated sortWhitelist or sortableFields options.
      *
-     * @param array $config The configuration data to coalesce and emit warnings on.
+     * @param array<string, mixed> $config The configuration data to coalesce and emit warnings on.
      * @return array<string>|null
      */
     protected function getSortableFields(array $config): ?array

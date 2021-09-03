@@ -34,8 +34,8 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Command list
      *
-     * @var array
-     * @psalm-var array<\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string>
+     * @var array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string>
+     * @psalm-var array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string>
      * @psalm-suppress DeprecatedClass
      */
     protected $commands = [];
@@ -43,7 +43,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Constructor
      *
-     * @param array $commands The map of commands to add to the collection.
+     * @param array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string> $commands The map of commands to add to the collection.
      */
     public function __construct(array $commands = [])
     {
@@ -86,7 +86,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Add multiple commands at once.
      *
-     * @param array $commands A map of command names => command classes/instances.
+     * @param array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string> $commands A map of command names => command classes/instances.
      * @return $this
      * @see \Cake\Console\CommandCollection::add()
      */

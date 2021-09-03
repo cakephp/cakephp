@@ -44,7 +44,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *    or an array containing `className` key, any other keys will be passed as
      *    config to the class. Defaults to 'Default'.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'fields' => [
@@ -82,7 +82,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * Constructor
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry used on this request.
-     * @param array $config Array of config to use.
+     * @param array<string, mixed> $config Array of config to use.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -99,7 +99,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string $username The username/identifier.
      * @param string|null $password The password, if not provided password checking is skipped
      *   and result of find is returned.
-     * @return array|false Either false on failure, or an array of user data.
+     * @return array<string, mixed>|false Either false on failure, or an array of user data.
      */
     protected function _findUser(string $username, ?string $password = null)
     {
@@ -210,7 +210,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param \Cake\Http\ServerRequest $request Request to get authentication information from.
      * @param \Cake\Http\Response $response A response object that can have headers added.
-     * @return array|false Either false on failure, or an array of user data on success.
+     * @return array<string, mixed>|false Either false on failure, or an array of user data on success.
      */
     abstract public function authenticate(ServerRequest $request, Response $response);
 
@@ -219,7 +219,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * systems like basic and digest auth.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array|false Either false or an array of user information
+     * @return array<string, mixed>|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {

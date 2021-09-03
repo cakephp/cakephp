@@ -64,7 +64,7 @@ class SecurityComponent extends Component
      * - `validatePost` - Whether to validate POST data. Set to false to disable
      *   for data coming from 3rd party services, etc.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'blackHoleCallback' => null,

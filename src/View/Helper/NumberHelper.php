@@ -35,7 +35,7 @@ class NumberHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'engine' => Number::class,
@@ -57,7 +57,7 @@ class NumberHelper extends Helper
      *            The class needs to be placed in the `Utility` directory.
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper
+     * @param array<string, mixed> $config Configuration settings for the helper
      * @throws \Cake\Core\Exception\CakeException When the engine class could not be found.
      */
     public function __construct(View $view, array $config = [])

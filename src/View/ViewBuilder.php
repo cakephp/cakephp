@@ -644,7 +644,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Configures a view builder instance from serialized config.
      *
-     * @param array $config View builder configuration array.
+     * @param array<string, mixed> $config View builder configuration array.
      * @return $this Configured view builder instance.
      */
     public function createFromArray(array $config)

@@ -82,7 +82,7 @@ class Component implements EventListenerInterface
      *
      * These are merged with user-provided config when the component is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
@@ -98,7 +98,7 @@ class Component implements EventListenerInterface
      *
      * @param \Cake\Controller\ComponentRegistry $registry A component registry
      *  this component can use to lazy load its components.
-     * @param array $config Array of configuration settings.
+     * @param array<string, mixed> $config Array of configuration settings.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -128,7 +128,7 @@ class Component implements EventListenerInterface
      * Implement this method to avoid having to overwrite
      * the constructor and call parent.
      *
-     * @param array $config The configuration settings provided to this component.
+     * @param array<string, mixed> $config The configuration settings provided to this component.
      * @return void
      */
     public function initialize(array $config): void

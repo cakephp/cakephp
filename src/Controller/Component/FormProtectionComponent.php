@@ -58,7 +58,7 @@ class FormProtectionComponent extends Component
      *   failure. Must be a valid Closure. Unset by default in which case
      *   exception is thrown on validation failure.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'validate' => true,

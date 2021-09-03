@@ -114,7 +114,7 @@ class Collection implements CollectionInterface
      *
      * @param string $stage The stage name.
      * @param string $name The table name.
-     * @param array $config The config data.
+     * @param array<string, mixed> $config The config data.
      * @param \Cake\Database\Schema\TableSchema $schema The table schema instance.
      * @return void
      * @throws \Cake\Database\Exception\DatabaseException on query failure.

@@ -30,7 +30,7 @@ class ArrayLog extends BaseLog
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'levels' => [],

@@ -238,7 +238,7 @@ class SelectLoader
      * If the required fields are missing, throws an exception.
      *
      * @param \Cake\ORM\Query $fetchQuery The association fetching query
-     * @param array $key The foreign key fields to check
+     * @param array<string> $key The foreign key fields to check
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -458,7 +458,7 @@ class SelectLoader
      *
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
      * @param array<string, mixed> $options The options passed to the eager loader
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _buildResultMap(Query $fetchQuery, array $options): array
     {
@@ -489,7 +489,7 @@ class SelectLoader
      * for injecting the eager loaded rows
      *
      * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
-     * @param array $resultMap an array with the foreignKey as keys and
+     * @param array<string, mixed> $resultMap an array with the foreignKey as keys and
      * the corresponding target table results as value.
      * @param array<string, mixed> $options The options passed to the eagerLoader method
      * @return \Closure
@@ -527,7 +527,7 @@ class SelectLoader
      * for injecting the eager loaded rows when the matching needs to
      * be done with multiple foreign keys
      *
-     * @param array $resultMap A keyed arrays containing the target table
+     * @param array<string, mixed> $resultMap A keyed arrays containing the target table
      * @param array<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure

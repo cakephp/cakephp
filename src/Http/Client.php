@@ -108,7 +108,7 @@ class Client implements ClientInterface
     /**
      * Default configuration for the client.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'adapter' => null,
@@ -175,7 +175,7 @@ class Client implements ClientInterface
      *   \Cake\Http\Client\Adapter\Stream.
      * - protocolVersion - The HTTP protocol version to use. Defaults to 1.1
      *
-     * @param array $config Config options for scoped clients.
+     * @param array<string, mixed> $config Config options for scoped clients.
      * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])

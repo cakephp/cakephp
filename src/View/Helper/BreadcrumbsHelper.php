@@ -39,7 +39,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * Default config for the helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'templates' => [
@@ -248,9 +248,9 @@ class BreadcrumbsHelper extends Helper
     /**
      * Renders the breadcrumbs trail.
      *
-     * @param array $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
+     * @param array<string, mixed> $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
      * allow the insertion of custom template variable in the template.
-     * @param array $separator Array of attributes for the `separator` template.
+     * @param array<string, mixed> $separator Array of attributes for the `separator` template.
      * Possible properties are :
      *
      * - *separator* The string to be displayed as a separator

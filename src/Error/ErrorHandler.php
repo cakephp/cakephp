@@ -93,7 +93,7 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Constructor
      *
-     * @param array $config The options for error handling.
+     * @param array<string, mixed> $config The options for error handling.
      */
     public function __construct(array $config = [])
     {

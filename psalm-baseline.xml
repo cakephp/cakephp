@@ -47,11 +47,13 @@
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandCollection.php">
-    <DeprecatedClass occurrences="4">
+    <DeprecatedClass occurrences="6">
       <code>Shell::class</code>
       <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|class-string</code>
       <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|string</code>
       <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
+      <code>array&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string&gt;</code>
+      <code>array&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string&gt;</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandFactoryInterface.php">
@@ -296,11 +298,6 @@
       <code>$this</code>
       <code>$this</code>
     </DeprecatedClass>
-  </file>
-  <file src="src/TestSuite/Fixture/FixtureDataManager.php">
-    <DeprecatedProperty occurrences="1">
-      <code>$test-&gt;autoFixtures</code>
-    </DeprecatedProperty>
   </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
     <DeprecatedInterface occurrences="1">

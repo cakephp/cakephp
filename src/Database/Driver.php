@@ -98,7 +98,7 @@ abstract class Driver implements DriverInterface
     /**
      * Constructor
      *
-     * @param array $config The configuration for the driver.
+     * @param array<string, mixed> $config The configuration for the driver.
      * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
@@ -119,7 +119,7 @@ abstract class Driver implements DriverInterface
      * Establishes a connection to the database server
      *
      * @param string $dsn A Driver-specific PDO-DSN
-     * @param array $config configuration to be used for creating connection
+     * @param array<string, mixed> $config configuration to be used for creating connection
      * @return bool true on success
      */
     protected function _connect(string $dsn, array $config): bool

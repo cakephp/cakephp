@@ -95,7 +95,7 @@ class ConsoleOptionParser
      * Option definitions.
      *
      * @see \Cake\Console\ConsoleOptionParser::addOption()
-     * @var array<\Cake\Console\ConsoleInputOption>
+     * @var array<string, \Cake\Console\ConsoleInputOption>
      */
     protected $_options = [];
 
@@ -118,7 +118,7 @@ class ConsoleOptionParser
      * Subcommands for this Shell.
      *
      * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
-     * @var array<\Cake\Console\ConsoleInputSubcommand>
+     * @var array<string, \Cake\Console\ConsoleInputSubcommand>
      */
     protected $_subcommands = [];
 
@@ -654,7 +654,7 @@ class ConsoleOptionParser
     /**
      * Get the defined options in the parser.
      *
-     * @return array<\Cake\Console\ConsoleInputOption>
+     * @return array<string, \Cake\Console\ConsoleInputOption>
      */
     public function options()
     {
@@ -664,7 +664,7 @@ class ConsoleOptionParser
     /**
      * Get the array of defined subcommands
      *
-     * @return array<\Cake\Console\ConsoleInputSubcommand>
+     * @return array<string, \Cake\Console\ConsoleInputSubcommand>
      */
     public function subcommands()
     {

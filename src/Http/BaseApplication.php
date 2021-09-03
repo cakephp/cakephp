@@ -141,7 +141,7 @@ abstract class BaseApplication implements
      * If it isn't available, ignore it.
      *
      * @param \Cake\Core\PluginInterface|string $name The plugin name or plugin object.
-     * @param array $config The configuration data for the plugin if using a string for $name
+     * @param array<string, mixed> $config The configuration data for the plugin if using a string for $name
      * @return $this
      */
     public function addOptionalPlugin($name, array $config = [])

@@ -45,7 +45,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * These are merged with user-provided configuration when the behavior is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
@@ -103,7 +103,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *   are created/modified. Default `null`.
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -119,7 +119,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Initialize hook
      *
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      * @return void
      */
     public function initialize(array $config): void

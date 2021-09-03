@@ -366,7 +366,7 @@ abstract class TestCase extends BaseTestCase
      * Useful to test how plugins being loaded/not loaded interact with other
      * elements in CakePHP or applications.
      *
-     * @param array $plugins List of Plugins to load.
+     * @param array<string, mixed> $plugins List of Plugins to load.
      * @return \Cake\Http\BaseApplication
      */
     public function loadPlugins(array $plugins = []): BaseApplication
@@ -841,7 +841,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
-     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param bool $fullDebug Whether more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
      * @return string|false
      */

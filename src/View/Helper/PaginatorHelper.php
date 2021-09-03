@@ -64,7 +64,7 @@ class PaginatorHelper extends Helper
      *
      * Templates: the templates used by this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'options' => [],
@@ -99,7 +99,7 @@ class PaginatorHelper extends Helper
      * Constructor. Overridden to merge passed args with URL options.
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper.
+     * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
     {
@@ -493,7 +493,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $options Pagination options.
      * @param string|null $model Which model to paginate on
      * @param array $url URL.
-     * @param array $urlOptions Array of options
+     * @param array<string, mixed> $urlOptions Array of options
      * @return string By default, returns a full pagination URL string for use
      *   in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#generating-pagination-urls
@@ -1227,7 +1227,7 @@ class PaginatorHelper extends Helper
      * Dropdown select for pagination limit.
      * This will generate a wrapping form.
      *
-     * @param array $limits The options array.
+     * @param array<string, string> $limits The options array.
      * @param int|null $default Default option for pagination limit. Defaults to `$this->param('perPage')`.
      * @param array<string, mixed> $options Options for Select tag attributes like class, id or event
      * @return string html output.

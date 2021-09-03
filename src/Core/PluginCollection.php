@@ -226,7 +226,7 @@ class PluginCollection implements Iterator, Countable
      * Create a plugin instance from a name/classname and configuration.
      *
      * @param string $name The plugin name or classname
-     * @param array $config Configuration options for the plugin.
+     * @param array<string, mixed> $config Configuration options for the plugin.
      * @return \Cake\Core\PluginInterface
      * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
      */

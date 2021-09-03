@@ -273,7 +273,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   validation set, or an associative array, where key is the name of the
      *   validation set and value the Validator instance.
      *
-     * @param array $config List of options for this table
+     * @param array<string, mixed> $config List of options for this table
      */
     public function __construct(array $config = [])
     {
@@ -353,7 +353,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *  }
      * ```
      *
-     * @param array $config Configuration options passed to the constructor
+     * @param array<string, mixed> $config Configuration options passed to the constructor
      * @return void
      */
     public function initialize(array $config): void

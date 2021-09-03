@@ -44,7 +44,7 @@ class TextHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'engine' => Text::class,
@@ -74,7 +74,7 @@ class TextHelper extends Helper
      *            The class needs to be placed in the `Utility` directory.
      *
      * @param \Cake\View\View $view the view object the helper is attached to.
-     * @param array $config Settings array Settings array
+     * @param array<string, mixed> $config Settings array Settings array
      * @throws \Cake\Core\Exception\CakeException when the engine class could not be found.
      */
     public function __construct(View $view, array $config = [])

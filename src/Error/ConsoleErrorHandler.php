@@ -37,7 +37,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
     /**
      * Constructor
      *
-     * @param array $config Config options for the error handler.
+     * @param array<string, mixed> $config Config options for the error handler.
      */
     public function __construct(array $config = [])
     {

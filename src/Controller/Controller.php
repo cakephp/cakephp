@@ -283,7 +283,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Will result in a `Toolbar` property being set.
      *
      * @param string $name The name of the component to load.
-     * @param array $config The config for the component.
+     * @param array<string, mixed> $config The config for the component.
      * @return \Cake\Controller\Component
      * @throws \Exception
      */

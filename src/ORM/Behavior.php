@@ -138,7 +138,7 @@ class Behavior implements EventListenerInterface
      *
      * These are merged with user-provided configuration when the behavior is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
@@ -148,7 +148,7 @@ class Behavior implements EventListenerInterface
      * Merges config with the default and store in the config property
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -173,7 +173,7 @@ class Behavior implements EventListenerInterface
      * Implement this method to avoid having to overwrite
      * the constructor and call parent.
      *
-     * @param array $config The configuration settings provided to this behavior.
+     * @param array<string, mixed> $config The configuration settings provided to this behavior.
      * @return void
      */
     public function initialize(array $config): void
@@ -207,8 +207,8 @@ class Behavior implements EventListenerInterface
      * Removes aliased methods that would otherwise be duplicated by userland configuration.
      *
      * @param string $key The key to filter.
-     * @param array $defaults The default method mappings.
-     * @param array $config The customized method mappings.
+     * @param array<string, mixed> $defaults The default method mappings.
+     * @param array<string, mixed> $config The customized method mappings.
      * @return array A de-duped list of config data.
      */
     protected function _resolveMethodAliases(string $key, array $defaults, array $config): array

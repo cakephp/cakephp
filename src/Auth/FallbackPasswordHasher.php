@@ -26,7 +26,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
     /**
      * Default config for this object.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'hashers' => [],
@@ -42,7 +42,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
     /**
      * Constructor
      *
-     * @param array $config configuration options for this object. Requires the
+     * @param array<string, mixed> $config configuration options for this object. Requires the
      * `hashers` key to be present in the array with a list of other hashers to be
      * used.
      */

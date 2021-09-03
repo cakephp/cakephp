@@ -42,7 +42,7 @@ class HtmlHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'templates' => [

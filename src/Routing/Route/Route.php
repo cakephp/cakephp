@@ -917,7 +917,7 @@ class Route
      * This method helps for applications that want to implement
      * router caching.
      *
-     * @param array $fields Key/Value of object attributes
+     * @param array<string, mixed> $fields Key/Value of object attributes
      * @return static A new instance of the route
      */
     public static function __set_state(array $fields)

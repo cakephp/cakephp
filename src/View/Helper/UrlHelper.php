@@ -30,7 +30,7 @@ class UrlHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'assetUrlClassName' => Asset::class,
@@ -47,7 +47,7 @@ class UrlHelper extends Helper
     /**
      * Check proper configuration
      *
-     * @param array $config The configuration settings provided to this helper.
+     * @param array<string, mixed> $config The configuration settings provided to this helper.
      * @return void
      */
     public function initialize(array $config): void
