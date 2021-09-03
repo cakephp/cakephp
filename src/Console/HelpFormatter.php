@@ -35,28 +35,28 @@ class HelpFormatter
      *
      * @var int
      */
-    protected $_maxArgs = 6;
+    protected int $_maxArgs = 6;
 
     /**
      * The maximum number of options shown when generating usage.
      *
      * @var int
      */
-    protected $_maxOptions = 6;
+    protected int $_maxOptions = 6;
 
     /**
      * Option parser.
      *
      * @var \Cake\Console\ConsoleOptionParser
      */
-    protected $_parser;
+    protected ConsoleOptionParser $_parser;
 
     /**
      * Alias to display in the output.
      *
      * @var string
      */
-    protected $_alias = 'cake';
+    protected string $_alias = 'cake';
 
     /**
      * Build the help formatter for an OptionParser

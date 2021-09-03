@@ -34,21 +34,21 @@ class ConsoleInputSubcommand
      *
      * @var string
      */
-    protected $_name = '';
+    protected string $_name = '';
 
     /**
      * Help string for the subcommand
      *
      * @var string
      */
-    protected $_help = '';
+    protected string $_help = '';
 
     /**
      * The ConsoleOptionParser for this subcommand.
      *
      * @var \Cake\Console\ConsoleOptionParser|null
      */
-    protected $_parser;
+    protected ?ConsoleOptionParser $_parser = null;
 
     /**
      * Make a new Subcommand

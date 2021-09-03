@@ -31,7 +31,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * @var \Cake\Console\CommandCollection
      */
-    protected $commands;
+    protected CommandCollection $commands;
 
     /**
      * Set the command collection used to get completion data on.

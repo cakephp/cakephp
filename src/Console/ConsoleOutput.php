@@ -88,14 +88,14 @@ class ConsoleOutput
      * @see setOutputAs() For manipulation.
      * @var int
      */
-    protected $_outputAs = self::COLOR;
+    protected int $_outputAs = self::COLOR;
 
     /**
      * text colors used in colored output.
      *
      * @var array
      */
-    protected static $_foregroundColors = [
+    protected static array $_foregroundColors = [
         'black' => 30,
         'red' => 31,
         'green' => 32,
@@ -111,7 +111,7 @@ class ConsoleOutput
      *
      * @var array
      */
-    protected static $_backgroundColors = [
+    protected static array $_backgroundColors = [
         'black' => 40,
         'red' => 41,
         'green' => 42,
@@ -127,7 +127,7 @@ class ConsoleOutput
      *
      * @var array
      */
-    protected static $_options = [
+    protected static array $_options = [
         'bold' => 1,
         'underline' => 4,
         'blink' => 5,
@@ -140,7 +140,7 @@ class ConsoleOutput
      *
      * @var array
      */
-    protected static $_styles = [
+    protected static array $_styles = [
         'emergency' => ['text' => 'red'],
         'alert' => ['text' => 'red'],
         'critical' => ['text' => 'red'],

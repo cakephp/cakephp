@@ -38,7 +38,7 @@ abstract class BaseCommand implements CommandInterface
      *
      * @var string
      */
-    protected $name = 'cake unknown';
+    protected string $name = 'cake unknown';
 
     /**
      * @inheritDoc

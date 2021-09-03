@@ -37,7 +37,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @var array
      * @psalm-var array<string, \Cake\Console\CommandInterface|class-string>
      */
-    protected $commands = [];
+    protected array $commands = [];
 
     /**
      * Constructor

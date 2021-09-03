@@ -27,21 +27,21 @@ class Arguments
      *
      * @var array<string>
      */
-    protected $argNames;
+    protected array $argNames;
 
     /**
      * Positional arguments.
      *
      * @var array<string>
      */
-    protected $args;
+    protected array $args;
 
     /**
      * Named options
      *
      * @var array
      */
-    protected $options;
+    protected array $options;
 
     /**
      * Constructor

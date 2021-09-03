@@ -27,14 +27,14 @@ class MissingOptionException extends ConsoleException
      *
      * @var string
      */
-    protected $requested = '';
+    protected string $requested = '';
 
     /**
      * The valid suggestions.
      *
      * @var array<string>
      */
-    protected $suggestions = [];
+    protected array $suggestions = [];
 
     /**
      * Constructor.
