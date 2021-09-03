@@ -100,6 +100,16 @@ class Sqlite extends Driver
     ];
 
     /**
+     * Mapping of feature to db server version for feature availability checks.
+     *
+     * @var array
+     */
+    protected $featureVersions = [
+        'cte' => '3.8.3',
+        'window' => '3.25.0',
+    ];
+
+    /**
      * Establishes a connection to the database server
      *
      * @return bool true on success
@@ -190,6 +200,24 @@ class Sqlite extends Driver
     public function enableForeignKeySQL(): string
     {
         return 'PRAGMA foreign_keys = ON';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_CTE:
+            case static::FEATURE_WINDOW:
+                return version_compare(
+                    $this->version(),
+                    $this->featureVersions[$feature],
+                    '>='
+                );
+        }
+
+        return parent::supports($feature);
     }
 
     /**
@@ -308,27 +336,25 @@ class Sqlite extends Driver
      * Returns true if the server supports common table expressions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_CTE)` instead
      */
     public function supportsCTEs(): bool
     {
-        if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare($this->version(), '3.8.3', '>=');
-        }
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->supportsCTEs;
+        return $this->supports(static::FEATURE_CTE);
     }
 
     /**
      * Returns true if the connected server supports window functions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_WINDOW)` instead
      */
     public function supportsWindowFunctions(): bool
     {
-        if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare($this->version(), '3.25.0', '>=');
-        }
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->_supportsWindowFunctions;
+        return $this->supports(static::FEATURE_WINDOW);
     }
 }

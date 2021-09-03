@@ -80,11 +80,6 @@ class Postgres extends Driver
     protected $_endQuote = '"';
 
     /**
-     * @inheritDoc
-     */
-    protected $supportsCTEs = true;
-
-    /**
      * Establishes a connection to the database server
      *
      * @return bool true on success
@@ -188,6 +183,21 @@ class Postgres extends Driver
     public function enableForeignKeySQL(): string
     {
         return 'SET CONSTRAINTS ALL IMMEDIATE';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_CTE:
+            case static::FEATURE_JSON:
+            case static::FEATURE_WINDOW:
+                return true;
+        }
+
+        return parent::supports($feature);
     }
 
     /**

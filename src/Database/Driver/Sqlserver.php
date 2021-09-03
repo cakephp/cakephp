@@ -99,11 +99,6 @@ class Sqlserver extends Driver
     protected $_endQuote = ']';
 
     /**
-     * @inheritDoc
-     */
-    protected $supportsCTEs = true;
-
-    /**
      * Establishes a connection to the database server.
      *
      * Please note that the PDO::ATTR_PERSISTENT attribute is not supported by
@@ -264,6 +259,25 @@ class Sqlserver extends Driver
     public function enableForeignKeySQL(): string
     {
         return 'EXEC sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_CTE:
+            case static::FEATURE_WINDOW:
+                return true;
+
+            case static::FEATURE_QUOTE:
+                $this->connect();
+
+                return $this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
+        }
+
+        return parent::supports($feature);
     }
 
     /**

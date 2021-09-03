@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\DriverInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -139,5 +141,47 @@ class SqliteTest extends TestCase
             }));
         $driver->setConnection($mock);
         $this->assertEquals($expected, $driver->schemaValue($input));
+    }
+
+    /**
+     * Tests driver-specific feature support check.
+     */
+    public function testSupports(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Sqlite);
+
+        $featureVersions = [
+            'cte' => '3.8.3',
+            'window' => '3.25.0',
+        ];
+
+        $this->assertSame(
+            version_compare($driver->version(), $featureVersions['cte'], '>='),
+            $driver->supports(DriverInterface::FEATURE_CTE)
+        );
+        $this->assertSame(
+            version_compare($driver->version(), $featureVersions['window'], '>='),
+            $driver->supports(DriverInterface::FEATURE_WINDOW)
+        );
+        $this->assertFalse($driver->supports(DriverInterface::FEATURE_JSON));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_QUOTE));
+
+        $this->assertFalse($driver->supports('this-is-fake'));
+    }
+
+    /**
+     * Tests driver-specific feature support check.
+     */
+    public function testDeprecatedSupports(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Sqlite);
+
+        $this->deprecated(function () use ($driver) {
+            $this->assertSame($driver->supportsCTEs(), $driver->supports(DriverInterface::FEATURE_CTE));
+            $this->assertSame($driver->supportsWindowFunctions(), $driver->supports(DriverInterface::FEATURE_WINDOW));
+        });
     }
 }
