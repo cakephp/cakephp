@@ -167,7 +167,6 @@ class FormTest extends TestCase
         $form->validate($data, ['validate' => null]);
     }
 
-
     /**
      * Test the get errors methods.
      */
