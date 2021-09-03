@@ -30,7 +30,7 @@ trait MergeVariablesTrait
      *   Properties in this list will be passed through Hash::normalize() before merging.
      *
      * @param array<string> $properties An array of properties and the merge strategy for them.
-     * @param array $options The options to use when merging properties.
+     * @param array<string, mixed> $options The options to use when merging properties.
      * @return void
      */
     protected function _mergeVars(array $properties, array $options = []): void
@@ -62,7 +62,7 @@ trait MergeVariablesTrait
      *
      * @param string $property The name of the property being merged.
      * @param array $parentClasses An array of classes you want to merge with.
-     * @param array $options Options for merging the property, see _mergeVars()
+     * @param array<string, mixed> $options Options for merging the property, see _mergeVars()
      * @return void
      */
     protected function _mergeProperty(string $property, array $parentClasses, array $options): void

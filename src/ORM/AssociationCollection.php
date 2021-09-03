@@ -79,7 +79,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @param string $className The name of association class.
      * @param string $associated The alias for the target table.
-     * @param array $options List of options to configure the association definition.
+     * @param array<string, mixed> $options List of options to configure the association definition.
      * @return \Cake\ORM\Association
      * @throws \InvalidArgumentException
      */
@@ -209,7 +209,7 @@ class AssociationCollection implements IteratorAggregate
      * @param \Cake\Datasource\EntityInterface $entity The entity to save associated data for.
      * @param array $associations The list of associations to save parents from.
      *   associations not in this list will not be saved.
-     * @param array $options The options for the save operation.
+     * @param array<string, mixed> $options The options for the save operation.
      * @return bool Success
      */
     public function saveParents(Table $table, EntityInterface $entity, array $associations, array $options = []): bool
@@ -231,7 +231,7 @@ class AssociationCollection implements IteratorAggregate
      * @param \Cake\Datasource\EntityInterface $entity The entity to save associated data for.
      * @param array $associations The list of associations to save children from.
      *   associations not in this list will not be saved.
-     * @param array $options The options for the save operation.
+     * @param array<string, mixed> $options The options for the save operation.
      * @return bool Success
      */
     public function saveChildren(Table $table, EntityInterface $entity, array $associations, array $options): bool
@@ -249,7 +249,7 @@ class AssociationCollection implements IteratorAggregate
      * @param \Cake\ORM\Table $table The table the save is currently operating on
      * @param \Cake\Datasource\EntityInterface $entity The entity to save
      * @param array $associations Array of associations to save.
-     * @param array $options Original options
+     * @param array<string, mixed> $options Original options
      * @param bool $owningSide Compared with association classes'
      *   isOwningSide method.
      * @return bool Success
@@ -294,7 +294,7 @@ class AssociationCollection implements IteratorAggregate
      * @param \Cake\ORM\Association $association The association object to save with.
      * @param \Cake\Datasource\EntityInterface $entity The entity to save
      * @param array $nested Options for deeper associations
-     * @param array $options Original options
+     * @param array<string, mixed> $options Original options
      * @return bool Success
      */
     protected function _save(
@@ -318,7 +318,7 @@ class AssociationCollection implements IteratorAggregate
      * Cascade first across associations for which cascadeCallbacks is true.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to delete associations for.
-     * @param array $options The options used in the delete operation.
+     * @param array<string, mixed> $options The options used in the delete operation.
      * @return bool
      */
     public function cascadeDelete(EntityInterface $entity, array $options): bool

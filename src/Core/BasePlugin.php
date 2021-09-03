@@ -103,7 +103,7 @@ class BasePlugin implements PluginInterface
     /**
      * Constructor
      *
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      */
     public function __construct(array $options = [])
     {

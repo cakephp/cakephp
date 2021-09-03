@@ -167,7 +167,7 @@ class ArrayContext implements ContextInterface
      *
      * @param string $field A dot separated path to the field a value
      *   is needed for.
-     * @param array $options Options:
+     * @param array<string, mixed> $options Options:
      *
      *   - `default`: Default value to return if no value found in data or
      *     context record.

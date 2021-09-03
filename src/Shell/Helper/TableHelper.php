@@ -100,7 +100,7 @@ class TableHelper extends Helper
      *
      * @param array $row The row to output.
      * @param array<int> $widths The widths of each column to output.
-     * @param array $options Options to be passed.
+     * @param array<string, mixed> $options Options to be passed.
      * @return void
      */
     protected function _render(array $row, array $widths, array $options = []): void

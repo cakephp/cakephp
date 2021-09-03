@@ -137,7 +137,7 @@ class HasMany extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array $options options to be passed to the save method in the target table
+     * @param array<string, mixed> $options options to be passed to the save method in the target table
      * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
@@ -199,7 +199,7 @@ class HasMany extends Association
      * entities to be saved.
      * @param array $entities list of entities
      * to persist in target table and to link to the parent entity
-     * @param array $options list of options accepted by `Table::save()`.
+     * @param array<string, mixed> $options list of options accepted by `Table::save()`.
      * @return bool `true` on success, `false` otherwise.
      */
     protected function _saveTarget(
@@ -267,7 +267,7 @@ class HasMany extends Association
      * of this association
      * @param array $targetEntities list of entities belonging to the `target` side
      * of this association
-     * @param array $options list of options to be passed to the internal `save` call
+     * @param array<string, mixed> $options list of options to be passed to the internal `save` call
      * @return bool true on success, false otherwise
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = []): bool
@@ -424,7 +424,7 @@ class HasMany extends Association
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
      * this association
      * @param array $targetEntities list of entities from the target table to be linked
-     * @param array $options list of options to be passed to the internal `save`/`delete` calls
+     * @param array<string, mixed> $options list of options to be passed to the internal `save`/`delete` calls
      * when persisting/updating new links, or deleting existing ones
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
@@ -456,7 +456,7 @@ class HasMany extends Association
      * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
      * @param \Cake\ORM\Table $target The associated table
      * @param iterable $remainingEntities Entities that should not be deleted
-     * @param array $options list of options accepted by `Table::delete()`
+     * @param array<string, mixed> $options list of options accepted by `Table::delete()`
      * @return bool success
      */
     protected function _unlinkAssociated(
@@ -504,7 +504,7 @@ class HasMany extends Association
      * @param array $foreignKey array of foreign key properties
      * @param \Cake\ORM\Table $target The associated table
      * @param array $conditions The conditions that specifies what are the objects to be unlinked
-     * @param array $options list of options accepted by `Table::delete()`
+     * @param array<string, mixed> $options list of options accepted by `Table::delete()`
      * @return bool success
      */
     protected function _unlink(array $foreignKey, Table $target, array $conditions = [], array $options = []): bool
@@ -575,7 +575,7 @@ class HasMany extends Association
     /**
      * Whether this association can be expressed directly in a query join
      *
-     * @param array $options custom options key that could alter the return value
+     * @param array<string, mixed> $options custom options key that could alter the return value
      * @return bool if the 'matching' key in $option is true then this function
      * will return true, false otherwise
      */
@@ -637,7 +637,7 @@ class HasMany extends Association
     /**
      * Parse extra options passed in the constructor.
      *
-     * @param array $options original list of options passed in constructor
+     * @param array<string, mixed> $options original list of options passed in constructor
      * @return void
      */
     protected function _options(array $options): void

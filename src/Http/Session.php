@@ -251,7 +251,7 @@ class Session
      * or null if none exists.
      *
      * @param \SessionHandlerInterface|string|null $class The session handler to use
-     * @param array $options the options to pass to the SessionHandler constructor
+     * @param array<string, mixed> $options the options to pass to the SessionHandler constructor
      * @return \SessionHandlerInterface|null
      * @throws \InvalidArgumentException
      */
@@ -306,7 +306,7 @@ class Session
      * $session->options(['session.use_cookies' => 1]);
      * ```
      *
-     * @param array $options Ini options to set.
+     * @param array<string, mixed> $options Ini options to set.
      * @return void
      * @throws \RuntimeException if any directive could not be set
      */

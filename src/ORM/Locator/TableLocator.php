@@ -194,7 +194,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * the same alias, the registry will only store the first instance.
      *
      * @param string $alias The alias name you want to get. Should be in CamelCase format.
-     * @param array $options The options you want to build the table with.
+     * @param array<string, mixed> $options The options you want to build the table with.
      *   If a table has already been loaded the options will be ignored.
      * @return \Cake\ORM\Table
      * @throws \RuntimeException When you try to configure an alias that already exists.
@@ -274,7 +274,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Gets the table class name.
      *
      * @param string $alias The alias name you want to get. Should be in CamelCase format.
-     * @param array $options Table options array.
+     * @param array<string, mixed> $options Table options array.
      * @return string|null
      */
     protected function _getClassName(string $alias, array $options = []): ?string
@@ -300,7 +300,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Wrapper for creating table instances
      *
-     * @param array $options The alias to check for.
+     * @param array<string, mixed> $options The alias to check for.
      * @return \Cake\ORM\Table
      */
     protected function _create(array $options): Table

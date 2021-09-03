@@ -279,7 +279,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string $data The query data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function get(string $url, $data = [], array $options = []): Response
@@ -305,7 +305,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param mixed $data The post data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function post(string $url, $data = [], array $options = []): Response
@@ -321,7 +321,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function put(string $url, $data = [], array $options = []): Response
@@ -337,7 +337,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function patch(string $url, $data = [], array $options = []): Response
@@ -353,7 +353,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function options(string $url, $data = [], array $options = []): Response
@@ -369,7 +369,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function trace(string $url, $data = [], array $options = []): Response
@@ -385,7 +385,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function delete(string $url, $data = [], array $options = []): Response
@@ -401,7 +401,7 @@ class Client implements ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array $data The query string data you want to send.
-     * @param array $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function head(string $url, array $data = [], array $options = []): Response
@@ -418,7 +418,7 @@ class Client implements ClientInterface
      * @param string $method HTTP method.
      * @param string $url URL to request.
      * @param mixed $data The request body.
-     * @param array $options The options to use. Contains auth, proxy, etc.
+     * @param array<string, mixed> $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Response
      */
     protected function _doRequest(string $method, string $url, $data, $options): Response
@@ -436,7 +436,7 @@ class Client implements ClientInterface
     /**
      * Does a recursive merge of the parameter with the scope config.
      *
-     * @param array $options Options to merge.
+     * @param array<string, mixed> $options Options to merge.
      * @return array Options merged with set config.
      */
     protected function _mergeOptions(array $options): array
@@ -463,7 +463,7 @@ class Client implements ClientInterface
      * handcrafted Request objects.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to send.
-     * @param array $options Additional options to use.
+     * @param array<string, mixed> $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
     public function send(RequestInterface $request, array $options = []): Response
@@ -523,7 +523,7 @@ class Client implements ClientInterface
      * @param string $method The HTTP method being mocked.
      * @param string $url The URL being matched. See above for examples.
      * @param \Cake\Http\Client\Response $response The response that matches the request.
-     * @param array $options See above.
+     * @param array<string, mixed> $options See above.
      * @return void
      */
     public static function addMockResponse(string $method, string $url, Response $response, array $options = []): void
@@ -539,7 +539,7 @@ class Client implements ClientInterface
      * Send a request without redirection.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to send.
-     * @param array $options Additional options to use.
+     * @param array<string, mixed> $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
     protected function _sendRequest(RequestInterface $request, array $options): Response
@@ -562,7 +562,7 @@ class Client implements ClientInterface
      *
      * @param string $url Either a full URL or just the path.
      * @param array|string $query The query data for the URL.
-     * @param array $options The config options stored with Client::config()
+     * @param array<string, mixed> $options The config options stored with Client::config()
      * @return string A complete url with scheme, port, host, and path.
      */
     public function buildUrl(string $url, $query = [], array $options = []): string
@@ -614,7 +614,7 @@ class Client implements ClientInterface
      * @param string $method HTTP method name.
      * @param string $url The url including query string.
      * @param mixed $data The request body.
-     * @param array $options The options to use. Contains auth, proxy, etc.
+     * @param array<string, mixed> $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Request
      */
     protected function _createRequest(string $method, string $url, $data, $options): Request
@@ -681,7 +681,7 @@ class Client implements ClientInterface
      * and use its methods to add headers.
      *
      * @param \Cake\Http\Client\Request $request The request to modify.
-     * @param array $options Array of options containing the 'auth' key.
+     * @param array<string, mixed> $options Array of options containing the 'auth' key.
      * @return \Cake\Http\Client\Request The updated request object.
      */
     protected function _addAuthentication(Request $request, array $options): Request
@@ -700,7 +700,7 @@ class Client implements ClientInterface
      * and use its methods to add headers.
      *
      * @param \Cake\Http\Client\Request $request The request to modify.
-     * @param array $options Array of options containing the 'proxy' key.
+     * @param array<string, mixed> $options Array of options containing the 'proxy' key.
      * @return \Cake\Http\Client\Request The updated request object.
      */
     protected function _addProxy(Request $request, array $options): Request
@@ -719,7 +719,7 @@ class Client implements ClientInterface
      * authentication strategy handler.
      *
      * @param array $auth The authentication options to use.
-     * @param array $options The overall request options to use.
+     * @param array<string, mixed> $options The overall request options to use.
      * @return object Authentication strategy instance.
      * @throws \Cake\Core\Exception\CakeException when an invalid strategy is chosen.
      */

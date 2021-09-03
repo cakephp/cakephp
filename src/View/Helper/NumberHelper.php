@@ -92,7 +92,7 @@ class NumberHelper extends Helper
      *
      * @param string|float $number A floating point number.
      * @param int $precision The precision of the returned number.
-     * @param array $options Additional options.
+     * @param array<string, mixed> $options Additional options.
      * @return string Formatted float.
      * @see \Cake\I18n\Number::precision()
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#formatting-floating-point-numbers
@@ -124,7 +124,7 @@ class NumberHelper extends Helper
      *
      * @param string|float $number A floating point number
      * @param int $precision The precision of the returned number
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @return string Percentage string
      * @see \Cake\I18n\Number::toPercentage()
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#formatting-percentages
@@ -147,7 +147,7 @@ class NumberHelper extends Helper
      * - `escape` - Whether or not to escape html in resulting string
      *
      * @param string|float $number A floating point number.
-     * @param array $options An array with options.
+     * @param array<string, mixed> $options An array with options.
      * @return string Formatted number
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#formatting-numbers
      */
@@ -180,7 +180,7 @@ class NumberHelper extends Helper
      *
      * @param string|float $number Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return string Number formatted as a currency.
      */
     public function currency($number, ?string $currency = null, array $options = []): string
@@ -204,7 +204,7 @@ class NumberHelper extends Helper
      * - `escape` - Set to false to prevent escaping
      *
      * @param string|float $value A floating point number
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return string formatted delta
      */
     public function formatDelta($value, array $options = []): string
@@ -247,7 +247,7 @@ class NumberHelper extends Helper
      * Formats a number into locale specific ordinal suffix.
      *
      * @param float|int $value An integer
-     * @param array $options An array with options.
+     * @param array<string, mixed> $options An array with options.
      * @return string formatted number
      */
     public function ordinal($value, array $options = []): string

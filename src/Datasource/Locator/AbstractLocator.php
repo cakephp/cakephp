@@ -39,7 +39,13 @@ abstract class AbstractLocator implements LocatorInterface
     protected $options = [];
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $alias The alias name you want to get.
+     * @param array<string, mixed> $options The options you want to build the table with.
+     * @return \Cake\Datasource\RepositoryInterface
+     * @throws \RuntimeException When trying to get alias for which instance
+     *   has already been created with different options.
      */
     public function get(string $alias, array $options = [])
     {
@@ -66,7 +72,7 @@ abstract class AbstractLocator implements LocatorInterface
      * Create an instance of a given classname.
      *
      * @param string $alias Repository alias.
-     * @param array $options The options you want to build the instance with.
+     * @param array<string, mixed> $options The options you want to build the instance with.
      * @return \Cake\Datasource\RepositoryInterface
      */
     abstract protected function createInstance(string $alias, array $options);

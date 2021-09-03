@@ -115,7 +115,7 @@ interface QueryInterface
      *  ->limit(10)
      * ```
      *
-     * @param array $options list of query clauses to apply new parts to.
+     * @param array<string, mixed> $options list of query clauses to apply new parts to.
      * @return $this
      */
     public function applyOptions(array $options);
@@ -133,7 +133,7 @@ interface QueryInterface
      * a single query.
      *
      * @param string $finder The finder method to use.
-     * @param array $options The options for the finder.
+     * @param array<string, mixed> $options The options for the finder.
      * @return static Returns a modified query.
      */
     public function find(string $finder, array $options = []);
