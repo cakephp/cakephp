@@ -88,6 +88,7 @@ class SchemaLoader
             $cleaner->dropTables($connectionName);
         }
 
+        /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
         foreach ($files as $file) {
             if (!file_exists($file)) {
