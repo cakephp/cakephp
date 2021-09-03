@@ -5,4 +5,4 @@ linters:
     extensions: 'php'
 
 branches:
-    ignore: ['5.0']
+    ignore: ['5.x']
