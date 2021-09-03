@@ -26,14 +26,14 @@ class Schema
      *
      * @var array
      */
-    protected $_fields = [];
+    protected array $_fields = [];
 
     /**
      * The default values for fields.
      *
      * @var array
      */
-    protected $_fieldDefaults = [
+    protected array $_fieldDefaults = [
         'type' => null,
         'length' => null,
         'precision' => null,

@@ -37,21 +37,21 @@ class FormProtector
      *
      * @var array
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * Unlocked fields.
      *
      * @var array
      */
-    protected $unlockedFields = [];
+    protected array $unlockedFields = [];
 
     /**
      * Error message providing detail for failed validation.
      *
      * @var string|null
      */
-    protected $debugMessage;
+    protected ?string $debugMessage = null;
 
     /**
      * Construct.
