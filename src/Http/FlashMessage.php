@@ -32,7 +32,7 @@ class FlashMessage
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'key' => 'flash',
         'element' => 'default',
         'plugin' => null,
@@ -44,7 +44,7 @@ class FlashMessage
     /**
      * @var \Cake\Http\Session
      */
-    protected $session;
+    protected Session $session;
 
     /**
      * Constructor

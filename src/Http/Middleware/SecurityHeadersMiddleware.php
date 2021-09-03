@@ -100,7 +100,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *
      * @var array
      */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * X-Content-Type-Options

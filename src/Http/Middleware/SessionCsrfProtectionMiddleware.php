@@ -56,7 +56,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var array
      */
-    protected $_config = [
+    protected array $_config = [
         'key' => 'csrfToken',
         'field' => '_csrfToken',
     ];

@@ -59,7 +59,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @var array<string>
      */
-    protected $_statusCodes = [
+    protected array $_statusCodes = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -132,7 +132,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @var array
      */
-    protected $_mimeTypes = [
+    protected array $_mimeTypes = [
         'html' => ['text/html', '*/*'],
         'json' => 'application/json',
         'xml' => ['application/xml', 'text/xml'],
@@ -375,28 +375,28 @@ class Response implements ResponseInterface, Stringable
      *
      * @var int
      */
-    protected $_status = 200;
+    protected int $_status = 200;
 
     /**
      * File object for file to be read out as response
      *
      * @var \SplFileInfo|null
      */
-    protected $_file;
+    protected ?SplFileInfo $_file = null;
 
     /**
      * File range. Used for requesting ranges of files.
      *
      * @var array
      */
-    protected $_fileRange = [];
+    protected array $_fileRange = [];
 
     /**
      * The charset the response body is encoded with
      *
      * @var string
      */
-    protected $_charset = 'UTF-8';
+    protected string $_charset = 'UTF-8';
 
     /**
      * Holds all the cache directives that will be converted
@@ -404,28 +404,28 @@ class Response implements ResponseInterface, Stringable
      *
      * @var array
      */
-    protected $_cacheDirectives = [];
+    protected array $_cacheDirectives = [];
 
     /**
      * Collection of cookies to send to the client
      *
      * @var \Cake\Http\Cookie\CookieCollection
      */
-    protected $_cookies;
+    protected CookieCollection $_cookies;
 
     /**
      * Reason Phrase
      *
      * @var string
      */
-    protected $_reasonPhrase = 'OK';
+    protected string $_reasonPhrase = 'OK';
 
     /**
      * Stream mode options.
      *
      * @var string
      */
-    protected $_streamMode = 'wb+';
+    protected string $_streamMode = 'wb+';
 
     /**
      * Stream target or resource object.

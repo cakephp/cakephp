@@ -54,63 +54,63 @@ class Cookie implements CookieInterface
      *
      * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * Raw Cookie value.
      *
      * @var array|string
      */
-    protected $value = '';
+    protected array|string $value = '';
 
     /**
      * Whether or not a JSON value has been expanded into an array.
      *
      * @var bool
      */
-    protected $isExpanded = false;
+    protected bool $isExpanded = false;
 
     /**
      * Expiration time
      *
      * @var \DateTimeInterface|null
      */
-    protected $expiresAt;
+    protected ?DateTimeInterface $expiresAt = null;
 
     /**
      * Path
      *
      * @var string
      */
-    protected $path = '/';
+    protected string $path = '/';
 
     /**
      * Domain
      *
      * @var string
      */
-    protected $domain = '';
+    protected string $domain = '';
 
     /**
      * Secure
      *
      * @var bool
      */
-    protected $secure = false;
+    protected bool $secure = false;
 
     /**
      * HTTP only
      *
      * @var bool
      */
-    protected $httpOnly = false;
+    protected bool $httpOnly = false;
 
     /**
      * Samesite
      *
      * @var string|null
      */
-    protected $sameSite = null;
+    protected ?string $sameSite = null;
 
     /**
      * Default attributes for a cookie.
@@ -118,7 +118,7 @@ class Cookie implements CookieInterface
      * @var array
      * @see \Cake\Cookie\Cookie::setDefaults()
      */
-    protected static $defaults = [
+    protected static array $defaults = [
         'expires' => null,
         'path' => '/',
         'domain' => '',

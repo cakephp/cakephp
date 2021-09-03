@@ -47,21 +47,21 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      *
      * @var array<string>
      */
-    protected $cookieNames;
+    protected array $cookieNames;
 
     /**
      * Encryption key to use.
      *
      * @var string
      */
-    protected $key;
+    protected string $key;
 
     /**
      * Encryption type.
      *
      * @var string
      */
-    protected $cipherType;
+    protected string $cipherType;
 
     /**
      * Constructor

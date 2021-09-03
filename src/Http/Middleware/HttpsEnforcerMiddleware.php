@@ -41,7 +41,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      *
      * @var array<string, mixed>
      */
-    protected $config = [
+    protected array $config = [
         'redirect' => true,
         'statusCode' => 301,
         'headers' => [],

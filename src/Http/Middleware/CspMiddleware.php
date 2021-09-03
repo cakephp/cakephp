@@ -34,7 +34,7 @@ class CspMiddleware implements MiddlewareInterface
      *
      * @var \ParagonIE\CSPBuilder\CSPBuilder $csp CSP Builder or config array
      */
-    protected $csp;
+    protected CSPBuilder $csp;
 
     /**
      * Constructor

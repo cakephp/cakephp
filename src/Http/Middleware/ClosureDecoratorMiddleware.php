@@ -43,7 +43,7 @@ class ClosureDecoratorMiddleware implements MiddlewareInterface
      *
      * @var \Closure
      */
-    protected $callable;
+    protected Closure $callable;
 
     /**
      * Constructor

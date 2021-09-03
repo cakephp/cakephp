@@ -37,12 +37,12 @@ class Server implements EventDispatcherInterface
     /**
      * @var \Cake\Core\HttpApplicationInterface
      */
-    protected $app;
+    protected HttpApplicationInterface $app;
 
     /**
      * @var \Cake\Http\Runner
      */
-    protected $runner;
+    protected Runner $runner;
 
     /**
      * Constructor

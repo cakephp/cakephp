@@ -40,7 +40,7 @@ class CookieCollection implements IteratorAggregate, Countable
      *
      * @var array<\Cake\Http\Cookie\CookieInterface>
      */
-    protected $cookies = [];
+    protected array $cookies = [];
 
     /**
      * Constructor

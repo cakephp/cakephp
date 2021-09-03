@@ -31,7 +31,7 @@ class Digest
      *
      * @var \Cake\Http\Client
      */
-    protected $_client;
+    protected Client $_client;
 
     /**
      * Constructor

@@ -62,28 +62,28 @@ abstract class BaseApplication implements
     /**
      * @var string Contains the path of the config directory
      */
-    protected $configDir;
+    protected string $configDir;
 
     /**
      * Plugin Collection
      *
      * @var \Cake\Core\PluginCollection
      */
-    protected $plugins;
+    protected PluginCollection $plugins;
 
     /**
      * Controller factory
      *
      * @var \Cake\Http\ControllerFactoryInterface|null
      */
-    protected $controllerFactory;
+    protected ?ControllerFactoryInterface $controllerFactory = null;
 
     /**
      * Container
      *
      * @var \Cake\Core\ContainerInterface|null
      */
-    protected $container;
+    protected ?ContainerInterface $container = null;
 
     /**
      * Constructor

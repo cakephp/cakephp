@@ -89,35 +89,35 @@ class Response extends Message implements ResponseInterface
      *
      * @var int
      */
-    protected $code;
+    protected int $code = 0;
 
     /**
      * Cookie Collection instance
      *
-     * @var \Cake\Http\Cookie\CookieCollection
+     * @var \Cake\Http\Cookie\CookieCollection|null
      */
-    protected $cookies;
+    protected ?CookieCollection $cookies = null;
 
     /**
      * The reason phrase for the status code
      *
      * @var string
      */
-    protected $reasonPhrase;
+    protected string $reasonPhrase;
 
     /**
      * Cached decoded XML data.
      *
-     * @var \SimpleXMLElement
+     * @var \SimpleXMLElement|null
      */
-    protected $_xml;
+    protected ?SimpleXMLElement $_xml = null;
 
     /**
      * Cached decoded JSON data.
      *
-     * @var array
+     * @var mixed
      */
-    protected $_json;
+    protected mixed $_json = null;
 
     /**
      * Constructor
@@ -315,9 +315,7 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookieCollection(): CookieCollection
     {
-        $this->buildCookieCollection();
-
-        return $this->cookies;
+        return $this->buildCookieCollection();
     }
 
     /**
@@ -328,13 +326,13 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookie(string $name): array|string|null
     {
-        $this->buildCookieCollection();
+        $cookies = $this->buildCookieCollection();
 
-        if (!$this->cookies->has($name)) {
+        if (!$cookies->has($name)) {
             return null;
         }
 
-        return $this->cookies->get($name)->getValue();
+        return $cookies->get($name)->getValue();
     }
 
     /**
@@ -345,26 +343,27 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookieData(string $name): ?array
     {
-        $this->buildCookieCollection();
+        $cookies = $this->buildCookieCollection();
 
-        if (!$this->cookies->has($name)) {
+        if (!$cookies->has($name)) {
             return null;
         }
 
-        return $this->cookies->get($name)->toArray();
+        return $cookies->get($name)->toArray();
     }
 
     /**
      * Lazily build the CookieCollection and cookie objects from the response header
      *
-     * @return void
+     * @return \Cake\Http\Cookie\CookieCollection
      */
-    protected function buildCookieCollection(): void
+    protected function buildCookieCollection(): CookieCollection
     {
-        if ($this->cookies !== null) {
-            return;
+        if ($this->cookies === null) {
+            $this->cookies = CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
         }
-        $this->cookies = CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
+
+        return $this->cookies;
     }
 
     /**
@@ -374,11 +373,10 @@ class Response extends Message implements ResponseInterface
      */
     protected function _getCookies(): array
     {
-        $this->buildCookieCollection();
+        $cookies = $this->buildCookieCollection();
 
         $out = [];
         /** @var array<\Cake\Http\Cookie\Cookie> $cookies */
-        $cookies = $this->cookies;
         foreach ($cookies as $cookie) {
             $out[$cookie->getName()] = $cookie->toArray();
         }

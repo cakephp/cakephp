@@ -40,14 +40,14 @@ class BodyParserMiddleware implements MiddlewareInterface
      *
      * @var array<\Closure>
      */
-    protected $parsers = [];
+    protected array $parsers = [];
 
     /**
      * The HTTP methods to parse data on.
      *
      * @var array<string>
      */
-    protected $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
+    protected array $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
     /**
      * Constructor
