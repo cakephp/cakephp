@@ -25,8 +25,6 @@ use UnexpectedValueException;
 
 /**
  * Helper for managing fixtures.
- *
- * @internal
  */
 class FixtureHelper
 {
@@ -121,6 +119,7 @@ class FixtureHelper
      *
      * @param array<\Cake\Datasource\FixtureInterface> $fixtures Test fixtures
      * @return void
+     * @internal
      */
     public function insert(array $fixtures): void
     {
@@ -149,6 +148,7 @@ class FixtureHelper
      *
      * @param array<\Cake\Datasource\FixtureInterface> $fixtures Test fixtures
      * @return void
+     * @internal
      */
     public function truncate(array $fixtures): void
     {
