@@ -31,42 +31,42 @@ class EventManager implements EventManagerInterface
      *
      * @var int
      */
-    public static $defaultPriority = 10;
+    public static int $defaultPriority = 10;
 
     /**
      * The globally available instance, used for dispatching events attached from any scope
      *
      * @var \Cake\Event\EventManager|null
      */
-    protected static $_generalManager;
+    protected static ?EventManager $_generalManager = null;
 
     /**
      * List of listener callbacks associated to
      *
      * @var array
      */
-    protected $_listeners = [];
+    protected array $_listeners = [];
 
     /**
      * Internal flag to distinguish a common manager from the singleton
      *
      * @var bool
      */
-    protected $_isGlobal = false;
+    protected bool $_isGlobal = false;
 
     /**
      * The event list object.
      *
      * @var \Cake\Event\EventList|null
      */
-    protected $_eventList;
+    protected ?EventList $_eventList = null;
 
     /**
      * Enables automatic adding of events to the event list object if it is present.
      *
      * @var bool
      */
-    protected $_trackEvents = false;
+    protected bool $_trackEvents = false;
 
     /**
      * Returns the globally available instance of a Cake\Event\EventManager

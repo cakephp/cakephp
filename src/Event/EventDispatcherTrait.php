@@ -27,14 +27,14 @@ trait EventDispatcherTrait
      *
      * @var \Cake\Event\EventManagerInterface|null
      */
-    protected $_eventManager;
+    protected ?EventManagerInterface $_eventManager = null;
 
     /**
      * Default class name for new event objects.
      *
      * @var string
      */
-    protected $_eventClass = Event::class;
+    protected string $_eventClass = Event::class;
 
     /**
      * Returns the Cake\Event\EventManager manager instance for this object.

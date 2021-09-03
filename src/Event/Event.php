@@ -30,7 +30,7 @@ class Event implements EventInterface
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * The object this event applies to (usually the same object that generates the event)
@@ -38,14 +38,14 @@ class Event implements EventInterface
      * @var object|null
      * @psalm-var TSubject|null
      */
-    protected $_subject;
+    protected ?object $_subject = null;
 
     /**
      * Custom data for the method that receives the event
      *
      * @var array
      */
-    protected $_data;
+    protected array $_data;
 
     /**
      * Property used to retain the result value of the event listeners
@@ -54,14 +54,14 @@ class Event implements EventInterface
      *
      * @var mixed
      */
-    protected $result;
+    protected mixed $result = null;
 
     /**
      * Flags an event as stopped or not, default is false
      *
      * @var bool
      */
-    protected $_stopped = false;
+    protected bool $_stopped = false;
 
     /**
      * Constructor

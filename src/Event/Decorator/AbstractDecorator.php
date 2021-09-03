@@ -33,7 +33,7 @@ abstract class AbstractDecorator
      *
      * @var array
      */
-    protected $_options = [];
+    protected array $_options = [];
 
     /**
      * Constructor.

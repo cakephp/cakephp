@@ -256,7 +256,7 @@ parameters:
 			path: src/Event/Event.php
 
 		-
-			message: "#^Property Cake\\\\Event\\\\Event\\<TSubject\\>\\:\\:\\$_subject \\(TSubject\\|null\\) does not accept object\\|null\\.$#"
+			message: "#^PHPDoc tag @var for property Cake\\\\Event\\\\Event\\:\\:\\$_subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Event/Event.php
 
