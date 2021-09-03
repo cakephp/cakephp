@@ -202,7 +202,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Gets the Model callbacks this behavior is interested in.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

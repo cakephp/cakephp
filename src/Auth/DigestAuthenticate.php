@@ -219,7 +219,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array<string> Headers for logging in.
+     * @return array<string, string> Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request): array
     {

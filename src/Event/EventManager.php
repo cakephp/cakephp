@@ -451,7 +451,7 @@ class EventManager implements EventManagerInterface
     /**
      * Debug friendly object properties.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

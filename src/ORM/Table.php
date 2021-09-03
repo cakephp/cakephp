@@ -2974,7 +2974,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - Model.beforeRules => beforeRules
      * - Model.afterRules => afterRules
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

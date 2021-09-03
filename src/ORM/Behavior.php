@@ -273,7 +273,7 @@ class Behavior implements EventListenerInterface
      * Override this method if you need to add non-conventional event listeners.
      * Or if you want your behavior to listen to non-standard events.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

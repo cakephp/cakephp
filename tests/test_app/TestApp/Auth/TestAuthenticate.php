@@ -30,7 +30,7 @@ class TestAuthenticate extends BaseAuthenticate
     public $authenticationProvider;
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

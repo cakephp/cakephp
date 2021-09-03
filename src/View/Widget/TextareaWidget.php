@@ -50,7 +50,7 @@ class TextareaWidget extends BasicWidget
      *
      * All other keys will be converted into HTML attributes.
      *
-     * @param array $data The data to build a textarea with.
+     * @param array<string, mixed> $data The data to build a textarea with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string HTML elements.
      */

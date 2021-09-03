@@ -578,7 +578,7 @@ class FormProtector
     /**
      * Return debug info
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

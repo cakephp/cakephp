@@ -58,7 +58,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param \Cake\Database\ExpressionInterface|array|string $conditions Tree like array structure
      * containing all the conditions to be added or nested inside this expression object.
-     * @param \Cake\Database\TypeMap|array $types associative array of types to be associated with the values
+     * @param \Cake\Database\TypeMap|array $types Associative array of types to be associated with the values
      * passed in $conditions.
      * @param string $conjunction the glue that will join all the string conditions at this
      * level of the expression tree. For example "AND", "OR", "XOR"...
@@ -111,7 +111,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * be added. When using an array and the key is 'OR' or 'AND' a new expression
      * object will be created with that conjunction and internal array value passed
      * as conditions.
-     * @param array $types associative array of fields pointing to the type of the
+     * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @see \Cake\Database\Query::where() for examples on conditions
      * @return $this
@@ -333,10 +333,10 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param \Cake\Database\ExpressionInterface|array $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param \Cake\Database\ExpressionInterface|array $values associative array of values to be associated with the
+     * @param \Cake\Database\ExpressionInterface|array $values Associative array of values to be associated with the
      * conditions passed in $conditions. If there are more $values than $conditions,
      * the last $value is used as the `ELSE` value.
-     * @param array $types associative array of types to be associated with the values
+     * @param array<string, string> $types Associative array of types to be associated with the values
      * passed in $values
      * @return $this
      */
@@ -431,7 +431,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * and set up the conjunction to be "AND"
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with AND
-     * @param array $types associative array of fields pointing to the type of the
+     * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
@@ -449,7 +449,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * and set up the conjunction to be "OR"
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with OR
-     * @param array $types associative array of fields pointing to the type of the
+     * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
@@ -469,7 +469,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * and set up the conjunction to be "AND"
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with AND
-     * @param array $types associative array of fields pointing to the type of the
+     * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      * @deprecated 4.0.0 Use {@link and()} instead.
@@ -486,7 +486,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * and set up the conjunction to be "OR"
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with OR
-     * @param array $types associative array of fields pointing to the type of the
+     * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      * @deprecated 4.0.0 Use {@link or()} instead.
@@ -507,7 +507,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * currently configured for this object.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be added and negated
-     * @param array $types associative array of fields pointing to the type of the
+     * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return $this
      */
@@ -667,7 +667,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * representation is wrapped around an adequate instance or of this class.
      *
      * @param array $conditions list of conditions to be stored in this object
-     * @param array $types list of types associated on fields referenced in $conditions
+     * @param array<string, string> $types list of types associated on fields referenced in $conditions
      * @return void
      */
     protected function _addConditions(array $conditions, array $types): void

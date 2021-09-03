@@ -1216,7 +1216,7 @@ class PaginatorHelper extends Helper
     /**
      * Event listeners.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
