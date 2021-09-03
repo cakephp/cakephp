@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\Date as ChronosDate;
+use Closure;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -46,7 +47,7 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\DateFormatTrait::i18nFormat()
      */
-    protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
+    protected static array|string|int $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
 
     /**
      * The format to use when converting this object to JSON.
@@ -62,7 +63,7 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      * @var \Closure|array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    protected static $_jsonEncodeFormat = 'yyyy-MM-dd';
+    protected static Closure|array|string|int $_jsonEncodeFormat = 'yyyy-MM-dd';
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
@@ -71,7 +72,7 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\DateFormatTrait::parseDate()
      */
-    public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
+    public static array|string|int $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::nice()`
@@ -87,7 +88,7 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\DateFormatTrait::nice()
      */
-    public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE];
+    public static array|string|int $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE];
 
     /**
      * The format to use when formatting a time using `Date::timeAgoInWords()`
@@ -96,7 +97,7 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      * @var array<string>
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public static $wordAccuracy = [
+    public static array $wordAccuracy = [
         'year' => 'day',
         'month' => 'day',
         'week' => 'day',
@@ -112,7 +113,7 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      * @var string
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public static $wordEnd = '+1 month';
+    public static string $wordEnd = '+1 month';
 
     /**
      * Create a new Date instance.

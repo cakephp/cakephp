@@ -35,28 +35,28 @@ class TranslatorRegistry
      * @var array
      * @psalm-var array<string, array<string, \Cake\I18n\Translator>>
      */
-    protected $registry = [];
+    protected array $registry = [];
 
     /**
      * The current locale code.
      *
      * @var string
      */
-    protected $locale;
+    protected string $locale;
 
     /**
      * A package locator.
      *
      * @var \Cake\I18n\PackageLocator
      */
-    protected $packages;
+    protected PackageLocator $packages;
 
     /**
      * A formatter locator.
      *
      * @var \Cake\I18n\FormatterLocator
      */
-    protected $formatters;
+    protected FormatterLocator $formatters;
 
     /**
      * A list of loader functions indexed by domain name. Loaders are
@@ -66,7 +66,7 @@ class TranslatorRegistry
      *
      * @var array<callable>
      */
-    protected $_loaders = [];
+    protected array $_loaders = [];
 
     /**
      * The name of the default formatter to use for newly created
@@ -74,14 +74,14 @@ class TranslatorRegistry
      *
      * @var string
      */
-    protected $_defaultFormatter = 'default';
+    protected string $_defaultFormatter = 'default';
 
     /**
      * Use fallback-domain for translation loaders.
      *
      * @var bool
      */
-    protected $_useFallback = true;
+    protected bool $_useFallback = true;
 
     /**
      * A CacheEngine object that is used to remember translator across

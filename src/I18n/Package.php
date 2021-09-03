@@ -27,7 +27,7 @@ class Package
      *
      * @var array<array|string>
      */
-    protected $messages = [];
+    protected array $messages = [];
 
     /**
      * The name of a fallback package to use when a message key does not
@@ -35,14 +35,14 @@ class Package
      *
      * @var string|null
      */
-    protected $fallback;
+    protected ?string $fallback = null;
 
     /**
      * The name of the formatter to use when formatting translated messages.
      *
      * @var string
      */
-    protected $formatter;
+    protected string $formatter;
 
     /**
      * Constructor.

@@ -33,7 +33,7 @@ class PluralRules
      *
      * @var array
      */
-    protected static $_rulesMap = [
+    protected static array $_rulesMap = [
         'af' => 1,
         'am' => 2,
         'ar' => 13,

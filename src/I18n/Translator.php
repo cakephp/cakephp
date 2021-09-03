@@ -33,28 +33,28 @@ class Translator
      *
      * @var \Cake\I18n\Translator|null
      */
-    protected $fallback;
+    protected ?Translator $fallback = null;
 
     /**
      * The formatter to use when translating messages.
      *
      * @var \Cake\I18n\FormatterInterface
      */
-    protected $formatter;
+    protected FormatterInterface $formatter;
 
     /**
      * The locale being used for translations.
      *
      * @var string
      */
-    protected $locale;
+    protected string $locale;
 
     /**
      * The Package containing keys and translations.
      *
      * @var \Cake\I18n\Package
      */
-    protected $package;
+    protected Package $package;
 
     /**
      * Constructor

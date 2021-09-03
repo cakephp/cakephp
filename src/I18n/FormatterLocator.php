@@ -31,7 +31,7 @@ class FormatterLocator
      *
      * @var array
      */
-    protected $registry = [];
+    protected array $registry = [];
 
     /**
      * Tracks whether or not a registry entry has been converted from a
@@ -39,7 +39,7 @@ class FormatterLocator
      *
      * @var array<bool>
      */
-    protected $converted = [];
+    protected array $converted = [];
 
     /**
      * Constructor.

@@ -39,14 +39,14 @@ class I18n
      *
      * @var \Cake\I18n\TranslatorRegistry|null
      */
-    protected static $_collection;
+    protected static ?TranslatorRegistry $_collection = null;
 
     /**
      * The environment default locale
      *
      * @var string|null
      */
-    protected static $_defaultLocale;
+    protected static ?string $_defaultLocale = null;
 
     /**
      * Returns the translators collection instance. It can be used
