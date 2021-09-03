@@ -853,9 +853,9 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     public function testSaveNewRecordWithTranslatesField(): void
     {
         $table = $this->getTableLocator()->get('Articles');
+        $table->getValidator()->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass(TranslateArticle::class);
 
