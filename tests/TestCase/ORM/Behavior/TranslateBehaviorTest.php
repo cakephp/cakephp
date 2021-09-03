@@ -1387,9 +1387,9 @@ class TranslateBehaviorTest extends TestCase
     public function testSaveNewRecordWithTranslatesField(): void
     {
         $table = $this->getTableLocator()->get('Articles');
+        $table->getValidator()->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass(TranslateArticle::class);
 
@@ -1434,9 +1434,9 @@ class TranslateBehaviorTest extends TestCase
     public function testSaveNewRecordWithOnlyTranslationsNotDefaultLocale(): void
     {
         $table = $this->getTableLocator()->get('Sections');
+        $table->getValidator()->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
 
         $data = [
