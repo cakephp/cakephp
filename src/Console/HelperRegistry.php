@@ -33,7 +33,7 @@ class HelperRegistry extends ObjectRegistry
      *
      * @var \Cake\Console\ConsoleIo
      */
-    protected $_io;
+    protected ConsoleIo $_io;
 
     /**
      * Sets The IO instance that should be passed to the shell helpers

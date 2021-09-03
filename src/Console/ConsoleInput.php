@@ -39,7 +39,7 @@ class ConsoleInput
      *
      * @var bool
      */
-    protected $_canReadline;
+    protected bool $_canReadline;
 
     /**
      * Constructor

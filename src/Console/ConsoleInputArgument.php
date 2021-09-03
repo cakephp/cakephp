@@ -32,28 +32,28 @@ class ConsoleInputArgument
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * Help string
      *
      * @var string
      */
-    protected $_help;
+    protected string $_help;
 
     /**
      * Is this option required?
      *
      * @var bool
      */
-    protected $_required;
+    protected bool $_required;
 
     /**
      * An array of valid choices for this argument.
      *
      * @var array<string>
      */
-    protected $_choices;
+    protected array $_choices;
 
     /**
      * Make a new Input Argument

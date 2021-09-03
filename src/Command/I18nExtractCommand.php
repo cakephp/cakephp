@@ -43,84 +43,84 @@ class I18nExtractCommand extends Command
      *
      * @var array<string>
      */
-    protected $_paths = [];
+    protected array $_paths = [];
 
     /**
      * Files from where to extract
      *
      * @var array<string>
      */
-    protected $_files = [];
+    protected array $_files = [];
 
     /**
      * Merge all domain strings into the default.pot file
      *
      * @var bool
      */
-    protected $_merge = false;
+    protected bool $_merge = false;
 
     /**
      * Current file being processed
      *
      * @var string
      */
-    protected $_file = '';
+    protected string $_file = '';
 
     /**
      * Contains all content waiting to be write
      *
      * @var array
      */
-    protected $_storage = [];
+    protected array $_storage = [];
 
     /**
      * Extracted tokens
      *
      * @var array
      */
-    protected $_tokens = [];
+    protected array $_tokens = [];
 
     /**
      * Extracted strings indexed by domain.
      *
      * @var array
      */
-    protected $_translations = [];
+    protected array $_translations = [];
 
     /**
      * Destination path
      *
      * @var string
      */
-    protected $_output = '';
+    protected string $_output = '';
 
     /**
      * An array of directories to exclude.
      *
      * @var array<string>
      */
-    protected $_exclude = [];
+    protected array $_exclude = [];
 
     /**
      * Holds whether this call should extract the CakePHP Lib messages
      *
      * @var bool
      */
-    protected $_extractCore = false;
+    protected bool $_extractCore = false;
 
     /**
      * Displays marker error(s) if true
      *
      * @var bool
      */
-    protected $_markerError = false;
+    protected bool $_markerError = false;
 
     /**
      * Count number of marker errors found
      *
      * @var int
      */
-    protected $_countMarkerError = 0;
+    protected int $_countMarkerError = 0;
 
     /**
      * Method to interact with the user and get path selections.

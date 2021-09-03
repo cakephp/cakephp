@@ -45,28 +45,28 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @var \Cake\Core\ConsoleApplicationInterface
      */
-    protected $app;
+    protected ConsoleApplicationInterface $app;
 
     /**
      * The application console commands are being run for.
      *
      * @var \Cake\Console\CommandFactoryInterface|null
      */
-    protected $factory;
+    protected ?CommandFactoryInterface $factory = null;
 
     /**
      * The root command name. Defaults to `cake`.
      *
      * @var string
      */
-    protected $root;
+    protected string $root;
 
     /**
      * Alias mappings.
      *
      * @var array<string>
      */
-    protected $aliases = [];
+    protected array $aliases = [];
 
     /**
      * Constructor

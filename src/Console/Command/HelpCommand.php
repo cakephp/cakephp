@@ -38,7 +38,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      *
      * @var \Cake\Console\CommandCollection
      */
-    protected $commands;
+    protected CommandCollection $commands;
 
     /**
      * @inheritDoc

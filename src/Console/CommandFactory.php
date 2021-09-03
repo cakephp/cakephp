@@ -28,7 +28,7 @@ class CommandFactory implements CommandFactoryInterface
     /**
      * @var \Cake\Core\ContainerInterface|null
      */
-    protected $container;
+    protected ?ContainerInterface $container = null;
 
     /**
      * Constructor

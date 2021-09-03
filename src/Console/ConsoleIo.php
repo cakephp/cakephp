@@ -57,35 +57,35 @@ class ConsoleIo
      *
      * @var \Cake\Console\ConsoleOutput
      */
-    protected $_out;
+    protected ConsoleOutput $_out;
 
     /**
      * The error stream
      *
      * @var \Cake\Console\ConsoleOutput
      */
-    protected $_err;
+    protected ConsoleOutput $_err;
 
     /**
      * The input stream
      *
      * @var \Cake\Console\ConsoleInput
      */
-    protected $_in;
+    protected ConsoleInput $_in;
 
     /**
      * The helper registry.
      *
      * @var \Cake\Console\HelperRegistry
      */
-    protected $_helpers;
+    protected HelperRegistry $_helpers;
 
     /**
      * The current output level.
      *
      * @var int
      */
-    protected $_level = self::NORMAL;
+    protected int $_level = self::NORMAL;
 
     /**
      * The number of bytes last written to the output stream
@@ -93,19 +93,19 @@ class ConsoleIo
      *
      * @var int
      */
-    protected $_lastWritten = 0;
+    protected int $_lastWritten = 0;
 
     /**
      * Whether or not files should be overwritten
      *
      * @var bool
      */
-    protected $forceOverwrite = false;
+    protected bool $forceOverwrite = false;
 
     /**
      * @var bool
      */
-    protected $interactive = true;
+    protected bool $interactive = true;
 
     /**
      * Constructor

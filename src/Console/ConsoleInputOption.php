@@ -32,56 +32,56 @@ class ConsoleInputOption
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * Short (1 character) alias for the option.
      *
      * @var string
      */
-    protected $_short;
+    protected string $_short;
 
     /**
      * Help text for the option.
      *
      * @var string
      */
-    protected $_help;
+    protected string $_help;
 
     /**
      * Is the option a boolean option. Boolean options do not consume a parameter.
      *
      * @var bool
      */
-    protected $_boolean;
+    protected bool $_boolean;
 
     /**
      * Default value for the option
      *
      * @var string|bool|null
      */
-    protected $_default;
+    protected string|bool|null $_default = null;
 
     /**
      * Can the option accept multiple value definition.
      *
      * @var bool
      */
-    protected $_multiple;
+    protected bool $_multiple;
 
     /**
      * An array of choices for the option.
      *
      * @var array<string>
      */
-    protected $_choices;
+    protected array $_choices;
 
     /**
      * Is the option required.
      *
      * @var bool
      */
-    protected $required;
+    protected bool $required;
 
     /**
      * Make a new Input Option

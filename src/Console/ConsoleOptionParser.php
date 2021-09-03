@@ -81,7 +81,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::description()
      * @var string
      */
-    protected $_description = '';
+    protected string $_description = '';
 
     /**
      * Epilog text - displays after options when help is generated
@@ -89,7 +89,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::epilog()
      * @var string
      */
-    protected $_epilog = '';
+    protected string $_epilog = '';
 
     /**
      * Option definitions.
@@ -97,14 +97,14 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::addOption()
      * @var array<\Cake\Console\ConsoleInputOption>
      */
-    protected $_options = [];
+    protected array $_options = [];
 
     /**
      * Map of short -> long options, generated when using addOption()
      *
      * @var array
      */
-    protected $_shortOptions = [];
+    protected array $_shortOptions = [];
 
     /**
      * Positional argument definitions.
@@ -112,7 +112,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
      * @var array<\Cake\Console\ConsoleInputArgument>
      */
-    protected $_args = [];
+    protected array $_args = [];
 
     /**
      * Subcommands for this Command.
@@ -120,28 +120,28 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
      * @var array<\Cake\Console\ConsoleInputSubcommand>
      */
-    protected $_subcommands = [];
+    protected array $_subcommands = [];
 
     /**
      * Subcommand sorting option
      *
      * @var bool
      */
-    protected $_subcommandSort = true;
+    protected bool $_subcommandSort = true;
 
     /**
      * Command name.
      *
      * @var string
      */
-    protected $_command = '';
+    protected string $_command = '';
 
     /**
      * Array of args (argv).
      *
      * @var array
      */
-    protected $_tokens = [];
+    protected array $_tokens = [];
 
     /**
      * Root alias used in help output
@@ -149,7 +149,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\HelpFormatter::setAlias()
      * @var string
      */
-    protected $rootName = 'cake';
+    protected string $rootName = 'cake';
 
     /**
      * Construct an OptionParser so you can define its behavior
