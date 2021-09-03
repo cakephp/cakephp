@@ -65,28 +65,28 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @var \Throwable
      */
-    protected $error;
+    protected Throwable $error;
 
     /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
      */
-    protected $controller;
+    protected Controller $controller;
 
     /**
      * Template to render for Cake\Core\Exception\CakeException
      *
      * @var string
      */
-    protected $template = '';
+    protected string $template = '';
 
     /**
      * The method corresponding to the Exception this object is for.
      *
      * @var string
      */
-    protected $method = '';
+    protected string $method = '';
 
     /**
      * If set, this will be request used to create the controller that will render
@@ -94,7 +94,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @var \Cake\Http\ServerRequest|null
      */
-    protected $request;
+    protected ?ServerRequest $request = null;
 
     /**
      * Map of exceptions to http status codes.
@@ -105,7 +105,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @var array
      * @psalm-var array<class-string<\Throwable>, int>
      */
-    protected $exceptionHttpCodes = [
+    protected array $exceptionHttpCodes = [
         // Controller exceptions
         MissingActionException::class => 404,
         // Datasource exceptions

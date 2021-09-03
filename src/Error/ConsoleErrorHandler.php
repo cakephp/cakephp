@@ -32,7 +32,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      *
      * @var \Cake\Console\ConsoleOutput
      */
-    protected $_stderr;
+    protected ConsoleOutput $_stderr;
 
     /**
      * Constructor

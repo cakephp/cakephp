@@ -60,7 +60,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'skipLog' => [],
         'log' => true,
         'trace' => false,
@@ -72,7 +72,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @var \Cake\Error\ErrorHandler|null
      */
-    protected $errorHandler;
+    protected ?ErrorHandler $errorHandler = null;
 
     /**
      * Constructor
