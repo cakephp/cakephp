@@ -33,7 +33,7 @@ class DashedRoute extends Route
      *
      * @var bool
      */
-    protected $_inflectedDefaults = false;
+    protected bool $_inflectedDefaults = false;
 
     /**
      * Camelizes the previously dashed plugin route taking into account plugin vendors

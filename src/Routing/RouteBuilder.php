@@ -55,7 +55,7 @@ class RouteBuilder
      *
      * @var array
      */
-    protected static $_resourceMap = [
+    protected static array $_resourceMap = [
         'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
         'create' => ['action' => 'add', 'method' => 'POST', 'path' => ''],
         'view' => ['action' => 'view', 'method' => 'GET', 'path' => '{id}'],
@@ -68,42 +68,42 @@ class RouteBuilder
      *
      * @var string
      */
-    protected $_routeClass = Route::class;
+    protected string $_routeClass = Route::class;
 
     /**
      * The extensions that should be set into the routes connected.
      *
      * @var array<string>
      */
-    protected $_extensions = [];
+    protected array $_extensions = [];
 
     /**
      * The path prefix scope that this collection uses.
      *
      * @var string
      */
-    protected $_path;
+    protected string $_path;
 
     /**
      * The scope parameters if there are any.
      *
      * @var array
      */
-    protected $_params;
+    protected array $_params;
 
     /**
      * Name prefix for connected routes.
      *
      * @var string
      */
-    protected $_namePrefix = '';
+    protected string $_namePrefix = '';
 
     /**
      * The route collection routes should be added to.
      *
      * @var \Cake\Routing\RouteCollection
      */
-    protected $_collection;
+    protected RouteCollection $_collection;
 
     /**
      * The list of middleware that routes in this builder get
@@ -111,7 +111,7 @@ class RouteBuilder
      *
      * @var array<string>
      */
-    protected $middleware = [];
+    protected array $middleware = [];
 
     /**
      * Constructor

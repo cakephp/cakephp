@@ -30,7 +30,7 @@ class Asset
      *
      * @var string
      */
-    protected static $inflectionType = 'underscore';
+    protected static string $inflectionType = 'underscore';
 
     /**
      * Set inflection type to use when inflecting plugin/theme name.
