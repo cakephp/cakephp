@@ -45,14 +45,14 @@ trait ValidatorAwareTrait
      *
      * @var string
      */
-    protected $_validatorClass = Validator::class;
+    protected string $_validatorClass = Validator::class;
 
     /**
      * A list of validation objects indexed by name
      *
      * @var array<\Cake\Validation\Validator>
      */
-    protected $_validators = [];
+    protected array $_validators = [];
 
     /**
      * Returns the validation rules tagged with $name. It is possible to have

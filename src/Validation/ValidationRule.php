@@ -47,14 +47,14 @@ class ValidationRule
      *
      * @var bool
      */
-    protected $_last = false;
+    protected bool $_last = false;
 
     /**
      * The 'message' key
      *
-     * @var string
+     * @var string|null
      */
-    protected $_message;
+    protected ?string $_message = null;
 
     /**
      * Key under which the object or class where the method to be used for
@@ -62,14 +62,14 @@ class ValidationRule
      *
      * @var string
      */
-    protected $_provider = 'default';
+    protected string $_provider = 'default';
 
     /**
      * Extra arguments to be passed to the validation method
      *
      * @var array
      */
-    protected $_pass = [];
+    protected array $_pass = [];
 
     /**
      * Constructor
