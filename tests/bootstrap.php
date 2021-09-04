@@ -104,6 +104,10 @@ if (!getenv('DB_URL')) {
 
 ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
 
+if (env('CAKE_TEST_AUTOQUOTE')) {
+    ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);
+}
+
 Configure::write('Session', [
     'defaults' => 'php',
 ]);

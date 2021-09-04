@@ -120,9 +120,12 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '8.0' ]]; then
-          export CODECOVERAGE=1 && vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
+          export CODECOVERAGE=1
+          vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
         else
           vendor/bin/phpunit
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
 
     - name: Submit code coverage
@@ -192,6 +195,8 @@ jobs:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
           vendor/bin/phpunit --verbose
+          set CAKE_TEST_AUTOQUOTE=1
+          vendor/bin/phpunit --verbose --testsuite=database
 
   cs-stan:
     name: Coding Standard & Static Analysis
