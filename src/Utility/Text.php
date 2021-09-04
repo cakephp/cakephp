@@ -30,21 +30,21 @@ class Text
      *
      * @var \Transliterator|null Transliterator instance.
      */
-    protected static $_defaultTransliterator;
+    protected static ?Transliterator $_defaultTransliterator = null;
 
     /**
      * Default transliterator id string.
      *
      * @var string $_defaultTransliteratorId Transliterator identifier string.
      */
-    protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+    protected static string $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
     /**
      * Default html tags who must not be count for truncate text.
      *
      * @var array
      */
-    protected static $_defaultHtmlNoCount = [
+    protected static array $_defaultHtmlNoCount = [
         'style',
         'script',
     ];

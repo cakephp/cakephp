@@ -31,21 +31,21 @@ class Security
      *
      * @var string
      */
-    public static $hashType = 'sha1';
+    public static string $hashType = 'sha1';
 
     /**
      * The HMAC salt to use for encryption and decryption routines
      *
      * @var string|null
      */
-    protected static $_salt;
+    protected static ?string $_salt = null;
 
     /**
      * The crypto implementation to use.
      *
      * @var object|null
      */
-    protected static $_instance;
+    protected static ?object $_instance = null;
 
     /**
      * Create a hash from string using given method.

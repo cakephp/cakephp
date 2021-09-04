@@ -31,7 +31,7 @@ class Inflector
      *
      * @var array
      */
-    protected static $_plural = [
+    protected static array $_plural = [
         '/(s)tatus$/i' => '\1tatuses',
         '/(quiz)$/i' => '\1zes',
         '/^(ox)$/i' => '\1\2en',
@@ -62,7 +62,7 @@ class Inflector
      *
      * @var array
      */
-    protected static $_singular = [
+    protected static array $_singular = [
         '/(s)tatuses$/i' => '\1\2tatus',
         '/^(.*)(menu)s$/i' => '\1\2',
         '/(quiz)zes$/i' => '\\1',
@@ -104,7 +104,7 @@ class Inflector
      *
      * @var array
      */
-    protected static $_irregular = [
+    protected static array $_irregular = [
         'atlas' => 'atlases',
         'beef' => 'beefs',
         'brief' => 'briefs',
@@ -154,7 +154,7 @@ class Inflector
      *
      * @var array
      */
-    protected static $_uninflected = [
+    protected static array $_uninflected = [
         '.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',
         '.*pox', '.*sheep', 'people', 'feedback', 'stadia', '.*?media',
         'chassis', 'clippers', 'debris', 'diabetes', 'equipment', 'gallows',
@@ -167,14 +167,14 @@ class Inflector
      *
      * @var array
      */
-    protected static $_cache = [];
+    protected static array $_cache = [];
 
     /**
      * The initial state of Inflector so reset() works.
      *
      * @var array
      */
-    protected static $_initialState = [];
+    protected static array $_initialState = [];
 
     /**
      * Cache inflected values, and return if already available
