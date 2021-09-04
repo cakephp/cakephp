@@ -37,14 +37,14 @@ class HtmlHelper extends Helper
      *
      * @var array
      */
-    protected $helpers = ['Url'];
+    protected array $helpers = ['Url'];
 
     /**
      * Default config for this class
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'templates' => [
             'meta' => '<meta{{attrs}}/>',
             'metalink' => '<link href="{{url}}"{{attrs}}/>',
@@ -83,14 +83,14 @@ class HtmlHelper extends Helper
      *
      * @var array
      */
-    protected $_includedAssets = [];
+    protected array $_includedAssets = [];
 
     /**
      * Options for the currently opened script block buffer if any.
      *
      * @var array
      */
-    protected $_scriptBlockOptions = [];
+    protected array $_scriptBlockOptions = [];
 
     /**
      * Creates a link to an external resource and handles basic meta tags

@@ -85,44 +85,44 @@ class View implements EventDispatcherInterface
     /**
      * Helpers collection
      *
-     * @var \Cake\View\HelperRegistry
+     * @var \Cake\View\HelperRegistry|null
      */
-    protected $_helpers;
+    protected ?HelperRegistry $_helpers = null;
 
     /**
      * ViewBlock instance.
      *
      * @var \Cake\View\ViewBlock
      */
-    protected $Blocks;
+    protected ViewBlock $Blocks;
 
     /**
      * The name of the plugin.
      *
      * @var string|null
      */
-    protected $plugin;
+    protected ?string $plugin = null;
 
     /**
      * Name of the controller that created the View if any.
      *
      * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * An array of names of built-in helpers to include.
      *
      * @var array
      */
-    protected $helpers = [];
+    protected array $helpers = [];
 
     /**
      * The name of the subfolder containing templates for this View.
      *
      * @var string
      */
-    protected $templatePath = '';
+    protected string $templatePath = '';
 
     /**
      * The name of the template file to render. The name specified
@@ -130,7 +130,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $template = '';
+    protected string $template = '';
 
     /**
      * The name of the layout file to render the template inside of. The name specified
@@ -139,14 +139,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $layout = 'default';
+    protected string $layout = 'default';
 
     /**
      * The name of the layouts subfolder containing layouts for this View.
      *
      * @var string
      */
-    protected $layoutPath = '';
+    protected string $layoutPath = '';
 
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
@@ -154,21 +154,21 @@ class View implements EventDispatcherInterface
      *
      * @var bool
      */
-    protected $autoLayout = true;
+    protected bool $autoLayout = true;
 
     /**
      * An array of variables
      *
      * @var array
      */
-    protected $viewVars = [];
+    protected array $viewVars = [];
 
     /**
      * File extension. Defaults to ".php".
      *
      * @var string
      */
-    protected $_ext = '.php';
+    protected string $_ext = '.php';
 
     /**
      * Sub-directory for this template file. This is often used for extension based routing.
@@ -176,14 +176,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $subDir = '';
+    protected string $subDir = '';
 
     /**
      * The view theme to use.
      *
      * @var string|null
      */
-    protected $theme;
+    protected ?string $theme = null;
 
     /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
@@ -192,14 +192,14 @@ class View implements EventDispatcherInterface
      *
      * @var \Cake\Http\ServerRequest
      */
-    protected $request;
+    protected ServerRequest $request;
 
     /**
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
      */
-    protected $response;
+    protected Response $response;
 
     /**
      * The Cache configuration View will use to store cached elements. Changing this will change
@@ -209,14 +209,14 @@ class View implements EventDispatcherInterface
      * @var string
      * @see \Cake\View\View::element()
      */
-    protected $elementCache = 'default';
+    protected string $elementCache = 'default';
 
     /**
      * List of variables to collect from the associated controller.
      *
      * @var array<string>
      */
-    protected $_passedVars = [
+    protected array $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
         'layoutPath', 'templatePath', 'plugin',
     ];
@@ -226,35 +226,35 @@ class View implements EventDispatcherInterface
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * Holds an array of paths.
      *
      * @var array<string>
      */
-    protected $_paths = [];
+    protected array $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
      * @var array<string[]>
      */
-    protected $_pathsForPlugin = [];
+    protected array $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
      * @var array<string>
      */
-    protected $_parents = [];
+    protected array $_parents = [];
 
     /**
      * The currently rendering view file. Used for resolving parent files.
      *
      * @var string
      */
-    protected $_current;
+    protected string $_current = '';
 
     /**
      * Currently rendering an element. Used for finding parent fragments
@@ -262,14 +262,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $_currentType = '';
+    protected string $_currentType = '';
 
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
      * @var array<string>
      */
-    protected $_stack = [];
+    protected array $_stack = [];
 
     /**
      * ViewBlock class.
@@ -277,7 +277,7 @@ class View implements EventDispatcherInterface
      * @var string
      * @psalm-var class-string<\Cake\View\ViewBlock>
      */
-    protected $_viewBlockClass = ViewBlock::class;
+    protected string $_viewBlockClass = ViewBlock::class;
 
     /**
      * Constant for view file type 'template'.

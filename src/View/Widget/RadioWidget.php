@@ -36,7 +36,7 @@ class RadioWidget extends BasicWidget
      *
      * @var array
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'options' => [],
         'disabled' => null,
@@ -53,7 +53,7 @@ class RadioWidget extends BasicWidget
      *
      * @var \Cake\View\Widget\LabelWidget
      */
-    protected $_label;
+    protected LabelWidget $_label;
 
     /**
      * Constructor

@@ -57,14 +57,14 @@ class EntityContext implements ContextInterface
      *
      * @var array
      */
-    protected $_context;
+    protected array $_context;
 
     /**
      * The name of the top level entity/table object.
      *
      * @var string
      */
-    protected $_rootName;
+    protected string $_rootName;
 
     /**
      * Boolean to track whether or not the entity is a
@@ -72,21 +72,21 @@ class EntityContext implements ContextInterface
      *
      * @var bool
      */
-    protected $_isCollection = false;
+    protected bool $_isCollection = false;
 
     /**
      * A dictionary of tables
      *
      * @var array<\Cake\ORM\Table>
      */
-    protected $_tables = [];
+    protected array $_tables = [];
 
     /**
      * Dictionary of validators.
      *
      * @var array<\Cake\Validation\Validator>
      */
-    protected $_validator = [];
+    protected array $_validator = [];
 
     /**
      * Constructor.

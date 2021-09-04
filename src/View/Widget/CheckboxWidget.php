@@ -31,7 +31,7 @@ class CheckboxWidget extends BasicWidget
      *
      * @var array
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'value' => 1,
         'val' => null,

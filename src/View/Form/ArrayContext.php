@@ -75,7 +75,7 @@ class ArrayContext implements ContextInterface
      *
      * @var array
      */
-    protected $_context;
+    protected array $_context;
 
     /**
      * Constructor.

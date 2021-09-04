@@ -32,7 +32,7 @@ class UrlHelper extends Helper
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'assetUrlClassName' => Asset::class,
     ];
 
@@ -42,7 +42,7 @@ class UrlHelper extends Helper
      * @var string
      * @psalm-var class-string<\Cake\Routing\Asset>
      */
-    protected $_assetUrlClassName;
+    protected string $_assetUrlClassName;
 
     /**
      * Check proper configuration

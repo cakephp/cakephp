@@ -40,7 +40,7 @@ class StringTemplate
      *
      * @var array
      */
-    protected $_compactAttributes = [
+    protected array $_compactAttributes = [
         'allowfullscreen' => true,
         'async' => true,
         'autofocus' => true,
@@ -89,21 +89,21 @@ class StringTemplate
      *
      * @var array
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * A stack of template sets that have been stashed temporarily.
      *
      * @var array
      */
-    protected $_configStack = [];
+    protected array $_configStack = [];
 
     /**
      * Contains the list of compiled templates
      *
      * @var array
      */
-    protected $_compiled = [];
+    protected array $_compiled = [];
 
     /**
      * Constructor.

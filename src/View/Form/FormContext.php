@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Form;
 
+use Cake\Form\Form;
 use Cake\Utility\Hash;
 
 /**
@@ -31,7 +32,7 @@ class FormContext implements ContextInterface
      *
      * @var \Cake\Form\Form
      */
-    protected $_form;
+    protected Form $_form;
 
     /**
      * Constructor.

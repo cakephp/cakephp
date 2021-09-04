@@ -342,7 +342,7 @@ object(Cake\View\View) id:0 {
   [protected] _paths => []
   [protected] _pathsForPlugin => []
   [protected] _parents => []
-  [protected] _current => null
+  [protected] _current => ''
   [protected] _currentType => ''
   [protected] _stack => []
   [protected] _viewBlockClass => 'Cake\View\ViewBlock'

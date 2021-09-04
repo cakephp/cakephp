@@ -27,7 +27,7 @@ class ArticlesCell extends Cell
      *
      * @var array
      */
-    protected $_validCellOptions = ['limit', 'page'];
+    protected array $_validCellOptions = ['limit', 'page'];
 
     /**
      * Counter used to test the cache cell feature

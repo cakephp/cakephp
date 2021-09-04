@@ -37,7 +37,7 @@ class NumberHelper extends Helper
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'engine' => Number::class,
     ];
 

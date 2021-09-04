@@ -56,14 +56,14 @@ class FormHelper extends Helper
      *
      * @var array
      */
-    protected $helpers = ['Url', 'Html'];
+    protected array $helpers = ['Url', 'Html'];
 
     /**
      * Default config for the helper.
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'idPrefix' => null,
         'errorClass' => 'form-error',
         'typeMap' => [
@@ -161,7 +161,7 @@ class FormHelper extends Helper
      *
      * @var array
      */
-    protected $_defaultWidgets = [
+    protected array $_defaultWidgets = [
         'button' => ['Button'],
         'checkbox' => ['Checkbox'],
         'file' => ['File'],
@@ -189,28 +189,28 @@ class FormHelper extends Helper
      *
      * @var string|null
      */
-    public $requestType;
+    public ?string $requestType = null;
 
     /**
      * Locator for input widgets.
      *
      * @var \Cake\View\Widget\WidgetLocator
      */
-    protected $_locator;
+    protected WidgetLocator $_locator;
 
     /**
      * Context for the current form.
      *
      * @var \Cake\View\Form\ContextInterface|null
      */
-    protected $_context;
+    protected ?ContextInterface $_context = null;
 
     /**
      * Context factory.
      *
      * @var \Cake\View\Form\ContextFactory|null
      */
-    protected $_contextFactory;
+    protected ?ContextFactory $_contextFactory = null;
 
     /**
      * The action attribute value of the last created form.
@@ -218,7 +218,7 @@ class FormHelper extends Helper
      *
      * @var string
      */
-    protected $_lastAction = '';
+    protected string $_lastAction = '';
 
     /**
      * The supported sources that can be used to populate input values.
@@ -229,7 +229,7 @@ class FormHelper extends Helper
      *
      * @var array<string>
      */
-    protected $supportedValueSources = ['context', 'data', 'query'];
+    protected array $supportedValueSources = ['context', 'data', 'query'];
 
     /**
      * The default sources.
@@ -237,21 +237,21 @@ class FormHelper extends Helper
      * @see FormHelper::$supportedValueSources for valid values.
      * @var array<string>
      */
-    protected $_valueSources = ['data', 'context'];
+    protected array $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
      * @var array<string>
      */
-    protected $_groupedInputTypes = ['radio', 'multicheckbox'];
+    protected array $_groupedInputTypes = ['radio', 'multicheckbox'];
 
     /**
      * Form protector
      *
      * @var \Cake\Form\FormProtector|null
      */
-    protected $formProtector;
+    protected ?FormProtector $formProtector = null;
 
     /**
      * Construct the widgets and binds the default context providers

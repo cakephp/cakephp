@@ -18,6 +18,7 @@ namespace Cake\View\Widget;
 
 use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
+use Cake\View\StringTemplate;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -38,14 +39,14 @@ class DateTimeWidget extends BasicWidget
      *
      * @var \Cake\View\StringTemplate
      */
-    protected $_templates;
+    protected StringTemplate $_templates;
 
     /**
      * Data defaults.
      *
      * @var array
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'val' => null,
         'type' => 'datetime-local',
@@ -59,7 +60,7 @@ class DateTimeWidget extends BasicWidget
      *
      * @var array<string>
      */
-    protected $formatMap = [
+    protected array $formatMap = [
         'datetime-local' => 'Y-m-d\TH:i:s',
         'date' => 'Y-m-d',
         'time' => 'H:i:s',
@@ -74,7 +75,7 @@ class DateTimeWidget extends BasicWidget
      *
      * @var array
      */
-    protected $defaultStep = [
+    protected array $defaultStep = [
         'datetime-local' => '1',
         'date' => null,
         'time' => '1',

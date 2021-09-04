@@ -33,7 +33,7 @@ class SelectBoxWidget extends BasicWidget
      *
      * @var array
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'empty' => false,
         'escape' => true,

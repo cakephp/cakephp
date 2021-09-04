@@ -34,14 +34,14 @@ class BreadcrumbsHelper extends Helper
      *
      * @var array
      */
-    protected $helpers = ['Url'];
+    protected array $helpers = ['Url'];
 
     /**
      * Default config for the helper.
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'templates' => [
             'wrapper' => '<ul{{attrs}}>{{content}}</ul>',
             'item' => '<li{{attrs}}><a href="{{url}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
@@ -55,7 +55,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @var array
      */
-    protected $crumbs = [];
+    protected array $crumbs = [];
 
     /**
      * Add a crumb to the end of the trail.
