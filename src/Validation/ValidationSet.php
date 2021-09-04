@@ -33,7 +33,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var array<\Cake\Validation\ValidationRule>
      */
-    protected $_rules = [];
+    protected array $_rules = [];
 
     /**
      * Denotes whether the fieldname key must be present in data array

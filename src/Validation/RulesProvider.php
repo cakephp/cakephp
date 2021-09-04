@@ -31,14 +31,14 @@ class RulesProvider
      *
      * @var object|string
      */
-    protected $_class;
+    protected object|string $_class;
 
     /**
      * The proxied class' reflection
      *
      * @var \ReflectionClass
      */
-    protected $_reflection;
+    protected ReflectionClass $_reflection;
 
     /**
      * Constructor, sets the default class to use for calling methods
