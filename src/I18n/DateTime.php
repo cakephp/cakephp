@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\Chronos;
+use Closure;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -45,7 +46,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
+    protected static array|string|int $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
 
     /**
      * The format to use when converting this object to JSON.
@@ -61,7 +62,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      * @var \Closure|array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
+    protected static Closure|array|string|int $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Time::nice()`
@@ -77,7 +78,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\Time::nice()
      */
-    public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
+    public static array|string|int $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
@@ -86,7 +87,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
+    public static array|string|int $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
 
     /**
      * The format to use when formatting a time using `Time::timeAgoInWords()`
@@ -95,7 +96,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      * @var array<string>
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public static $wordAccuracy = [
+    public static array $wordAccuracy = [
         'year' => 'day',
         'month' => 'day',
         'week' => 'day',
@@ -111,7 +112,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      * @var string
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public static $wordEnd = '+1 month';
+    public static string $wordEnd = '+1 month';
 
     /**
      * serialise the value as a Unix Timestamp

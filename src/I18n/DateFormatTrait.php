@@ -38,7 +38,7 @@ trait DateFormatTrait
      *
      * @var string|null
      */
-    protected static $defaultLocale;
+    protected static ?string $defaultLocale = null;
 
     /**
      * Whether lenient parsing is enabled for IntlDateFormatter.
@@ -47,14 +47,14 @@ trait DateFormatTrait
      *
      * @var bool
      */
-    protected static $lenientParsing = true;
+    protected static bool $lenientParsing = true;
 
     /**
      * In-memory cache of date formatters
      *
      * @var array<\IntlDateFormatter>
      */
-    protected static $_formatters = [];
+    protected static array $_formatters = [];
 
     /**
      * Gets the default locale.

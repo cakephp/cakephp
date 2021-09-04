@@ -35,7 +35,7 @@ class PackageLocator
      *
      * @var array
      */
-    protected $registry = [];
+    protected array $registry = [];
 
     /**
      * Tracks whether or not a registry entry has been converted from a
@@ -43,7 +43,7 @@ class PackageLocator
      *
      * @var array
      */
-    protected $converted = [];
+    protected array $converted = [];
 
     /**
      * Constructor.

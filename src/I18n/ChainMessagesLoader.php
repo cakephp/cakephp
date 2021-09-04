@@ -29,7 +29,7 @@ class ChainMessagesLoader
      *
      * @var array<callable>
      */
-    protected $_loaders = [];
+    protected array $_loaders = [];
 
     /**
      * Receives a list of callable functions or objects that will be executed

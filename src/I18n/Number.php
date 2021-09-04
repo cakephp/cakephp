@@ -53,21 +53,21 @@ class Number
      *
      * @var array
      */
-    protected static $_formatters = [];
+    protected static array $_formatters = [];
 
     /**
      * Default currency used by Number::currency()
      *
      * @var string|null
      */
-    protected static $_defaultCurrency;
+    protected static ?string $_defaultCurrency = null;
 
     /**
      * Default currency format used by Number::currency()
      *
      * @var string|null
      */
-    protected static $_defaultCurrencyFormat;
+    protected static ?string $_defaultCurrencyFormat = null;
 
     /**
      * Formats a number with a level of precision.
