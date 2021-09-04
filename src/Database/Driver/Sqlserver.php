@@ -201,7 +201,7 @@ class Sqlserver extends Driver
         $sql = $query;
         $options = [
             PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+            //PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
         ];
         if ($query instanceof Query) {
             $sql = $query->sql();
