@@ -31,7 +31,7 @@ class ApcuEngine extends CacheEngine
      *
      * @var array<string>
      */
-    protected $_compiledGroupNames = [];
+    protected array $_compiledGroupNames = [];
 
     /**
      * Initialize the Cache Engine

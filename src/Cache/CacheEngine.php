@@ -51,7 +51,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'duration' => 3600,
         'groups' => [],
         'prefix' => 'cake_',
@@ -64,7 +64,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @var string
      */
-    protected $_groupPrefix = '';
+    protected string $_groupPrefix = '';
 
     /**
      * Initialize the cache engine
