@@ -39,14 +39,14 @@ class TextHelper extends Helper
      *
      * @var array
      */
-    protected $helpers = ['Html'];
+    protected array $helpers = ['Html'];
 
     /**
      * Default config for this class
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'engine' => Text::class,
     ];
 
@@ -56,7 +56,7 @@ class TextHelper extends Helper
      *
      * @var array
      */
-    protected $_placeholders = [];
+    protected array $_placeholders = [];
 
     /**
      * Cake Utility Text instance

@@ -62,21 +62,21 @@ class JsonView extends SerializedView
      *
      * @var string
      */
-    protected $layoutPath = 'json';
+    protected string $layoutPath = 'json';
 
     /**
      * JSON views are located in the 'json' sub directory for controllers' views.
      *
      * @var string
      */
-    protected $subDir = 'json';
+    protected string $subDir = 'json';
 
     /**
      * Response type.
      *
      * @var string
      */
-    protected $_responseType = 'json';
+    protected string $_responseType = 'json';
 
     /**
      * Default config options.
@@ -95,7 +95,7 @@ class JsonView extends SerializedView
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'serialize' => null,
         'jsonOptions' => null,
         'jsonp' => null,

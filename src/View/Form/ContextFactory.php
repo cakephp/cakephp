@@ -32,7 +32,7 @@ class ContextFactory
      *
      * @var array
      */
-    protected $providers = [];
+    protected array $providers = [];
 
     /**
      * Constructor.

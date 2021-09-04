@@ -37,7 +37,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      *
      * @var \Cake\View\View
      */
-    protected $_View;
+    protected View $_View;
 
     /**
      * Constructor

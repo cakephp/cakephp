@@ -30,7 +30,7 @@ abstract class SerializedView extends View
      *
      * @var string
      */
-    protected $_responseType;
+    protected string $_responseType;
 
     /**
      * Default config options.
@@ -44,7 +44,7 @@ abstract class SerializedView extends View
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'serialize' => null,
     ];
 

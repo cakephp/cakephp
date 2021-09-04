@@ -40,56 +40,56 @@ class ViewBuilder implements JsonSerializable
      *
      * @var string|null
      */
-    protected $_templatePath;
+    protected ?string $_templatePath = null;
 
     /**
      * The template file to render.
      *
      * @var string|null
      */
-    protected $_template;
+    protected ?string $_template = null;
 
     /**
      * The plugin name to use.
      *
      * @var string|null
      */
-    protected $_plugin;
+    protected ?string $_plugin = null;
 
     /**
      * The theme name to use.
      *
      * @var string|null
      */
-    protected $_theme;
+    protected ?string $_theme = null;
 
     /**
      * The layout name to render.
      *
      * @var string|null
      */
-    protected $_layout;
+    protected ?string $_layout = null;
 
     /**
      * Whether or not autoLayout should be enabled.
      *
      * @var bool
      */
-    protected $_autoLayout = true;
+    protected bool $_autoLayout = true;
 
     /**
      * The layout path to build the view with.
      *
      * @var string|null
      */
-    protected $_layoutPath;
+    protected ?string $_layoutPath = null;
 
     /**
      * The view variables to use
      *
      * @var string|null
      */
-    protected $_name;
+    protected ?string $_name = null;
 
     /**
      * The view class name to use.
@@ -99,7 +99,7 @@ class ViewBuilder implements JsonSerializable
      * @var string|null
      * @psalm-var class-string<\Cake\View\View>|string|null
      */
-    protected $_className;
+    protected ?string $_className = null;
 
     /**
      * Additional options used when constructing the view.
@@ -109,21 +109,21 @@ class ViewBuilder implements JsonSerializable
      *
      * @var array
      */
-    protected $_options = [];
+    protected array $_options = [];
 
     /**
      * The helpers to use
      *
      * @var array
      */
-    protected $_helpers = [];
+    protected array $_helpers = [];
 
     /**
      * View vars
      *
      * @var array
      */
-    protected $_vars = [];
+    protected array $_vars = [];
 
     /**
      * Saves a variable for use inside a template.

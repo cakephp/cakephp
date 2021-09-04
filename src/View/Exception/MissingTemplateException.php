@@ -25,22 +25,22 @@ class MissingTemplateException extends CakeException
     /**
      * @var string|null
      */
-    protected $templateName;
+    protected ?string $templateName = null;
 
     /**
      * @var string
      */
-    protected $filename;
+    protected string $filename;
 
     /**
      * @var array<string>
      */
-    protected $paths;
+    protected array $paths;
 
     /**
      * @var string
      */
-    protected $type = 'Template';
+    protected string $type = 'Template';
 
     /**
      * Constructor

@@ -65,21 +65,21 @@ class XmlView extends SerializedView
      *
      * @var string
      */
-    protected $layoutPath = 'xml';
+    protected string $layoutPath = 'xml';
 
     /**
      * XML views are located in the 'xml' sub directory for controllers' views.
      *
      * @var string
      */
-    protected $subDir = 'xml';
+    protected string $subDir = 'xml';
 
     /**
      * Response type.
      *
      * @var string
      */
-    protected $_responseType = 'xml';
+    protected string $_responseType = 'xml';
 
     /**
      * Option to allow setting an array of custom options for Xml::fromArray()
@@ -88,7 +88,7 @@ class XmlView extends SerializedView
      *
      * @var array|null
      */
-    protected $xmlOptions;
+    protected ?array $xmlOptions = null;
 
     /**
      * Default config options.
@@ -105,7 +105,7 @@ class XmlView extends SerializedView
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'serialize' => null,
         'xmlOptions' => null,
         'rootNode' => null,

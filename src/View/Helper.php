@@ -49,28 +49,28 @@ class Helper implements EventListenerInterface
      *
      * @var array
      */
-    protected $helpers = [];
+    protected array $helpers = [];
 
     /**
      * Default config for this helper.
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * A helper lookup table used to lazy load helper objects.
      *
      * @var array
      */
-    protected $_helperMap = [];
+    protected array $_helperMap = [];
 
     /**
      * The View instance this helper is attached to
      *
      * @var \Cake\View\View
      */
-    protected $_View;
+    protected View $_View;
 
     /**
      * Default Constructor

@@ -57,7 +57,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * @var \Cake\View\View
      */
-    protected $View;
+    protected View $View;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
@@ -66,28 +66,28 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * @var \Cake\Http\ServerRequest
      */
-    protected $request;
+    protected ServerRequest $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
      */
-    protected $response;
+    protected Response $response;
 
     /**
      * The cell's action to invoke.
      *
      * @var string
      */
-    protected $action;
+    protected string $action;
 
     /**
      * Arguments to pass to cell's action.
      *
      * @var array
      */
-    protected $args = [];
+    protected array $args = [];
 
     /**
      * List of valid options (constructor's fourth arguments)
@@ -96,14 +96,14 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * @var array<string>
      */
-    protected $_validCellOptions = [];
+    protected array $_validCellOptions = [];
 
     /**
      * Caching setup.
      *
      * @var array|bool
      */
-    protected $_cache = false;
+    protected array|bool $_cache = false;
 
     /**
      * Constructor.

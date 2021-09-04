@@ -52,14 +52,14 @@ class ViewBlock
      *
      * @var array<string>
      */
-    protected $_blocks = [];
+    protected array $_blocks = [];
 
     /**
      * The active blocks being captured.
      *
      * @var array<string>
      */
-    protected $_active = [];
+    protected array $_active = [];
 
     /**
      * Should the currently captured content be discarded on ViewBlock::end()
@@ -67,7 +67,7 @@ class ViewBlock
      * @see \Cake\View\ViewBlock::end()
      * @var bool
      */
-    protected $_discardActiveBufferOnEnd = false;
+    protected bool $_discardActiveBufferOnEnd = false;
 
     /**
      * Start capturing output for a 'block'

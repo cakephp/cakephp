@@ -32,7 +32,7 @@ class FileWidget extends BasicWidget
      *
      * @var array
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'escape' => true,
         'templateVars' => [],

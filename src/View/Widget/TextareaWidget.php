@@ -31,7 +31,7 @@ class TextareaWidget extends BasicWidget
      *
      * @var array
      */
-    protected $defaults = [
+    protected array $defaults = [
         'val' => '',
         'name' => '',
         'escape' => true,
