@@ -27,7 +27,7 @@ abstract class AbstractFormatter
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
     ];
 
     /**

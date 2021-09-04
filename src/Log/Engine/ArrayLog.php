@@ -33,7 +33,7 @@ class ArrayLog extends BaseLog
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'levels' => [],
         'scopes' => [],
         'formatter' => [
@@ -47,7 +47,7 @@ class ArrayLog extends BaseLog
      *
      * @var array
      */
-    protected $content = [];
+    protected array $content = [];
 
     /**
      * Implements writing to the internal storage.

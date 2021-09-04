@@ -51,7 +51,7 @@ class SyslogLog extends BaseLog
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'levels' => [],
         'scopes' => [],
         'flag' => LOG_ODELAY,
@@ -68,7 +68,7 @@ class SyslogLog extends BaseLog
      *
      * @var array<int>
      */
-    protected $_levelMap = [
+    protected array $_levelMap = [
         'emergency' => LOG_EMERG,
         'alert' => LOG_ALERT,
         'critical' => LOG_CRIT,
@@ -84,7 +84,7 @@ class SyslogLog extends BaseLog
      *
      * @var bool
      */
-    protected $_open = false;
+    protected bool $_open = false;
 
     /**
      * Writes a message to syslog

@@ -118,7 +118,7 @@ class Log
      * @var array<string>
      * @psalm-var array<string, class-string>
      */
-    protected static $_dsnClassMap = [
+    protected static array $_dsnClassMap = [
         'console' => Engine\ConsoleLog::class,
         'file' => Engine\FileLog::class,
         'syslog' => Engine\SyslogLog::class,
@@ -129,21 +129,21 @@ class Log
      *
      * @var bool
      */
-    protected static $_dirtyConfig = false;
+    protected static bool $_dirtyConfig = false;
 
     /**
      * LogEngineRegistry class
      *
-     * @var \Cake\Log\LogEngineRegistry
+     * @var \Cake\Log\LogEngineRegistry|null
      */
-    protected static $_registry;
+    protected static ?LogEngineRegistry $_registry = null;
 
     /**
      * Handled log levels
      *
      * @var array<string>
      */
-    protected static $_levels = [
+    protected static array $_levels = [
         'emergency',
         'alert',
         'critical',
@@ -160,7 +160,7 @@ class Log
      *
      * @var array
      */
-    protected static $_levelMap = [
+    protected static array $_levelMap = [
         'emergency' => LOG_EMERG,
         'alert' => LOG_ALERT,
         'critical' => LOG_CRIT,
@@ -172,37 +172,30 @@ class Log
     ];
 
     /**
-     * Initializes registry and configurations
+     * Creates registry if doesn't exist and creates all defined logging
+     * adapters if config isn't loaded.
      *
-     * @return void
+     * @return \Cake\Log\LogEngineRegistry
      */
-    protected static function _init(): void
+    protected static function getRegistry(): LogEngineRegistry
     {
-        if (empty(static::$_registry)) {
+        if (static::$_registry === null) {
             static::$_registry = new LogEngineRegistry();
         }
+
         if (static::$_dirtyConfig) {
-            static::_loadConfig();
+            foreach (static::$_config as $name => $properties) {
+                if (isset($properties['engine'])) {
+                    $properties['className'] = $properties['engine'];
+                }
+                if (!static::$_registry->has((string)$name)) {
+                    static::$_registry->load((string)$name, $properties);
+                }
+            }
         }
         static::$_dirtyConfig = false;
-    }
 
-    /**
-     * Load the defined configuration and create all the defined logging
-     * adapters.
-     *
-     * @return void
-     */
-    protected static function _loadConfig(): void
-    {
-        foreach (static::$_config as $name => $properties) {
-            if (isset($properties['engine'])) {
-                $properties['className'] = $properties['engine'];
-            }
-            if (!static::$_registry->has((string)$name)) {
-                static::$_registry->load((string)$name, $properties);
-            }
-        }
+        return static::$_registry;
     }
 
     /**
@@ -217,7 +210,7 @@ class Log
      */
     public static function reset(): void
     {
-        if (!empty(static::$_registry)) {
+        if (static::$_registry) {
             static::$_registry->reset();
         }
         static::$_config = [];
@@ -291,9 +284,9 @@ class Log
      */
     public static function engine(string $name): ?LoggerInterface
     {
-        static::_init();
-        if (static::$_registry->{$name}) {
-            return static::$_registry->{$name};
+        $registry = static::getRegistry();
+        if ($registry->{$name}) {
+            return $registry->{$name};
         }
 
         return null;
@@ -355,7 +348,6 @@ class Log
      */
     public static function write(string|int $level, Stringable|string $message, array|string $context = []): bool
     {
-        static::_init();
         if (is_int($level) && in_array($level, static::$_levelMap, true)) {
             $level = array_search($level, static::$_levelMap, true);
         }
@@ -372,8 +364,9 @@ class Log
         }
         $context += ['scope' => []];
 
-        foreach (static::$_registry->loaded() as $streamName) {
-            $logger = static::$_registry->{$streamName};
+        $registry = static::getRegistry();
+        foreach ($registry->loaded() as $streamName) {
+            $logger = $registry->{$streamName};
             $levels = $scopes = null;
 
             if ($logger instanceof BaseLog) {

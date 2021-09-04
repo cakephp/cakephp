@@ -31,7 +31,7 @@ class ConsoleLog extends BaseLog
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'stream' => 'php://stderr',
         'levels' => null,
         'scopes' => [],
@@ -47,7 +47,7 @@ class ConsoleLog extends BaseLog
      *
      * @var \Cake\Console\ConsoleOutput
      */
-    protected $_output;
+    protected ConsoleOutput $_output;
 
     /**
      * Constructs a new Console Logger.
