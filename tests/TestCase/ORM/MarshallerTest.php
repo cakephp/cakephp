@@ -2837,27 +2837,6 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to pass a validator directly in the options
-     *
-     * @deprecated
-     */
-    public function testPassingCustomValidator(): void
-    {
-        $this->deprecated(function () {
-            $data = [
-                'title' => 'Thing',
-                'body' => 'hey',
-            ];
-
-            $validator = clone $this->articles->getValidator();
-            $validator->requirePresence('thing');
-            $marshall = new Marshaller($this->articles);
-            $entity = $marshall->one($data, ['validate' => $validator]);
-            $this->assertNotEmpty($entity->getError('thing'));
-        });
-    }
-
-    /**
      * Tests that invalid property is being filled when data cannot be patched into an entity.
      */
     public function testValidationWithInvalidFilled(): void

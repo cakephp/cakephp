@@ -530,15 +530,13 @@ class TimeHelperTest extends TestCase
      */
     public function testFormatTimeInstance(): void
     {
-        $this->deprecated(function () {
-            $time = new DateTime('2010-01-14 13:59:28', 'America/New_York');
-            $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
-            $this->assertTimeFormat('13:59', $result);
+        $time = new DateTime('2010-01-14 13:59:28', 'America/New_York');
+        $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
+        $this->assertTimeFormat('13:59', $result);
 
-            $time = new DateTime('2010-01-14 13:59:28', 'UTC');
-            $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
-            $this->assertTimeFormat('08:59', $result);
-        });
+        $time = new DateTime('2010-01-14 13:59:28', 'UTC');
+        $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
+        $this->assertTimeFormat('08:59', $result);
     }
 
     /**

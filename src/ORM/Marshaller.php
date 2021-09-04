@@ -256,14 +256,6 @@ class Marshaller
             $validator = $this->_table->getValidator();
         } elseif (is_string($options['validate'])) {
             $validator = $this->_table->getValidator($options['validate']);
-        } elseif (is_object($options['validate'])) {
-            deprecationWarning(
-                'Passing validator instance for the `validate` option is deprecated,'
-                . ' use `ValidatorAwareTrait::setValidator() instead.`'
-            );
-
-            /** @var \Cake\Validation\Validator $validator */
-            $validator = $options['validate'];
         }
 
         if ($validator === null) {

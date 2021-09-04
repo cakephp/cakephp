@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
-use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use ReflectionFunction;
@@ -190,36 +189,6 @@ class Router
     public static function getNamedExpressions(): array
     {
         return static::$_namedExpressions;
-    }
-
-    /**
-     * Connects a new Route in the router.
-     *
-     * Compatibility proxy to \Cake\Routing\RouteBuilder::connect() in the `/` scope.
-     *
-     * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
-     * @param array|string $defaults An array describing the default route parameters.
-     *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
-     * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
-     *   element should match. Also contains additional parameters such as which routed parameters should be
-     *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
-     *   custom routing class.
-     * @return void
-     * @throws \Cake\Core\Exception\CakeException
-     * @see \Cake\Routing\RouteBuilder::connect()
-     * @see \Cake\Routing\Router::scope()
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::connect()` instead.
-     */
-    public static function connect(Route|string $route, array|string $defaults = [], array $options = []): void
-    {
-        deprecationWarning(
-            '`Router::connect()` is deprecated, use the non-static method `RouterBuilder::connect()` instead.'
-        );
-
-        static::scope('/', function ($routes) use ($route, $defaults, $options): void {
-            /** @var \Cake\Routing\RouteBuilder $routes */
-            $routes->connect($route, $defaults, $options);
-        });
     }
 
     /**
@@ -775,143 +744,6 @@ class Router
             'routeClass' => $options['routeClass'],
             'extensions' => $options['extensions'],
         ]);
-    }
-
-    /**
-     * Create a routing scope.
-     *
-     * Routing scopes allow you to keep your routes DRY and avoid repeating
-     * common path prefixes, and or parameter sets.
-     *
-     * Scoped collections will be indexed by path for faster route parsing. If you
-     * re-open or re-use a scope the connected routes will be merged with the
-     * existing ones.
-     *
-     * ### Options
-     *
-     * The `$params` array allows you to define options for the routing scope.
-     * The options listed below *are not* available to be used as routing defaults
-     *
-     * - `routeClass` The route class to use in this scope. Defaults to
-     *   `Router::defaultRouteClass()`
-     * - `extensions` The extensions to enable in this scope. Defaults to the globally
-     *   enabled extensions set with `Router::extensions()`
-     *
-     * ### Example
-     *
-     * ```
-     * Router::scope('/blog', ['plugin' => 'Blog'], function ($routes) {
-     *    $routes->connect('/', ['controller' => 'Articles']);
-     * });
-     * ```
-     *
-     * The above would result in a `/blog/` route being created, with both the
-     * plugin & controller default parameters set.
-     *
-     * You can use `Router::plugin()` and `Router::prefix()` as shortcuts to creating
-     * specific kinds of scopes.
-     *
-     * @param string $path The path prefix for the scope. This path will be prepended
-     *   to all routes connected in the scoped collection.
-     * @param callable|array $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a callable.
-     * @param callable|null $callback The callback to invoke with the scoped collection.
-     * @throws \InvalidArgumentException When an invalid callable is provided.
-     * @return void
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::scope()` instead.
-     */
-    public static function scope(string $path, callable|array $params = [], ?callable $callback = null): void
-    {
-        deprecationWarning(
-            '`Router::scope()` is deprecated, use the non-static method `RouterBuilder::scope()` instead.'
-        );
-
-        $options = [];
-        if (is_array($params)) {
-            $options = $params;
-            unset($params['routeClass'], $params['extensions']);
-        }
-        $builder = static::createRouteBuilder('/', $options);
-        $builder->scope($path, $params, $callback);
-    }
-
-    /**
-     * Create prefixed routes.
-     *
-     * This method creates a scoped route collection that includes
-     * relevant prefix information.
-     *
-     * The path parameter is used to generate the routing parameter name.
-     * For example a path of `admin` would result in `'prefix' => 'Admin'` being
-     * applied to all connected routes.
-     *
-     * The prefix name will be inflected to the dasherized version to create
-     * the routing path. If you want a custom path name, use the `path` option.
-     *
-     * You can re-open a prefix as many times as necessary, as well as nest prefixes.
-     * Nested prefixes will result in prefix values like `Admin/Api` which translates
-     * to the `Controller\Admin\Api\` namespace.
-     *
-     * @param string $name The prefix name to use.
-     * @param callable|array $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a callable.
-     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
-     * @return void
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::prefix()` instead.
-     */
-    public static function prefix(string $name, callable|array $params = [], ?callable $callback = null): void
-    {
-        deprecationWarning(
-            '`Router::prefix()` is deprecated, use the non-static method `RouterBuilder::prefix()` instead.'
-        );
-
-        if (!is_array($params)) {
-            $callback = $params;
-            $params = [];
-        }
-
-        $path = $params['path'] ?? '/' . Inflector::dasherize($name);
-        unset($params['path']);
-
-        $params = array_merge($params, ['prefix' => Inflector::camelize($name)]);
-        static::scope($path, $params, $callback);
-    }
-
-    /**
-     * Add plugin routes.
-     *
-     * This method creates a scoped route collection that includes
-     * relevant plugin information.
-     *
-     * The plugin name will be inflected to the dasherized version to create
-     * the routing path. If you want a custom path name, use the `path` option.
-     *
-     * Routes connected in the scoped collection will have the correct path segment
-     * prepended, and have a matching plugin routing key set.
-     *
-     * @param string $name The plugin name to build routes for
-     * @param callable|array $options Either the options to use, or a callback
-     * @param callable|null $callback The callback to invoke that builds the plugin routes.
-     *   Only required when $options is defined
-     * @return void
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::plugin()` instead.
-     */
-    public static function plugin(string $name, callable|array $options = [], ?callable $callback = null): void
-    {
-        deprecationWarning(
-            '`Router::plugin()` is deprecated, use the non-static method `RouterBuilder::plugin()` instead.'
-        );
-
-        if (!is_array($options)) {
-            $callback = $options;
-            $options = [];
-        }
-        $params = ['plugin' => $name];
-        $path = $options['path'] ?? '/' . Inflector::dasherize($name);
-        if (isset($options['_namePrefix'])) {
-            $params['_namePrefix'] = $options['_namePrefix'];
-        }
-        static::scope($path, $params, $callback);
     }
 
     /**
