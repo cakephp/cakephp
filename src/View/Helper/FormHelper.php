@@ -2262,6 +2262,7 @@ class FormHelper extends Helper
 
         $disabledIndex = array_search('disabled', $options, true);
         if (is_int($disabledIndex)) {
+            deprecationWarning('Using non-associative options is deprecated, use `\'disabled\' => true` instead.');
             unset($options[$disabledIndex]);
             $options['disabled'] = true;
         }
