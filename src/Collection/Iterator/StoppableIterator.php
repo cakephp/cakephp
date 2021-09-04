@@ -43,7 +43,7 @@ class StoppableIterator extends Collection
      *
      * @var \Traversable
      */
-    protected $_innerIterator;
+    protected Traversable $_innerIterator;
 
     /**
      * Creates an iterator that can be stopped based on a condition provided by a callback.

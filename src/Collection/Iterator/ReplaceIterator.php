@@ -39,7 +39,7 @@ class ReplaceIterator extends Collection
      *
      * @var \Traversable
      */
-    protected $_innerIterator;
+    protected Traversable $_innerIterator;
 
     /**
      * Creates an iterator from another iterator that will modify each of the values
