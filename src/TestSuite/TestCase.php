@@ -53,7 +53,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var array<string>
      */
-    protected $fixtures = [];
+    protected array $fixtures = [];
 
     /**
      * @var \Cake\TestSuite\Fixture\FixtureStrategyInterface|null
@@ -65,7 +65,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var array
      */
-    protected $_configure = [];
+    protected array $_configure = [];
 
     /**
      * Asserts that a string matches a given regular expression.

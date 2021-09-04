@@ -24,14 +24,14 @@ class ProductsFixture extends TestFixture
     /**
      * @inheritDoc
      */
-    public $table = 'products';
+    public string $table = 'products';
 
     /**
      * fields property
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'category' => ['type' => 'integer', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
@@ -44,7 +44,7 @@ class ProductsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['id' => 1, 'category' => 1, 'name' => 'First product', 'price' => 10],
         ['id' => 2, 'category' => 2, 'name' => 'Second product', 'price' => 20],
         ['id' => 3, 'category' => 3, 'name' => 'Third product', 'price' => 30],

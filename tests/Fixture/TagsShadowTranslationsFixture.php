@@ -26,7 +26,7 @@ class TagsShadowTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'locale' => ['type' => 'string', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
@@ -38,7 +38,7 @@ class TagsShadowTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['locale' => 'eng', 'id' => 1, 'name' => 'tag1 in eng'],
         ['locale' => 'deu', 'id' => 1, 'name' => 'tag1 in deu'],
         ['locale' => 'cze', 'id' => 1, 'name' => 'tag1 in cze'],

@@ -31,7 +31,7 @@ trait StringCompareTrait
      *
      * @var string
      */
-    protected $_compareBasePath = '';
+    protected string $_compareBasePath = '';
 
     /**
      * Update comparisons to match test changes
@@ -40,7 +40,7 @@ trait StringCompareTrait
      *
      * @var bool
      */
-    protected $_updateComparisons;
+    protected bool $_updateComparisons;
 
     /**
      * Compare the result to the contents of the file

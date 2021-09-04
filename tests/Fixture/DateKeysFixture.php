@@ -26,7 +26,7 @@ class DateKeysFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'date'],
         'title' => ['type' => 'string', 'null' => true],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
@@ -37,5 +37,5 @@ class DateKeysFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 }

@@ -27,7 +27,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @var array|int
      * @psalm-var TCode
      */
-    protected $code;
+    protected array|int $code;
 
     /**
      * Check assertion

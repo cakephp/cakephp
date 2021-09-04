@@ -44,7 +44,7 @@ class BelongsToManyTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.SpecialTags',

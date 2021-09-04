@@ -27,12 +27,12 @@ abstract class ContentsBase extends Constraint
     /**
      * @var string
      */
-    protected $contents;
+    protected string $contents;
 
     /**
      * @var string
      */
-    protected $output;
+    protected string $output;
 
     /**
      * Constructor

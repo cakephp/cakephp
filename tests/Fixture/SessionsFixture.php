@@ -27,7 +27,7 @@ class SessionsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'string', 'length' => 128],
         'data' => ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => true],
         'expires' => ['type' => 'integer', 'length' => 11, 'null' => true],
@@ -39,5 +39,5 @@ class SessionsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 }

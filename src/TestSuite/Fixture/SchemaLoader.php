@@ -38,12 +38,12 @@ class SchemaLoader
     /**
      * @var \Cake\Console\ConsoleIo
      */
-    protected $io;
+    protected ConsoleIo $io;
 
     /**
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'dropTables' => true,
         'outputLevel' => ConsoleIo::NORMAL,
     ];

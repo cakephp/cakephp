@@ -26,7 +26,7 @@ class SpecialTagsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'locale' => ['type' => 'string', 'null' => false],
         'extra_info' => ['type' => 'string'],
@@ -38,7 +38,7 @@ class SpecialTagsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['id' => 2, 'locale' => 'eng', 'extra_info' => 'Translated Info'],
     ];
 }

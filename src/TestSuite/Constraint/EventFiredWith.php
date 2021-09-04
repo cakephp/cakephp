@@ -20,21 +20,21 @@ class EventFiredWith extends Constraint
      *
      * @var \Cake\Event\EventManager
      */
-    protected $_eventManager;
+    protected EventManager $_eventManager;
 
     /**
      * Event data key
      *
      * @var string
      */
-    protected $_dataKey;
+    protected string $_dataKey;
 
     /**
      * Event data value
      *
      * @var mixed
      */
-    protected $_dataValue;
+    protected mixed $_dataValue;
 
     /**
      * Constructor

@@ -10,16 +10,16 @@ class ImportsFixture extends TestFixture
     /**
      * Import property
      *
-     * @var mixed
+     * @var array|null
      */
-    public $import = ['table' => 'posts', 'connection' => 'test'];
+    public ?array $import = ['table' => 'posts', 'connection' => 'test'];
 
     /**
      * Records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['title' => 'Hello!', 'body' => 'Hello world!'],
     ];
 }

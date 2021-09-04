@@ -23,7 +23,7 @@ class CompositeIncrementsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
         'account_id' => ['type' => 'integer', 'null' => false],
         'name' => ['type' => 'string', 'default' => null],
@@ -35,6 +35,6 @@ class CompositeIncrementsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
     ];
 }

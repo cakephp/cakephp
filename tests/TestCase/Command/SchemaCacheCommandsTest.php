@@ -34,7 +34,7 @@ class SchemaCacheCommandsTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = ['core.Articles', 'core.Tags'];
+    protected array $fixtures = ['core.Articles', 'core.Tags'];
 
     /**
      * @var \Cake\Datasource\ConnectionInterface

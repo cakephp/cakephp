@@ -29,7 +29,7 @@ use UnexpectedValueException;
 
 class FixtureHelperTest extends TestCase
 {
-    protected $fixtures = ['core.Articles'];
+    protected array $fixtures = ['core.Articles'];
 
     /**
      * Clean up after test.

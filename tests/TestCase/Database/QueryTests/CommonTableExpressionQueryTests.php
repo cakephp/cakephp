@@ -31,7 +31,7 @@ class CommonTableExpressionQueryTests extends TestCase
     /**
      * @inheritDoc
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
     ];
 

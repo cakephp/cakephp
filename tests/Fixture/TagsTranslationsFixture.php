@@ -26,7 +26,7 @@ class TagsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
         'locale' => ['type' => 'string', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
@@ -38,7 +38,7 @@ class TagsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['locale' => 'en_us', 'name' => 'tag 1 translated into en_us'],
         ['locale' => 'en_us', 'name' => 'tag 2 translated into en_us'],
         ['locale' => 'en_us', 'name' => 'tag 3 translated into en_us'],

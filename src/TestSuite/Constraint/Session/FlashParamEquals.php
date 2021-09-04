@@ -30,22 +30,22 @@ class FlashParamEquals extends Constraint
     /**
      * @var \Cake\Http\Session
      */
-    protected $session;
+    protected Session $session;
 
     /**
      * @var string
      */
-    protected $key;
+    protected string $key;
 
     /**
      * @var string
      */
-    protected $param;
+    protected string $param;
 
     /**
      * @var int|null
      */
-    protected $at;
+    protected ?int $at = null;
 
     /**
      * Constructor

@@ -26,7 +26,7 @@ class CommentsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'locale' => ['type' => 'string', 'null' => false],
         'comment' => 'text',
@@ -38,7 +38,7 @@ class CommentsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['locale' => 'eng', 'id' => 1, 'comment' => 'Comment #1'],
         ['locale' => 'eng', 'id' => 2, 'comment' => 'Comment #2'],
         ['locale' => 'eng', 'id' => 3, 'comment' => 'Comment #3'],

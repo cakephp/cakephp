@@ -26,7 +26,7 @@ class MailSentWith extends MailConstraintBase
     /**
      * @var string
      */
-    protected $method;
+    protected string $method;
 
     /**
      * Constructor

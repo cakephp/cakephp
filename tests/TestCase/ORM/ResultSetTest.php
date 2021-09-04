@@ -33,7 +33,7 @@ class ResultSetTest extends TestCase
     /**
      * @var array
      */
-    protected $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
+    protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
     /**
      * @var \Cake\ORM\Table

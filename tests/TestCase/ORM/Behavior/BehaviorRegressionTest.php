@@ -31,7 +31,7 @@ class BehaviorRegressionTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.NumberTrees',
         'core.Translates',
     ];

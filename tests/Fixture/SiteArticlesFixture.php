@@ -23,7 +23,7 @@ class SiteArticlesFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'author_id' => ['type' => 'integer', 'null' => true],
         'site_id' => ['type' => 'integer', 'null' => false],
@@ -37,7 +37,7 @@ class SiteArticlesFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         [
             'id' => 1,
             'author_id' => 1,

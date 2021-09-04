@@ -26,7 +26,7 @@ class SectionsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'locale' => ['type' => 'string', 'null' => false],
         'title' => ['type' => 'string'],
@@ -38,5 +38,5 @@ class SectionsTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 }

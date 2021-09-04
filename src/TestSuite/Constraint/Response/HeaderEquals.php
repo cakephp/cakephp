@@ -27,7 +27,7 @@ class HeaderEquals extends ResponseBase
     /**
      * @var string
      */
-    protected $headerName;
+    protected string $headerName;
 
     /**
      * Constructor.

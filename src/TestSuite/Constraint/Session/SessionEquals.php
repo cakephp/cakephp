@@ -28,7 +28,7 @@ class SessionEquals extends Constraint
     /**
      * @var string
      */
-    protected $path;
+    protected string $path;
 
     /**
      * Constructor

@@ -26,7 +26,7 @@ class CategoriesFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'parent_id' => ['type' => 'integer', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
@@ -40,7 +40,7 @@ class CategoriesFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
         ['parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
         ['parent_id' => 1, 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],

@@ -28,7 +28,7 @@ class MailContains extends MailConstraintBase
      *
      * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
     /**
      * Checks constraint

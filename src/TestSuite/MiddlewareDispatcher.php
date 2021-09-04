@@ -38,7 +38,7 @@ class MiddlewareDispatcher
      *
      * @var \Cake\Core\HttpApplicationInterface
      */
-    protected $app;
+    protected HttpApplicationInterface $app;
 
     /**
      * Constructor

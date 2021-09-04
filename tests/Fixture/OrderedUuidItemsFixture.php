@@ -26,7 +26,7 @@ class OrderedUuidItemsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'string', 'length' => 32],
         'published' => ['type' => 'boolean', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
@@ -38,6 +38,6 @@ class OrderedUuidItemsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
     ];
 }

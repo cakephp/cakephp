@@ -26,7 +26,7 @@ class ArticlesFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'author_id' => ['type' => 'integer', 'null' => true],
         'title' => ['type' => 'string', 'null' => true],
@@ -39,7 +39,7 @@ class ArticlesFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['author_id' => 1, 'title' => 'Plugin Article', 'body' => 'Plugin Article Body'],
     ];
 }

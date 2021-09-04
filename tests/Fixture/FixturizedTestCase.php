@@ -28,7 +28,7 @@ class FixturizedTestCase extends TestCase
      *
      * @var array
      */
-    protected $fixtures = ['core.Categories', 'core.Articles'];
+    protected array $fixtures = ['core.Categories', 'core.Articles'];
 
     /**
      * test that the shared fixture is correctly set

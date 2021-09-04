@@ -40,7 +40,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Posts', 'core.Articles', 'core.ArticlesTags',
         'core.Tags', 'core.Authors', 'core.AuthorsTags',
     ];

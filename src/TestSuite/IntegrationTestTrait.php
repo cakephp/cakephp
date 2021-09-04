@@ -62,6 +62,7 @@ use Cake\Utility\Security;
 use Exception;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Exception as PHPUnitException;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 /**
@@ -83,63 +84,63 @@ trait IntegrationTestTrait
      *
      * @var array
      */
-    protected $_request = [];
+    protected array $_request = [];
 
     /**
      * The response for the most recent request.
      *
      * @var \Psr\Http\Message\ResponseInterface|null
      */
-    protected $_response;
+    protected ?ResponseInterface $_response = null;
 
     /**
      * The exception being thrown if the case.
      *
      * @var \Throwable|null
      */
-    protected $_exception;
+    protected ?Throwable $_exception = null;
 
     /**
      * Session data to use in the next request.
      *
      * @var array
      */
-    protected $_session = [];
+    protected array $_session = [];
 
     /**
      * Cookie data to use in the next request.
      *
      * @var array
      */
-    protected $_cookie = [];
+    protected array $_cookie = [];
 
     /**
      * The controller used in the last request.
      *
      * @var \Cake\Controller\Controller|null
      */
-    protected $_controller;
+    protected ?Controller $_controller = null;
 
     /**
      * The last rendered view
      *
-     * @var string
+     * @var string|null
      */
-    protected $_viewName;
+    protected ?string $_viewName = null;
 
     /**
      * The last rendered layout
      *
-     * @var string
+     * @var string|null
      */
-    protected $_layoutName;
+    protected ?string $_layoutName = null;
 
     /**
      * The session instance from the last request
      *
-     * @var \Cake\Http\Session
+     * @var \Cake\Http\Session|null
      */
-    protected $_requestSession;
+    protected ?Session $_requestSession = null;
 
     /**
      * Boolean flag for whether or not the request should have
@@ -147,7 +148,7 @@ trait IntegrationTestTrait
      *
      * @var bool
      */
-    protected $_securityToken = false;
+    protected bool $_securityToken = false;
 
     /**
      * Boolean flag for whether or not the request should have
@@ -155,7 +156,7 @@ trait IntegrationTestTrait
      *
      * @var bool
      */
-    protected $_csrfToken = false;
+    protected bool $_csrfToken = false;
 
     /**
      * Boolean flag for whether or not the request should re-store
@@ -163,33 +164,33 @@ trait IntegrationTestTrait
      *
      * @var bool
      */
-    protected $_retainFlashMessages = false;
+    protected bool $_retainFlashMessages = false;
 
     /**
      * Stored flash messages before render
      *
      * @var array
      */
-    protected $_flashMessages = [];
+    protected array $_flashMessages = [];
 
     /**
      * @var string|null
      */
-    protected $_cookieEncryptionKey;
+    protected ?string $_cookieEncryptionKey = null;
 
     /**
      * List of fields that are excluded from field validation.
      *
      * @var array<string>
      */
-    protected $_unlockedFields = [];
+    protected array $_unlockedFields = [];
 
     /**
      * The name that will be used when retrieving the csrf token.
      *
      * @var string
      */
-    protected $_csrfKeyName = 'csrfToken';
+    protected string $_csrfKeyName = 'csrfToken';
 
     /**
      * Clears the state used for requests.

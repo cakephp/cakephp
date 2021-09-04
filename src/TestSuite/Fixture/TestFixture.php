@@ -41,15 +41,14 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      *
      * @var string
      */
-    public $connection = 'test';
+    public string $connection = 'test';
 
     /**
      * Full Table Name
      *
      * @var string
-     * @psalm-suppress PropertyNotSetInConstructor
      */
-    public $table;
+    public string $table = '';
 
     /**
      * Fields / Schema for the fixture.
@@ -60,7 +59,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      *
      * @var array
      */
-    public $fields = [];
+    public array $fields = [];
 
     /**
      * Configuration for importing fixture schema
@@ -71,14 +70,14 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      *
      * @var array|null
      */
-    public $import;
+    public ?array $import = null;
 
     /**
      * Fixture records to be inserted.
      *
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 
     /**
      * The schema for this fixture.
@@ -93,7 +92,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      *
      * @var array
      */
-    protected $_constraints = [];
+    protected array $_constraints = [];
 
     /**
      * Instantiate the fixture.
@@ -140,7 +139,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     public function init(): void
     {
-        if ($this->table === null) {
+        if (empty($this->table)) {
             $this->table = $this->_tableFromClass();
         }
 
@@ -334,7 +333,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     public function insert(ConnectionInterface $connection): StatementInterface|bool
     {
-        if (isset($this->records) && !empty($this->records)) {
+        if (!empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
             /** @var \Cake\Database\Connection $connection */
             $query = $connection->newQuery()

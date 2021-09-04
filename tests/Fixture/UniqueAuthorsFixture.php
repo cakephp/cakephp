@@ -26,7 +26,7 @@ class UniqueAuthorsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'first_author_id' => ['type' => 'integer', 'null' => true],
         'second_author_id' => ['type' => 'integer', 'null' => false],
@@ -41,7 +41,7 @@ class UniqueAuthorsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['first_author_id' => null, 'second_author_id' => 1],
     ];
 }

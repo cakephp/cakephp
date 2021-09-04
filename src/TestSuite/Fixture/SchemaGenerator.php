@@ -36,12 +36,12 @@ class SchemaGenerator
      *
      * @var string
      */
-    protected $file;
+    protected string $file;
 
     /**
      * @var string
      */
-    protected $connection;
+    protected string $connection;
 
     /**
      * Constructor
