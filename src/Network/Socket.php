@@ -38,7 +38,7 @@ class Socket
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'persistent' => false,
         'host' => 'localhost',
         'protocol' => 'tcp',
@@ -58,28 +58,28 @@ class Socket
      *
      * @var bool
      */
-    protected $connected = false;
+    protected bool $connected = false;
 
     /**
      * This variable contains an array with the last error number (num) and string (str)
      *
      * @var array
      */
-    protected $lastError = [];
+    protected array $lastError = [];
 
     /**
      * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
      *
      * @var bool
      */
-    protected $encrypted = false;
+    protected bool $encrypted = false;
 
     /**
      * Contains all the encryption methods available
      *
      * @var array
      */
-    protected $_encryptMethods = [
+    protected array $_encryptMethods = [
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
         'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
         'tlsv10_client' => STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT,
@@ -98,7 +98,7 @@ class Socket
      *
      * @var array
      */
-    protected $_connectionErrors = [];
+    protected array $_connectionErrors = [];
 
     /**
      * Constructor.
