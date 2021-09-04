@@ -492,16 +492,4 @@ class SocketTest extends TestCase
         ]);
         $socket->connect();
     }
-
-    /**
-     * @return void
-     * @deprecated
-     */
-    public function testDeprecatedProps()
-    {
-        $this->deprecated(function () {
-            $this->assertFalse($this->Socket->connected);
-            $this->assertFalse($this->Socket->encrypted);
-        });
-    }
 }
