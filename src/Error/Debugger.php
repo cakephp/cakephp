@@ -60,7 +60,7 @@ class Debugger
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'outputMask' => [],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
@@ -71,7 +71,7 @@ class Debugger
      *
      * @var string
      */
-    protected $_outputFormat = 'js';
+    protected string $_outputFormat = 'js';
 
     /**
      * Templates used when generating trace or error strings. Can be global or indexed by the format
@@ -79,7 +79,7 @@ class Debugger
      *
      * @var array
      */
-    protected $_templates = [
+    protected array $_templates = [
         'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
             'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]',
@@ -115,7 +115,7 @@ class Debugger
      *
      * @var array
      */
-    protected $editors = [
+    protected array $editors = [
         'atom' => 'atom://core/open/file?filename={file}&line={line}',
         'emacs' => 'emacs://open?url=file://{file}&line={line}',
         'macvim' => 'mvim://open/?url=file://{file}&line={line}',
@@ -130,7 +130,7 @@ class Debugger
      *
      * @var array
      */
-    protected $_data = [];
+    protected array $_data = [];
 
     /**
      * Constructor.

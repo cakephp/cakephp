@@ -39,7 +39,7 @@ class ErrorLogger implements ErrorLoggerInterface
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'skipLog' => [],
         'trace' => false,
     ];

@@ -39,7 +39,7 @@ abstract class BaseErrorHandler
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'log' => true,
         'trace' => false,
         'skipLog' => [],
@@ -49,14 +49,14 @@ abstract class BaseErrorHandler
     /**
      * @var bool
      */
-    protected $_handled = false;
+    protected bool $_handled = false;
 
     /**
      * Exception logger instance.
      *
      * @var \Cake\Error\ErrorLoggerInterface|null
      */
-    protected $logger;
+    protected ?ErrorLoggerInterface $logger = null;
 
     /**
      * Display an error message in an environment specific way.

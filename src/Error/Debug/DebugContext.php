@@ -31,17 +31,17 @@ class DebugContext
     /**
      * @var int
      */
-    private $maxDepth = 0;
+    private int $maxDepth = 0;
 
     /**
      * @var int
      */
-    private $depth = 0;
+    private int $depth = 0;
 
     /**
      * @var \SplObjectStorage
      */
-    private $refs;
+    private SplObjectStorage $refs;
 
     /**
      * Constructor

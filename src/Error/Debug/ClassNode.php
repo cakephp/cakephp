@@ -24,17 +24,17 @@ class ClassNode implements NodeInterface
     /**
      * @var string
      */
-    private $class;
+    private string $class;
 
     /**
      * @var int
      */
-    private $id;
+    private int $id;
 
     /**
      * @var array<\Cake\Error\Debug\PropertyNode>
      */
-    private $properties = [];
+    private array $properties = [];
 
     /**
      * Constructor

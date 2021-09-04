@@ -24,12 +24,12 @@ class ArrayItemNode implements NodeInterface
     /**
      * @var \Cake\Error\Debug\NodeInterface
      */
-    private $key;
+    private NodeInterface $key;
 
     /**
      * @var \Cake\Error\Debug\NodeInterface
      */
-    private $value;
+    private NodeInterface $value;
 
     /**
      * Constructor

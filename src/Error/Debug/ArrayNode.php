@@ -24,7 +24,7 @@ class ArrayNode implements NodeInterface
     /**
      * @var array<\Cake\Error\Debug\ArrayItemNode>
      */
-    private $items;
+    private array $items;
 
     /**
      * Constructor

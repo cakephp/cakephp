@@ -24,7 +24,7 @@ class SpecialNode implements NodeInterface
     /**
      * @var string
      */
-    private $value;
+    private string $value;
 
     /**
      * Constructor

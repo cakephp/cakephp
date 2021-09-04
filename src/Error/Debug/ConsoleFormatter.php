@@ -30,7 +30,7 @@ class ConsoleFormatter implements FormatterInterface
      *
      * @var array
      */
-    protected $styles = [
+    protected array $styles = [
         // bold yellow
         'const' => '1;33',
         // green
