@@ -82,35 +82,35 @@ class Message implements JsonSerializable
      *
      * @var array
      */
-    protected $to = [];
+    protected array $to = [];
 
     /**
      * The mail which the email is sent from
      *
      * @var array
      */
-    protected $from = [];
+    protected array $from = [];
 
     /**
      * The sender email
      *
      * @var array
      */
-    protected $sender = [];
+    protected array $sender = [];
 
     /**
      * List of email(s) that the recipient will reply to
      *
      * @var array
      */
-    protected $replyTo = [];
+    protected array $replyTo = [];
 
     /**
      * The read receipt email
      *
      * @var array
      */
-    protected $readReceipt = [];
+    protected array $readReceipt = [];
 
     /**
      * The mail that will be used in case of any errors like
@@ -120,7 +120,7 @@ class Message implements JsonSerializable
      *
      * @var array
      */
-    protected $returnPath = [];
+    protected array $returnPath = [];
 
     /**
      * Carbon Copy
@@ -130,7 +130,7 @@ class Message implements JsonSerializable
      *
      * @var array
      */
-    protected $cc = [];
+    protected array $cc = [];
 
     /**
      * Blind Carbon Copy
@@ -140,14 +140,14 @@ class Message implements JsonSerializable
      *
      * @var array
      */
-    protected $bcc = [];
+    protected array $bcc = [];
 
     /**
      * Message ID
      *
      * @var string|bool
      */
-    protected $messageId = true;
+    protected string|bool $messageId = true;
 
     /**
      * Domain for messageId generation.
@@ -155,14 +155,14 @@ class Message implements JsonSerializable
      *
      * @var string
      */
-    protected $domain = '';
+    protected string $domain = '';
 
     /**
      * The subject of the email
      *
      * @var string
      */
-    protected $subject = '';
+    protected string $subject = '';
 
     /**
      * Associative array of a user defined headers
@@ -170,49 +170,49 @@ class Message implements JsonSerializable
      *
      * @var array
      */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * Text message
      *
      * @var string
      */
-    protected $textMessage = '';
+    protected string $textMessage = '';
 
     /**
      * Html message
      *
      * @var string
      */
-    protected $htmlMessage = '';
+    protected string $htmlMessage = '';
 
     /**
      * Final message to send
      *
      * @var array
      */
-    protected $message = [];
+    protected array $message = [];
 
     /**
      * Available formats to be sent.
      *
      * @var array
      */
-    protected $emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
+    protected array $emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
 
     /**
      * What format should the email be sent in
      *
      * @var string
      */
-    protected $emailFormat = self::MESSAGE_TEXT;
+    protected string $emailFormat = self::MESSAGE_TEXT;
 
     /**
      * Charset the email body is sent in
      *
      * @var string
      */
-    protected $charset = 'utf-8';
+    protected string $charset = 'utf-8';
 
     /**
      * Charset the email header is sent in
@@ -220,7 +220,7 @@ class Message implements JsonSerializable
      *
      * @var string|null
      */
-    protected $headerCharset;
+    protected ?string $headerCharset = null;
 
     /**
      * The email transfer encoding used.
@@ -228,14 +228,14 @@ class Message implements JsonSerializable
      *
      * @var string|null
      */
-    protected $transferEncoding;
+    protected ?string $transferEncoding = null;
 
     /**
      * Available encoding to be set for transfer.
      *
      * @var array
      */
-    protected $transferEncodingAvailable = [
+    protected array $transferEncodingAvailable = [
         '7bit',
         '8bit',
         'base64',
@@ -248,7 +248,7 @@ class Message implements JsonSerializable
      *
      * @var string|null
      */
-    protected $appCharset;
+    protected ?string $appCharset = null;
 
     /**
      * List of files that should be attached to the email.
@@ -257,35 +257,35 @@ class Message implements JsonSerializable
      *
      * @var array
      */
-    protected $attachments = [];
+    protected array $attachments = [];
 
     /**
      * If set, boundary to use for multipart mime messages
      *
      * @var string|null
      */
-    protected $boundary;
+    protected ?string $boundary = null;
 
     /**
      * Contains the optional priority of the email.
      *
      * @var int|null
      */
-    protected $priority;
+    protected ?int $priority = null;
 
     /**
      * 8Bit character sets
      *
      * @var array
      */
-    protected $charset8bit = ['UTF-8', 'SHIFT_JIS'];
+    protected array $charset8bit = ['UTF-8', 'SHIFT_JIS'];
 
     /**
      * Define Content-Type charset name
      *
      * @var array
      */
-    protected $contentTypeCharset = [
+    protected array $contentTypeCharset = [
         'ISO-2022-JP-MS' => 'ISO-2022-JP',
     ];
 
@@ -297,7 +297,7 @@ class Message implements JsonSerializable
      *
      * @var string|null
      */
-    protected $emailPattern = self::EMAIL_PATTERN;
+    protected ?string $emailPattern = self::EMAIL_PATTERN;
 
     /**
      * Constructor

@@ -31,7 +31,7 @@ abstract class AbstractTransport
      *
      * @var array
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * Send mail
