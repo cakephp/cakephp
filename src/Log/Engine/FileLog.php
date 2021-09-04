@@ -45,7 +45,7 @@ class FileLog extends BaseLog
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'path' => null,
         'file' => null,
         'types' => null,
@@ -64,21 +64,21 @@ class FileLog extends BaseLog
      *
      * @var string
      */
-    protected $_path;
+    protected string $_path;
 
     /**
      * The name of the file to save logs into.
      *
      * @var string|null
      */
-    protected $_file;
+    protected ?string $_file = null;
 
     /**
      * Max file size, used for log file rotation.
      *
      * @var int|null
      */
-    protected $_size;
+    protected ?int $_size = null;
 
     /**
      * Sets protected properties based on config provided

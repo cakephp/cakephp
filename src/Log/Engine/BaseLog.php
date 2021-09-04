@@ -38,7 +38,7 @@ abstract class BaseLog extends AbstractLogger
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'levels' => [],
         'scopes' => [],
         'formatter' => DefaultFormatter::class,
@@ -47,7 +47,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * @var \Cake\Log\Formatter\AbstractFormatter
      */
-    protected $formatter;
+    protected AbstractFormatter $formatter;
 
     /**
      * __construct method
