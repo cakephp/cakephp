@@ -46,7 +46,7 @@ class DatabaseSession implements SessionHandlerInterface
      * Constructor. Looks at Session configuration information and
      * sets up the session model.
      *
-     * @param array $config The configuration for this engine. It requires the 'model'
+     * @param array<string, mixed> $config The configuration for this engine. It requires the 'model'
      * key to be present corresponding to the Table to use for managing the sessions.
      */
     public function __construct(array $config = [])

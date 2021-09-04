@@ -70,7 +70,7 @@ class ConnectionRegistry extends ObjectRegistry
      *
      * @param callable|object|string $class The classname or object to make.
      * @param string $alias The alias of the object.
-     * @param array $config An array of settings to use for the datasource.
+     * @param array<string, mixed> $config An array of settings to use for the datasource.
      * @return object A connection with the correct settings.
      */
     protected function _create(callable|object|string $class, string $alias, array $config): object

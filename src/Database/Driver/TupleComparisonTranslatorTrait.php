@@ -73,7 +73,8 @@ trait TupleComparisonTranslatorTrait
 
         $type = $expression->getType();
         if ($type) {
-            $typeMap = array_combine($fields, $type);
+            /** @var array<string, string> $typeMap */
+            $typeMap = array_combine($fields, $type) ?: [];
         } else {
             $typeMap = [];
         }

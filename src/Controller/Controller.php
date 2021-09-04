@@ -277,7 +277,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Will result in a `Toolbar` property being set.
      *
      * @param string $name The name of the component to load.
-     * @param array $config The config for the component.
+     * @param array<string, mixed> $config The config for the component.
      * @return \Cake\Controller\Component
      * @throws \Exception
      */
@@ -518,7 +518,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Register middleware for the controller.
      *
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware Middleware.
-     * @param array $options Valid options:
+     * @param array<string, mixed> $options Valid options:
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
@@ -569,7 +569,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Returns a list of all events that will fire in the controller during its lifecycle.
      * You can override this function to add your own listener callbacks
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

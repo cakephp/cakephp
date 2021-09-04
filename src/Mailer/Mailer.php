@@ -591,7 +591,7 @@ class Mailer implements EventListenerInterface
     /**
      * Implemented events.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

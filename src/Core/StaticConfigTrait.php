@@ -207,7 +207,7 @@ trait StaticConfigTrait
      * Note that querystring arguments are also parsed and set as values in the returned configuration.
      *
      * @param string $dsn The DSN string to convert to a configuration array
-     * @return array The configuration array to be stored after parsing the DSN
+     * @return array<string, mixed> The configuration array to be stored after parsing the DSN
      * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
     public static function parseDsn(string $dsn): array
@@ -303,7 +303,7 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param array<string> $map Additions/edits to the class map to apply.
+     * @param array<string, string> $map Additions/edits to the class map to apply.
      * @return void
      * @psalm-param array<string, class-string> $map
      */
@@ -315,7 +315,7 @@ REGEXP;
     /**
      * Returns the DSN class map for this class.
      *
-     * @return array<string>
+     * @return array<string, string>
      * @psalm-return array<string, class-string>
      */
     public static function getDsnClassMap(): array

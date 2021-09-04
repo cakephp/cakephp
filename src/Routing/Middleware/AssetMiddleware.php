@@ -45,7 +45,7 @@ class AssetMiddleware implements MiddlewareInterface
     /**
      * Constructor.
      *
-     * @param array $options The options to use
+     * @param array<string, mixed> $options The options to use
      */
     public function __construct(array $options = [])
     {

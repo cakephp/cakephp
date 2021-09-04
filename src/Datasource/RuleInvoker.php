@@ -62,7 +62,7 @@ class RuleInvoker
      *
      * @param callable $rule The rule to be invoked.
      * @param ?string $name The name of the rule. Used in error messsages.
-     * @param array $options The options for the rule. See above.
+     * @param array<string, mixed> $options The options for the rule. See above.
      */
     public function __construct(callable $rule, ?string $name, array $options = [])
     {
@@ -76,7 +76,7 @@ class RuleInvoker
      *
      * Old options will be merged with the new ones.
      *
-     * @param array $options The options to set.
+     * @param array<string, mixed> $options The options to set.
      * @return $this
      */
     public function setOptions(array $options)

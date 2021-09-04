@@ -237,7 +237,7 @@ class EagerLoader
      * @param string $associationPath Dot separated association path, 'Name1.Name2.Name3'
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
-     * @param array $options Extra options for the association matching.
+     * @param array<string, mixed> $options Extra options for the association matching.
      * @return $this
      */
     public function setMatching(string $associationPath, ?callable $builder = null, array $options = [])
@@ -475,8 +475,8 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $parent owning side of the association
      * @param string $alias name of the association to be loaded
-     * @param array $options list of extra options to use for this association
-     * @param array $paths An array with two values, the first one is a list of dot
+     * @param array<string, mixed> $options list of extra options to use for this association
+     * @param array<string, mixed> $paths An array with two values, the first one is a list of dot
      * separated strings representing associations that lead to this `$alias` in the
      * chain of associations to be loaded. The second value is the path to follow in
      * entities' properties to fetch a record of the corresponding association.

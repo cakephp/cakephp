@@ -126,7 +126,7 @@ class RouteBuilder
      * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
      * @param string $path The path prefix the scope is for.
      * @param array $params The scope's routing parameters.
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      */
     public function __construct(RouteCollection $collection, string $path, array $params = [], array $options = [])
     {
@@ -660,7 +660,7 @@ class RouteBuilder
      * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
      * @param array|string $defaults An array describing the default route parameters.
      *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
-     * @param array $options An array matching the named elements in the route to regular expressions which that
+     * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
      *   custom routing class.
@@ -710,7 +710,7 @@ class RouteBuilder
      *
      * @param \Cake\Routing\Route\Route|string $route The route template or route object.
      * @param array $defaults Default parameters.
-     * @param array $options Additional options parameters.
+     * @param array<string, mixed> $options Additional options parameters.
      * @return \Cake\Routing\Route\Route
      * @throws \InvalidArgumentException when route class or route object is invalid.
      * @throws \BadMethodCallException when the route to make conflicts with the current scope
@@ -786,7 +786,7 @@ class RouteBuilder
      *
      * @param string $route A string describing the template of the route
      * @param array|string $url A URL to redirect to. Can be a string or a Cake array-based URL
-     * @param array $options An array matching the named elements in the route to regular expressions which that
+     * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return \Cake\Routing\Route\Route|\Cake\Routing\Route\RedirectRoute

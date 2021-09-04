@@ -191,7 +191,7 @@ class Cookie implements CookieInterface
      * - `samesite`: Can be one of `CookieInterface::SAMESITE_LAX`, `CookieInterface::SAMESITE_STRICT`,
      *    `CookieInterface::SAMESITE_NONE` or `null`. Defaults to `null`.
      *
-     * @param array $options Default options.
+     * @param array<string, mixed> $options Default options.
      * @return void
      */
     public static function setDefaults(array $options): void
@@ -211,7 +211,7 @@ class Cookie implements CookieInterface
      *
      * @param string $name Cookie name
      * @param array|string|float|int|bool $value Value of the cookie
-     * @param array $options Cookies options.
+     * @param array<string, mixed> $options Cookies options.
      * @return static
      * @see \Cake\Cookie\Cookie::setDefaults()
      */
@@ -271,9 +271,9 @@ class Cookie implements CookieInterface
      * Create Cookie instance from "set-cookie" header string.
      *
      * @param string $cookie Cookie header string.
-     * @param array $defaults Default attributes.
+     * @param array<string, mixed> $defaults Default attributes.
      * @return static
-     * @see \Cake\Cookie\Cookie::setDefaults()
+     * @see \Cake\Http\Cookie\Cookie::setDefaults()
      */
     public static function createFromHeaderString(string $cookie, array $defaults = []): static
     {

@@ -809,7 +809,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * $options = $query->getOptions();
      * ```
      *
-     * @param array $options The options to be applied
+     * @param array<string, mixed> $options The options to be applied
      * @return $this
      * @see getOptions()
      */
@@ -1220,7 +1220,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * {@inheritDoc}
      *
      * @param string $finder The finder method to use.
-     * @param array $options The options for the finder.
+     * @param array<string, mixed> $options The options for the finder.
      * @return static Returns a modified query.
      * @psalm-suppress MoreSpecificReturnType
      */

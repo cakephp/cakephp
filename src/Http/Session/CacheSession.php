@@ -39,7 +39,7 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Constructor.
      *
-     * @param array $config The configuration to use for this engine
+     * @param array<string, mixed> $config The configuration to use for this engine
      * It requires the key 'config' which is the name of the Cache config to use for
      * storing the session
      * @throws \InvalidArgumentException if the 'config' key is not provided

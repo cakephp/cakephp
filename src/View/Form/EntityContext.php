@@ -221,7 +221,7 @@ class EntityContext implements ContextInterface
      * Traverses the entity data and finds the value for $path.
      *
      * @param string $field The dot separated path to the value.
-     * @param array $options Options:
+     * @param array<string, mixed> $options Options:
      *
      *   - `default`: Default value to return if no value found in data or
      *     entity.

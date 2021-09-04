@@ -99,7 +99,7 @@ class SelectLoader
      * Copies the options array to properties in this class. The keys in the array correspond
      * to properties in this class.
      *
-     * @param array $options Properties to be copied to this class
+     * @param array<string, mixed> $options Properties to be copied to this class
      */
     public function __construct(array $options)
     {
@@ -118,7 +118,7 @@ class SelectLoader
      * Returns a callable that can be used for injecting association results into a given
      * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
      *
-     * @param array $options Same options as `Association::eagerLoader()`
+     * @param array<string, mixed> $options Same options as `Association::eagerLoader()`
      * @return \Closure
      */
     public function buildEagerLoader(array $options): Closure
@@ -151,7 +151,7 @@ class SelectLoader
      * in the target table that are associated to those specified in $options from
      * the source table
      *
-     * @param array $options options accepted by eagerLoader()
+     * @param array<string, mixed> $options options accepted by eagerLoader()
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
@@ -238,7 +238,7 @@ class SelectLoader
      * If the required fields are missing, throws an exception.
      *
      * @param \Cake\ORM\Query $fetchQuery The association fetching query
-     * @param array $key The foreign key fields to check
+     * @param array<string> $key The foreign key fields to check
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -363,7 +363,7 @@ class SelectLoader
      * Generates a string used as a table field that contains the values upon
      * which the filter should be applied
      *
-     * @param array $options The options for getting the link field.
+     * @param array<string, mixed> $options The options for getting the link field.
      * @return array<string>|string
      * @throws \RuntimeException
      */
@@ -461,8 +461,8 @@ class SelectLoader
      * the foreignKey value corresponding to this association.
      *
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
-     * @param array $options The options passed to the eager loader
-     * @return array
+     * @param array<string, mixed> $options The options passed to the eager loader
+     * @return array<string, mixed>
      */
     protected function _buildResultMap(Query $fetchQuery, array $options): array
     {
@@ -493,9 +493,9 @@ class SelectLoader
      * for injecting the eager loaded rows
      *
      * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
-     * @param array $resultMap an array with the foreignKey as keys and
+     * @param array<string, mixed> $resultMap an array with the foreignKey as keys and
      * the corresponding target table results as value.
-     * @param array $options The options passed to the eagerLoader method
+     * @param array<string, mixed> $options The options passed to the eagerLoader method
      * @return \Closure
      */
     protected function _resultInjector(Query $fetchQuery, array $resultMap, array $options): Closure
@@ -531,7 +531,7 @@ class SelectLoader
      * for injecting the eager loaded rows when the matching needs to
      * be done with multiple foreign keys
      *
-     * @param array $resultMap A keyed arrays containing the target table
+     * @param array<string, mixed> $resultMap A keyed arrays containing the target table
      * @param array<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure

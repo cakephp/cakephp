@@ -58,7 +58,7 @@ class FormProtectionComponent extends Component
      *   failure. Must be a valid Closure. Unset by default in which case
      *   exception is thrown on validation failure.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'validate' => true,
@@ -118,7 +118,7 @@ class FormProtectionComponent extends Component
     /**
      * Events supported by this component.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

@@ -61,7 +61,7 @@ trait StringTemplateTrait
      * Formats a template string with $data
      *
      * @param string $name The template name.
-     * @param array $data The data to insert.
+     * @param array<string, mixed> $data The data to insert.
      * @return string
      */
     public function formatTemplate(string $name, array $data): string

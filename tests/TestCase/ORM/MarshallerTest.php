@@ -2838,19 +2838,23 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that it is possible to pass a validator directly in the options
+     *
+     * @deprecated
      */
     public function testPassingCustomValidator(): void
     {
-        $data = [
-            'title' => 'Thing',
-            'body' => 'hey',
-        ];
+        $this->deprecated(function () {
+            $data = [
+                'title' => 'Thing',
+                'body' => 'hey',
+            ];
 
-        $validator = clone $this->articles->getValidator();
-        $validator->requirePresence('thing');
-        $marshall = new Marshaller($this->articles);
-        $entity = $marshall->one($data, ['validate' => $validator]);
-        $this->assertNotEmpty($entity->getError('thing'));
+            $validator = clone $this->articles->getValidator();
+            $validator->requirePresence('thing');
+            $marshall = new Marshaller($this->articles);
+            $entity = $marshall->one($data, ['validate' => $validator]);
+            $this->assertNotEmpty($entity->getError('thing'));
+        });
     }
 
     /**
@@ -2862,9 +2866,12 @@ class MarshallerTest extends TestCase
             'title' => 'foo',
             'number' => 'bar',
         ];
-        $validator = (new Validator())->add('number', 'numeric', ['rule' => 'numeric']);
+        $this->articles->setValidator(
+            'custom',
+            (new Validator())->add('number', 'numeric', ['rule' => 'numeric'])
+        );
         $marshall = new Marshaller($this->articles);
-        $entity = $marshall->one($data, ['validate' => $validator]);
+        $entity = $marshall->one($data, ['validate' => 'custom']);
         $this->assertNotEmpty($entity->getError('number'));
         $this->assertNull($entity->number);
         $this->assertSame(['number' => 'bar'], $entity->getInvalid());

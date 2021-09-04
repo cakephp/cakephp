@@ -39,7 +39,7 @@ abstract class AbstractDecorator
      * Constructor.
      *
      * @param callable $callable Callable.
-     * @param array $options Decorator options.
+     * @param array<string, mixed> $options Decorator options.
      */
     public function __construct(callable $callable, array $options = [])
     {

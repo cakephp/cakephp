@@ -65,7 +65,7 @@ class RequestHandlerComponent extends Component
      * - `viewClassMap` - Mapping between type and view classes. If undefined
      *   JSON, XML, and AJAX will be mapped. Defining any types will omit the defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'checkHttpCache' => true,
@@ -76,7 +76,7 @@ class RequestHandlerComponent extends Component
      * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
      *
      * @param \Cake\Controller\ComponentRegistry $registry ComponentRegistry object.
-     * @param array $config Array of config.
+     * @param array<string, mixed> $config Array of config.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -93,7 +93,7 @@ class RequestHandlerComponent extends Component
     /**
      * Events supported by this component.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -388,7 +388,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller A reference to a controller object
      * @param string $type Type of response to send (e.g: 'ajax')
-     * @param array $options Array of options to use
+     * @param array<string, mixed> $options Array of options to use
      * @return void
      * @see \Cake\Controller\Component\RequestHandlerComponent::respondAs()
      */
@@ -442,7 +442,7 @@ class RequestHandlerComponent extends Component
      *
      * @param string $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
      *    like 'application/x-shockwave'.
-     * @param array $options If $type is a friendly type name that is associated with
+     * @param array<string, mixed> $options If $type is a friendly type name that is associated with
      *    more than one type of content, $index is used to select which content-type to use.
      * @return bool Returns false if the friendly type name given in $type does
      *    not exist in the type map, or if the Content-type header has

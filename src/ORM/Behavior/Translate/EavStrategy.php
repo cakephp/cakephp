@@ -52,7 +52,7 @@ class EavStrategy implements TranslateStrategyInterface
      *
      * These are merged with user-provided configuration.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'fields' => [],
@@ -70,7 +70,7 @@ class EavStrategy implements TranslateStrategyInterface
      * Constructor
      *
      * @param \Cake\ORM\Table $table The table this strategy is attached to.
-     * @param array $config The config for this strategy.
+     * @param array<string, mixed> $config The config for this strategy.
      */
     public function __construct(Table $table, array $config = [])
     {

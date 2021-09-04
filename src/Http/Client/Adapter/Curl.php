@@ -78,7 +78,7 @@ class Curl implements AdapterInterface
      * Convert client options into curl options.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request.
-     * @param array $options The client options
+     * @param array<string, mixed> $options The client options
      * @return array
      */
     public function buildOptions(RequestInterface $request, array $options): array

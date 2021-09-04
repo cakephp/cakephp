@@ -129,7 +129,7 @@ class Connection implements ConnectionInterface
      *    If set to a string it will be used as the name of cache config to use.
      * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
      *
-     * @param array $config Configuration array.
+     * @param array<string, mixed> $config Configuration array.
      */
     public function __construct(array $config)
     {
@@ -183,7 +183,7 @@ class Connection implements ConnectionInterface
      * as a class name and will be instantiated.
      *
      * @param \Cake\Database\DriverInterface|string $driver The driver instance to use.
-     * @param array $config Config for a new driver.
+     * @param array<string, mixed> $config Config for a new driver.
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
      * @return $this
@@ -933,7 +933,7 @@ class Connection implements ConnectionInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

@@ -37,7 +37,7 @@ class ErrorLogger implements ErrorLoggerInterface
      *   extend one of the listed exceptions will also not be logged.
      * - `trace` Should error logs include stack traces?
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'skipLog' => [],
@@ -47,7 +47,7 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * Constructor
      *
-     * @param array $config Config array.
+     * @param array<string, mixed> $config Config array.
      */
     public function __construct(array $config = [])
     {

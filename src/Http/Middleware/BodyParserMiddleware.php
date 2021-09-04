@@ -59,7 +59,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      *   handling requires more care than JSON does.
      * - `methods` The HTTP methods to parse on. Defaults to PUT, POST, PATCH DELETE.
      *
-     * @param array $options The options to use. See above.
+     * @param array<string, mixed> $options The options to use. See above.
      */
     public function __construct(array $options = [])
     {

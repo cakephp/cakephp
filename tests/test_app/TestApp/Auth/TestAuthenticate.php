@@ -30,7 +30,7 @@ class TestAuthenticate extends BaseAuthenticate
     public $authenticationProvider;
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -41,7 +41,7 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function authenticate(ServerRequest $request, Response $response): array
     {

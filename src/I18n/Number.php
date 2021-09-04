@@ -78,7 +78,7 @@ class Number
      *
      * @param string|float|int $value A floating point number.
      * @param int $precision The precision of the returned number.
-     * @param array $options Additional options
+     * @param array<string, mixed> $options Additional options
      * @return string Formatted float.
      * @link https://book.cakephp.org/4/en/core-libraries/number.html#formatting-floating-point-numbers
      */
@@ -124,7 +124,7 @@ class Number
      *
      * @param string|float|int $value A floating point number
      * @param int $precision The precision of the returned number
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @return string Percentage string
      * @link https://book.cakephp.org/4/en/core-libraries/number.html#formatting-percentages
      */
@@ -151,7 +151,7 @@ class Number
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
      * @param string|float|int $value A floating point number.
-     * @param array $options An array with options.
+     * @param array<string, mixed> $options An array with options.
      * @return string Formatted number
      */
     public static function format(string|float|int $value, array $options = []): string
@@ -172,7 +172,7 @@ class Number
      *    numbers representing money.
      *
      * @param string $value A numeric string.
-     * @param array $options An array with options.
+     * @param array<string, mixed> $options An array with options.
      * @return float point number
      */
     public static function parseFloat(string $value, array $options = []): float
@@ -194,7 +194,7 @@ class Number
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
      * @param string|float|int $value A floating point number
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return string formatted delta
      */
     public static function formatDelta(string|float|int $value, array $options = []): string
@@ -227,7 +227,7 @@ class Number
      *
      * @param string|float|int $value Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return string Number formatted as a currency.
      */
     public static function currency(string|float|int $value, ?string $currency = null, array $options = []): string
@@ -328,7 +328,7 @@ class Number
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
-     * @param array $options An array with options.
+     * @param array<string, mixed> $options An array with options.
      * @return \NumberFormatter The configured formatter instance
      */
     public static function formatter(array $options = []): NumberFormatter
@@ -379,7 +379,7 @@ class Number
      *
      * @param string $locale The locale name to use for formatting the number, e.g. fr_FR
      * @param int $type The formatter type to construct. Defaults to NumberFormatter::DECIMAL.
-     * @param array $options See Number::formatter() for possible options.
+     * @param array<string, mixed> $options See Number::formatter() for possible options.
      * @return void
      */
     public static function config(string $locale, int $type = NumberFormatter::DECIMAL, array $options = []): void
@@ -394,7 +394,7 @@ class Number
      * Set formatter attributes
      *
      * @param \NumberFormatter $formatter Number formatter instance.
-     * @param array $options See Number::formatter() for possible options.
+     * @param array<string, mixed> $options See Number::formatter() for possible options.
      * @return \NumberFormatter
      */
     protected static function _setAttributes(NumberFormatter $formatter, array $options = []): NumberFormatter
@@ -434,7 +434,7 @@ class Number
      * For all other options see formatter().
      *
      * @param float|int $value An integer
-     * @param array $options An array with options.
+     * @param array<string, mixed> $options An array with options.
      * @return string
      */
     public static function ordinal(float|int $value, array $options = []): string

@@ -49,7 +49,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * - `warnOnWriteFailures` Some engines, such as ApcuEngine, may raise warnings on
      *    write failures.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'duration' => 3600,
@@ -72,7 +72,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * Called automatically by the cache frontend. Merge the runtime config with the defaults
      * before use.
      *
-     * @param array $config Associative array of parameters for the engine
+     * @param array<string, mixed> $config Associative array of parameters for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
     public function init(array $config = []): bool

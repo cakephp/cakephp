@@ -62,7 +62,7 @@ class Marshaller
      * Build the map of property => marshalling callable.
      *
      * @param array $data The data being marshalled.
-     * @param array $options List of options containing the 'associated' key.
+     * @param array<string, mixed> $options List of options containing the 'associated' key.
      * @throws \InvalidArgumentException When associations do not exist.
      * @return array
      */
@@ -169,7 +169,7 @@ class Marshaller
      * ```
      *
      * @param array $data The data to hydrate.
-     * @param array $options List of options
+     * @param array<string, mixed> $options List of options
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$_accessible
@@ -240,7 +240,7 @@ class Marshaller
      * Returns the validation errors for a data set based on the passed options
      *
      * @param array $data The data to validate.
-     * @param array $options The options passed to this marshaller.
+     * @param array<string, mixed> $options The options passed to this marshaller.
      * @param bool $isNew Whether it is a new entity or one to be updated.
      * @return array The list of validation errors.
      * @throws \RuntimeException If no validator can be created.
@@ -257,6 +257,11 @@ class Marshaller
         } elseif (is_string($options['validate'])) {
             $validator = $this->_table->getValidator($options['validate']);
         } elseif (is_object($options['validate'])) {
+            deprecationWarning(
+                'Passing validator instance for the `validate` option is deprecated,'
+                . ' use `ValidatorAwareTrait::setValidator() instead.`'
+            );
+
             /** @var \Cake\Validation\Validator $validator */
             $validator = $options['validate'];
         }
@@ -275,7 +280,7 @@ class Marshaller
      * Returns data and options prepared to validate and marshall.
      *
      * @param array $data The data to prepare.
-     * @param array $options The options passed to this marshaller.
+     * @param array<string, mixed> $options The options passed to this marshaller.
      * @return array An array containing prepared data and options.
      */
     protected function _prepareDataAndOptions(array $data, array $options): array
@@ -300,7 +305,7 @@ class Marshaller
      *
      * @param \Cake\ORM\Association $assoc The association to marshall
      * @param mixed $value The data to hydrate. If not an array, this method will return null.
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null
      */
     protected function _marshalAssociation(Association $assoc, mixed $value, array $options): EntityInterface|array|null
@@ -350,7 +355,7 @@ class Marshaller
      *   on missing entities would be ignored. Defaults to false.
      *
      * @param array $data The data to hydrate.
-     * @param array $options List of options
+     * @param array<string, mixed> $options List of options
      * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      * @see \Cake\ORM\Table::newEntities()
      * @see \Cake\ORM\Entity::$_accessible
@@ -376,7 +381,7 @@ class Marshaller
      *
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshal.
      * @param array $data The data to convert into entities.
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface> An array of built entities.
      * @throws \BadMethodCallException
      * @throws \InvalidArgumentException
@@ -535,7 +540,7 @@ class Marshaller
      * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
      * data merged in
      * @param array $data key value list of fields to be merged into the entity
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -653,7 +658,7 @@ class Marshaller
      * @param iterable<\Cake\Datasource\EntityInterface> $entities the entities that will get the
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface>
      * @see \Cake\ORM\Entity::$_accessible
      * @psalm-suppress NullArrayOffset
@@ -737,7 +742,7 @@ class Marshaller
      * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null $original The original entity
      * @param \Cake\ORM\Association $assoc The association to merge
      * @param mixed $value The array of data to hydrate. If not an array, this method will return null.
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null
      */
     protected function _mergeAssociation(
@@ -788,7 +793,7 @@ class Marshaller
      * @param array<\Cake\Datasource\EntityInterface> $original The original entities list.
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface>
      */
     protected function _mergeBelongsToMany(array $original, BelongsToMany $assoc, array $value, array $options): array
@@ -818,7 +823,7 @@ class Marshaller
      * @param array<\Cake\Datasource\EntityInterface> $original The original entities list.
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface> An array of entities
      */
     protected function _mergeJoinData(array $original, BelongsToMany $assoc, array $value, array $options): array
@@ -878,7 +883,7 @@ class Marshaller
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity that was marshaled.
      * @param array $data readOnly $data to use.
-     * @param array $options List of options that are readOnly.
+     * @param array<string, mixed> $options List of options that are readOnly.
      * @return void
      */
     protected function dispatchAfterMarshal(EntityInterface $entity, array $data, array $options = []): void

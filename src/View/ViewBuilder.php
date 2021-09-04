@@ -304,7 +304,7 @@ class ViewBuilder implements JsonSerializable
      * Adds a helper to use.
      *
      * @param string $helper Helper to use.
-     * @param array $options Options.
+     * @param array<string, mixed> $options Options.
      * @return $this
      * @since 4.1.0
      */
@@ -450,7 +450,7 @@ class ViewBuilder implements JsonSerializable
      *
      * This lets you provide custom constructor arguments to application/plugin view classes.
      *
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @param bool $merge Whether or not to merge existing data with the new data.
      * @return $this
      */
@@ -635,7 +635,7 @@ class ViewBuilder implements JsonSerializable
     /**
      * Configures a view builder instance from serialized config.
      *
-     * @param array $config View builder configuration array.
+     * @param array<string, mixed> $config View builder configuration array.
      * @return $this Configured view builder instance.
      */
     public function createFromArray(array $config)

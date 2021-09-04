@@ -35,7 +35,7 @@ class FlashComponent extends Component
     /**
      * Default configuration
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'key' => 'flash',
@@ -63,7 +63,7 @@ class FlashComponent extends Component
      * @param \Throwable|string $message Message to be flashed. If an instance
      *   of \Throwable the throwable message will be used and code will be set
      *   in params.
-     * @param array $options An array of options
+     * @param array<string, mixed> $options An array of options
      * @return void
      */
     public function set(Throwable|string $message, array $options = []): void

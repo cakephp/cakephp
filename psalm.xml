@@ -18,6 +18,7 @@
 
     <issueHandlers>
         <RedundantConditionGivenDocblockType errorLevel="suppress"/>
+        <RedundantCastGivenDocblockType errorLevel="suppress"/>
         <DocblockTypeContradiction errorLevel="suppress"/>
         <UndefinedAttributeClass errorLevel="suppress"/>
         <MissingClosureParamType errorLevel="suppress"/>

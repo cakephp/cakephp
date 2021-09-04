@@ -117,7 +117,7 @@ interface QueryInterface
      *  ->limit(10)
      * ```
      *
-     * @param array $options list of query clauses to apply new parts to.
+     * @param array<string, mixed> $options list of query clauses to apply new parts to.
      * @return $this
      */
     public function applyOptions(array $options);
@@ -135,7 +135,7 @@ interface QueryInterface
      * a single query.
      *
      * @param string $finder The finder method to use.
-     * @param array $options The options for the finder.
+     * @param array<string, mixed> $options The options for the finder.
      * @return static Returns a modified query.
      */
     public function find(string $finder, array $options = []): static;
@@ -399,7 +399,7 @@ interface QueryInterface
      * The safest thing you can do is to never use string conditions.
      *
      * @param \Closure|array|string|null $conditions The conditions to filter on.
-     * @param array $types associative array of type names used to bind values to query
+     * @param array<string, string> $types Associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this
      */

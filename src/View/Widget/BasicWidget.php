@@ -69,7 +69,7 @@ class BasicWidget implements WidgetInterface
      *
      * Any other keys provided in $data will be converted into HTML attributes.
      *
-     * @param array $data The data to build an input with.
+     * @param array<string, mixed> $data The data to build an input with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
@@ -113,7 +113,7 @@ class BasicWidget implements WidgetInterface
     /**
      * Merge default values with supplied data.
      *
-     * @param array $data Data array
+     * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @return array Updated data array.
      */
@@ -131,7 +131,7 @@ class BasicWidget implements WidgetInterface
     /**
      * Set value for "required" attribute if applicable.
      *
-     * @param array $data Data array
+     * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
      * @return array Updated data array.
@@ -157,7 +157,7 @@ class BasicWidget implements WidgetInterface
     /**
      * Set value for "maxlength" attribute if applicable.
      *
-     * @param array $data Data array
+     * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
      * @return array Updated data array.
@@ -175,7 +175,7 @@ class BasicWidget implements WidgetInterface
     /**
      * Set value for "step" attribute if applicable.
      *
-     * @param array $data Data array
+     * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
      * @return array Updated data array.

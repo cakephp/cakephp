@@ -38,7 +38,7 @@ class TimeHelper extends Helper
     /**
      * Config options
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'outputTimezone' => null,
@@ -272,7 +272,7 @@ class TimeHelper extends Helper
      *
      * @param \DateTimeInterface|string|int $dateTime UNIX timestamp, strtotime() valid
      *   string or DateTime object.
-     * @param array $options Default format if timestamp is used in $dateString
+     * @param array<string, mixed> $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
@@ -430,7 +430,7 @@ class TimeHelper extends Helper
     /**
      * Event listeners.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

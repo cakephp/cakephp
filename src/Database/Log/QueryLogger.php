@@ -30,7 +30,7 @@ class QueryLogger extends BaseLog
     /**
      * Constructor.
      *
-     * @param array $config Configuration array
+     * @param array<string, mixed> $config Configuration array
      */
     public function __construct(array $config = [])
     {

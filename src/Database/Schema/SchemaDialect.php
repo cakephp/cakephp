@@ -183,7 +183,7 @@ abstract class SchemaDialect
     /**
      * Generate the SQL to list the tables.
      *
-     * @param array $config The connection configuration to use for
+     * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
@@ -193,7 +193,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeColumnSql(string $tableName, array $config): array;
@@ -202,7 +202,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe the indexes in a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeIndexSql(string $tableName, array $config): array;
@@ -211,7 +211,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe the foreign keys in a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeForeignKeySql(string $tableName, array $config): array;
@@ -220,7 +220,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe table options
      *
      * @param string $tableName Table name.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array SQL statements to get options for a table.
      */
     public function describeOptionsSql(string $tableName, array $config): array

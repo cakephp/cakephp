@@ -37,7 +37,7 @@ abstract class BaseErrorHandler
     /**
      * Options to use for the Error handling.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'log' => true,

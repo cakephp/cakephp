@@ -58,7 +58,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *   which returns a \Cake\Error\ExceptionRendererInterface instance.
      *   Defaults to \Cake\Error\ExceptionRenderer
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'skipLog' => [],

@@ -121,7 +121,7 @@ class Route
      *
      * @param string $template Template string with parameter placeholders
      * @param array $defaults Defaults for the route.
-     * @param array $options Array of additional options for the Route
+     * @param array<string, mixed> $options Array of additional options for the Route
      * @throws \InvalidArgumentException When `$options['_method']` are not in `VALID_METHODS` list.
      */
     public function __construct(string $template, array $defaults = [], array $options = [])
@@ -888,7 +888,7 @@ class Route
      * This method helps for applications that want to implement
      * router caching.
      *
-     * @param array $fields Key/Value of object attributes
+     * @param array<string, mixed> $fields Key/Value of object attributes
      * @return static A new instance of the route
      */
     public static function __set_state(array $fields): static

@@ -29,7 +29,7 @@ class ConsoleLog extends BaseLog
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'stream' => 'php://stderr',
@@ -60,7 +60,7 @@ class ConsoleLog extends BaseLog
      * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
      * - `dateFormat` PHP date() format.
      *
-     * @param array $config Options for the FileLog, see above.
+     * @param array<string, mixed> $config Options for the FileLog, see above.
      * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])

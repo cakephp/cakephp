@@ -48,7 +48,7 @@ class Mock implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request A partial request to use for matching.
      * @param \Cake\Http\Client\Response $response The response that matches the request.
-     * @param array $options See above.
+     * @param array<string, mixed> $options See above.
      * @return void
      */
     public function addResponse(RequestInterface $request, Response $response, array $options): void
@@ -68,7 +68,7 @@ class Mock implements AdapterInterface
      * Find a response if one exists.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to match
-     * @param array $options Unused.
+     * @param array<string, mixed> $options Unused.
      * @return array<\Cake\Http\Client\Response> The matched response or an empty array for no matches.
      */
     public function send(RequestInterface $request, array $options): array

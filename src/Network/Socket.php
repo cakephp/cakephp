@@ -36,7 +36,7 @@ class Socket
     /**
      * Default configuration settings for the socket connection
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'persistent' => false,
@@ -103,7 +103,7 @@ class Socket
     /**
      * Constructor.
      *
-     * @param array $config Socket configuration, which will be merged with the base configuration
+     * @param array<string, mixed> $config Socket configuration, which will be merged with the base configuration
      * @see \Cake\Network\Socket::$_defaultConfig
      */
     public function __construct(array $config = [])

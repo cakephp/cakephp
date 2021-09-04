@@ -44,7 +44,7 @@ class TextHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'engine' => Text::class,
@@ -74,7 +74,7 @@ class TextHelper extends Helper
      *            The class needs to be placed in the `Utility` directory.
      *
      * @param \Cake\View\View $view the view object the helper is attached to.
-     * @param array $config Settings array Settings array
+     * @param array<string, mixed> $config Settings array Settings array
      * @throws \Cake\Core\Exception\CakeException when the engine class could not be found.
      */
     public function __construct(View $view, array $config = [])
@@ -113,7 +113,7 @@ class TextHelper extends Helper
      * - `escape` Control HTML escaping of input. Defaults to true.
      *
      * @param string $text Text
-     * @param array $options Array of HTML options, and options listed above.
+     * @param array<string, mixed> $options Array of HTML options, and options listed above.
      * @return string The text with links
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-urls
      */
@@ -211,7 +211,7 @@ class TextHelper extends Helper
      * Links email addresses
      *
      * @param string $text The text to operate on
-     * @param array $options An array of options to use for the HTML.
+     * @param array<string, mixed> $options An array of options to use for the HTML.
      * @return string
      * @see \Cake\View\Helper\TextHelper::autoLinkEmails()
      */
@@ -235,7 +235,7 @@ class TextHelper extends Helper
      * - `escape` Control HTML escaping of input. Defaults to true.
      *
      * @param string $text Text
-     * @param array $options Array of HTML options, and options listed above.
+     * @param array<string, mixed> $options Array of HTML options, and options listed above.
      * @return string The text with links
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-email-addresses
      */
@@ -265,7 +265,7 @@ class TextHelper extends Helper
      * - `escape` Control HTML escaping of input. Defaults to true.
      *
      * @param string $text Text
-     * @param array $options Array of HTML options, and options listed above.
+     * @param array<string, mixed> $options Array of HTML options, and options listed above.
      * @return string The text with links
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-both-urls-and-email-addresses
      */
@@ -282,7 +282,7 @@ class TextHelper extends Helper
      *
      * @param string $text Text to search the phrase in
      * @param string $phrase The phrase that will be searched
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @see \Cake\Utility\Text::highlight()
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#highlighting-substrings
@@ -332,7 +332,7 @@ class TextHelper extends Helper
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::truncate()
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#truncating-text
@@ -355,7 +355,7 @@ class TextHelper extends Helper
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::tail()
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#truncating-the-tail-of-a-string
@@ -426,7 +426,7 @@ class TextHelper extends Helper
     /**
      * Event listeners.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

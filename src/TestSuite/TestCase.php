@@ -298,7 +298,7 @@ abstract class TestCase extends BaseTestCase
      * Useful to test how plugins being loaded/not loaded interact with other
      * elements in CakePHP or applications.
      *
-     * @param array $plugins List of Plugins to load.
+     * @param array<string, mixed> $plugins List of Plugins to load.
      * @return \Cake\Http\BaseApplication
      */
     public function loadPlugins(array $plugins = []): BaseApplication
@@ -773,7 +773,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
-     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param bool $fullDebug Whether more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
      * @return string|false
      */
@@ -893,7 +893,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param string $alias The model to get a mock for.
      * @param array<string> $methods The list of methods to mock
-     * @param array $options The config data for the mock's constructor.
+     * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -953,7 +953,7 @@ abstract class TestCase extends BaseTestCase
      * Gets the class name for the table.
      *
      * @param string $alias The model to get a mock for.
-     * @param array $options The config data for the mock's constructor.
+     * @param array<string, mixed> $options The config data for the mock's constructor.
      * @return string
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @psalm-return class-string<\Cake\ORM\Table>

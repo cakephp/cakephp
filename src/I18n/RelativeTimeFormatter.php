@@ -93,7 +93,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * Format a into a relative timestring.
      *
      * @param \Cake\I18n\I18nDateTimeInterface $time The time instance to format.
-     * @param array $options Array of options.
+     * @param array<string, mixed> $options Array of options.
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
@@ -189,7 +189,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param string|int $futureTime The timestamp from the future.
      * @param string|int $pastTime The timestamp from the past.
      * @param bool $backwards Whether or not the difference was backwards.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return array An array of values.
      */
     protected function _diffData(string|int $futureTime, string|int $pastTime, bool $backwards, array $options): array
@@ -315,7 +315,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * Format a into a relative date string.
      *
      * @param \Cake\I18n\I18nDateTimeInterface $date The date to format.
-     * @param array $options Array of options.
+     * @param array<string, mixed> $options Array of options.
      * @return string Relative date string.
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
@@ -393,7 +393,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     /**
      * Build the options for relative date formatting.
      *
-     * @param array $options The options provided by the user.
+     * @param array<string, mixed> $options The options provided by the user.
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
      * @psalm-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\DateTime> $class

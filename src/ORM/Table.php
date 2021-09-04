@@ -277,7 +277,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   validation set, or an associative array, where key is the name of the
      *   validation set and value the Validator instance.
      *
-     * @param array $config List of options for this table
+     * @param array<string, mixed> $config List of options for this table
      */
     public function __construct(array $config = [])
     {
@@ -357,7 +357,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *  }
      * ```
      *
-     * @param array $config Configuration options passed to the constructor
+     * @param array<string, mixed> $config Configuration options passed to the constructor
      * @return void
      */
     public function initialize(array $config): void
@@ -772,7 +772,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Behaviors are generally loaded during Table::initialize().
      *
      * @param string $name The name of the behavior. Can be a short class reference.
-     * @param array $options The options for the behavior to use.
+     * @param array<string, mixed> $options The options for the behavior to use.
      * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
@@ -1039,7 +1039,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\BelongsTo
      */
     public function belongsTo(string $associated, array $options = []): BelongsTo
@@ -1085,7 +1085,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\HasOne
      */
     public function hasOne(string $associated, array $options = []): HasOne
@@ -1137,7 +1137,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\HasMany
      */
     public function hasMany(string $associated, array $options = []): HasMany
@@ -1191,7 +1191,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\BelongsToMany
      */
     public function belongsToMany(string $associated, array $options = []): BelongsToMany
@@ -1259,7 +1259,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Would invoke the `findPublished` method.
      *
      * @param string $type the type of query to perform
-     * @param array $options An array that will be passed to Query::applyOptions()
+     * @param array<string, mixed> $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query The query builder
      */
     public function find(string $type = 'all', array $options = []): Query
@@ -1277,7 +1277,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * can override this method in subclasses to modify how `find('all')` works.
      *
      * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to use for the find
+     * @param array<string, mixed> $options The options to use for the find
      * @return \Cake\ORM\Query The query builder
      */
     public function findAll(Query $query, array $options): Query
@@ -1358,7 +1358,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options for the find
+     * @param array<string, mixed> $options The options for the find
      * @return \Cake\ORM\Query The query builder
      */
     public function findList(Query $query, array $options): Query
@@ -1423,7 +1423,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to find with
+     * @param array<string, mixed> $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
     public function findThreaded(Query $query, array $options): Query
@@ -1450,7 +1450,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * This is an auxiliary function used for result formatters that can accept
      * composite keys when comparing values.
      *
-     * @param array $options the original options passed to a finder
+     * @param array<string, mixed> $options the original options passed to a finder
      * @param array<string> $keys the keys to check in $options to build matchers from
      * the associated value
      * @return array
@@ -1494,7 +1494,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param mixed $primaryKey primary key value to find
-     * @param array $options options accepted by `Table::find()`
+     * @param array<string, mixed> $options options accepted by `Table::find()`
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException if the record with such id
      * could not be found
@@ -1608,7 +1608,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
-     * @param array $options The options to use when saving.
+     * @param array<string, mixed> $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
@@ -1641,7 +1641,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
-     * @param array $options The options to use when saving.
+     * @param array<string, mixed> $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|array An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @throws \InvalidArgumentException
@@ -2539,7 +2539,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type name of the finder to be called
      * @param \Cake\ORM\Query $query The query object to apply the finder options to
-     * @param array $options List of options to pass to the finder
+     * @param array<string, mixed> $options List of options to pass to the finder
      * @return \Cake\ORM\Query
      * @throws \BadMethodCallException
      */
@@ -2768,7 +2768,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * before it is converted into entities.
      *
      * @param array $data The data to build an entity with.
-     * @param array $options A list of options for the object hydration.
+     * @param array<string, mixed> $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Marshaller::one()
      */
@@ -2809,7 +2809,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * before it is converted into entities.
      *
      * @param array $data The data to build an entity with.
-     * @param array $options A list of options for the objects hydration.
+     * @param array<string, mixed> $options A list of options for the objects hydration.
      * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      */
     public function newEntities(array $data, array $options = []): array
@@ -2867,7 +2867,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
      * data merged in
      * @param array $data key value list of fields to be merged into the entity
-     * @param array $options A list of options for the object hydration.
+     * @param array<string, mixed> $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Marshaller::merge()
      */
@@ -2907,7 +2907,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Traversable|array<\Cake\Datasource\EntityInterface> $entities the entities that will get the
      * data merged in
      * @param array $data list of arrays to be merged into the entities
-     * @param array $options A list of options for the objects hydration.
+     * @param array<string, mixed> $options A list of options for the objects hydration.
      * @return array<\Cake\Datasource\EntityInterface>
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
@@ -2947,7 +2947,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the data to be validated.
      *
      * @param mixed $value The value of column to be checked for uniqueness.
-     * @param array $options The options array, optionally containing the 'scope' key.
+     * @param array<string, mixed> $options The options array, optionally containing the 'scope' key.
      *   May also be the validation context, if there are no options.
      * @param array|null $context Either the validation context or null.
      * @return bool True if the value is unique, or false if a non-scalar, non-unique value was given.
@@ -3006,7 +3006,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - Model.beforeRules => beforeRules
      * - Model.afterRules => afterRules
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -3050,7 +3050,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets a SaveOptionsBuilder instance.
      *
-     * @param array $options Options to parse by the builder.
+     * @param array<string, mixed> $options Options to parse by the builder.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
     public function getSaveOptionsBuilder(array $options = []): SaveOptionsBuilder

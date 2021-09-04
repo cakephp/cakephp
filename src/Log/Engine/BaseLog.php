@@ -36,7 +36,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'levels' => [],
@@ -52,7 +52,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * __construct method
      *
-     * @param array $config Configuration array
+     * @param array<string, mixed> $config Configuration array
      */
     public function __construct(array $config = [])
     {

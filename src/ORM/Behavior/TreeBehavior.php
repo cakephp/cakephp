@@ -52,7 +52,7 @@ class TreeBehavior extends Behavior
      *
      * These are merged with user-provided configuration when the behavior is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'implementedFinders' => [
@@ -371,7 +371,7 @@ class TreeBehavior extends Behavior
      * is passed in the options containing the id of the node to get its path for.
      *
      * @param \Cake\ORM\Query $query The constructed query to modify
-     * @param array $options the list of options for the query
+     * @param array<string, mixed> $options the list of options for the query
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException If the 'for' key is missing in options
      */
@@ -435,7 +435,7 @@ class TreeBehavior extends Behavior
      * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
      *
      * @param \Cake\ORM\Query $query Query.
-     * @param array $options Array of options as described above
+     * @param array<string, mixed> $options Array of options as described above
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException When the 'for' key is not passed in $options
      */
@@ -487,7 +487,7 @@ class TreeBehavior extends Behavior
      * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
      *
      * @param \Cake\ORM\Query $query Query.
-     * @param array $options Array of options as described above.
+     * @param array<string, mixed> $options Array of options as described above.
      * @return \Cake\ORM\Query
      */
     public function findTreeList(Query $query, array $options): Query
@@ -517,7 +517,7 @@ class TreeBehavior extends Behavior
      * - spacer: A string to be used as prefix for denoting the depth in the tree for each item.
      *
      * @param \Cake\ORM\Query $query The query object to format.
-     * @param array $options Array of options as described above.
+     * @param array<string, mixed> $options Array of options as described above.
      * @return \Cake\ORM\Query Augmented query.
      */
     public function formatTreeList(Query $query, array $options = []): Query
@@ -967,7 +967,7 @@ class TreeBehavior extends Behavior
             return;
         }
 
-        $fresh = $this->_table->get($entity->get($this->_getPrimaryKey()), $fields);
+        $fresh = $this->_table->get($entity->get($this->_getPrimaryKey()));
         $entity->set($fresh->extract($fields), ['guard' => false]);
 
         foreach ($fields as $field) {

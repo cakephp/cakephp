@@ -1476,7 +1476,7 @@ class Message implements JsonSerializable
     /**
      * Sets the configuration for this instance.
      *
-     * @param array $config Config array.
+     * @param array<string, mixed> $config Config array.
      * @return $this
      */
     public function setConfig(array $config)
@@ -1874,7 +1874,7 @@ class Message implements JsonSerializable
     /**
      * Configures an email instance object from serialized config.
      *
-     * @param array $config Email configuration array.
+     * @param array<string, mixed> $config Email configuration array.
      * @return $this Configured email instance.
      */
     public function createFromArray(array $config)

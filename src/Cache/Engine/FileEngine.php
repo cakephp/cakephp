@@ -57,7 +57,7 @@ class FileEngine extends CacheEngine
      *    cache::gc from ever being called automatically.
      * - `serialize` Should cache objects be serialized first.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'duration' => 3600,
@@ -81,7 +81,7 @@ class FileEngine extends CacheEngine
      *
      * Called automatically by the cache frontend.
      *
-     * @param array $config array of setting for the engine
+     * @param array<string, mixed> $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
     public function init(array $config = []): bool

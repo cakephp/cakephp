@@ -99,7 +99,7 @@ class Xml
      * If using array as input, you can pass `options` from Xml::fromArray.
      *
      * @param object|array|string $input XML string, a path to a file, a URL or an array
-     * @param array $options The options to use
+     * @param array<string, mixed> $options The options to use
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
@@ -132,7 +132,7 @@ class Xml
      * Parse the input data and create either a SimpleXmlElement object or a DOMDocument.
      *
      * @param string $input The input to load.
-     * @param array $options The options to use. See Xml::build()
+     * @param array<string, mixed> $options The options to use. See Xml::build()
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
@@ -159,7 +159,7 @@ class Xml
      * Parse the input html string and create either a SimpleXmlElement object or a DOMDocument.
      *
      * @param string $input The input html string to load.
-     * @param array $options The options to use. See Xml::build()
+     * @param array<string, mixed> $options The options to use. See Xml::build()
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
@@ -191,7 +191,7 @@ class Xml
      * Parse the input data and create either a SimpleXmlElement object or a DOMDocument.
      *
      * @param string $input The input to load.
-     * @param array $options The options to use. See Xml::build()
+     * @param array<string, mixed> $options The options to use. See Xml::build()
      * @param \Closure $callable Closure that should return SimpleXMLElement or DOMDocument instance.
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
@@ -253,7 +253,7 @@ class Xml
      * `<root><tag id="1" value="defect">description</tag></root>`
      *
      * @param object|array $input Array with data or a collection instance.
-     * @param array $options The options to use.
+     * @param array<string, mixed> $options The options to use.
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
@@ -452,7 +452,10 @@ class Xml
         $data = [];
 
         foreach ($namespaces as $namespace) {
-            /** @psalm-suppress PossiblyNullIterator */
+            /**
+             * @psalm-suppress PossiblyNullIterator
+             * @var string $key
+             */
             foreach ($xml->attributes($namespace, true) as $key => $value) {
                 if (!empty($namespace)) {
                     $key = $namespace . ':' . $key;

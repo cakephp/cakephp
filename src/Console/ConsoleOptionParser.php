@@ -95,7 +95,7 @@ class ConsoleOptionParser
      * Option definitions.
      *
      * @see \Cake\Console\ConsoleOptionParser::addOption()
-     * @var array<\Cake\Console\ConsoleInputOption>
+     * @var array<string, \Cake\Console\ConsoleInputOption>
      */
     protected array $_options = [];
 
@@ -118,7 +118,7 @@ class ConsoleOptionParser
      * Subcommands for this Command.
      *
      * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
-     * @var array<\Cake\Console\ConsoleInputSubcommand>
+     * @var array<string, \Cake\Console\ConsoleInputSubcommand>
      */
     protected array $_subcommands = [];
 
@@ -241,7 +241,7 @@ class ConsoleOptionParser
     /**
      * Returns an array representation of this parser.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -409,7 +409,7 @@ class ConsoleOptionParser
      *
      * @param \Cake\Console\ConsoleInputOption|string $name The long name you want to the value to be parsed out
      *   as when options are parsed. Will also accept an instance of ConsoleInputOption.
-     * @param array $options An array of parameters that define the behavior of the option
+     * @param array<string, mixed> $options An array of parameters that define the behavior of the option
      * @return $this
      */
     public function addOption(ConsoleInputOption|string $name, array $options = [])
@@ -537,7 +537,7 @@ class ConsoleOptionParser
      * Add multiple options at once. Takes an array of option definitions.
      * The keys are used as option names, and the values as params for the option.
      *
-     * @param array $options Array of options to add.
+     * @param array<string, mixed> $options Array of options to add.
      * @see \Cake\Console\ConsoleOptionParser::addOption()
      * @return $this
      */
@@ -567,7 +567,7 @@ class ConsoleOptionParser
      *
      * @param \Cake\Console\ConsoleInputSubcommand|string $name Name of the subcommand.
      *   Will also accept an instance of ConsoleInputSubcommand.
-     * @param array $options Array of params, see above.
+     * @param array<string, mixed> $options Array of params, see above.
      * @return $this
      */
     public function addSubcommand(ConsoleInputSubcommand|string $name, array $options = [])
@@ -654,7 +654,7 @@ class ConsoleOptionParser
     /**
      * Get the defined options in the parser.
      *
-     * @return array<\Cake\Console\ConsoleInputOption>
+     * @return array<string, \Cake\Console\ConsoleInputOption>
      */
     public function options(): array
     {
@@ -664,7 +664,7 @@ class ConsoleOptionParser
     /**
      * Get the array of defined subcommands
      *
-     * @return array<\Cake\Console\ConsoleInputSubcommand>
+     * @return array<string, \Cake\Console\ConsoleInputSubcommand>
      */
     public function subcommands(): array
     {

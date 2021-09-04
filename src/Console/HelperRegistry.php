@@ -89,7 +89,7 @@ class HelperRegistry extends ObjectRegistry
      *
      * @param \Cake\Console\Helper|string $class The classname to create.
      * @param string $alias The alias of the helper.
-     * @param array $config An array of settings to use for the helper.
+     * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\Console\Helper The constructed helper class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */

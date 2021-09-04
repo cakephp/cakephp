@@ -768,7 +768,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Returns an array of the table schema.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

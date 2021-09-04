@@ -31,7 +31,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'host' => 'localhost',

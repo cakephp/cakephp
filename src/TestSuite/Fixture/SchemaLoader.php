@@ -41,7 +41,7 @@ class SchemaLoader
     protected $io;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'dropTables' => true,
@@ -94,9 +94,12 @@ class SchemaLoader
             if (!file_exists($file)) {
                 throw new InvalidArgumentException("Unable to load schema file `$file`.");
             }
-
             $sql = file_get_contents($file);
-            $connection->execute($sql)->closeCursor();
+
+            // Use the underlying PDO connection so we can avoid prepared statements
+            // which don't support multiple queries in postgres.
+            $driver = $connection->getDriver();
+            $driver->getConnection()->exec($sql);
         }
 
         if ($truncateTables) {

@@ -49,7 +49,7 @@ class SyslogLog extends BaseLog
      *  ]);
      * ```
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'levels' => [],

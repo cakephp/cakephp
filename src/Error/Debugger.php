@@ -58,7 +58,7 @@ class Debugger
     /**
      * Default configuration
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'outputMask' => [],
@@ -362,7 +362,7 @@ class Debugger
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
-     * @param array $options Format for outputting stack trace.
+     * @param array<string, mixed> $options Format for outputting stack trace.
      * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */
@@ -384,7 +384,7 @@ class Debugger
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
      * @param \Throwable|array $backtrace Trace as array or an exception object.
-     * @param array $options Format for outputting stack trace.
+     * @param array<string, mixed> $options Format for outputting stack trace.
      * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */

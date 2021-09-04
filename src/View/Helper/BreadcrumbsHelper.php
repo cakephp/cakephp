@@ -39,7 +39,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * Default config for the helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'templates' => [
@@ -70,7 +70,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -106,7 +106,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -143,7 +143,7 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -173,7 +173,7 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -207,7 +207,7 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -256,9 +256,9 @@ class BreadcrumbsHelper extends Helper
     /**
      * Renders the breadcrumbs trail.
      *
-     * @param array $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
+     * @param array<string, mixed> $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
      * allow the insertion of custom template variable in the template.
-     * @param array $separator Array of attributes for the `separator` template.
+     * @param array<string, mixed> $separator Array of attributes for the `separator` template.
      * Possible properties are :
      *
      * - *separator* The string to be displayed as a separator

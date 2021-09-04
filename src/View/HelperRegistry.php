@@ -143,7 +143,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      *
      * @param \Cake\View\Helper|string $class The class to create.
      * @param string $alias The alias of the loaded helper.
-     * @param array $config An array of settings to use for the helper.
+     * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\View\Helper The constructed helper class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */

@@ -98,7 +98,7 @@ class MiddlewareDispatcher
     /**
      * Create a PSR7 request from the request spec.
      *
-     * @param array $spec The request spec.
+     * @param array<string, mixed> $spec The request spec.
      * @return \Cake\Http\ServerRequest
      */
     protected function _createRequest(array $spec): ServerRequest
@@ -131,7 +131,7 @@ class MiddlewareDispatcher
     /**
      * Run a request and get the response.
      *
-     * @param array $requestSpec The request spec to execute.
+     * @param array<string, mixed> $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      * @throws \LogicException
      */
