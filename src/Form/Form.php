@@ -70,28 +70,28 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @var string
      * @psalm-var class-string<\Cake\Form\Schema>
      */
-    protected $_schemaClass = Schema::class;
+    protected string $_schemaClass = Schema::class;
 
     /**
      * The schema used by this form.
      *
      * @var \Cake\Form\Schema|null
      */
-    protected $_schema;
+    protected ?Schema $_schema = null;
 
     /**
      * The errors if any
      *
      * @var array
      */
-    protected $_errors = [];
+    protected array $_errors = [];
 
     /**
      * Form's data.
      *
      * @var array
      */
-    protected $_data = [];
+    protected array $_data = [];
 
     /**
      * Constructor
