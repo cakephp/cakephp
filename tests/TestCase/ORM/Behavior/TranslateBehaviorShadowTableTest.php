@@ -24,7 +24,6 @@ use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\Utility\Hash;
-use Cake\Validation\Validator;
 use TestApp\Model\Entity\TranslateArticle;
 use TestApp\Model\Entity\TranslateBakedArticle;
 
