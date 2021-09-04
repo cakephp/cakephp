@@ -140,14 +140,14 @@ class Mailer implements EventListenerInterface
      *
      * @var string
      */
-    public static $name;
+    public static string $name;
 
     /**
      * The transport instance to use for sending mail.
      *
      * @var \Cake\Mailer\AbstractTransport|null
      */
-    protected $transport;
+    protected ?AbstractTransport $transport = null;
 
     /**
      * Message class name.
@@ -155,21 +155,21 @@ class Mailer implements EventListenerInterface
      * @var string
      * @psalm-var class-string<\Cake\Mailer\Message>
      */
-    protected $messageClass = Message::class;
+    protected string $messageClass = Message::class;
 
     /**
      * Message instance.
      *
      * @var \Cake\Mailer\Message
      */
-    protected $message;
+    protected Message $message;
 
     /**
      * Email Renderer
      *
      * @var \Cake\Mailer\Renderer|null
      */
-    protected $renderer;
+    protected ?Renderer $renderer = null;
 
     /**
      * Hold message, renderer and transport instance for restoring after runnning
@@ -177,7 +177,7 @@ class Mailer implements EventListenerInterface
      *
      * @var array
      */
-    protected $clonedInstances = [
+    protected array $clonedInstances = [
         'message' => null,
         'renderer' => null,
         'transport' => null,
@@ -189,12 +189,12 @@ class Mailer implements EventListenerInterface
      * @var array
      * @psalm-var array<string, class-string>
      */
-    protected static $_dsnClassMap = [];
+    protected static array $_dsnClassMap = [];
 
     /**
      * @var array|null
      */
-    protected $logConfig = null;
+    protected ?array $logConfig = null;
 
     /**
      * Constructor

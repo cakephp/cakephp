@@ -33,7 +33,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'host' => 'localhost',
         'port' => 25,
         'timeout' => 30,
@@ -49,21 +49,21 @@ class SmtpTransport extends AbstractTransport
      *
      * @var \Cake\Network\Socket|null
      */
-    protected $_socket;
+    protected ?Socket $_socket = null;
 
     /**
      * Content of email to return
      *
      * @var array
      */
-    protected $_content = [];
+    protected array $_content = [];
 
     /**
      * The response of the last sent SMTP command.
      *
      * @var array
      */
-    protected $_lastResponse = [];
+    protected array $_lastResponse = [];
 
     /**
      * Destructor

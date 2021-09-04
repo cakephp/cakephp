@@ -31,7 +31,7 @@ class TransportFactory
      *
      * @var \Cake\Mailer\TransportRegistry|null
      */
-    protected static $_registry;
+    protected static ?TransportRegistry $_registry = null;
 
     /**
      * An array mapping url schemes to fully qualified Transport class names
@@ -39,7 +39,7 @@ class TransportFactory
      * @var array<string>
      * @psalm-var array<string, class-string>
      */
-    protected static $_dsnClassMap = [
+    protected static array $_dsnClassMap = [
         'debug' => Transport\DebugTransport::class,
         'mail' => Transport\MailTransport::class,
         'smtp' => Transport\SmtpTransport::class,
