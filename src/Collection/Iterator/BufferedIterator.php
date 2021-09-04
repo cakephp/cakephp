@@ -31,28 +31,28 @@ class BufferedIterator extends Collection implements Countable
      *
      * @var \SplDoublyLinkedList
      */
-    protected $_buffer;
+    protected SplDoublyLinkedList $_buffer;
 
     /**
      * Points to the next record number that should be fetched
      *
      * @var int
      */
-    protected $_index = 0;
+    protected int $_index = 0;
 
     /**
      * Last record fetched from the inner iterator
      *
      * @var mixed
      */
-    protected $_current;
+    protected mixed $_current;
 
     /**
      * Last key obtained from the inner iterator
      *
      * @var mixed
      */
-    protected $_key;
+    protected mixed $_key;
 
     /**
      * Whether or not the internal iterator's rewind method was already
@@ -60,14 +60,14 @@ class BufferedIterator extends Collection implements Countable
      *
      * @var bool
      */
-    protected $_started = false;
+    protected bool $_started = false;
 
     /**
      * Whether or not the internal iterator has reached its end.
      *
      * @var bool
      */
-    protected $_finished = false;
+    protected bool $_finished = false;
 
     /**
      * Maintains an in-memory cache of the results yielded by the internal

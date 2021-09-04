@@ -42,7 +42,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      *
      * @var \Traversable
      */
-    protected $_innerIterator;
+    protected Traversable $_innerIterator;
 
     /**
      * Creates the iterator that will generate child iterators from each of the

@@ -48,14 +48,14 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @var mixed
      */
-    protected $_current;
+    protected mixed $_current = null;
 
     /**
      * The string to use for prefixing the values according to their depth in the tree.
      *
      * @var string
      */
-    protected $_spacer;
+    protected string $_spacer;
 
     /**
      * Constructor

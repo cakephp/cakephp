@@ -31,14 +31,14 @@ class InsertIterator extends Collection
      *
      * @var \Cake\Collection\Collection
      */
-    protected $_values;
+    protected Collection $_values;
 
     /**
      * Holds whether the values collection is still valid. (has more records)
      *
      * @var bool
      */
-    protected $_validValues = true;
+    protected bool $_validValues = true;
 
     /**
      * An array containing each of the properties to be traversed to reach the
@@ -46,14 +46,14 @@ class InsertIterator extends Collection
      *
      * @var array
      */
-    protected $_path;
+    protected array $_path;
 
     /**
      * The property name to which values will be assigned
      *
      * @var string
      */
-    protected $_target;
+    protected string $_target;
 
     /**
      * Constructs a new collection that will dynamically add properties to it out of

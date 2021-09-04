@@ -34,28 +34,28 @@ class MapReduce implements IteratorAggregate
      *
      * @var array
      */
-    protected $_intermediate = [];
+    protected array $_intermediate = [];
 
     /**
      * Holds the results as emitted during the reduce phase
      *
      * @var array
      */
-    protected $_result = [];
+    protected array $_result = [];
 
     /**
      * Whether the Map-Reduce routine has been executed already on the data
      *
      * @var bool
      */
-    protected $_executed = false;
+    protected bool $_executed = false;
 
     /**
      * Holds the original data that needs to be processed
      *
      * @var \Traversable
      */
-    protected $_data;
+    protected Traversable $_data;
 
     /**
      * A callable that will be executed for each record in the original data
@@ -77,7 +77,7 @@ class MapReduce implements IteratorAggregate
      *
      * @var int
      */
-    protected $_counter = 0;
+    protected int $_counter = 0;
 
     /**
      * Constructor

@@ -60,7 +60,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
      *
      * @var array
      */
-    protected $_iterators = [];
+    protected array $_iterators = [];
 
     /**
      * Creates the iterator to merge together the values by for all the passed

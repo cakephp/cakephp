@@ -34,7 +34,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      *
      * @var int
      */
-    protected $_mode;
+    protected int $_mode;
 
     /**
      * Constructor
