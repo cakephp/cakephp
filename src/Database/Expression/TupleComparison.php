@@ -32,7 +32,7 @@ class TupleComparison extends ComparisonExpression
      * @var array<string|null>
      * @psalm-suppress NonInvariantDocblockPropertyType
      */
-    protected $_type;
+    protected array $types;
 
     /**
      * Constructor
@@ -49,7 +49,7 @@ class TupleComparison extends ComparisonExpression
         array $types = [],
         string $conjunction = '='
     ) {
-        $this->_type = $types;
+        $this->types = $types;
         $this->setField($fields);
         $this->setValue($values);
         $this->_operator = $conjunction;
@@ -62,7 +62,7 @@ class TupleComparison extends ComparisonExpression
      */
     public function getType(): array
     {
-        return $this->_type;
+        return $this->types;
     }
 
     /**
@@ -122,7 +122,7 @@ class TupleComparison extends ComparisonExpression
                 continue;
             }
 
-            $type = $this->_type;
+            $type = $this->types;
             $isMultiOperation = $this->isMulti();
             if (empty($type)) {
                 $type = null;

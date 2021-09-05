@@ -29,12 +29,12 @@ class DateType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected $_format = 'Y-m-d';
+    protected string $_format = 'Y-m-d';
 
     /**
      * @inheritDoc
      */
-    protected $_marshalFormats = [
+    protected array $_marshalFormats = [
         'Y-m-d',
     ];
 
@@ -44,7 +44,7 @@ class DateType extends DateTimeType
      *
      * @var bool
      */
-    protected $setToDateStart = true;
+    protected bool $setToDateStart = true;
 
     /**
      * @inheritDoc

@@ -26,13 +26,6 @@ use Cake\Database\Exception\DatabaseException;
 class MysqlSchemaDialect extends SchemaDialect
 {
     /**
-     * The driver instance being used.
-     *
-     * @var \Cake\Database\Driver\Mysql
-     */
-    protected $_driver;
-
-    /**
      * @inheritDoc
      */
     public function listTablesSql(array $config): array
@@ -338,7 +331,10 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $out = $this->_driver->quoteIdentifier($name);
-        $nativeJson = $this->_driver->supportsNativeJson();
+
+        /** @var \Cake\Database\Driver\Mysql $driver */
+        $driver = $this->_driver;
+        $nativeJson = $driver->supportsNativeJson();
 
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' TINYINT',

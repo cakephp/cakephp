@@ -58,7 +58,7 @@ class Sqlserver extends Driver
      *
      * @var array
      */
-    protected $_baseConfig = [
+    protected array $_baseConfig = [
         'host' => 'localhost\SQLEXPRESS',
         'username' => '',
         'password' => '',
@@ -82,26 +82,26 @@ class Sqlserver extends Driver
      *
      * @var \Cake\Database\Schema\SqlserverSchemaDialect|null
      */
-    protected $_schemaDialect;
+    protected ?SqlserverSchemaDialect $_schemaDialect = null;
 
     /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_startQuote = '[';
+    protected string $_startQuote = '[';
 
     /**
      * String used to end a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_endQuote = ']';
+    protected string $_endQuote = ']';
 
     /**
      * @inheritDoc
      */
-    protected $supportsCTEs = true;
+    protected ?bool $supportsCTEs = true;
 
     /**
      * Establishes a connection to the database server.

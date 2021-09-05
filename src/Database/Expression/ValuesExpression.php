@@ -41,21 +41,21 @@ class ValuesExpression implements ExpressionInterface
      *
      * @var array
      */
-    protected $_values = [];
+    protected array $_values = [];
 
     /**
      * List of columns to ensure are part of the insert.
      *
      * @var array
      */
-    protected $_columns = [];
+    protected array $_columns = [];
 
     /**
      * The Query object to use as a values expression
      *
      * @var \Cake\Database\Query|null
      */
-    protected $_query;
+    protected ?Query $_query = null;
 
     /**
      * Whether or not values have been casted to expressions
@@ -63,7 +63,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @var bool
      */
-    protected $_castedExpressions = false;
+    protected bool $_castedExpressions = false;
 
     /**
      * Constructor

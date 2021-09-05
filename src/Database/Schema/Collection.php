@@ -33,14 +33,14 @@ class Collection implements CollectionInterface
      *
      * @var \Cake\Database\Connection
      */
-    protected $_connection;
+    protected Connection $_connection;
 
     /**
      * Schema dialect instance.
      *
      * @var \Cake\Database\Schema\SchemaDialect
      */
-    protected $_dialect;
+    protected SchemaDialect $_dialect;
 
     /**
      * Constructor.

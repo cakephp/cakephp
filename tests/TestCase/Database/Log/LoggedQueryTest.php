@@ -157,7 +157,7 @@ class LoggedQueryTest extends TestCase
 
         $expected = [
             'numRows' => 10,
-            'took' => 15,
+            'took' => 15.0,
         ];
         $this->assertSame($expected, $query->getContext());
     }

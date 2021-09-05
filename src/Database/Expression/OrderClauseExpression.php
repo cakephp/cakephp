@@ -33,7 +33,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
      *
      * @var string
      */
-    protected $_direction;
+    protected string $_direction;
 
     /**
      * Constructor

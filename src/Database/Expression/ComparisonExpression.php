@@ -37,28 +37,28 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      *
      * @var mixed
      */
-    protected $_value;
+    protected mixed $_value;
 
     /**
      * The type to be used for casting the value to a database representation
      *
      * @var string|null
      */
-    protected $_type;
+    protected ?string $_type = null;
 
     /**
      * The operator used for comparing field and value
      *
      * @var string
      */
-    protected $_operator = '=';
+    protected string $_operator = '=';
 
     /**
      * Whether or not the value in this expression is a traversable
      *
      * @var bool
      */
-    protected $_isMultiple = false;
+    protected bool $_isMultiple = false;
 
     /**
      * A cached list of ExpressionInterface objects that were
@@ -66,7 +66,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      *
      * @var array<\Cake\Database\ExpressionInterface>
      */
-    protected $_valueExpressions = [];
+    protected array $_valueExpressions = [];
 
     /**
      * Constructor

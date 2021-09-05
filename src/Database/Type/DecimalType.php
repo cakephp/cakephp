@@ -35,7 +35,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @var string
      */
-    public static $numberClass = Number::class;
+    public static string $numberClass = Number::class;
 
     /**
      * Whether numbers should be parsed using a locale aware parser
@@ -43,7 +43,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @var bool
      */
-    protected $_useLocaleParser = false;
+    protected bool $_useLocaleParser = false;
 
     /**
      * Convert decimal strings into the database format.

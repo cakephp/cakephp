@@ -33,28 +33,28 @@ class LoggingStatement extends StatementDecorator
      *
      * @var \Psr\Log\LoggerInterface
      */
-    protected $_logger;
+    protected LoggerInterface $_logger;
 
     /**
      * Holds bound params
      *
      * @var array
      */
-    protected $_compiledParams = [];
+    protected array $_compiledParams = [];
 
     /**
      * Query execution start time.
      *
      * @var float
      */
-    protected $startTime = 0.0;
+    protected float $startTime = 0.0;
 
     /**
      * Logged query
      *
      * @var \Cake\Database\Log\LoggedQuery|null
      */
-    protected $loggedQuery;
+    protected ?LoggedQuery $loggedQuery = null;
 
     /**
      * Wrapper for the execute function to calculate time spent

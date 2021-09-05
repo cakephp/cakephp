@@ -62,21 +62,21 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var \Cake\Database\Connection
      */
-    protected $_connection;
+    protected Connection $_connection;
 
     /**
      * Type of this query (select, insert, update, delete).
      *
      * @var string
      */
-    protected $_type = 'select';
+    protected string $_type = 'select';
 
     /**
      * List of SQL parts that will be used to build this query.
      *
      * @var array
      */
-    protected $_parts = [
+    protected array $_parts = [
         'delete' => true,
         'update' => [],
         'set' => [],
@@ -104,7 +104,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var array<string>
      */
-    protected $_selectParts = [
+    protected array $_selectParts = [
         'with', 'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
         'offset', 'union', 'epilog',
     ];
@@ -114,21 +114,21 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var array<string>
      */
-    protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
+    protected array $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var array<string>
      */
-    protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
+    protected array $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var array<string>
      */
-    protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
+    protected array $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
     /**
      * Indicates whether internal state of this query was changed, this is used to
@@ -137,7 +137,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var bool
      */
-    protected $_dirty = false;
+    protected bool $_dirty = false;
 
     /**
      * A list of callback functions to be called to alter each row from resulting
@@ -146,14 +146,14 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var array<callable>
      */
-    protected $_resultDecorators = [];
+    protected array $_resultDecorators = [];
 
     /**
      * Statement object resulting from executing this query.
      *
      * @var \Cake\Database\StatementInterface|null
      */
-    protected $_iterator;
+    protected ?StatementInterface $_iterator = null;
 
     /**
      * The object responsible for generating query placeholders and temporarily store values
@@ -161,14 +161,14 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var \Cake\Database\ValueBinder|null
      */
-    protected $_valueBinder;
+    protected ?ValueBinder $_valueBinder = null;
 
     /**
      * Instance of functions builder object used for generating arbitrary SQL functions.
      *
      * @var \Cake\Database\FunctionsBuilder|null
      */
-    protected $_functionsBuilder;
+    protected ?FunctionsBuilder $_functionsBuilder = null;
 
     /**
      * Boolean for tracking whether or not buffered results
@@ -176,21 +176,21 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var bool
      */
-    protected $_useBufferedResults = true;
+    protected bool $_useBufferedResults = true;
 
     /**
      * The Type map for fields in the select clause
      *
      * @var \Cake\Database\TypeMap|null
      */
-    protected $_selectTypeMap;
+    protected ?TypeMap $_selectTypeMap = null;
 
     /**
      * Tracking flag to disable casting
      *
      * @var bool
      */
-    protected $typeCastEnabled = true;
+    protected bool $typeCastEnabled = true;
 
     /**
      * Constructor.

@@ -37,7 +37,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @var bool
      */
-    protected $_allFetched = false;
+    protected bool $_allFetched = false;
 
     /**
      * The decorated statement
@@ -51,28 +51,28 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @var \Cake\Database\DriverInterface
      */
-    protected $_driver;
+    protected DriverInterface $_driver;
 
     /**
      * The in-memory cache containing results from previous iterators
      *
      * @var array
      */
-    protected $buffer = [];
+    protected array $buffer = [];
 
     /**
      * Whether or not this statement has already been executed
      *
      * @var bool
      */
-    protected $_hasExecuted = false;
+    protected bool $_hasExecuted = false;
 
     /**
      * The current iterator index.
      *
      * @var int
      */
-    protected $index = 0;
+    protected int $index = 0;
 
     /**
      * Constructor

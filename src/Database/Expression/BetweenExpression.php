@@ -34,21 +34,21 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      *
      * @var mixed
      */
-    protected $_from;
+    protected mixed $_from;
 
     /**
      * The second value in the expression
      *
      * @var mixed
      */
-    protected $_to;
+    protected mixed $_to;
 
     /**
      * The data type for the from and to arguments
      *
      * @var mixed
      */
-    protected $_type;
+    protected mixed $_type;
 
     /**
      * Constructor

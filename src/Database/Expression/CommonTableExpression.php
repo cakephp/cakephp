@@ -31,35 +31,35 @@ class CommonTableExpression implements ExpressionInterface
      *
      * @var \Cake\Database\Expression\IdentifierExpression
      */
-    protected $name;
+    protected IdentifierExpression $name;
 
     /**
      * The field names to use for the CTE.
      *
      * @var array<\Cake\Database\Expression\IdentifierExpression>
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * The CTE query definition.
      *
      * @var \Cake\Database\ExpressionInterface|null
      */
-    protected $query;
+    protected ?ExpressionInterface $query = null;
 
     /**
      * Whether the CTE is materialized or not materialized.
      *
      * @var string|null
      */
-    protected $materialized = null;
+    protected ?string $materialized = null;
 
     /**
      * Whether the CTE is recursive.
      *
      * @var bool
      */
-    protected $recursive = false;
+    protected bool $recursive = false;
 
     /**
      * Constructor.

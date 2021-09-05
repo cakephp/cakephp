@@ -24,12 +24,12 @@ class DateTimeTimezoneType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected $_format = 'Y-m-d H:i:s.uP';
+    protected string $_format = 'Y-m-d H:i:s.uP';
 
     /**
      * @inheritDoc
      */
-    protected $_marshalFormats = [
+    protected array $_marshalFormats = [
         'Y-m-d H:i',
         'Y-m-d H:i:s',
         'Y-m-d H:i:sP',

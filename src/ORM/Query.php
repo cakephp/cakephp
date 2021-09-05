@@ -1058,7 +1058,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function cache($key, $config = 'default')
     {
-        if ($this->_type !== 'select' && $this->_type !== null) {
+        if ($this->_type !== 'select') {
             throw new RuntimeException('You cannot cache the results of non-select queries.');
         }
 
@@ -1073,7 +1073,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function all(): ResultSetInterface
     {
-        if ($this->_type !== 'select' && $this->_type !== null) {
+        if ($this->_type !== 'select') {
             throw new RuntimeException(
                 'You cannot call all() on a non-select query. Use execute() instead.'
             );

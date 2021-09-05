@@ -31,7 +31,7 @@ class FieldTypeConverter
      *
      * @var array<\Cake\Database\TypeInterface>
      */
-    protected $_typeMap;
+    protected array $_typeMap;
 
     /**
      * An array containing the name of the fields and the Type objects
@@ -39,7 +39,7 @@ class FieldTypeConverter
      *
      * @var array
      */
-    protected $batchingTypeMap;
+    protected array $batchingTypeMap;
 
     /**
      * An array containing all the types registered in the Type system
@@ -48,14 +48,14 @@ class FieldTypeConverter
      *
      * @var array<\Cake\Database\TypeInterface>|array<\Cake\Database\Type\BatchCastingInterface>
      */
-    protected $types;
+    protected array $types;
 
     /**
      * The driver object to be used in the type conversion
      *
      * @var \Cake\Database\DriverInterface
      */
-    protected $_driver;
+    protected DriverInterface $_driver;
 
     /**
      * Builds the type map

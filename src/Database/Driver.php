@@ -56,7 +56,7 @@ abstract class Driver implements DriverInterface
      *
      * @var array
      */
-    protected $_config;
+    protected array $_config;
 
     /**
      * Base configuration that is merged into the user
@@ -64,7 +64,7 @@ abstract class Driver implements DriverInterface
      *
      * @var array
      */
-    protected $_baseConfig = [];
+    protected array $_baseConfig = [];
 
     /**
      * Indicates whether or not the driver is doing automatic identifier quoting
@@ -72,28 +72,28 @@ abstract class Driver implements DriverInterface
      *
      * @var bool
      */
-    protected $_autoQuoting = false;
+    protected bool $_autoQuoting = false;
 
     /**
      * Whether or not the server supports common table expressions.
      *
      * @var bool|null
      */
-    protected $supportsCTEs = null;
+    protected ?bool $supportsCTEs = null;
 
     /**
      * The server version
      *
      * @var string|null
      */
-    protected $_version;
+    protected ?string $_version = null;
 
     /**
      * The last number of connection retry attempts.
      *
      * @var int
      */
-    protected $connectRetries = 0;
+    protected int $connectRetries = 0;
 
     /**
      * Constructor

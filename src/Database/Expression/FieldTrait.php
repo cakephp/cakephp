@@ -28,7 +28,7 @@ trait FieldTrait
      *
      * @var \Cake\Database\ExpressionInterface|array|string
      */
-    protected $_field;
+    protected ExpressionInterface|array|string $_field;
 
     /**
      * Sets the field name
