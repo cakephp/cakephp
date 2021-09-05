@@ -24,7 +24,6 @@ use Cake\ORM\Marshaller;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
-use RuntimeException;
 use TestApp\Model\Entity\OpenArticleEntity;
 use TestApp\Model\Entity\OpenTag;
 use TestApp\Model\Entity\ProtectedArticle;
@@ -2747,19 +2746,6 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
         $entity = $marshall->one($data);
         $this->assertNotEmpty($entity->getError('thing'));
-    }
-
-    /**
-     * Test that invalid validate options raise exceptions
-     */
-    public function testValidateInvalidType(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $data = ['title' => 'foo'];
-        $marshaller = new Marshaller($this->articles);
-        $marshaller->one($data, [
-            'validate' => ['derp'],
-        ]);
     }
 
     /**

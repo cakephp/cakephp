@@ -25,7 +25,6 @@ use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Contains logic to convert array data into entities.
@@ -188,7 +187,7 @@ class Marshaller
                 $entity->setAccess($key, $value);
             }
         }
-        $errors = $this->_validate($data, $options, true);
+        $errors = $this->_validate($data, $options['validate'], true);
 
         $options['isMerge'] = false;
         $propertyMap = $this->_buildPropertyMap($data, $options);
@@ -240,32 +239,22 @@ class Marshaller
      * Returns the validation errors for a data set based on the passed options
      *
      * @param array $data The data to validate.
-     * @param array<string, mixed> $options The options passed to this marshaller.
+     * @param string|bool $validator Validator name or `true` for default validator.
      * @param bool $isNew Whether it is a new entity or one to be updated.
      * @return array The list of validation errors.
      * @throws \RuntimeException If no validator can be created.
      */
-    protected function _validate(array $data, array $options, bool $isNew): array
+    protected function _validate(array $data, string|bool $validator, bool $isNew): array
     {
-        if (!$options['validate']) {
+        if (!$validator) {
             return [];
         }
 
-        $validator = null;
-        if ($options['validate'] === true) {
-            $validator = $this->_table->getValidator();
-        } elseif (is_string($options['validate'])) {
-            $validator = $this->_table->getValidator($options['validate']);
+        if ($validator === true) {
+            $validator = null;
         }
 
-        if ($validator === null) {
-            throw new RuntimeException(sprintf(
-                'validate must be a boolean, a string or an object. Got %s.',
-                get_debug_type($options['validate'])
-            ));
-        }
-
-        return $validator->validate($data, $isNew);
+        return $this->_table->getValidator($validator)->validate($data, $isNew);
     }
 
     /**
@@ -553,7 +542,7 @@ class Marshaller
             }
         }
 
-        $errors = $this->_validate($data + $keys, $options, $isNew);
+        $errors = $this->_validate($data + $keys, $options['validate'], $isNew);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];
