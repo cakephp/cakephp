@@ -28,7 +28,7 @@ trait LocatorAwareTrait
      *
      * @var \Cake\ORM\Locator\LocatorInterface|null
      */
-    protected $_tableLocator;
+    protected ?LocatorInterface $_tableLocator = null;
 
     /**
      * Sets the table locator.

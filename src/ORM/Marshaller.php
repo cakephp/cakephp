@@ -45,7 +45,7 @@ class Marshaller
      *
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected Table $_table;
 
     /**
      * Constructor.

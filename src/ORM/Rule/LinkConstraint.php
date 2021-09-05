@@ -46,14 +46,14 @@ class LinkConstraint
      *
      * @var \Cake\ORM\Association|string
      */
-    protected $_association;
+    protected Association|string $_association;
 
     /**
      * The link status that is required to be present in order for the check to succeed.
      *
      * @var string
      */
-    protected $_requiredLinkState;
+    protected string $_requiredLinkState;
 
     /**
      * Constructor.

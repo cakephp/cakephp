@@ -16,7 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association\Loader;
 
+use Cake\Database\ExpressionInterface;
+use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
+use Closure;
 use RuntimeException;
 
 /**
@@ -31,28 +34,28 @@ class SelectWithPivotLoader extends SelectLoader
      *
      * @var string
      */
-    protected $junctionAssociationName;
+    protected string $junctionAssociationName;
 
     /**
      * The property name for the junction association, where its results should be nested at.
      *
      * @var string
      */
-    protected $junctionProperty;
+    protected string $junctionProperty;
 
     /**
      * The junction association instance
      *
      * @var \Cake\ORM\Association\HasMany
      */
-    protected $junctionAssoc;
+    protected HasMany $junctionAssoc;
 
     /**
      * Custom conditions for the junction association
      *
      * @var \Cake\Database\ExpressionInterface|\Closure|array|string|null
      */
-    protected $junctionConditions;
+    protected ExpressionInterface|Closure|array|string|null $junctionConditions = null;
 
     /**
      * @inheritDoc

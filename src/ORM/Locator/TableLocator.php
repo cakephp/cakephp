@@ -36,14 +36,14 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @var array
      */
-    protected $locations = [];
+    protected array $locations = [];
 
     /**
      * Configuration for aliases.
      *
      * @var array
      */
-    protected $_config = [];
+    protected array $_config = [];
 
     /**
      * Instances that belong to the registry.
@@ -58,7 +58,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @var array<\Cake\ORM\Table>
      */
-    protected $_fallbacked = [];
+    protected array $_fallbacked = [];
 
     /**
      * Fallback class to use
@@ -66,14 +66,14 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @var string
      * @psalm-var class-string<\Cake\ORM\Table>
      */
-    protected $fallbackClassName = Table::class;
+    protected string $fallbackClassName = Table::class;
 
     /**
      * Whether fallback class should be used if a table class could not be found.
      *
      * @var bool
      */
-    protected $allowFallbackClass = true;
+    protected bool $allowFallbackClass = true;
 
     /**
      * Constructor.

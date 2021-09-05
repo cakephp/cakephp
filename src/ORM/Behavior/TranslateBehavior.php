@@ -47,7 +47,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
         'implementedMethods' => [
             'setLocale' => 'setLocale',
@@ -70,14 +70,14 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @var string
      * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
-    protected static $defaultStrategyClass = EavStrategy::class;
+    protected static string $defaultStrategyClass = EavStrategy::class;
 
     /**
      * Translation strategy instance.
      *
      * @var \Cake\ORM\Behavior\Translate\TranslateStrategyInterface|null
      */
-    protected $strategy;
+    protected ?TranslateStrategyInterface $strategy = null;
 
     /**
      * Constructor

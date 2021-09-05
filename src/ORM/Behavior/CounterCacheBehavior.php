@@ -108,7 +108,7 @@ class CounterCacheBehavior extends Behavior
      *
      * @var array
      */
-    protected $_ignoreDirty = [];
+    protected array $_ignoreDirty = [];
 
     /**
      * beforeSave callback.

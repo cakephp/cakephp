@@ -96,21 +96,21 @@ abstract class Association
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * The class name of the target table object
      *
      * @var string
      */
-    protected $_className;
+    protected string $_className;
 
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
      * @var array<string>|string|null
      */
-    protected $_bindingKey;
+    protected array|string|null $_bindingKey = null;
 
     /**
      * The name of the field representing the foreign key to the table to load
@@ -125,7 +125,7 @@ abstract class Association
      *
      * @var \Closure|array
      */
-    protected $_conditions = [];
+    protected Closure|array $_conditions = [];
 
     /**
      * Whether the records on the target table are dependent on the source table,
@@ -134,14 +134,14 @@ abstract class Association
      *
      * @var bool
      */
-    protected $_dependent = false;
+    protected bool $_dependent = false;
 
     /**
      * Whether or not cascaded deletes should also fire callbacks.
      *
      * @var bool
      */
-    protected $_cascadeCallbacks = false;
+    protected bool $_cascadeCallbacks = false;
 
     /**
      * Source table instance
@@ -162,7 +162,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_joinType = Query::JOIN_TYPE_LEFT;
+    protected string $_joinType = Query::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
@@ -178,7 +178,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_strategy = self::STRATEGY_JOIN;
+    protected string $_strategy = self::STRATEGY_JOIN;
 
     /**
      * The default finder name to use for fetching rows from the target table
@@ -186,14 +186,14 @@ abstract class Association
      *
      * @var array|string
      */
-    protected $_finder = 'all';
+    protected array|string $_finder = 'all';
 
     /**
      * Valid strategies for this association. Subclasses can narrow this down.
      *
      * @var array<string>
      */
-    protected $_validStrategies = [
+    protected array $_validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,

@@ -75,7 +75,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @var bool|null
      */
-    protected $_hasFields;
+    protected ?bool $_hasFields = null;
 
     /**
      * Tracks whether or not the original query should include
@@ -83,21 +83,21 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @var bool|null
      */
-    protected $_autoFields;
+    protected ?bool $_autoFields = null;
 
     /**
      * Whether to hydrate results into entity objects
      *
      * @var bool
      */
-    protected $_hydrate = true;
+    protected bool $_hydrate = true;
 
     /**
      * Whether aliases are generated for fields.
      *
      * @var bool
      */
-    protected $aliasingEnabled = true;
+    protected bool $aliasingEnabled = true;
 
     /**
      * A callable function that can be used to calculate the total amount of
@@ -113,14 +113,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @var \Cake\ORM\EagerLoader|null
      */
-    protected $_eagerLoader;
+    protected ?EagerLoader $_eagerLoader = null;
 
     /**
      * True if the beforeFind event has already been triggered for this query
      *
      * @var bool
      */
-    protected $_beforeFindFired = false;
+    protected bool $_beforeFindFired = false;
 
     /**
      * The COUNT(*) for the query.
@@ -129,7 +129,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @var int|null
      */
-    protected $_resultsCount;
+    protected ?int $_resultsCount = null;
 
     /**
      * Constructor

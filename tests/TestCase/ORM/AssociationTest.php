@@ -211,7 +211,6 @@ class AssociationTest extends TestCase
     public function testInvalidTableFetchedFromRegistry(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->getTableLocator()->get('Test');
 
         $config = [
             'className' => TestTable::class,
@@ -223,6 +222,7 @@ class AssociationTest extends TestCase
             ])
             ->setConstructorArgs(['Test', $config])
             ->getMock();
+        $this->association->setSource($this->getTableLocator()->get('Test'));
 
         $this->association->getTarget();
     }

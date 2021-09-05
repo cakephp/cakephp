@@ -32,7 +32,7 @@ trait TranslateStrategyTrait
      *
      * @var \Cake\ORM\Table
      */
-    protected $table;
+    protected Table $table;
 
     /**
      * The locale name that will be used to override fields in the bound table
@@ -40,14 +40,14 @@ trait TranslateStrategyTrait
      *
      * @var string|null
      */
-    protected $locale;
+    protected ?string $locale = null;
 
     /**
      * Instance of Table responsible for translating
      *
      * @var \Cake\ORM\Table
      */
-    protected $translationTable;
+    protected Table $translationTable;
 
     /**
      * Return translation table instance.

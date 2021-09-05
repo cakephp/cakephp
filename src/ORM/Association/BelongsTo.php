@@ -38,7 +38,7 @@ class BelongsTo extends Association
      *
      * @var array<string>
      */
-    protected $_validStrategies = [
+    protected array $_validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
     ];

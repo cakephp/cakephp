@@ -58,14 +58,14 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_joinType = Query::JOIN_TYPE_INNER;
+    protected string $_joinType = Query::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
      *
      * @var string
      */
-    protected $_strategy = self::STRATEGY_SELECT;
+    protected string $_strategy = self::STRATEGY_SELECT;
 
     /**
      * Junction table instance
@@ -79,7 +79,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_junctionTableName;
+    protected string $_junctionTableName;
 
     /**
      * The name of the hasMany association from the target table
@@ -95,21 +95,21 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_junctionProperty = '_joinData';
+    protected string $_junctionProperty = '_joinData';
 
     /**
      * Saving strategy to be used by this association
      *
      * @var string
      */
-    protected $_saveStrategy = self::SAVE_REPLACE;
+    protected string $_saveStrategy = self::SAVE_REPLACE;
 
     /**
      * The name of the field representing the foreign key to the target table
      *
      * @var array<string>|string|null
      */
-    protected $_targetForeignKey;
+    protected array|string|null $_targetForeignKey = null;
 
     /**
      * The table instance for the junction relation.
@@ -123,7 +123,7 @@ class BelongsToMany extends Association
      *
      * @var array<string>
      */
-    protected $_validStrategies = [
+    protected array $_validStrategies = [
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,
     ];
@@ -136,28 +136,28 @@ class BelongsToMany extends Association
      *
      * @var bool
      */
-    protected $_dependent = true;
+    protected bool $_dependent = true;
 
     /**
      * Filtered conditions that reference the target table.
      *
      * @var array|null
      */
-    protected $_targetConditions;
+    protected ?array $_targetConditions = null;
 
     /**
      * Filtered conditions that reference the junction table.
      *
      * @var array|null
      */
-    protected $_junctionConditions;
+    protected ?array $_junctionConditions = null;
 
     /**
      * Order in which target records should be returned
      *
      * @var mixed
      */
-    protected $_sort;
+    protected mixed $_sort = null;
 
     /**
      * Sets the name of the field representing the foreign key to the target table.

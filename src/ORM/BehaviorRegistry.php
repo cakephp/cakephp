@@ -41,21 +41,21 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected Table $_table;
 
     /**
      * Method mappings.
      *
      * @var array
      */
-    protected $_methodMap = [];
+    protected array $_methodMap = [];
 
     /**
      * Finder method mappings.
      *
      * @var array
      */
-    protected $_finderMap = [];
+    protected array $_finderMap = [];
 
     /**
      * Constructor

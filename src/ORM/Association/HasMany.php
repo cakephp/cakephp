@@ -41,28 +41,28 @@ class HasMany extends Association
      *
      * @var mixed
      */
-    protected $_sort;
+    protected mixed $_sort = null;
 
     /**
      * The type of join to be used when adding the association to a query
      *
      * @var string
      */
-    protected $_joinType = Query::JOIN_TYPE_INNER;
+    protected string $_joinType = Query::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
      *
      * @var string
      */
-    protected $_strategy = self::STRATEGY_SELECT;
+    protected string $_strategy = self::STRATEGY_SELECT;
 
     /**
      * Valid strategies for this type of association
      *
      * @var array<string>
      */
-    protected $_validStrategies = [
+    protected array $_validStrategies = [
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,
     ];
@@ -86,7 +86,7 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected $_saveStrategy = self::SAVE_APPEND;
+    protected string $_saveStrategy = self::SAVE_APPEND;
 
     /**
      * Returns whether or not the passed table is the owning side for this
