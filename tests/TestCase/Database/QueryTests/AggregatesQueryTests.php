@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
  */
 class AggregatesQueryTests extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Comments',
     ];
 

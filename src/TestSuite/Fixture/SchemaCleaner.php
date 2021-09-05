@@ -32,7 +32,7 @@ class SchemaCleaner
     /**
      * @var \Cake\Console\ConsoleIo|null
      */
-    protected $io;
+    protected ?ConsoleIo $io = null;
 
     /**
      * SchemaCleaner constructor.

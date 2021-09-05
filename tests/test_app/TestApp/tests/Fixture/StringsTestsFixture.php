@@ -12,14 +12,14 @@ class StringsTestsFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'strings';
+    public string $table = 'strings';
 
     /**
      * Fields array
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'length' => '255'],
         'email' => ['type' => 'string', 'length' => '255'],
@@ -31,7 +31,7 @@ class StringsTestsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['name' => 'Mark Doe', 'email' => 'mark.doe@email.com'],
         ['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
         ['email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30],

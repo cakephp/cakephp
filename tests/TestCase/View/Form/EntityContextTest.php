@@ -39,7 +39,7 @@ class EntityContextTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = ['core.Articles', 'core.Comments', 'core.Tags', 'core.ArticlesTags'];
+    protected array $fixtures = ['core.Articles', 'core.Comments', 'core.Tags', 'core.ArticlesTags'];
 
     /**
      * tests getRequiredMessage

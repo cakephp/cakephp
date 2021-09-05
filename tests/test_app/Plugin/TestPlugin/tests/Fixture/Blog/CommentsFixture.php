@@ -26,7 +26,7 @@ class CommentsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'article_id' => ['type' => 'integer', 'null' => false],
         'comment' => 'text',
@@ -38,5 +38,5 @@ class CommentsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 }

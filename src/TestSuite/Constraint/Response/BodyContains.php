@@ -27,7 +27,7 @@ class BodyContains extends ResponseBase
     /**
      * @var bool
      */
-    protected $ignoreCase;
+    protected bool $ignoreCase;
 
     /**
      * Constructor.

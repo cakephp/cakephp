@@ -30,12 +30,12 @@ class TransactionStrategy implements FixtureStrategyInterface
     /**
      * @var \Cake\TestSuite\Fixture\FixtureHelper
      */
-    protected $helper;
+    protected FixtureHelper $helper;
 
     /**
      * @var array<\Cake\Datasource\FixtureInterface>
      */
-    protected $fixtures = [];
+    protected array $fixtures = [];
 
     /**
      * Initialize strategy.

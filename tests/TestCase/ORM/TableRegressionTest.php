@@ -30,7 +30,7 @@ class TableRegressionTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Authors',
     ];
 

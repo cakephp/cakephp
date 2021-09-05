@@ -26,7 +26,7 @@ class AuthorsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'default' => null],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
@@ -37,7 +37,7 @@ class AuthorsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['name' => 'mariano'],
         ['name' => 'nate'],
         ['name' => 'larry'],

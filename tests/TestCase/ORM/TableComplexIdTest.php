@@ -31,7 +31,7 @@ class TableComplexIdTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.DateKeys',
     ];
 

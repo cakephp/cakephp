@@ -26,7 +26,7 @@ class StatusError extends StatusCodeBase
     /**
      * @var array<int, int>
      */
-    protected $code = [400, 429];
+    protected array|int $code = [400, 429];
 
     /**
      * Assertion message

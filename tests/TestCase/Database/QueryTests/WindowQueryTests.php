@@ -30,7 +30,7 @@ use RuntimeException;
  */
 class WindowQueryTests extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Comments',
     ];
 

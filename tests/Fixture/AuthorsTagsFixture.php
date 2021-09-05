@@ -25,7 +25,7 @@ class AuthorsTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'author_id' => ['type' => 'integer', 'null' => false],
         'tag_id' => ['type' => 'integer', 'null' => false],
         '_constraints' => [
@@ -45,7 +45,7 @@ class AuthorsTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['author_id' => 3, 'tag_id' => 1],
         ['author_id' => 3, 'tag_id' => 2],
         ['author_id' => 2, 'tag_id' => 1],

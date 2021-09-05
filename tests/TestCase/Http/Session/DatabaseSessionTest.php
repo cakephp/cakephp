@@ -33,7 +33,7 @@ class DatabaseSessionTest extends TestCase
      *
      * @var string
      */
-    protected $fixtures = ['core.Sessions'];
+    protected array $fixtures = ['core.Sessions'];
 
     /**
      * @var \Cake\Http\Session\DatabaseSession

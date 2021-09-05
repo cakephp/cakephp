@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 
 class TransactionFixtureStrategyTest extends TestCase
 {
-    protected $fixtures = ['core.Articles'];
+    protected array $fixtures = ['core.Articles'];
 
     /**
      * Tests truncation strategy.

@@ -26,7 +26,7 @@ class ArticlesTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'locale' => ['type' => 'string', 'null' => false],
         'title' => ['type' => 'string', 'null' => true],
@@ -39,7 +39,7 @@ class ArticlesTranslationsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['locale' => 'eng', 'id' => 1, 'title' => 'Title #1', 'body' => 'Content #1'],
         ['locale' => 'deu', 'id' => 1, 'title' => 'Titel #1', 'body' => 'Inhalt #1'],
         ['locale' => 'cze', 'id' => 1, 'title' => 'Titulek #1', 'body' => 'Obsah #1'],

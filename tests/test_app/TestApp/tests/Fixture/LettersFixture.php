@@ -16,7 +16,7 @@ class LettersFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['letter' => 'a'],
         ['letter' => 'b'],
         ['letter' => 'c'],

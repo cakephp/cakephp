@@ -27,7 +27,7 @@ class TemplateFileEquals extends Constraint
     /**
      * @var string
      */
-    protected $filename;
+    protected string $filename;
 
     /**
      * Constructor

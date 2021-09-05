@@ -30,7 +30,7 @@ use Cake\Utility\Xml;
  */
 class XmlViewTest extends TestCase
 {
-    protected $fixtures = ['core.Authors'];
+    protected array $fixtures = ['core.Authors'];
 
     public function setUp(): void
     {

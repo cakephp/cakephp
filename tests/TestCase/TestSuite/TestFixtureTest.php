@@ -38,7 +38,7 @@ class TestFixtureTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = ['core.Posts'];
+    protected array $fixtures = ['core.Posts'];
 
     /**
      * Set up
@@ -67,7 +67,7 @@ class TestFixtureTest extends TestCase
         $this->assertSame('articles', $Fixture->table);
 
         $Fixture = new ArticlesFixture();
-        $Fixture->table = null;
+        $Fixture->table = '';
         $Fixture->init();
         $this->assertSame('articles', $Fixture->table);
 
@@ -91,34 +91,6 @@ class TestFixtureTest extends TestCase
     public function testInitImport(): void
     {
         $fixture = new ImportsFixture();
-        $fixture->fields = $fixture->records = null;
-        $fixture->import = [
-            'table' => 'posts',
-            'connection' => 'test',
-        ];
-        $fixture->init();
-
-        $expected = [
-            'id',
-            'author_id',
-            'title',
-            'body',
-            'published',
-        ];
-        $this->assertSame($expected, $fixture->getTableSchema()->columns());
-    }
-
-    /**
-     * test import fixture initialization
-     */
-    public function testInitImportModel(): void
-    {
-        $fixture = new ImportsFixture();
-        $fixture->fields = $fixture->records = null;
-        $fixture->import = [
-            'model' => 'Posts',
-            'connection' => 'test',
-        ];
         $fixture->init();
 
         $expected = [

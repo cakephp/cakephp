@@ -29,7 +29,7 @@ use TestApp\Database\Type\IntType;
  */
 class TableSchemaTest extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',

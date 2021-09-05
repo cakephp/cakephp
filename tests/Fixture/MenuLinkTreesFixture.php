@@ -28,7 +28,7 @@ class MenuLinkTreesFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'menu' => ['type' => 'string', 'null' => false],
         'lft' => ['type' => 'integer'],
@@ -70,7 +70,7 @@ class MenuLinkTreesFixture extends TestFixture
      *
      * **Note:** title:id
      */
-    public $records = [
+    public array $records = [
         [
             'menu' => 'main-menu',
             'lft' => '1',

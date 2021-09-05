@@ -17,6 +17,7 @@ namespace Cake\TestSuite;
 
 use Cake\Command\Command;
 use Cake\Console\CommandRunner;
+use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\TestSuite\Constraint\Console\ContentsContain;
@@ -25,7 +26,7 @@ use Cake\TestSuite\Constraint\Console\ContentsEmpty;
 use Cake\TestSuite\Constraint\Console\ContentsNotContain;
 use Cake\TestSuite\Constraint\Console\ContentsRegExp;
 use Cake\TestSuite\Constraint\Console\ExitCode;
-use Cake\TestSuite\Stub\ConsoleInput;
+use Cake\TestSuite\Stub\ConsoleInput as StubConsoleInput;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\Stub\MissingConsoleInputException;
 use RuntimeException;
@@ -46,28 +47,28 @@ trait ConsoleIntegrationTestTrait
      *
      * @var int|null
      */
-    protected $_exitCode;
+    protected ?int $_exitCode = null;
 
     /**
      * Console output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|null
      */
-    protected $_out;
+    protected ?ConsoleOutput $_out = null;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|null
      */
-    protected $_err;
+    protected ?ConsoleOutput $_err = null;
 
     /**
      * Console input mock
      *
-     * @var \Cake\Console\ConsoleInput
+     * @var \Cake\Console\ConsoleInput|null
      */
-    protected $_in;
+    protected ?ConsoleInput $_in = null;
 
     /**
      * Runs CLI integration test
@@ -89,7 +90,7 @@ trait ConsoleIntegrationTestTrait
             $this->_err = new ConsoleOutput();
         }
         if ($this->_in === null) {
-            $this->_in = new ConsoleInput($input);
+            $this->_in = new StubConsoleInput($input);
         } elseif ($input) {
             throw new RuntimeException('You can use `$input` only if `$_in` property is null and will be reset.');
         }

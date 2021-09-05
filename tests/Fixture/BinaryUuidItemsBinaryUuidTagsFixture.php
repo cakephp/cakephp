@@ -26,7 +26,7 @@ class BinaryUuidItemsBinaryUuidTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'binary_uuid_item_id' => ['type' => 'binaryuuid', 'null' => false],
         'binary_uuid_tag_id' => ['type' => 'binaryuuid', 'null' => false],
@@ -44,5 +44,5 @@ class BinaryUuidItemsBinaryUuidTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 }

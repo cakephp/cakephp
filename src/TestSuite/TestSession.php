@@ -28,7 +28,7 @@ class TestSession
     /**
      * @var array|null
      */
-    protected $session;
+    protected ?array $session = null;
 
     /**
      * @param array|null $session Session data.

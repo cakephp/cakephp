@@ -27,7 +27,7 @@ class HeaderSet extends ResponseBase
     /**
      * @var string
      */
-    protected $headerName;
+    protected string $headerName;
 
     /**
      * Constructor.

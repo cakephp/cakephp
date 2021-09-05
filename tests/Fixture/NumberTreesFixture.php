@@ -28,7 +28,7 @@ class NumberTreesFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'null' => false],
         'parent_id' => 'integer',
@@ -55,7 +55,7 @@ class NumberTreesFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         [
             'name' => 'electronics',
             'parent_id' => null,

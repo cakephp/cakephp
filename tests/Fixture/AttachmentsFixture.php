@@ -26,7 +26,7 @@ class AttachmentsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'comment_id' => ['type' => 'integer', 'null' => false],
         'attachment' => ['type' => 'string', 'null' => false],
@@ -40,7 +40,7 @@ class AttachmentsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'],
     ];
 }

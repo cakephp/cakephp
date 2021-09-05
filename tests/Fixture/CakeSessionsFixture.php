@@ -26,7 +26,7 @@ class CakeSessionsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'string', 'length' => 128],
         'data' => ['type' => 'text', 'null' => true],
         'expires' => ['type' => 'integer', 'length' => 11, 'null' => true],
@@ -38,5 +38,5 @@ class CakeSessionsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 }

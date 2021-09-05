@@ -54,7 +54,7 @@ class ViewTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = ['core.Posts', 'core.Users'];
+    protected array $fixtures = ['core.Posts', 'core.Users'];
 
     /**
      * @var \Cake\View\View

@@ -26,7 +26,7 @@ class SectionsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'title' => ['type' => 'string'],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
@@ -37,7 +37,7 @@ class SectionsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['title' => 'foo'],
         ['title' => 'bar'],
     ];

@@ -8,7 +8,7 @@ use TestApp\Database\ColumnSchemaAwareTypeValueObject;
 
 class ColumnSchemaAwareTypeValuesFixture extends TestFixture
 {
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'val' => ['type' => 'text', 'null' => false, 'comment' => 'Fixture comment'],
         '_constraints' => [

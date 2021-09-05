@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * ContentType
  *
@@ -25,7 +27,7 @@ class ContentType extends ResponseBase
     /**
      * @var \Cake\Http\Response
      */
-    protected $response;
+    protected ResponseInterface $response;
 
     /**
      * Checks assertion

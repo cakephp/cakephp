@@ -40,7 +40,7 @@ class TranslateBehaviorTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',

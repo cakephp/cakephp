@@ -38,7 +38,7 @@ class ConsoleOutput extends ConsoleOutputBase
      *
      * @var array
      */
-    protected $_out = [];
+    protected array $_out = [];
 
     /**
      * Write output to the buffer.

@@ -26,7 +26,7 @@ class FeaturedTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'tag_id' => ['type' => 'integer', 'null' => false],
         'priority' => ['type' => 'integer', 'null' => false],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['tag_id']]],
@@ -37,7 +37,7 @@ class FeaturedTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['priority' => 1],
         ['priority' => 2],
         ['priority' => 3],

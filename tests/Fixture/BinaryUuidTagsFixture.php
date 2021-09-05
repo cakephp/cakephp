@@ -26,7 +26,7 @@ class BinaryUuidTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'binaryuuid'],
         'name' => ['type' => 'string', 'null' => false],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
@@ -37,7 +37,7 @@ class BinaryUuidTagsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['id' => '481fc6d0-b920-43e0-a40d-111111111111', 'name' => 'Defect'],
         ['id' => '48298a29-81c0-4c26-a7fb-222222222222', 'name' => 'Enhancement'],
     ];

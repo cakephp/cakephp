@@ -50,7 +50,7 @@ class ConnectionTest extends TestCase
     /**
      * @var array
      */
-    protected $fixtures = ['core.Things'];
+    protected array $fixtures = ['core.Things'];
 
     /**
      * Where the NestedTransactionRollbackException was created.

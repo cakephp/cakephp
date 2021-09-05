@@ -30,7 +30,7 @@ class TableUuidTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.BinaryUuidItems',
         'core.UuidItems',
     ];

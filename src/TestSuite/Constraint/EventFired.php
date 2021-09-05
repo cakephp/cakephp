@@ -31,7 +31,7 @@ class EventFired extends Constraint
      *
      * @var \Cake\Event\EventManager
      */
-    protected $_eventManager;
+    protected EventManager $_eventManager;
 
     /**
      * Constructor

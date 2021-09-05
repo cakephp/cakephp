@@ -30,7 +30,7 @@ use TestApp\Database\Type\UuidValue;
  */
 class ExpressionTypeCastingIntegrationTest extends TestCase
 {
-    protected $fixtures = ['core.OrderedUuidItems'];
+    protected array $fixtures = ['core.OrderedUuidItems'];
 
     /**
      * @var \Cake\Database\Connection

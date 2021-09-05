@@ -31,14 +31,14 @@ class ConsoleInput extends ConsoleInputBase
      *
      * @var array<string>
      */
-    protected $replies = [];
+    protected array $replies = [];
 
     /**
      * Current message index
      *
      * @var int
      */
-    protected $currentIndex = -1;
+    protected int $currentIndex = -1;
 
     /**
      * Constructor

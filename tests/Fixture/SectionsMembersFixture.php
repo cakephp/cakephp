@@ -26,7 +26,7 @@ class SectionsMembersFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'section_id' => ['type' => 'integer'],
         'member_id' => ['type' => 'integer'],
@@ -38,7 +38,7 @@ class SectionsMembersFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['section_id' => 1, 'member_id' => 1],
         ['section_id' => 2, 'member_id' => 1],
     ];

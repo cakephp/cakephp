@@ -23,7 +23,7 @@ class ThingsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'title' => ['type' => 'string', 'length' => 20],
         'body' => ['type' => 'string', 'length' => 50],
@@ -34,7 +34,7 @@ class ThingsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['id' => 1, 'title' => 'a title', 'body' => 'a body'],
         ['id' => 2, 'title' => 'another title', 'body' => 'another body'],
     ];

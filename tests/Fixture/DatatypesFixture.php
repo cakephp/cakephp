@@ -24,7 +24,7 @@ class DatatypesFixture extends TestFixture
     /**
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'biginteger'],
         'cost' => ['type' => 'decimal', 'length' => 20, 'precision' => 1, 'null' => true],
         'fraction' => ['type' => 'decimal', 'length' => 20, 'precision' => 19, 'null' => true],
@@ -37,5 +37,5 @@ class DatatypesFixture extends TestFixture
     /**
      * @var array
      */
-    public $records = [];
+    public array $records = [];
 }

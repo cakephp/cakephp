@@ -66,7 +66,7 @@ class TableTest extends TestCase
     /**
      * @var string[]
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',

@@ -12,14 +12,14 @@ class ArticlesFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'articles';
+    public string $table = 'articles';
 
     /**
      * Fields array
      *
      * @var array
      */
-    public $fields = [
+    public array $fields = [
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'length' => '255'],
         'created' => ['type' => 'datetime'],
@@ -33,7 +33,7 @@ class ArticlesFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
         ['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
         ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00'],

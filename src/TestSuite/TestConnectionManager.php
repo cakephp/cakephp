@@ -25,7 +25,7 @@ final class TestConnectionManager
     /**
      * @var bool
      */
-    public static $aliasConnectionIsLoaded = false;
+    public static bool $aliasConnectionIsLoaded = false;
 
     /**
      * @return void

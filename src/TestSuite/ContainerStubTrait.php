@@ -39,21 +39,21 @@ trait ContainerStubTrait
      * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
      * @var string|null
      */
-    protected $_appClass;
+    protected ?string $_appClass = null;
 
     /**
      * The customized application constructor arguments.
      *
      * @var array|null
      */
-    protected $_appArgs;
+    protected ?array $_appArgs = null;
 
     /**
      * The collection of container services.
      *
      * @var array
      */
-    private $containerServices = [];
+    private array $containerServices = [];
 
     /**
      * Configure the application class to use in integration tests.

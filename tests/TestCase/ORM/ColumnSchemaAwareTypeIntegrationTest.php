@@ -10,7 +10,7 @@ use TestApp\Database\Type\ColumnSchemaAwareType;
 
 class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         //'core.ColumnSchemaAwareTypeValues',
     ];
 
