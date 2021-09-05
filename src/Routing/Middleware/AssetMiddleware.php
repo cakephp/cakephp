@@ -40,7 +40,7 @@ class AssetMiddleware implements MiddlewareInterface
      *
      * @var string
      */
-    protected $cacheTime = '+1 day';
+    protected string $cacheTime = '+1 day';
 
     /**
      * Constructor.

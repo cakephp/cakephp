@@ -32,7 +32,7 @@ class InflectedRoute extends Route
      *
      * @var bool
      */
-    protected $_inflectedDefaults = false;
+    protected bool $_inflectedDefaults = false;
 
     /**
      * Parses a string URL into an array. If it matches, it will convert the prefix, controller and

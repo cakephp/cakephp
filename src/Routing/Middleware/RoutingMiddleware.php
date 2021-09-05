@@ -48,7 +48,7 @@ class RoutingMiddleware implements MiddlewareInterface
      *
      * @var \Cake\Routing\RoutingApplicationInterface
      */
-    protected $app;
+    protected RoutingApplicationInterface $app;
 
     /**
      * The cache configuration name to use for route collection caching,
@@ -56,7 +56,7 @@ class RoutingMiddleware implements MiddlewareInterface
      *
      * @var string|null
      */
-    protected $cacheConfig;
+    protected ?string $cacheConfig = null;
 
     /**
      * Constructor

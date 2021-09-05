@@ -46,7 +46,7 @@ class Router
      *
      * @var string
      */
-    protected static $_defaultRouteClass = Route::class;
+    protected static string $_defaultRouteClass = Route::class;
 
     /**
      * Contains the base string that will be applied to all generated URLs
@@ -54,7 +54,7 @@ class Router
      *
      * @var string|null
      */
-    protected static $_fullBaseUrl;
+    protected static ?string $_fullBaseUrl = null;
 
     /**
      * Regular expression for action names
@@ -103,21 +103,21 @@ class Router
      *
      * @var \Cake\Routing\RouteCollection
      */
-    protected static $_collection;
+    protected static RouteCollection $_collection;
 
     /**
      * A hash of request context data.
      *
      * @var array
      */
-    protected static $_requestContext = [];
+    protected static array $_requestContext = [];
 
     /**
      * Named expressions
      *
      * @var array
      */
-    protected static $_namedExpressions = [
+    protected static array $_namedExpressions = [
         'Action' => Router::ACTION,
         'Year' => Router::YEAR,
         'Month' => Router::MONTH,
@@ -129,9 +129,9 @@ class Router
     /**
      * Maintains the request object reference.
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Http\ServerRequest|null
      */
-    protected static $_request;
+    protected static ?ServerRequest $_request;
 
     /**
      * Initial state is populated the first time reload() is called which is at the bottom
@@ -140,7 +140,7 @@ class Router
      *
      * @var array
      */
-    protected static $_initialState = [];
+    protected static array $_initialState = [];
 
     /**
      * The stack of URL filters to apply against routing URLs before passing the
@@ -148,21 +148,21 @@ class Router
      *
      * @var array<callable>
      */
-    protected static $_urlFilters = [];
+    protected static array $_urlFilters = [];
 
     /**
      * Default extensions defined with Router::extensions()
      *
      * @var array<string>
      */
-    protected static $_defaultExtensions = [];
+    protected static array $_defaultExtensions = [];
 
     /**
      * Cache of parsed route paths
      *
      * @var array
      */
-    protected static $_routePaths = [];
+    protected static array $_routePaths = [];
 
     /**
      * Get or set default route class.
@@ -249,7 +249,7 @@ class Router
             return;
         }
         foreach (static::$_initialState as $key => $val) {
-            if ($key !== '_initialState') {
+            if ($key !== '_initialState' && $key !== '_collection') {
                 static::${$key} = $val;
             }
         }

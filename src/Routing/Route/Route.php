@@ -34,28 +34,28 @@ class Route
      *
      * @var array
      */
-    public $keys = [];
+    public array $keys = [];
 
     /**
      * An array of additional parameters for the Route.
      *
      * @var array
      */
-    public $options = [];
+    public array $options = [];
 
     /**
      * Default parameters for a Route
      *
      * @var array
      */
-    public $defaults = [];
+    public array $defaults = [];
 
     /**
      * The routes template string.
      *
      * @var string
      */
-    public $template;
+    public string $template;
 
     /**
      * Is this route a greedy route? Greedy routes have a `/*` in their
@@ -63,35 +63,35 @@ class Route
      *
      * @var bool
      */
-    protected $_greedy = false;
+    protected bool $_greedy = false;
 
     /**
      * The compiled route regular expression
      *
      * @var string|null
      */
-    protected $_compiledRoute;
+    protected ?string $_compiledRoute = null;
 
     /**
      * The name for a route. Fetch with Route::getName();
      *
      * @var string|null
      */
-    protected $_name;
+    protected ?string $_name = null;
 
     /**
      * List of connected extensions for this route.
      *
      * @var array<string>
      */
-    protected $_extensions = [];
+    protected array $_extensions = [];
 
     /**
      * List of middleware that should be applied.
      *
      * @var array
      */
-    protected $middleware = [];
+    protected array $middleware = [];
 
     /**
      * Valid HTTP methods.
