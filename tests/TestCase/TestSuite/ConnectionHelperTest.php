@@ -15,32 +15,38 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\Exception\MissingDatasourceConfigException;
+use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\TestCase;
-use Cake\TestSuite\TestConnectionManager;
+use TestApp\Database\Driver\TestDriver;
 
-class TestConnectionManagerTest extends TestCase
+class ConnectionHelperTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        ConnectionManager::drop('query_logging');
+    }
+
     public function testAliasConnections(): void
     {
         ConnectionManager::dropAlias('default');
 
-        try {
-            $exceptionThrown = false;
-            ConnectionManager::get('default');
-        } catch (MissingDatasourceConfigException $e) {
-            $exceptionThrown = true;
-        } finally {
-            $this->assertTrue($exceptionThrown);
-        }
-
-        TestConnectionManager::$aliasConnectionIsLoaded = false;
-        TestConnectionManager::aliasConnections();
+        (new ConnectionHelper())->addTestAliases();
 
         $this->assertSame(
             ConnectionManager::get('test'),
             ConnectionManager::get('default')
         );
+    }
+
+    public function testEnableQueryLogging(): void
+    {
+        $connection = new Connection(['driver' => TestDriver::class]);
+        ConnectionManager::setConfig('query_logging', $connection);
+        $this->assertFalse($connection->isQueryLoggingEnabled());
+
+        (new ConnectionHelper())->enableQueryLogging(['query_logging']);
+        $this->assertTrue($connection->isQueryLoggingEnabled());
     }
 }
