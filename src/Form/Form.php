@@ -210,33 +210,22 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * Used to check if $data passes this form's validation.
      *
      * @param array $data The data to check.
-     * @param array $options The validate options
+     * @param string|bool $validator Validator name or `true` for default validator.
      * @return bool Whether or not the data is valid.
      * @throws \RuntimeException If validator is invalid.
      */
-    public function validate(array $data, array $options = []): bool
+    public function validate(array $data, $validator = true): bool
     {
-        $options += [
-            'validate' => true,
-        ];
-
-        $validator = null;
-        if ($options['validate'] === true) {
-            $validator = $this->getValidator();
-        } elseif (is_string($options['validate'])) {
-            $validator = $this->getValidator($options['validate']);
-        } elseif (is_object($options['validate'])) {
-            /** @var \Cake\Validation\Validator $validator */
-            $validator = $options['validate'];
+        if (!$validator) {
+            return true;
         }
 
-        if ($validator === null) {
-            throw new RuntimeException(
-                sprintf('validate must be a boolean, a string or an object. Got %s.', getTypeName($options['validate']))
-            );
+        if ($validator === true) {
+            $validator = null;
         }
 
-        $this->_errors = $validator->validate($data);
+        $this->_errors = $this->getValidator($validator)
+            ->validate($data);
 
         return count($this->_errors) === 0;
     }

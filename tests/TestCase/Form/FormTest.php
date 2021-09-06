@@ -126,6 +126,18 @@ class FormTest extends TestCase
     /**
      * Test validate with custom validator
      */
+    public function testValidateNoValidation(): void
+    {
+        $form = new Form();
+        $form->getValidator()
+            ->add('email', 'format', ['rule' => 'email']);
+        $data = ['email' => 'wrong'];
+        $this->assertTrue($form->validate($data, false));
+    }
+
+    /**
+     * Test validate with custom validator
+     */
     public function testValidateCustomValidator(): void
     {
         $form = new Form();
@@ -137,34 +149,7 @@ class FormTest extends TestCase
 
         $data = ['email' => 'wrong'];
 
-        $this->assertFalse($form->validate($data, ['validate' => 'custom']));
-    }
-
-    /**
-     * Test validate with object validator
-     */
-    public function testValidateObjectValidator(): void
-    {
-        $form = new Form();
-
-        $validator = clone $form->getValidator();
-        $validator->add('email', 'format', ['rule' => 'email']);
-
-        $data = ['email' => 'wrong'];
-
-        $this->assertFalse($form->validate($data, ['validate' => $validator]));
-    }
-
-    /**
-     * Test that invalid validate options raise exceptions
-     */
-    public function testValidateInvalidType(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('validate must be a boolean, a string or an object. Got NULL.');
-        $data = ['email' => 'wrong'];
-        $form = new Form();
-        $form->validate($data, ['validate' => null]);
+        $this->assertFalse($form->validate($data, 'custom'));
     }
 
     /**
