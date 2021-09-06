@@ -20,7 +20,6 @@ use Cake\Form\Form;
 use Cake\Form\Schema;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-use RuntimeException;
 use TestApp\Form\AppForm;
 use TestApp\Form\FormSchema;
 
