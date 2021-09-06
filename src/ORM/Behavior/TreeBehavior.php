@@ -45,7 +45,7 @@ class TreeBehavior extends Behavior
      *
      * @var string
      */
-    protected $_primaryKey;
+    protected string $_primaryKey = '';
 
     /**
      * Default config
@@ -54,7 +54,7 @@ class TreeBehavior extends Behavior
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => [
             'path' => 'findPath',
             'children' => 'findChildren',

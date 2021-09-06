@@ -23,7 +23,7 @@ use Cake\ORM\Behavior;
  */
 class DuplicateBehavior extends Behavior
 {
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => [
             'children' => 'findChildren',
         ],

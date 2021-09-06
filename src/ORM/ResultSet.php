@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
+use Cake\Database\DriverInterface;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
@@ -37,37 +38,37 @@ class ResultSet implements ResultSetInterface
     /**
      * Database statement holding the results
      *
-     * @var \Cake\Database\StatementInterface
+     * @var \Cake\Database\StatementInterface|null
      */
-    protected $_statement;
+    protected ?StatementInterface $_statement = null;
 
     /**
      * Points to the next record number that should be fetched
      *
      * @var int
      */
-    protected $_index = 0;
+    protected int $_index = 0;
 
     /**
      * Last record fetched from the statement
      *
      * @var \Cake\Datasource\EntityInterface|array
      */
-    protected $_current;
+    protected EntityInterface|array $_current = [];
 
     /**
      * Default table instance
      *
      * @var \Cake\ORM\Table
      */
-    protected $_defaultTable;
+    protected Table $_defaultTable;
 
     /**
      * The default table alias
      *
      * @var string
      */
-    protected $_defaultAlias;
+    protected string $_defaultAlias;
 
     /**
      * List of associations that should be placed under the `_matchingData`
@@ -75,14 +76,14 @@ class ResultSet implements ResultSetInterface
      *
      * @var array
      */
-    protected $_matchingMap = [];
+    protected array $_matchingMap = [];
 
     /**
      * List of associations that should be eager loaded.
      *
      * @var array
      */
-    protected $_containMap = [];
+    protected array $_containMap = [];
 
     /**
      * Map of fields that are fetched from the statement with
@@ -90,7 +91,7 @@ class ResultSet implements ResultSetInterface
      *
      * @var array
      */
-    protected $_map = [];
+    protected array $_map = [];
 
     /**
      * List of matching associations and the column keys to expect
@@ -98,49 +99,49 @@ class ResultSet implements ResultSetInterface
      *
      * @var array
      */
-    protected $_matchingMapColumns = [];
+    protected array $_matchingMapColumns = [];
 
     /**
      * Results that have been fetched or hydrated into the results.
      *
      * @var \SplFixedArray|array
      */
-    protected $_results = [];
+    protected SplFixedArray|array $_results = [];
 
     /**
      * Whether to hydrate results into objects or not
      *
      * @var bool
      */
-    protected $_hydrate = true;
+    protected bool $_hydrate = true;
 
     /**
      * Tracks value of $_autoFields property of $query passed to constructor.
      *
      * @var bool|null
      */
-    protected $_autoFields;
+    protected ?bool $_autoFields = null;
 
     /**
      * The fully namespaced name of the class to use for hydrating results
      *
      * @var string
      */
-    protected $_entityClass;
+    protected string $_entityClass;
 
     /**
      * Whether or not to buffer results fetched from the statement
      *
      * @var bool
      */
-    protected $_useBuffering = true;
+    protected bool $_useBuffering = true;
 
     /**
      * Holds the count of records in this result set
      *
-     * @var int
+     * @var int|null
      */
-    protected $_count;
+    protected ?int $_count = null;
 
     /**
      * The Database driver object.
@@ -149,7 +150,7 @@ class ResultSet implements ResultSetInterface
      *
      * @var \Cake\Database\DriverInterface
      */
-    protected $_driver;
+    protected DriverInterface $_driver;
 
     /**
      * Constructor
@@ -257,8 +258,11 @@ class ResultSet implements ResultSetInterface
             }
         }
 
-        $this->_current = $this->_fetchResult();
-        $valid = $this->_current !== false;
+        $current = $this->_fetchResult();
+        $valid = $current !== false;
+        if ($valid) {
+            $this->_current = $current;
+        }
 
         if ($valid && $this->_useBuffering) {
             $this->_results[$this->_index] = $this->_current;

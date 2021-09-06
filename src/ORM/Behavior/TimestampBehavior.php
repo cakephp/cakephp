@@ -46,7 +46,7 @@ class TimestampBehavior extends Behavior
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => [],
         'implementedMethods' => [
             'timestamp' => 'timestamp',
@@ -66,7 +66,7 @@ class TimestampBehavior extends Behavior
      *
      * @var \Cake\I18n\DateTime|null
      */
-    protected $_ts;
+    protected ?DateTime $_ts = null;
 
     /**
      * Initialize hook

@@ -36,7 +36,7 @@ class EagerLoader
      *
      * @var array
      */
-    protected $_containments = [];
+    protected array $_containments = [];
 
     /**
      * Contains a nested array with the compiled containments tree
@@ -44,7 +44,7 @@ class EagerLoader
      *
      * @var \Cake\ORM\EagerLoadable|array<\Cake\ORM\EagerLoadable>|null
      */
-    protected $_normalized;
+    protected EagerLoadable|array|null $_normalized = null;
 
     /**
      * List of options accepted by associations in contain()
@@ -52,7 +52,7 @@ class EagerLoader
      *
      * @var array
      */
-    protected $_containOptions = [
+    protected array $_containOptions = [
         'associations' => 1,
         'foreignKey' => 1,
         'conditions' => 1,
@@ -71,21 +71,21 @@ class EagerLoader
      *
      * @var array<\Cake\ORM\EagerLoadable>
      */
-    protected $_loadExternal = [];
+    protected array $_loadExternal = [];
 
     /**
      * Contains a list of the association names that are to be eagerly loaded
      *
      * @var array
      */
-    protected $_aliasList = [];
+    protected array $_aliasList = [];
 
     /**
      * Another EagerLoader instance that will be used for 'matching' associations.
      *
      * @var \Cake\ORM\EagerLoader|null
      */
-    protected $_matching;
+    protected ?EagerLoader $_matching = null;
 
     /**
      * A map of table aliases pointing to the association objects they represent
@@ -93,7 +93,7 @@ class EagerLoader
      *
      * @var array
      */
-    protected $_joinsMap = [];
+    protected array $_joinsMap = [];
 
     /**
      * Controls whether or not fields from associated tables
@@ -102,7 +102,7 @@ class EagerLoader
      *
      * @var bool
      */
-    protected $_autoFields = true;
+    protected bool $_autoFields = true;
 
     /**
      * Sets the list of associations that should be eagerly loaded along for a

@@ -121,7 +121,7 @@ class Behavior implements EventListenerInterface
      *
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected Table $_table;
 
     /**
      * Reflection method cache for behaviors.
@@ -131,7 +131,7 @@ class Behavior implements EventListenerInterface
      *
      * @var array
      */
-    protected static $_reflectionCache = [];
+    protected static array $_reflectionCache = [];
 
     /**
      * Default configuration
@@ -140,7 +140,7 @@ class Behavior implements EventListenerInterface
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * Constructor

@@ -191,7 +191,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string|null
      */
-    protected $_table;
+    protected ?string $_table = null;
 
     /**
      * Human name giving to this particular instance. Multiple objects representing
@@ -199,64 +199,64 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string|null
      */
-    protected $_alias;
+    protected ?string $_alias = null;
 
     /**
      * Connection instance
      *
      * @var \Cake\Database\Connection|null
      */
-    protected $_connection;
+    protected ?Connection $_connection = null;
 
     /**
      * The schema object containing a description of this table fields
      *
      * @var \Cake\Database\Schema\TableSchemaInterface|null
      */
-    protected $_schema;
+    protected ?TableSchemaInterface $_schema = null;
 
     /**
      * The name of the field that represents the primary key in the table
      *
      * @var array<string>|string|null
      */
-    protected $_primaryKey;
+    protected array|string|null $_primaryKey = null;
 
     /**
      * The name of the field that represents a human readable representation of a row
      *
      * @var array<string>|string|null
      */
-    protected $_displayField;
+    protected array|string|null $_displayField = null;
 
     /**
      * The associations container for this Table.
      *
      * @var \Cake\ORM\AssociationCollection
      */
-    protected $_associations;
+    protected AssociationCollection $_associations;
 
     /**
      * BehaviorRegistry for this table
      *
      * @var \Cake\ORM\BehaviorRegistry
      */
-    protected $_behaviors;
+    protected BehaviorRegistry $_behaviors;
 
     /**
      * The name of the class that represent a single row for this table
      *
-     * @var string
-     * @psalm-var class-string<\Cake\Datasource\EntityInterface>
+     * @var string|null
+     * @psalm-var class-string<\Cake\Datasource\EntityInterface>|null
      */
-    protected $_entityClass;
+    protected ?string $_entityClass = null;
 
     /**
      * Registry key used to create this table object
      *
      * @var string|null
      */
-    protected $_registryAlias;
+    protected ?string $_registryAlias = null;
 
     /**
      * Initializes a new instance

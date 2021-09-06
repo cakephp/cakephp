@@ -29,7 +29,7 @@ class PersistenceFailedException extends CakeException
      *
      * @var \Cake\Datasource\EntityInterface
      */
-    protected $_entity;
+    protected EntityInterface $_entity;
 
     /**
      * @inheritDoc

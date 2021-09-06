@@ -32,21 +32,21 @@ class ExistsIn
      *
      * @var array
      */
-    protected $_fields;
+    protected array $_fields;
 
     /**
      * The repository where the field will be looked for
      *
      * @var \Cake\ORM\Table|\Cake\ORM\Association|string
      */
-    protected $_repository;
+    protected Table|Association|string $_repository;
 
     /**
      * Options for the constructor
      *
      * @var array
      */
-    protected $_options = [];
+    protected array $_options = [];
 
     /**
      * Constructor.

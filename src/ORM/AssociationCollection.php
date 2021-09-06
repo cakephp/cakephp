@@ -40,7 +40,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @var array<\Cake\ORM\Association>
      */
-    protected $_items = [];
+    protected array $_items = [];
 
     /**
      * Constructor.

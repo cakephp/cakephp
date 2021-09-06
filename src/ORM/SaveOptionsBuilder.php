@@ -36,14 +36,14 @@ class SaveOptionsBuilder extends ArrayObject
      *
      * @var array
      */
-    protected $_options = [];
+    protected array $_options = [];
 
     /**
      * Table object.
      *
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected Table $_table;
 
     /**
      * Constructor.
