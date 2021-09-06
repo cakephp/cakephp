@@ -2536,7 +2536,7 @@ class FormHelperTest extends TestCase
                 'id' => 'article-title',
                 'class' => 'form-error',
                 'aria-invalid' => 'true',
-                'aria-describedby' => 'article-title-error'
+                'aria-describedby' => 'article-title-error',
             ],
             ['div' => ['class' => 'error-message', 'id' => 'article-title-error']],
             [],
