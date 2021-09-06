@@ -749,6 +749,8 @@ class Connection implements ConnectionInterface
     /**
      * Quotes value to be used safely in database query.
      *
+     * This uses `PDO::quote()` and requires `supportsQuoting()` to work.
+     *
      * @param mixed $value The value to quote.
      * @param \Cake\Database\TypeInterface|string|int $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
@@ -761,7 +763,9 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Checks if the driver supports quoting.
+     * Checks if using `quote()` is supported.
+     *
+     * This is not required to use `quoteIdentifier()`.
      *
      * @return bool
      */
@@ -773,6 +777,8 @@ class Connection implements ConnectionInterface
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
      * be used safely in queries without the risk of using reserved words.
+     *
+     * This does not require `supportsQuoting()` to work.
      *
      * @param string $identifier The identifier to quote.
      * @return string
