@@ -173,6 +173,7 @@ interface DriverInterface
      * to already created tables.
      *
      * @return bool True if driver supports dynamic constraints.
+     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
      */
     public function supportsDynamicConstraints(): bool;
 
