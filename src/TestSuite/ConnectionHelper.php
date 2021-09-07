@@ -20,6 +20,8 @@ use Cake\Datasource\ConnectionManager;
 
 /**
  * Helper for managing test connections
+ * 
+ * @internal
  */
 class ConnectionHelper
 {
