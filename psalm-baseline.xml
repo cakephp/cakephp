@@ -221,6 +221,11 @@
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
+  <file src="src/TestSuite/Fixture/TestFixture.php">
+    <DeprecatedMethod occurrences="1">
+        <code>supportsDynamicConstraints</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">
       <code>BaseTestSuite</code>
