@@ -672,6 +672,7 @@ class Connection implements ConnectionInterface
      * to already created tables.
      *
      * @return bool true if driver supports dynamic constraints
+     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
      */
     public function supportsDynamicConstraints(): bool
     {
