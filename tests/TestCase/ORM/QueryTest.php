@@ -20,6 +20,7 @@ use Cake\Cache\Engine\FileEngine;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\DriverInterface;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -3785,7 +3786,7 @@ class QueryTest extends TestCase
     public function testWith(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supportsCTEs(),
+            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_CTE),
             'The current driver does not support common table expressions.'
         );
         $this->skipIf(
@@ -3793,7 +3794,7 @@ class QueryTest extends TestCase
                 $this->connection->getDriver() instanceof Mysql ||
                 $this->connection->getDriver() instanceof Sqlite
             ) &&
-            !$this->connection->getDriver()->supportsWindowFunctions(),
+            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_WINDOW),
             'The current driver does not support window functions.'
         );
 

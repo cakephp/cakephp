@@ -528,15 +528,19 @@ class ConnectionTest extends TestCase
     public function testSimpleTransactions(): void
     {
         $this->connection->begin();
+        $this->assertTrue($this->connection->getDriver()->inTransaction());
         $this->connection->delete('things', ['id' => 1]);
         $this->connection->rollback();
+        $this->assertFalse($this->connection->getDriver()->inTransaction());
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(2, $result);
         $result->closeCursor();
 
         $this->connection->begin();
+        $this->assertTrue($this->connection->getDriver()->inTransaction());
         $this->connection->delete('things', ['id' => 1]);
         $this->connection->commit();
+        $this->assertFalse($this->connection->getDriver()->inTransaction());
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
     }
@@ -573,13 +577,16 @@ class ConnectionTest extends TestCase
         $this->connection->begin();
         $this->connection->begin();
         $this->connection->begin();
+        $this->assertTrue($this->connection->getDriver()->inTransaction());
 
         $this->connection->delete('things', ['id' => 1]);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
 
         $this->connection->commit();
+        $this->assertTrue($this->connection->getDriver()->inTransaction());
         $this->connection->rollback();
+        $this->assertFalse($this->connection->getDriver()->inTransaction());
 
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(2, $result);

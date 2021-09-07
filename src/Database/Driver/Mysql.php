@@ -76,20 +76,6 @@ class Mysql extends Driver
     protected ?MysqlSchemaDialect $_schemaDialect = null;
 
     /**
-     * Whether or not the server supports native JSON
-     *
-     * @var bool|null
-     */
-    protected ?bool $_supportsNativeJson = null;
-
-    /**
-     * Whether or not the connected server supports window functions.
-     *
-     * @var bool|null
-     */
-    protected ?bool $_supportsWindowFunctions = null;
-
-    /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
@@ -118,7 +104,7 @@ class Mysql extends Driver
      *
      * @var array
      */
-    protected array $featuresToVersionMap = [
+    protected $featureVersions = [
         'mysql' => [
             'json' => '5.7.0',
             'cte' => '8.0.0',
@@ -260,6 +246,25 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_CTE:
+            case static::FEATURE_JSON:
+            case static::FEATURE_WINDOW:
+                return version_compare(
+                    $this->version(),
+                    $this->featureVersions[$this->serverType][$feature],
+                    '>='
+                );
+        }
+
+        return parent::supports($feature);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function supportsDynamicConstraints(): bool
     {
         return true;
@@ -302,53 +307,38 @@ class Mysql extends Driver
      * Returns true if the server supports common table expressions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_CTE)` instead
      */
     public function supportsCTEs(): bool
     {
-        if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare(
-                $this->version(),
-                $this->featuresToVersionMap[$this->serverType]['cte'],
-                '>='
-            );
-        }
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->supportsCTEs;
+        return $this->supports(static::FEATURE_CTE);
     }
 
     /**
      * Returns true if the server supports native JSON columns
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_JSON)` instead
      */
     public function supportsNativeJson(): bool
     {
-        if ($this->_supportsNativeJson === null) {
-            $this->_supportsNativeJson = version_compare(
-                $this->version(),
-                $this->featuresToVersionMap[$this->serverType]['json'],
-                '>='
-            );
-        }
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->_supportsNativeJson;
+        return $this->supports(static::FEATURE_JSON);
     }
 
     /**
      * Returns true if the connected server supports window functions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_WINDOW)` instead
      */
     public function supportsWindowFunctions(): bool
     {
-        if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare(
-                $this->version(),
-                $this->featuresToVersionMap[$this->serverType]['window'],
-                '>='
-            );
-        }
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->_supportsWindowFunctions;
+        return $this->supports(static::FEATURE_WINDOW);
     }
 }

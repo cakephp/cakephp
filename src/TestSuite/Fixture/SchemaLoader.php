@@ -17,6 +17,7 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Console\ConsoleIo;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use InvalidArgumentException;
 
@@ -41,11 +42,16 @@ class SchemaLoader
     protected ConsoleIo $io;
 
     /**
+     * @var \Cake\TestSuite\Fixture\SchemaCleaner
+     */
+    protected $schemaCleaner;
+
+    /**
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'dropTables' => true,
-        'outputLevel' => ConsoleIo::NORMAL,
+        'outputLevel' => ConsoleIo::QUIET,
     ];
 
     /**
@@ -59,10 +65,12 @@ class SchemaLoader
 
         $this->io = new ConsoleIo();
         $this->io->level($this->getConfig('outputLevel'));
+
+        $this->schemaCleaner = new SchemaCleaner($this->io);
     }
 
     /**
-     * Import schema from a file, or an array of files.
+     * Load and apply schema sql file, or an array of files.
      *
      * @param array<string>|string $files Schema files to load
      * @param string $connectionName Connection name
@@ -70,7 +78,7 @@ class SchemaLoader
      * @param bool $truncateTables Truncate all tables after loading schema files
      * @return void
      */
-    public function loadFiles(
+    public function loadSqlFiles(
         $files,
         string $connectionName,
         bool $dropTables = true,
@@ -83,16 +91,15 @@ class SchemaLoader
             return;
         }
 
-        $cleaner = new SchemaCleaner($this->io);
         if ($dropTables) {
-            $cleaner->dropTables($connectionName);
+            $this->schemaCleaner->dropTables($connectionName);
         }
 
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
         foreach ($files as $file) {
             if (!file_exists($file)) {
-                throw new InvalidArgumentException("Unable to load schema file `$file`.");
+                throw new InvalidArgumentException("Unable to load SQL file `$file`.");
             }
             $sql = file_get_contents($file);
 
@@ -103,7 +110,49 @@ class SchemaLoader
         }
 
         if ($truncateTables) {
-            $cleaner->truncateTables($connectionName);
+            $this->schemaCleaner->truncateTables($connectionName);
         }
+    }
+
+    /**
+     * Load and apply CakePHP-specific schema file.
+     *
+     * @param string $file Schema file
+     * @param string $connectionName Connection name
+     * @return void
+     * @internal
+     */
+    public function loadInternalFile(string $file, string $connectionName): void
+    {
+        // Don't reload schema when we are in a separate process state.
+        if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
+            return;
+        }
+
+        $this->schemaCleaner->dropTables($connectionName);
+
+        $tables = include $file;
+
+        $connection = ConnectionManager::get($connectionName);
+        $connection->disableConstraints(function ($connection) use ($tables) {
+            foreach ($tables as $table) {
+                $schema = new TableSchema($table['table'], $table['columns']);
+                if (isset($table['indexes'])) {
+                    foreach ($table['indexes'] as $key => $index) {
+                        $schema->addIndex($key, $index);
+                    }
+                }
+                if (isset($table['constraints'])) {
+                    foreach ($table['constraints'] as $key => $index) {
+                        $schema->addConstraint($key, $index);
+                    }
+                }
+
+                // Generate SQL for each table.
+                foreach ($schema->createSql($connection) as $sql) {
+                    $connection->execute($sql);
+                }
+            }
+        });
     }
 }

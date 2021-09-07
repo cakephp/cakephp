@@ -96,7 +96,7 @@ class FormHelper extends Helper
             // Wrapper container for checkboxes.
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Error message wrapper elements.
-            'error' => '<div class="error-message">{{content}}</div>',
+            'error' => '<div class="error-message" id="{{id}}">{{content}}</div>',
             // Container for error items.
             'errorList' => '<ul>{{content}}</ul>',
             // Error item wrapper.
@@ -767,7 +767,10 @@ class FormHelper extends Helper
             }
         }
 
-        return $this->formatTemplate('error', ['content' => $error]);
+        return $this->formatTemplate('error', [
+            'content' => $error,
+            'id' => $this->_domId($field) . '-error',
+        ]);
     }
 
     /**
@@ -1054,6 +1057,31 @@ class FormHelper extends Helper
             $templater->{$templateMethod}($options['templates']);
         }
         unset($options['templates']);
+
+        // Hidden inputs don't need aria.
+        // Multiple checkboxes can't have aria generated for them at this layer.
+        if ($options['type'] !== 'hidden' && ($options['type'] !== 'select' && !isset($options['multiple']))) {
+            $isFieldError = $this->isFieldError($fieldName);
+            $options += [
+                'aria-required' => $options['required'] == true ? 'true' : null,
+                'aria-invalid' => $isFieldError ? 'true' : null,
+            ];
+            // Don't include aria-describedby unless we have a good chance of
+            // having error message show up.
+            if (
+                strpos($templater->get('error'), '{{id}}') !== false &&
+                strpos($templater->get('inputContainerError'), '{{error}}') !== false
+            ) {
+                $options += [
+                   'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
+                ];
+            }
+            if (isset($options['placeholder']) && $options['label'] === false) {
+                $options += [
+                    'aria-label' => $options['placeholder'],
+                ];
+            }
+        }
 
         $error = null;
         $errorSuffix = '';
@@ -2263,6 +2291,7 @@ class FormHelper extends Helper
 
         $disabledIndex = array_search('disabled', $options, true);
         if (is_int($disabledIndex)) {
+            deprecationWarning('Using non-associative options is deprecated, use `\'disabled\' => true` instead.');
             unset($options[$disabledIndex]);
             $options['disabled'] = true;
         }

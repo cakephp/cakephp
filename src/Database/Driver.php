@@ -75,13 +75,6 @@ abstract class Driver implements DriverInterface
     protected bool $_autoQuoting = false;
 
     /**
-     * Whether or not the server supports common table expressions.
-     *
-     * @var bool|null
-     */
-    protected ?bool $supportsCTEs = null;
-
-    /**
      * The server version
      *
      * @var string|null
@@ -269,21 +262,38 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns whether a transaction is active for connection.
+     *
+     * @return bool
+     */
+    public function inTransaction(): bool
+    {
+        $this->connect();
+
+        return $this->_connection->inTransaction();
+    }
+
+    /**
      * @inheritDoc
      */
     public function supportsSavePoints(): bool
     {
-        return true;
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
+
+        return $this->supports(static::FEATURE_SAVEPOINT);
     }
 
     /**
      * Returns true if the server supports common table expressions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
      */
     public function supportsCTEs(): bool
     {
-        return $this->supportsCTEs === true;
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
+
+        return $this->supports(static::FEATURE_CTE);
     }
 
     /**
@@ -300,12 +310,13 @@ abstract class Driver implements DriverInterface
      * Checks if the driver supports quoting, as PDO_ODBC does not support it.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
      */
     public function supportsQuoting(): bool
     {
-        $this->connect();
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
+        return $this->supports(static::FEATURE_QUOTE);
     }
 
     /**
@@ -425,6 +436,25 @@ abstract class Driver implements DriverInterface
     public function isAutoQuotingEnabled(): bool
     {
         return $this->_autoQuoting;
+    }
+
+    /**
+     * Returns whether the driver supports the feature.
+     *
+     * Defaults to true for FEATURE_QUOTE and FEATURE_SAVEPOINT.
+     *
+     * @param string $feature Driver feature name
+     * @return bool
+     */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_QUOTE:
+            case static::FEATURE_SAVEPOINT:
+                return true;
+        }
+
+        return false;
     }
 
     /**

@@ -12,7 +12,8 @@
             <exclude>tests/TestCase/ORM/</exclude>
         </testsuite>
         <testsuite name="database">
-            <file>tests/TestCase/DatabaseSuite.php</file>
+            <directory>tests/TestCase/Database/</directory>
+            <directory>tests/TestCase/ORM/</directory>
         </testsuite>
     </testsuites>
 

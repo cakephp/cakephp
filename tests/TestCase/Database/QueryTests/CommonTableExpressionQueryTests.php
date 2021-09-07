@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\QueryTests;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverInterface;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
@@ -52,7 +53,7 @@ class CommonTableExpressionQueryTests extends TestCase
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
 
         $this->skipIf(
-            !$this->connection->getDriver()->supportsCTEs(),
+            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_CTE),
             'The current driver does not support common table expressions.'
         );
     }

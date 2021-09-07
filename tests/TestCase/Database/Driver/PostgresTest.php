@@ -16,7 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Driver\Postgres;
+use Cake\Database\DriverInterface;
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -238,5 +241,22 @@ class PostgresTest extends TestCase
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
             'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
         $this->assertSame($expected, $query->sql());
+    }
+
+    /**
+     * Tests driver-specific feature support check.
+     */
+    public function testSupports(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Postgres);
+
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_CTE));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_JSON));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_QUOTE));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_WINDOW));
+
+        $this->assertFalse($driver->supports('this-is-fake'));
     }
 }

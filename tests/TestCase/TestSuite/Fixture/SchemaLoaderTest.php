@@ -54,7 +54,7 @@ class SchemaLoaderTest extends TestCase
         $GLOBALS['__PHPUNIT_BOOTSTRAP'] = $this->restore;
 
         (new SchemaCleaner())->dropTables('test', ['schema_loader_test_one', 'schema_loader_test_two']);
-        ConnectionManager::drop('schema_test');
+        ConnectionManager::drop('test_schema_loader');
 
         if (file_exists($this->truncateDbFile)) {
             unlink($this->truncateDbFile);
@@ -64,14 +64,14 @@ class SchemaLoaderTest extends TestCase
     /**
      * Tests loading schema files.
      */
-    public function testLoadingFiles(): void
+    public function testLoadSqlFiles(): void
     {
         $connection = ConnectionManager::get('test');
 
         $schemaFiles[] = $this->createSchemaFile('schema_loader_test_one');
         $schemaFiles[] = $this->createSchemaFile('schema_loader_test_two');
 
-        $this->loader->loadFiles($schemaFiles, 'test', false, false);
+        $this->loader->loadSqlFiles($schemaFiles, 'test', false, false);
 
         $connection = ConnectionManager::get('test');
         $tables = $connection->getSchemaCollection()->listTables();
@@ -85,7 +85,7 @@ class SchemaLoaderTest extends TestCase
     public function testLoadMissingFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->loader->loadFiles('missing_schema_file.sql', 'test', false, false);
+        $this->loader->loadSqlFiles('missing_schema_file.sql', 'test', false, false);
     }
 
     /**
@@ -101,14 +101,14 @@ class SchemaLoaderTest extends TestCase
         ]);
 
         $schemaFile = $this->createSchemaFile('schema_loader_first');
-        $this->loader->loadFiles($schemaFile, 'test_schema_loader');
+        $this->loader->loadSqlFiles($schemaFile, 'test_schema_loader');
         $connection = ConnectionManager::get('test_schema_loader');
 
         $result = $connection->getSchemaCollection()->listTables();
         $this->assertEquals(['schema_loader_first'], $result);
 
         $schemaFile = $this->createSchemaFile('schema_loader_second');
-        $this->loader->loadFiles($schemaFile, 'test_schema_loader');
+        $this->loader->loadSqlFiles($schemaFile, 'test_schema_loader');
 
         $result = $connection->getSchemaCollection()->listTables();
         $this->assertEquals(['schema_loader_second'], $result);
@@ -116,6 +116,23 @@ class SchemaLoaderTest extends TestCase
         $statement = $connection->query('SELECT * FROM schema_loader_second');
         $result = $statement->fetchAll();
         $this->assertCount(0, $result, 'Table should be empty.');
+    }
+
+    public function testLoadInternalFiles(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        ConnectionManager::setConfig('test_schema_loader', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'database' => $this->truncateDbFile,
+        ]);
+
+        $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test_schema_loader');
+
+        $connection = ConnectionManager::get('test_schema_loader');
+        $tables = $connection->getSchemaCollection()->listTables();
+        $this->assertContains('schema_generator', $tables);
+        $this->assertContains('schema_generator_comment', $tables);
     }
 
     protected function createSchemaFile(string $tableName): string

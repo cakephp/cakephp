@@ -22,9 +22,47 @@ use Closure;
 
 /**
  * Interface for database driver.
+ *
+ * @method bool supports(string $feature) Checks whether a feature is supported by the driver.
+ * @method bool inTransaction() Returns whether a transaction is active.
  */
 interface DriverInterface
 {
+    /**
+     * Common Table Expressions (with clause) support.
+     *
+     * @var string
+     */
+    public const FEATURE_CTE = 'cte';
+
+    /**
+     * Native JSON data type support.
+     *
+     * @var string
+     */
+    public const FEATURE_JSON = 'json';
+
+    /**
+     * PDO::quote() support.
+     *
+     * @var string
+     */
+    public const FEATURE_QUOTE = 'quote';
+
+    /**
+     * Transaction savepoint support.
+     *
+     * @var string
+     */
+    public const FEATURE_SAVEPOINT = 'savepoint';
+
+    /**
+     * Window function support (all or partial clauses).
+     *
+     * @var string
+     */
+    public const FEATURE_WINDOW = 'window';
+
     /**
      * Establishes a connection to the database server.
      *
@@ -134,6 +172,7 @@ interface DriverInterface
      * to already created tables.
      *
      * @return bool True if driver supports dynamic constraints.
+     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
      */
     public function supportsDynamicConstraints(): bool;
 
@@ -141,6 +180,7 @@ interface DriverInterface
      * Returns whether this driver supports save points for nested transactions.
      *
      * @return bool True if save points are supported, false otherwise.
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_SAVEPOINT)` instead
      */
     public function supportsSavePoints(): bool;
 
@@ -157,6 +197,7 @@ interface DriverInterface
      * Checks if the driver supports quoting.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
      */
     public function supportsQuoting(): bool;
 

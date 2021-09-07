@@ -19,7 +19,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
-use Cake\TestSuite\Fixture\SchemaGenerator;
+use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\Utility\Security;
 
 if (is_file('vendor/autoload.php')) {
@@ -104,6 +104,10 @@ if (!getenv('DB_URL')) {
 
 ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
 
+if (env('CAKE_TEST_AUTOQUOTE')) {
+    ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);
+}
+
 Configure::write('Session', [
     'defaults' => 'php',
 ]);
@@ -137,6 +141,6 @@ session_id('cli');
 
 // Create test database schema
 if (env('FIXTURE_SCHEMA_METADATA')) {
-    $schema = new SchemaGenerator(env('FIXTURE_SCHEMA_METADATA'), 'test');
-    $schema->reload();
+    $loader = new SchemaLoader();
+    $loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'), 'test');
 }

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\QueryTests;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query;
@@ -60,7 +61,7 @@ class WindowQueryTests extends TestCase
             $driver instanceof Mysql ||
             $driver instanceof Sqlite
         ) {
-            $this->skipTests = !$this->connection->getDriver()->supportsWindowFunctions();
+            $this->skipTests = !$this->connection->getDriver()->supports(DriverInterface::FEATURE_WINDOW);
         } else {
             $this->skipTests = false;
         }

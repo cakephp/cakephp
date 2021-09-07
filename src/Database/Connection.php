@@ -579,7 +579,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->_useSavePoints = false;
         } else {
-            $this->_useSavePoints = $this->_driver->supportsSavePoints();
+            $this->_useSavePoints = $this->_driver->supports(DriverInterface::FEATURE_SAVEPOINT);
         }
 
         return $this;
@@ -672,6 +672,7 @@ class Connection implements ConnectionInterface
      * to already created tables.
      *
      * @return bool true if driver supports dynamic constraints
+     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
      */
     public function supportsDynamicConstraints(): bool
     {
@@ -749,6 +750,8 @@ class Connection implements ConnectionInterface
     /**
      * Quotes value to be used safely in database query.
      *
+     * This uses `PDO::quote()` and requires `supportsQuoting()` to work.
+     *
      * @param mixed $value The value to quote.
      * @param \Cake\Database\TypeInterface|string|int $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
@@ -761,18 +764,22 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Checks if the driver supports quoting.
+     * Checks if using `quote()` is supported.
+     *
+     * This is not required to use `quoteIdentifier()`.
      *
      * @return bool
      */
     public function supportsQuoting(): bool
     {
-        return $this->_driver->supportsQuoting();
+        return $this->_driver->supports(DriverInterface::FEATURE_QUOTE);
     }
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
      * be used safely in queries without the risk of using reserved words.
+     *
+     * This does not require `supportsQuoting()` to work.
      *
      * @param string $identifier The identifier to quote.
      * @return string
