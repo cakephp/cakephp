@@ -429,7 +429,7 @@ abstract class Driver implements DriverInterface
     /**
      * Returns whether the driver supports the feature.
      *
-     * Defaults to true for "quoting" and "savepoints".
+     * Defaults to true for FEATURE_QUOTE and FEATURE_SAVEPOINT.
      *
      * @param string $feature Driver feature name
      * @return bool
