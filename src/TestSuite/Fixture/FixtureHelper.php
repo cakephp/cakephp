@@ -36,6 +36,8 @@ class FixtureHelper
      */
     public function loadFixtures(array $fixtureNames): array
     {
+        static $cachedFixtures = [];
+
         $fixtures = [];
         foreach ($fixtureNames as $fixtureName) {
             if (strpos($fixtureName, '.')) {
@@ -84,7 +86,11 @@ class FixtureHelper
                 throw new UnexpectedValueException("Could not find fixture `$fixtureName`.");
             }
 
-            $fixtures[$className] = new $className();
+            if (!isset($cachedFixtures[$className])) {
+                $cachedFixtures[$className] = new $className();
+            }
+
+            $fixtures[$className] = $cachedFixtures[$className];
         }
 
         return $fixtures;
