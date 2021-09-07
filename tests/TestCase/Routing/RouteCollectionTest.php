@@ -648,10 +648,9 @@ class RouteCollectionTest extends TestCase
         });
         $this->assertSame($result, $this->collection);
 
-        $mock = $this->getMockBuilder('\stdClass')
-            ->addMethods(['__invoke'])
-            ->getMock();
-        $result = $this->collection->registerMiddleware('callable', $mock);
+        $callable = function () {
+        };
+        $result = $this->collection->registerMiddleware('callable', $callable);
         $this->assertSame($result, $this->collection);
 
         $this->assertTrue($this->collection->hasMiddleware('closure'));
@@ -668,11 +667,10 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('closure', function (): void {
         });
 
-        $mock = $this->getMockBuilder('\stdClass')
-            ->addMethods(['__invoke'])
-            ->getMock();
-        $result = $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->registerMiddleware('callable', $mock);
+        $callable = function () {
+        };
+        $result = $this->collection->registerMiddleware('callable', $callable);
+        $this->collection->registerMiddleware('callable', $callable);
 
         $this->collection->middlewareGroup('group', ['closure', 'callable']);
 

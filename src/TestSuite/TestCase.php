@@ -31,6 +31,7 @@ use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
+use Closure;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
 use PHPUnit\Framework\Constraint\FileExists;
@@ -170,10 +171,10 @@ abstract class TestCase extends BaseTestCase
     /**
      * Helper method for check deprecation methods
      *
-     * @param callable $callable callable function that will receive asserts
+     * @param \Closure $callable callable function that will receive asserts
      * @return void
      */
-    public function deprecated(callable $callable): void
+    public function deprecated(Closure $callable): void
     {
         $errorLevel = error_reporting();
         error_reporting($errorLevel & ~E_USER_DEPRECATED);

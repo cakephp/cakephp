@@ -33,11 +33,15 @@ trait ExtractTrait
      * @param callable|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
-     * @return callable
+     * @return \Closure
      */
-    protected function _propertyExtractor(callable|string $path): callable
+    protected function _propertyExtractor(callable|string $path): Closure
     {
         if (!is_string($path)) {
+            if (!$path instanceof Closure) {
+                $path = Closure::fromCallable($path);
+            }
+
             return $path;
         }
 

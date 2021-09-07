@@ -72,9 +72,9 @@ class ClosureDecoratorMiddleware implements MiddlewareInterface
 
     /**
      * @internal
-     * @return callable
+     * @return \Closure
      */
-    public function getCallable(): callable
+    public function getCallable(): Closure
     {
         return $this->callable;
     }

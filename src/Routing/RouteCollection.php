@@ -19,6 +19,7 @@ namespace Cake\Routing;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
+use Closure;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
@@ -391,11 +392,11 @@ class RouteCollection
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param \Psr\Http\Server\MiddlewareInterface|callable|string $middleware The middleware to register.
+     * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
      * @throws \RuntimeException
      */
-    public function registerMiddleware(string $name, MiddlewareInterface|callable|string $middleware)
+    public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {
         $this->_middleware[$name] = $middleware;
 
