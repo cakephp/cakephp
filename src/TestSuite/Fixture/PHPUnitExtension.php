@@ -16,9 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Database\Connection;
-use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
+use Cake\TestSuite\ConnectionHelper;
 use PHPUnit\Runner\BeforeFirstTestHook;
 
 /**
@@ -31,49 +30,17 @@ class PHPUnitExtension implements BeforeFirstTestHook
      */
     public function __construct()
     {
+        $helper = new ConnectionHelper();
+        $helper->addTestAliases();
+
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
-        $this->aliasConnections($enableLogging);
         if ($enableLogging) {
+            $helper->enableQueryLogging();
             Log::setConfig('queries', [
                 'className' => 'Console',
                 'stream' => 'php://stderr',
                 'scopes' => ['queriesLog'],
             ]);
-        }
-    }
-
-    /**
-     * Alias non test connections to the test ones
-     * so that models reach the test database connections instead.
-     *
-     * @param bool $enableLogging Whether or not to enable query logging.
-     * @return void
-     */
-    protected function aliasConnections(bool $enableLogging): void
-    {
-        $connections = ConnectionManager::configured();
-        $map = [
-            'test' => 'default',
-        ];
-        foreach ($connections as $connection) {
-            if ($connection === 'test' || $connection === 'default') {
-                continue;
-            }
-            if (isset($map[$connection])) {
-                continue;
-            }
-            if (strpos($connection, 'test_') === 0) {
-                $map[$connection] = substr($connection, 5);
-            } else {
-                $map['test_' . $connection] = $connection;
-            }
-        }
-        foreach ($map as $testConnection => $normal) {
-            ConnectionManager::alias($testConnection, $normal);
-            $connection = ConnectionManager::get($normal);
-            if ($connection instanceof Connection && $enableLogging) {
-                $connection->enableQueryLogging();
-            }
         }
     }
 
