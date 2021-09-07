@@ -25,9 +25,45 @@ use Closure;
  *
  * @method int|null getMaxAliasLength() Returns the maximum alias length allowed.
  * @method int getConnectRetries() Returns the number of connection retry attempts made.
+ * @method bool supports(string $feature) Checks whether a feature is supported by the driver.
  */
 interface DriverInterface
 {
+    /**
+     * Common Table Expressions (with clause) support.
+     *
+     * @var string
+     */
+    public const FEATURE_CTE = 'cte';
+
+    /**
+     * Native JSON data type support.
+     *
+     * @var string
+     */
+    public const FEATURE_JSON = 'json';
+
+    /**
+     * PDO::quote() support.
+     *
+     * @var string
+     */
+    public const FEATURE_QUOTE = 'quote';
+
+    /**
+     * Transaction savepoint support.
+     *
+     * @var string
+     */
+    public const FEATURE_SAVEPOINT = 'savepoint';
+
+    /**
+     * Window function support (all or partial clauses).
+     *
+     * @var string
+     */
+    public const FEATURE_WINDOW = 'window';
+
     /**
      * Establishes a connection to the database server.
      *
@@ -144,6 +180,7 @@ interface DriverInterface
      * Returns whether this driver supports save points for nested transactions.
      *
      * @return bool True if save points are supported, false otherwise.
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_SAVEPOINT)` instead
      */
     public function supportsSavePoints(): bool;
 
@@ -160,6 +197,7 @@ interface DriverInterface
      * Checks if the driver supports quoting.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
      */
     public function supportsQuoting(): bool;
 

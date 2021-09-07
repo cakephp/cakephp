@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -82,34 +83,30 @@ class DriverTest extends TestCase
     }
 
     /**
-     * Test supportsSavePoints().
+     * Tests default implementation of feature support check.
      */
-    public function testSupportsSavePoints(): void
+    public function testSupports(): void
     {
-        $result = $this->driver->supportsSavePoints();
-        $this->assertTrue($result);
+        $this->assertTrue($this->driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+        $this->assertTrue($this->driver->supports(DriverInterface::FEATURE_QUOTE));
+
+        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_CTE));
+        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_JSON));
+        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_WINDOW));
+
+        $this->assertFalse($this->driver->supports('this-is-fake'));
     }
 
     /**
-     * Test supportsQuoting().
+     * Tests deprecated supports checks.
      */
-    public function testSupportsQuoting(): void
+    public function testDeprecatedSupports(): void
     {
-        $connection = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttribute'])
-            ->getMock();
-
-        $connection
-            ->expects($this->once())
-            ->method('getAttribute')
-            ->with(PDO::ATTR_DRIVER_NAME)
-            ->willReturn('mysql');
-
-        $this->driver->setConnection($connection);
-
-        $result = $this->driver->supportsQuoting();
-        $this->assertTrue($result);
+        $this->deprecated(function () {
+            $this->assertSame($this->driver->supportsCTEs(), $this->driver->supports(DriverInterface::FEATURE_CTE));
+            $this->assertSame($this->driver->supportsSavePoints(), $this->driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+            $this->assertSame($this->driver->supportsQuoting(), $this->driver->supports(DriverInterface::FEATURE_QUOTE));
+        });
     }
 
     /**
