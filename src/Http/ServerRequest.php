@@ -55,9 +55,9 @@ class ServerRequest implements ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var object|array|string|null
+     * @var object|array|null
      */
-    protected object|array|string|null $data = [];
+    protected object|array|null $data = [];
 
     /**
      * Array of query string arguments
@@ -290,7 +290,15 @@ class ServerRequest implements ServerRequestInterface
         }
         $this->stream = $stream;
 
-        $this->data = $config['post'];
+        $post = $config['post'];
+        if (!(is_array($post) || is_object($post) || $post === null)) {
+            throw new InvalidArgumentException(sprintf(
+                '`post` key must be an array, object or null.'
+                . ' Got `%s` instead.',
+                get_debug_type($post)
+            ));
+        }
+        $this->data = $post;
         $this->uploadedFiles = $config['files'];
         $this->query = $config['query'];
         $this->params = $config['params'];
