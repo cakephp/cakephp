@@ -262,6 +262,18 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns whether a transaction is active for connection.
+     *
+     * @return bool
+     */
+    public function inTransaction(): bool
+    {
+        $this->connect();
+
+        return $this->_connection->inTransaction();
+    }
+
+    /**
      * @inheritDoc
      */
     public function supportsSavePoints(): bool
