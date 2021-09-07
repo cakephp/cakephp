@@ -81,7 +81,7 @@ class MysqlSchemaDialect extends SchemaDialect
      * The returned type will be a type that Cake\Database\TypeFactory can handle.
      *
      * @param string $column The column type + length
-     * @return array Array of column information.
+     * @return array<string, mixed> Array of column information.
      * @throws \Cake\Database\Exception\DatabaseException When column type cannot be parsed.
      */
     protected function _convertColumn(string $column): array
