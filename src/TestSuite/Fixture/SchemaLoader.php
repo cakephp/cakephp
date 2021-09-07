@@ -133,6 +133,9 @@ class SchemaLoader
 
         $tables = include $file;
 
+        /**
+         * @var \Cake\Database\Connection $connection
+         */
         $connection = ConnectionManager::get($connectionName);
         $connection->disableConstraints(function ($connection) use ($tables) {
             foreach ($tables as $table) {
