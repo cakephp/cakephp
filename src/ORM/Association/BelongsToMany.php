@@ -72,7 +72,7 @@ class BelongsToMany extends Association
      *
      * @var \Cake\ORM\Table
      */
-    protected $_junctionTable;
+    protected Table $_junctionTable;
 
     /**
      * Junction table name
@@ -87,7 +87,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_junctionAssociationName;
+    protected string $_junctionAssociationName;
 
     /**
      * The name of the property to be set containing data from the junction table
@@ -116,7 +116,7 @@ class BelongsToMany extends Association
      *
      * @var \Cake\ORM\Table|string
      */
-    protected $_through;
+    protected Table|string $_through;
 
     /**
      * Valid strategies for this type of association

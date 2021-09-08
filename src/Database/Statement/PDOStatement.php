@@ -33,7 +33,7 @@ class PDOStatement extends StatementDecorator
      *
      * @var \PDOStatement
      */
-    protected $_statement;
+    protected \PDOStatement $_statement;
 
     /**
      * Constructor

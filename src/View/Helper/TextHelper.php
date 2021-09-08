@@ -63,7 +63,7 @@ class TextHelper extends Helper
      *
      * @var \Cake\Utility\Text
      */
-    protected $_engine;
+    protected Text $_engine;
 
     /**
      * Constructor

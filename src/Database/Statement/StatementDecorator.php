@@ -44,7 +44,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @var \Cake\Database\StatementInterface
      */
-    protected $_statement;
+    protected StatementInterface $_statement;
 
     /**
      * Reference to the driver object associated to this statement.

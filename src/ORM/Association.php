@@ -117,7 +117,7 @@ abstract class Association
      *
      * @var array<string>|string|false
      */
-    protected $_foreignKey;
+    protected array|string|false $_foreignKey;
 
     /**
      * A list of conditions to be always included when fetching records from
@@ -148,14 +148,14 @@ abstract class Association
      *
      * @var \Cake\ORM\Table
      */
-    protected $_sourceTable;
+    protected Table $_sourceTable;
 
     /**
      * Target table instance
      *
      * @var \Cake\ORM\Table
      */
-    protected $_targetTable;
+    protected Table $_targetTable;
 
     /**
      * The type of join to be used when adding the association to a query
@@ -170,7 +170,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_propertyName;
+    protected string $_propertyName;
 
     /**
      * The strategy name to be used to fetch associated records. Some association

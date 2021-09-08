@@ -91,7 +91,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
      * @return array
      */
     #[ReturnTypeWillChange]
-    public function current()
+    public function current(): array
     {
         if ($this->_callback === null) {
             return parent::current();

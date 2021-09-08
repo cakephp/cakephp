@@ -49,7 +49,7 @@ abstract class Driver implements DriverInterface
      *
      * @var \PDO
      */
-    protected $_connection;
+    protected PDO $_connection;
 
     /**
      * Configuration data.

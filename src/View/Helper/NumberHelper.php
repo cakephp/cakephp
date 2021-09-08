@@ -46,7 +46,7 @@ class NumberHelper extends Helper
      *
      * @var \Cake\I18n\Number
      */
-    protected $_engine;
+    protected Number $_engine;
 
     /**
      * Default Constructor

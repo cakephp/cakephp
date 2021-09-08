@@ -52,7 +52,7 @@ class Filesystem
      * @param int|null $flags Flags for FilesystemIterator::__construct();
      * @return \Iterator
      */
-    public function find(string $path, $filter = null, ?int $flags = null): Iterator
+    public function find(string $path, mixed $filter = null, ?int $flags = null): Iterator
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
@@ -76,7 +76,7 @@ class Filesystem
      * @param int|null $flags Flags for FilesystemIterator::__construct();
      * @return \Iterator
      */
-    public function findRecursive(string $path, $filter = null, ?int $flags = null): Iterator
+    public function findRecursive(string $path, mixed $filter = null, ?int $flags = null): Iterator
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
@@ -113,7 +113,7 @@ class Filesystem
      * @param mixed $filter Regex string or callback.
      * @return \Iterator
      */
-    protected function filterIterator(Iterator $iterator, $filter): Iterator
+    protected function filterIterator(Iterator $iterator, mixed $filter): Iterator
     {
         if (is_string($filter)) {
             return new RegexIterator($iterator, $filter);

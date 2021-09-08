@@ -101,7 +101,7 @@ class ConsoleInputOption
         string $short = '',
         string $help = '',
         bool $isBoolean = false,
-        $default = null,
+        mixed $default = null,
         array $choices = [],
         bool $multiple = false,
         bool $required = false

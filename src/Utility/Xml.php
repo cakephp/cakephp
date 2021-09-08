@@ -303,7 +303,7 @@ class Xml
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _fromArray(DOMDocument $dom, DOMDocument|DOMElement $node, $data, string $format): void
+    protected static function _fromArray(DOMDocument $dom, DOMDocument|DOMElement $node, array $data, string $format): void
     {
         if (empty($data) || !is_array($data)) {
             return;

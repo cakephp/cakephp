@@ -44,7 +44,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @var \Cake\Database\StatementInterface
      */
-    protected $statement;
+    protected StatementInterface $statement;
 
     /**
      * The driver for the statement
