@@ -125,18 +125,6 @@ class FormTest extends TestCase
     /**
      * Test validate with custom validator
      */
-    public function testValidateNoValidation(): void
-    {
-        $form = new Form();
-        $form->getValidator()
-            ->add('email', 'format', ['rule' => 'email']);
-        $data = ['email' => 'wrong'];
-        $this->assertTrue($form->validate($data, false));
-    }
-
-    /**
-     * Test validate with custom validator
-     */
     public function testValidateCustomValidator(): void
     {
         $form = new Form();
@@ -224,6 +212,21 @@ class FormTest extends TestCase
         ];
 
         $this->assertTrue($form->execute($data));
+    }
+
+    /**
+     * test execute() when data is valid.
+     */
+    public function testExecuteSkipValidation(): void
+    {
+        $form = new Form();
+        $form->getValidator()
+            ->add('email', 'format', ['rule' => 'email']);
+        $data = [
+            'email' => 'wrong',
+        ];
+
+        $this->assertTrue($form->execute($data, ['validate' => false]));
     }
 
     /**

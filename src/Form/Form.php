@@ -209,21 +209,13 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * Used to check if $data passes this form's validation.
      *
      * @param array $data The data to check.
-     * @param string|bool $validator Validator name or `true` for default validator.
+     * @param string|null $validator Validator name.
      * @return bool Whether or not the data is valid.
      * @throws \RuntimeException If validator is invalid.
      */
-    public function validate(array $data, $validator = true): bool
+    public function validate(array $data, ?string $validator = null): bool
     {
-        if (!$validator) {
-            return true;
-        }
-
-        if ($validator === true) {
-            $validator = null;
-        }
-
-        $this->_errors = $this->getValidator($validator)
+        $this->_errors = $this->getValidator($validator ?: static::DEFAULT_VALIDATOR)
             ->validate($data);
 
         return count($this->_errors) === 0;
@@ -271,19 +263,29 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * the action of the form. This may be sending email, interacting
      * with a remote API, or anything else you may need.
      *
+     * ### Options:
+     *
+     * - validate: Set to `false` to disable validation. Can also be a string of the validator ruleset to be applied.
+     *   Defaults to `true`/`'default'`.
+     *
      * @param array $data Form data.
+     * @param array $options List of options.
      * @return bool False on validation failure, otherwise returns the
      *   result of the `_execute()` method.
      */
-    public function execute(array $data): bool
+    public function execute(array $data, array $options = []): bool
     {
         $this->_data = $data;
 
-        if (!$this->validate($data)) {
-            return false;
+        $options += ['validate' => true];
+
+        if ($options['validate'] === false) {
+            return $this->_execute($data);
         }
 
-        return $this->_execute($data);
+        $validator = $options['validate'] === true ? static::DEFAULT_VALIDATOR : $options['validate'];
+
+        return $this->validate($data, $validator) ? $this->_execute($data) : false;
     }
 
     /**
