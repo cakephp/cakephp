@@ -257,7 +257,7 @@ class Message implements JsonSerializable, Serializable
      *
      * Only absolute paths
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $attachments = [];
 
@@ -1217,7 +1217,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Gets attachments to the email message.
      *
-     * @return array Array of attachments.
+     * @return array<string, array> Array of attachments.
      */
     public function getAttachments(): array
     {
@@ -1606,7 +1606,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @param string|null $message Message to wrap
      * @param int $wrapLength The line length
-     * @return array Wrapped message
+     * @return array<string> Wrapped message
      */
     protected function wrap(?string $message = null, int $wrapLength = self::LINE_LENGTH_MUST): array
     {

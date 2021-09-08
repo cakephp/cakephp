@@ -81,7 +81,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      * @param int|null $length the column length
      * @param int|null $precision The column precision
      * @param int|null $scale The column scale
-     * @return array Array of column information.
+     * @return array<string, mixed> Array of column information.
      * @link https://technet.microsoft.com/en-us/library/ms187752.aspx
      */
     protected function _convertColumn(

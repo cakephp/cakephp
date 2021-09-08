@@ -146,7 +146,7 @@ class Helper implements EventListenerInterface
      * @param array<string, mixed> $options Array options/attributes to add a class to
      * @param string $class The class name being added.
      * @param string $key the key to use for class. Defaults to `'class'`.
-     * @return array Array of options with $key set.
+     * @return array<string, mixed> Array of options with $key set.
      */
     public function addClass(array $options, string $class, string $key = 'class'): array
     {

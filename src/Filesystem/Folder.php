@@ -257,7 +257,7 @@ class Folder
      *
      * @param string $regexpPattern Preg_match pattern (Defaults to: .*)
      * @param string|bool $sort Whether results should be sorted.
-     * @return array Files that match given pattern
+     * @return array<string> Files that match given pattern
      */
     public function find(string $regexpPattern = '.*', $sort = false): array
     {

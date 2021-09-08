@@ -426,7 +426,7 @@ class SelectLoader
      * that need to be present to ensure the correct association data is loaded.
      *
      * @param \Cake\ORM\Query $query The query to get fields from.
-     * @return array The list of fields for the subquery.
+     * @return array<string, array> The list of fields for the subquery.
      */
     protected function _subqueryFields(Query $query): array
     {

@@ -265,7 +265,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $scheme The http scheme to match
      * @param string $host The host to match.
      * @param string $path The path to match
-     * @return array An array of cookie name/value pairs
+     * @return array<string, mixed> An array of cookie name/value pairs
      */
     protected function findMatchingCookies(string $scheme, string $host, string $path): array
     {

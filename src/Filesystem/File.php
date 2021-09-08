@@ -45,7 +45,7 @@ class File
     /**
      * File info
      *
-     * @var array
+     * @var array<string, mixed>
      * https://book.cakephp.org/4/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
      */
     public $info = [];
@@ -297,7 +297,7 @@ class File
      * - filesize
      * - mime
      *
-     * @return array File information.
+     * @return array<string, mixed> File information.
      */
     public function info(): array
     {
