@@ -44,7 +44,7 @@ class SchemaLoader
     /**
      * @var \Cake\TestSuite\Fixture\SchemaCleaner
      */
-    protected $schemaCleaner;
+    protected SchemaCleaner $schemaCleaner;
 
     /**
      * @var array<string, mixed>
@@ -79,7 +79,7 @@ class SchemaLoader
      * @return void
      */
     public function loadSqlFiles(
-        $files,
+        array|string $files,
         string $connectionName,
         bool $dropTables = true,
         bool $truncateTables = true
@@ -137,7 +137,7 @@ class SchemaLoader
          * @var \Cake\Database\Connection $connection
          */
         $connection = ConnectionManager::get($connectionName);
-        $connection->disableConstraints(function ($connection) use ($tables) {
+        $connection->disableConstraints(function ($connection) use ($tables): void {
             foreach ($tables as $table) {
                 $schema = new TableSchema($table['table'], $table['columns']);
                 if (isset($table['indexes'])) {

@@ -129,22 +129,22 @@ class FixtureHelper
      */
     public function insert(array $fixtures): void
     {
-        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
+        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
             if (
                 method_exists($connection, 'transactional') &&
                 method_exists($connection, 'disableConstraints') &&
                 $connection->getDriver() instanceof Postgres
             ) {
                 // disabling foreign key constraints is only valid in a transaction
-                $connection->transactional(function () use ($connection, $groupFixtures) {
-                    $connection->disableConstraints(function () use ($connection, $groupFixtures) {
+                $connection->transactional(function () use ($connection, $groupFixtures): void {
+                    $connection->disableConstraints(function () use ($connection, $groupFixtures): void {
                         foreach ($groupFixtures as $fixture) {
                             $fixture->insert($connection);
                         }
                     });
                 });
             } elseif (method_exists($connection, 'disableConstraints')) {
-                $connection->disableConstraints(function () use ($connection, $groupFixtures) {
+                $connection->disableConstraints(function () use ($connection, $groupFixtures): void {
                     foreach ($groupFixtures as $fixture) {
                         $fixture->insert($connection);
                     }
@@ -166,9 +166,9 @@ class FixtureHelper
      */
     public function truncate(array $fixtures): void
     {
-        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
+        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
             if (method_exists($connection, 'disableConstraints')) {
-                $connection->disableConstraints(function () use ($connection, $groupFixtures) {
+                $connection->disableConstraints(function () use ($connection, $groupFixtures): void {
                     foreach ($groupFixtures as $fixture) {
                         $fixture->truncate($connection);
                     }

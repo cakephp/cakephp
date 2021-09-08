@@ -52,7 +52,7 @@ class TransactionStrategy implements FixtureStrategyInterface
     {
         $this->fixtures = $this->helper->loadFixtures($fixtureNames);
 
-        $this->helper->runPerConnection(function ($connection) {
+        $this->helper->runPerConnection(function ($connection): void {
             if ($connection instanceof Connection) {
                 assert(
                     $connection->inTransaction() === false,
@@ -81,7 +81,7 @@ class TransactionStrategy implements FixtureStrategyInterface
      */
     public function teardownTest(): void
     {
-        $this->helper->runPerConnection(function ($connection) {
+        $this->helper->runPerConnection(function ($connection): void {
             if ($connection->inTransaction()) {
                 $connection->rollback(true);
             }
