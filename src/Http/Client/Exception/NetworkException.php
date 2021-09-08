@@ -32,7 +32,7 @@ class NetworkException extends RuntimeException implements NetworkExceptionInter
     /**
      * @var \Psr\Http\Message\RequestInterface
      */
-    protected $request;
+    protected RequestInterface $request;
 
     /**
      * Constructor.

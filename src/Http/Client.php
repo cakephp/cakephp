@@ -110,7 +110,7 @@ class Client implements ClientInterface
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'adapter' => null,
         'host' => null,
         'port' => null,
@@ -133,21 +133,21 @@ class Client implements ClientInterface
      *
      * @var \Cake\Http\Cookie\CookieCollection
      */
-    protected $_cookies;
+    protected CookieCollection $_cookies;
 
     /**
      * Mock adapter for stubbing requests in tests.
      *
      * @var \Cake\Http\Client\Adapter\Mock|null
      */
-    protected static $_mockAdapter;
+    protected static ?MockAdapter $_mockAdapter = null;
 
     /**
      * Adapter for sending requests.
      *
      * @var \Cake\Http\Client\AdapterInterface
      */
-    protected $_adapter;
+    protected AdapterInterface $_adapter;
 
     /**
      * Create a new HTTP Client.

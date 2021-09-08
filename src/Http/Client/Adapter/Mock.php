@@ -37,7 +37,7 @@ class Mock implements AdapterInterface
      *
      * @var array
      */
-    protected $responses = [];
+    protected array $responses = [];
 
     /**
      * Add a mocked response.

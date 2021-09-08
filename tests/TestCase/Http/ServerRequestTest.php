@@ -1220,14 +1220,15 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test that getData() doesn't fail on scalar data.
+     * Test setting post data to a string throws exception.
      */
-    public function testGetDataOnStringData(): void
+    public function testInvalidStringData(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`post` key must be an array, object or null. Got `string` instead.');
+
         $post = 'strange, but could happen';
         $request = new ServerRequest(compact('post'));
-        $this->assertNull($request->getData('Model'));
-        $this->assertNull($request->getData('Model.field'));
     }
 
     /**

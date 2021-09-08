@@ -43,28 +43,28 @@ class Session
      *
      * @var \SessionHandlerInterface
      */
-    protected $_engine;
+    protected SessionHandlerInterface $_engine;
 
     /**
      * Indicates whether the sessions has already started
      *
      * @var bool
      */
-    protected $_started;
+    protected bool $_started = false;
 
     /**
      * The time in seconds the session will be valid for
      *
      * @var int
      */
-    protected $_lifetime;
+    protected int $_lifetime;
 
     /**
      * Whether this session is running under a CLI environment
      *
      * @var bool
      */
-    protected $_isCLI = false;
+    protected bool $_isCLI = false;
 
     /**
      * Returns a new instance of a session after building a configuration bundle for it.

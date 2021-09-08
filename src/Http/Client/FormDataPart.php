@@ -34,56 +34,56 @@ class FormDataPart implements Stringable
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * Value to send.
      *
      * @var string
      */
-    protected $_value;
+    protected string $_value;
 
     /**
      * Content type to use
      *
      * @var string|null
      */
-    protected $_type;
+    protected ?string $_type = null;
 
     /**
      * Disposition to send
      *
      * @var string
      */
-    protected $_disposition;
+    protected string $_disposition;
 
     /**
      * Filename to send if using files.
      *
      * @var string|null
      */
-    protected $_filename;
+    protected ?string $_filename = null;
 
     /**
      * The encoding used in this part.
      *
      * @var string|null
      */
-    protected $_transferEncoding;
+    protected ?string $_transferEncoding = null;
 
     /**
      * The contentId for the part
      *
      * @var string|null
      */
-    protected $_contentId;
+    protected ?string $_contentId = null;
 
     /**
      * The charset attribute for the Content-Disposition header fields
      *
      * @var string|null
      */
-    protected $_charset;
+    protected ?string $_charset = null;
 
     /**
      * Constructor

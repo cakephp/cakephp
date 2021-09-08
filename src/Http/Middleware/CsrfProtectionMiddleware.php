@@ -63,7 +63,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var array
      */
-    protected $_config = [
+    protected array $_config = [
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,

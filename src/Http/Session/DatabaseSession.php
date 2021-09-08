@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace Cake\Http\Session;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Table;
 use SessionHandlerInterface;
 
 /**
@@ -33,14 +34,14 @@ class DatabaseSession implements SessionHandlerInterface
      *
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected Table $_table;
 
     /**
      * Number of seconds to mark the session as expired
      *
      * @var int
      */
-    protected $_timeout;
+    protected int $_timeout;
 
     /**
      * Constructor. Looks at Session configuration information and

@@ -39,7 +39,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      *
      * @var int
      */
-    protected $position = 0;
+    protected int $position = 0;
 
     /**
      * The queue of middlewares.
@@ -47,7 +47,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @var array
      * @psalm-var array<int, mixed>
      */
-    protected $queue = [];
+    protected array $queue = [];
 
     /**
      * Constructor

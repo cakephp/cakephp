@@ -33,28 +33,28 @@ class FormData implements Countable, Stringable
      *
      * @var string
      */
-    protected $_boundary;
+    protected string $_boundary = '';
 
     /**
      * Whether or not this formdata object has attached files.
      *
      * @var bool
      */
-    protected $_hasFile = false;
+    protected bool $_hasFile = false;
 
     /**
      * Whether or not this formdata object has a complex part.
      *
      * @var bool
      */
-    protected $_hasComplexPart = false;
+    protected bool $_hasComplexPart = false;
 
     /**
      * The parts in the form data.
      *
      * @var array<\Cake\Http\Client\FormDataPart>
      */
-    protected $_parts = [];
+    protected array $_parts = [];
 
     /**
      * Get the boundary marker

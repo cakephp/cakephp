@@ -42,7 +42,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var array
      */
-    protected $params = [
+    protected array $params = [
         'plugin' => null,
         'controller' => null,
         'action' => null,
@@ -57,42 +57,42 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var object|array|null
      */
-    protected $data = [];
+    protected object|array|null $data = [];
 
     /**
      * Array of query string arguments
      *
      * @var array
      */
-    protected $query = [];
+    protected array $query = [];
 
     /**
      * Array of cookie data.
      *
      * @var array
      */
-    protected $cookies = [];
+    protected array $cookies = [];
 
     /**
      * Array of environment data.
      *
      * @var array
      */
-    protected $_environment = [];
+    protected array $_environment = [];
 
     /**
      * Base URL path.
      *
      * @var string
      */
-    protected $base;
+    protected string $base;
 
     /**
      * webroot path segment for the request.
      *
      * @var string
      */
-    protected $webroot = '/';
+    protected string $webroot = '/';
 
     /**
      * Whether or not to trust HTTP_X headers set by most load balancers.
@@ -101,14 +101,14 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var bool
      */
-    public $trustProxy = false;
+    public bool $trustProxy = false;
 
     /**
      * Trusted proxies list
      *
      * @var array<string>
      */
-    protected $trustedProxies = [];
+    protected array $trustedProxies = [];
 
     /**
      * The built in detectors used with `is()` can be modified with `addDetector()`.
@@ -118,7 +118,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var array<callable|array>
      */
-    protected static $_detectors = [
+    protected static array $_detectors = [
         'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
         'post' => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
         'put' => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
@@ -137,70 +137,70 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var array
      */
-    protected $_detectorCache = [];
+    protected array $_detectorCache = [];
 
     /**
      * Request body stream. Contains php://input unless `input` constructor option is used.
      *
      * @var \Psr\Http\Message\StreamInterface
      */
-    protected $stream;
+    protected StreamInterface $stream;
 
     /**
      * Uri instance
      *
      * @var \Psr\Http\Message\UriInterface
      */
-    protected $uri;
+    protected UriInterface $uri;
 
     /**
      * Instance of a Session object relative to this request
      *
      * @var \Cake\Http\Session
      */
-    protected $session;
+    protected Session $session;
 
     /**
      * Instance of a FlashMessage object relative to this request
      *
      * @var \Cake\Http\FlashMessage
      */
-    protected $flash;
+    protected FlashMessage $flash;
 
     /**
      * Store the additional attributes attached to the request.
      *
      * @var array
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * A list of propertes that emulated by the PSR7 attribute methods.
      *
      * @var array
      */
-    protected $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
+    protected array $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
 
     /**
      * Array of Psr\Http\Message\UploadedFileInterface objects.
      *
      * @var array
      */
-    protected $uploadedFiles = [];
+    protected array $uploadedFiles = [];
 
     /**
      * The HTTP protocol version used.
      *
      * @var string|null
      */
-    protected $protocol;
+    protected ?string $protocol = null;
 
     /**
      * The request target if overridden
      *
      * @var string|null
      */
-    protected $requestTarget;
+    protected ?string $requestTarget = null;
 
     /**
      * Create a new request object.
@@ -290,7 +290,15 @@ class ServerRequest implements ServerRequestInterface
         }
         $this->stream = $stream;
 
-        $this->data = $config['post'];
+        $post = $config['post'];
+        if (!(is_array($post) || is_object($post) || $post === null)) {
+            throw new InvalidArgumentException(sprintf(
+                '`post` key must be an array, object or null.'
+                . ' Got `%s` instead.',
+                get_debug_type($post)
+            ));
+        }
+        $this->data = $post;
         $this->uploadedFiles = $config['files'];
         $this->query = $config['query'];
         $this->params = $config['params'];

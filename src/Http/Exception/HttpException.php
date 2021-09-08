@@ -34,7 +34,7 @@ class HttpException extends CakeException
     /**
      * @var array
      */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * Set a single HTTP response header.
