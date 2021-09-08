@@ -257,7 +257,7 @@ class Message implements JsonSerializable, Serializable
      *
      * Only absolute paths
      *
-     * @var array<string, mixed>
+     * @var array<string, array>
      */
     protected $attachments = [];
 
@@ -1217,7 +1217,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Gets attachments to the email message.
      *
-     * @return array<string, mixed> Array of attachments.
+     * @return array<string, array> Array of attachments.
      */
     public function getAttachments(): array
     {
