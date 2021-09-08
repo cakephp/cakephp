@@ -97,18 +97,6 @@ class DriverTest extends TestCase
     }
 
     /**
-     * Tests deprecated supports checks.
-     */
-    public function testDeprecatedSupports(): void
-    {
-        $this->deprecated(function () {
-            $this->assertSame($this->driver->supportsCTEs(), $this->driver->supports(DriverInterface::FEATURE_CTE));
-            $this->assertSame($this->driver->supportsSavePoints(), $this->driver->supports(DriverInterface::FEATURE_SAVEPOINT));
-            $this->assertSame($this->driver->supportsQuoting(), $this->driver->supports(DriverInterface::FEATURE_QUOTE));
-        });
-    }
-
-    /**
      * Test schemaValue().
      * Uses a provider for all the different values we can pass to the method.
      *

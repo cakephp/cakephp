@@ -302,43 +302,4 @@ class Mysql extends Driver
 
         return $this->_version;
     }
-
-    /**
-     * Returns true if the server supports common table expressions.
-     *
-     * @return bool
-     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_CTE)` instead
-     */
-    public function supportsCTEs(): bool
-    {
-        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
-
-        return $this->supports(static::FEATURE_CTE);
-    }
-
-    /**
-     * Returns true if the server supports native JSON columns
-     *
-     * @return bool
-     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_JSON)` instead
-     */
-    public function supportsNativeJson(): bool
-    {
-        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
-
-        return $this->supports(static::FEATURE_JSON);
-    }
-
-    /**
-     * Returns true if the connected server supports window functions.
-     *
-     * @return bool
-     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_WINDOW)` instead
-     */
-    public function supportsWindowFunctions(): bool
-    {
-        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
-
-        return $this->supports(static::FEATURE_WINDOW);
-    }
 }

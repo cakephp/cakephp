@@ -284,19 +284,6 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Returns true if the server supports common table expressions.
-     *
-     * @return bool
-     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
-     */
-    public function supportsCTEs(): bool
-    {
-        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
-
-        return $this->supports(static::FEATURE_CTE);
-    }
-
-    /**
      * @inheritDoc
      */
     public function quote($value, $type = PDO::PARAM_STR): string
@@ -304,19 +291,6 @@ abstract class Driver implements DriverInterface
         $this->connect();
 
         return $this->_connection->quote((string)$value, $type);
-    }
-
-    /**
-     * Checks if the driver supports quoting, as PDO_ODBC does not support it.
-     *
-     * @return bool
-     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
-     */
-    public function supportsQuoting(): bool
-    {
-        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
-
-        return $this->supports(static::FEATURE_QUOTE);
     }
 
     /**
