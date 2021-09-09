@@ -670,6 +670,8 @@ class SqlserverSchemaDialect extends SchemaDialect
             }
         }
 
+        $queries[] = sprintf('ALTER TABLE %s REBUILD', $name);
+
         return $queries;
     }
 }
