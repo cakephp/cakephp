@@ -246,19 +246,4 @@ class MysqlTest extends TestCase
 
         $this->assertFalse($driver->supports('this-is-fake'));
     }
-
-    /**
-     * Tests driver-specific feature support check.
-     */
-    public function testDeprecatedSupports(): void
-    {
-        $driver = ConnectionManager::get('test')->getDriver();
-        $this->skipIf(!$driver instanceof Mysql);
-
-        $this->deprecated(function () use ($driver) {
-            $this->assertSame($driver->supportsCTEs(), $driver->supports(DriverInterface::FEATURE_CTE));
-            $this->assertSame($driver->supportsNativeJson(), $driver->supports(DriverInterface::FEATURE_JSON));
-            $this->assertSame($driver->supportsWindowFunctions(), $driver->supports(DriverInterface::FEATURE_WINDOW));
-        });
-    }
 }

@@ -194,14 +194,6 @@ interface DriverInterface
     public function quote(mixed $value, int $type): string;
 
     /**
-     * Checks if the driver supports quoting.
-     *
-     * @return bool
-     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
-     */
-    public function supportsQuoting(): bool;
-
-    /**
      * Returns a callable function that will be used to transform a passed Query object.
      * This function, in turn, will return an instance of a Query object that has been
      * transformed to accommodate any specificities of the SQL dialect in use.
