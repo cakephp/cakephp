@@ -488,7 +488,7 @@ class SmtpTransport extends AbstractTransport
      * @return string|null The matched code, or null if nothing matched
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _smtpSend(?string $data, $checkCode = '250'): ?string
+    protected function _smtpSend(?string $data, string|false $checkCode = '250'): ?string
     {
         $this->_lastResponse = [];
 
