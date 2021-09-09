@@ -276,16 +276,6 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function supportsSavePoints(): bool
-    {
-        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
-
-        return $this->supports(static::FEATURE_SAVEPOINT);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function quote($value, $type = PDO::PARAM_STR): string
     {
         $this->connect();

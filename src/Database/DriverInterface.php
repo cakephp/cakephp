@@ -177,14 +177,6 @@ interface DriverInterface
     public function supportsDynamicConstraints(): bool;
 
     /**
-     * Returns whether this driver supports save points for nested transactions.
-     *
-     * @return bool True if save points are supported, false otherwise.
-     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_SAVEPOINT)` instead
-     */
-    public function supportsSavePoints(): bool;
-
-    /**
      * Returns a value in a safe representation to be used in a query string
      *
      * @param mixed $value The value to quote.
