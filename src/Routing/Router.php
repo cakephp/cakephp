@@ -115,7 +115,7 @@ class Router
     /**
      * Named expressions
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static array $_namedExpressions = [
         'Action' => Router::ACTION,
@@ -183,7 +183,7 @@ class Router
     /**
      * Gets the named route patterns for use in config/routes.php
      *
-     * @return array Named route elements
+     * @return array<string, string> Named route elements
      * @see \Cake\Routing\Router::$_namedExpressions
      */
     public static function getNamedExpressions(): array

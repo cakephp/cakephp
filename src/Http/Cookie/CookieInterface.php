@@ -243,14 +243,14 @@ interface CookieInterface
     /**
      * Get cookie options
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOptions(): array;
 
     /**
      * Get cookie data as array.
      *
-     * @return array With keys `name`, `value`, `expires` etc. options.
+     * @return array<string, mixed> With keys `name`, `value`, `expires` etc. options.
      */
     public function toArray(): array;
 

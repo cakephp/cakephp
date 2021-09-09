@@ -49,7 +49,7 @@ trait PluginAssetsTrait
      *
      * @param string|null $name Name of plugin for which to symlink assets.
      *   If null all plugins will be processed.
-     * @return array List of plugins with meta data.
+     * @return array<string, mixed> List of plugins with meta data.
      */
     protected function _list(?string $name = null): array
     {

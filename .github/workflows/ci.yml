@@ -184,6 +184,11 @@ jobs:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
           vendor/bin/phpunit --verbose
+          
+    - name: Run PHPUnit (autoquote enabled)
+      env:
+        DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
+      run: |
           set CAKE_TEST_AUTOQUOTE=1
           vendor/bin/phpunit --verbose --testsuite=database
 

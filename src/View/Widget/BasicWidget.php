@@ -115,7 +115,7 @@ class BasicWidget implements WidgetInterface
      *
      * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
-     * @return array Updated data array.
+     * @return array<string, mixed> Updated data array.
      */
     protected function mergeDefaults(array $data, ContextInterface $context): array
     {
@@ -134,7 +134,7 @@ class BasicWidget implements WidgetInterface
      * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
-     * @return array Updated data array.
+     * @return array<string, mixed> Updated data array.
      */
     protected function setRequired(array $data, ContextInterface $context, string $fieldName): array
     {
@@ -160,7 +160,7 @@ class BasicWidget implements WidgetInterface
      * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
-     * @return array Updated data array.
+     * @return array<string, mixed> Updated data array.
      */
     protected function setMaxLength(array $data, ContextInterface $context, string $fieldName): array
     {
@@ -178,7 +178,7 @@ class BasicWidget implements WidgetInterface
      * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
-     * @return array Updated data array.
+     * @return array<string, mixed> Updated data array.
      */
     protected function setStep(array $data, ContextInterface $context, string $fieldName): array
     {

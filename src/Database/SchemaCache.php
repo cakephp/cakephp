@@ -51,12 +51,13 @@ class SchemaCache
      * Build metadata.
      *
      * @param string|null $name The name of the table to build cache data for.
-     * @return array Returns a list build table caches
+     * @return array<string> Returns a list build table caches
      */
     public function build(?string $name = null): array
     {
-        $tables = [$name];
-        if (empty($name)) {
+        if ($name) {
+            $tables = [$name];
+        } else {
             $tables = $this->_schema->listTables();
         }
 
@@ -72,12 +73,13 @@ class SchemaCache
      * Clear metadata.
      *
      * @param string|null $name The name of the table to clear cache data for.
-     * @return array Returns a list of cleared table caches
+     * @return array<string> Returns a list of cleared table caches
      */
     public function clear(?string $name = null): array
     {
-        $tables = [$name];
-        if (empty($name)) {
+        if ($name) {
+            $tables = [$name];
+        } else {
             $tables = $this->_schema->listTables();
         }
 

@@ -312,7 +312,7 @@ class ServerRequest implements ServerRequestInterface
      * `query` option is also updated based on URL's querystring.
      *
      * @param array<string, mixed> $config Config array.
-     * @return array Update config.
+     * @return array<string, mixed> Update config.
      */
     protected function processUrlOption(array $config): array
     {

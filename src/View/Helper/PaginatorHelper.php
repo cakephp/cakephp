@@ -814,7 +814,7 @@ class PaginatorHelper extends Helper
     /**
      * Calculates the start and end for the pagination numbers.
      *
-     * @param array $params Params from the numbers() method.
+     * @param array<string, mixed> $params Params from the numbers() method.
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return array An array with the start and end numbers.
      * @psalm-return array{0: int, 1: int}

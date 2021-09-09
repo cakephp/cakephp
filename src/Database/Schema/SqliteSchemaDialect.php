@@ -48,7 +48,7 @@ class SqliteSchemaDialect extends SchemaDialect
      *
      * @param string $column The column type + length
      * @throws \Cake\Database\Exception\DatabaseException when unable to parse column type
-     * @return array Array of column information.
+     * @return array<string, mixed> Array of column information.
      */
     protected function _convertColumn(string $column): array
     {

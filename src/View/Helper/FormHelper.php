@@ -1225,7 +1225,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName The name of the field to parse options for.
      * @param array<string, mixed> $options Options list.
-     * @return array Options
+     * @return array<string, mixed> Options
      */
     protected function _parseOptions(string $fieldName, array $options): array
     {
@@ -1332,9 +1332,9 @@ class FormHelper extends Helper
      *
      * @param string $fieldName The name of the field to generate options for.
      * @param array<string, mixed> $options Options list.
-     * @param bool $allowOverride Whether or not it is allowed for this method to
+     * @param bool $allowOverride Whether it is allowed for this method to
      * overwrite the 'type' key in options.
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _magicOptions(string $fieldName, array $options, bool $allowOverride): array
     {
@@ -1365,7 +1365,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName The name of the field to generate options for.
      * @param array<string, mixed> $options Options list.
-     * @return array Modified options list.
+     * @return array<string, mixed> Modified options list.
      */
     protected function setRequiredAndCustomValidity(string $fieldName, array $options): array
     {
@@ -2274,7 +2274,7 @@ class FormHelper extends Helper
      *
      * @param string $field Name of the field to initialize options for.
      * @param array<string, mixed>|array<string> $options Array of options to append options into.
-     * @return array Array of options for the input.
+     * @return array<string, mixed> Array of options for the input.
      */
     protected function _initInputField(string $field, array $options = []): array
     {
