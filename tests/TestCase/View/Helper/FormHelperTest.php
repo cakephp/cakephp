@@ -2178,32 +2178,6 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testFormSecuredAndDisabledNotAssoc method
-     *
-     * Test that when disabled is in a list based attribute array it works.
-     */
-    public function testFormSecuredAndDisabledNotAssoc(): void
-    {
-        $this->View->setRequest($this->View->getRequest()->withAttribute('formTokenData', []));
-        $this->Form->create();
-
-        $this->deprecated(function () {
-            $this->Form->select('Model.select', [1, 2], ['disabled']);
-            $this->Form->checkbox('Model.checkbox', ['disabled']);
-            $this->Form->text('Model.text', ['disabled']);
-            $this->Form->textarea('Model.textarea', ['disabled']);
-            $this->Form->password('Model.password', ['disabled']);
-            $this->Form->radio('Model.radio', [1, 2], ['disabled']);
-        });
-
-        $expected = [
-            'Model.radio' => '',
-        ];
-        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
      * testFormSecuredAndDisabled method
      *
      * Test that forms with disabled inputs + secured forms leave off the inputs from the form

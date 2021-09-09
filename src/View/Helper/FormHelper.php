@@ -2289,13 +2289,6 @@ class FormHelper extends Helper
             $options['id'] = $this->_domId($field);
         }
 
-        $disabledIndex = array_search('disabled', $options, true);
-        if (is_int($disabledIndex)) {
-            deprecationWarning('Using non-associative options is deprecated, use `\'disabled\' => true` instead.');
-            unset($options[$disabledIndex]);
-            $options['disabled'] = true;
-        }
-
         if (!isset($options['name'])) {
             $endsWithBrackets = '';
             if (substr($field, -2) === '[]') {
