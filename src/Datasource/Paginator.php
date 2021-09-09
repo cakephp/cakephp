@@ -669,7 +669,7 @@ class Paginator implements PaginatorInterface
     public function checkLimit(array $options): array
     {
         $options['limit'] = (int)$options['limit'];
-        if (empty($options['limit']) || $options['limit'] < 1) {
+        if ($options['limit'] < 1) {
             $options['limit'] = 1;
         }
         $options['limit'] = max(min($options['limit'], $options['maxLimit']), 1);
