@@ -1125,7 +1125,11 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
-        $this->assertSame("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
+        $this->assertSame(
+            "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) " .
+            "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
+            $result[1]
+        );
     }
 
     /**
