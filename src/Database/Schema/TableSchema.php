@@ -729,11 +729,11 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         foreach (array_keys($this->_columns) as $name) {
             $columns[] = $dialect->columnSql($this, $name);
         }
-        foreach (array_keys($this->_constraints) as $name) {
-            if ($this->_constraints[$name]['type'] === TableSchema::CONSTRAINT_PRIMARY) {
-                $constraints[] = $dialect->constraintSql($this, $name);
-            }
-        }
+        //foreach (array_keys($this->_constraints) as $name) {
+        //    if ($this->_constraints[$name]['type'] === TableSchema::CONSTRAINT_PRIMARY) {
+        //        $constraints[] = $dialect->constraintSql($this, $name);
+        //    }
+        //}
         foreach (array_keys($this->_indexes) as $name) {
             $indexes[] = $dialect->indexSql($this, $name);
         }
