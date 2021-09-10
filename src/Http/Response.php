@@ -612,7 +612,7 @@ class Response implements ResponseInterface, Stringable
      * @return static
      * @throws \InvalidArgumentException For invalid status code arguments.
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): static
     {
         $new = clone $this;
         $new->_setStatus($code, $reasonPhrase);
