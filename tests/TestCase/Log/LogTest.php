@@ -102,18 +102,6 @@ class LogTest extends TestCase
     }
 
     /**
-     * test that loggers have to implement the correct interface.
-     */
-    public function testNotImplementingInterface(): void
-    {
-        Log::setConfig('fail', ['engine' => '\stdClass']);
-
-        $this->expectException(RuntimeException::class);
-
-        Log::engine('fail');
-    }
-
-    /**
      * explicit tests for drop()
      */
     public function testDrop(): void

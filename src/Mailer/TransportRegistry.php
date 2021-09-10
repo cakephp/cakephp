@@ -19,7 +19,6 @@ namespace Cake\Mailer;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
-use RuntimeException;
 
 /**
  * An object registry for mailer transports.
@@ -66,23 +65,16 @@ class TransportRegistry extends ObjectRegistry
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config An array of settings to use for the cache engine.
      * @return \Cake\Mailer\AbstractTransport The constructed transport class.
-     * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
     protected function _create(object|string $class, string $alias, array $config): AbstractTransport
     {
         if (is_object($class)) {
-            $instance = $class;
-        } else {
-            $instance = new $class($config);
+            /** @var \Cake\Mailer\AbstractTransport */
+            return $class;
         }
 
-        if ($instance instanceof AbstractTransport) {
-            return $instance;
-        }
-
-        throw new RuntimeException(
-            'Mailer transports must use Cake\Mailer\AbstractTransport as a base class.'
-        );
+        /** @var \Cake\Mailer\AbstractTransport */
+        return new $class($config);
     }
 
     /**

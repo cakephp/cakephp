@@ -66,32 +66,19 @@ class LogEngineRegistry extends ObjectRegistry
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config An array of settings to use for the logger.
      * @return \Psr\Log\LoggerInterface The constructed logger class.
-     * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
     protected function _create(callable|object|string $class, string $alias, array $config): LoggerInterface
     {
+        if (is_string($class)) {
+            /** @var \Psr\Log\LoggerInterface */
+            return new $class($config);
+        }
+
         if (is_callable($class)) {
             return $class($alias);
         }
 
-        if (is_object($class)) {
-            $instance = $class;
-        }
-
-        if (!isset($instance)) {
-            /** @psalm-suppress UndefinedClass */
-            $instance = new $class($config);
-        }
-
-        if ($instance instanceof LoggerInterface) {
-            return $instance;
-        }
-
-        throw new RuntimeException(sprintf(
-            'Loggers must implement %s. Found `%s` instance instead.',
-            LoggerInterface::class,
-            get_debug_type($instance)
-        ));
+        return $class;
     }
 
     /**
