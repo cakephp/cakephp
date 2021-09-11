@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestSuite;
 /**
  * Test listener used to inject a fixture manager in all tests that
  * are composed inside a Test Suite
+ *
+ * @deprecated 4.3.0
  */
 class FixtureInjector implements TestListener
 {
