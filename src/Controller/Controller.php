@@ -122,13 +122,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $response;
 
     /**
-     * The class name to use for creating the response object.
-     *
-     * @var string
-     */
-    protected $_responseClass = Response::class;
-
-    /**
      * Settings for pagination.
      *
      * Used to pre-configure pagination preferences for the various
