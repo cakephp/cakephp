@@ -9,7 +9,7 @@ We support fixing security issues on the following releases:
 | 4.x     | :white_check_mark: | 
 | 3.10.x  | :white_check_mark: | 15th December 2022 (36 months after 4.0.0)
 | <= 3.9  | :x:                |
-| 2.10.x  | :white_check_mark: | 15th June 2021 (18 months after 4.0.0)
+| 2.10.x  | :x:                | 15th June 2021 (18 months after 4.0.0)
 | <= 2.9  | :x:                |
 
 ## Reporting a Vulnerability
