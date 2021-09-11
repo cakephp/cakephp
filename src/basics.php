@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
-use Psy\Shell as PsyShell;
 
 define('SECOND', 1);
 define('MINUTE', 60);
@@ -92,33 +91,6 @@ if (!function_exists('stackTrace')) {
         echo $trace;
     }
 
-}
-
-if (!function_exists('breakpoint')) {
-    /**
-     * Command to return the eval-able code to startup PsySH in interactive debugger
-     * Works the same way as eval(\Psy\sh());
-     * psy/psysh must be loaded in your project
-     *
-     * ```
-     * eval(breakpoint());
-     * ```
-     *
-     * @return string|null
-     * @link http://psysh.org/
-     */
-    function breakpoint(): ?string
-    {
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(PsyShell::class)) {
-            return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
-        }
-        trigger_error(
-            'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
-            E_USER_WARNING
-        );
-
-        return null;
-    }
 }
 
 if (!function_exists('dd')) {
