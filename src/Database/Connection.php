@@ -171,11 +171,7 @@ class Connection implements ConnectionInterface
      */
     public function configName(): string
     {
-        if (empty($this->_config['name'])) {
-            return '';
-        }
-
-        return $this->_config['name'];
+        return $this->_config['name'] ?? '';
     }
 
     /**
