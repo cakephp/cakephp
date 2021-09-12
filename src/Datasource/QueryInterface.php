@@ -174,10 +174,10 @@ interface QueryInterface
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param int|null $num number of records to be returned
+     * @param int|null $limit number of records to be returned
      * @return $this
      */
-    public function limit(int|null $num);
+    public function limit(int|null $limit);
 
     /**
      * Sets the number of records that should be skipped from the original result set
@@ -194,10 +194,10 @@ interface QueryInterface
      *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param int|null $num number of records to be skipped
+     * @param int|null $offset number of records to be skipped
      * @return $this
      */
-    public function offset(int|null $num);
+    public function offset(int|null $offset);
 
     /**
      * Adds a single or multiple fields to be used in the ORDER clause for this query.
