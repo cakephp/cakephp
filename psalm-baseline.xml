@@ -39,6 +39,9 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$set</code>
     </ArgumentTypeCoercion>
+    <UndefinedAttributeClass occurrences="1">
+      <code>ReturnTypeWillChange</code>
+    </UndefinedAttributeClass>
   </file>
   <file src="src/Controller/Controller.php">
     <PropertyTypeCoercion occurrences="1">
@@ -59,7 +62,7 @@
   </file>
   <file src="src/Database/Connection.php">
     <DeprecatedMethod occurrences="1">
-        <code>supportsDynamicConstraints</code>
+      <code>supportsDynamicConstraints</code>
     </DeprecatedMethod>
   </file>
   <file src="src/Database/Driver.php">
@@ -73,11 +76,6 @@
       <code>$limit</code>
       <code>$offset</code>
     </ParamNameMismatch>
-  </file>
-  <file src="src/Database/Schema/MysqlSchemaDialect.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$_driver</code>
-    </NonInvariantDocblockPropertyType>
   </file>
   <file src="src/Database/Statement/PDOStatement.php">
     <NonInvariantDocblockPropertyType occurrences="1">
@@ -93,11 +91,6 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Http/Client/Adapter/Mock.php">
-    <UndefinedFunction occurrences="1">
-      <code>getTypeName($options['match'])</code>
-    </UndefinedFunction>
   </file>
   <file src="src/Http/Client/Request.php">
     <PropertyTypeCoercion occurrences="1">
@@ -155,11 +148,6 @@
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$instances</code>
     </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/ORM/Query.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;_repository</code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -223,7 +211,7 @@
   </file>
   <file src="src/TestSuite/Fixture/TestFixture.php">
     <DeprecatedMethod occurrences="1">
-        <code>supportsDynamicConstraints</code>
+      <code>supportsDynamicConstraints</code>
     </DeprecatedMethod>
   </file>
   <file src="src/TestSuite/TestSuite.php">
@@ -234,12 +222,6 @@
       <code>addTestFile</code>
       <code>addTestFile</code>
     </InternalMethod>
-  </file>
-  <file src="src/Utility/Xml.php">
-    <PossiblyFalseOperand occurrences="2">
-      <code>$key</code>
-      <code>$key</code>
-    </PossiblyFalseOperand>
   </file>
   <file src="src/View/View.php">
     <ArgumentTypeCoercion occurrences="1">
