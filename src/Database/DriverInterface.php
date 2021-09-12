@@ -22,9 +22,6 @@ use Closure;
 
 /**
  * Interface for database driver.
- *
- * @method bool supports(string $feature) Checks whether a feature is supported by the driver.
- * @method bool inTransaction() Returns whether a transaction is active.
  */
 interface DriverInterface
 {
@@ -128,6 +125,13 @@ interface DriverInterface
      * @return bool True on success, false otherwise.
      */
     public function rollbackTransaction(): bool;
+
+    /**
+     * Returns whether a transaction is active.
+     *
+     * @return bool
+     */
+    public function inTransaction(): bool;
 
     /**
      * Get the SQL for releasing a save point.
@@ -272,6 +276,16 @@ interface DriverInterface
      * @return bool
      */
     public function isAutoQuotingEnabled(): bool;
+
+    /**
+     * Returns whether the driver supports the feature.
+     *
+     * Defaults to true for FEATURE_QUOTE and FEATURE_SAVEPOINT.
+     *
+     * @param string $feature Driver feature name
+     * @return bool
+     */
+    public function supports(string $feature): bool;
 
     /**
      * Transforms the passed query to this Driver's dialect and returns an instance
