@@ -1251,7 +1251,7 @@ class Validation
                 }
 
                 return false;
-            } catch (RuntimeException $e) {
+            } catch (RuntimeException) {
                 return false;
             }
         }

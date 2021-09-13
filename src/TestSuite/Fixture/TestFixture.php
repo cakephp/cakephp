@@ -321,7 +321,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             foreach ($sql as $stmt) {
                 $connection->execute($stmt)->closeCursor();
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
 

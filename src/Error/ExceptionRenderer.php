@@ -172,7 +172,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             /** @var \Cake\Controller\Controller $controller */
             $controller = new $class($request);
             $controller->startupProcess();
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $errorOccured = true;
         }
 
@@ -187,7 +187,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
-            } catch (Throwable $e) {
+            } catch (Throwable) {
             }
         }
 

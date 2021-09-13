@@ -307,7 +307,7 @@ class FileEngine extends CacheEngine
 
             try {
                 $file = new SplFileObject($path . $entry, 'r');
-            } catch (Exception $e) {
+            } catch (Exception) {
                 continue;
             }
 

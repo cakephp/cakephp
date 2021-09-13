@@ -540,7 +540,7 @@ class Router
             static::url($url, $full);
 
             return true;
-        } catch (MissingRouteException $e) {
+        } catch (MissingRouteException) {
             return false;
         }
     }

@@ -472,7 +472,7 @@ class EventManager implements EventManagerInterface
                 try {
                     $subject = $event->getSubject();
                     $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($subject);
-                } catch (CakeException $e) {
+                } catch (CakeException) {
                     $properties['_dispatchedEvents'][] = $event->getName() . ' with no subject';
                 }
             }

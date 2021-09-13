@@ -808,7 +808,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         try {
             $method = new ReflectionMethod($this, $action);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             return false;
         }
 
