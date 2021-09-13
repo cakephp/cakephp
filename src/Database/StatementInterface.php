@@ -16,13 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Traversable;
+
 /**
  * Represents a database statement. Concrete implementations
  * can either use PDOStatement or a native driver
  *
  * @property-read string $queryString
  */
-interface StatementInterface
+interface StatementInterface extends Traversable
 {
     /**
      * Used to designate that numeric indexes be returned in a result when calling fetch methods

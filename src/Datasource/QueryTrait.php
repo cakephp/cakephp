@@ -136,7 +136,7 @@ trait QueryTrait
      * @return \Cake\Datasource\ResultSetInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->all();
     }

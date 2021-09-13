@@ -11,9 +11,6 @@ parameters:
 	paths:
 		- src/
 
-	ignoreErrors:
-		- "#^Attribute class ReturnTypeWillChange does not exist\\.$#"
-
 services:
 	-
 		class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension

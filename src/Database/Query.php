@@ -28,9 +28,9 @@ use Cake\Database\Statement\CallbackStatement;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
-use ReturnTypeWillChange;
 use RuntimeException;
 use Stringable;
+use Traversable;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -1940,8 +1940,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * @return \Cake\Database\StatementInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    #[ReturnTypeWillChange]
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         if ($this->_iterator === null || $this->_dirty) {
             $this->_iterator = $this->execute();
