@@ -235,10 +235,10 @@ class Cookie implements CookieInterface
     /**
      * Converts non null expiry value into DateTimeInterface instance.
      *
-     * @param mixed $expires Expiry value.
+     * @param \DateTimeInterface|string|int|null $expires Expiry value.
      * @return \DateTimeInterface|null
      */
-    protected static function dateTimeInstance(mixed $expires): ?DateTimeInterface
+    protected static function dateTimeInstance(DateTimeInterface|string|int|null $expires): ?DateTimeInterface
     {
         if ($expires === null) {
             return $expires;
@@ -247,13 +247,6 @@ class Cookie implements CookieInterface
         if ($expires instanceof DateTimeInterface) {
             /** @psalm-suppress UndefinedInterfaceMethod */
             return $expires->setTimezone(new DateTimeZone('GMT'));
-        }
-
-        if (!is_string($expires) && !is_int($expires)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid type `%s` for expires. Expected an string, integer or DateTime object.',
-                get_debug_type($expires)
-            ));
         }
 
         if (!is_numeric($expires)) {
