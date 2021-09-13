@@ -104,7 +104,7 @@ class Mysql extends Driver
      *
      * @var array
      */
-    protected $featureVersions = [
+    protected array $featureVersions = [
         'mysql' => [
             'json' => '5.7.0',
             'cte' => '8.0.0',
