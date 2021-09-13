@@ -262,7 +262,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $clause->iterateParts(
             function ($c, &$field) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired) {
-                if (!is_string($field) || strpos($field, '.')) {
+                if (!is_string($field) || str_contains($field, '.')) {
                     return $c;
                 }
 
@@ -312,7 +312,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     return;
                 }
                 $field = $expression->getField();
-                if (!is_string($field) || strpos($field, '.')) {
+                if (!is_string($field) || str_contains($field, '.')) {
                     return;
                 }
 

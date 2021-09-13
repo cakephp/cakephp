@@ -1012,7 +1012,7 @@ class BelongsToMany extends Association
         $matching = [];
         $alias = $this->getAlias() . '.';
         foreach ($conditions as $field => $value) {
-            if (is_string($field) && strpos($field, $alias) === 0) {
+            if (is_string($field) && str_starts_with($field, $alias)) {
                 $matching[$field] = $value;
             } elseif (is_int($field) || $value instanceof ExpressionInterface) {
                 $matching[$field] = $value;
@@ -1041,7 +1041,7 @@ class BelongsToMany extends Association
         $alias = $this->_junctionAssociationName() . '.';
         foreach ($conditions as $field => $value) {
             $isString = is_string($field);
-            if ($isString && strpos($field, $alias) === 0) {
+            if ($isString && str_starts_with($field, $alias)) {
                 $matching[$field] = $value;
             }
             // Assume that operators contain junction conditions.

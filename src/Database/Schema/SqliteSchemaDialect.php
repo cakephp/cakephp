@@ -70,7 +70,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $length = $precision = $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
-            if (strpos($length, ',') !== false) {
+            if (str_contains($length, ',')) {
                 [$length, $precision] = explode(',', $length);
             }
             $length = (int)$length;
@@ -94,10 +94,10 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($col === 'tinyint') {
             return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (strpos($col, 'int') !== false) {
+        if (str_contains($col, 'int')) {
             return ['type' => TableSchema::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (strpos($col, 'decimal') !== false) {
+        if (str_contains($col, 'decimal')) {
             return [
                 'type' => TableSchema::TYPE_DECIMAL,
                 'length' => $length,
@@ -114,7 +114,7 @@ class SqliteSchemaDialect extends SchemaDialect
             ];
         }
 
-        if (strpos($col, 'boolean') !== false) {
+        if (str_contains($col, 'boolean')) {
             return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
 
@@ -124,7 +124,7 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($col === 'char') {
             return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
-        if (strpos($col, 'char') !== false) {
+        if (str_contains($col, 'char')) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
 

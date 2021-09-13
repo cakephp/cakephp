@@ -381,7 +381,7 @@ abstract class Association
     public function getTarget(): Table
     {
         if ($this->_targetTable === null) {
-            if (strpos($this->_className, '.')) {
+            if (str_contains($this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
                 $registryAlias = (string)$plugin . $this->_name;
             } else {

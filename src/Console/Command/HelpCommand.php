@@ -108,7 +108,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 $prefix = $namespace;
             }
             $shortestName = $this->getShortestName($names);
-            if (strpos($shortestName, '.') !== false) {
+            if (str_contains($shortestName, '.')) {
                 [, $shortestName] = explode('.', $shortestName, 2);
             }
 

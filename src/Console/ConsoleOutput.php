@@ -169,8 +169,8 @@ class ConsoleOutput
         if (
             (
                 DIRECTORY_SEPARATOR === '\\' &&
-                strpos(strtolower(php_uname('v')), 'windows 10') === false &&
-                strpos(strtolower((string)env('SHELL')), 'bash.exe') === false &&
+                !str_contains(strtolower(php_uname('v')), 'windows 10') &&
+                !str_contains(strtolower((string)env('SHELL')), 'bash.exe') &&
                 !(bool)env('ANSICON') &&
                 env('ConEmuANSI') !== 'ON'
             ) ||

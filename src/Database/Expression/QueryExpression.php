@@ -717,7 +717,7 @@ class QueryExpression implements ExpressionInterface, Countable
         }
         $type = $this->getTypeMap()->type($expression);
 
-        $typeMultiple = (is_string($type) && strpos($type, '[]') !== false);
+        $typeMultiple = (is_string($type) && str_contains($type, '[]'));
         if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
             $type = $type ?: 'string';
             if (!$typeMultiple) {

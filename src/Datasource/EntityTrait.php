@@ -952,7 +952,7 @@ trait EntityTrait
     protected function _nestedErrors(string $field): array
     {
         // Only one path element, check for nested entity with error.
-        if (strpos($field, '.') === false) {
+        if (!str_contains($field, '.')) {
             $entity = $this->get($field);
             if ($entity instanceof EntityInterface || is_iterable($entity)) {
                 return $this->_readError($entity);

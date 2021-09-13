@@ -390,7 +390,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
                 $e instanceof MissingLayoutException ||
                 (
                     isset($attributes['file']) &&
-                    strpos($attributes['file'], 'error500') !== false
+                    str_contains($attributes['file'], 'error500')
                 )
             ) {
                 return $this->_outputMessageSafe('error500');

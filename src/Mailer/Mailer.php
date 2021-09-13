@@ -283,7 +283,7 @@ class Mailer implements EventListenerInterface
     public function __call(string $method, array $args)
     {
         $result = $this->message->$method(...$args);
-        if (strpos($method, 'get') === 0) {
+        if (str_starts_with($method, 'get')) {
             return $result;
         }
 

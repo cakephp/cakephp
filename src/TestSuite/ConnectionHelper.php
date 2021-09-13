@@ -44,7 +44,7 @@ class ConnectionHelper
                 continue;
             }
 
-            if (strpos($connection, 'test_') === 0) {
+            if (str_starts_with($connection, 'test_')) {
                 $original = substr($connection, 5);
                 ConnectionManager::alias($connection, $original);
             } else {

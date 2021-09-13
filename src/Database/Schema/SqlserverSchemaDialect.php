@@ -108,7 +108,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             // datetime cannot parse more than 3 digits of precision and isn't accurate
             return ['type' => TableSchema::TYPE_DATETIME, 'length' => null];
         }
-        if (strpos($col, 'datetime') !== false) {
+        if (str_contains($col, 'datetime')) {
             $typeName = TableSchema::TYPE_DATETIME;
             if ($scale > 0) {
                 $typeName = TableSchema::TYPE_DATETIME_FRACTIONAL;
@@ -137,9 +137,9 @@ class SqlserverSchemaDialect extends SchemaDialect
             return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
         if (
-            strpos($col, 'numeric') !== false ||
-            strpos($col, 'money') !== false ||
-            strpos($col, 'decimal') !== false
+            str_contains($col, 'numeric') ||
+            str_contains($col, 'money') ||
+            str_contains($col, 'decimal')
         ) {
             return ['type' => TableSchema::TYPE_DECIMAL, 'length' => $precision, 'precision' => $scale];
         }
@@ -152,23 +152,23 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($col === 'nvarchar' || $col === 'nchar' || $col === 'ntext') {
             $length /= 2;
         }
-        if (strpos($col, 'varchar') !== false && $length < 0) {
+        if (str_contains($col, 'varchar') && $length < 0) {
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
-        if (strpos($col, 'varchar') !== false) {
+        if (str_contains($col, 'varchar')) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length ?: 255];
         }
 
-        if (strpos($col, 'char') !== false) {
+        if (str_contains($col, 'char')) {
             return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
 
-        if (strpos($col, 'text') !== false) {
+        if (str_contains($col, 'text')) {
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
-        if ($col === 'image' || strpos($col, 'binary') !== false) {
+        if ($col === 'image' || str_contains($col, 'binary')) {
             // -1 is the value for MAX which we treat as a 'long' binary
             if ($length == -1) {
                 $length = TableSchema::LENGTH_LONG;

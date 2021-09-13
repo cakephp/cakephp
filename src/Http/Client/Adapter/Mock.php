@@ -126,7 +126,7 @@ class Mock implements AdapterInterface
         if ($starPosition === strlen($mockUri) - 4) {
             $mockUri = substr($mockUri, 0, $starPosition);
 
-            return strpos($requestUri, $mockUri) === 0;
+            return str_starts_with($requestUri, $mockUri);
         }
 
         return false;

@@ -210,7 +210,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     protected function createInstance(string $alias, array $options): Table
     {
-        if (strpos($alias, '\\') === false) {
+        if (!str_contains($alias, '\\')) {
             [, $classAlias] = pluginSplit($alias);
             $options = ['alias' => $classAlias] + $options;
         } elseif (!isset($options['alias'])) {
@@ -231,7 +231,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             if (empty($options['className'])) {
                 $options['className'] = $alias;
             }
-            if (!isset($options['table']) && strpos($options['className'], '\\') === false) {
+            if (!isset($options['table']) && !str_contains($options['className'], '\\')) {
                 [, $table] = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }
@@ -239,7 +239,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         } else {
             $message = $options['className'] ?? $alias;
             $message = '`' . $message . '`';
-            if (strpos($message, '\\') === false) {
+            if (!str_contains($message, '\\')) {
                 $message = 'for alias ' . $message;
             }
             throw new MissingTableClassException([$message]);
@@ -283,7 +283,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options['className'] = $alias;
         }
 
-        if (strpos($options['className'], '\\') !== false && class_exists($options['className'])) {
+        if (str_contains($options['className'], '\\') && class_exists($options['className'])) {
             return $options['className'];
         }
 

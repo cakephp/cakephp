@@ -801,7 +801,7 @@ class Text
             $len = self::_strlen($part, $options);
             if ($offset !== 0 || $totalLength + $len > $length) {
                 if (
-                    strpos($part, '&') === 0
+                    str_starts_with($part, '&')
                     && preg_match($pattern, $part)
                     && $part !== html_entity_decode($part, ENT_HTML5 | ENT_QUOTES, 'UTF-8')
                 ) {

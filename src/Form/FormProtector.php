@@ -168,7 +168,7 @@ class FormProtector
             return [];
         }
 
-        if (strpos($name, '[') === false) {
+        if (!str_contains($name, '[')) {
             return Hash::filter(explode('.', $name));
         }
         $parts = explode('[', $name);
@@ -259,7 +259,7 @@ class FormProtector
         }
 
         $token = urldecode($formData['_Token']['fields']);
-        if (strpos($token, ':')) {
+        if (str_contains($token, ':')) {
             [$token, ] = explode(':', $token, 2);
         }
 
@@ -296,7 +296,7 @@ class FormProtector
         $token = urldecode($formData['_Token']['fields']);
         $unlocked = urldecode($formData['_Token']['unlocked']);
 
-        if (strpos($token, ':')) {
+        if (str_contains($token, ':')) {
             [, $locked] = explode(':', $token, 2);
         }
         unset($formData['_Token']);

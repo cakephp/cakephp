@@ -149,7 +149,7 @@ class Asset
             return $path;
         }
 
-        if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
+        if (str_contains($path, '://') || preg_match('/^[a-z]+:/i', $path)) {
             return ltrim(Router::url($path), '/');
         }
 
@@ -169,7 +169,7 @@ class Asset
         }
         if (
             !empty($options['ext']) &&
-            strpos($path, '?') === false &&
+            !str_contains($path, '?') &&
             substr($path, -strlen($options['ext'])) !== $options['ext']
         ) {
             $path .= $options['ext'];
@@ -236,7 +236,7 @@ class Asset
      */
     public static function assetTimestamp(string $path, string|bool|null $timestamp = null): string
     {
-        if (strpos($path, '?') !== false) {
+        if (str_contains($path, '?')) {
             return $path;
         }
 
@@ -316,7 +316,7 @@ class Asset
                 }
             }
         }
-        if (strpos($webPath, '//') !== false) {
+        if (str_contains($webPath, '//')) {
             return str_replace('//', '/', $webPath . $asset[1]);
         }
 

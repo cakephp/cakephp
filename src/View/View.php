@@ -1297,9 +1297,9 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name);
         $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
 
-        if (strpos($name, DIRECTORY_SEPARATOR) === false && $name !== '' && $name[0] !== '.') {
+        if (!str_contains($name, DIRECTORY_SEPARATOR) && $name !== '' && !str_starts_with($name, '.')) {
             $name = $templatePath . $subDir . $this->_inflectTemplateFileName($name);
-        } elseif (strpos($name, DIRECTORY_SEPARATOR) !== false) {
+        } elseif (str_contains($name, DIRECTORY_SEPARATOR)) {
             if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
                 $name = trim($name, DIRECTORY_SEPARATOR);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
@@ -1344,11 +1344,11 @@ class View implements EventDispatcherInterface
      */
     protected function _checkFilePath(string $file, string $path): string
     {
-        if (strpos($file, '..') === false) {
+        if (!str_contains($file, '..')) {
             return $file;
         }
         $absolute = realpath($file);
-        if (strpos($absolute, $path) !== 0) {
+        if (!str_starts_with($absolute, $path)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use "%s" as a template, it is not within any view template path.',
                 $file

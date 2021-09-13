@@ -580,7 +580,7 @@ class Client implements ClientInterface
         $options += $defaults;
 
         if ($query) {
-            $q = strpos($url, '?') === false ? '?' : '&';
+            $q = str_contains($url, '?') ? '&' : '?';
             $url .= $q;
             $url .= is_string($query) ? $query : http_build_query($query, '', '&', PHP_QUERY_RFC3986);
         }
@@ -654,7 +654,7 @@ class Client implements ClientInterface
      */
     protected function _typeHeaders(string $type): array
     {
-        if (strpos($type, '/') !== false) {
+        if (str_contains($type, '/')) {
             return [
                 'Accept' => $type,
                 'Content-Type' => $type,

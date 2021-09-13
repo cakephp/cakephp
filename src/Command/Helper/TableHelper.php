@@ -68,7 +68,7 @@ class TableHelper extends Helper
             return 0;
         }
 
-        if (strpos($text, '<') === false && strpos($text, '>') === false) {
+        if (!str_contains($text, '<') && !str_contains($text, '>')) {
             return mb_strwidth($text);
         }
 

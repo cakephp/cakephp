@@ -69,7 +69,7 @@ class RoutesGenerateCommand extends Command
     {
         $out = [];
         foreach ($args as $arg) {
-            if (strpos($arg, ':') !== false) {
+            if (str_contains($arg, ':')) {
                 [$key, $value] = explode(':', $arg);
                 if (in_array($value, ['true', 'false'], true)) {
                     $value = $value === 'true';

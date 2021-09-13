@@ -103,7 +103,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     {
         if (!empty($this->connection)) {
             $connection = $this->connection;
-            if (strpos($connection, 'test') !== 0) {
+            if (!str_starts_with($connection, 'test')) {
                 $message = sprintf(
                     'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
                     $connection,

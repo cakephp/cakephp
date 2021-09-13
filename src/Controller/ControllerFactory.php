@@ -235,9 +235,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         // controller names as they allow direct references to
         // be created.
         if (
-            strpos($controller, '\\') !== false ||
-            strpos($controller, '/') !== false ||
-            strpos($controller, '.') !== false ||
+            str_contains($controller, '\\') ||
+            str_contains($controller, '/') ||
+            str_contains($controller, '.') ||
             $firstChar === strtolower($firstChar)
         ) {
             throw $this->missingController($request);

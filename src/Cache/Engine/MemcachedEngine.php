@@ -259,7 +259,7 @@ class MemcachedEngine extends CacheEngine
     public function parseServerString(string $server): array
     {
         $socketTransport = 'unix://';
-        if (strpos($server, $socketTransport) === 0) {
+        if (str_starts_with($server, $socketTransport)) {
             return [substr($server, strlen($socketTransport)), 0];
         }
         if (substr($server, 0, 1) === '[') {
@@ -442,7 +442,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         foreach ($keys as $key) {
-            if (strpos($key, $this->_config['prefix']) === 0) {
+            if (str_starts_with($key, $this->_config['prefix'])) {
                 $this->_Memcached->delete($key);
             }
         }

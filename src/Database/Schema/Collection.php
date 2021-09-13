@@ -92,7 +92,7 @@ class Collection implements CollectionInterface
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
         $config = $this->_connection->config();
-        if (strpos($name, '.')) {
+        if (str_contains($name, '.')) {
             [$config['schema'], $name] = explode('.', $name);
         }
         $table = $this->_connection->getDriver()->newTableSchema($name);

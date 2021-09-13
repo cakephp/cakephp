@@ -325,7 +325,7 @@ class Route
                 }
                 $slashParam = '/' . $search;
                 // phpcs:disable Generic.Files.LineLength
-                if (strpos($parsed, $slashParam) !== false) {
+                if (str_contains($parsed, $slashParam)) {
                     $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
                     $routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
@@ -379,7 +379,7 @@ class Route
         ];
         foreach ($keys as $key => $glue) {
             $value = null;
-            if (strpos($this->template, '{' . $key . '}') !== false) {
+            if (str_contains($this->template, '{' . $key . '}')) {
                 $value = '_' . $key;
             } elseif (isset($this->defaults[$key])) {
                 $value = $this->defaults[$key];
@@ -526,7 +526,7 @@ class Route
      */
     protected function _parseExtension(string $url): array
     {
-        if (count($this->_extensions) && strpos($url, '.') !== false) {
+        if (count($this->_extensions) && str_contains($url, '.')) {
             foreach ($this->_extensions as $ext) {
                 $len = strlen($ext) + 1;
                 if (substr($url, -$len) === '.' . $ext) {
@@ -615,7 +615,7 @@ class Route
 
         // Apply the _host option if possible
         if (isset($this->options['_host'])) {
-            if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
+            if (!isset($hostOptions['_host']) && !str_contains($this->options['_host'], '*')) {
                 $hostOptions['_host'] = $this->options['_host'];
             }
             $hostOptions['_host'] = $hostOptions['_host'] ?? $context['_host'];
@@ -787,10 +787,10 @@ class Route
             $replace[] = $string;
         }
 
-        if (strpos($this->template, '**') !== false) {
+        if (str_contains($this->template, '**')) {
             array_push($search, '**', '%2F');
             array_push($replace, $pass, '/');
-        } elseif (strpos($this->template, '*') !== false) {
+        } elseif (str_contains($this->template, '*')) {
             $search[] = '*';
             $replace[] = $pass;
         }

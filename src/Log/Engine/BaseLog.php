@@ -127,7 +127,7 @@ abstract class BaseLog extends AbstractLogger
     {
         $message = (string)$message;
 
-        if (strpos($message, '{') === false && strpos($message, '}') === false) {
+        if (!str_contains($message, '{') && !str_contains($message, '}')) {
             return $message;
         }
 

@@ -470,14 +470,14 @@ class Router
             $url = (string)$url;
 
             $plainString = (
-                strpos($url, 'javascript:') === 0 ||
-                strpos($url, 'mailto:') === 0 ||
-                strpos($url, 'tel:') === 0 ||
-                strpos($url, 'sms:') === 0 ||
-                strpos($url, '#') === 0 ||
-                strpos($url, '?') === 0 ||
-                strpos($url, '//') === 0 ||
-                strpos($url, '://') !== false
+                str_starts_with($url, 'javascript:') ||
+                str_starts_with($url, 'mailto:') ||
+                str_starts_with($url, 'tel:') ||
+                str_starts_with($url, 'sms:') ||
+                str_starts_with($url, '#') ||
+                str_starts_with($url, '?') ||
+                str_starts_with($url, '//') ||
+                str_contains($url, '://')
             );
 
             if ($plainString) {
@@ -678,7 +678,7 @@ class Router
         }
         $url = '/' . $url;
 
-        while (strpos($url, '//') !== false) {
+        while (str_contains($url, '//')) {
             $url = str_replace('//', '/', $url);
         }
         $url = preg_replace('/(?:(\/$))/', '', $url);

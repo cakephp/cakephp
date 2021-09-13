@@ -99,7 +99,7 @@ trait ModelAwareTrait
         $modelType = $modelType ?? $this->getModelType();
 
         $options = [];
-        if (strpos($modelClass, '\\') === false) {
+        if (!str_contains($modelClass, '\\')) {
             [, $alias] = pluginSplit($modelClass, true);
         } else {
             $options['className'] = $modelClass;

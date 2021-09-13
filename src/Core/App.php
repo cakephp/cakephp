@@ -56,7 +56,7 @@ class App
      */
     public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {
-        if (strpos($class, '\\') !== false) {
+        if (str_contains($class, '\\')) {
             return class_exists($class) ? $class : null;
         }
 

@@ -178,7 +178,7 @@ trait CollectionTrait
     public function extract($path): CollectionInterface
     {
         $extractor = new ExtractIterator($this->unwrap(), $path);
-        if (is_string($path) && strpos($path, '{*}') !== false) {
+        if (is_string($path) && str_contains($path, '{*}')) {
             $extractor = $extractor
                 ->filter(function ($data) {
                     return $data !== null && ($data instanceof Traversable || is_array($data));

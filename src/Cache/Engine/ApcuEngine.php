@@ -153,7 +153,7 @@ class ApcuEngine extends CacheEngine
 
         $cache = apcu_cache_info(); // Raises warning by itself already
         foreach ($cache['cache_list'] as $key) {
-            if (strpos($key['info'], $this->_config['prefix']) === 0) {
+            if (str_starts_with($key['info'], $this->_config['prefix'])) {
                 apcu_delete($key['info']);
             }
         }

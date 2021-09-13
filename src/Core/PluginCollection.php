@@ -232,7 +232,7 @@ class PluginCollection implements Iterator, Countable
      */
     public function create(string $name, array $config = []): PluginInterface
     {
-        if (strpos($name, '\\') !== false) {
+        if (str_contains($name, '\\')) {
             /** @var \Cake\Core\PluginInterface */
             return new $name($config);
         }

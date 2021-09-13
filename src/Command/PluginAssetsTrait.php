@@ -76,7 +76,7 @@ trait PluginAssetsTrait
             $wwwRoot = Configure::read('App.wwwRoot');
             $dir = $wwwRoot;
             $namespaced = false;
-            if (strpos($link, '/') !== false) {
+            if (str_contains($link, '/')) {
                 $namespaced = true;
                 $parts = explode('/', $link);
                 $link = array_pop($parts);

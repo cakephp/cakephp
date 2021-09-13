@@ -430,7 +430,7 @@ class PaginatorHelper extends Helper
         if (empty($title)) {
             $title = $key;
 
-            if (strpos($title, '.') !== false) {
+            if (str_contains($title, '.')) {
                 $title = str_replace('.', ' ', $title);
             }
 
@@ -528,14 +528,14 @@ class PaginatorHelper extends Helper
         if (
             !empty($paging['sort'])
             && !empty($options['sort'])
-            && strpos($options['sort'], '.') === false
+            && !str_contains($options['sort'], '.')
         ) {
             $paging['sort'] = $this->_removeAlias($paging['sort'], $model = null);
         }
         if (
             !empty($paging['sortDefault'])
             && !empty($options['sort'])
-            && strpos($options['sort'], '.') === false
+            && !str_contains($options['sort'], '.')
         ) {
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
         }
@@ -596,7 +596,7 @@ class PaginatorHelper extends Helper
     {
         $currentModel = $model ?: $this->defaultModel();
 
-        if (strpos($field, '.') === false) {
+        if (!str_contains($field, '.')) {
             return $field;
         }
 
