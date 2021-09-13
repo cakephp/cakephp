@@ -102,7 +102,7 @@ class ValidationRule
      * be passed as the last argument for the validation method
      * @param array $context A key value list of data that could be used as context
      * during validation. Recognized keys are:
-     * - newRecord: (boolean) whether or not the data to be validated belongs to a
+     * - newRecord: (boolean) whether the data to be validated belongs to a
      *   new record
      * - data: The full data that was passed to the validation process
      * - field: The name of the field that is being processed
@@ -157,7 +157,7 @@ class ValidationRule
      *
      * @param array $context A key value list of data that could be used as context
      * during validation. Recognized keys are:
-     * - newRecord: (boolean) whether or not the data to be validated belongs to a
+     * - newRecord: (boolean) whether the data to be validated belongs to a
      *   new record
      * - data: The full data that was passed to the validation process
      * - providers associative array with objects or class names that will

@@ -96,7 +96,7 @@ class EagerLoader
     protected $_joinsMap = [];
 
     /**
-     * Controls whether or not fields from associated tables
+     * Controls whether fields from associated tables
      * will be eagerly loaded. When set to false, no fields will
      * be loaded from associations.
      *
@@ -187,7 +187,7 @@ class EagerLoader
     }
 
     /**
-     * Sets whether or not contained associations will load fields automatically.
+     * Sets whether contained associations will load fields automatically.
      *
      * @param bool $enable The value to set.
      * @return $this
@@ -212,7 +212,7 @@ class EagerLoader
     }
 
     /**
-     * Gets whether or not contained associations will load fields automatically.
+     * Gets whether contained associations will load fields automatically.
      *
      * @return bool The current value.
      */
@@ -686,10 +686,10 @@ class EagerLoader
      *
      * - alias: The association alias
      * - instance: The association instance
-     * - canBeJoined: Whether or not the association will be loaded using a JOIN
+     * - canBeJoined: Whether the association will be loaded using a JOIN
      * - entityClass: The entity that should be used for hydrating the results
      * - nestKey: A dotted path that can be used to correctly insert the data into the results.
-     * - matching: Whether or not it is an association loaded through `matching()`.
+     * - matching: Whether it is an association loaded through `matching()`.
      *
      * @param \Cake\ORM\Table $table The table containing the association that
      * will be normalized
@@ -717,7 +717,7 @@ class EagerLoader
      *
      * @param array $map An initial array for the map.
      * @param array<\Cake\ORM\EagerLoadable> $level An array of EagerLoadable instances.
-     * @param bool $matching Whether or not it is an association loaded through `matching()`.
+     * @param bool $matching Whether it is an association loaded through `matching()`.
      * @return array
      */
     protected function _buildAssociationsMap(array $map, array $level, bool $matching = false): array
@@ -752,7 +752,7 @@ class EagerLoader
      * @param string $alias The table alias as it appears in the query.
      * @param \Cake\ORM\Association $assoc The association object the alias represents;
      * will be normalized
-     * @param bool $asMatching Whether or not this join results should be treated as a
+     * @param bool $asMatching Whether this join results should be treated as a
      * 'matching' association.
      * @param string $targetProperty The property name where the results of the join should be nested at.
      * If not passed, the default property for the association will be used.

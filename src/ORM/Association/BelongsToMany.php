@@ -808,7 +808,7 @@ class BelongsToMany extends Association
             );
             // Keys were changed, the junction table record _could_ be
             // new. By clearing the primary key values, and marking the entity
-            // as new, we let save() sort out whether or not we have a new link
+            // as new, we let save() sort out whether we have a new link
             // or if we are updating an existing link.
             if ($changedKeys) {
                 $joint->setNew(true);
@@ -882,7 +882,7 @@ class BelongsToMany extends Association
      * Additionally to the default options accepted by `Table::delete()`, the following
      * keys are supported:
      *
-     * - cleanProperty: Whether or not to remove all the objects in `$targetEntities` that
+     * - cleanProperty: Whether to remove all the objects in `$targetEntities` that
      * are stored in `$sourceEntity` (default: true)
      *
      * By default this method will unset each of the entity objects stored inside the

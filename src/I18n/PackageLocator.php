@@ -38,7 +38,7 @@ class PackageLocator
     protected $registry = [];
 
     /**
-     * Tracks whether or not a registry entry has been converted from a
+     * Tracks whether a registry entry has been converted from a
      * callable to a Package object.
      *
      * @var array

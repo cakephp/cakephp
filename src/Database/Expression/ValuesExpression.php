@@ -58,7 +58,7 @@ class ValuesExpression implements ExpressionInterface
     protected $_query;
 
     /**
-     * Whether or not values have been casted to expressions
+     * Whether values have been casted to expressions
      * already.
      *
      * @var bool

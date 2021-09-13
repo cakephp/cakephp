@@ -112,7 +112,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Sets error messages to the entity
      *
      * @param array $errors The array of errors to set.
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $fields
      * @return $this
      */
     public function setErrors(array $errors, bool $overwrite = false);
@@ -122,13 +122,13 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @param string $field The field to get errors for, or the array of errors to set.
      * @param array|string $errors The errors to be set for $field
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $field
      * @return $this
      */
     public function setError(string $field, $errors, bool $overwrite = false);
 
     /**
-     * Stores whether or not a field value can be changed or set in this entity.
+     * Stores whether a field value can be changed or set in this entity.
      *
      * @param array|string $field single or list of fields to change its accessibility
      * @param bool $set true marks the field as accessible, false will
@@ -273,15 +273,15 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Using `true` means that the entity has not been persisted in the database,
      * `false` indicates that the entity has been persisted.
      *
-     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @param bool $new Indicate whether this entity has been persisted.
      * @return $this
      */
     public function setNew(bool $new);
 
     /**
-     * Returns whether or not this entity has already been persisted.
+     * Returns whether this entity has already been persisted.
      *
-     * @return bool Whether or not the entity has been persisted.
+     * @return bool Whether the entity has been persisted.
      */
     public function isNew(): bool;
 }

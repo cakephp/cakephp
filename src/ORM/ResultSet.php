@@ -130,7 +130,7 @@ class ResultSet implements ResultSetInterface
     protected $_entityClass;
 
     /**
-     * Whether or not to buffer results fetched from the statement
+     * Whether to buffer results fetched from the statement
      *
      * @var bool
      */

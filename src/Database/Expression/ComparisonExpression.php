@@ -54,7 +54,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     protected $_operator = '=';
 
     /**
-     * Whether or not the value in this expression is a traversable
+     * Whether the value in this expression is a traversable
      *
      * @var bool
      */

@@ -42,7 +42,7 @@ trait ConsoleIntegrationTestTrait
     use ContainerStubTrait;
 
     /**
-     * Whether or not to use the CommandRunner
+     * Whether to use the CommandRunner
      *
      * @var bool
      */

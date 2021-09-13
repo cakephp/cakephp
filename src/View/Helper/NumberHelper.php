@@ -144,7 +144,7 @@ class NumberHelper extends Helper
      * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
-     * - `escape` - Whether or not to escape html in resulting string
+     * - `escape` - Whether to escape html in resulting string
      *
      * @param string|float $number A floating point number.
      * @param array<string, mixed> $options An array with options.
@@ -174,9 +174,9 @@ class NumberHelper extends Helper
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
      * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
-     * - `useIntlCode` - Whether or not to replace the currency symbol with the international
+     * - `useIntlCode` - Whether to replace the currency symbol with the international
      *   currency code.
-     * - `escape` - Whether or not to escape html in resulting string
+     * - `escape` - Whether to escape html in resulting string
      *
      * @param string|float $number Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'

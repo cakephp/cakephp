@@ -71,7 +71,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     protected $_passwordHasher;
 
     /**
-     * Whether or not the user authenticated by this class
+     * Whether the user authenticated by this class
      * requires their password to be rehashed with another algorithm.
      *
      * @var bool
@@ -195,7 +195,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     }
 
     /**
-     * Returns whether or not the password stored in the repository for the logged in user
+     * Returns whether the password stored in the repository for the logged in user
      * requires to be rehashed with another algorithm
      *
      * @return bool

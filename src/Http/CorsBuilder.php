@@ -47,7 +47,7 @@ class CorsBuilder
     protected $_origin;
 
     /**
-     * Whether or not the request was over SSL.
+     * Whether the request was over SSL.
      *
      * @var bool
      */
@@ -65,7 +65,7 @@ class CorsBuilder
      *
      * @param \Psr\Http\Message\MessageInterface $response The response object to add headers onto.
      * @param string $origin The request's Origin header.
-     * @param bool $isSsl Whether or not the request was over SSL.
+     * @param bool $isSsl Whether the request was over SSL.
      */
     public function __construct(MessageInterface $response, string $origin, bool $isSsl = false)
     {

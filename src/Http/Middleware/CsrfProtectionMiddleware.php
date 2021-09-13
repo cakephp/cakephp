@@ -53,8 +53,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *  - `cookieName` The name of the cookie to send.
      *  - `expiry` A strotime compatible value of how long the CSRF token should last.
      *    Defaults to browser session.
-     *  - `secure` Whether or not the cookie will be set with the Secure flag. Defaults to false.
-     *  - `httponly` Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
+     *  - `secure` Whether the cookie will be set with the Secure flag. Defaults to false.
+     *  - `httponly` Whether the cookie will be set with the HttpOnly flag. Defaults to false.
      *  - `samesite` "SameSite" attribute for cookies. Defaults to `null`.
      *    Valid values: `CookieInterface::SAMESITE_LAX`, `CookieInterface::SAMESITE_STRICT`,
      *    `CookieInterface::SAMESITE_NONE` or `null`.
@@ -73,7 +73,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     ];
 
     /**
-     * Callback for deciding whether or not to skip the token check for particular request.
+     * Callback for deciding whether to skip the token check for particular request.
      *
      * CSRF protection token check will be skipped if the callback returns `true`.
      *

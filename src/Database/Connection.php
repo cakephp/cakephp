@@ -529,7 +529,7 @@ class Connection implements ConnectionInterface
     /**
      * Rollback current transaction.
      *
-     * @param bool|null $toBeginning Whether or not the transaction should be rolled back to the
+     * @param bool|null $toBeginning Whether the transaction should be rolled back to the
      * beginning of it. Defaults to false if using savepoints, or true if not.
      * @return bool
      */
@@ -571,7 +571,7 @@ class Connection implements ConnectionInterface
      * If you are trying to enable this feature, make sure you check
      * `isSavePointsEnabled()` to verify that savepoints were enabled successfully.
      *
-     * @param bool $enable Whether or not save points should be used.
+     * @param bool $enable Whether save points should be used.
      * @return $this
      */
     public function enableSavePoints(bool $enable = true)

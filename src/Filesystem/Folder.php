@@ -77,7 +77,7 @@ class Folder
     public $path;
 
     /**
-     * Sortedness. Whether or not list results
+     * Sortedness. Whether list results
      * should be sorted by name.
      *
      * @var bool

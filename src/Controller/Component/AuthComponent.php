@@ -474,7 +474,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Check if the provided user is authorized for the request.
      *
-     * Uses the configured Authorization adapters to check whether or not a user is authorized.
+     * Uses the configured Authorization adapters to check whether a user is authorized.
      * Each adapter will be checked in sequence, if any of them return true, then the user will
      * be authorized for the request.
      *
