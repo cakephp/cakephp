@@ -37,13 +37,13 @@ use Cake\Log\LogTrait;
  * cycle. The available callbacks are:
  *
  * - `beforeFilter(EventInterface $event)`
- *   Called before the controller's beforeFilter method by default.
+ *   Called before Controller::beforeFilter() method by default.
  * - `startup(EventInterface $event)`
- *   Called after the controller's beforeFilter method, and before the
+ *   Called after Controller::beforeFilter() method, and before the
  *   controller action is called.
  * - `beforeRender(EventInterface $event)`
- *   Called before the Controller beforeRender, and before the view class is loaded.
- * - `shutdown(EventInterface $event)`
+ *   Called before Controller::beforeRender(), and before the view class is loaded.
+ * - `afterFilter(EventInterface $event)`
  *   Called after the action is complete and the view has been rendered but
  *   before Controller::afterFilter().
  * - `beforeRedirect(EventInterface $event $url, Response $response)`
@@ -170,7 +170,7 @@ class Component implements EventListenerInterface
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
             'Controller.beforeRedirect' => 'beforeRedirect',
-            'Controller.shutdown' => 'shutdown',
+            'Controller.shutdown' => 'afterFilter',
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {
