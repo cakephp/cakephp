@@ -170,7 +170,7 @@ class Component implements EventListenerInterface
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
             'Controller.beforeRedirect' => 'beforeRedirect',
-            'Controller.shutdown' => 'shutdown',
+            'Controller.shutdown' => 'afterFilter',
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {
