@@ -177,7 +177,7 @@ interface QueryInterface
      * @param int|null $limit number of records to be returned
      * @return $this
      */
-    public function limit(int|null $limit);
+    public function limit(?int $limit);
 
     /**
      * Sets the number of records that should be skipped from the original result set
@@ -197,7 +197,7 @@ interface QueryInterface
      * @param int|null $offset number of records to be skipped
      * @return $this
      */
-    public function offset(int|null $offset);
+    public function offset(?int $offset);
 
     /**
      * Adds a single or multiple fields to be used in the ORDER clause for this query.

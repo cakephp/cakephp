@@ -192,7 +192,7 @@ interface CookieInterface
      * @param \DateTimeInterface $time The time to test against. Defaults to 'now' in UTC.
      * @return bool
      */
-    public function isExpired(DateTimeInterface|null $time = null): bool;
+    public function isExpired(?DateTimeInterface $time = null): bool;
 
     /**
      * Check if the cookie is HTTP only
