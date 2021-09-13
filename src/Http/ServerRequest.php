@@ -725,22 +725,22 @@ class ServerRequest implements ServerRequestInterface
      * `addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'csv']]`
      *
      * @param string $name The name of the detector.
-     * @param callable|array $callable A callable or options array for the detector definition.
+     * @param callable|array $detector A callable or options array for the detector definition.
      * @return void
      */
-    public static function addDetector(string $name, $callable): void
+    public static function addDetector(string $name, $detector): void
     {
         $name = strtolower($name);
-        if (is_callable($callable)) {
-            static::$_detectors[$name] = $callable;
+        if (is_callable($detector)) {
+            static::$_detectors[$name] = $detector;
 
             return;
         }
-        if (isset(static::$_detectors[$name], $callable['options'])) {
+        if (isset(static::$_detectors[$name], $detector['options'])) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $callable = Hash::merge(static::$_detectors[$name], $callable);
+            $detector = Hash::merge(static::$_detectors[$name], $detector);
         }
-        static::$_detectors[$name] = $callable;
+        static::$_detectors[$name] = $detector;
     }
 
     /**
