@@ -105,7 +105,7 @@ class ReconnectStrategy implements RetryStrategyInterface
         try {
             // Make sure we free any resources associated with the old connection
             $this->connection->disconnect();
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         try {
@@ -113,7 +113,7 @@ class ReconnectStrategy implements RetryStrategyInterface
             $this->connection->log('[RECONNECT]');
 
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             // If there was an error connecting again, don't report it back,
             // let the retry handler do it.
             return false;

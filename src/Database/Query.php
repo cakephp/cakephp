@@ -2412,7 +2412,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
         } finally {

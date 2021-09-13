@@ -61,7 +61,7 @@ class SubjectFilterDecorator extends AbstractDecorator
 
         try {
             $subject = $event->getSubject();
-        } catch (CakeException $e) {
+        } catch (CakeException) {
             return false;
         }
 

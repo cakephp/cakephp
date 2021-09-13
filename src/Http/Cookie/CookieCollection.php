@@ -68,7 +68,7 @@ class CookieCollection implements IteratorAggregate, Countable
         foreach ($header as $value) {
             try {
                 $cookies[] = Cookie::createFromHeaderString($value, $defaults);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Don't blow up on invalid cookies
             }
         }

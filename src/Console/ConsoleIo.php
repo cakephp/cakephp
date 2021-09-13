@@ -641,7 +641,7 @@ class ConsoleIo
             }
 
             $file = new SplFileObject($path, 'w');
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException) {
             $this->error("Could not write to `{$path}`. Permission denied.", 2);
 
             return false;
