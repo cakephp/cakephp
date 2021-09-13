@@ -23,6 +23,7 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
+use Closure;
 
 /**
  * Manages and loads instances of Connection
@@ -73,12 +74,12 @@ class ConnectionManager
      * The connection will not be constructed until it is first used.
      *
      * @param array|string $key The name of the connection config, or an array of multiple configs.
-     * @param object|array|null $config An array of name => config data for adapter.
+     * @param \Cake\Datasource\ConnectionInterface|\Closure|array|null $config An array of name => config data for adapter.
      * @return void
      * @throws \Cake\Core\Exception\CakeException When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
-    public static function setConfig(array|string $key, object|array|null $config = null): void
+    public static function setConfig(array|string $key, ConnectionInterface|Closure|array|null $config = null): void
     {
         if (is_array($config)) {
             $config['name'] = $key;
@@ -194,7 +195,7 @@ class ConnectionManager
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
      * data is missing.
      */
-    public static function get(string $name, bool $useAliases = true)
+    public static function get(string $name, bool $useAliases = true): ConnectionInterface
     {
         if ($useAliases && isset(static::$_aliasMap[$name])) {
             $name = static::$_aliasMap[$name];
