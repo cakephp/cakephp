@@ -37,7 +37,7 @@ interface InvalidPropertyInterface
      * purposes or to be able to log it away.
      *
      * @param array $fields The values to set.
-     * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
+     * @param bool $overwrite Whether to overwrite pre-existing values for $field.
      * @return $this
      */
     public function setInvalid(array $fields, bool $overwrite = false);

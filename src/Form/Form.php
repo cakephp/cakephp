@@ -210,7 +210,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @param array $data The data to check.
      * @param string|null $validator Validator name.
-     * @return bool Whether or not the data is valid.
+     * @return bool Whether the data is valid.
      * @throws \RuntimeException If validator is invalid.
      */
     public function validate(array $data, ?string $validator = null): bool

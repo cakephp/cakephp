@@ -1357,7 +1357,7 @@ class Validation
      *   the file type will be checked with ext/finfo.
      * - `minSize` - The minimum file size in bytes. Defaults to not checking.
      * - `maxSize` - The maximum file size in bytes. Defaults to not checking.
-     * - `optional` - Whether or not this file is optional. Defaults to false.
+     * - `optional` - Whether this file is optional. Defaults to false.
      *   If true a missing file will pass the validator regardless of other constraints.
      *
      * @param mixed $file The uploaded file data from PHP.

@@ -98,7 +98,7 @@ class RulesChecker
     protected $_options = [];
 
     /**
-     * Whether or not to use I18n functions for translating default error messages
+     * Whether to use I18n functions for translating default error messages
      *
      * @var bool
      */

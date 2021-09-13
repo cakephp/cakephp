@@ -64,7 +64,7 @@ class Sqlite extends Driver
     protected $_schemaDialect;
 
     /**
-     * Whether or not the connected server supports window functions.
+     * Whether the connected server supports window functions.
      *
      * @var bool|null
      */

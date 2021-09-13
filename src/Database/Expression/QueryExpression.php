@@ -620,7 +620,7 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Check whether or not a callable is acceptable.
+     * Check whether a callable is acceptable.
      *
      * We don't accept ['class', 'method'] style callbacks,
      * as they often contain user input and arrays of strings

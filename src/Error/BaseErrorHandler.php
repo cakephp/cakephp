@@ -65,7 +65,7 @@ abstract class BaseErrorHandler
      * desired for the runtime they operate in.
      *
      * @param array $error An array of error data.
-     * @param bool $debug Whether or not the app is in debug mode.
+     * @param bool $debug Whether the app is in debug mode.
      * @return void
      */
     abstract protected function _displayError(array $error, bool $debug): void;

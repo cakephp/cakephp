@@ -76,7 +76,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     protected $_options = [];
 
     /**
-     * Whether or not the table is temporary
+     * Whether the table is temporary
      *
      * @var bool
      */
@@ -624,7 +624,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Check whether or not a table has an autoIncrement column defined.
+     * Check whether a table has an autoIncrement column defined.
      *
      * @return bool
      */

@@ -134,7 +134,7 @@ class AssociationCollection implements IteratorAggregate
      * Check for an attached association by name.
      *
      * @param string $alias The association alias to get.
-     * @return bool Whether or not the association exists.
+     * @return bool Whether the association exists.
      */
     public function has(string $alias): bool
     {

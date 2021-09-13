@@ -54,7 +54,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     protected $_driver;
 
     /**
-     * Whether or not this statement has already been executed
+     * Whether this statement has already been executed
      *
      * @var bool
      */

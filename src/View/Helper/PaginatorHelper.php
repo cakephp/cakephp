@@ -264,7 +264,7 @@ class PaginatorHelper extends Helper
      * Generate an active/inactive link for next/prev methods.
      *
      * @param string|false $text The enabled text for the link.
-     * @param bool $enabled Whether or not the enabled/disabled version should be created.
+     * @param bool $enabled Whether the enabled/disabled version should be created.
      * @param array<string, mixed> $options An array of options from the calling method.
      * @param array $templates An array of templates with the 'active' and 'disabled' keys.
      * @return string Generated HTML
@@ -1024,7 +1024,7 @@ class PaginatorHelper extends Helper
      * ### Options:
      *
      * - `model` The model to use defaults to PaginatorHelper::defaultModel()
-     * - `escape` Whether or not to HTML escape the text.
+     * - `escape` Whether to HTML escape the text.
      * - `url` An array of additional URL options to use for link generation.
      *
      * @param string|int $first if string use as label for the link. If numeric, the number of page links
@@ -1085,7 +1085,7 @@ class PaginatorHelper extends Helper
      * ### Options:
      *
      * - `model` The model to use defaults to PaginatorHelper::defaultModel()
-     * - `escape` Whether or not to HTML escape the text.
+     * - `escape` Whether to HTML escape the text.
      * - `url` An array of additional URL options to use for link generation.
      *
      * @param string|int $last if string use as label for the link, if numeric print page numbers

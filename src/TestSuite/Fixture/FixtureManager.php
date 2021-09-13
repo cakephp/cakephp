@@ -81,7 +81,7 @@ class FixtureManager
     /**
      * Modify the debug mode.
      *
-     * @param bool $debug Whether or not fixture debug mode is enabled.
+     * @param bool $debug Whether fixture debug mode is enabled.
      * @return void
      */
     public function setDebug(bool $debug): void
@@ -506,7 +506,7 @@ class FixtureManager
     }
 
     /**
-     * Check whether or not a fixture has been inserted in a given connection name.
+     * Check whether a fixture has been inserted in a given connection name.
      *
      * @param string $connection The connection name.
      * @param \Cake\Datasource\FixtureInterface $fixture The fixture to check.

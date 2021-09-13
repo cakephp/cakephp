@@ -161,9 +161,9 @@ class Client implements ClientInterface
      * - scheme - The default scheme/protocol to use. Defaults to http.
      * - basePath - A path to append to the domain to use. (/api/v1/)
      * - timeout - The timeout in seconds. Defaults to 30
-     * - ssl_verify_peer - Whether or not SSL certificates should be validated.
+     * - ssl_verify_peer - Whether SSL certificates should be validated.
      *   Defaults to true.
-     * - ssl_verify_peer_name - Whether or not peer names should be validated.
+     * - ssl_verify_peer_name - Whether peer names should be validated.
      *   Defaults to true.
      * - ssl_verify_depth - The maximum certificate chain depth to traverse.
      *   Defaults to 5.

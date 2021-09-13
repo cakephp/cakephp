@@ -41,10 +41,10 @@ interface SchemaInterface
      * - `precision` The number of decimal places to store
      *   for float and decimal types.
      * - `default` The default value of the column.
-     * - `null` Whether or not the column can hold nulls.
-     * - `fixed` Whether or not the column is a fixed length column.
+     * - `null` Whether the column can hold nulls.
+     * - `fixed` Whether the column is a fixed length column.
      *   This is only present/valid with string columns.
-     * - `unsigned` Whether or not the column is an unsigned column.
+     * - `unsigned` Whether the column is an unsigned column.
      *   This is only present/valid for integer, decimal, float columns.
      *
      * In addition to the above keys, the following keys are
@@ -119,12 +119,12 @@ interface SchemaInterface
     public function baseColumnType(string $column): ?string;
 
     /**
-     * Check whether or not a field is nullable
+     * Check whether a field is nullable
      *
      * Missing columns are nullable.
      *
      * @param string $name The column to get the type of.
-     * @return bool Whether or not the field is nullable.
+     * @return bool Whether the field is nullable.
      */
     public function isNullable(string $name): bool;
 

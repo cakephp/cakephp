@@ -35,14 +35,14 @@ class FormData implements Countable
     protected $_boundary;
 
     /**
-     * Whether or not this formdata object has attached files.
+     * Whether this formdata object has attached files.
      *
      * @var bool
      */
     protected $_hasFile = false;
 
     /**
-     * Whether or not this formdata object has a complex part.
+     * Whether this formdata object has a complex part.
      *
      * @var bool
      */
@@ -196,10 +196,10 @@ class FormData implements Countable
     }
 
     /**
-     * Check whether or not the current payload
+     * Check whether the current payload
      * has any files.
      *
-     * @return bool Whether or not there is a file in this payload.
+     * @return bool Whether there is a file in this payload.
      */
     public function hasFile(): bool
     {
@@ -207,13 +207,13 @@ class FormData implements Countable
     }
 
     /**
-     * Check whether or not the current payload
+     * Check whether the current payload
      * is multipart.
      *
      * A payload will become multipart when you add files
      * or use add() with a Part instance.
      *
-     * @return bool Whether or not the payload is multipart.
+     * @return bool Whether the payload is multipart.
      */
     public function isMultipart(): bool
     {

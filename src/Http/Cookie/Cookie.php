@@ -64,7 +64,7 @@ class Cookie implements CookieInterface
     protected $value = '';
 
     /**
-     * Whether or not a JSON value has been expanded into an array.
+     * Whether a JSON value has been expanded into an array.
      *
      * @var bool
      */

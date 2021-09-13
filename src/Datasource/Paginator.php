@@ -624,7 +624,7 @@ class Paginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $order Order array.
-     * @param bool $allowed Whether or not the field was allowed.
+     * @param bool $allowed Whether the field was allowed.
      * @return array Final order array.
      */
     protected function _prefix(RepositoryInterface $object, array $order, bool $allowed = false): array

@@ -171,7 +171,7 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_UUID = 'uuid';
 
     /**
-     * Check whether or not a table has an autoIncrement column defined.
+     * Check whether a table has an autoIncrement column defined.
      *
      * @return bool
      */
@@ -180,7 +180,7 @@ interface TableSchemaInterface extends SchemaInterface
     /**
      * Sets whether the table is temporary in the database.
      *
-     * @param bool $temporary Whether or not the table is to be temporary.
+     * @param bool $temporary Whether the table is to be temporary.
      * @return $this
      */
     public function setTemporary(bool $temporary);

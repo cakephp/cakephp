@@ -123,7 +123,7 @@ class Log
     ];
 
     /**
-     * Internal flag for tracking whether or not configuration has been changed.
+     * Internal flag for tracking whether configuration has been changed.
      *
      * @var bool
      */

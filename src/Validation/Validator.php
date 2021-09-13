@@ -159,7 +159,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected $_presenceMessages = [];
 
     /**
-     * Whether or not to use I18n functions for translating default error messages
+     * Whether to use I18n functions for translating default error messages
      *
      * @var bool
      */
@@ -299,7 +299,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Check whether or not a validator contains any rules for the given field.
+     * Check whether a validator contains any rules for the given field.
      *
      * @param string $name The field name to check.
      * @return bool
@@ -1861,7 +1861,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add an email validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param bool $checkMX Whether or not to check the MX records.
+     * @param bool $checkMX Whether to check the MX records.
      * @param string|null $message The error message when the rule fails.
      * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -2472,7 +2472,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Returns whether or not a field can be left empty for a new or already existing
+     * Returns whether a field can be left empty for a new or already existing
      * record.
      *
      * @param string $field Field name.
@@ -2489,7 +2489,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Returns whether or not a field can be left out for a new or already existing
+     * Returns whether a field can be left out for a new or already existing
      * record.
      *
      * @param string $field Field name.
@@ -2506,7 +2506,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Returns whether or not a field matches against a regular expression.
+     * Returns whether a field matches against a regular expression.
      *
      * @param string $field Field name.
      * @param string $regex Regular expression.

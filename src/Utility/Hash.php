@@ -233,7 +233,7 @@ class Hash
     }
 
     /**
-     * Checks whether or not $data matches the attribute patterns
+     * Checks whether $data matches the attribute patterns
      *
      * @param \ArrayAccess|array $data Array of data to match.
      * @param string $selector The patterns to match.
@@ -618,7 +618,7 @@ class Hash
     }
 
     /**
-     * Test whether or not a given path exists in $data.
+     * Test whether a given path exists in $data.
      * This method uses the same path syntax as Hash::extract()
      *
      * Checking for paths that could target more than one element will

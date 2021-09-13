@@ -96,7 +96,7 @@ class ConsoleIo
     protected $_lastWritten = 0;
 
     /**
-     * Whether or not files should be overwritten
+     * Whether files should be overwritten
      *
      * @var bool
      */

@@ -74,7 +74,7 @@ class ReconnectStrategy implements RetryStrategyInterface
     /**
      * {@inheritDoc}
      *
-     * Checks whether or not the exception was caused by a lost connection,
+     * Checks whether the exception was caused by a lost connection,
      * and returns true if it was able to successfully reconnect.
      */
     public function shouldRetry(Exception $exception, int $retryCount): bool
@@ -93,7 +93,7 @@ class ReconnectStrategy implements RetryStrategyInterface
     /**
      * Tries to re-establish the connection to the server, if it is safe to do so
      *
-     * @return bool Whether or not the connection was re-established
+     * @return bool Whether the connection was re-established
      */
     protected function reconnect(): bool
     {

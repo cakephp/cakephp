@@ -52,7 +52,7 @@ class Configure
     protected static $_engines = [];
 
     /**
-     * Flag to track whether or not ini_set exists.
+     * Flag to track whether ini_set exists.
      *
      * @var bool|null
      */

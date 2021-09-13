@@ -85,7 +85,7 @@ class Cache
     ];
 
     /**
-     * Flag for tracking whether or not caching is enabled.
+     * Flag for tracking whether caching is enabled.
      *
      * @var bool
      */
@@ -548,7 +548,7 @@ class Cache
     }
 
     /**
-     * Check whether or not caching is enabled.
+     * Check whether caching is enabled.
      *
      * @return bool
      */
