@@ -420,7 +420,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     {
         $builder = $this->controller->viewBuilder();
         $builder
-            ->setHelpers([], false)
+            ->setHelpers([])
             ->setLayoutPath('')
             ->setTemplatePath('Error');
         $view = $this->controller->createView('View');

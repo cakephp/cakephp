@@ -310,13 +310,7 @@ class ViewBuilder implements JsonSerializable
      */
     public function addHelper(string $helper, array $options = [])
     {
-        if ($options) {
-            $array = [$helper => $options];
-        } else {
-            $array = [$helper];
-        }
-
-        $this->_helpers = array_merge($this->_helpers, $array);
+        $this->_helpers[$helper] = $options;
 
         return $this;
     }
