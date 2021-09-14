@@ -68,6 +68,7 @@ tests for CakePHP by doing the following:
 ## Get Support!
 
 * [Slack](https://cakesf.herokuapp.com/) - Join us on Slack.
+* [Discord](https://discord.gg/k4trEMPebj) - Join us on Discord.
 * [#cakephp](https://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 * [Forum](https://discourse.cakephp.org/) - Official CakePHP forum.
 * [GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
