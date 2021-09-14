@@ -472,13 +472,13 @@ class Debugger
      */
     public static function trimPath(string $path): string
     {
-        if (defined('APP') && strpos($path, APP) === 0) {
+        if (defined('APP') && str_starts_with($path, APP)) {
             return str_replace(APP, 'APP/', $path);
         }
-        if (defined('CAKE_CORE_INCLUDE_PATH') && strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
+        if (defined('CAKE_CORE_INCLUDE_PATH') && str_starts_with($path, CAKE_CORE_INCLUDE_PATH)) {
             return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
         }
-        if (defined('ROOT') && strpos($path, ROOT) === 0) {
+        if (defined('ROOT') && str_starts_with($path, ROOT)) {
             return str_replace(ROOT, 'ROOT', $path);
         }
 
@@ -516,7 +516,7 @@ class Debugger
         if (empty($data)) {
             return $lines;
         }
-        if (strpos($data, "\n") !== false) {
+        if (str_contains($data, "\n")) {
             $data = explode("\n", $data);
         }
         $line--;
@@ -551,7 +551,7 @@ class Debugger
             return htmlentities($str);
         }
         $added = false;
-        if (strpos($str, '<?php') === false) {
+        if (!str_contains($str, '<?php')) {
             $added = true;
             $str = "<?php \n" . $str;
         }

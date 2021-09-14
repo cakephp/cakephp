@@ -275,7 +275,7 @@ class CookieCollection implements IteratorAggregate, Countable
             if ($scheme === 'http' && $cookie->isSecure()) {
                 continue;
             }
-            if (strpos($path, $cookie->getPath()) !== 0) {
+            if (!str_starts_with($path, $cookie->getPath())) {
                 continue;
             }
             $domain = $cookie->getDomain();
@@ -341,7 +341,7 @@ class CookieCollection implements IteratorAggregate, Countable
             if (!$cookie->isExpired($time)) {
                 continue;
             }
-            $pathMatches = strpos($path, $cookie->getPath()) === 0;
+            $pathMatches = str_starts_with($path, $cookie->getPath());
             $hostMatches = preg_match($hostPattern, $cookie->getDomain());
             if ($pathMatches && $hostMatches) {
                 unset($this->cookies[$i]);

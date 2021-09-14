@@ -138,7 +138,7 @@ class CorsBuilder
             }
 
             $original = $preg = $domain;
-            if (strpos($domain, '://') === false) {
+            if (!str_contains($domain, '://')) {
                 $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
             }
             $preg = '@^' . str_replace('\*', '.*', preg_quote($preg, '@')) . '$@';

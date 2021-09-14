@@ -821,7 +821,7 @@ class ConsoleOptionParser
     protected function _parseLongOption(string $option, array $params): array
     {
         $name = substr($option, 2);
-        if (strpos($name, '=') !== false) {
+        if (str_contains($name, '=')) {
             [$name, $value] = explode('=', $name, 2);
             array_unshift($this->_tokens, $value);
         }

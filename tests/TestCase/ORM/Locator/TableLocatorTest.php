@@ -300,13 +300,9 @@ class TableLocatorTest extends TestCase
      */
     public function testGetWithConventions(): void
     {
-        $table = $this->_locator->get('articles');
-        $this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
         $table = $this->_locator->get('Articles');
         $this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
 
-        $table = $this->_locator->get('authors');
-        $this->assertInstanceOf('TestApp\Model\Table\AuthorsTable', $table);
         $table = $this->_locator->get('Authors');
         $this->assertInstanceOf('TestApp\Model\Table\AuthorsTable', $table);
     }

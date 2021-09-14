@@ -105,11 +105,11 @@ class MoFileParser
             fseek($stream, $offset);
             $singularId = fread($stream, $length);
 
-            if (strpos($singularId, "\x04") !== false) {
+            if (str_contains($singularId, "\x04")) {
                 [$context, $singularId] = explode("\x04", $singularId);
             }
 
-            if (strpos($singularId, "\000") !== false) {
+            if (str_contains($singularId, "\000")) {
                 [$singularId, $pluralId] = explode("\000", $singularId);
             }
 
@@ -119,7 +119,7 @@ class MoFileParser
             fseek($stream, $offset);
             $translated = fread($stream, $length);
 
-            if ($pluralId !== null || strpos($translated, "\000") !== false) {
+            if ($pluralId !== null || str_contains($translated, "\000")) {
                 $translated = explode("\000", $translated);
                 $plurals = $pluralId !== null ? $translated : null;
                 $translated = $translated[0];

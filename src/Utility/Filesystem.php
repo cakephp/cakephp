@@ -272,6 +272,6 @@ class Filesystem
      */
     public function isStream(string $path): bool
     {
-        return strpos($path, '://') !== false;
+        return str_contains($path, '://');
     }
 }

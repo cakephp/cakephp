@@ -45,7 +45,7 @@ abstract class BaseCommand implements CommandInterface
      */
     public function setName(string $name)
     {
-        if (strpos($name, ' ') < 1) {
+        if (!strpos($name, ' ')) {
             throw new InvalidArgumentException(
                 "The name '{$name}' is missing a space. Names should look like `cake routes`"
             );

@@ -781,7 +781,7 @@ class I18nExtractCommand extends Command
      */
     protected function _markerError(ConsoleIo $io, string $file, int $line, string $marker, int $count): void
     {
-        if (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+        if (!str_contains($this->_file, CAKE_CORE_INCLUDE_PATH)) {
             $this->_countMarkerError++;
         }
 

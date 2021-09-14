@@ -40,7 +40,7 @@ trait AssociationsNormalizerTrait
                 $options = [];
             }
 
-            if (!strpos($table, '.')) {
+            if (!str_contains($table, '.')) {
                 $result[$table] = $options;
                 continue;
             }

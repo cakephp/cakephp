@@ -323,9 +323,9 @@ abstract class Driver implements DriverInterface
             ) ||
             (
                 is_numeric($value) &&
-                strpos($value, ',') === false &&
+                !str_contains($value, ',') &&
                 substr($value, 0, 1) !== '0' &&
-                strpos($value, 'e') === false
+                !str_contains($value, 'e')
             )
         ) {
             return (string)$value;

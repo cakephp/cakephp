@@ -104,10 +104,10 @@ class PostgresSchemaDialect extends SchemaDialect
         if (in_array($col, ['timestamptz', 'timestamp with time zone'], true)) {
             return ['type' => TableSchema::TYPE_TIMESTAMP_TIMEZONE, 'length' => null];
         }
-        if (strpos($col, 'timestamp') !== false) {
+        if (str_contains($col, 'timestamp')) {
             return ['type' => TableSchema::TYPE_TIMESTAMP_FRACTIONAL, 'length' => null];
         }
-        if (strpos($col, 'time') !== false) {
+        if (str_contains($col, 'time')) {
             return ['type' => TableSchema::TYPE_TIME, 'length' => null];
         }
         if ($col === 'serial' || $col === 'integer') {
@@ -128,31 +128,28 @@ class PostgresSchemaDialect extends SchemaDialect
         if ($col === 'char') {
             return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
-        if (strpos($col, 'character') !== false) {
+        if (str_contains($col, 'character')) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
-        if (strpos($col, 'money') !== false || $col === 'string') {
+        if (str_contains($col, 'money') || $col === 'string') {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
-        if (strpos($col, 'text') !== false) {
+        if (str_contains($col, 'text')) {
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
         if ($col === 'bytea') {
             return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
-        if ($col === 'real' || strpos($col, 'double') !== false) {
+        if ($col === 'real' || str_contains($col, 'double')) {
             return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
-        if (
-            strpos($col, 'numeric') !== false ||
-            strpos($col, 'decimal') !== false
-        ) {
+        if (str_contains($col, 'numeric') || str_contains($col, 'decimal')) {
             return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null];
         }
 
-        if (strpos($col, 'json') !== false) {
+        if (str_contains($col, 'json')) {
             return ['type' => TableSchema::TYPE_JSON, 'length' => null];
         }
 
@@ -222,11 +219,11 @@ class PostgresSchemaDialect extends SchemaDialect
             return $default;
         }
         // Sequences
-        if (strpos($default, 'nextval') === 0) {
+        if (str_starts_with($default, 'nextval')) {
             return null;
         }
 
-        if (strpos($default, 'NULL::') === 0) {
+        if (str_starts_with($default, 'NULL::')) {
             return null;
         }
 

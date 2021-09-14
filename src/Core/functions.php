@@ -88,7 +88,7 @@ if (!function_exists('pluginSplit')) {
      */
     function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
     {
-        if (strpos($name, '.') !== false) {
+        if (str_contains($name, '.')) {
             $parts = explode('.', $name, 2);
             if ($dotAppend) {
                 $parts[0] .= '.';
@@ -199,7 +199,7 @@ if (!function_exists('env')) {
                 return !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
             }
 
-            return strpos((string)env('SCRIPT_URI'), 'https://') === 0;
+            return str_starts_with((string)env('SCRIPT_URI'), 'https://');
         }
 
         if ($key === 'SCRIPT_NAME' && env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
@@ -227,7 +227,7 @@ if (!function_exists('env')) {
                 $name = (string)env('SCRIPT_NAME');
                 $filename = (string)env('SCRIPT_FILENAME');
                 $offset = 0;
-                if (!strpos($name, '.php')) {
+                if (!str_ends_with($name, '.php')) {
                     $offset = 4;
                 }
 

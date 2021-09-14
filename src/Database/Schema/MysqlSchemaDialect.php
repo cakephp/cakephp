@@ -89,7 +89,7 @@ class MysqlSchemaDialect extends SchemaDialect
         $length = $precision = $scale = null;
         if (isset($matches[2]) && strlen($matches[2])) {
             $length = $matches[2];
-            if (strpos($matches[2], ',') !== false) {
+            if (str_contains($matches[2], ',')) {
                 [$length, $precision] = explode(',', $length);
             }
             $length = (int)$length;
@@ -121,7 +121,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
-        if (strpos($col, 'bigint') !== false || $col === 'bigint') {
+        if (str_contains($col, 'bigint') || $col === 'bigint') {
             return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
         if ($col === 'tinyint') {
@@ -139,10 +139,10 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($col === 'char') {
             return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
-        if (strpos($col, 'char') !== false) {
+        if (str_contains($col, 'char')) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
-        if (strpos($col, 'text') !== false) {
+        if (str_contains($col, 'text')) {
             $lengthName = substr($col, 0, -4);
             $length = TableSchema::$columnLengths[$lengthName] ?? null;
 
@@ -151,13 +151,13 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($col === 'binary' && $length === 16) {
             return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
         }
-        if (strpos($col, 'blob') !== false || in_array($col, ['binary', 'varbinary'])) {
+        if (str_contains($col, 'blob') || in_array($col, ['binary', 'varbinary'])) {
             $lengthName = substr($col, 0, -4);
             $length = TableSchema::$columnLengths[$lengthName] ?? $length;
 
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
-        if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
+        if (str_contains($col, 'float') || str_contains($col, 'double')) {
             return [
                 'type' => TableSchema::TYPE_FLOAT,
                 'length' => $length,
@@ -165,7 +165,7 @@ class MysqlSchemaDialect extends SchemaDialect
                 'unsigned' => $unsigned,
             ];
         }
-        if (strpos($col, 'decimal') !== false) {
+        if (str_contains($col, 'decimal')) {
             return [
                 'type' => TableSchema::TYPE_DECIMAL,
                 'length' => $length,
@@ -174,7 +174,7 @@ class MysqlSchemaDialect extends SchemaDialect
             ];
         }
 
-        if (strpos($col, 'json') !== false) {
+        if (str_contains($col, 'json')) {
             return ['type' => TableSchema::TYPE_JSON, 'length' => null];
         }
 
@@ -493,7 +493,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if (
             isset($data['default']) &&
             in_array($data['type'], $dateTimeTypes) &&
-            strpos(strtolower($data['default']), 'current_timestamp') !== false
+            str_contains(strtolower($data['default']), 'current_timestamp')
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
             if (isset($data['precision'])) {

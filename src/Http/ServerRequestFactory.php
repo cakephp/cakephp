@@ -107,7 +107,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 
         if (
             in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            strpos((string)$request->contentType(), 'application/x-www-form-urlencoded') === 0
+            str_starts_with((string)$request->contentType(), 'application/x-www-form-urlencoded')
         ) {
             $data = (string)$request->getBody();
             parse_str($data, $parsedBody);
@@ -268,7 +268,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     protected static function updatePath(string $base, UriInterface $uri): UriInterface
     {
         $path = $uri->getPath();
-        if ($base !== '' && strpos($path, $base) === 0) {
+        if ($base !== '' && str_starts_with($path, $base)) {
             $path = substr($path, strlen($base));
         }
         if ($path === '/index.php' && $uri->getQuery()) {
@@ -341,12 +341,12 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         $webrootDir = $base . '/';
 
         $docRoot = Hash::get($server, 'DOCUMENT_ROOT');
-        $docRootContainsWebroot = strpos($docRoot, $webroot);
 
-        if (!empty($base) || !$docRootContainsWebroot) {
-            if (strpos($webrootDir, '/' . $webroot . '/') === false) {
-                $webrootDir .= $webroot . '/';
-            }
+        if (
+            (!empty($base) || !str_contains($docRoot, $webroot))
+            && !str_contains($webrootDir, '/' . $webroot . '/')
+        ) {
+            $webrootDir .= $webroot . '/';
         }
 
         return [$base . $file, $webrootDir];

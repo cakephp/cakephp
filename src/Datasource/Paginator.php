@@ -501,7 +501,7 @@ class Paginator implements PaginatorInterface
             }
 
             $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-            if ($order && $options['sort'] && strpos($options['sort'], '.') === false) {
+            if ($order && $options['sort'] && !str_contains($options['sort'], '.')) {
                 $order = $this->_removeAliases($order, $object->getAlias());
             }
 
@@ -554,7 +554,7 @@ class Paginator implements PaginatorInterface
     {
         $result = [];
         foreach ($fields as $field => $sort) {
-            if (strpos($field, '.') === false) {
+            if (!str_contains($field, '.')) {
                 $result[$field] = $sort;
                 continue;
             }
@@ -592,7 +592,7 @@ class Paginator implements PaginatorInterface
             $field = $key;
             $alias = $tableAlias;
 
-            if (strpos($key, '.') !== false) {
+            if (str_contains($key, '.')) {
                 [$alias, $field] = explode('.', $key);
             }
             $correctAlias = ($tableAlias === $alias);

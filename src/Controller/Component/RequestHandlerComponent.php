@@ -457,7 +457,7 @@ class RequestHandlerComponent extends Component
         $controller = $this->getController();
         $response = $controller->getResponse();
 
-        if (strpos($type, '/') === false) {
+        if (!str_contains($type, '/')) {
             $cType = $response->getMimeType($type);
         }
         if (is_array($cType)) {

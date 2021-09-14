@@ -132,7 +132,7 @@ class Hash
             return $data !== null ? (array)$data : [];
         }
 
-        if (strpos($path, '[') === false) {
+        if (!str_contains($path, '[')) {
             $tokens = explode('.', $path);
         } else {
             $tokens = Text::tokenize($path, '.', '[', ']');
@@ -300,8 +300,8 @@ class Hash
      */
     public static function insert(array $data, string $path, mixed $values = null): array
     {
-        $noTokens = strpos($path, '[') === false;
-        if ($noTokens && strpos($path, '.') === false) {
+        $noTokens = !str_contains($path, '[');
+        if ($noTokens && !str_contains($path, '.')) {
             $data[$path] = $values;
 
             return $data;
@@ -313,7 +313,7 @@ class Hash
             $tokens = Text::tokenize($path, '.', '[', ']');
         }
 
-        if ($noTokens && strpos($path, '{') === false) {
+        if ($noTokens && !str_contains($path, '{')) {
             return static::_simpleOp('insert', $data, $tokens, $values);
         }
 
@@ -323,12 +323,13 @@ class Hash
         [$token, $conditions] = static::_splitConditions($token);
 
         foreach ($data as $k => $v) {
-            if (static::_matchToken($k, $token)) {
-                if (!$conditions || static::_matches($v, $conditions)) {
-                    $data[$k] = $nextPath
-                        ? static::insert($v, $nextPath, $values)
-                        : array_merge($v, (array)$values);
-                }
+            if (
+                static::_matchToken($k, $token) &&
+                (!$conditions || static::_matches($v, $conditions))
+            ) {
+                $data[$k] = $nextPath
+                    ? static::insert($v, $nextPath, $values)
+                    : array_merge($v, (array)$values);
             }
         }
 
@@ -392,10 +393,10 @@ class Hash
      */
     public static function remove(array $data, string $path): array
     {
-        $noTokens = strpos($path, '[') === false;
-        $noExpansion = strpos($path, '{') === false;
+        $noTokens = !str_contains($path, '[');
+        $noExpansion = !str_contains($path, '{');
 
-        if ($noExpansion && $noTokens && strpos($path, '.') === false) {
+        if ($noExpansion && $noTokens && !str_contains($path, '.')) {
             unset($data[$path]);
 
             return $data;

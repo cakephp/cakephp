@@ -184,7 +184,7 @@ class Response extends Message implements ResponseInterface
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
-            if (strpos($value, ':') === false) {
+            if (!str_contains($value, ':')) {
                 continue;
             }
             [$name, $value] = explode(':', $value, 2);

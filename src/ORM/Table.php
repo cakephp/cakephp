@@ -440,7 +440,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function aliasField(string $field): string
     {
-        if (strpos($field, '.') !== false) {
+        if (str_contains($field, '.')) {
             return $field;
         }
 
@@ -943,7 +943,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function findAssociation(string $name): ?Association
     {
-        if (strpos($name, '.') === false) {
+        if (!str_contains($name, '.')) {
             return $this->_associations->get($name);
         }
 
@@ -2584,8 +2584,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $fields = substr($method, strlen($matches[0]));
             $findType = Inflector::variable($matches[1]);
         }
-        $hasOr = strpos($fields, '_or_');
-        $hasAnd = strpos($fields, '_and_');
+        $hasOr = str_contains($fields, '_or_');
+        $hasAnd = str_contains($fields, '_and_');
 
         $makeConditions = function ($fields, $args) {
             $conditions = [];

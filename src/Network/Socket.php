@@ -123,8 +123,7 @@ class Socket
             $this->disconnect();
         }
 
-        $hasProtocol = strpos($this->_config['host'], '://') !== false;
-        if ($hasProtocol) {
+        if (str_contains($this->_config['host'], '://')) {
             [$this->_config['protocol'], $this->_config['host']] = explode('://', $this->_config['host']);
         }
         $scheme = null;

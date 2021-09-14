@@ -47,7 +47,7 @@ trait ExtractTrait
 
         $parts = explode('.', $path);
 
-        if (strpos($path, '{*}') !== false) {
+        if (str_contains($path, '{*}')) {
             return function ($element) use ($parts) {
                 return $this->_extract($element, $parts);
             };

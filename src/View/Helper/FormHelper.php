@@ -838,7 +838,7 @@ class FormHelper extends Helper
             if (substr($text, -5) === '._ids') {
                 $text = substr($text, 0, -5);
             }
-            if (strpos($text, '.') !== false) {
+            if (str_contains($text, '.')) {
                 $fieldElements = explode('.', $text);
                 $text = array_pop($fieldElements);
             }
@@ -1069,8 +1069,8 @@ class FormHelper extends Helper
             // Don't include aria-describedby unless we have a good chance of
             // having error message show up.
             if (
-                strpos($templater->get('error'), '{{id}}') !== false &&
-                strpos($templater->get('inputContainerError'), '{{error}}') !== false
+                str_contains($templater->get('error'), '{{id}}') &&
+                str_contains($templater->get('inputContainerError'), '{{error}}')
             ) {
                 $options += [
                    'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
@@ -1924,7 +1924,7 @@ class FormHelper extends Helper
         }
         unset($options['secure']);
 
-        $isUrl = strpos($caption, '://') !== false;
+        $isUrl = str_contains($caption, '://');
         $isImage = preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
 
         $type = $options['type'];

@@ -507,14 +507,14 @@ class Response implements ResponseInterface, Stringable
         if (
             $this->_charset &&
             (
-                strpos($type, 'text/') === 0 ||
+                str_starts_with($type, 'text/') ||
                 in_array($type, $allowed, true)
             )
         ) {
             $charset = true;
         }
 
-        if ($charset && strpos($type, ';') === false) {
+        if ($charset && !str_contains($type, ';')) {
             $this->_setHeader('Content-Type', "{$type}; charset={$this->_charset}");
         } else {
             $this->_setHeader('Content-Type', $type);
@@ -691,7 +691,7 @@ class Response implements ResponseInterface, Stringable
     public function getType(): string
     {
         $header = $this->getHeaderLine('Content-Type');
-        if (strpos($header, ';') !== false) {
+        if (str_contains($header, ';')) {
             return explode(';', $header)[0];
         }
 
@@ -729,7 +729,7 @@ class Response implements ResponseInterface, Stringable
         if ($mapped) {
             return is_array($mapped) ? current($mapped) : $mapped;
         }
-        if (strpos($contentType, '/') === false) {
+        if (!str_contains($contentType, '/')) {
             throw new InvalidArgumentException(sprintf('"%s" is an invalid content type.', $contentType));
         }
 
@@ -1111,11 +1111,10 @@ class Response implements ResponseInterface, Stringable
      */
     public function compress(): bool
     {
-        $compressionEnabled = ini_get('zlib.output_compression') !== '1' &&
+        return ini_get('zlib.output_compression') !== '1' &&
             extension_loaded('zlib') &&
-            (strpos((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
-
-        return $compressionEnabled && ob_start('ob_gzhandler');
+            str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') &&
+            ob_start('ob_gzhandler');
     }
 
     /**
@@ -1125,7 +1124,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function outputCompressed(): bool
     {
-        return strpos((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
+        return str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip')
             && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true));
     }
 
@@ -1485,7 +1484,7 @@ class Response implements ResponseInterface, Stringable
      */
     protected function validateFile(string $path): SplFileInfo
     {
-        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
+        if (str_contains($path, '../') || str_contains($path, '..\\')) {
             throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
         }
 

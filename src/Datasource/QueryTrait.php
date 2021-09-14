@@ -227,7 +227,7 @@ trait QueryTrait
      */
     public function aliasField(string $field, ?string $alias = null): array
     {
-        $namespaced = strpos($field, '.') !== false;
+        $namespaced = str_contains($field, '.');
         $aliasedField = $field;
 
         if ($namespaced) {

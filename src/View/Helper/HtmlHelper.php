@@ -395,7 +395,7 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (strpos($path, '//') !== false) {
+        if (str_contains($path, '//')) {
             $url = $path;
         } else {
             $url = $this->Url->css($path, $options);
@@ -499,7 +499,7 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (strpos($url, '//') === false) {
+        if (!str_contains($url, '//')) {
             $url = $this->Url->script($url, $options);
             $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }

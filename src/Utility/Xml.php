@@ -121,7 +121,7 @@ class Xml
             return static::_loadXml(file_get_contents($input), $options);
         }
 
-        if (strpos($input, '<') !== false) {
+        if (str_contains($input, '<')) {
             return static::_loadXml($input, $options);
         }
 
@@ -320,8 +320,7 @@ class Xml
                     } elseif ($value === null) {
                         $value = '';
                     }
-                    $isNamespace = strpos($key, 'xmlns:');
-                    if ($isNamespace !== false) {
+                    if (str_contains($key, 'xmlns:')) {
                         /** @psalm-suppress PossiblyUndefinedMethod */
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, (string)$value);
                         continue;

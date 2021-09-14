@@ -204,7 +204,7 @@ class MultiCheckboxWidget extends BasicWidget
             ),
         ]);
 
-        if ($checkbox['label'] === false && strpos($this->_templates->get('checkboxWrapper'), '{{input}}') === false) {
+        if ($checkbox['label'] === false && !str_contains($this->_templates->get('checkboxWrapper'), '{{input}}')) {
             $label = $input;
         } else {
             $labelAttrs = is_array($checkbox['label']) ? $checkbox['label'] : [];

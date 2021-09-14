@@ -218,7 +218,7 @@ class RouteBuilder
     public function path(): string
     {
         $routeKey = strpos($this->_path, '{');
-        if ($routeKey !== false && strpos($this->_path, '}') !== false) {
+        if ($routeKey !== false && str_contains($this->_path, '}')) {
             return substr($this->_path, 0, $routeKey);
         }
 

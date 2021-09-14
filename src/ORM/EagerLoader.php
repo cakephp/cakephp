@@ -350,7 +350,7 @@ class EagerLoader
                 continue;
             }
 
-            if (strpos($table, '.')) {
+            if (str_contains($table, '.')) {
                 $path = explode('.', $table);
                 $table = array_pop($path);
                 foreach ($path as $t) {
@@ -548,7 +548,7 @@ class EagerLoader
                 }
                 /** @var \Cake\ORM\EagerLoadable $loadable */
                 foreach ($configs as $loadable) {
-                    if (strpos($loadable->aliasPath(), '.')) {
+                    if (str_contains($loadable->aliasPath(), '.')) {
                         $this->_correctStrategy($loadable);
                     }
                 }
@@ -651,7 +651,7 @@ class EagerLoader
                 // Nested paths are not subject to this condition because they could
                 // be attached to joined associations.
                 if (
-                    strpos($path, '.') === false &&
+                    !str_contains($path, '.') &&
                     (!array_key_exists($path, $collected) || !array_key_exists($alias, $collected[$path]))
                 ) {
                     $message = "Unable to load `{$path}` association. Ensure foreign key in `{$alias}` is selected.";

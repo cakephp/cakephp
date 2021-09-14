@@ -135,7 +135,7 @@ class IniConfig implements ConfigEngineInterface
                 $value = false;
             }
             unset($values[$key]);
-            if (strpos((string)$key, '.') !== false) {
+            if (str_contains((string)$key, '.')) {
                 $values = Hash::insert($values, $key, $value);
             } else {
                 $values[$key] = $value;

@@ -290,7 +290,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __get(string $name): ?RepositoryInterface
     {
         if (!empty($this->modelClass)) {
-            if (strpos($this->modelClass, '\\') === false) {
+            if (!str_contains($this->modelClass, '\\')) {
                 [, $class] = pluginSplit($this->modelClass, true);
             } else {
                 $class = App::shortName($this->modelClass, 'Model/Table', 'Table');
@@ -726,7 +726,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($referer === null) {
             $url = Router::url($default, !$local);
             $base = $this->request->getAttribute('base');
-            if ($local && $base && strpos($url, $base) === 0) {
+            if ($local && $base && str_starts_with($url, $base)) {
                 $url = substr($url, strlen($base));
                 if ($url[0] !== '/') {
                     $url = '/' . $url;

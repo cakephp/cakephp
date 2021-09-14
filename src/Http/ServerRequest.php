@@ -320,7 +320,7 @@ class ServerRequest implements ServerRequestInterface
             $config['url'] = '/' . $config['url'];
         }
 
-        if (strpos($config['url'], '?') !== false) {
+        if (str_contains($config['url'], '?')) {
             [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', $config['url']);
 
             parse_str($config['environment']['QUERY_STRING'], $queryArgs);
@@ -437,9 +437,9 @@ class ServerRequest implements ServerRequestInterface
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
         if (!empty($ref) && !empty($base)) {
-            if ($local && strpos($ref, $base) === 0) {
+            if ($local && str_starts_with($ref, $base)) {
                 $ref = substr($ref, strlen($base));
-                if (!strlen($ref) || strpos($ref, '//') === 0) {
+                if (!strlen($ref) || str_starts_with($ref, '//')) {
                     $ref = '/';
                 }
                 if ($ref[0] !== '/') {
@@ -466,7 +466,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function __call(string $name, array $params): mixed
     {
-        if (strpos($name, 'is') === 0) {
+        if (str_starts_with($name, 'is')) {
             $type = strtolower(substr($name, 2));
 
             array_unshift($params, $type);
@@ -784,10 +784,10 @@ class ServerRequest implements ServerRequestInterface
         $headers = [];
         foreach ($this->_environment as $key => $value) {
             $name = null;
-            if (strpos($key, 'HTTP_') === 0) {
+            if (str_starts_with($key, 'HTTP_')) {
                 $name = substr($key, 5);
             }
-            if (strpos($key, 'CONTENT_') === 0) {
+            if (str_starts_with($key, 'CONTENT_')) {
                 $name = $key;
             }
             if ($name !== null) {
@@ -1146,7 +1146,7 @@ class ServerRequest implements ServerRequestInterface
         $accept = [];
         foreach ($raw as $languages) {
             foreach ($languages as &$lang) {
-                if (strpos($lang, '_')) {
+                if (str_contains($lang, '_')) {
                     $lang = str_replace('_', '-', $lang);
                 }
                 $lang = strtolower($lang);
@@ -1177,8 +1177,7 @@ class ServerRequest implements ServerRequestInterface
             $prefValue = '1.0';
             $value = trim($value);
 
-            $semiPos = strpos($value, ';');
-            if ($semiPos !== false) {
+            if (str_contains($value, ';')) {
                 $params = explode(';', $value);
                 $value = trim($params[0]);
                 foreach ($params as $param) {

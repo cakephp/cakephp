@@ -220,7 +220,7 @@ class Configure
      */
     public static function consume(string $var): mixed
     {
-        if (strpos($var, '.') === false) {
+        if (!str_contains($var, '.')) {
             if (!isset(static::$_values[$var])) {
                 return null;
             }

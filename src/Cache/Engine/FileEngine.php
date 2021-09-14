@@ -471,18 +471,15 @@ class FileEngine extends CacheEngine
                     return false;
                 }
 
-                $hasPrefix = $prefix === ''
-                    || strpos($current->getBasename(), $prefix) === 0;
+                $hasPrefix = $prefix === '' || str_starts_with($current->getBasename(), $prefix);
                 if ($hasPrefix === false) {
                     return false;
                 }
 
-                $pos = strpos(
+                return str_contains(
                     $current->getPathname(),
                     DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR
                 );
-
-                return $pos !== false;
             }
         );
         foreach ($filtered as $object) {

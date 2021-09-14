@@ -476,9 +476,9 @@ class ConsoleIo
     public function askChoice(string $prompt, array|string $options, ?string $default = null): string
     {
         if (is_string($options)) {
-            if (strpos($options, ',')) {
+            if (str_contains($options, ',')) {
                 $options = explode(',', $options);
-            } elseif (strpos($options, '/')) {
+            } elseif (str_contains($options, '/')) {
                 $options = explode('/', $options);
             } else {
                 $options = [$options];

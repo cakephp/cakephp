@@ -40,7 +40,7 @@ class FixtureHelper
 
         $fixtures = [];
         foreach ($fixtureNames as $fixtureName) {
-            if (strpos($fixtureName, '.')) {
+            if (str_contains($fixtureName, '.')) {
                 [$type, $pathName] = explode('.', $fixtureName, 2);
                 $path = explode('/', $pathName);
                 $name = array_pop($path);
