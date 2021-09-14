@@ -368,7 +368,7 @@ class ConsoleOptionParser
     /**
      * Enables sorting of subcommands
      *
-     * @param bool $value Whether or not to sort subcommands
+     * @param bool $value Whether to sort subcommands
      * @return $this
      */
     public function enableSubcommandSort(bool $value = true)
@@ -379,7 +379,7 @@ class ConsoleOptionParser
     }
 
     /**
-     * Checks whether or not sorting is enabled for subcommands.
+     * Checks whether sorting is enabled for subcommands.
      *
      * @return bool
      */

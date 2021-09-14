@@ -708,7 +708,7 @@ class FormHelper extends Helper
      *
      * ### Options:
      *
-     * - `escape` boolean - Whether or not to html escape the contents of the error.
+     * - `escape` boolean - Whether to html escape the contents of the error.
      *
      * @param string $field A field name, like "modelname.fieldname"
      * @param array|string|null $text Error message as string or array of messages. If an array,
@@ -1614,7 +1614,7 @@ class FormHelper extends Helper
      *
      * ### Options:
      *
-     * - `escape` - Whether or not the contents of the textarea should be escaped. Defaults to true.
+     * - `escape` - Whether the contents of the textarea should be escaped. Defaults to true.
      *
      * @param string $fieldName Name of a field, in the form "modelname.fieldname"
      * @param array<string, mixed> $options Array of HTML attributes, and special options above.
@@ -2258,7 +2258,7 @@ class FormHelper extends Helper
      *
      * ### Options
      *
-     * - `secure` - boolean whether or not the field should be added to the security fields.
+     * - `secure` - boolean whether the field should be added to the security fields.
      *   Disabling the field using the `disabled` option, will also omit the field from being
      *   part of the hashed key.
      * - `default` - mixed - The value to use if there is no value in the form's context.
@@ -2334,7 +2334,7 @@ class FormHelper extends Helper
      * Determine if a field is disabled.
      *
      * @param array<string, mixed> $options The option set.
-     * @return bool Whether or not the field is disabled.
+     * @return bool Whether the field is disabled.
      */
     protected function _isDisabled(array $options): bool
     {

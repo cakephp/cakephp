@@ -209,7 +209,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     }
 
     /**
-     * Check whether or not a given object is loaded.
+     * Check whether a given object is loaded.
      *
      * @param string $name The object name to check for.
      * @return bool True is object is loaded else false.

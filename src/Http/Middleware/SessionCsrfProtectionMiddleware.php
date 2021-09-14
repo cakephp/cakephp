@@ -62,7 +62,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     ];
 
     /**
-     * Callback for deciding whether or not to skip the token check for particular request.
+     * Callback for deciding whether to skip the token check for particular request.
      *
      * CSRF protection token check will be skipped if the callback returns `true`.
      *

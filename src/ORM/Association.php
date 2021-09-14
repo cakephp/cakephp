@@ -137,7 +137,7 @@ abstract class Association
     protected bool $_dependent = false;
 
     /**
-     * Whether or not cascaded deletes should also fire callbacks.
+     * Whether cascaded deletes should also fire callbacks.
      *
      * @var bool
      */
@@ -279,7 +279,7 @@ abstract class Association
     }
 
     /**
-     * Sets whether or not cascaded deletes should also fire callbacks.
+     * Sets whether cascaded deletes should also fire callbacks.
      *
      * @param bool $cascadeCallbacks cascade callbacks switch value
      * @return $this
@@ -292,7 +292,7 @@ abstract class Association
     }
 
     /**
-     * Gets whether or not cascaded deletes should also fire callbacks.
+     * Gets whether cascaded deletes should also fire callbacks.
      *
      * @return bool
      */
@@ -808,7 +808,7 @@ abstract class Association
      * @param array $row The row to transform
      * @param string $nestKey The array key under which the results for this association
      *   should be found
-     * @param bool $joined Whether or not the row is a result of a direct join
+     * @param bool $joined Whether the row is a result of a direct join
      *   with this association
      * @param string|null $targetProperty The property name in the source results where the association
      * data shuld be nested in. Will use the default one if not provided.
@@ -833,7 +833,7 @@ abstract class Association
      * joined or fetched externally.
      *
      * @param array $row The row to set a default on.
-     * @param bool $joined Whether or not the row is a result of a direct join
+     * @param bool $joined Whether the row is a result of a direct join
      *   with this association
      * @return array
      */
@@ -1234,7 +1234,7 @@ abstract class Association
     abstract public function cascadeDelete(EntityInterface $entity, array $options = []): bool;
 
     /**
-     * Returns whether or not the passed table is the owning side for this
+     * Returns whether the passed table is the owning side for this
      * association. This means that rows in the 'target' table would miss important
      * or required information if the row in 'source' did not exist.
      *

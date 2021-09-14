@@ -98,7 +98,7 @@ trait MergeVariablesTrait
      *
      * @param array $current The current merged value.
      * @param array $parent The parent class' value.
-     * @param bool $isAssoc Whether or not the merging should be done in associative mode.
+     * @param bool $isAssoc Whether the merging should be done in associative mode.
      * @return mixed The updated value.
      */
     protected function _mergePropertyData(array $current, array $parent, bool $isAssoc): mixed

@@ -502,7 +502,7 @@ class Marshaller
      * ### Options:
      *
      * - associated: Associations listed here will be marshalled as well.
-     * - validate: Whether or not to validate data before hydrating the entities. Can
+     * - validate: Whether to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - fields: An allowed list of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
@@ -629,7 +629,7 @@ class Marshaller
      *
      * ### Options:
      *
-     * - validate: Whether or not to validate data before hydrating the entities. Can
+     * - validate: Whether to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
      * - fields: An allowed list of fields to be assigned to the entity. If not present,

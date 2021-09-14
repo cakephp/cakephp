@@ -50,7 +50,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     protected $_allowEmpty = false;
 
     /**
-     * Returns whether or not a field can be left out.
+     * Returns whether a field can be left out.
      *
      * @return callable|string|bool
      */
@@ -73,7 +73,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Returns whether or not a field can be left empty.
+     * Returns whether a field can be left empty.
      *
      * @return callable|string|bool
      */

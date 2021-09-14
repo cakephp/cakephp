@@ -203,7 +203,7 @@ trait QueryTrait
      * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
-     * @param bool $value Whether or not to eager load.
+     * @param bool $value Whether to eager load.
      * @return $this
      */
     public function eagerLoaded(bool $value)
@@ -441,7 +441,7 @@ trait QueryTrait
      * ```
      *
      * @param callable|null $formatter The formatting callable.
-     * @param int|true $mode Whether or not to overwrite, append or prepend the formatter.
+     * @param int|true $mode Whether to overwrite, append or prepend the formatter.
      * @return $this
      * @throws \InvalidArgumentException
      */

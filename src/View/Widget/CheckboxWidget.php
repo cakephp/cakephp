@@ -48,7 +48,7 @@ class CheckboxWidget extends BasicWidget
      * - `value` - The value attribute. Defaults to '1'.
      * - `val` - The current value. If it matches `value` the checkbox will be checked.
      *   You can also use the 'checked' attribute to make the checkbox checked.
-     * - `disabled` - Whether or not the checkbox should be disabled.
+     * - `disabled` - Whether the checkbox should be disabled.
      *
      * Any other attributes passed in will be treated as HTML attributes.
      *

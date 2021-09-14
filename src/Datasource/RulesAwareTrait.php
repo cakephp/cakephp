@@ -39,7 +39,7 @@ trait RulesAwareTrait
     protected ?RulesChecker $_rulesChecker = null;
 
     /**
-     * Returns whether or not the passed entity complies with all the rules stored in
+     * Returns whether the passed entity complies with all the rules stored in
      * the rules checker.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.

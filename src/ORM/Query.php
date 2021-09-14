@@ -78,7 +78,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected ?bool $_hasFields = null;
 
     /**
-     * Tracks whether or not the original query should include
+     * Tracks whether the original query should include
      * fields from the top level table.
      *
      * @var bool|null
@@ -1350,7 +1350,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Sets whether or not the ORM should automatically append fields.
+     * Sets whether the ORM should automatically append fields.
      *
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with this method.
@@ -1378,7 +1378,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Gets whether or not the ORM should automatically append fields.
+     * Gets whether the ORM should automatically append fields.
      *
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().

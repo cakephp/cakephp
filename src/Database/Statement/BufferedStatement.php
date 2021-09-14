@@ -61,7 +61,7 @@ class BufferedStatement implements Iterator, StatementInterface
     protected array $buffer = [];
 
     /**
-     * Whether or not this statement has already been executed
+     * Whether this statement has already been executed
      *
      * @var bool
      */
@@ -307,7 +307,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * Returns whether or not the iterator has more elements
+     * Returns whether the iterator has more elements
      *
      * @return bool
      */

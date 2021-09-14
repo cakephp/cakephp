@@ -356,7 +356,7 @@ class HtmlHelper extends Helper
      *
      * - `block` Set to true to append output to view block "css" or provide
      *   custom block name.
-     * - `once` Whether or not the css file should be checked for uniqueness. If true css
+     * - `once` Whether the css file should be checked for uniqueness. If true css
      *   files  will only be included once, use false to allow the same
      *   css to be included more than once per request.
      * - `plugin` False value will prevent parsing path as a plugin
@@ -463,7 +463,7 @@ class HtmlHelper extends Helper
      *
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
-     * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
+     * - `once` Whether the script should be checked for uniqueness. If true scripts will only be
      *   included once, use false to allow the same script to be included more than once per request.
      * - `plugin` False value will prevent parsing path as a plugin
      * - `fullBase` If true the url will get a full address for the script file.
@@ -608,7 +608,7 @@ class HtmlHelper extends Helper
      * ```
      *
      * @param array $data Style data array, keys will be used as property names, values as property values.
-     * @param bool $oneLine Whether or not the style block should be displayed on one line.
+     * @param bool $oneLine Whether the style block should be displayed on one line.
      * @return string CSS styling data
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-css-programatically
      */
@@ -850,7 +850,7 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `escape` Whether or not the contents should be html_entity escaped.
+     * - `escape` Whether the contents should be html_entity escaped.
      *
      * @param string $name Tag name.
      * @param string|null $text String content that will appear inside the div element.
@@ -882,7 +882,7 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `escape` Whether or not the contents should be html_entity escaped.
+     * - `escape` Whether the contents should be html_entity escaped.
      *
      * @param string|null $class CSS class name of the div element.
      * @param string|null $text String content that will appear inside the div element.
@@ -904,7 +904,7 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `escape` Whether or not the contents should be html_entity escaped.
+     * - `escape` Whether the contents should be html_entity escaped.
      *
      * @param string|null $class CSS class name of the p element.
      * @param string|null $text String content that will appear inside the p element.

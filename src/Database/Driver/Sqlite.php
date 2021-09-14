@@ -64,7 +64,7 @@ class Sqlite extends Driver
     protected ?SqliteSchemaDialect $_schemaDialect = null;
 
     /**
-     * Whether or not the connected server supports window functions.
+     * Whether the connected server supports window functions.
      *
      * @var bool|null
      */

@@ -129,10 +129,10 @@ class FloatType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Sets whether or not to parse numbers passed to the marshal() function
+     * Sets whether to parse numbers passed to the marshal() function
      * by using a locale aware parser.
      *
-     * @param bool $enable Whether or not to enable
+     * @param bool $enable Whether to enable
      * @return $this
      */
     public function useLocaleParser(bool $enable = true)

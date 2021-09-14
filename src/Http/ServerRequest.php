@@ -95,7 +95,7 @@ class ServerRequest implements ServerRequestInterface
     protected string $webroot = '/';
 
     /**
-     * Whether or not to trust HTTP_X headers set by most load balancers.
+     * Whether to trust HTTP_X headers set by most load balancers.
      * Only set to true if your application runs behind load balancers/proxies
      * that you control.
      *
@@ -477,7 +477,7 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * Check whether or not a Request is a certain type.
+     * Check whether a Request is a certain type.
      *
      * Uses the built in detection rules as well as additional rules
      * defined with Cake\Http\ServerRequest::addDetector(). Any detector can be called
@@ -486,7 +486,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array<string>|string $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
-     * @return bool Whether or not the request is the type you are checking.
+     * @return bool Whether the request is the type you are checking.
      */
     public function is(array|string $type, mixed ...$args): bool
     {
@@ -526,7 +526,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $type The type of request you want to check.
      * @param array $args Array of custom detector arguments.
-     * @return bool Whether or not the request is the type you are checking.
+     * @return bool Whether the request is the type you are checking.
      */
     protected function _is(string $type, array $args): bool
     {
@@ -556,7 +556,7 @@ class ServerRequest implements ServerRequestInterface
      * Detects if a specific accept header is present.
      *
      * @param array $detect Detector options array.
-     * @return bool Whether or not the request is the type you are checking.
+     * @return bool Whether the request is the type you are checking.
      */
     protected function _acceptHeaderDetector(array $detect): bool
     {
@@ -574,7 +574,7 @@ class ServerRequest implements ServerRequestInterface
      * Detects if a specific header is present.
      *
      * @param array $detect Detector options array.
-     * @return bool Whether or not the request is the type you are checking.
+     * @return bool Whether the request is the type you are checking.
      */
     protected function _headerDetector(array $detect): bool
     {
@@ -596,7 +596,7 @@ class ServerRequest implements ServerRequestInterface
      * Detects if a specific request parameter is present.
      *
      * @param array $detect Detector options array.
-     * @return bool Whether or not the request is the type you are checking.
+     * @return bool Whether the request is the type you are checking.
      */
     protected function _paramDetector(array $detect): bool
     {
@@ -617,7 +617,7 @@ class ServerRequest implements ServerRequestInterface
      * Detects if a specific environment variable is present.
      *
      * @param array $detect Detector options array.
-     * @return bool Whether or not the request is the type you are checking.
+     * @return bool Whether the request is the type you are checking.
      */
     protected function _environmentDetector(array $detect): bool
     {
@@ -733,22 +733,22 @@ class ServerRequest implements ServerRequestInterface
      * `addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'csv']]`
      *
      * @param string $name The name of the detector.
-     * @param callable|array $callable A callable or options array for the detector definition.
+     * @param callable|array $detector A callable or options array for the detector definition.
      * @return void
      */
-    public static function addDetector(string $name, callable|array $callable): void
+    public static function addDetector(string $name, callable|array $detector): void
     {
         $name = strtolower($name);
-        if (is_callable($callable)) {
-            static::$_detectors[$name] = $callable;
+        if (is_callable($detector)) {
+            static::$_detectors[$name] = $detector;
 
             return;
         }
-        if (isset(static::$_detectors[$name], $callable['options'])) {
+        if (isset(static::$_detectors[$name], $detector['options'])) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $callable = Hash::merge(static::$_detectors[$name], $callable);
+            $detector = Hash::merge(static::$_detectors[$name], $detector);
         }
-        static::$_detectors[$name] = $callable;
+        static::$_detectors[$name] = $detector;
     }
 
     /**
@@ -804,7 +804,7 @@ class ServerRequest implements ServerRequestInterface
      * Check if a header is set in the request.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return bool Whether or not the header is defined.
+     * @return bool Whether the header is defined.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function hasHeader($name): bool
@@ -1750,7 +1750,7 @@ class ServerRequest implements ServerRequestInterface
      * and `url` attributes.
      *
      * @param \Psr\Http\Message\UriInterface $uri The new request uri
-     * @param bool $preserveHost Whether or not the host should be retained.
+     * @param bool $preserveHost Whether the host should be retained.
      * @return static
      */
     public function withUri($uri, $preserveHost = false): static

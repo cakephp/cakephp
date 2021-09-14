@@ -67,7 +67,7 @@ class EntityContext implements ContextInterface
     protected string $_rootName;
 
     /**
-     * Boolean to track whether or not the entity is a
+     * Boolean to track whether the entity is a
      * collection.
      *
      * @var bool
@@ -189,7 +189,7 @@ class EntityContext implements ContextInterface
     }
 
     /**
-     * Check whether or not this form is a create or update.
+     * Check whether this form is a create or update.
      *
      * If the context is for a single entity, the entity's isNew() method will
      * be used. If isNew() returns null, a create operation will be assumed.
@@ -618,7 +618,7 @@ class EntityContext implements ContextInterface
      * Get the table instance from a property path
      *
      * @param \Cake\Datasource\EntityInterface|array<string>|string $parts Each one of the parts in a path for a field name
-     * @param bool $fallback Whether or not to fallback to the last found table
+     * @param bool $fallback Whether to fallback to the last found table
      *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null
      */
@@ -708,7 +708,7 @@ class EntityContext implements ContextInterface
     }
 
     /**
-     * Check whether or not a field has an error attached to it
+     * Check whether a field has an error attached to it
      *
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.

@@ -82,7 +82,7 @@ class Cache
     ];
 
     /**
-     * Flag for tracking whether or not caching is enabled.
+     * Flag for tracking whether caching is enabled.
      *
      * @var bool
      */
@@ -531,7 +531,7 @@ class Cache
     }
 
     /**
-     * Check whether or not caching is enabled.
+     * Check whether caching is enabled.
      *
      * @return bool
      */
@@ -562,9 +562,8 @@ class Cache
      *   the cache key is empty. Can be any callable type supported by your PHP.
      * @param string $config The cache configuration to use for this operation.
      *   Defaults to default.
-     * @return mixed If the key is found: the cached data, false if the data
-     *   missing/expired, or an error. If the key is not found: boolean of the
-     *   success of the write
+     * @return mixed If the key is found: the cached data.
+     *   If the key is not found the value returned by the callable.
      */
     public static function remember(string $key, callable $callable, string $config = 'default'): mixed
     {

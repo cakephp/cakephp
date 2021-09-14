@@ -55,7 +55,7 @@ class BufferedIterator extends Collection implements Countable
     protected mixed $_key;
 
     /**
-     * Whether or not the internal iterator's rewind method was already
+     * Whether the internal iterator's rewind method was already
      * called
      *
      * @var bool
@@ -63,7 +63,7 @@ class BufferedIterator extends Collection implements Countable
     protected bool $_started = false;
 
     /**
-     * Whether or not the internal iterator has reached its end.
+     * Whether the internal iterator has reached its end.
      *
      * @var bool
      */
@@ -119,7 +119,7 @@ class BufferedIterator extends Collection implements Countable
     }
 
     /**
-     * Returns whether or not the iterator has more elements
+     * Returns whether the iterator has more elements
      *
      * @return bool
      */

@@ -77,7 +77,7 @@ class QueryCompiler
     protected array $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
     /**
-     * Indicate whether or not this query dialect supports ordered unions.
+     * Indicate whether this query dialect supports ordered unions.
      *
      * Overridden in subclasses.
      *

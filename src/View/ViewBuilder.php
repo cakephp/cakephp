@@ -71,7 +71,7 @@ class ViewBuilder implements JsonSerializable
     protected ?string $_layout = null;
 
     /**
-     * Whether or not autoLayout should be enabled.
+     * Whether autoLayout should be enabled.
      *
      * @var bool
      */
@@ -323,7 +323,7 @@ class ViewBuilder implements JsonSerializable
      * Sets the helpers to use.
      *
      * @param array $helpers Helpers to use.
-     * @param bool $merge Whether or not to merge existing data with the new data.
+     * @param bool $merge Whether to merge existing data with the new data.
      * @return $this
      */
     public function setHelpers(array $helpers, bool $merge = true)
@@ -451,7 +451,7 @@ class ViewBuilder implements JsonSerializable
      * This lets you provide custom constructor arguments to application/plugin view classes.
      *
      * @param array<string, mixed> $options An array of options.
-     * @param bool $merge Whether or not to merge existing data with the new data.
+     * @param bool $merge Whether to merge existing data with the new data.
      * @return $this
      */
     public function setOptions(array $options, bool $merge = true)

@@ -36,7 +36,7 @@ use RuntimeException;
 class DateTimeType extends BaseType implements BatchCastingInterface
 {
     /**
-     * Whether or not we want to override the time of the converted Time objects
+     * Whether we want to override the time of the converted Time objects
      * so it points to the start of the day.
      *
      * This is primarily to avoid subclasses needing to re-implement the same functionality.
@@ -384,10 +384,10 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Sets whether or not to parse strings passed to `marshal()` using
+     * Sets whether to parse strings passed to `marshal()` using
      * the locale-aware format set by `setLocaleFormat()`.
      *
-     * @param bool $enable Whether or not to enable
+     * @param bool $enable Whether to enable
      * @return $this
      */
     public function useLocaleParser(bool $enable = true)

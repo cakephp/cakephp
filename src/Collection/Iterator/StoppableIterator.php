@@ -66,7 +66,7 @@ class StoppableIterator extends Collection
 
     /**
      * Evaluates the condition and returns its result, this controls
-     * whether or not more results will be yielded.
+     * whether more results will be yielded.
      *
      * @return bool
      */

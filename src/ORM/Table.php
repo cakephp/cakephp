@@ -93,7 +93,7 @@ use RuntimeException;
  * - `Model.beforeFind` Fired before each find operation. By stopping the event and
  *   supplying a return value you can bypass the find operation entirely. Any
  *   changes done to the $query instance will be retained for the rest of the find. The
- *   `$primary` parameter indicates whether or not this is the root query, or an
+ *   `$primary` parameter indicates whether this is the root query, or an
  *   associated query.
  *
  * - `Model.buildValidator` Allows listeners to modify validation rules
@@ -872,7 +872,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Check if a behavior with the given alias has been loaded.
      *
      * @param string $name The behavior alias to check.
-     * @return bool Whether or not the behavior exists.
+     * @return bool Whether the behavior exists.
      */
     public function hasBehavior(string $name): bool
     {
@@ -1792,7 +1792,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * - atomic: Whether to execute the save and callbacks inside a database
      *   transaction (default: true)
-     * - checkRules: Whether or not to check the rules on entity before saving, if the checking
+     * - checkRules: Whether to check the rules on entity before saving, if the checking
      *   fails, it will abort the save operation. (default:true)
      * - associated: If `true` it will save 1st level associated entities as they are found
      *   in the passed `$entity` whenever the property defined for the association
@@ -1800,7 +1800,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   to be saved. It is possible to provide different options for saving on associated
      *   table objects using this key by making the custom options the array value.
      *   If `false` no associated records will be saved. (default: `true`)
-     * - checkExisting: Whether or not to check if the entity already exists, assuming that the
+     * - checkExisting: Whether to check if the entity already exists, assuming that the
      *   entity is marked as not new, and the primary key has been set.
      *
      * ### Events

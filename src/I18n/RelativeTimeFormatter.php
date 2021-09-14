@@ -188,7 +188,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      *
      * @param string|int $futureTime The timestamp from the future.
      * @param string|int $pastTime The timestamp from the past.
-     * @param bool $backwards Whether or not the difference was backwards.
+     * @param bool $backwards Whether the difference was backwards.
      * @param array<string, mixed> $options An array of options.
      * @return array An array of values.
      */

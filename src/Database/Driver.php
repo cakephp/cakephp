@@ -67,7 +67,7 @@ abstract class Driver implements DriverInterface
     protected array $_baseConfig = [];
 
     /**
-     * Indicates whether or not the driver is doing automatic identifier quoting
+     * Indicates whether the driver is doing automatic identifier quoting
      * for all queries
      *
      * @var bool

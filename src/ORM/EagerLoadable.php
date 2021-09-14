@@ -82,14 +82,14 @@ class EagerLoadable
     protected ?string $_propertyPath = null;
 
     /**
-     * Whether or not this level can be fetched using a join.
+     * Whether this level can be fetched using a join.
      *
      * @var bool
      */
     protected bool $_canBeJoined = false;
 
     /**
-     * Whether or not this level was meant for a "matching" fetch
+     * Whether this level was meant for a "matching" fetch
      * operation
      *
      * @var bool|null
@@ -212,7 +212,7 @@ class EagerLoadable
     }
 
     /**
-     * Sets whether or not this level can be fetched using a join.
+     * Sets whether this level can be fetched using a join.
      *
      * @param bool $possible The value to set.
      * @return $this
@@ -225,7 +225,7 @@ class EagerLoadable
     }
 
     /**
-     * Gets whether or not this level can be fetched using a join.
+     * Gets whether this level can be fetched using a join.
      *
      * @return bool
      */
@@ -260,7 +260,7 @@ class EagerLoadable
     }
 
     /**
-     * Gets whether or not this level was meant for a
+     * Gets whether this level was meant for a
      * "matching" fetch operation.
      *
      * @return bool|null

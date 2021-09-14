@@ -577,7 +577,7 @@ class Paginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $order Order array.
-     * @param bool $allowed Whether or not the field was allowed.
+     * @param bool $allowed Whether the field was allowed.
      * @return array Final order array.
      */
     protected function _prefix(RepositoryInterface $object, array $order, bool $allowed = false): array
@@ -622,7 +622,7 @@ class Paginator implements PaginatorInterface
     public function checkLimit(array $options): array
     {
         $options['limit'] = (int)$options['limit'];
-        if (empty($options['limit']) || $options['limit'] < 1) {
+        if ($options['limit'] < 1) {
             $options['limit'] = 1;
         }
         $options['limit'] = max(min($options['limit'], $options['maxLimit']), 1);

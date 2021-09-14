@@ -222,7 +222,7 @@ class Number
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
      * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
-     * - `useIntlCode` - Whether or not to replace the currency symbol with the international
+     * - `useIntlCode` - Whether to replace the currency symbol with the international
      *   currency code.
      *
      * @param string|float|int $value Value to format.
@@ -325,7 +325,7 @@ class Number
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
      * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
-     * - `useIntlCode` - Whether or not to replace the currency symbol with the international
+     * - `useIntlCode` - Whether to replace the currency symbol with the international
      *   currency code.
      *
      * @param array<string, mixed> $options An array with options.

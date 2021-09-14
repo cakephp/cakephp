@@ -247,14 +247,14 @@ interface DriverInterface
     public function lastInsertId(?string $table = null, ?string $column = null): string|int;
 
     /**
-     * Checks whether or not the driver is connected.
+     * Checks whether the driver is connected.
      *
      * @return bool
      */
     public function isConnected(): bool;
 
     /**
-     * Sets whether or not this driver should automatically quote identifiers
+     * Sets whether this driver should automatically quote identifiers
      * in queries.
      *
      * @param bool $enable Whether to enable auto quoting
@@ -270,7 +270,7 @@ interface DriverInterface
     public function disableAutoQuoting();
 
     /**
-     * Returns whether or not this driver should automatically quote identifiers
+     * Returns whether this driver should automatically quote identifiers
      * in queries.
      *
      * @return bool

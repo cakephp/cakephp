@@ -127,13 +127,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected Response $response;
 
     /**
-     * The class name to use for creating the response object.
-     *
-     * @var string
-     */
-    protected string $_responseClass = Response::class;
-
-    /**
      * Settings for pagination.
      *
      * Used to pre-configure pagination preferences for the various
@@ -797,7 +790,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * and allows all public methods on all subclasses of this class.
      *
      * @param string $action The action to check.
-     * @return bool Whether or not the method is accessible from a URL.
+     * @return bool Whether the method is accessible from a URL.
      * @throws \ReflectionException
      */
     public function isAction(string $action): bool

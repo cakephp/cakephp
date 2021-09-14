@@ -508,7 +508,7 @@ class Route
      * Check to see if the host matches the route requirements
      *
      * @param string $host The request's host name
-     * @return bool Whether or not the host matches any conditions set in for this route.
+     * @return bool Whether the host matches any conditions set in for this route.
      */
     public function hostMatches(string $host): bool
     {
@@ -737,7 +737,7 @@ class Route
     }
 
     /**
-     * Check whether or not the URL's HTTP method matches.
+     * Check whether the URL's HTTP method matches.
      *
      * @param array $url The array for the URL being generated.
      * @return bool

@@ -34,7 +34,7 @@ class FormatterLocator
     protected array $registry = [];
 
     /**
-     * Tracks whether or not a registry entry has been converted from a
+     * Tracks whether a registry entry has been converted from a
      * FQCN to a formatter object.
      *
      * @var array<bool>

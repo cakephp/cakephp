@@ -127,7 +127,7 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * Returns whether or not this form is for a create operation.
+     * Returns whether this form is for a create operation.
      *
      * For this method to return true, both the primary key constraint
      * must be defined in the 'schema' data, and the 'defaults' data must
@@ -311,7 +311,7 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * Check whether or not a field has an error attached to it
+     * Check whether a field has an error attached to it
      *
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.

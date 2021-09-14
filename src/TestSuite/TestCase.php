@@ -137,7 +137,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
      *
-     * @param bool $shouldSkip Whether or not the test should be skipped.
+     * @param bool $shouldSkip Whether the test should be skipped.
      * @param string $message The message to display.
      * @return bool
      */
@@ -496,7 +496,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $needle The string to search for.
      * @param string $haystack The string to search through.
      * @param string $message The message to display on failure.
-     * @param bool $ignoreCase Whether or not the search should be case-sensitive.
+     * @param bool $ignoreCase Whether the search should be case-sensitive.
      * @return void
      */
     public function assertTextContains(
@@ -522,7 +522,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $needle The string to search for.
      * @param string $haystack The string to search through.
      * @param string $message The message to display on failure.
-     * @param bool $ignoreCase Whether or not the search should be case-sensitive.
+     * @param bool $ignoreCase Whether the search should be case-sensitive.
      * @return void
      */
     public function assertTextNotContains(
@@ -617,7 +617,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param array $expected An array, see above
      * @param string $string An HTML/XHTML/XML string
-     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param bool $fullDebug Whether more verbose output should be used.
      * @return bool
      */
     public function assertHtml(array $expected, string $string, bool $fullDebug = false): bool

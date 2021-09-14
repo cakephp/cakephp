@@ -26,7 +26,7 @@ use Cake\Utility\Inflector;
 class DashedRoute extends Route
 {
     /**
-     * Flag for tracking whether or not the defaults have been inflected.
+     * Flag for tracking whether the defaults have been inflected.
      *
      * Default values need to be inflected so that they match the inflections that
      * match() will create.

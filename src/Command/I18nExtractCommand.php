@@ -692,7 +692,7 @@ class I18nExtractCommand extends Command
      * @param string $oldFile The existing file.
      * @param int $headerLength The length of the file header in bytes.
      * @param string $newFileContent The content of the new file.
-     * @return bool Whether or not the old and new file are unchanged.
+     * @return bool Whether the old and new file are unchanged.
      */
     protected function checkUnchanged(string $oldFile, int $headerLength, string $newFileContent): bool
     {
@@ -859,7 +859,7 @@ class I18nExtractCommand extends Command
     }
 
     /**
-     * Checks whether or not a given path is usable for writing.
+     * Checks whether a given path is usable for writing.
      *
      * @param string $path Path to folder
      * @return bool true if it exists and is writable, false otherwise

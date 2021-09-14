@@ -171,7 +171,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     protected ?FunctionsBuilder $_functionsBuilder = null;
 
     /**
-     * Boolean for tracking whether or not buffered results
+     * Boolean for tracking whether buffered results
      * are enabled.
      *
      * @var bool
@@ -1309,7 +1309,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * not sanitized by the query builder.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
-     * @param bool $overwrite Whether or not to reset the order clauses.
+     * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      */
     public function orderAsc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
@@ -1343,7 +1343,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * not sanitized by the query builder.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
-     * @param bool $overwrite Whether or not to reset the order clauses.
+     * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      */
     public function orderDesc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
@@ -2016,7 +2016,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * ```
      *
      * @param callable|null $callback The callback to invoke when results are fetched.
-     * @param bool $overwrite Whether or not this should append or replace all existing decorators.
+     * @param bool $overwrite Whether this should append or replace all existing decorators.
      * @return $this
      */
     public function decorateResults(?callable $callback, bool $overwrite = false)
@@ -2153,7 +2153,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * When disabled it will consume less memory as fetched results are not
      * remembered for future iterations.
      *
-     * @param bool $enable Whether or not to enable buffering
+     * @param bool $enable Whether to enable buffering
      * @return $this
      */
     public function enableBufferedResults(bool $enable = true)

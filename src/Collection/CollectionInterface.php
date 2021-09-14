@@ -65,7 +65,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable|null $callback the method that will receive each of the elements and
-     *   returns true whether or not they should be in the resulting collection.
+     *   returns true whether they should be in the resulting collection.
      *   If left null, a callback that filters out falsey values will be used.
      * @return self
      */
@@ -91,7 +91,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable $callback the method that will receive each of the elements and
-     * returns true whether or not they should be out of the resulting collection.
+     * returns true whether they should be out of the resulting collection.
      * @return self
      */
     public function reject(callable $callback): CollectionInterface;
@@ -1074,7 +1074,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface;
 
     /**
-     * Returns whether or not there are elements in this collection
+     * Returns whether there are elements in this collection
      *
      * ### Example:
      *
