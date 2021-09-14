@@ -48,6 +48,13 @@ class TransactionStrategy implements FixtureStrategyInterface
     /**
      * @inheritDoc
      */
+    public function setupStrategy(): void
+    {
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setupTest(array $fixtureNames): void
     {
         $this->fixtures = $this->helper->loadFixtures($fixtureNames);
@@ -86,5 +93,12 @@ class TransactionStrategy implements FixtureStrategyInterface
                 $connection->rollback(true);
             }
         }, $this->fixtures);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function teardownStrategy(): void
+    {
     }
 }

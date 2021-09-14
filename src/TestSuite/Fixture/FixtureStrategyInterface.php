@@ -22,6 +22,13 @@ namespace Cake\TestSuite\Fixture;
 interface FixtureStrategyInterface
 {
     /**
+     * Called before all tests are run for TestCase.
+     *
+     * @return void
+     */
+    public function setupStrategy(): void;
+
+    /**
      * Called before each test run in each TestCase.
      *
      * @param array<string> $fixtureNames Name of fixtures used by test.
@@ -35,4 +42,11 @@ interface FixtureStrategyInterface
      * @return void
      */
     public function teardownTest(): void;
+
+    /**
+     * Called after all tests are run for TestCase.
+     *
+     * @return void
+     */
+    public function teardownStrategy(): void;
 }

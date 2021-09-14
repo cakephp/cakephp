@@ -86,7 +86,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * @var \Cake\TestSuite\Fixture\FixtureStrategyInterface|null
      */
-    protected $fixtureStrategy = null;
+    protected static $fixtureStrategy = null;
 
     /**
      * Configure values to restore at end of test.
@@ -213,6 +213,29 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function setUpBeforeClass(): void
+    {
+        if (static::$fixtureManager) {
+            return;
+        }
+
+        static::$fixtureStrategy = static::getFixtureStrategy();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function tearDownAfterClass(): void
+    {
+        if (static::$fixtureStrategy) {
+            static::$fixtureStrategy->teardownStrategy();
+            static::$fixtureStrategy = null;
+        }
+    }
+
+    /**
      * Setup the test case, backup the static object values so they can be restored.
      * Specifically backs up the contents of Configure and paths in App if they have
      * not already been backed up.
@@ -273,8 +296,9 @@ abstract class TestCase extends BaseTestCase
             return;
         }
 
-        $this->fixtureStrategy = $this->getFixtureStrategy();
-        $this->fixtureStrategy->setupTest($fixtureNames);
+        if (static::$fixtureStrategy) {
+            static::$fixtureStrategy->setupTest($fixtureNames);
+        }
     }
 
     /**
@@ -284,9 +308,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function teardownFixtures(): void
     {
-        if ($this->fixtureStrategy) {
-            $this->fixtureStrategy->teardownTest();
-            $this->fixtureStrategy = null;
+        if (static::$fixtureStrategy) {
+            static::$fixtureStrategy->teardownTest();
         }
     }
 
@@ -295,7 +318,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return \Cake\TestSuite\Fixture\FixtureStrategyInterface
      */
-    protected function getFixtureStrategy(): FixtureStrategyInterface
+    protected static function getFixtureStrategy(): FixtureStrategyInterface
     {
         return new TruncateStrategy();
     }

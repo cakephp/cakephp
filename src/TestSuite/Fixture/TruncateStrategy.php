@@ -42,6 +42,13 @@ class TruncateStrategy implements FixtureStrategyInterface
     /**
      * @inheritDoc
      */
+    public function setupStrategy(): void
+    {
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setupTest(array $fixtureNames): void
     {
         $this->fixtures = $this->helper->loadFixtures($fixtureNames);
@@ -54,5 +61,12 @@ class TruncateStrategy implements FixtureStrategyInterface
     public function teardownTest(): void
     {
         $this->helper->truncate($this->fixtures);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function teardownStrategy(): void
+    {
     }
 }
