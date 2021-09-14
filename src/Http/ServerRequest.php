@@ -22,6 +22,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
+use Closure;
 use InvalidArgumentException;
 use Laminas\Diactoros\PhpInputStream;
 use Laminas\Diactoros\Stream;
@@ -116,7 +117,7 @@ class ServerRequest implements ServerRequestInterface
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
      * various formats and ways to define detectors.
      *
-     * @var array<callable|array>
+     * @var array<\Closure|array>
      */
     protected static array $_detectors = [
         'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
@@ -531,7 +532,7 @@ class ServerRequest implements ServerRequestInterface
     protected function _is(string $type, array $args): bool
     {
         $detect = static::$_detectors[$type];
-        if (is_callable($detect)) {
+        if ($detect instanceof Closure) {
             array_unshift($args, $this);
 
             return $detect(...$args);
@@ -581,7 +582,7 @@ class ServerRequest implements ServerRequestInterface
         foreach ($detect['header'] as $header => $value) {
             $header = $this->getEnv('http_' . $header);
             if ($header !== null) {
-                if (!is_string($value) && !is_bool($value) && is_callable($value)) {
+                if ($value instanceof Closure) {
                     return $value($header);
                 }
 
@@ -666,8 +667,8 @@ class ServerRequest implements ServerRequestInterface
      *
      * ### Callback comparison
      *
-     * Callback detectors allow you to provide a callable to handle the check.
-     * The callback will receive the request object as its only parameter.
+     * Callback detectors allow you to provide a closure to handle the check.
+     * The closure will receive the request object as its only parameter.
      *
      * ```
      * addDetector('custom', function ($request) { //Return a boolean });
@@ -733,17 +734,18 @@ class ServerRequest implements ServerRequestInterface
      * `addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'csv']]`
      *
      * @param string $name The name of the detector.
-     * @param callable|array $detector A callable or options array for the detector definition.
+     * @param \Closure|array $detector A Closure or options array for the detector definition.
      * @return void
      */
-    public static function addDetector(string $name, callable|array $detector): void
+    public static function addDetector(string $name, Closure|array $detector): void
     {
         $name = strtolower($name);
-        if (is_callable($detector)) {
+        if ($detector instanceof Closure) {
             static::$_detectors[$name] = $detector;
 
             return;
         }
+
         if (isset(static::$_detectors[$name], $detector['options'])) {
             /** @psalm-suppress PossiblyInvalidArgument */
             $detector = Hash::merge(static::$_detectors[$name], $detector);
