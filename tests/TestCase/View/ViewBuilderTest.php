@@ -159,7 +159,7 @@ class ViewBuilderTest extends TestCase
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
 
-        $this->deprecated(function() use($get, $set, $value) {
+        $this->deprecated(function () use ($get, $set, $value) {
             $builder = new ViewBuilder();
             $this->assertSame([], $builder->{$get}(), 'Default value should be empty list');
             $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
@@ -177,7 +177,7 @@ class ViewBuilderTest extends TestCase
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
 
-        $this->deprecated(function() use($get, $set, $value) {
+        $this->deprecated(function () use ($get, $set, $value) {
             $builder = new ViewBuilder();
             $builder->{$set}($value);
 
