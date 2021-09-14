@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Datasource;
 use BadMethodCallException;
 use Cake\Core\Exception\CakeException;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -196,16 +195,6 @@ class ConnectionManagerTest extends TestCase
         ConnectionManager::alias('test_variant', 'other_name');
         $result = ConnectionManager::get('test_variant');
         $this->assertSame($result, ConnectionManager::get('other_name'));
-    }
-
-    /**
-     * Test alias() raises an error when aliasing an undefined connection.
-     */
-    public function testAliasError(): void
-    {
-        $this->expectException(MissingDatasourceConfigException::class);
-        $this->assertNotContains('test_kaboom', ConnectionManager::configured());
-        ConnectionManager::alias('test_kaboom', 'other_name');
     }
 
     /**

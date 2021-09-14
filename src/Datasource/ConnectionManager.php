@@ -153,16 +153,9 @@ class ConnectionManager
      * @param string $source The existing connection to alias.
      * @param string $alias The alias name that resolves to `$source`.
      * @return void
-     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When aliasing a
-     * connection that does not exist.
      */
     public static function alias(string $source, string $alias): void
     {
-        if (empty(static::$_config[$source])) {
-            throw new MissingDatasourceConfigException(
-                sprintf('Cannot create alias of "%s" as it does not exist.', $source)
-            );
-        }
         static::$_aliasMap[$alias] = $source;
     }
 
