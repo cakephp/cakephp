@@ -24,6 +24,8 @@ use RuntimeException;
  * after each test.
  *
  * Any test that calls Connection::rollback(true) will break this strategy.
+ *
+ * @experimental
  */
 class TransactionStrategy implements FixtureStrategyInterface
 {
