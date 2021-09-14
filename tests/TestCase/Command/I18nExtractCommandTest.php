@@ -269,9 +269,9 @@ class I18nExtractCommandTest extends TestCase
     }
 
     /**
-     * Test that is possible to extract messages from a vendored plugin.
+     * Test that is possible to extract messages from a vendor prefixed plugin.
      */
-    public function testExtractVendoredPlugin(): void
+    public function testExtractVendorPrefixedPlugin(): void
     {
         $this->loadPlugins(['Company/TestPluginThree']);
 
@@ -283,7 +283,7 @@ class I18nExtractCommandTest extends TestCase
         );
         $this->assertExitSuccess();
 
-        $result = file_get_contents($this->path . DS . 'test_plugin_three.pot');
+        $result = file_get_contents($this->path . DS . 'company_test_plugin_three.pot');
         $this->assertDoesNotMatchRegularExpression('#Pages#', $result);
         $this->assertMatchesRegularExpression('/default\.php:\d+/', $result);
         $this->assertStringContainsString('A vendor message', $result);

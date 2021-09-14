@@ -149,7 +149,7 @@ class I18nTest extends TestCase
      * Tests that messages can also be loaded from plugins by using the
      * domain = plugin_name convention
      */
-    public function testPluginMesagesLoad(): void
+    public function testPluginMessagesLoad(): void
     {
         $this->loadPlugins([
             'TestPlugin',
@@ -170,7 +170,7 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Tests that messages messages from a plugin can be automatically
+     * Tests that messages from a plugin can be automatically
      * overridden by messages in app
      */
     public function testPluginOverride(): void
