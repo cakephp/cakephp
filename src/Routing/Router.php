@@ -20,10 +20,10 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
+use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use ReflectionFunction;
-use ReflectionMethod;
 use RuntimeException;
 use Throwable;
 
@@ -146,7 +146,7 @@ class Router
      * The stack of URL filters to apply against routing URLs before passing the
      * parameters to the route collection.
      *
-     * @var array<callable>
+     * @var array<\Closure>
      */
     protected static array $_urlFilters = [];
 
@@ -305,10 +305,10 @@ class Router
      * });
      * ```
      *
-     * @param callable $function The function to add
+     * @param \Closure $function The function to add
      * @return void
      */
-    public static function addUrlFilter(callable $function): void
+    public static function addUrlFilter(Closure $function): void
     {
         static::$_urlFilters[] = $function;
     }
@@ -328,12 +328,7 @@ class Router
             try {
                 $url = $filter($url, $request);
             } catch (Throwable $e) {
-                if (is_array($filter)) {
-                    $ref = new ReflectionMethod($filter[0], $filter[1]);
-                } else {
-                    /** @psalm-var \Closure|callable-string $filter */
-                    $ref = new ReflectionFunction($filter);
-                }
+                $ref = new ReflectionFunction($filter);
                 $message = sprintf(
                     'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
                     $ref->getFileName(),
