@@ -3254,6 +3254,42 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test the limitControl() with a request url and query.
+     *
+     * @return void
+     */
+    public function testLimitControlUrlWithQuery()
+    {
+        $request = new ServerRequest([
+            'url' => '/batches?owner=billy&expected=1',
+            'params' => [
+                'plugin' => null, 'controller' => 'Batches', 'action' => 'index', 'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+
+        $out = $this->Paginator->limitControl([1 => 1]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches?owner=billy&amp;expected=1']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
      * test the limitControl() method with defaults and query
      */
     public function testLimitControlQuery(): void

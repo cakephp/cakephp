@@ -236,7 +236,7 @@ jobs:
       run: composer stan-setup
 
     - name: Run PHP CodeSniffer
-      run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
+      run: vendor/bin/phpcs -n --report=checkstyle src/ tests/ | cs2pr
 
     - name: Run psalm
       if: success() || failure()

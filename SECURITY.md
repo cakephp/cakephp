@@ -4,13 +4,12 @@
 
 We support fixing security issues on the following releases:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 4.0.x   | :white_check_mark: |
-| 3.8.x   | :white_check_mark: |
-| 3.7.x   | :white_check_mark: |
-| <= 3.6  | :x:                |
-| 2.10.x  | :white_check_mark: |
+| Version | Supported          | Security fixes until
+| ------- | ------------------ | -------------------- 
+| 4.x     | :white_check_mark: | 
+| 3.10.x  | :white_check_mark: | 15th December 2022 (36 months after 4.0.0)
+| <= 3.9  | :x:                |
+| 2.10.x  | :x:                | 15th June 2021 (18 months after 4.0.0)
 | <= 2.9  | :x:                |
 
 ## Reporting a Vulnerability
