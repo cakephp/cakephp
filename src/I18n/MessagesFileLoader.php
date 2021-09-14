@@ -55,7 +55,7 @@ class MessagesFileLoader
      * Creates a translation file loader. The file to be loaded corresponds to
      * the following rules:
      *
-     * - The locale is a folder under the `Locale/` directory, a fallback will be
+     * - The locale is a folder under the `resources/locales/` directory, a fallback will be
      *   used if the folder is not found.
      * - The $name corresponds to the file name to load
      * - If there is a loaded plugin with the underscored version of $name, the
