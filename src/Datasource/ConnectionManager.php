@@ -165,12 +165,12 @@ class ConnectionManager
      * Removes an alias from ConnectionManager. Fetching the aliased
      * connection may fail if there is no other connection with that name.
      *
-     * @param string $name The connection name to remove aliases for.
+     * @param string $alias The connection alias to drop
      * @return void
      */
-    public static function dropAlias(string $name): void
+    public static function dropAlias(string $alias): void
     {
-        unset(static::$_aliasMap[$name]);
+        unset(static::$_aliasMap[$alias]);
     }
 
     /**
