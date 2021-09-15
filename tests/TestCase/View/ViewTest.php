@@ -956,7 +956,7 @@ class ViewTest extends TestCase
         $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => TestBeforeAfterHelper::class],
             'Html',
-        ]);
+        ], false);
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
         $View->render('index');
@@ -971,7 +971,7 @@ class ViewTest extends TestCase
         $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => TestBeforeAfterHelper::class],
             'Html',
-        ]);
+        ], false);
         $this->PostsController->set('variable', 'values');
 
         $View = $this->PostsController->createView();
@@ -988,7 +988,7 @@ class ViewTest extends TestCase
      */
     public function testRenderLoadHelper(): void
     {
-        $this->PostsController->viewBuilder()->setHelpers(['Form', 'Number']);
+        $this->PostsController->viewBuilder()->setHelpers(['Form', 'Number'], false);
         $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
 
@@ -999,7 +999,7 @@ class ViewTest extends TestCase
         // HtmlHelper is loaded in TestView::initialize()
         $this->assertEquals(['Html', 'Form', 'Number'], $attached);
 
-        $this->PostsController->viewBuilder()->setHelpers(
+        $this->PostsController->viewBuilder()->addHelpers(
             ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
         );
         $View = $this->PostsController->createView(TestView::class);
@@ -1026,7 +1026,7 @@ class ViewTest extends TestCase
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
-        $this->PostsController->viewBuilder()->setHelpers(['Html']);
+        $this->PostsController->viewBuilder()->addHelpers(['Html']);
         $this->PostsController->setRequest(
             $this->PostsController->getRequest()->withParam('action', 'index')
         );

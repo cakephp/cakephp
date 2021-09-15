@@ -103,7 +103,7 @@ trait CellTrait
             $builder->setPlugin($plugin);
         }
         if (!empty($this->helpers)) {
-            $builder->setHelpers($this->helpers);
+            $builder->addHelpers($this->helpers);
         }
 
         if ($this instanceof View) {

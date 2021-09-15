@@ -317,7 +317,29 @@ class ViewBuilder implements JsonSerializable, Serializable
             $array = [$helper];
         }
 
-        return $this->setHelpers($array);
+        $this->_helpers = array_merge($this->_helpers, $array);
+
+        return $this;
+    }
+
+    /**
+     * Adds helpers to use by merging with existing ones.
+     *
+     * @param array $helpers Helpers to use.
+     * @return $this
+     * @since 4.3.0
+     */
+    public function addHelpers(array $helpers)
+    {
+        foreach ($helpers as $helper => $config) {
+            if (is_int($helper)) {
+                $helper = $config;
+                $config = [];
+            }
+            $this->addHelper($helper, $config);
+        }
+
+        return $this;
     }
 
     /**
@@ -330,6 +352,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function setHelpers(array $helpers, bool $merge = true)
     {
         if ($merge) {
+            deprecationWarning('The $merge param is deprecated, use addHelper()/addHelpers() instead.');
             $helpers = array_merge($this->_helpers, $helpers);
         }
         $this->_helpers = $helpers;
