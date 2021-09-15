@@ -653,7 +653,7 @@ class ExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->onlyMethods(['render'])
             ->getMock();
-        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
+        $controller->viewBuilder()->setHelpers(['Fail', 'Boom'], false);
         $controller->setRequest(new ServerRequest());
         $controller->expects($this->once())
             ->method('render')
@@ -702,7 +702,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         $controller = new Controller();
-        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
+        $controller->viewBuilder()->setHelpers(['Fail', 'Boom'], false);
         $controller->getEventManager()->on(
             'Controller.beforeRender',
             function (EventInterface $event): void {

@@ -159,10 +159,12 @@ class ViewBuilderTest extends TestCase
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
 
-        $builder = new ViewBuilder();
-        $this->assertSame([], $builder->{$get}(), 'Default value should be empty list');
-        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
+        $this->deprecated(function () use ($get, $set, $value) {
+            $builder = new ViewBuilder();
+            $this->assertSame([], $builder->{$get}(), 'Default value should be empty list');
+            $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+            $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
+        });
     }
 
     /**
@@ -175,14 +177,37 @@ class ViewBuilderTest extends TestCase
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
 
+        $this->deprecated(function () use ($get, $set, $value) {
+            $builder = new ViewBuilder();
+            $builder->{$set}($value);
+
+            $builder->{$set}(['Merged'], true);
+            $this->assertSame(array_merge($value, ['Merged']), $builder->{$get}(), 'Should merge');
+
+            $builder->{$set}($value, false);
+            $this->assertSame($value, $builder->{$get}(), 'Should replace');
+        });
+    }
+
+    /**
+     * Tests that adding non-assoc and assoc merge properly.
+     *
+     * @return void
+     */
+    public function testAddHelpers(): void
+    {
         $builder = new ViewBuilder();
-        $builder->{$set}($value);
+        $builder->addHelper('Form');
+        $builder->addHelpers(['Form' => ['config' => 'value']]);
 
-        $builder->{$set}(['Merged'], true);
-        $this->assertSame(array_merge($value, ['Merged']), $builder->{$get}(), 'Should merge');
-
-        $builder->{$set}($value, false);
-        $this->assertSame($value, $builder->{$get}(), 'Should replace');
+        $helpers = $builder->getHelpers();
+        $expected = [
+            'Form',
+            'Form' => [
+                'config' => 'value',
+            ],
+        ];
+        $this->assertSame($expected, $helpers);
     }
 
     /**
@@ -200,7 +225,7 @@ class ViewBuilderTest extends TestCase
             ->setTemplate('edit')
             ->setLayout('default')
             ->setTemplatePath('Articles/')
-            ->setHelpers(['Form', 'Html'])
+            ->setHelpers(['Form', 'Html'], false)
             ->setLayoutPath('Admin/')
             ->setTheme('TestTheme')
             ->setPlugin('TestPlugin')
@@ -270,7 +295,7 @@ class ViewBuilderTest extends TestCase
         $builder
             ->setTemplate('default')
             ->setLayout('test')
-            ->setHelpers(['Html'])
+            ->setHelpers(['Html'], false)
             ->setClassName('JsonView');
 
         $result = json_decode(json_encode($builder), true);
@@ -298,7 +323,7 @@ class ViewBuilderTest extends TestCase
         $builder
             ->setTemplate('default')
             ->setLayout('test')
-            ->setHelpers(['Html'])
+            ->setHelpers(['Html'], false)
             ->setClassName('JsonView');
 
         $result = json_encode($builder);
