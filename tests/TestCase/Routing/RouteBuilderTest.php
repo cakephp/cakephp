@@ -885,7 +885,7 @@ class RouteBuilderTest extends TestCase
     public function testScopeException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Need a valid callable to connect routes. Got `null` instead.');
+        $this->expectExceptionMessage('Need a valid Closure to connect routes.');
 
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
         $routes->scope('/v1', ['fail'], null);

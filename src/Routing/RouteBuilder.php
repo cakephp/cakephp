@@ -351,12 +351,12 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param callable|array $options Options to use when generating REST routes, or a callback.
-     * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
+     * @param \Closure|array $options Options to use when generating REST routes, or a callback.
+     * @param \Closure|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @return $this
      */
-    public function resources(string $name, callable|array $options = [], ?callable $callback = null)
+    public function resources(string $name, Closure|array $options = [], ?Closure $callback = null)
     {
         if (!is_array($options)) {
             $callback = $options;
@@ -827,13 +827,13 @@ class RouteBuilder
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param callable|array $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a callable.
-     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
+     * @param \Closure|array $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a Closure.
+     * @param \Closure|null $callback The callback to invoke that builds the prefixed routes.
      * @return $this
      * @throws \InvalidArgumentException If a valid callback is not passed
      */
-    public function prefix(string $name, callable|array $params = [], ?callable $callback = null)
+    public function prefix(string $name, Closure|array $params = [], ?Closure $callback = null)
     {
         if (!is_array($params)) {
             $callback = $params;
@@ -873,12 +873,12 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $name The plugin name to build routes for
-     * @param callable|array $options Either the options to use, or a callback to build routes.
-     * @param callable|null $callback The callback to invoke that builds the plugin routes
+     * @param \Closure|array $options Either the options to use, or a callback to build routes.
+     * @param \Closure|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return $this
      */
-    public function plugin(string $name, callable|array $options = [], ?callable $callback = null)
+    public function plugin(string $name, Closure|array $options = [], ?Closure $callback = null)
     {
         if (!is_array($options)) {
             $callback = $options;
@@ -906,23 +906,20 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
-     * @param callable|array $params Either the parameters to add to routes, or a callback.
-     * @param callable|null $callback The callback to invoke that builds the plugin routes.
+     * @param \Closure|array $params Either the parameters to add to routes, or a callback.
+     * @param \Closure|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $params is defined.
      * @return $this
      * @throws \InvalidArgumentException when there is no callable parameter.
      */
-    public function scope(string $path, callable|array $params, ?callable $callback = null)
+    public function scope(string $path, Closure|array $params, ?Closure $callback = null)
     {
-        if (is_callable($params)) {
+        if ($params instanceof Closure) {
             $callback = $params;
             $params = [];
         }
-        if (!is_callable($callback)) {
-            throw new InvalidArgumentException(sprintf(
-                'Need a valid callable to connect routes. Got `%s` instead.',
-                get_debug_type($callback)
-            ));
+        if ($callback === null) {
+            throw new InvalidArgumentException('Need a valid Closure to connect routes.');
         }
 
         if ($this->_path !== '/') {
