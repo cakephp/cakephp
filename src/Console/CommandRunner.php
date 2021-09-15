@@ -163,7 +163,6 @@ class CommandRunner implements EventDispatcherInterface
             return CommandInterface::CODE_ERROR;
         }
 
-        $result = CommandInterface::CODE_ERROR;
         $command = $this->getCommand($io, $commands, $name);
         $result = $this->runCommand($command, $argv, $io);
 
