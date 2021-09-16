@@ -72,7 +72,7 @@ class BelongsToMany extends Association
      *
      * @var \Cake\ORM\Table
      */
-    protected $_junctionTable;
+    protected Table $_junctionTable;
 
     /**
      * Junction table name
@@ -87,7 +87,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_junctionAssociationName;
+    protected string $_junctionAssociationName;
 
     /**
      * The name of the property to be set containing data from the junction table
@@ -116,7 +116,7 @@ class BelongsToMany extends Association
      *
      * @var \Cake\ORM\Table|string
      */
-    protected $_through;
+    protected Table|string $_through;
 
     /**
      * Valid strategies for this type of association
@@ -203,7 +203,7 @@ class BelongsToMany extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        if ($this->_foreignKey === null) {
+        if (!isset($this->_foreignKey)) {
             $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
         }
 
@@ -256,12 +256,12 @@ class BelongsToMany extends Association
      */
     public function junction(Table|string|null $table = null): Table
     {
-        if ($table === null && $this->_junctionTable !== null) {
+        if ($table === null && isset($this->_junctionTable)) {
             return $this->_junctionTable;
         }
 
         $tableLocator = $this->getTableLocator();
-        if ($table === null && $this->_through) {
+        if ($table === null && isset($this->_through)) {
             $table = $this->_through;
         } elseif ($table === null) {
             $tableName = $this->_junctionTableName();
@@ -463,7 +463,7 @@ class BelongsToMany extends Association
         $includeFields = $options['includeFields'] ?? null;
 
         // Attach the junction table as well we need it to populate _joinData.
-        $assoc = $this->_targetTable->getAssociation($junction->getAlias());
+        $assoc = $this->getTarget()->getAssociation($junction->getAlias());
         $newOptions = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $newOptions += [
             'conditions' => $cond,
@@ -1422,7 +1422,7 @@ class BelongsToMany extends Association
      */
     protected function _junctionAssociationName(): string
     {
-        if (!$this->_junctionAssociationName) {
+        if (!isset($this->_junctionAssociationName)) {
             $this->_junctionAssociationName = $this->getTarget()
                 ->getAssociation($this->junction()->getAlias())
                 ->getName();

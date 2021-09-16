@@ -108,16 +108,16 @@ abstract class Association
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
-     * @var array<string>|string|null
+     * @var array<string>|string
      */
-    protected array|string|null $_bindingKey = null;
+    protected array|string $_bindingKey;
 
     /**
      * The name of the field representing the foreign key to the table to load
      *
      * @var array<string>|string|false
      */
-    protected $_foreignKey;
+    protected array|string|false $_foreignKey;
 
     /**
      * A list of conditions to be always included when fetching records from
@@ -148,14 +148,14 @@ abstract class Association
      *
      * @var \Cake\ORM\Table
      */
-    protected $_sourceTable;
+    protected Table $_sourceTable;
 
     /**
      * Target table instance
      *
      * @var \Cake\ORM\Table
      */
-    protected $_targetTable;
+    protected Table $_targetTable;
 
     /**
      * The type of join to be used when adding the association to a query
@@ -170,7 +170,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_propertyName;
+    protected string $_propertyName;
 
     /**
      * The strategy name to be used to fetch associated records. Some association
@@ -251,7 +251,7 @@ abstract class Association
      */
     public function setName(string $name)
     {
-        if ($this->_targetTable !== null) {
+        if (isset($this->_targetTable)) {
             $alias = $this->_targetTable->getAlias();
             if ($alias !== $name) {
                 throw new InvalidArgumentException(sprintf(
@@ -312,7 +312,7 @@ abstract class Association
     public function setClassName(string $className)
     {
         if (
-            $this->_targetTable !== null &&
+            isset($this->_targetTable) &&
             get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
@@ -380,7 +380,7 @@ abstract class Association
      */
     public function getTarget(): Table
     {
-        if ($this->_targetTable === null) {
+        if (!isset($this->_targetTable)) {
             if (str_contains($this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
                 $registryAlias = (string)$plugin . $this->_name;
@@ -407,7 +407,7 @@ abstract class Association
 
                     throw new RuntimeException(sprintf(
                         $errorMessage,
-                        $this->_sourceTable === null ? 'null' : get_class($this->_sourceTable),
+                        isset($this->_sourceTable) ? get_class($this->_sourceTable) : 'null',
                         $this->getName(),
                         $this->type(),
                         get_class($this->_targetTable),
@@ -469,7 +469,7 @@ abstract class Association
      */
     public function getBindingKey(): array|string
     {
-        if ($this->_bindingKey === null) {
+        if (!isset($this->_bindingKey)) {
             $this->_bindingKey = $this->isOwningSide($this->getSource()) ?
                 $this->getSource()->getPrimaryKey() :
                 $this->getTarget()->getPrimaryKey();
@@ -590,7 +590,7 @@ abstract class Association
      */
     public function getProperty(): string
     {
-        if (!$this->_propertyName) {
+        if (!isset($this->_propertyName)) {
             $this->_propertyName = $this->_propertyName();
             if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)) {
                 $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
@@ -790,7 +790,7 @@ abstract class Association
      */
     protected function _appendNotMatching(Query $query, array $options): void
     {
-        $target = $this->_targetTable;
+        $target = $this->getTarget();
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
             $query->andWhere(function ($exp) use ($primaryKey) {
@@ -969,11 +969,11 @@ abstract class Association
             (empty($fields) && $options['includeFields']) ||
             $surrogate->isAutoFieldsEnabled()
         ) {
-            $fields = array_merge($fields, $this->_targetTable->getSchema()->columns());
+            $fields = array_merge($fields, $this->getTarget()->getSchema()->columns());
         }
 
         $query->select($query->aliasFields($fields, $this->_name));
-        $query->addDefaultTypes($this->_targetTable);
+        $query->addDefaultTypes($this->getTarget());
     }
 
     /**
