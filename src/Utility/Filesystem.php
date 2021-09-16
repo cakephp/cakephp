@@ -18,6 +18,7 @@ namespace Cake\Utility;
 
 use Cake\Core\Exception\CakeException;
 use CallbackFilterIterator;
+use Closure;
 use FilesystemIterator;
 use Iterator;
 use RecursiveCallbackFilterIterator;
@@ -47,12 +48,12 @@ class Filesystem
      * Find files / directories (non-recursively) in given directory path.
      *
      * @param string $path Directory path.
-     * @param mixed $filter If string will be used as regex for filtering using
+     * @param \Closure|string|null $filter If string will be used as regex for filtering using
      *   `RegexIterator`, if callable will be as callback for `CallbackFilterIterator`.
      * @param int|null $flags Flags for FilesystemIterator::__construct();
      * @return \Iterator
      */
-    public function find(string $path, $filter = null, ?int $flags = null): Iterator
+    public function find(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
@@ -70,13 +71,13 @@ class Filesystem
      * Find files/ directories recursively in given directory path.
      *
      * @param string $path Directory path.
-     * @param mixed $filter If string will be used as regex for filtering using
+     * @param \Closure|string|null $filter If string will be used as regex for filtering using
      *   `RegexIterator`, if callable will be as callback for `CallbackFilterIterator`.
      *   Hidden directories (starting with dot e.g. .git) are always skipped.
      * @param int|null $flags Flags for FilesystemIterator::__construct();
      * @return \Iterator
      */
-    public function findRecursive(string $path, $filter = null, ?int $flags = null): Iterator
+    public function findRecursive(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
@@ -110,10 +111,10 @@ class Filesystem
      * Wrap iterator in additional filtering iterator.
      *
      * @param \Iterator $iterator Iterator
-     * @param mixed $filter Regex string or callback.
+     * @param \Closure|string|null $filter Regex string or callback.
      * @return \Iterator
      */
-    protected function filterIterator(Iterator $iterator, $filter): Iterator
+    protected function filterIterator(Iterator $iterator, Closure|string|null $filter): Iterator
     {
         if (is_string($filter)) {
             return new RegexIterator($iterator, $filter);
