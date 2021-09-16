@@ -36,7 +36,7 @@ class TestPluginCacheEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
     }
 
