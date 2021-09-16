@@ -341,7 +341,7 @@ class MemcachedEngine extends CacheEngine
      * @return mixed The cached data, or default value if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         $key = $this->_key($key);
         $value = $this->_Memcached->get($key);

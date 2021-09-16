@@ -233,7 +233,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return mixed The value of the item from the cache, or $default in case of cache miss.
      * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
      */
-    abstract public function get($key, $default = null);
+    abstract public function get($key, $default = null): mixed;
 
     /**
      * Persists data in the cache, uniquely referenced by the given key with an optional expiration TTL time.

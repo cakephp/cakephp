@@ -164,7 +164,7 @@ class RedisEngine extends CacheEngine
      * @return mixed The cached data, or the default if the data doesn't exist, has
      *   expired, or if there was an error fetching it
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         $value = $this->_Redis->get($this->_key($key));
         if ($value === false) {
