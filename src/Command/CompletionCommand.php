@@ -147,7 +147,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     protected function getSubcommands(Arguments $args, ConsoleIo $io): int
     {
         $name = $args->getArgument('command');
-        if ($name === null || !strlen($name)) {
+        if ($name === null || $name === '') {
             return static::CODE_SUCCESS;
         }
 

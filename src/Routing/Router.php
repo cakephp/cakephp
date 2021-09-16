@@ -700,8 +700,8 @@ class Router
         $request = static::getRequest();
 
         if ($request) {
-            $base = $request->getAttribute('base');
-            if (strlen($base) && stristr($url, $base)) {
+            $base = $request->getAttribute('base', '');
+            if ($base !== '' && stristr($url, $base)) {
                 $url = preg_replace('/^' . preg_quote($base, '/') . '/', '', $url, 1);
             }
         }
