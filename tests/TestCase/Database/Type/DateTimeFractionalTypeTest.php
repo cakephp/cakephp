@@ -48,7 +48,7 @@ class DateTimeFractionalTypeTest extends TestCase
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
 
         Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/DateTimeFractionalTypeTest.php',
+            'src/I18n/Time.php',
         ]);
     }
 
@@ -219,7 +219,7 @@ class DateTimeFractionalTypeTest extends TestCase
     public function marshalProvider(): array
     {
         Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/DateTimeFractionalTypeTest.php',
+            'src/I18n/Time.php',
         ]);
 
         $data = [

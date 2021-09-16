@@ -48,7 +48,7 @@ class DateTimeTimezoneTypeTest extends TestCase
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
 
         Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/DateTimeTimezoneTypeTest.php',
+            'src/I18n/Time.php',
         ]);
     }
 
@@ -255,7 +255,7 @@ class DateTimeTimezoneTypeTest extends TestCase
     public function marshalProvider(): array
     {
         Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/DateTimeTimezoneTypeTest.php',
+            'src/I18n/Time.php',
         ]);
 
         $data = [

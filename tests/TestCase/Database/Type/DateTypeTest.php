@@ -48,10 +48,9 @@ class DateTypeTest extends TestCase
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
 
         Configure::write('Error.ignoredDeprecationPaths', [
-            'src/Database/Type/DateTimeType.php',
-            'src/I18n/DateFormatTrait.php',
-            'tests/TestCase/Database/Type/DateTypeTest.php',
-            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
+            'src/Database/Type/DateType.php',
+            'src/I18n/Date.php',
+            'src/I18n/Time.php',
         ]);
     }
 
@@ -109,7 +108,7 @@ class DateTypeTest extends TestCase
         $result = $this->type->toDatabase($value, $this->driver);
         $this->assertSame($value, $result);
 
-        $date = new Time('2013-08-12');
+        $date = new Date('2013-08-12');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12', $result);
 
@@ -126,7 +125,7 @@ class DateTypeTest extends TestCase
     public function marshalProvider(): array
     {
         Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/DateTypeTest.php',
+            'src/I18n/Date.php',
         ]);
 
         $date = new Date('@1392387900');
