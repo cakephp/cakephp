@@ -26,9 +26,11 @@ use PHPUnit\Runner\BeforeFirstTestHook;
 class PHPUnitExtension implements BeforeFirstTestHook
 {
     /**
-     * Constructor. Set the record only fixture manager as the singleton.
+     * Initializes before any tests are run.
+     *
+     * @return void
      */
-    public function __construct()
+    public function executeBeforeFirstTest(): void
     {
         $helper = new ConnectionHelper();
         $helper->addTestAliases();
@@ -42,17 +44,5 @@ class PHPUnitExtension implements BeforeFirstTestHook
                 'scopes' => ['queriesLog'],
             ]);
         }
-    }
-
-    /**
-     * First test hook.
-     *
-     * @return void
-     */
-    public function executeBeforeFirstTest(): void
-    {
-        // Do nothing as we setup in the constructor
-        // to avoid applications hitting non-test DB
-        // during bootstrap.
     }
 }
