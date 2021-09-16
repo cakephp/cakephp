@@ -24,6 +24,12 @@ use Cake\TestSuite\TestCase;
 
 class PHPUnitExtensionTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        ConnectionManager::dropAlias('fixture_schema');
+        ConnectionManager::drop('test_fixture_schema');
+    }
+
     /**
      * Test connection aliasing during construction.
      */
@@ -36,9 +42,8 @@ class PHPUnitExtensionTest extends TestCase
             'database' => TMP . 'fixture_schema.sqlite',
         ]);
         $this->assertNotContains('fixture_schema', ConnectionManager::configured());
-        $extension = new PHPUnitExtension();
 
-        $this->assertContains('test_fixture_schema', ConnectionManager::configured());
+        (new PHPUnitExtension())->executeBeforeFirstTest();
         $this->assertSame(
             ConnectionManager::get('test_fixture_schema'),
             ConnectionManager::get('fixture_schema')
@@ -47,7 +52,5 @@ class PHPUnitExtensionTest extends TestCase
             ConnectionManager::get('test'),
             ConnectionManager::get('default')
         );
-        $this->assertNull($extension->executeBeforeFirstTest());
-        ConnectionManager::drop('test_fixture_schema');
     }
 }
