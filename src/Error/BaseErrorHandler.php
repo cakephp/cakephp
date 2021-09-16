@@ -269,7 +269,7 @@ abstract class BaseErrorHandler
     public function increaseMemoryLimit(int $additionalKb): void
     {
         $limit = ini_get('memory_limit');
-        if (!strlen($limit) || $limit === '-1') {
+        if ($limit === false || $limit === '' || $limit === '-1') {
             return;
         }
         $limit = trim($limit);
