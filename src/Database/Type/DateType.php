@@ -68,7 +68,8 @@ class DateType extends DateTimeType
     {
         deprecationWarning(
             'Configuring immutable or mutable classes is deprecated and immutable'
-            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
+            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.',
+            0
         );
 
         $this->_setClassName(FrozenDate::class, DateTimeImmutable::class);
@@ -86,7 +87,8 @@ class DateType extends DateTimeType
     {
         deprecationWarning(
             'Configuring immutable or mutable classes is deprecated and immutable'
-            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.'
+            . ' classes will be the permanent configuration in 5.0. Calling `useImmutable()` is unnecessary.',
+            0
         );
 
         $this->_setClassName(Date::class, DateTime::class);

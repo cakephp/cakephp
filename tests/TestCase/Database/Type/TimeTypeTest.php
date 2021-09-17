@@ -49,8 +49,7 @@ class TimeTypeTest extends TestCase
 
         Configure::write('Error.ignoredDeprecationPaths', [
             'src/Database/Type/DateTimeType.php',
-            'tests/TestCase/Database/Type/TimeTypeTest.php',
-            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
+            'src/I18n/Time.php',
         ]);
     }
 
@@ -128,7 +127,7 @@ class TimeTypeTest extends TestCase
     public function marshalProvider(): array
     {
         Configure::write('Error.ignoredDeprecationPaths', [
-            'tests/TestCase/Database/Type/TimeTypeTest.php',
+            'src/I18n/Time.php',
         ]);
 
         $date = new Time('@1392387900');

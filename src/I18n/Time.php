@@ -130,7 +130,8 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
     public function __construct($time = null, $tz = null)
     {
         deprecationWarning(
-            'The `Time` class has been deprecated. Use the immutable alternative `FrozenTime` instead'
+            'The `Time` class has been deprecated. Use the immutable alternative `FrozenTime` instead',
+            0
         );
 
         if ($time instanceof DateTimeInterface) {

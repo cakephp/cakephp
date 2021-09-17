@@ -134,7 +134,8 @@ class Date extends MutableDate implements I18nDateTimeInterface
     public function __construct($time = 'now', $tz = null)
     {
         deprecationWarning(
-            'The `Date` class has been deprecated. Use the immutable alternative `FrozenDate` instead'
+            'The `Date` class has been deprecated. Use the immutable alternative `FrozenDate` instead',
+            0
         );
 
         parent::__construct($time, $tz);

@@ -40,9 +40,7 @@ class TimeTest extends TestCase
         $this->now = Time::getTestNow();
 
         Configure::write('Error.ignoredDeprecationPaths', [
-            'src/I18n/DateFormatTrait.php',
-            'tests/TestCase/I18n/TimeTest.php',
-            'vendor/cakephp/chronos/src/Traits/FactoryTrait.php',
+            'src/I18n/Time.php',
         ]);
     }
 

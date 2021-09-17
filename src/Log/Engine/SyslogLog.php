@@ -94,7 +94,8 @@ class SyslogLog extends BaseLog
         if (isset($config['format'])) {
             deprecationWarning(
                 '`format` option is now deprecated in favor of custom formatters. ' .
-                'Switching to `LegacySyslogFormatter`.'
+                'Switching to `LegacySyslogFormatter`.',
+                0
             );
             /** @psalm-suppress DeprecatedClass */
             $config['formatter'] = [

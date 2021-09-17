@@ -267,7 +267,7 @@ abstract class TestCase extends BaseTestCase
 
         if (static::$fixtureManager) {
             if ($this->dropTables) {
-                deprecationWarning('`$dropTables` is deprecated and will be removed in 5.0.');
+                deprecationWarning('`$dropTables` is deprecated and will be removed in 5.0.', 0);
             }
             // legacy fixtures are managed by FixtureInjector
             return;

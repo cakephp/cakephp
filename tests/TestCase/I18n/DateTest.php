@@ -36,8 +36,7 @@ class DateTest extends TestCase
         parent::setUp();
 
         Configure::write('Error.ignoredDeprecationPaths', [
-            'src/I18n/DateFormatTrait.php',
-            'tests/TestCase/I18n/DateTest.php',
+            'src/I18n/Date.php',
         ]);
     }
 

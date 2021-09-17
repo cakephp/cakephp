@@ -110,7 +110,7 @@ class FileLog extends BaseLog
         }
 
         if (isset($this->_config['dateFormat'])) {
-            deprecationWarning('`dateFormat` option should now be set in the formatter options.');
+            deprecationWarning('`dateFormat` option should now be set in the formatter options.', 0);
             $this->formatter->setConfig('dateFormat', $this->_config['dateFormat']);
         }
     }

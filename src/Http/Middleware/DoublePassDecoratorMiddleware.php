@@ -60,7 +60,8 @@ class DoublePassDecoratorMiddleware implements MiddlewareInterface
     {
         deprecationWarning(
             '"Double pass" middleware are deprecated. Use a `Closure` with the signature of'
-            . ' `($request, $handler)` or a class which implements `Psr\Http\Server\MiddlewareInterface` instead.'
+            . ' `($request, $handler)` or a class which implements `Psr\Http\Server\MiddlewareInterface` instead.',
+            0
         );
         $this->callable = $callable;
     }
