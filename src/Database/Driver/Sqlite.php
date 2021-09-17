@@ -43,7 +43,7 @@ class Sqlite extends Driver
      *
      * - `mask` The mask used for created database
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_baseConfig = [
         'persistent' => false,

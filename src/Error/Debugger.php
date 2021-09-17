@@ -113,7 +113,7 @@ class Debugger
     /**
      * A map of editors to their link templates.
      *
-     * @var array<string, string>
+     * @var array<string, string|callable>
      */
     protected $editors = [
         'atom' => 'atom://core/open/file?filename={file}&line={line}',

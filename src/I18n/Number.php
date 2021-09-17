@@ -60,7 +60,7 @@ class Number
     /**
      * A list of number formatters indexed by locale and type
      *
-     * @var array<string, array<int, array>>
+     * @var array<string, array<int, mixed>>
      */
     protected static $_formatters = [];
 
