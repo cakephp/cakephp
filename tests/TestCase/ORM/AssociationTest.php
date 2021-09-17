@@ -77,42 +77,58 @@ class AssociationTest extends TestCase
 
     /**
      * Tests that setName()
+     *
+     * @deprecated
      */
     public function testSetName(): void
     {
-        $this->assertSame('Foo', $this->association->getName());
-        $this->assertSame($this->association, $this->association->setName('Bar'));
-        $this->assertSame('Bar', $this->association->getName());
+        $this->deprecated(function () {
+            $this->assertSame('Foo', $this->association->getName());
+            $this->assertSame($this->association, $this->association->setName('Bar'));
+            $this->assertSame('Bar', $this->association->getName());
+        });
     }
 
     /**
      * Tests that setName() succeeds before the target table is resolved.
+     *
+     * @deprecated
      */
     public function testSetNameBeforeTarget(): void
     {
-        $this->association->setName('Bar');
-        $this->assertSame('Bar', $this->association->getName());
+        $this->deprecated(function () {
+            $this->association->setName('Bar');
+            $this->assertSame('Bar', $this->association->getName());
+        });
     }
 
     /**
      * Tests that setName() fails after the target table is resolved.
+     *
+     * @deprecated
      */
     public function testSetNameAfterTarget(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Association name "Bar" does not match target table alias');
-        $this->association->getTarget();
-        $this->association->setName('Bar');
+        $this->deprecated(function () {
+            $this->association->getTarget();
+            $this->association->setName('Bar');
+        });
     }
 
     /**
      * Tests that setName() succeeds if name equals target table alias.
+     *
+     * @deprecated
      */
     public function testSetNameToTargetAlias(): void
     {
-        $alias = $this->association->getTarget()->getAlias();
-        $this->association->setName($alias);
-        $this->assertSame($alias, $this->association->getName());
+        $this->deprecated(function () {
+            $alias = $this->association->getTarget()->getAlias();
+            $this->association->setName($alias);
+            $this->assertSame($alias, $this->association->getName());
+        });
     }
 
     /**
