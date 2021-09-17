@@ -48,7 +48,7 @@ class BelongsTo extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        if ($this->_foreignKey === null) {
+        if (!isset($this->_foreignKey)) {
             $this->_foreignKey = $this->_modelKey($this->getTarget()->getAlias());
         }
 

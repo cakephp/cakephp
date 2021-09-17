@@ -17,6 +17,7 @@
     </projectFiles>
 
     <issueHandlers>
+        <RedundantPropertyInitializationCheck errorLevel="suppress"/>
         <RedundantConditionGivenDocblockType errorLevel="suppress"/>
         <RedundantCastGivenDocblockType errorLevel="suppress"/>
         <DocblockTypeContradiction errorLevel="suppress"/>
