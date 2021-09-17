@@ -50,7 +50,6 @@ class SchemaLoader
      * @var array<string, mixed>
      */
     protected $_defaultConfig = [
-        'dropTables' => true,
         'outputLevel' => ConsoleIo::QUIET,
     ];
 
