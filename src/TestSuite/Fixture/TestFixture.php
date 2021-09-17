@@ -90,7 +90,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * Fixture constraints to be created.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_constraints = [];
 
@@ -328,7 +328,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     public function insert(ConnectionInterface $connection)
     {
-        if (isset($this->records) && !empty($this->records)) {
+        if (!empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
             $query = $connection->newQuery()
                 ->insert($fields, $types)

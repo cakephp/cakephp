@@ -31,7 +31,7 @@ class Schema
     /**
      * The default values for fields.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_fieldDefaults = [
         'type' => null,

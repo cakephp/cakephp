@@ -28,7 +28,7 @@ class ConsoleFormatter implements FormatterInterface
     /**
      * text colors used in colored output.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $styles = [
         // bold yellow

@@ -89,7 +89,7 @@ class Component implements EventListenerInterface
     /**
      * A component lookup table used to lazy load component objects.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_componentMap = [];
 

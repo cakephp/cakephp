@@ -31,7 +31,7 @@ class PluralRules
      * A map of locale => plurals group used to determine
      * which plural rules apply to the language
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_rulesMap = [
         'af' => 1,

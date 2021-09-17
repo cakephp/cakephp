@@ -113,7 +113,7 @@ class Log
     /**
      * An array mapping url schemes to fully qualified Log engine class names
      *
-     * @var array<string>
+     * @var array<string, string>
      * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [
@@ -156,7 +156,7 @@ class Log
      * Log levels as detailed in RFC 5424
      * https://tools.ietf.org/html/rfc5424
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_levelMap = [
         'emergency' => LOG_EMERG,

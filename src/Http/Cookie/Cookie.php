@@ -115,8 +115,8 @@ class Cookie implements CookieInterface
     /**
      * Default attributes for a cookie.
      *
-     * @var array
-     * @see \Cake\Cookie\Cookie::setDefaults()
+     * @var array<string, mixed>
+     * @see \Cake\Http\Cookie\Cookie::setDefaults()
      */
     protected static $defaults = [
         'expires' => null,

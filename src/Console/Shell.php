@@ -143,7 +143,7 @@ class Shell
     /**
      * Contains the loaded tasks
      *
-     * @var array
+     * @var array<string>
      */
     public $taskNames = [];
 
@@ -157,7 +157,7 @@ class Shell
     /**
      * Normalized map of tasks.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_taskMap = [];
 

@@ -54,7 +54,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_config = [
         'key' => 'csrfToken',

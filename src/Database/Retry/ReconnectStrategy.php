@@ -33,7 +33,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      *
      * This is a static variable to enable opcache to inline the values.
      *
-     * @var array
+     * @var array<string>
      */
     protected static $causes = [
         'gone away',

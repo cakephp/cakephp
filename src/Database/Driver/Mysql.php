@@ -53,7 +53,7 @@ class Mysql extends Driver
     /**
      * Base configuration settings for MySQL driver
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_baseConfig = [
         'persistent' => true,
@@ -102,7 +102,7 @@ class Mysql extends Driver
     /**
      * Mapping of feature to db server version for feature availability checks.
      *
-     * @var array
+     * @var array<string, array<string, string>>
      */
     protected $featureVersions = [
         'mysql' => [

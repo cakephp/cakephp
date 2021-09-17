@@ -29,7 +29,7 @@ class TextareaWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaults = [
         'val' => '',

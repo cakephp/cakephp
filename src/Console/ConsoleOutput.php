@@ -93,7 +93,7 @@ class ConsoleOutput
     /**
      * text colors used in colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_foregroundColors = [
         'black' => 30,
@@ -109,7 +109,7 @@ class ConsoleOutput
     /**
      * background colors used in colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_backgroundColors = [
         'black' => 40,
@@ -125,7 +125,7 @@ class ConsoleOutput
     /**
      * Formatting options for colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_options = [
         'bold' => 1,
@@ -138,7 +138,7 @@ class ConsoleOutput
      * Styles that are available as tags in console output.
      * You can modify these styles with ConsoleOutput::styles()
      *
-     * @var array<string, mixed>
+     * @var array<string, array>
      */
     protected static $_styles = [
         'emergency' => ['text' => 'red'],

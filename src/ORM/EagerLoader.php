@@ -50,7 +50,7 @@ class EagerLoader
      * List of options accepted by associations in contain()
      * index by key for faster access
      *
-     * @var array
+     * @var array<string, int>
      */
     protected $_containOptions = [
         'associations' => 1,
