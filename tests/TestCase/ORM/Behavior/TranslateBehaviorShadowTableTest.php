@@ -20,7 +20,6 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
-use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\Utility\Hash;
@@ -30,7 +29,7 @@ use TestApp\Model\Entity\TranslateBakedArticle;
 /**
  * TranslateBehavior test case
  */
-class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
+class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 {
     protected array $fixtures = [
         'core.Articles',

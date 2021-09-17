@@ -36,7 +36,7 @@ use TestApp\Model\Table\CustomI18nTable;
 /**
  * Translate behavior test case
  */
-class TranslateBehaviorTest extends TestCase
+class TranslateBehaviorEavTest extends TestCase
 {
     /**
      * fixtures
