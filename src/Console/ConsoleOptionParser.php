@@ -773,7 +773,7 @@ class ConsoleOptionParser
                     ->addOptions($this->options())
                     ->addArguments($this->arguments());
             }
-            if (strlen($subparser->getDescription()) === 0) {
+            if ($subparser->getDescription() === '') {
                 $subparser->setDescription($command->getRawHelp());
             }
             $subparser->setCommand($this->getCommand() . ' ' . $subcommand);

@@ -4091,9 +4091,8 @@ class TableTest extends TestCase
             ->getMock();
 
         try {
-            $articles->belongsTo('authors')
+            $articles->belongsTo('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Authors')
                 ->setTarget($authors)
                 ->setBindingKey('id')
                 ->setConditions([])
@@ -4115,9 +4114,8 @@ class TableTest extends TestCase
             ->getMock();
 
         try {
-            $authors->hasOne('articles')
+            $authors->hasOne('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Articles')
                 ->setDependent(true)
                 ->setBindingKey('id')
                 ->setConditions([])
@@ -4141,9 +4139,8 @@ class TableTest extends TestCase
             ->getMock();
 
         try {
-            $authors->hasMany('articles')
+            $authors->hasMany('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Articles')
                 ->setDependent(true)
                 ->setSort(['created' => 'DESC'])
                 ->setBindingKey('id')
@@ -4168,9 +4165,8 @@ class TableTest extends TestCase
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
         try {
-            $authors->belongsToMany('articles')
+            $authors->belongsToMany('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Articles')
                 ->setDependent(true)
                 ->setTargetForeignKey('article_id')
                 ->setBindingKey('id')

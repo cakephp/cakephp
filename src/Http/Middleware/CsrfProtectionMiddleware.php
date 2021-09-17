@@ -143,7 +143,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if (is_string($cookieData) && strlen($cookieData) > 0) {
+        if (is_string($cookieData) && $cookieData !== '') {
             $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
         }
 

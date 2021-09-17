@@ -248,6 +248,8 @@ abstract class Association
      *
      * @param string $name Name to be assigned
      * @return $this
+     * @deprecated 4.3.0 Changing the association name after object creation is
+     *   no longer supported. The name should only be set through the constructor.
      */
     public function setName(string $name)
     {

@@ -440,7 +440,7 @@ class ServerRequest implements ServerRequestInterface
         if (!empty($ref) && !empty($base)) {
             if ($local && str_starts_with($ref, $base)) {
                 $ref = substr($ref, strlen($base));
-                if (!strlen($ref) || str_starts_with($ref, '//')) {
+                if ($ref === '' || str_starts_with($ref, '//')) {
                     $ref = '/';
                 }
                 if ($ref[0] !== '/') {

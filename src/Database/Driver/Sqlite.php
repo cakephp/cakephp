@@ -125,7 +125,7 @@ class Sqlite extends Driver
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        if (!is_string($config['database']) || !strlen($config['database'])) {
+        if (!is_string($config['database']) || $config['database'] === '') {
             $name = $config['name'] ?? 'unknown';
             throw new InvalidArgumentException(
                 "The `database` key for the `{$name}` SQLite connection needs to be a non-empty string."

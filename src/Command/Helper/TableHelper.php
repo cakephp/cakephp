@@ -116,7 +116,7 @@ class TableHelper extends Helper
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
-            if (strlen($column) > 0 && preg_match('#(.*)<text-right>.+</text-right>(.*)#', $column, $matches)) {
+            if ($column !== '' && preg_match('#(.*)<text-right>.+</text-right>(.*)#', $column, $matches)) {
                 if ($matches[1] !== '' || $matches[2] !== '') {
                     throw new UnexpectedValueException('You cannot include text before or after the text-right tag.');
                 }
