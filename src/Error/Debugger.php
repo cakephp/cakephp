@@ -77,7 +77,7 @@ class Debugger
      * Templates used when generating trace or error strings. Can be global or indexed by the format
      * value used in $_outputFormat.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected $_templates = [
         'log' => [
@@ -113,7 +113,7 @@ class Debugger
     /**
      * A map of editors to their link templates.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $editors = [
         'atom' => 'atom://core/open/file?filename={file}&line={line}',

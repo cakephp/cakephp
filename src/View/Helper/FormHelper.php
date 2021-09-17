@@ -158,7 +158,7 @@ class FormHelper extends Helper
     /**
      * Default widgets
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultWidgets = [
         'button' => ['Button'],

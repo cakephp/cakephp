@@ -175,9 +175,9 @@ class ServerRequest implements ServerRequestInterface
     protected $attributes = [];
 
     /**
-     * A list of propertes that emulated by the PSR7 attribute methods.
+     * A list of properties that emulated by the PSR7 attribute methods.
      *
-     * @var array
+     * @var array<string>
      */
     protected $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
 

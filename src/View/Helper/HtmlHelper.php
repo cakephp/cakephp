@@ -81,14 +81,14 @@ class HtmlHelper extends Helper
     /**
      * Names of script & css files that have been included once
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_includedAssets = [];
 
     /**
      * Options for the currently opened script block buffer if any.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_scriptBlockOptions = [];
 

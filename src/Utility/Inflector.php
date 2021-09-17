@@ -29,7 +29,7 @@ class Inflector
     /**
      * Plural inflector rules
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_plural = [
         '/(s)tatus$/i' => '\1tatuses',
@@ -60,7 +60,7 @@ class Inflector
     /**
      * Singular inflector rules
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_singular = [
         '/(s)tatuses$/i' => '\1\2tatus',
@@ -102,7 +102,7 @@ class Inflector
     /**
      * Irregular rules
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_irregular = [
         'atlas' => 'atlases',
@@ -152,7 +152,7 @@ class Inflector
     /**
      * Words that should not be inflected
      *
-     * @var array
+     * @var array<string>
      */
     protected static $_uninflected = [
         '.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',

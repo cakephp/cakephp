@@ -55,8 +55,17 @@ class QueryTest extends TestCase
         'core.MenuLinkTrees',
     ];
 
+    /**
+     * @var int
+     */
     public const ARTICLE_COUNT = 3;
+    /**
+     * @var int
+     */
     public const AUTHOR_COUNT = 4;
+    /**
+     * @var int
+     */
     public const COMMENT_COUNT = 6;
 
     /**

@@ -38,7 +38,7 @@ class StringTemplate
     /**
      * List of attributes that can be made compact.
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $_compactAttributes = [
         'allowfullscreen' => true,
@@ -101,7 +101,7 @@ class StringTemplate
     /**
      * Contains the list of compiled templates
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_compiled = [];
 

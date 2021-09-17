@@ -56,7 +56,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * The DateTime formats allowed by `marshal()`.
      *
-     * @var array
+     * @var array<string>
      */
     protected $_marshalFormats = [
         'Y-m-d H:i',

@@ -38,7 +38,7 @@ class BasicWidget implements WidgetInterface
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaults = [
         'name' => '',

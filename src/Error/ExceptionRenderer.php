@@ -102,7 +102,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * This can be customized for users that don't want specific exceptions to throw 404 errors
      * or want their application exceptions to be automatically converted.
      *
-     * @var array
+     * @var array<string, int>
      * @psalm-var array<class-string<\Throwable>, int>
      */
     protected $exceptionHttpCodes = [

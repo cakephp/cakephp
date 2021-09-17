@@ -44,7 +44,7 @@ class ExistsIn
     /**
      * Options for the constructor
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_options = [];
 

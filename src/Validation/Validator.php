@@ -130,8 +130,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Holds the ValidationSet objects array
      *
-     * @var array<\Cake\Validation\ValidationSet>
-     * @psalm-var array<string, \Cake\Validation\ValidationSet>
+     * @var array<string, \Cake\Validation\ValidationSet>
      */
     protected $_fields = [];
 

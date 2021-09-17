@@ -51,7 +51,7 @@ class RouteBuilder
     /**
      * Default HTTP request method => controller action map.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected static $_resourceMap = [
         'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
