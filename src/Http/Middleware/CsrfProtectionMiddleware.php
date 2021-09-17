@@ -149,7 +149,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
         if (is_string($cookieData) && strlen($cookieData) > 0) {
-            $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
+            try {
+                $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
+            } catch (RuntimeException $e) {
+                $cookieData = null;
+            }
         }
 
         if ($method === 'GET' && $cookieData === null) {
@@ -277,6 +281,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return $token;
         }
         $decoded = base64_decode($token, true);
+        if ($decoded === false) {
+            throw new RuntimeException('Invalid token data.');
+        }
+
         $length = strlen($decoded);
         $salt = Security::randomBytes($length);
         $salted = '';
