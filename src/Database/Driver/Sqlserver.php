@@ -258,7 +258,7 @@ class Sqlserver extends Driver
      */
     public function enableForeignKeySQL(): string
     {
-        return 'EXEC sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"';
+        return 'EXEC sp_MSforeachtable "ALTER TABLE ? CHECK CONSTRAINT all"';
     }
 
     /**

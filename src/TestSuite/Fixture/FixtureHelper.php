@@ -159,11 +159,11 @@ class FixtureHelper
     public function truncate(array $fixtures): void
     {
         $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
-            //$connection->disableConstraints(function () use ($connection, $groupFixtures) {
-            foreach ($groupFixtures as $fixture) {
-                $fixture->truncate($connection);
-            }
-            //});
+            $connection->disableConstraints(function () use ($connection, $groupFixtures) {
+                foreach ($groupFixtures as $fixture) {
+                    $fixture->truncate($connection);
+                }
+            });
         }, $fixtures);
     }
 }
