@@ -243,33 +243,6 @@ abstract class Association
     }
 
     /**
-     * Sets the name for this association, usually the alias
-     * assigned to the target associated table
-     *
-     * @param string $name Name to be assigned
-     * @return $this
-     * @deprecated 4.3.0 Changing the association name after object creation is
-     *   no longer supported. The name should only be set through the constructor.
-     */
-    public function setName(string $name)
-    {
-        if (isset($this->_targetTable)) {
-            $alias = $this->_targetTable->getAlias();
-            if ($alias !== $name) {
-                throw new InvalidArgumentException(sprintf(
-                    'Association name "%s" does not match target table alias "%s".',
-                    $name,
-                    $alias
-                ));
-            }
-        }
-
-        $this->_name = $name;
-
-        return $this;
-    }
-
-    /**
      * Gets the name for this association, usually the alias
      * assigned to the target associated table
      *
