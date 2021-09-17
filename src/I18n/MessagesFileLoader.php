@@ -55,7 +55,7 @@ class MessagesFileLoader
      * Creates a translation file loader. The file to be loaded corresponds to
      * the following rules:
      *
-     * - The locale is a folder under the `Locale` directory, a fallback will be
+     * - The locale is a folder under the `resources/locales/` directory, a fallback will be
      *   used if the folder is not found.
      * - The $name corresponds to the file name to load
      * - If there is a loaded plugin with the underscored version of $name, the
@@ -82,6 +82,8 @@ class MessagesFileLoader
      * ```
      * $loader = new MessagesFileLoader('my_plugin', 'fr_FR', 'mo');
      * $package = $loader();
+     *
+     * Vendor prefixed plugins are expected to use `my_prefix_my_plugin` syntax.
      * ```
      *
      * @param string $name The name (domain) of the translations package.
@@ -108,27 +110,12 @@ class MessagesFileLoader
     public function __invoke(): Package|false
     {
         $folders = $this->translationsFolders();
-        $ext = $this->_extension;
-        $file = false;
-
-        $fileName = $this->_name;
-        $pos = strpos($fileName, '/');
-        if ($pos !== false) {
-            $fileName = substr($fileName, $pos + 1);
-        }
-        foreach ($folders as $folder) {
-            $path = $folder . $fileName . ".$ext";
-            if (is_file($path)) {
-                $file = $path;
-                break;
-            }
-        }
-
+        $file = $this->translationFile($folders, $this->_name, $this->_extension);
         if (!$file) {
             return false;
         }
 
-        $name = ucfirst($ext);
+        $name = ucfirst($this->_extension);
         $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
@@ -172,12 +159,35 @@ class MessagesFileLoader
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
         if (Plugin::isLoaded($pluginName)) {
-            $basePath = App::path('locales', $pluginName)[0];
+            $basePath = Plugin::path($pluginName) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
             foreach ($folders as $folder) {
                 $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
             }
         }
 
         return $searchPaths;
+    }
+
+    /**
+     * @param array<string> $folders Folders
+     * @param string $name File name
+     * @param string $ext File extension
+     * @return string|null File if found
+     */
+    protected function translationFile(array $folders, string $name, string $ext): ?string
+    {
+        $file = null;
+
+        $name = str_replace('/', '_', $name);
+
+        foreach ($folders as $folder) {
+            $path = $folder . $name . ".$ext";
+            if (is_file($path)) {
+                $file = $path;
+                break;
+            }
+        }
+
+        return $file;
     }
 }

@@ -618,12 +618,6 @@ class I18nExtractCommand extends Command
                 $output .= $header . $sentence;
             }
 
-            // Remove vendor prefix if present.
-            $slashPosition = strpos($domain, '/');
-            if ($slashPosition !== false) {
-                $domain = substr($domain, $slashPosition + 1);
-            }
-
             $filename = str_replace('/', '_', $domain) . '.pot';
             $outputPath = $this->_output . $filename;
 
@@ -833,11 +827,15 @@ class I18nExtractCommand extends Command
 
         foreach ($this->_paths as $path) {
             $path = realpath($path) . DIRECTORY_SEPARATOR;
+            if (!is_dir($path)) {
+                continue;
+            }
+
             $fs = new Filesystem();
             $files = $fs->findRecursive($path, '/\.php$/');
             $files = array_keys(iterator_to_array($files));
             sort($files);
-            if (!empty($pattern)) {
+            if ($pattern) {
                 $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
                 $files = array_values($files);
             }
