@@ -47,14 +47,6 @@ class SqlserverCompiler extends QueryCompiler
     ];
 
     /**
-     * @inheritDoc
-     */
-    protected $_selectParts = [
-        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'offset', 'limit', 'union', 'epilog',
-    ];
-
-    /**
      * Helper function used to build the string representation of a `WITH` clause,
      * it constructs the CTE definitions list without generating the `RECURSIVE`
      * keyword that is neither required nor valid.
