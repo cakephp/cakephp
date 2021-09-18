@@ -106,7 +106,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Valid column length that can be used with text type columns
      *
-     * @var array
+     * @var array<string, int>
      */
     public static array $columnLengths = [
         'tiny' => self::LENGTH_TINY,
@@ -118,7 +118,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * The valid keys that can be used in a column
      * definition.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $_columnKeys = [
         'type' => null,
@@ -133,7 +133,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Additional type specific properties.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected static array $_columnExtras = [
         'string' => [
@@ -171,7 +171,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * The valid keys that can be used in an index
      * definition.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $_indexKeys = [
         'type' => null,
@@ -185,7 +185,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Names of the valid index types.
      *
-     * @var array
+     * @var array<string>
      */
     protected static array $_validIndexTypes = [
         self::INDEX_INDEX,
@@ -195,7 +195,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Names of the valid constraint types.
      *
-     * @var array
+     * @var array<string>
      */
     protected static array $_validConstraintTypes = [
         self::CONSTRAINT_PRIMARY,
@@ -206,7 +206,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Names of the valid foreign key actions.
      *
-     * @var array
+     * @var array<string>
      */
     protected static array $_validForeignKeyActions = [
         self::ACTION_CASCADE,

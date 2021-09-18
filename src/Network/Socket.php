@@ -77,7 +77,7 @@ class Socket
     /**
      * Contains all the encryption methods available
      *
-     * @var array
+     * @var array<string, int>
      */
     protected array $_encryptMethods = [
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,

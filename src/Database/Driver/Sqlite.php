@@ -43,7 +43,7 @@ class Sqlite extends Driver
      *
      * - `mask` The mask used for created database
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_baseConfig = [
         'persistent' => false,
@@ -87,7 +87,7 @@ class Sqlite extends Driver
     /**
      * Mapping of date parts.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $_dateParts = [
         'day' => 'd',
@@ -102,7 +102,7 @@ class Sqlite extends Driver
     /**
      * Mapping of feature to db server version for feature availability checks.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $featureVersions = [
         'cte' => '3.8.3',

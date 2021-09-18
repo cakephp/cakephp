@@ -34,7 +34,7 @@ class IsUnique
     /**
      * The unique check options
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_options = [
         'allowMultipleNulls' => false,

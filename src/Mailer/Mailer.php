@@ -171,10 +171,10 @@ class Mailer implements EventListenerInterface
     protected ?Renderer $renderer = null;
 
     /**
-     * Hold message, renderer and transport instance for restoring after runnning
+     * Hold message, renderer and transport instance for restoring after running
      * a mailer action.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $clonedInstances = [
         'message' => null,
@@ -185,7 +185,7 @@ class Mailer implements EventListenerInterface
     /**
      * Mailer driver class map.
      *
-     * @var array
+     * @var array<string, string>
      * @psalm-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [];

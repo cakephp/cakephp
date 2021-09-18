@@ -57,7 +57,7 @@ class Response implements ResponseInterface, Stringable
     /**
      * Allowed HTTP status codes and their default description.
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected array $_statusCodes = [
         100 => 'Continue',
@@ -130,7 +130,7 @@ class Response implements ResponseInterface, Stringable
     /**
      * Holds type key to mime type mappings for known mime types.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_mimeTypes = [
         'html' => ['text/html', '*/*'],

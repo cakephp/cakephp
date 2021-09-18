@@ -40,9 +40,9 @@ class Text
     protected static string $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
     /**
-     * Default html tags who must not be count for truncate text.
+     * Default HTML tags which must not be counted for truncating text.
      *
-     * @var array
+     * @var array<string>
      */
     protected static array $_defaultHtmlNoCount = [
         'style',
@@ -397,6 +397,7 @@ class Text
     /**
      * Unicode and newline aware version of wordwrap.
      *
+     * @phpstan-param non-empty-string $break
      * @param string $text The text to format.
      * @param int $width The width to wrap to. Defaults to 72.
      * @param string $break The line is broken using the optional break parameter. Defaults to '\n'.

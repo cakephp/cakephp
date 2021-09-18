@@ -32,7 +32,7 @@ class QueryCompiler
      * this query. There are some clauses that can be built as just as the
      * direct concatenation of the internal parts, those are listed here.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $_templates = [
         'delete' => 'DELETE',
@@ -48,7 +48,7 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var array
+     * @var array<string>
      */
     protected array $_selectParts = [
         'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
@@ -58,21 +58,22 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var array
+     * @var array<string>
+     * @deprecated Not used.
      */
     protected array $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var array
+     * @var array<string>
      */
     protected array $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var array
+     * @var array<string>
      */
     protected array $_insertParts = ['with', 'insert', 'values', 'epilog'];
 

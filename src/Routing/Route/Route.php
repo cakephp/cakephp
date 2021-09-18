@@ -96,12 +96,14 @@ class Route
     /**
      * Valid HTTP methods.
      *
-     * @var array
+     * @var array<string>
      */
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
      * Regex for matching braced placholders in route template.
+     *
+     * @var string
      */
     protected const PLACEHOLDER_REGEX = '#\{([a-z][a-z0-9-_]*)\}#i';
 

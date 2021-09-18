@@ -61,7 +61,7 @@ class Helper implements EventListenerInterface
     /**
      * A helper lookup table used to lazy load helper objects.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected array $_helperMap = [];
 

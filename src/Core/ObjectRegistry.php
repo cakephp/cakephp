@@ -288,7 +288,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * easier
      *
      * @param array $objects Array of child objects to normalize.
-     * @return array<array> Array of normalized objects.
+     * @return array<string, array> Array of normalized objects.
      */
     public function normalizeArray(array $objects): array
     {

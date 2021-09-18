@@ -54,7 +54,7 @@ class TextHelper extends Helper
      * An array of hashes and their contents.
      * Used when inserting links into text.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected array $_placeholders = [];
 

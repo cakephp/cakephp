@@ -713,6 +713,7 @@ class Hash
      * into a multi-dimensional array. So, `['0.Foo.Bar' => 'Far']` becomes
      * `[['Foo' => ['Bar' => 'Far']]]`.
      *
+     * @phpstan-param non-empty-string $separator
      * @param array $data Flattened array
      * @param string $separator The delimiter used
      * @return array

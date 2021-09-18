@@ -196,7 +196,7 @@ class Message implements JsonSerializable
     /**
      * Available formats to be sent.
      *
-     * @var array
+     * @var array<string>
      */
     protected array $emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
 
@@ -233,7 +233,7 @@ class Message implements JsonSerializable
     /**
      * Available encoding to be set for transfer.
      *
-     * @var array
+     * @var array<string>
      */
     protected array $transferEncodingAvailable = [
         '7bit',
@@ -276,14 +276,14 @@ class Message implements JsonSerializable
     /**
      * 8Bit character sets
      *
-     * @var array
+     * @var array<string>
      */
     protected array $charset8bit = ['UTF-8', 'SHIFT_JIS'];
 
     /**
      * Define Content-Type charset name
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $contentTypeCharset = [
         'ISO-2022-JP-MS' => 'ISO-2022-JP',

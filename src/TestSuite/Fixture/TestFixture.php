@@ -90,7 +90,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * Fixture constraints to be created.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_constraints = [];
 

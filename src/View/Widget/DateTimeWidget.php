@@ -44,7 +44,7 @@ class DateTimeWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $defaults = [
         'name' => '',
@@ -73,7 +73,7 @@ class DateTimeWidget extends BasicWidget
      *
      * If not set, defaults to browser default.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $defaultStep = [
         'datetime-local' => '1',

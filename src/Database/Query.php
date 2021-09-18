@@ -74,7 +74,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     /**
      * List of SQL parts that will be used to build this query.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_parts = [
         'delete' => true,

@@ -62,7 +62,7 @@ abstract class Driver implements DriverInterface
      * Base configuration that is merged into the user
      * supplied configuration data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_baseConfig = [];
 

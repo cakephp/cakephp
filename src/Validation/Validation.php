@@ -116,7 +116,7 @@ class Validation
     /**
      * Some complex patterns needed in multiple places
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static array $_pattern = [
         'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',

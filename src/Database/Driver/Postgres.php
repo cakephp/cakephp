@@ -42,7 +42,7 @@ class Postgres extends Driver
     /**
      * Base configuration settings for Postgres driver
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_baseConfig = [
         'persistent' => true,
