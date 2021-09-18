@@ -110,6 +110,7 @@ class SyslogLogTest extends TestCase
     {
         $this->expectDeprecation();
         $this->expectDeprecationMessage('`format` option is now deprecated in favor of custom formatters');
+        $this->expectDeprecationMessage('SyslogLog.php');
         new SyslogLog(['format' => 'custom %s: %s']);
     }
 

@@ -520,7 +520,7 @@ class PaginatorComponentTest extends TestCase
     /**
      * test that modifying the whitelist works.
      */
-    public function testMergeOptionsExtraWhitelist(): void
+    public function testDeprecatedMergeOptionsExtraWhitelist(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => 10,
@@ -548,6 +548,39 @@ class PaginatorComponentTest extends TestCase
             ];
             $this->assertEquals($expected, $result);
         });
+    }
+
+    /**
+     * Test path for deprecated whitelist.
+     */
+    public function testDeprecatedPathMergeOptionsExtraWhitelist(): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('Paginator.php');
+        $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
+            'page' => 10,
+            'limit' => 10,
+            'fields' => ['bad.stuff'],
+            'recursive' => 1000,
+            'conditions' => ['bad.stuff'],
+            'contain' => ['bad'],
+        ]));
+        $settings = [
+            'page' => 1,
+            'limit' => 20,
+            'maxLimit' => 100,
+        ];
+
+        $this->Paginator->setConfig('whitelist', ['fields']);
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 10,
+            'limit' => 10,
+            'maxLimit' => 100,
+            'fields' => ['bad.stuff'],
+            'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
+        ];
     }
 
     /**
