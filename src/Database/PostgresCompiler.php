@@ -36,7 +36,9 @@ class PostgresCompiler extends QueryCompiler
     protected bool $_quotedSelectAliases = true;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @var array<string, string>
      */
     protected array $_templates = [
         'delete' => 'DELETE',

@@ -31,7 +31,9 @@ class TimeType extends DateTimeType
     protected string $_format = 'H:i:s';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @var array<string>
      */
     protected array $_marshalFormats = [
         'H:i:s',

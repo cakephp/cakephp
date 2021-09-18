@@ -35,7 +35,9 @@ class SqlserverCompiler extends QueryCompiler
     protected bool $_orderedUnion = false;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @var array<string, string>
      */
     protected array $_templates = [
         'delete' => 'DELETE',
@@ -47,7 +49,9 @@ class SqlserverCompiler extends QueryCompiler
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @var array<string>
      */
     protected array $_selectParts = [
         'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
