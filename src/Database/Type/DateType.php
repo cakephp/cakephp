@@ -32,7 +32,9 @@ class DateType extends DateTimeType
     protected string $_format = 'Y-m-d';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @var array<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d',

@@ -27,7 +27,9 @@ class DateTimeFractionalType extends DateTimeType
     protected string $_format = 'Y-m-d H:i:s.u';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @var array<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d H:i',
