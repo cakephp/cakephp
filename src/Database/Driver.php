@@ -49,14 +49,14 @@ abstract class Driver implements DriverInterface
      *
      * @var \PDO
      */
-    protected $_connection;
+    protected PDO $_connection;
 
     /**
      * Configuration data.
      *
      * @var array
      */
-    protected array $_config;
+    protected array $_config = [];
 
     /**
      * Base configuration that is merged into the user
@@ -155,8 +155,7 @@ abstract class Driver implements DriverInterface
      */
     public function disconnect(): void
     {
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
-        $this->_connection = null;
+        unset($this->_connection);
         $this->_version = null;
     }
 
@@ -182,7 +181,7 @@ abstract class Driver implements DriverInterface
      */
     public function getConnection(): PDO
     {
-        if ($this->_connection === null) {
+        if (!isset($this->_connection)) {
             throw new MissingConnectionException([
                 'driver' => App::shortName(static::class, 'Database/Driver'),
                 'reason' => 'Unknown',
@@ -349,6 +348,7 @@ abstract class Driver implements DriverInterface
     {
         $this->connect();
 
+        /** @psalm-suppress RedundantCondition */
         if ($this->_connection instanceof PDO) {
             return $this->_connection->lastInsertId($table);
         }
@@ -361,14 +361,14 @@ abstract class Driver implements DriverInterface
      */
     public function isConnected(): bool
     {
-        if ($this->_connection === null) {
-            $connected = false;
-        } else {
+        if (isset($this->_connection)) {
             try {
                 $connected = (bool)$this->_connection->query('SELECT 1');
             } catch (PDOException $e) {
                 $connected = false;
             }
+        } else {
+            $connected = false;
         }
 
         return $connected;
@@ -481,8 +481,7 @@ abstract class Driver implements DriverInterface
      */
     public function __destruct()
     {
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
-        $this->_connection = null;
+        unset($this->_connection);
     }
 
     /**
@@ -494,7 +493,7 @@ abstract class Driver implements DriverInterface
     public function __debugInfo(): array
     {
         return [
-            'connected' => $this->_connection !== null,
+            'connected' => !isset($this->_connection),
         ];
     }
 }
