@@ -123,9 +123,9 @@ class ConnectionTest extends TestCase
     /**
      * Tests connecting to database
      */
-    public function testConnect(): void
+    public function testIsConnect(): void
     {
-        $this->assertTrue($this->connection->connect());
+        $this->connection->connect();
         $this->assertTrue($this->connection->isConnected());
     }
 

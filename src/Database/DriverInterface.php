@@ -64,9 +64,9 @@ interface DriverInterface
      * Establishes a connection to the database server.
      *
      * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
-     * @return bool True on success, false on failure.
+     * @return void
      */
-    public function connect(): bool;
+    public function connect();
 
     /**
      * Disconnects from database server.

@@ -113,9 +113,9 @@ abstract class Driver implements DriverInterface
      *
      * @param string $dsn A Driver-specific PDO-DSN
      * @param array<string, mixed> $config configuration to be used for creating connection
-     * @return bool true on success
+     * @return void
      */
-    protected function _connect(string $dsn, array $config): bool
+    protected function _connect(string $dsn, array $config): void
     {
         $action = function () use ($dsn, $config): void {
             $this->setConnection(new PDO(
@@ -141,14 +141,12 @@ abstract class Driver implements DriverInterface
         } finally {
             $this->connectRetries = $retry->getRetries();
         }
-
-        return true;
     }
 
     /**
      * @inheritDoc
      */
-    abstract public function connect(): bool;
+    abstract public function connect(): void;
 
     /**
      * @inheritDoc

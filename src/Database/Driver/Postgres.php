@@ -80,14 +80,12 @@ class Postgres extends Driver
     protected string $_endQuote = '"';
 
     /**
-     * Establishes a connection to the database server
-     *
-     * @return bool true on success
+     * @inheritDoc
      */
-    public function connect(): bool
+    public function connect(): void
     {
         if ($this->_connection) {
-            return true;
+            return;
         }
         $config = $this->_config;
         $config['flags'] += [
@@ -118,8 +116,6 @@ class Postgres extends Driver
         foreach ($config['init'] as $command) {
             $connection->exec($command);
         }
-
-        return true;
     }
 
     /**

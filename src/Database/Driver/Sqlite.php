@@ -110,14 +110,12 @@ class Sqlite extends Driver
     ];
 
     /**
-     * Establishes a connection to the database server
-     *
-     * @return bool true on success
+     * @inheritDoc
      */
-    public function connect(): bool
+    public function connect(): void
     {
         if ($this->_connection) {
-            return true;
+            return;
         }
         $config = $this->_config;
         $config['flags'] += [
@@ -148,8 +146,6 @@ class Sqlite extends Driver
                 $this->getConnection()->exec($command);
             }
         }
-
-        return true;
     }
 
     /**

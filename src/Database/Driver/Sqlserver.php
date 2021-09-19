@@ -107,12 +107,12 @@ class Sqlserver extends Driver
      * information see: https://github.com/Microsoft/msphpsql/issues/65).
      *
      * @throws \InvalidArgumentException if an unsupported setting is in the driver config
-     * @return bool true on success
+     * @return void
      */
-    public function connect(): bool
+    public function connect(): void
     {
         if ($this->_connection) {
-            return true;
+            return;
         }
         $config = $this->_config;
 
@@ -169,8 +169,6 @@ class Sqlserver extends Driver
                 $connection->setAttribute($key, $value);
             }
         }
-
-        return true;
     }
 
     /**

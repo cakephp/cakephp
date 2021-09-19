@@ -228,12 +228,12 @@ class Connection implements ConnectionInterface
      * Connects to the configured database.
      *
      * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
-     * @return bool true, if the connection was already established or the attempt was successful.
+     * @return void
      */
-    public function connect(): bool
+    public function connect(): void
     {
         try {
-            return $this->_driver->connect();
+            $this->_driver->connect();
         } catch (MissingConnectionException $e) {
             throw $e;
         } catch (Throwable $e) {
