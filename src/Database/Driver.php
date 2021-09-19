@@ -448,16 +448,6 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Returns the number of connection retry attempts made.
-     *
-     * @return int
-     */
-    public function getConnectRetries(): int
-    {
-        return $this->connectRetries;
-    }
-
-    /**
      * Destructor
      */
     public function __destruct()

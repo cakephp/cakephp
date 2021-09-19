@@ -37,6 +37,11 @@ class RetryDriver extends Sqlserver
         $this->_connect($dsn, ['username' => 'invalid', 'password' => '', 'flags' => []]);
     }
 
+    public function getConnectRetries(): int
+    {
+        return $this->connectRetries;
+    }
+
     public function enabled(): bool
     {
         return true;

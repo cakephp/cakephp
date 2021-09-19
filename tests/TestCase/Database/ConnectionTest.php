@@ -215,21 +215,6 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
 
-    public function testConnectRetry(): void
-    {
-        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
-
-        $connection = new Connection(['driver' => 'RetryDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
-
-        try {
-            $connection->connect();
-        } catch (MissingConnectionException $e) {
-        }
-
-        $this->assertSame(4, $connection->getDriver()->getConnectRetries());
-    }
-
     /**
      * Tests creation of prepared statements
      */

@@ -307,13 +307,6 @@ interface DriverInterface
     public function newTableSchema(string $table, array $columns = []): TableSchema;
 
     /**
-     * Returns the number of connection retry attempts made.
-     *
-     * @return int
-     */
-    public function getConnectRetries(): int;
-
-    /**
      * Returns the maximum alias length allowed.
      *
      * @return int|null

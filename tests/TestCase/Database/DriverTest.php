@@ -17,16 +17,19 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
 use PDOStatement;
+use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
 
 /**
@@ -265,6 +268,20 @@ class DriverTest extends TestCase
         $actual = $this->driver->newTableSchema($tableName);
         $this->assertInstanceOf(TableSchema::class, $actual);
         $this->assertSame($tableName, $actual->name());
+    }
+
+    public function testConnectRetry(): void
+    {
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
+
+        $driver = new RetryDriver();
+
+        try {
+            $driver->connect();
+        } catch (MissingConnectionException) {
+        }
+
+        $this->assertSame(4, $driver->getConnectRetries());
     }
 
     /**
