@@ -19,6 +19,7 @@ namespace Cake\Database;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Closure;
+use PDO;
 
 /**
  * Interface for database driver.
@@ -78,17 +79,17 @@ interface DriverInterface
     /**
      * Returns correct connection resource or object that is internally used.
      *
-     * @return object Connection object used internally.
+     * @return \PDO Connection object used internally.
      */
-    public function getConnection(): object;
+    public function getConnection(): PDO;
 
     /**
      * Set the internal connection object.
      *
-     * @param object $connection The connection instance.
+     * @param \PDO $connection The connection instance.
      * @return $this
      */
-    public function setConnection(object $connection);
+    public function setConnection(PDO $connection);
 
     /**
      * Returns whether php is able to use this driver for connecting to database.

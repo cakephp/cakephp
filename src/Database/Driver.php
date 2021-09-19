@@ -194,9 +194,8 @@ abstract class Driver implements DriverInterface
      *
      * @param \PDO $connection PDO instance.
      * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function setConnection(object $connection)
+    public function setConnection(PDO $connection)
     {
         $this->_connection = $connection;
 
