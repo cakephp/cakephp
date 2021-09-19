@@ -84,7 +84,7 @@ class Postgres extends Driver
      */
     public function connect(): void
     {
-        if ($this->_connection) {
+        if (isset($this->_connection)) {
             return;
         }
         $config = $this->_config;

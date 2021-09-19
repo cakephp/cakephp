@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
@@ -176,10 +175,10 @@ class MysqlTest extends TestCase
      */
     public function testVersion($dbVersion, $expectedVersion): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
-        $connection = $this->getMockBuilder(Connection::class)
+        /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */
+        $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAttribute'])
+            ->onlyMethods(['getAttribute'])
             ->getMock();
         $connection->expects($this->once())
             ->method('getAttribute')
