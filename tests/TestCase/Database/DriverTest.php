@@ -27,6 +27,7 @@ use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
 use PDOStatement;
+use TestApp\Database\Driver\StubDriver;
 
 /**
  * Tests Driver class
@@ -45,7 +46,15 @@ class DriverTest extends TestCase
     {
         parent::setUp();
 
-        $this->driver = $this->getMockForAbstractClass(Driver::class);
+        $this->driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['_connect']
+        );
     }
 
     /**
@@ -128,7 +137,10 @@ class DriverTest extends TestCase
             ->with($value, PDO::PARAM_STR)
             ->will($this->returnValue('string'));
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($connection);
+
         $this->driver->schemaValue($value);
     }
 
@@ -147,7 +159,10 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($connection);
+
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
     }
 
@@ -168,7 +183,12 @@ class DriverTest extends TestCase
             ->method('query')
             ->willReturn(new PDOStatement());
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($connection);
+
+        $this->driver->connect();
+
         $this->assertTrue($this->driver->isConnected());
     }
 

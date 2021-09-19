@@ -84,14 +84,6 @@ interface DriverInterface
     public function getConnection(): PDO;
 
     /**
-     * Set the internal connection object.
-     *
-     * @param \PDO $connection The connection instance.
-     * @return $this
-     */
-    public function setConnection(PDO $connection);
-
-    /**
      * Returns whether php is able to use this driver for connecting to database.
      *
      * @return bool True if it is valid to use this driver.

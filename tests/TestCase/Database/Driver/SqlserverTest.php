@@ -171,11 +171,8 @@ class SqlserverTest extends TestCase
                 ['SET config2 value2']
             );
 
-        $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-
-        $driver->expects($this->any())->method('getConnection')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
         $driver->connect();

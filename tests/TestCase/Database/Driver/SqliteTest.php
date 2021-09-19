@@ -129,7 +129,6 @@ class SqliteTest extends TestCase
      */
     public function testSchemaValue($input, $expected): void
     {
-        $driver = new Sqlite();
         $mock = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote'])
             ->addMethods(['quoteIdentifier'])
@@ -140,7 +139,15 @@ class SqliteTest extends TestCase
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));
-        $driver->setConnection($mock);
+
+        $driver = $this->getMockBuilder(Sqlite::class)
+            ->onlyMethods(['_connect'])
+            ->getMock();
+
+        $driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($mock);
+
         $this->assertEquals($expected, $driver->schemaValue($input));
     }
 

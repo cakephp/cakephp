@@ -1356,7 +1356,8 @@ SQL;
      */
     protected function _getMockedDriver(): Driver
     {
-        $driver = new Mysql();
+        $this->_needsConnection();
+
         $mock = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote', 'getAttribute'])
             ->addMethods(['quoteIdentifier'])
@@ -1367,7 +1368,16 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->setConnection($mock);
+
+        $driver = $this->getMockBuilder(Mysql::class)
+            ->onlyMethods(['_connect'])
+            ->getMock();
+
+        $driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($mock);
+
+        $driver->connect();
 
         return $driver;
     }

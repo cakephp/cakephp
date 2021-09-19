@@ -190,19 +190,6 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Set the internal PDO connection instance.
-     *
-     * @param \PDO $connection PDO instance.
-     * @return $this
-     */
-    public function setConnection(PDO $connection)
-    {
-        $this->_connection = $connection;
-
-        return $this;
-    }
-
-    /**
      * @inheritDoc
      */
     abstract public function enabled(): bool;
@@ -326,6 +313,8 @@ abstract class Driver implements DriverInterface
         ) {
             return (string)$value;
         }
+
+        $this->connect();
 
         return $this->_connection->quote((string)$value, PDO::PARAM_STR);
     }
