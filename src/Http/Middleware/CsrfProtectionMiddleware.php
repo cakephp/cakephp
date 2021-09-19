@@ -23,6 +23,7 @@ use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -149,7 +150,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
         if (is_string($cookieData) && strlen($cookieData) > 0) {
-            $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
+            try {
+                $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
+            } catch (InvalidArgumentException $e) {
+                $cookieData = null;
+            }
         }
 
         if ($method === 'GET' && $cookieData === null) {
@@ -277,6 +282,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return $token;
         }
         $decoded = base64_decode($token, true);
+        if ($decoded === false) {
+            throw new InvalidArgumentException('Invalid token data.');
+        }
+
         $length = strlen($decoded);
         $salt = Security::randomBytes($length);
         $salted = '';

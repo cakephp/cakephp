@@ -171,6 +171,27 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that the CSRF tokens are regenerated when token is not valid
+     *
+     * @return void
+     */
+    public function testRegenerateTokenOnGetWithInvalidData()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+            ],
+            'cookies' => ['csrfToken' => "\x20\x26"],
+        ]);
+
+        $middleware = new CsrfProtectionMiddleware();
+        /** @var \Cake\Http\Response $response */
+        $response = $middleware->process($request, $this->_getRequestHandler());
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertGreaterThan(32, strlen($response->getCookie('csrfToken')['value']));
+    }
+
+    /**
      * Test that the CSRF tokens are set for redirect responses
      *
      * @return void
@@ -373,13 +394,32 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that invalid string cookies are rejected.
+     *
+     * @return void
+     */
+    public function testInvalidTokenStringCookies()
+    {
+        $this->expectException(InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => ['_csrfToken' => ["\x20\x26"]],
+            'cookies' => ['csrfToken' => ["\x20\x26"]],
+        ]);
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->process($request, $this->_getRequestHandler());
+    }
+
+    /**
      * Test that request non string cookies are ignored.
      *
      * @return void
      */
     public function testInvalidTokenNonStringCookies()
     {
-        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
