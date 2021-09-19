@@ -291,13 +291,6 @@ interface DriverInterface
     public function compileQuery(Query $query, ValueBinder $binder): array;
 
     /**
-     * Returns an instance of a QueryCompiler.
-     *
-     * @return \Cake\Database\QueryCompiler
-     */
-    public function newCompiler(): QueryCompiler;
-
-    /**
      * Constructs new TableSchema.
      *
      * @param string $table The table name.
