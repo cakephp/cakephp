@@ -1347,7 +1347,7 @@ SQL;
         $this->_needsConnection();
 
         $mock = $this->getMockBuilder(PDO::class)
-            ->onlyMethods(['quote'])
+            ->onlyMethods(['quote', 'exec'])
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())

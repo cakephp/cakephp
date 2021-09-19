@@ -29,14 +29,12 @@ class RetryDriver extends Sqlserver
     /**
      * @inheritDoc
      */
-    public function connect(): bool
+    public function connect(): void
     {
         $testConfig = ConnectionManager::get('test')->config() + $this->_baseConfig;
         $dsn = "sqlsrv:Server={$testConfig['host']};Database={$testConfig['database']}";
 
         $this->_connect($dsn, ['username' => 'invalid', 'password' => '', 'flags' => []]);
-
-        return true;
     }
 
     public function enabled(): bool

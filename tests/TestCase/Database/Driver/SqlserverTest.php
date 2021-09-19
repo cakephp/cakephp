@@ -132,7 +132,7 @@ class SqlserverTest extends TestCase
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'setConnection', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
