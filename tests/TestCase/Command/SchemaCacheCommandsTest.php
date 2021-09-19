@@ -68,9 +68,9 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function tearDown(): void
     {
+        $this->connection->cacheMetadata(false);
         parent::tearDown();
 
-        $this->connection->cacheMetadata('_cake_model_');
         unset($this->connection);
         Cache::drop('orm_cache');
     }

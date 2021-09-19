@@ -55,8 +55,8 @@ class CollectionTest extends TestCase
      */
     public function tearDown(): void
     {
-        parent::tearDown();
         $this->connection->cacheMetadata(false);
+        parent::tearDown();
         unset($this->connection);
     }
 

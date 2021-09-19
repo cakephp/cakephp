@@ -17,9 +17,14 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FixtureInterface;
 use Closure;
 use UnexpectedValueException;
 
@@ -127,8 +132,16 @@ class FixtureHelper
      */
     public function insert(array $fixtures): void
     {
-        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
-            if (
+        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
+            if ($connection instanceof Connection) {
+                $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
+            }
+
+            if (isset($sortedFixtures)) {
+                foreach ($sortedFixtures as $fixture) {
+                    $fixture->insert($connection);
+                }
+            } elseif (
                 method_exists($connection, 'transactional') &&
                 method_exists($connection, 'disableConstraints') &&
                 $connection->getDriver() instanceof Postgres
@@ -164,9 +177,25 @@ class FixtureHelper
      */
     public function truncate(array $fixtures): void
     {
-        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
-            if (method_exists($connection, 'disableConstraints')) {
-                $connection->disableConstraints(function () use ($connection, $groupFixtures): void {
+        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
+            if ($connection instanceof Connection) {
+                $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
+            }
+
+            $driver = $connection->getDriver();
+            if (
+                isset($sortedFixtures) &&
+                (
+                    $driver instanceof Postgres ||
+                    $driver instanceof Sqlite ||
+                    $driver instanceof Sqlserver
+                )
+            ) {
+                foreach (array_reverse($sortedFixtures) as $fixture) {
+                    $fixture->truncate($connection);
+                }
+            } elseif (method_exists($connection, 'disableConstraints')) {
+                $connection->disableConstraints(function () use ($connection, $groupFixtures) {
                     foreach ($groupFixtures as $fixture) {
                         $fixture->truncate($connection);
                     }
@@ -177,5 +206,68 @@ class FixtureHelper
                 }
             }
         }, $fixtures);
+    }
+
+    /**
+     * Sort fixtures with foreign constraints last if possible, otherwise returns null.
+     *
+     * @param \Cake\Database\Connection $connection Database connection
+     * @param array<\Cake\Datasource\FixtureInterface> $fixtures Database fixtures
+     * @return array|null
+     */
+    protected function sortByConstraint(Connection $connection, array $fixtures): ?array
+    {
+        $constrained = [];
+        $unconstrained = [];
+        foreach ($fixtures as $fixture) {
+            $references = $this->getForeignReferences($connection, $fixture);
+            if ($references) {
+                $constrained[$fixture->sourceName()] = ['references' => $references, 'fixture' => $fixture];
+            } else {
+                $unconstrained[] = $fixture;
+            }
+        }
+
+        // Check if any fixtures reference another fixture with constrants
+        // If they do, then there might be cross-dependencies which we don't support sorting
+        foreach ($constrained as ['references' => $references]) {
+            foreach ($references as $reference) {
+                if (isset($constrained[$reference])) {
+                    return null;
+                }
+            }
+        }
+
+        return array_merge($unconstrained, array_column($constrained, 'fixture'));
+    }
+
+    /**
+     * Gets array of foreign references for fixtures table.
+     *
+     * @param \Cake\Database\Connection $connection Database connection
+     * @param \Cake\Datasource\FixtureInterface $fixture Database fixture
+     * @return array
+     */
+    protected function getForeignReferences(Connection $connection, FixtureInterface $fixture): array
+    {
+        static $schemas = [];
+
+        // Get and cache off the schema since TestFixture generates a fake schema based on $fields
+        $tableName = $fixture->sourceName();
+        if (!isset($schemas[$tableName])) {
+            $schemas[$tableName] = $connection->getSchemaCollection()->describe($tableName);
+        }
+        $schema = $schemas[$tableName];
+
+        $references = [];
+        foreach ($schema->constraints() as $constraintName) {
+            $constraint = $schema->getConstraint($constraintName);
+
+            if ($constraint && $constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
+                $references[] = $constraint['references'][0];
+            }
+        }
+
+        return $references;
     }
 }

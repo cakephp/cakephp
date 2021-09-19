@@ -22,12 +22,13 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->markTestSkipped('This test requires non-auto-fixtures');
 
         $this->textType = TypeFactory::build('text');
         TypeFactory::map('text', ColumnSchemaAwareType::class);
         // For SQLServer.
         TypeFactory::map('nvarchar', ColumnSchemaAwareType::class);
+
+        $this->markTestSkipped('This test requires non-auto-fixtures');
     }
 
     public function tearDown(): void
