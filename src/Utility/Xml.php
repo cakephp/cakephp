@@ -298,13 +298,17 @@ class Xml
      *
      * @param \DOMDocument $dom Handler to DOMDocument
      * @param \DOMDocument|\DOMElement $node Handler to DOMElement (child)
-     * @param array $data Array of data to append to the $node.
+     * @param mixed $data Array of data to append to the $node.
      * @param string $format Either 'attributes' or 'tags'. This determines where nested keys go.
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _fromArray(DOMDocument $dom, DOMDocument|DOMElement $node, $data, string $format): void
-    {
+    protected static function _fromArray(
+        DOMDocument $dom,
+        DOMDocument|DOMElement $node,
+        mixed $data,
+        string $format
+    ): void {
         if (empty($data) || !is_array($data)) {
             return;
         }

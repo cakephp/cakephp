@@ -90,7 +90,7 @@ class ConsoleInputOption
      * @param string $short The short alias for this option
      * @param string $help The help text for this option
      * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
-     * @param mixed $default The default value for this option.
+     * @param string|bool|null $default The default value for this option.
      * @param array<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
@@ -101,7 +101,7 @@ class ConsoleInputOption
         string $short = '',
         string $help = '',
         bool $isBoolean = false,
-        $default = null,
+        string|bool|null $default = null,
         array $choices = [],
         bool $multiple = false,
         bool $required = false
