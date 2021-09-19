@@ -113,22 +113,22 @@ abstract class Driver implements DriverInterface
      *
      * @param string $dsn A Driver-specific PDO-DSN
      * @param array<string, mixed> $config configuration to be used for creating connection
-     * @return void
+     * @return \PDO
      */
-    protected function _connect(string $dsn, array $config): void
+    protected function _connect(string $dsn, array $config): PDO
     {
-        $action = function () use ($dsn, $config): void {
-            $this->setConnection(new PDO(
+        $action = function () use ($dsn, $config): PDO {
+            return new PDO(
                 $dsn,
                 $config['username'] ?: null,
                 $config['password'] ?: null,
                 $config['flags']
-            ));
+            );
         };
 
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
         try {
-            $retry->run($action);
+            return $retry->run($action);
         } catch (PDOException $e) {
             throw new MissingConnectionException(
                 [

@@ -72,7 +72,7 @@ class SqliteTest extends TestCase
             'mask' => 0666,
         ];
         $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlite:bar.db';
@@ -94,9 +94,9 @@ class SqliteTest extends TestCase
             ->withConsecutive(['Execute this'], ['this too']);
 
         $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-        $driver->expects($this->any())->method('getConnection')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
+
         $driver->connect($config);
     }
 

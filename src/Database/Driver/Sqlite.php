@@ -133,7 +133,7 @@ class Sqlite extends Driver
         $databaseExists = file_exists($config['database']);
 
         $dsn = "sqlite:{$config['database']}";
-        $this->_connect($dsn, $config);
+        $this->_connection = $this->_connect($dsn, $config);
 
         if (!$databaseExists && $config['database'] !== ':memory:') {
             // phpcs:disable
@@ -143,7 +143,7 @@ class Sqlite extends Driver
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->getConnection()->exec($command);
+                $this->_connection->exec($command);
             }
         }
     }

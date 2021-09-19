@@ -99,8 +99,7 @@ class Postgres extends Driver
             $dsn = "pgsql:dbname={$config['database']}";
         }
 
-        $this->_connect($dsn, $config);
-        $this->_connection = $connection = $this->getConnection();
+        $this->_connection = $this->_connect($dsn, $config);
         if (!empty($config['encoding'])) {
             $this->setEncoding($config['encoding']);
         }
@@ -110,11 +109,11 @@ class Postgres extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            $config['init'][] = sprintf('SET timezone = %s', $connection->quote($config['timezone']));
+            $config['init'][] = sprintf('SET timezone = %s', $this->_connection->quote($config['timezone']));
         }
 
         foreach ($config['init'] as $command) {
-            $connection->exec($command);
+            $this->_connection->exec($command);
         }
     }
 

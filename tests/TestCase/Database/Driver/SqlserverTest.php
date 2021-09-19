@@ -101,7 +101,7 @@ class SqlserverTest extends TestCase
     public function testDnsString($constructorArgs, $dnsString): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
 
@@ -110,15 +110,7 @@ class SqlserverTest extends TestCase
                 $this->assertSame($dns, $dnsString);
 
                 return true;
-            }))
-            ->will($this->returnValue(true));
-
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $driver->method('getConnection')
-            ->will($this->returnValue($connection));
+            }));
 
         $driver->connect();
     }

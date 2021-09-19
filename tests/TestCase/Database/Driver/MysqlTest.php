@@ -98,7 +98,7 @@ class MysqlTest extends TestCase
             ],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar';
@@ -120,8 +120,7 @@ class MysqlTest extends TestCase
             ->withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]);
 
         $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-        $driver->expects($this->any())->method('getConnection')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
         $driver->connect($config);
     }
@@ -187,10 +186,12 @@ class MysqlTest extends TestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['connect'])
+            ->onlyMethods(['_connect'])
             ->getMock();
 
-        $driver->setConnection($connection);
+        $driver->expects($this->once())
+            ->method('_connect')
+            ->willReturn($connection);
 
         $result = $driver->version();
         $this->assertSame($expectedVersion, $result);

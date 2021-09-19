@@ -159,12 +159,11 @@ class Mysql extends Driver
             $dsn .= ";charset={$config['encoding']}";
         }
 
-        $this->_connect($dsn, $config);
+        $this->_connection = $this->_connect($dsn, $config);
 
         if (!empty($config['init'])) {
-            $connection = $this->getConnection();
             foreach ((array)$config['init'] as $command) {
-                $connection->exec($command);
+                $this->_connection->exec($command);
             }
         }
     }
