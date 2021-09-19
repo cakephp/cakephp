@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Schema\SchemaDialect;
-use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
 use PDO;
 
@@ -302,9 +302,9 @@ interface DriverInterface
      *
      * @param string $table The table name.
      * @param array $columns The list of columns for the schema.
-     * @return \Cake\Database\Schema\TableSchema
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    public function newTableSchema(string $table, array $columns = []): TableSchema;
+    public function newTableSchema(string $table, array $columns = []): TableSchemaInterface;
 
     /**
      * Returns the maximum alias length allowed.

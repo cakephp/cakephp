@@ -179,7 +179,9 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     {
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($this->connection());
-        $this->_schema = $connection->getDriver()->newTableSchema($this->table);
+        /** @var \Cake\Database\Schema\TableSchema $schema */
+        $schema = $connection->getDriver()->newTableSchema($this->table);
+        $this->_schema = $schema;
         foreach ($this->fields as $field => $data) {
             if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
                 continue;
