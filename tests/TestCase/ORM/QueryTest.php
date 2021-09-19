@@ -1840,7 +1840,7 @@ class QueryTest extends TestCase
      * @param mixed $arg
      * @param mixed $return
      */
-    public function testCollectionProxy(string $method, $arg, $return): void
+    public function testDeprecatedCollectionProxy(string $method, $arg, $return): void
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all'])
@@ -1862,6 +1862,25 @@ class QueryTest extends TestCase
         $this->deprecated(function () use ($return, $query, $method, $arg) {
             $this->assertSame($return, $query->{$method}($arg, 99));
         });
+    }
+
+    /**
+     * Tests deprecation path for proxy collection methods.
+     *
+     * @dataProvider collectionMethodsProvider
+     */
+    public function testDeprecatedPathCollectionProxy(string $method, $arg, $return): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('QueryTest.php');
+
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->onlyMethods(['all'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
+        $query->select();
+
+        $this->assertSame($return, $query->{$method}($arg, 99));
     }
 
     /**

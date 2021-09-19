@@ -251,7 +251,7 @@ class ComponentTest extends TestCase
     /**
      * Tests deprecated shutdown callback
      */
-    public function testEventShutdown(): void
+    public function testDeprecatedEventShutdown(): void
     {
         $Collection = new ComponentRegistry();
 
@@ -268,6 +268,15 @@ class ComponentTest extends TestCase
             ];
             $this->assertEquals($expected, $result);
         });
+    }
+
+    public function testDeprecatedEventShutdownPath(): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('Component.php');
+
+        $component = new TestShutdownComponent(new ComponentRegistry());
+        $result = $component->__debugInfo();
     }
 
     /**
