@@ -330,16 +330,11 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function lastInsertId(?string $table = null, ?string $column = null): string|int
+    public function lastInsertId(?string $table = null): string
     {
         $this->connect();
 
-        /** @psalm-suppress RedundantCondition */
-        if ($this->_connection instanceof PDO) {
-            return $this->_connection->lastInsertId($table);
-        }
-
-        return $this->_connection->lastInsertId($table, $column);
+        return $this->_connection->lastInsertId($table);
     }
 
     /**

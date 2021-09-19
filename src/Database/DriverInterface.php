@@ -234,10 +234,9 @@ interface DriverInterface
      * Returns last id generated for a table or sequence in database.
      *
      * @param string|null $table table name or sequence to get last insert value from.
-     * @param string|null $column the name of the column representing the primary key.
-     * @return string|int
+     * @return string
      */
-    public function lastInsertId(?string $table = null, ?string $column = null): string|int;
+    public function lastInsertId(?string $table = null): string;
 
     /**
      * Checks whether the driver is connected.

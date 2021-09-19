@@ -348,7 +348,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
             }
         }
 
-        return $this->_driver->lastInsertId($table, $column);
+        return $this->_driver->lastInsertId($table);
     }
 
     /**
