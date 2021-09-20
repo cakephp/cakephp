@@ -280,14 +280,6 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    public function supportsDynamicConstraints(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function schemaDialect(): SchemaDialect
     {
         if ($this->_schemaDialect === null) {

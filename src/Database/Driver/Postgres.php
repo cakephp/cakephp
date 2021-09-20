@@ -198,14 +198,6 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    public function supportsDynamicConstraints(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
     protected function _transformDistinct(Query $query): Query
     {
         return $query;

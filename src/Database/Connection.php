@@ -664,18 +664,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Returns whether the driver supports adding or dropping constraints
-     * to already created tables.
-     *
-     * @return bool true if driver supports dynamic constraints
-     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
-     */
-    public function supportsDynamicConstraints(): bool
-    {
-        return $this->_driver->supportsDynamicConstraints();
-    }
-
-    /**
      * @inheritDoc
      */
     public function transactional(callable $callback): mixed

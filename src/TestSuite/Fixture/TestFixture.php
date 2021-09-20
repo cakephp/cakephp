@@ -188,15 +188,6 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             }
             $this->_schema->addColumn($field, $data);
         }
-        if (!empty($this->fields['_constraints'])) {
-            foreach ($this->fields['_constraints'] as $name => $data) {
-                if (!$connection->supportsDynamicConstraints() || $data['type'] !== TableSchema::CONSTRAINT_FOREIGN) {
-                    $this->_schema->addConstraint($name, $data);
-                } else {
-                    $this->_constraints[$name] = $data;
-                }
-            }
-        }
         if (!empty($this->fields['_indexes'])) {
             foreach ($this->fields['_indexes'] as $name => $data) {
                 $this->_schema->addIndex($name, $data);

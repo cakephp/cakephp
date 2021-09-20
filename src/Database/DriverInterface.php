@@ -165,15 +165,6 @@ interface DriverInterface
     public function enableForeignKeySQL(): string;
 
     /**
-     * Returns whether the driver supports adding or dropping constraints
-     * to already created tables.
-     *
-     * @return bool True if driver supports dynamic constraints.
-     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
-     */
-    public function supportsDynamicConstraints(): bool;
-
-    /**
      * Returns a value in a safe representation to be used in a query string
      *
      * @param mixed $value The value to quote.

@@ -219,14 +219,6 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
-    public function supportsDynamicConstraints(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function schemaDialect(): SchemaDialect
     {
         if ($this->_schemaDialect === null) {

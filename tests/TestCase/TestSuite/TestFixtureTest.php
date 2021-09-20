@@ -81,7 +81,6 @@ class TestFixtureTest extends TestCase
             $schema->columns(),
             'Fields do not match'
         );
-        $this->assertSame(array_keys($Fixture->fields['_constraints']), $schema->constraints());
         $this->assertEmpty($schema->indexes());
     }
 

@@ -258,14 +258,6 @@ class Mysql extends Driver
     }
 
     /**
-     * @inheritDoc
-     */
-    public function supportsDynamicConstraints(): bool
-    {
-        return true;
-    }
-
-    /**
      * Returns true if the connected server is MariaDB.
      *
      * @return bool
