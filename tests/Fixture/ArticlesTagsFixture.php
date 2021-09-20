@@ -22,26 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ArticlesTagsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'article_id' => ['type' => 'integer', 'null' => false],
-        'tag_id' => ['type' => 'integer', 'null' => false],
-        '_constraints' => [
-            'unique_tag' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']],
-            'tag_id_fk' => [
-                'type' => 'foreign',
-                'columns' => ['tag_id'],
-                'references' => ['tags', 'id'],
-                'update' => 'cascade',
-                'delete' => 'cascade',
-            ],
-        ],
-    ];
-
-    /**
      * records property
      *
      * @var array

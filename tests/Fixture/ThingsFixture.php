@@ -19,17 +19,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ThingsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'title' => ['type' => 'string', 'length' => 20],
-        'body' => ['type' => 'string', 'length' => 50],
-    ];
-
-    /**
      * records property
      *
      * @var array

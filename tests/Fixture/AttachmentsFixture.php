@@ -22,20 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AttachmentsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'comment_id' => ['type' => 'integer', 'null' => false],
-        'attachment' => ['type' => 'string', 'null' => false],
-        'created' => 'datetime',
-        'updated' => 'datetime',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

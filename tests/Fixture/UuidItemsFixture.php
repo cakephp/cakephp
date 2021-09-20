@@ -22,18 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class UuidItemsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'uuid'],
-        'published' => ['type' => 'boolean', 'null' => false],
-        'name' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

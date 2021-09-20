@@ -15,20 +15,6 @@ class ArticlesFixture extends TestFixture
     public string $table = 'articles';
 
     /**
-     * Fields array
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'name' => ['type' => 'string', 'length' => '255'],
-        'created' => ['type' => 'datetime'],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
-    ];
-
-    /**
      * Records property
      *
      * @var array

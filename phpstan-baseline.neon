@@ -457,7 +457,7 @@ parameters:
 
 		-
 			message: "#^Property Cake\\\\TestSuite\\\\Fixture\\\\TestFixture\\:\\:\\$_schema \\(Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface&Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\) does not accept Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\.$#"
-			count: 2
+			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-

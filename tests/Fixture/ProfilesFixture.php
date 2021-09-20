@@ -22,22 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ProfilesFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
-        'user_id' => ['type' => 'integer', 'null' => false],
-        'first_name' => ['type' => 'string', 'null' => true],
-        'last_name' => ['type' => 'string', 'null' => true],
-        'is_active' => ['type' => 'boolean', 'null' => false, 'default' => true],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
-    ];
-
-    /**
      * records property
      *
      * @var array

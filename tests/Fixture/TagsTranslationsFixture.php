@@ -22,18 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class TagsTranslationsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
-        'locale' => ['type' => 'string', 'null' => false],
-        'name' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

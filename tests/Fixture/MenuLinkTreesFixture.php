@@ -24,22 +24,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class MenuLinkTreesFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'menu' => ['type' => 'string', 'null' => false],
-        'lft' => ['type' => 'integer'],
-        'rght' => ['type' => 'integer'],
-        'parent_id' => 'integer',
-        'url' => ['type' => 'string', 'null' => false],
-        'title' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * Records
      *
      * # main-menu:

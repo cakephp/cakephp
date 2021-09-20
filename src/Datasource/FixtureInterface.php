@@ -22,22 +22,6 @@ namespace Cake\Datasource;
 interface FixtureInterface
 {
     /**
-     * Create the fixture schema/mapping/definition
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection An instance of the connection the fixture should be created on.
-     * @return bool True on success, false on failure.
-     */
-    public function create(ConnectionInterface $connection): bool;
-
-    /**
-     * Run after all tests executed, should remove the table/collection from the connection.
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection An instance of the connection the fixture should be removed from.
-     * @return bool True on success, false on failure.
-     */
-    public function drop(ConnectionInterface $connection): bool;
-
-    /**
      * Run before each test is executed.
      *
      * Should insert all the records into the test database.
