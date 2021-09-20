@@ -141,7 +141,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testHandleErrorTraceOffset(): void
     {
-        set_error_handler(function ($code, $message, $file, $line, $context = null): void {
+        set_error_handler(function ($code, $message, $file, $line): void {
             $errorHandler = new ErrorHandler();
             $context['_trace_frame_offset'] = 3;
             $errorHandler->handleError($code, $message, $file, $line, $context);

@@ -89,13 +89,11 @@ class Debugger
             'info' => '',
             'trace' => '<pre class="stack-trace">{:trace}</pre>',
             'code' => '',
-            'context' => '',
             'links' => [],
             'escapeContext' => true,
         ],
         'html' => [
             'trace' => '<pre class="cake-error trace"><b>Trace</b> <p>{:trace}</p></pre>',
-            'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>',
             'escapeContext' => true,
         ],
         'txt' => [
@@ -106,7 +104,6 @@ class Debugger
         'base' => [
             'traceLine' => '{:reference} - {:path}, line {:line}',
             'trace' => "Trace:\n{:trace}\n",
-            'context' => "Context:\n{:context}\n",
         ],
     ];
 
@@ -160,7 +157,7 @@ class Debugger
         $this->_templates['js']['error'] = $e;
 
         $t = '<div id="{:id}-trace" class="cake-stack-trace" style="display: none;">';
-        $t .= '{:context}{:code}{:trace}</div>';
+        $t .= '{:code}{:trace}</div>';
         $this->_templates['js']['info'] = $t;
 
         $links = [];
@@ -169,15 +166,7 @@ class Debugger
         $link .= '\'none\' ? \'\' : \'none\')">Code</a>';
         $links['code'] = $link;
 
-        $link = '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-context\')';
-        $link .= '.style.display = (document.getElementById(\'{:id}-context\').style.display == ';
-        $link .= '\'none\' ? \'\' : \'none\')">Context</a>';
-        $links['context'] = $link;
-
         $this->_templates['js']['links'] = $links;
-
-        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context cake-debug" ';
-        $this->_templates['js']['context'] .= 'style="display: none;">{:context}</pre>';
 
         $this->_templates['js']['code'] = '<pre id="{:id}-code" class="cake-code-dump" ';
         $this->_templates['js']['code'] .= 'style="display: none;">{:code}</pre>';
@@ -185,9 +174,6 @@ class Debugger
         $e = '<pre class="cake-error"><b>{:error}</b> ({:code}) : {:description} ';
         $e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
         $this->_templates['html']['error'] = $e;
-
-        $this->_templates['html']['context'] = '<pre class="cake-context cake-debug"><b>Context</b> ';
-        $this->_templates['html']['context'] .= '<p>{:context}</p></pre>';
     }
 
     /**
@@ -857,7 +843,6 @@ class Debugger
      *   the contents of the other template keys.
      * - 'trace' - The container for a stack trace. Gets the following template
      *   variables: `trace`
-     * - 'context' - The container element for the context variables.
      *   Gets the following templates: `id`, `context`
      * - 'links' - An array of HTML links that are used for creating links to other resources.
      *   Typically this is used to create javascript links to open other sections.
@@ -875,7 +860,7 @@ class Debugger
      *
      * The callback can expect two parameters. The first is an array of all
      * the error data. The second contains the formatted strings generated using
-     * the other template strings. Keys like `info`, `links`, `code`, `context` and `trace`
+     * the other template strings. Keys like `info`, `links`, `code` and `trace`
      * will be present depending on the other templates in the format type.
      *
      * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
@@ -917,7 +902,6 @@ class Debugger
             'description' => '',
             'file' => '',
             'line' => 0,
-            'context' => [],
             'start' => 2,
         ];
         $data += $defaults;
@@ -935,21 +919,16 @@ class Debugger
         }
         $trace = static::trace(['start' => $data['start'], 'depth' => '20']);
         $insertOpts = ['before' => '{:', 'after' => '}'];
-        $context = [];
         $links = [];
         $info = '';
 
-        foreach ((array)$data['context'] as $var => $value) {
-            $context[] = "\${$var} = " . static::exportVar($value, 3);
-        }
-
         switch ($this->_outputFormat) {
             case false:
-                $this->_data[] = compact('context', 'trace') + $data;
+                $this->_data[] = compact('trace') + $data;
 
                 return;
             case 'log':
-                static::log(compact('context', 'trace') + $data);
+                static::log(compact('trace') + $data);
 
                 return;
         }
@@ -968,7 +947,7 @@ class Debugger
             $data['description'] = h($data['description']);
         }
 
-        $infoData = compact('code', 'context', 'trace');
+        $infoData = compact('code', 'trace');
         foreach ($infoData as $key => $value) {
             if (empty($value) || !isset($tpl[$key])) {
                 continue;

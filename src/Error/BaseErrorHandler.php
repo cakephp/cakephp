@@ -176,7 +176,6 @@ abstract class BaseErrorHandler
                 unset($context['_trace_frame_offset']);
             }
             $data += [
-                'context' => $context,
                 'start' => $start,
                 'path' => Debugger::trimPath((string)$file),
             ];
