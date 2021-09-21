@@ -22,17 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class BinaryUuidTagsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'binaryuuid'],
-        'name' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

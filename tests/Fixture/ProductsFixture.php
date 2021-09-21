@@ -27,19 +27,6 @@ class ProductsFixture extends TestFixture
     public string $table = 'products';
 
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'category' => ['type' => 'integer', 'null' => false],
-        'name' => ['type' => 'string', 'null' => false],
-        'price' => ['type' => 'integer'],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['category', 'id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

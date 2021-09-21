@@ -22,17 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class DateKeysFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'date'],
-        'title' => ['type' => 'string', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

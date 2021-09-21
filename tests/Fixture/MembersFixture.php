@@ -22,17 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class MembersFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'section_count' => ['type' => 'integer'],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array
