@@ -121,21 +121,21 @@ abstract class BaseLog extends AbstractLogger
      * @param string $message The message to be formatted.
      * @param array $context Additional logging information for the message.
      * @return string
-     * @deprecated 4.3.0 Call `resolve()` directly from your log engine and format the message in a formatter.
+     * @deprecated 4.3.0 Call `interpolate()` directly from your log engine and format the message in a formatter.
      */
     protected function _format(string $message, array $context = []): string
     {
-        return $this->resolve($message, $context);
+        return $this->interpolate($message, $context);
     }
 
     /**
-     * Resolves interpolation expressions in message string.
+     * Replaces placeholders in message string with context values.
      *
-     * @param string $message Interpolated message
-     * @param array $context Interpolation expression values
+     * @param string $message Formatted string
+     * @param array $context Context for placeholder values.
      * @return string
      */
-    protected function resolve(string $message, array $context = []): string
+    protected function interpolate(string $message, array $context = []): string
     {
         if (strpos($message, '{') === false && strpos($message, '}') === false) {
             return $message;
