@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\NumberTree;
 
@@ -52,7 +53,10 @@ class BehaviorRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('NumberTrees');
         $table->setPrimaryKey(['id']);
         $table->addBehavior('Tree');
-        $table->addBehavior('Translate', ['fields' => ['name']]);
+        $table->addBehavior('Translate', [
+            'fields' => ['name'],
+            'strategyClass' => EavStrategy::class,
+        ]);
         $table->setEntityClass(NumberTree::class);
 
         /** @var \TestApp\Model\Entity\NumberTree[] $all */

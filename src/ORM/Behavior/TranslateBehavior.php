@@ -18,7 +18,7 @@ namespace Cake\ORM\Behavior;
 
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
-use Cake\ORM\Behavior\Translate\EavStrategy;
+use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
@@ -62,6 +62,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         'strategy' => 'subquery',
         'tableLocator' => null,
         'validator' => false,
+        'strategyClass' => null,
     ];
 
     /**
@@ -70,7 +71,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @var string
      * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
-    protected static string $defaultStrategyClass = EavStrategy::class;
+    protected static string $defaultStrategyClass = ShadowTableStrategy::class;
 
     /**
      * Translation strategy instance.

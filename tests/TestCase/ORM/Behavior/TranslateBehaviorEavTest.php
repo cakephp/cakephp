@@ -23,6 +23,9 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\I18n\I18n;
+use Cake\ORM\Behavior\Translate\EavStrategy;
+use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
+use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\TestCase;
@@ -33,7 +36,7 @@ use TestApp\Model\Table\CustomI18nTable;
 /**
  * Translate behavior test case
  */
-class TranslateBehaviorTest extends TestCase
+class TranslateBehaviorEavTest extends TestCase
 {
     /**
      * fixtures
@@ -50,6 +53,26 @@ class TranslateBehaviorTest extends TestCase
         'core.Comments',
         'core.Translates',
     ];
+
+    /**
+     * setUpBeforeClass
+     */
+    public static function setUpBeforeClass(): void
+    {
+        TranslateBehavior::setDefaultStrategyClass(EavStrategy::class);
+
+        parent::setUpBeforeClass();
+    }
+
+    /**
+     * tearDownAfterClass
+     */
+    public static function tearDownAfterClass(): void
+    {
+        TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
+
+        parent::tearDownAfterClass();
+    }
 
     public function tearDown(): void
     {
