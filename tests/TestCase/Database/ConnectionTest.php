@@ -123,7 +123,7 @@ class ConnectionTest extends TestCase
     /**
      * Tests connecting to database
      */
-    public function testIsConnect(): void
+    public function testIsConnected(): void
     {
         $this->connection->connect();
         $this->assertTrue($this->connection->isConnected());
