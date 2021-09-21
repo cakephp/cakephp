@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverInterface;
-use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -216,7 +215,6 @@ class SqlserverTest extends TestCase
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
 
-        $this->expectException(MissingConnectionException::class);
         $driver->connect();
     }
 
