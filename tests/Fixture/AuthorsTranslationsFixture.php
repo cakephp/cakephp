@@ -22,18 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AuthorsTranslationsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'locale' => ['type' => 'string', 'null' => false],
-        'name' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'locale']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

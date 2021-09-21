@@ -21,26 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AuthorsTagsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'author_id' => ['type' => 'integer', 'null' => false],
-        'tag_id' => ['type' => 'integer', 'null' => false],
-        '_constraints' => [
-            'unique_tag' => ['type' => 'primary', 'columns' => ['author_id', 'tag_id']],
-            'author_id_fk' => [
-                'type' => 'foreign',
-                'columns' => ['author_id'],
-                'references' => ['authors', 'id'],
-                'update' => 'cascade',
-                'delete' => 'cascade',
-            ],
-        ],
-    ];
-
-    /**
      * records property
      *
      * @var array

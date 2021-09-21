@@ -18,16 +18,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Core\Configure;
-use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\NumberHelper;
 use Cake\View\View;
-use ReflectionMethod;
-use TestApp\Utility\NumberMock;
-use TestApp\Utility\TestAppEngine;
-use TestApp\View\Helper\NumberHelperTestObject;
-use TestPlugin\Utility\TestPluginEngine;
 
 /**
  * NumberHelperTest class
@@ -47,7 +40,6 @@ class NumberHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
 
-        $this->_appNamespace = Configure::read('App.namespace');
         static::setAppNamespace();
     }
 
@@ -58,7 +50,6 @@ class NumberHelperTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        static::setAppNamespace($this->_appNamespace);
         unset($this->View);
     }
 
@@ -70,60 +61,20 @@ class NumberHelperTest extends TestCase
     public function methodProvider(): array
     {
         return [
-            ['precision'],
-            ['toReadableSize'],
-            ['toPercentage'],
-            ['currency'],
-            ['format'],
-            ['formatDelta'],
-            ['ordinal'],
+            ['precision', 1.23],
+            ['toReadableSize', 1.23],
+            ['toPercentage', 1.23],
         ];
     }
 
     /**
-     * test CakeNumber class methods are called correctly
+     * Tests calls are proxied to Number class.
      *
      * @dataProvider methodProvider
      */
-    public function testNumberHelperProxyMethodCalls(string $method): void
+    public function testMethodProxying(string $method, mixed $arg): void
     {
-        $number = $this->getMockBuilder(NumberMock::class)
-            ->addMethods([$method])
-            ->getMock();
-        $helper = new NumberHelperTestObject($this->View, ['engine' => NumberMock::class]);
-        $helper->attach($number);
-        $number->expects($this->once())
-            ->method($method)
-            ->with(12.3)
-            ->willReturn('');
-        $helper->{$method}(12.3);
-    }
-
-    /**
-     * Test that number of argument of helper's proxy methods matches
-     * corresponding method of Number class.
-     *
-     * @dataProvider methodProvider
-     */
-    public function testParameterCountMatch(string $method): void
-    {
-        $numberMethod = new ReflectionMethod(Number::class, $method);
-        $helperMethod = new ReflectionMethod(NumberHelper::class, $method);
-
-        $this->assertSame($numberMethod->getNumberOfParameters(), $helperMethod->getNumberOfParameters());
-    }
-
-    /**
-     * test engine override
-     */
-    public function testEngineOverride(): void
-    {
-        $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
-        $this->assertInstanceOf(TestAppEngine::class, $Number->engine());
-
-        $this->loadPlugins(['TestPlugin']);
-        $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
-        $this->assertInstanceOf(TestPluginEngine::class, $Number->engine());
-        $this->removePlugins(['TestPlugin']);
+        $helper = new NumberHelper($this->View);
+        $this->assertNotNull($helper->{$method}($arg));
     }
 }

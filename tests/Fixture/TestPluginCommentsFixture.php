@@ -22,22 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class TestPluginCommentsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'article_id' => ['type' => 'integer', 'null' => false],
-        'user_id' => ['type' => 'integer', 'null' => false],
-        'comment' => 'text',
-        'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
-        'created' => 'datetime',
-        'updated' => 'datetime',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array

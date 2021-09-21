@@ -16,23 +16,19 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
-use Cake\Database\ConstraintsInterface;
-use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
-use Cake\Log\Log;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
-use Exception;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchemaAwareInterface
+class TestFixture implements FixtureInterface, TableSchemaAwareInterface
 {
     use LocatorAwareTrait;
 
@@ -51,28 +47,6 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     public string $table = '';
 
     /**
-     * Fields / Schema for the fixture.
-     *
-     * This array should be compatible with Cake\Database\Schema\Schema.
-     * The `_constraints`, `_options` and `_indexes` keys are reserved for defining
-     * constraints, options and indexes respectively.
-     *
-     * @var array
-     */
-    public array $fields = [];
-
-    /**
-     * Configuration for importing fixture schema
-     *
-     * Accepts a `connection` and `model` or `table` key, to define
-     * which table and which connection contain the schema to be
-     * imported.
-     *
-     * @var array|null
-     */
-    public ?array $import = null;
-
-    /**
      * Fixture records to be inserted.
      *
      * @var array
@@ -86,13 +60,6 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      * @psalm-suppress PropertyNotSetInConstructor
      */
     protected $_schema;
-
-    /**
-     * Fixture constraints to be created.
-     *
-     * @var array<string, mixed>
-     */
-    protected array $_constraints = [];
 
     /**
      * Instantiate the fixture.
@@ -143,17 +110,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             $this->table = $this->_tableFromClass();
         }
 
-        if (empty($this->import) && !empty($this->fields)) {
-            $this->_schemaFromFields();
-        }
-
-        if (!empty($this->import)) {
-            $this->_schemaFromImport();
-        }
-
-        if (empty($this->import) && empty($this->fields)) {
-            $this->_schemaFromReflection();
-        }
+        $this->_schemaFromReflection();
     }
 
     /**
@@ -168,68 +125,6 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         $table = $matches[1] ?? $class;
 
         return Inflector::tableize($table);
-    }
-
-    /**
-     * Build the fixtures table schema from the fields property.
-     *
-     * @return void
-     */
-    protected function _schemaFromFields(): void
-    {
-        /** @var \Cake\Database\Connection $connection */
-        $connection = ConnectionManager::get($this->connection());
-        /** @var \Cake\Database\Schema\TableSchema $schema */
-        $schema = $connection->getDriver()->newTableSchema($this->table);
-        $this->_schema = $schema;
-        foreach ($this->fields as $field => $data) {
-            if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
-                continue;
-            }
-            $this->_schema->addColumn($field, $data);
-        }
-        if (!empty($this->fields['_indexes'])) {
-            foreach ($this->fields['_indexes'] as $name => $data) {
-                $this->_schema->addIndex($name, $data);
-            }
-        }
-        if (!empty($this->fields['_options'])) {
-            $this->_schema->setOptions($this->fields['_options']);
-        }
-    }
-
-    /**
-     * Build fixture schema from a table in another datasource.
-     *
-     * @return void
-     * @throws \Cake\Core\Exception\CakeException when trying to import from an empty table.
-     */
-    protected function _schemaFromImport(): void
-    {
-        if (!is_array($this->import)) {
-            return;
-        }
-        $import = $this->import + ['connection' => 'default', 'table' => null, 'model' => null];
-
-        if (!empty($import['model'])) {
-            if (!empty($import['table'])) {
-                throw new CakeException('You cannot define both table and model.');
-            }
-            $import['table'] = $this->getTableLocator()->get($import['model'])->getTable();
-        }
-
-        if (empty($import['table'])) {
-            throw new CakeException('Cannot import from undefined table.');
-        }
-
-        $this->table = $import['table'];
-
-        /** @var \Cake\Database\Connection $db */
-        $db = ConnectionManager::get($import['connection'], false);
-        $schemaCollection = $db->getSchemaCollection();
-        $tableSchema = $schemaCollection->describe($import['table']);
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
-        $this->_schema = $tableSchema;
     }
 
     /**
@@ -262,68 +157,6 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function create(ConnectionInterface $connection): bool
-    {
-        if (empty($this->_schema)) {
-            return false;
-        }
-
-        if (empty($this->import) && empty($this->fields)) {
-            return true;
-        }
-
-        try {
-            /** @var \Cake\Database\Connection $connection */
-            $queries = $this->_schema->createSql($connection);
-            foreach ($queries as $query) {
-                $stmt = $connection->prepare($query);
-                $stmt->execute();
-                $stmt->closeCursor();
-            }
-        } catch (Exception $e) {
-            $msg = sprintf(
-                'Fixture creation for "%s" failed "%s"',
-                $this->table,
-                $e->getMessage()
-            );
-            Log::error($msg);
-            trigger_error($msg, E_USER_WARNING);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function drop(ConnectionInterface $connection): bool
-    {
-        if (empty($this->_schema)) {
-            return false;
-        }
-
-        if (empty($this->import) && empty($this->fields)) {
-            return $this->truncate($connection);
-        }
-
-        try {
-            /** @var \Cake\Database\Connection $connection */
-            $sql = $this->_schema->dropSql($connection);
-            foreach ($sql as $stmt) {
-                $connection->execute($stmt)->closeCursor();
-            }
-        } catch (Exception) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function insert(ConnectionInterface $connection): StatementInterface|bool
     {
         if (!empty($this->records)) {
@@ -340,60 +173,6 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             $statement->closeCursor();
 
             return $statement;
-        }
-
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createConstraints(ConnectionInterface $connection): bool
-    {
-        if (empty($this->_constraints)) {
-            return true;
-        }
-
-        foreach ($this->_constraints as $name => $data) {
-            $this->_schema->addConstraint($name, $data);
-        }
-
-        /** @var \Cake\Database\Connection $connection */
-        $sql = $this->_schema->addConstraintSql($connection);
-
-        if (empty($sql)) {
-            return true;
-        }
-
-        foreach ($sql as $stmt) {
-            $connection->execute($stmt)->closeCursor();
-        }
-
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function dropConstraints(ConnectionInterface $connection): bool
-    {
-        if (empty($this->_constraints)) {
-            return true;
-        }
-
-        /** @var \Cake\Database\Connection $connection */
-        $sql = $this->_schema->dropConstraintSql($connection);
-
-        if (empty($sql)) {
-            return true;
-        }
-
-        foreach ($sql as $stmt) {
-            $connection->execute($stmt)->closeCursor();
-        }
-
-        foreach ($this->_constraints as $name => $data) {
-            $this->_schema->dropConstraint($name);
         }
 
         return true;

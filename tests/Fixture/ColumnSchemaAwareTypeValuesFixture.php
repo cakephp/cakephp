@@ -8,14 +8,6 @@ use TestApp\Database\ColumnSchemaAwareTypeValueObject;
 
 class ColumnSchemaAwareTypeValuesFixture extends TestFixture
 {
-    public array $fields = [
-        'id' => ['type' => 'integer'],
-        'val' => ['type' => 'text', 'null' => false, 'comment' => 'Fixture comment'],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
-    ];
-
     public function init(): void
     {
         parent::init();
