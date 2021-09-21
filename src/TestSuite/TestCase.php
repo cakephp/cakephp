@@ -203,13 +203,27 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated(callable $callable): void
     {
-        $errorLevel = error_reporting();
-        error_reporting($errorLevel & ~E_USER_DEPRECATED);
+        $deprecation = false;
+        $previousHandler = set_error_handler(
+            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation) {
+                if ($code == E_USER_DEPRECATED) {
+                    $deprecation = true;
+
+                    return;
+                }
+                if ($previousHandler) {
+                    return $previousHandler($code, $message, $file, $line, $context);
+                }
+
+                return false;
+            }
+        );
         try {
             $callable();
         } finally {
-            error_reporting($errorLevel);
+            restore_error_handler();
         }
+        $this->assertTrue($deprecation, 'Should have at least one deprecation warning');
     }
 
     /**

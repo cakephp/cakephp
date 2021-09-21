@@ -147,6 +147,32 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * test deprecated
+     */
+    public function testDeprecated(): void
+    {
+        $this->deprecated(function () {
+            deprecationWarning('test');
+        });
+    }
+
+    /**
+     * test deprecated
+     */
+    public function testDeprecatedWithNoDeprecation(): void
+    {
+        $message = '';
+        try {
+            $this->deprecated(function () {
+            });
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        } finally {
+            $this->assertStringStartsWith('Should have at least one deprecation warning', $message);
+        }
+    }
+
+    /**
      * Test that TestCase::setUp() backs up values.
      */
     public function testSetupBackUpValues(): void
