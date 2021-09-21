@@ -644,6 +644,10 @@ class RouteBuilder
      * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
      *   See {@link \Cake\Routing\RouteCollection::setExtensions()}.
      * - `_method` Only match requests with specific HTTP verbs.
+     * - `_host` - Define the host name pattern if you want this route to only match
+     *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
+     *   e.g. `*.example.com` matches all subdomains on `example.com`.
+     * - '_port` - Define the port if you want this route to only match specific port number.
      *
      * Example of using the `_method` condition:
      *
