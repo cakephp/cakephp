@@ -25,7 +25,7 @@ class JsonFormatter extends AbstractFormatter
      */
     protected $_defaultConfig = [
         'dateFormat' => DATE_ATOM,
-        'flags' => JSON_UNESCAPED_UNICODE,
+        'flags' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
     ];
 
     /**
