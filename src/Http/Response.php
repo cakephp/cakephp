@@ -1551,6 +1551,10 @@ class Response implements ResponseInterface
         $this->_setHeader('Content-Length', (string)($end - $start + 1));
         $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
         $this->_setStatus(206);
+        /**
+         * @var int $start
+         * @var int $end
+         */
         $this->_fileRange = [$start, $end];
     }
 

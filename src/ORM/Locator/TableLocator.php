@@ -41,7 +41,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Configuration for aliases.
      *
-     * @var array<string, array>
+     * @var array<string, array|null>
      */
     protected $_config = [];
 
