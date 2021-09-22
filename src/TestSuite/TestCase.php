@@ -203,6 +203,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated(callable $callable): void
     {
+        /** @var boolean $deprecation */
         $deprecation = false;
         $previousHandler = set_error_handler(
             function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation) {
