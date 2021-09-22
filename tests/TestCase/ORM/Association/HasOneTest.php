@@ -33,7 +33,7 @@ class HasOneTest extends TestCase
     /**
      * Fixtures to load
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = ['core.Users', 'core.Profiles'];
 

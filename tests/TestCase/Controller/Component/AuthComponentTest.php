@@ -54,7 +54,7 @@ class AuthComponentTest extends TestCase
     /**
      * fixtures property
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = ['core.AuthUsers', 'core.Users'];
 

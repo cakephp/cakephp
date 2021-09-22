@@ -26,7 +26,7 @@ class PaginatorTest extends TestCase
     /**
      * fixtures property
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Posts', 'core.Articles', 'core.Tags', 'core.ArticlesTags',

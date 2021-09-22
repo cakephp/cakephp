@@ -44,7 +44,7 @@ class ShellDispatcher
     /**
      * List of connected aliases.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_aliases = [];
 

@@ -386,7 +386,7 @@ class Response implements ResponseInterface
     /**
      * File range. Used for requesting ranges of files.
      *
-     * @var array
+     * @var array<int>
      */
     protected $_fileRange = [];
 

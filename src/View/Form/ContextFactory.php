@@ -30,7 +30,7 @@ class ContextFactory
     /**
      * Context providers.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $providers = [];
 

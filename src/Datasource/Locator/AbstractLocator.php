@@ -27,14 +27,14 @@ abstract class AbstractLocator implements LocatorInterface
     /**
      * Instances that belong to the registry.
      *
-     * @var array<\Cake\Datasource\RepositoryInterface>
+     * @var array<string, \Cake\Datasource\RepositoryInterface>
      */
     protected $instances = [];
 
     /**
      * Contains a list of options that were passed to get() method.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $options = [];
 

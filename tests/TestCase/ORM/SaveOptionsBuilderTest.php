@@ -28,7 +28,7 @@ use RuntimeException;
 class SaveOptionsBuilderTest extends TestCase
 {
     /**
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Articles',

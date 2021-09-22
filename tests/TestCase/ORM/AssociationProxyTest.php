@@ -28,7 +28,7 @@ class AssociationProxyTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Articles', 'core.Authors', 'core.Comments',
