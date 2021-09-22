@@ -26,6 +26,7 @@ class JsonFormatter extends AbstractFormatter
     protected $_defaultConfig = [
         'dateFormat' => DATE_ATOM,
         'flags' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+        'appendNewline' => true,
     ];
 
     /**
@@ -42,7 +43,8 @@ class JsonFormatter extends AbstractFormatter
     public function format($level, string $message, array $context = []): string
     {
         $log = ['date' => date($this->_config['dateFormat']), 'level' => (string)$level, 'message' => $message];
+        $json = json_encode($log, $this->_config['flags']);
 
-        return json_encode($log, $this->_config['flags']);
+        return $this->_config['appendNewline'] ? $json . "\n" : $json;
     }
 }
