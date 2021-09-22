@@ -103,6 +103,27 @@ class ConsoleLogTest extends TestCase
             'stream' => $filename,
             'formatter' => [
                 'className' => JsonFormatter::class,
+            ],
+        ]);
+        $log->log('error', 'test with newline');
+        $fh = fopen($filename, 'r');
+        $line = fgets($fh);
+        $this->assertSame(strlen($line) - 1, strpos($line, "\n"));
+
+        $entry = json_decode($line, true);
+        $this->assertSame('test with newline', $entry['message']);
+    }
+
+    /**
+     * Test json formatter custom flags
+     */
+    public function testJsonFormatterFlags(): void
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+        $log = new ConsoleLog([
+            'stream' => $filename,
+            'formatter' => [
+                'className' => JsonFormatter::class,
                 'flags' => JSON_HEX_QUOT,
             ],
         ]);
@@ -112,8 +133,6 @@ class ConsoleLogTest extends TestCase
         $this->assertStringContainsString('\u0022noes\u0022', $line);
 
         $entry = json_decode($line, true);
-        $this->assertNotNull($entry['date']);
-        $this->assertSame('error', $entry['level']);
         $this->assertSame('oh "noes"', $entry['message']);
     }
 
