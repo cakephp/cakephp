@@ -21,7 +21,6 @@ use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Countable;
 use IteratorAggregate;
-use ReturnTypeWillChange;
 
 /**
  * Represents a database statement. Statements contains queries that can be
@@ -283,7 +282,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return \Cake\Database\StatementInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         if (!$this->_hasExecuted) {

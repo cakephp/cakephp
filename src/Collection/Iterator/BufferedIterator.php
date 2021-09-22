@@ -18,7 +18,6 @@ namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
 use Countable;
-use ReturnTypeWillChange;
 use Serializable;
 use SplDoublyLinkedList;
 
@@ -88,7 +87,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->_key;
@@ -99,7 +98,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->_current;

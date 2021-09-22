@@ -33,6 +33,7 @@ class Mysql extends Driver
 
     /**
      * @inheritDoc
+     * @var int
      */
     protected const MAX_ALIAS_LENGTH = 256;
 

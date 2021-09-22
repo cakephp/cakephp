@@ -36,6 +36,7 @@ class Postgres extends Driver
 
     /**
      * @inheritDoc
+     * @var int
      */
     protected const MAX_ALIAS_LENGTH = 63;
 

@@ -20,7 +20,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use RecursiveIterator;
 use RecursiveIteratorIterator;
-use ReturnTypeWillChange;
 
 /**
  * Iterator for flattening elements in a tree structure while adding some
@@ -88,7 +87,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function key()
     {
         $extractor = $this->_key;
