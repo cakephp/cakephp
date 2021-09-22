@@ -112,7 +112,7 @@ class ConsoleLogTest extends TestCase
 
         $entry = json_decode($line, true);
         $this->assertNotNull($entry['date']);
-        $this->assertSame('error', $entry['level']);        
+        $this->assertSame('error', $entry['level']);
         $this->assertSame('test with newline', $entry['message']);
     }
 
