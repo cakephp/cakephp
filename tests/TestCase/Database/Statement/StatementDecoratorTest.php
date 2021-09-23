@@ -37,8 +37,8 @@ class StatementDecoratorTest extends TestCase
 
         $driver->expects($this->once())->method('lastInsertId')
             ->with('users')
-            ->will($this->returnValue(2));
-        $this->assertSame(2, $statement->lastInsertId('users'));
+            ->will($this->returnValue('2'));
+        $this->assertSame('2', $statement->lastInsertId('users'));
     }
 
     /**

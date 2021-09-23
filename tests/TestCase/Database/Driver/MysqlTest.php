@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
@@ -99,7 +98,7 @@ class MysqlTest extends TestCase
             ],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar';
@@ -121,8 +120,7 @@ class MysqlTest extends TestCase
             ->withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]);
 
         $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-        $driver->expects($this->any())->method('getConnection')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
         $driver->connect($config);
     }
@@ -176,10 +174,10 @@ class MysqlTest extends TestCase
      */
     public function testVersion($dbVersion, $expectedVersion): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
-        $connection = $this->getMockBuilder(Connection::class)
+        /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */
+        $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAttribute'])
+            ->onlyMethods(['getAttribute'])
             ->getMock();
         $connection->expects($this->once())
             ->method('getAttribute')
@@ -188,10 +186,12 @@ class MysqlTest extends TestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['connect'])
+            ->onlyMethods(['_connect'])
             ->getMock();
 
-        $driver->setConnection($connection);
+        $driver->expects($this->once())
+            ->method('_connect')
+            ->willReturn($connection);
 
         $result = $driver->version();
         $this->assertSame($expectedVersion, $result);

@@ -80,14 +80,12 @@ class Postgres extends Driver
     protected string $_endQuote = '"';
 
     /**
-     * Establishes a connection to the database server
-     *
-     * @return bool true on success
+     * @inheritDoc
      */
-    public function connect(): bool
+    public function connect(): void
     {
-        if ($this->_connection) {
-            return true;
+        if (isset($this->_connection)) {
+            return;
         }
         $config = $this->_config;
         $config['flags'] += [
@@ -101,8 +99,7 @@ class Postgres extends Driver
             $dsn = "pgsql:dbname={$config['database']}";
         }
 
-        $this->_connect($dsn, $config);
-        $this->_connection = $connection = $this->getConnection();
+        $this->_connection = $this->_connect($dsn, $config);
         if (!empty($config['encoding'])) {
             $this->setEncoding($config['encoding']);
         }
@@ -112,14 +109,12 @@ class Postgres extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            $config['init'][] = sprintf('SET timezone = %s', $connection->quote($config['timezone']));
+            $config['init'][] = sprintf('SET timezone = %s', $this->_connection->quote($config['timezone']));
         }
 
         foreach ($config['init'] as $command) {
-            $connection->exec($command);
+            $this->_connection->exec($command);
         }
-
-        return true;
     }
 
     /**
@@ -198,14 +193,6 @@ class Postgres extends Driver
         }
 
         return parent::supports($feature);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportsDynamicConstraints(): bool
-    {
-        return true;
     }
 
     /**

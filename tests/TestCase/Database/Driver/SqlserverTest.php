@@ -101,7 +101,7 @@ class SqlserverTest extends TestCase
     public function testDnsString($constructorArgs, $dnsString): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
 
@@ -110,15 +110,7 @@ class SqlserverTest extends TestCase
                 $this->assertSame($dns, $dnsString);
 
                 return true;
-            }))
-            ->will($this->returnValue(true));
-
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $driver->method('getConnection')
-            ->will($this->returnValue($connection));
+            }));
 
         $driver->connect();
     }
@@ -140,7 +132,7 @@ class SqlserverTest extends TestCase
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'setConnection', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
@@ -179,11 +171,8 @@ class SqlserverTest extends TestCase
                 ['SET config2 value2']
             );
 
-        $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-
-        $driver->expects($this->any())->method('getConnection')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
         $driver->connect();

@@ -22,6 +22,7 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Statement\PDOStatement;
 use Closure;
 use InvalidArgumentException;
@@ -49,14 +50,14 @@ abstract class Driver implements DriverInterface
      *
      * @var \PDO
      */
-    protected $_connection;
+    protected PDO $_connection;
 
     /**
      * Configuration data.
      *
      * @var array<string, mixed>
      */
-    protected array $_config;
+    protected array $_config = [];
 
     /**
      * Base configuration that is merged into the user
@@ -113,22 +114,22 @@ abstract class Driver implements DriverInterface
      *
      * @param string $dsn A Driver-specific PDO-DSN
      * @param array<string, mixed> $config configuration to be used for creating connection
-     * @return bool true on success
+     * @return \PDO
      */
-    protected function _connect(string $dsn, array $config): bool
+    protected function _connect(string $dsn, array $config): PDO
     {
-        $action = function () use ($dsn, $config): void {
-            $this->setConnection(new PDO(
+        $action = function () use ($dsn, $config): PDO {
+            return new PDO(
                 $dsn,
                 $config['username'] ?: null,
                 $config['password'] ?: null,
                 $config['flags']
-            ));
+            );
         };
 
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
         try {
-            $retry->run($action);
+            return $retry->run($action);
         } catch (PDOException $e) {
             throw new MissingConnectionException(
                 [
@@ -141,22 +142,19 @@ abstract class Driver implements DriverInterface
         } finally {
             $this->connectRetries = $retry->getRetries();
         }
-
-        return true;
     }
 
     /**
      * @inheritDoc
      */
-    abstract public function connect(): bool;
+    abstract public function connect(): void;
 
     /**
      * @inheritDoc
      */
     public function disconnect(): void
     {
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
-        $this->_connection = null;
+        unset($this->_connection);
         $this->_version = null;
     }
 
@@ -182,7 +180,7 @@ abstract class Driver implements DriverInterface
      */
     public function getConnection(): PDO
     {
-        if ($this->_connection === null) {
+        if (!isset($this->_connection)) {
             throw new MissingConnectionException([
                 'driver' => App::shortName(static::class, 'Database/Driver'),
                 'reason' => 'Unknown',
@@ -190,20 +188,6 @@ abstract class Driver implements DriverInterface
         }
 
         return $this->_connection;
-    }
-
-    /**
-     * Set the internal PDO connection instance.
-     *
-     * @param \PDO $connection PDO instance.
-     * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
-     */
-    public function setConnection(object $connection)
-    {
-        $this->_connection = $connection;
-
-        return $this;
     }
 
     /**
@@ -331,6 +315,8 @@ abstract class Driver implements DriverInterface
             return (string)$value;
         }
 
+        $this->connect();
+
         return $this->_connection->quote((string)$value, PDO::PARAM_STR);
     }
 
@@ -345,15 +331,11 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function lastInsertId(?string $table = null, ?string $column = null): string|int
+    public function lastInsertId(?string $table = null): string
     {
         $this->connect();
 
-        if ($this->_connection instanceof PDO) {
-            return $this->_connection->lastInsertId($table);
-        }
-
-        return $this->_connection->lastInsertId($table, $column);
+        return $this->_connection->lastInsertId($table);
     }
 
     /**
@@ -361,14 +343,14 @@ abstract class Driver implements DriverInterface
      */
     public function isConnected(): bool
     {
-        if ($this->_connection === null) {
-            $connected = false;
-        } else {
+        if (isset($this->_connection)) {
             try {
                 $connected = (bool)$this->_connection->query('SELECT 1');
             } catch (PDOException $e) {
                 $connected = false;
             }
+        } else {
+            $connected = false;
         }
 
         return $connected;
@@ -444,14 +426,11 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function newTableSchema(string $table, array $columns = []): TableSchema
+    public function newTableSchema(string $table, array $columns = []): TableSchemaInterface
     {
-        $className = TableSchema::class;
-        if (isset($this->_config['tableSchema'])) {
-            /** @var class-string<\Cake\Database\Schema\TableSchema> $className */
-            $className = $this->_config['tableSchema'];
-        }
+        $className = $this->_config['tableSchema'] ?? TableSchema::class;
 
+        /** @var \Cake\Database\Schema\TableSchemaInterface */
         return new $className($table, $columns);
     }
 
@@ -467,22 +446,11 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Returns the number of connection retry attempts made.
-     *
-     * @return int
-     */
-    public function getConnectRetries(): int
-    {
-        return $this->connectRetries;
-    }
-
-    /**
      * Destructor
      */
     public function __destruct()
     {
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
-        $this->_connection = null;
+        unset($this->_connection);
     }
 
     /**
@@ -494,7 +462,7 @@ abstract class Driver implements DriverInterface
     public function __debugInfo(): array
     {
         return [
-            'connected' => $this->_connection !== null,
+            'connected' => !isset($this->_connection),
         ];
     }
 }

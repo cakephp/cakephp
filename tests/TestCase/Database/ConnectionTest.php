@@ -123,9 +123,9 @@ class ConnectionTest extends TestCase
     /**
      * Tests connecting to database
      */
-    public function testConnect(): void
+    public function testIsConnected(): void
     {
-        $this->assertTrue($this->connection->connect());
+        $this->connection->connect();
         $this->assertTrue($this->connection->isConnected());
     }
 
@@ -213,21 +213,6 @@ class ConnectionTest extends TestCase
             $e->getMessage()
         );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
-    }
-
-    public function testConnectRetry(): void
-    {
-        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
-
-        $connection = new Connection(['driver' => 'RetryDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
-
-        try {
-            $connection->connect();
-        } catch (MissingConnectionException $e) {
-        }
-
-        $this->assertSame(4, $connection->getDriver()->getConnectRetries());
     }
 
     /**

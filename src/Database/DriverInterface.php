@@ -17,8 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Schema\SchemaDialect;
-use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
+use PDO;
 
 /**
  * Interface for database driver.
@@ -64,9 +65,9 @@ interface DriverInterface
      * Establishes a connection to the database server.
      *
      * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
-     * @return bool True on success, false on failure.
+     * @return void
      */
-    public function connect(): bool;
+    public function connect();
 
     /**
      * Disconnects from database server.
@@ -78,17 +79,9 @@ interface DriverInterface
     /**
      * Returns correct connection resource or object that is internally used.
      *
-     * @return object Connection object used internally.
+     * @return \PDO Connection object used internally.
      */
-    public function getConnection(): object;
-
-    /**
-     * Set the internal connection object.
-     *
-     * @param object $connection The connection instance.
-     * @return $this
-     */
-    public function setConnection(object $connection);
+    public function getConnection(): PDO;
 
     /**
      * Returns whether php is able to use this driver for connecting to database.
@@ -172,15 +165,6 @@ interface DriverInterface
     public function enableForeignKeySQL(): string;
 
     /**
-     * Returns whether the driver supports adding or dropping constraints
-     * to already created tables.
-     *
-     * @return bool True if driver supports dynamic constraints.
-     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
-     */
-    public function supportsDynamicConstraints(): bool;
-
-    /**
      * Returns a value in a safe representation to be used in a query string
      *
      * @param mixed $value The value to quote.
@@ -241,10 +225,9 @@ interface DriverInterface
      * Returns last id generated for a table or sequence in database.
      *
      * @param string|null $table table name or sequence to get last insert value from.
-     * @param string|null $column the name of the column representing the primary key.
-     * @return string|int
+     * @return string
      */
-    public function lastInsertId(?string $table = null, ?string $column = null): string|int;
+    public function lastInsertId(?string $table = null): string;
 
     /**
      * Checks whether the driver is connected.
@@ -299,27 +282,13 @@ interface DriverInterface
     public function compileQuery(Query $query, ValueBinder $binder): array;
 
     /**
-     * Returns an instance of a QueryCompiler.
-     *
-     * @return \Cake\Database\QueryCompiler
-     */
-    public function newCompiler(): QueryCompiler;
-
-    /**
      * Constructs new TableSchema.
      *
      * @param string $table The table name.
      * @param array $columns The list of columns for the schema.
-     * @return \Cake\Database\Schema\TableSchema
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    public function newTableSchema(string $table, array $columns = []): TableSchema;
-
-    /**
-     * Returns the number of connection retry attempts made.
-     *
-     * @return int
-     */
-    public function getConnectRetries(): int;
+    public function newTableSchema(string $table, array $columns = []): TableSchemaInterface;
 
     /**
      * Returns the maximum alias length allowed.

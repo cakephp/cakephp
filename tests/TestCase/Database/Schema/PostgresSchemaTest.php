@@ -1344,9 +1344,10 @@ SQL;
      */
     protected function _getMockedDriver(): Driver
     {
-        $driver = new Postgres();
+        $this->_needsConnection();
+
         $mock = $this->getMockBuilder(PDO::class)
-            ->onlyMethods(['quote'])
+            ->onlyMethods(['quote', 'exec'])
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
@@ -1354,7 +1355,16 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->setConnection($mock);
+
+        $driver = $this->getMockBuilder(Postgres::class)
+            ->onlyMethods(['_connect'])
+            ->getMock();
+
+        $driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($mock);
+
+        $driver->connect();
 
         return $driver;
     }

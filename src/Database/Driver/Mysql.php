@@ -118,14 +118,12 @@ class Mysql extends Driver
     ];
 
     /**
-     * Establishes a connection to the database server
-     *
-     * @return bool true on success
+     * @inheritDoc
      */
-    public function connect(): bool
+    public function connect(): void
     {
-        if ($this->_connection) {
-            return true;
+        if (isset($this->_connection)) {
+            return;
         }
         $config = $this->_config;
 
@@ -161,16 +159,13 @@ class Mysql extends Driver
             $dsn .= ";charset={$config['encoding']}";
         }
 
-        $this->_connect($dsn, $config);
+        $this->_connection = $this->_connect($dsn, $config);
 
         if (!empty($config['init'])) {
-            $connection = $this->getConnection();
             foreach ((array)$config['init'] as $command) {
-                $connection->exec($command);
+                $this->_connection->exec($command);
             }
         }
-
-        return true;
     }
 
     /**
@@ -260,14 +255,6 @@ class Mysql extends Driver
         }
 
         return parent::supports($feature);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportsDynamicConstraints(): bool
-    {
-        return true;
     }
 
     /**

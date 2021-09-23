@@ -228,12 +228,12 @@ class Connection implements ConnectionInterface
      * Connects to the configured database.
      *
      * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
-     * @return bool true, if the connection was already established or the attempt was successful.
+     * @return void
      */
-    public function connect(): bool
+    public function connect(): void
     {
         try {
-            return $this->_driver->connect();
+            $this->_driver->connect();
         } catch (MissingConnectionException $e) {
             throw $e;
         } catch (Throwable $e) {
@@ -661,18 +661,6 @@ class Connection implements ConnectionInterface
         $this->getDisconnectRetry()->run(function (): void {
             $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
         });
-    }
-
-    /**
-     * Returns whether the driver supports adding or dropping constraints
-     * to already created tables.
-     *
-     * @return bool true if driver supports dynamic constraints
-     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
-     */
-    public function supportsDynamicConstraints(): bool
-    {
-        return $this->_driver->supportsDynamicConstraints();
     }
 
     /**

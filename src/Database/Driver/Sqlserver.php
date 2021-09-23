@@ -107,12 +107,12 @@ class Sqlserver extends Driver
      * information see: https://github.com/Microsoft/msphpsql/issues/65).
      *
      * @throws \InvalidArgumentException if an unsupported setting is in the driver config
-     * @return bool true on success
+     * @return void
      */
-    public function connect(): bool
+    public function connect(): void
     {
-        if ($this->_connection) {
-            return true;
+        if (isset($this->_connection)) {
+            return;
         }
         $config = $this->_config;
 
@@ -151,26 +151,23 @@ class Sqlserver extends Driver
         if ($config['multiSubnetFailover'] !== null) {
             $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
         }
-        $this->_connect($dsn, $config);
 
-        $connection = $this->getConnection();
+        $this->_connection = $this->_connect($dsn, $config);
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $connection->exec($command);
+                $this->_connection->exec($command);
             }
         }
         if (!empty($config['settings']) && is_array($config['settings'])) {
             foreach ($config['settings'] as $key => $value) {
-                $connection->exec("SET {$key} {$value}");
+                $this->_connection->exec("SET {$key} {$value}");
             }
         }
         if (!empty($config['attributes']) && is_array($config['attributes'])) {
             foreach ($config['attributes'] as $key => $value) {
-                $connection->setAttribute($key, $value);
+                $this->_connection->setAttribute($key, $value);
             }
         }
-
-        return true;
     }
 
     /**
@@ -278,14 +275,6 @@ class Sqlserver extends Driver
         }
 
         return parent::supports($feature);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportsDynamicConstraints(): bool
-    {
-        return true;
     }
 
     /**

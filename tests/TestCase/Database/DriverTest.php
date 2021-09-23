@@ -17,16 +17,20 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
 use PDOStatement;
+use TestApp\Database\Driver\RetryDriver;
+use TestApp\Database\Driver\StubDriver;
 
 /**
  * Tests Driver class
@@ -45,7 +49,15 @@ class DriverTest extends TestCase
     {
         parent::setUp();
 
-        $this->driver = $this->getMockForAbstractClass(Driver::class);
+        $this->driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['_connect']
+        );
     }
 
     /**
@@ -128,7 +140,10 @@ class DriverTest extends TestCase
             ->with($value, PDO::PARAM_STR)
             ->will($this->returnValue('string'));
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($connection);
+
         $this->driver->schemaValue($value);
     }
 
@@ -147,7 +162,10 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($connection);
+
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
     }
 
@@ -168,7 +186,12 @@ class DriverTest extends TestCase
             ->method('query')
             ->willReturn(new PDOStatement());
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('_connect')
+            ->willReturn($connection);
+
+        $this->driver->connect();
+
         $this->assertTrue($this->driver->isConnected());
     }
 
@@ -245,6 +268,20 @@ class DriverTest extends TestCase
         $actual = $this->driver->newTableSchema($tableName);
         $this->assertInstanceOf(TableSchema::class, $actual);
         $this->assertSame($tableName, $actual->name());
+    }
+
+    public function testConnectRetry(): void
+    {
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
+
+        $driver = new RetryDriver();
+
+        try {
+            $driver->connect();
+        } catch (MissingConnectionException) {
+        }
+
+        $this->assertSame(4, $driver->getConnectRetries());
     }
 
     /**

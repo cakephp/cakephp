@@ -34,7 +34,7 @@ class PostgresTest extends TestCase
     public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect'])
             ->getMock();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
         $expected = [
@@ -77,8 +77,7 @@ class PostgresTest extends TestCase
             );
 
         $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-        $driver->expects($this->any())->method('getConnection')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
         $driver->connect();
@@ -103,7 +102,7 @@ class PostgresTest extends TestCase
             'init' => ['Execute this', 'this too'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['_connect', 'getConnection', 'setConnection'])
+            ->onlyMethods(['_connect'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
@@ -137,11 +136,8 @@ class PostgresTest extends TestCase
                 ['SET timezone = Antarctica']
             );
 
-        $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-
-        $driver->expects($this->any())->method('getConnection')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
         $driver->connect();

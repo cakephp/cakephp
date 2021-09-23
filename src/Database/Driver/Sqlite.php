@@ -110,14 +110,12 @@ class Sqlite extends Driver
     ];
 
     /**
-     * Establishes a connection to the database server
-     *
-     * @return bool true on success
+     * @inheritDoc
      */
-    public function connect(): bool
+    public function connect(): void
     {
-        if ($this->_connection) {
-            return true;
+        if (isset($this->_connection)) {
+            return;
         }
         $config = $this->_config;
         $config['flags'] += [
@@ -135,7 +133,7 @@ class Sqlite extends Driver
         $databaseExists = file_exists($config['database']);
 
         $dsn = "sqlite:{$config['database']}";
-        $this->_connect($dsn, $config);
+        $this->_connection = $this->_connect($dsn, $config);
 
         if (!$databaseExists && $config['database'] !== ':memory:') {
             // phpcs:disable
@@ -145,11 +143,9 @@ class Sqlite extends Driver
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->getConnection()->exec($command);
+                $this->_connection->exec($command);
             }
         }
-
-        return true;
     }
 
     /**
@@ -218,14 +214,6 @@ class Sqlite extends Driver
         }
 
         return parent::supports($feature);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supportsDynamicConstraints(): bool
-    {
-        return false;
     }
 
     /**
