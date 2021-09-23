@@ -180,8 +180,8 @@ class ViewBuilderTest extends TestCase
             $builder = new ViewBuilder();
             $builder->{$set}($value);
 
-            $builder->{$set}(['Merged'], true);
-            $this->assertSame(array_merge($value, ['Merged']), $builder->{$get}(), 'Should merge');
+            $builder->{$set}(['merged' => 'Merged'], true);
+            $this->assertSame(['merged' => 'Merged'] + $value, $builder->{$get}(), 'Should merge');
 
             $builder->{$set}($value, false);
             $this->assertSame($value, $builder->{$get}(), 'Should replace');
@@ -346,19 +346,18 @@ class ViewBuilderTest extends TestCase
     }
 
     /**
-     * test setOptions() with 2 strings in array, merge true.
+     * test setOptions() with 2 assoc strings in array, merge true.
      */
     public function testSetOptionsMultiple(): void
     {
         $builder = new ViewBuilder();
-        $builder->setOptions(['oldOption'], false);
+        $builder->setOptions(['key' => 'oldOption'], false);
 
-        $option = ['newOption', 'anotherOption'];
+        $option = ['anotherKey' => 'anotherOption', 'key' => 'newOption'];
         $builder->setOptions($option);
-        $expects = ['oldOption', 'newOption', 'anotherOption'];
+        $expects = ['key' => 'newOption', 'anotherKey' => 'anotherOption'];
 
         $result = $builder->getOptions();
-        $this->assertContainsOnly('string', $result);
         $this->assertEquals($expects, $result);
     }
 
