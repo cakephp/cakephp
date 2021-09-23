@@ -322,7 +322,8 @@ class CellTest extends TestCase
         $view = new View($request, $response, null, ['helpers' => $helpers]);
 
         $cell = $view->cell('Articles');
-        $this->assertSame($helpers, $cell->viewBuilder()->getHelpers());
+        $expected = array_combine($helpers, [[], [], []]);
+        $this->assertSame($expected, $cell->viewBuilder()->getHelpers());
     }
 
     /**
