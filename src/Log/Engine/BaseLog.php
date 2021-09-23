@@ -119,7 +119,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Replaces placeholders in message string with context values.
      *
-     * @param string $message Formatted string
+     * @param \Stringable|string $message Formatted message
      * @param array $context Context for placeholder values.
      * @return string
      */
