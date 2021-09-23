@@ -84,10 +84,10 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabled(): void
     {
         $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This is going away', 2);
+            deprecationWarning('5.0.0', 'This is going away', 2);
         });
     }
 
@@ -97,10 +97,10 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
         $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/This is going away too - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This is going away too');
+            deprecationWarning('5.0.0', 'This is going away too');
         });
     }
 
@@ -113,7 +113,7 @@ class FunctionsTest extends TestCase
 
         Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
         $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This will be gone soon');
+            deprecationWarning('5.0.0', 'This will be gone soon');
         });
     }
 
@@ -125,7 +125,7 @@ class FunctionsTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function (): void {
-            deprecationWarning('This is leaving');
+            deprecationWarning('5.0.0', 'This is leaving');
         });
     }
 

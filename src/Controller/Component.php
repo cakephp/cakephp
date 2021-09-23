@@ -181,6 +181,7 @@ class Component implements EventListenerInterface
 
         if (!isset($events['Controller.shutdown']) && method_exists($this, 'shutdown')) {
             deprecationWarning(
+                '4.3.0',
                 '`Controller.shutdown` event callback is now `afterFilter()` instead of `shutdown()`.',
                 0
             );

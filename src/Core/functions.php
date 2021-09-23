@@ -272,12 +272,13 @@ if (!function_exists('deprecationWarning')) {
     /**
      * Helper method for outputting deprecation warnings
      *
+     * @param string $version The version that added this deprecation warning.
      * @param string $message The message to output as a deprecation warning.
      * @param int $stackFrame The stack frame to include in the error. Defaults to 1
      *   as that should point to application/plugin code.
      * @return void
      */
-    function deprecationWarning(string $message, int $stackFrame = 1): void
+    function deprecationWarning(string $version, string $message, int $stackFrame = 1): void
     {
         if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;
@@ -298,10 +299,11 @@ if (!function_exists('deprecationWarning')) {
             }
 
             $message = sprintf(
-                '%s - %s, line: %s' . "\n" .
+                'Since %s: %s - %s, line: %s' . "\n" .
                 ' You can disable all deprecation warnings by setting `Error.errorLevel` to' .
                 ' `E_ALL & ~E_USER_DEPRECATED`, or add `%s` to ' .
                 ' `Error.ignoredDeprecationPaths` in your `config/app.php` to mute deprecations from only this file.',
+                $version,
                 $message,
                 $frame['file'],
                 $frame['line'],
