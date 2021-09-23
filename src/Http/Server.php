@@ -23,7 +23,6 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
-use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -116,11 +115,11 @@ class Server implements EventDispatcherInterface
      * Emit the response using the PHP SAPI.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @param \Laminas\HttpHandlerRunner\Emitter\EmitterInterface|null $emitter The emitter to use.
+     * @param \Cake\Http\ResponseEmitter|null $emitter The emitter to use.
      *   When null, a SAPI Stream Emitter will be used.
      * @return void
      */
-    public function emit(ResponseInterface $response, ?EmitterInterface $emitter = null): void
+    public function emit(ResponseInterface $response, ?ResponseEmitter $emitter = null): void
     {
         if (!$emitter) {
             $emitter = new ResponseEmitter();
