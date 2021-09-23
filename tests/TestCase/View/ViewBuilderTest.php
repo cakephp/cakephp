@@ -201,27 +201,6 @@ class ViewBuilderTest extends TestCase
 
         $helpers = $builder->getHelpers();
         $expected = [
-            'Form',
-            'Form' => [
-                'config' => 'value',
-            ],
-        ];
-        $this->assertSame($expected, $helpers);
-    }
-
-    /**
-     * Tests that adding non-assoc and assoc merge properly.
-     *
-     * @return void
-     */
-    public function testAddHelpers(): void
-    {
-        $builder = new ViewBuilder();
-        $builder->addHelper('Form');
-        $builder->addHelpers(['Form' => ['config' => 'value']]);
-
-        $helpers = $builder->getHelpers();
-        $expected = [
             'Form' => [
                 'config' => 'value',
             ],
