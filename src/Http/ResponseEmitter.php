@@ -23,19 +23,12 @@ namespace Cake\Http;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Laminas\Diactoros\RelativeStream;
-use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Emits a Response to the PHP Server API.
- *
- * This emitter offers a few changes from the emitters offered by
- * diactoros:
- *
- * - It logs headers sent using CakePHP's logging tools.
- * - Cookies are emitted using setcookie() to not conflict with ext/session
  */
-class ResponseEmitter implements EmitterInterface
+class ResponseEmitter
 {
     /**
      * Maximum output buffering size for each iteration.

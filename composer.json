@@ -29,7 +29,6 @@
         "cakephp/chronos": "^2.2",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
-        "laminas/laminas-httphandlerrunner": "^1.1",
         "league/container": "^4.1.1",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",

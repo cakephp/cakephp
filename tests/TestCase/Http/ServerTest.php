@@ -22,6 +22,7 @@ use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ResponseEmitter;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
@@ -248,7 +249,7 @@ class ServerTest extends TestCase
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
-        $emitter = $this->getMockBuilder('Laminas\HttpHandlerRunner\Emitter\EmitterInterface')->getMock();
+        $emitter = $this->getMockBuilder(ResponseEmitter::class)->getMock();
         $emitter->expects($this->once())
             ->method('emit')
             ->with($final);
