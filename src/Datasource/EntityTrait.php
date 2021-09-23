@@ -32,14 +32,14 @@ trait EntityTrait
     /**
      * Holds all fields and their values for this entity.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_fields = [];
 
     /**
      * Holds all fields that have been changed and their original values for this entity.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_original = [];
 
@@ -71,7 +71,7 @@ trait EntityTrait
     /**
      * Holds a cached list of getters/setters per class
      *
-     * @var array
+     * @var array<string, array<string, array<string, string>>>
      */
     protected static array $_accessors = [];
 
@@ -87,14 +87,14 @@ trait EntityTrait
     /**
      * List of errors per field as stored in this object.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_errors = [];
 
     /**
      * List of invalid fields and their data for errors upon validation/patching.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_invalid = [];
 

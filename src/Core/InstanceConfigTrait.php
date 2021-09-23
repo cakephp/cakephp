@@ -30,7 +30,7 @@ trait InstanceConfigTrait
     /**
      * Runtime config
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_config = [];
 

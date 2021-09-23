@@ -102,7 +102,7 @@ class ConsoleOptionParser
     /**
      * Map of short -> long options, generated when using addOption()
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $_shortOptions = [];
 

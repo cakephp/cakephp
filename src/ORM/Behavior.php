@@ -129,7 +129,7 @@ class Behavior implements EventListenerInterface
      * Stores the reflected method + finder methods per class.
      * This prevents reflecting the same class multiple times in a single process.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected static array $_reflectionCache = [];
 

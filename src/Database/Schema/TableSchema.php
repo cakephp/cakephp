@@ -43,28 +43,28 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Columns in the table.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected array $_columns = [];
 
     /**
      * A map with columns to types
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $_typeMap = [];
 
     /**
      * Indexes in the table.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected array $_indexes = [];
 
     /**
      * Constraints in the table.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected array $_constraints = [];
 

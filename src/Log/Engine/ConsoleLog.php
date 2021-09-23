@@ -92,7 +92,7 @@ class ConsoleLog extends BaseLog
      */
     public function log($level, Stringable|string $message, array $context = []): void
     {
-        $message = $this->resolve($message, $context);
+        $message = $this->interpolate($message, $context);
         $this->_output->write($this->formatter->format($level, $message, $context));
     }
 }

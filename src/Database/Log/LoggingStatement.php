@@ -38,7 +38,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * Holds bound params
      *
-     * @var array
+     * @var array<array>
      */
     protected array $_compiledParams = [];
 

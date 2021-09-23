@@ -28,7 +28,7 @@ class TableRegressionTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Authors',

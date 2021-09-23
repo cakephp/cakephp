@@ -56,7 +56,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * The in-memory cache containing results from previous iterators
      *
-     * @var array
+     * @var array<int, array>
      */
     protected array $buffer = [];
 

@@ -159,7 +159,7 @@ class View implements EventDispatcherInterface
     /**
      * An array of variables
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $viewVars = [];
 

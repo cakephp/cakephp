@@ -47,7 +47,7 @@ class Connection implements ConnectionInterface
     /**
      * Contains the configuration params for this connection.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_config;
 

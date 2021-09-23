@@ -82,7 +82,7 @@ class MemcachedEngine extends CacheEngine
      *
      * Memcached must be compiled with JSON and igbinary support to use these engines
      *
-     * @var array
+     * @var array<string, int>
      */
     protected array $_serializers = [];
 

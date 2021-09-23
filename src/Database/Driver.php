@@ -55,7 +55,7 @@ abstract class Driver implements DriverInterface
     /**
      * Configuration data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_config = [];
 

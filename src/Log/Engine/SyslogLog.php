@@ -111,7 +111,7 @@ class SyslogLog extends BaseLog
             $priority = $this->_levelMap[$level];
         }
 
-        $lines = explode("\n", $this->resolve($message, $context));
+        $lines = explode("\n", $this->interpolate($message, $context));
         foreach ($lines as $line) {
             $this->_write($priority, $this->formatter->format($level, $line, $context));
         }
