@@ -102,11 +102,11 @@ class FormContext implements ContextInterface
     protected function _schemaDefault(string $field): mixed
     {
         $field = $this->_form->getSchema()->field($field);
-        if ($field) {
-            return $field['default'];
+        if (!$field) {
+            return null;
         }
 
-        return null;
+        return $field['default'];
     }
 
     /**
@@ -162,11 +162,11 @@ class FormContext implements ContextInterface
         }
 
         $attributes = $this->attributes($field);
-        if (!empty($attributes['length'])) {
-            return $attributes['length'];
+        if (empty($attributes['length'])) {
+            return null;
         }
 
-        return null;
+        return $attributes['length'];
     }
 
     /**

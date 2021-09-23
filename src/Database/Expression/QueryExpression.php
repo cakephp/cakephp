@@ -774,11 +774,11 @@ class QueryExpression implements ExpressionInterface, Countable
     protected function _calculateType(ExpressionInterface|string $field): ?string
     {
         $field = $field instanceof IdentifierExpression ? $field->getIdentifier() : $field;
-        if (is_string($field)) {
-            return $this->getTypeMap()->type($field);
+        if (!is_string($field)) {
+            return null;
         }
 
-        return null;
+        return $this->getTypeMap()->type($field);
     }
 
     /**

@@ -372,18 +372,18 @@ trait DateFormatTrait
         $formatter->setLenient(static::$lenientParsing);
 
         $time = $formatter->parse($time);
-        if ($time !== false) {
-            $dateTime = new DateTimeImmutable('@' . $time);
-
-            if (!($tz instanceof DateTimeZone)) {
-                $tz = new DateTimeZone($tz ?? date_default_timezone_get());
-            }
-            $dateTime = $dateTime->setTimezone($tz);
-
-            return new static($dateTime);
+        if ($time === false) {
+            return null;
         }
 
-        return null;
+        $dateTime = new DateTimeImmutable('@' . $time);
+
+        if (!($tz instanceof DateTimeZone)) {
+            $tz = new DateTimeZone($tz ?? date_default_timezone_get());
+        }
+        $dateTime = $dateTime->setTimezone($tz);
+
+        return new static($dateTime);
     }
 
     /**

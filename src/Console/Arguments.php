@@ -76,11 +76,11 @@ class Arguments
      */
     public function getArgumentAt(int $index): ?string
     {
-        if ($this->hasArgumentAt($index)) {
-            return $this->args[$index];
+        if (!$this->hasArgumentAt($index)) {
+            return null;
         }
 
-        return null;
+        return $this->args[$index];
     }
 
     /**

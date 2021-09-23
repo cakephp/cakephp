@@ -73,11 +73,11 @@ class EventList implements ArrayAccess, Countable
      */
     public function offsetGet(mixed $offset): mixed
     {
-        if ($this->offsetExists($offset)) {
-            return $this->_events[$offset];
+        if (!$this->offsetExists($offset)) {
+            return null;
         }
 
-        return null;
+        return $this->_events[$offset];
     }
 
     /**

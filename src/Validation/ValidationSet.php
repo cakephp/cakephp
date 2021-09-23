@@ -104,11 +104,11 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      */
     public function rule(string $name): ?ValidationRule
     {
-        if (!empty($this->_rules[$name])) {
-            return $this->_rules[$name];
+        if (empty($this->_rules[$name])) {
+            return null;
         }
 
-        return null;
+        return $this->_rules[$name];
     }
 
     /**

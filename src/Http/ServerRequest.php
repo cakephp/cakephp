@@ -437,24 +437,27 @@ class ServerRequest implements ServerRequestInterface
         $ref = $this->getEnv('HTTP_REFERER');
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
-        if (!empty($ref) && !empty($base)) {
-            if ($local && str_starts_with($ref, $base)) {
-                $ref = substr($ref, strlen($base));
-                if ($ref === '' || str_starts_with($ref, '//')) {
-                    $ref = '/';
-                }
-                if ($ref[0] !== '/') {
-                    $ref = '/' . $ref;
-                }
-
-                return $ref;
-            }
-            if (!$local) {
-                return $ref;
-            }
+        if (empty($ref) || empty($base)) {
+            return null;
         }
 
-        return null;
+        if ($local && str_starts_with($ref, $base)) {
+            $ref = substr($ref, strlen($base));
+            if ($ref === '' || str_starts_with($ref, '//')) {
+                $ref = '/';
+            }
+            if ($ref[0] !== '/') {
+                $ref = '/' . $ref;
+            }
+
+            return $ref;
+        }
+
+        if ($local) {
+            return null;
+        }
+
+        return $ref;
     }
 
     /**

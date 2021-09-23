@@ -119,10 +119,10 @@ class IntegerType extends BaseType implements BatchCastingInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value)) {
-            return (int)$value;
+        if (!is_numeric($value)) {
+            return null;
         }
 
-        return null;
+        return (int)$value;
     }
 }

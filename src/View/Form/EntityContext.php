@@ -516,11 +516,11 @@ class EntityContext implements ContextInterface
         }
 
         $ruleset = $validator->field($fieldName);
-        if (!$ruleset->isEmptyAllowed()) {
-            return $validator->getNotEmptyMessage($fieldName);
+        if ($ruleset->isEmptyAllowed()) {
+            return null;
         }
 
-        return null;
+        return $validator->getNotEmptyMessage($fieldName);
     }
 
     /**
@@ -544,11 +544,11 @@ class EntityContext implements ContextInterface
         }
 
         $attributes = $this->attributes($field);
-        if (!empty($attributes['length'])) {
-            return (int)$attributes['length'];
+        if (empty($attributes['length'])) {
+            return null;
         }
 
-        return null;
+        return (int)$attributes['length'];
     }
 
     /**

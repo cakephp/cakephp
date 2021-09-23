@@ -1050,13 +1050,13 @@ class View implements EventDispatcherInterface
     public function __get(string $name): mixed
     {
         $registry = $this->helpers();
-        if (isset($registry->{$name})) {
-            $this->{$name} = $registry->{$name};
-
-            return $registry->{$name};
+        if (!isset($registry->{$name})) {
+            return null;
         }
 
-        return null;
+        $this->{$name} = $registry->{$name};
+
+        return $registry->{$name};
     }
 
     /**

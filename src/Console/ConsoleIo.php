@@ -197,13 +197,13 @@ class ConsoleIo
      */
     public function out(array|string $message = '', int $newlines = 1, int $level = self::NORMAL): ?int
     {
-        if ($level <= $this->_level) {
-            $this->_lastWritten = $this->_out->write($message, $newlines);
-
-            return $this->_lastWritten;
+        if ($level > $this->_level) {
+            return null;
         }
 
-        return null;
+        $this->_lastWritten = $this->_out->write($message, $newlines);
+
+        return $this->_lastWritten;
     }
 
     /**
