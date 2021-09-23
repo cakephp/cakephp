@@ -116,10 +116,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      */
     public function marshal(mixed $value): ?int
     {
-        if ($value === null || $value === '') {
-            return null;
-        }
-        if (!is_numeric($value)) {
+        if ($value === null || $value === '' || !is_numeric($value)) {
             return null;
         }
 
