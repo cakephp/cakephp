@@ -48,20 +48,10 @@ class CommandTest extends TestCase
     /**
      * test loadModel is configured properly
      */
-    public function testConstructorLoadModel(): void
-    {
-        $command = new Command();
-        $command->loadModel('Comments');
-        $this->assertInstanceOf(Table::class, $command->Comments);
-    }
-
-    /**
-     * test loadModel is configured properly
-     */
     public function testConstructorAutoLoadModel(): void
     {
         $command = new AutoLoadModelCommand();
-        $this->assertInstanceOf(Table::class, $command->Posts);
+        $this->assertInstanceOf(Table::class, $command->getTable());
     }
 
     /**

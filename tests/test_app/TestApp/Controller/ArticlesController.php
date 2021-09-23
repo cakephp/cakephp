@@ -23,5 +23,5 @@ class ArticlesController extends Controller
     /**
      * @var string
      */
-    protected ?string $modelClass = ArticlesTable::class;
+    protected $defaultTable = ArticlesTable::class;
 }

@@ -16,7 +16,6 @@ namespace Cake\Mailer;
 
 use BadMethodCallException;
 use Cake\Core\StaticConfigTrait;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Log\Log;
 use Cake\Mailer\Exception\MissingActionException;
@@ -132,7 +131,6 @@ use InvalidArgumentException;
  */
 class Mailer implements EventListenerInterface
 {
-    use ModelAwareTrait;
     use LocatorAwareTrait;
     use StaticConfigTrait;
 
@@ -205,10 +203,6 @@ class Mailer implements EventListenerInterface
     public function __construct(array|string|null $config = null)
     {
         $this->message = new $this->messageClass();
-
-        if ($this->defaultTable !== null) {
-            $this->modelClass = $this->defaultTable;
-        }
 
         if ($config === null) {
             $config = static::getConfig('default');

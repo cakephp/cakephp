@@ -43,29 +43,7 @@
       <code>ReturnTypeWillChange</code>
     </UndefinedAttributeClass>
   </file>
-  <file src="src/Command/Command.php">
-    <DeprecatedMethod occurrences="1">
-      <code>loadModel</code>
-    </DeprecatedMethod>
-    <DeprecatedProperty occurrences="2">
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
-  </file>
   <file src="src/Controller/Controller.php">
-    <DeprecatedMethod occurrences="2">
-      <code>loadModel</code>
-      <code>loadModel</code>
-    </DeprecatedMethod>
-    <DeprecatedProperty occurrences="7">
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
     <PropertyTypeCoercion occurrences="1">
       <code>$result</code>
     </PropertyTypeCoercion>
@@ -81,13 +59,6 @@
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$_statement</code>
     </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/Datasource/ModelAwareTrait.php">
-    <DeprecatedProperty occurrences="3">
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
   </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -127,11 +98,6 @@
       <code>translate</code>
       <code>translate</code>
     </InternalMethod>
-  </file>
-  <file src="src/Mailer/Mailer.php">
-    <DeprecatedProperty occurrences="1">
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
   </file>
   <file src="src/ORM/Association.php">
     <MismatchingDocblockParamType occurrences="1">
