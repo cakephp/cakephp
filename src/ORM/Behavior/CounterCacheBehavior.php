@@ -106,7 +106,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Store the fields which should be ignored
      *
-     * @var array
+     * @var array<string, array<string, bool>>
      */
     protected $_ignoreDirty = [];
 

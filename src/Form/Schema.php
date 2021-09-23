@@ -24,7 +24,7 @@ class Schema
     /**
      * The fields in this schema.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_fields = [];
 

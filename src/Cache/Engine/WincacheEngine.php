@@ -30,7 +30,7 @@ class WincacheEngine extends CacheEngine
      * Contains the compiled group names
      * (prefixed with the global configuration prefix)
      *
-     * @var array
+     * @var array<string>
      */
     protected $_compiledGroupNames = [];
 

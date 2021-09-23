@@ -67,9 +67,9 @@ class I18nExtractCommand extends Command
     protected $_file = '';
 
     /**
-     * Contains all content waiting to be write
+     * Contains all content waiting to be written
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_storage = [];
 
@@ -83,7 +83,7 @@ class I18nExtractCommand extends Command
     /**
      * Extracted strings indexed by domain.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_translations = [];
 

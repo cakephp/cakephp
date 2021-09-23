@@ -38,7 +38,7 @@ class TranslateBehaviorTest extends TestCase
     /**
      * fixtures
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Articles',

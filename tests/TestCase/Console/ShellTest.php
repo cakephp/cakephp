@@ -41,7 +41,7 @@ class ShellTest extends TestCase
     /**
      * Fixtures used in this test case
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Articles',

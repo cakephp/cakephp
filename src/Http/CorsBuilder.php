@@ -56,7 +56,7 @@ class CorsBuilder
     /**
      * The headers that have been queued so far.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_headers = [];
 
