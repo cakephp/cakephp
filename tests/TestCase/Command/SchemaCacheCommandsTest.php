@@ -32,7 +32,7 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * Fixtures.
      *
-     * @var array
+     * @var array<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Tags'];
 

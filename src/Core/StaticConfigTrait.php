@@ -32,7 +32,7 @@ trait StaticConfigTrait
     /**
      * Configuration sets.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $_config = [];
 

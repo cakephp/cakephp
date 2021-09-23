@@ -37,7 +37,7 @@ class FieldTypeConverter
      * An array containing the name of the fields and the Type objects
      * each should use when converting them using batching.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected array $batchingTypeMap;
 

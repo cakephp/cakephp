@@ -117,13 +117,13 @@ abstract class BaseLog extends AbstractLogger
     }
 
     /**
-     * Resolves interpolation expressions in message string.
+     * Replaces placeholders in message string with context values.
      *
-     * @param \Stringable|string $message Interpolated message
-     * @param array $context Interpolation expression values
+     * @param string $message Formatted string
+     * @param array $context Context for placeholder values.
      * @return string
      */
-    protected function resolve(Stringable|string $message, array $context = []): string
+    protected function interpolate(Stringable|string $message, array $context = []): string
     {
         $message = (string)$message;
 

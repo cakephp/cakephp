@@ -39,7 +39,7 @@ class SmtpTransportTest extends TestCase
     protected $socket;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     protected $credentials = [
         'username' => 'mark',

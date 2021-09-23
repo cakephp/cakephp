@@ -48,7 +48,7 @@ use ReflectionProperty;
 class ConnectionTest extends TestCase
 {
     /**
-     * @var array
+     * @var array<string>
      */
     protected array $fixtures = ['core.Things'];
 

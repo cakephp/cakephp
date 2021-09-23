@@ -387,7 +387,7 @@ class Response implements ResponseInterface, Stringable
     /**
      * File range. Used for requesting ranges of files.
      *
-     * @var array
+     * @var array<int>
      */
     protected array $_fileRange = [];
 
@@ -1551,6 +1551,10 @@ class Response implements ResponseInterface, Stringable
         $this->_setHeader('Content-Length', (string)($end - $start + 1));
         $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
         $this->_setStatus(206);
+        /**
+         * @var int $start
+         * @var int $end
+         */
         $this->_fileRange = [$start, $end];
     }
 

@@ -28,7 +28,7 @@ class TestBaseLog extends BaseLog
      */
     public function log($level, Stringable|string $message, array $context = []): void
     {
-        $this->message = $this->resolve($message, $context);
+        $this->message = $this->interpolate($message, $context);
     }
 
     public function getMessage(): string

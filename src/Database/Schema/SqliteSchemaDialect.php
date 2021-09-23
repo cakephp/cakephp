@@ -29,7 +29,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * Array containing the foreign keys constraints names
      * Necessary for composite foreign keys to be handled
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_constraintsIdMap = [];
 

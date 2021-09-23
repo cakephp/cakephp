@@ -27,7 +27,7 @@ class InflectorTest extends TestCase
     /**
      * A list of chars to test transliteration.
      *
-     * @var array
+     * @var array<string, array>
      */
     public static $maps = [
         'de' => [ /* German */

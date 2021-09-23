@@ -42,7 +42,7 @@ class FormProtector
     /**
      * Unlocked fields.
      *
-     * @var array
+     * @var array<string>
      */
     protected array $unlockedFields = [];
 
@@ -107,7 +107,7 @@ class FormProtector
     /**
      * Determine which fields of a form should be used for hash.
      *
-     * @param array|string $field Reference to field to be secured. Can be dot
+     * @param array<string>|string $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
      * @param bool $lock Whether this field should be part of the validation
      *   or excluded as part of the unlockedFields. Default `true`.
