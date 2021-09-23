@@ -112,7 +112,6 @@ class ViewBuilderTest extends TestCase
     public function arrayPropertyProvider(): array
     {
         return [
-            ['helpers', ['Html', 'Form']],
             ['options', ['key' => 'value']],
         ];
     }
@@ -202,7 +201,6 @@ class ViewBuilderTest extends TestCase
 
         $helpers = $builder->getHelpers();
         $expected = [
-            'Form',
             'Form' => [
                 'config' => 'value',
             ],
@@ -431,9 +429,9 @@ class ViewBuilderTest extends TestCase
 
         $helpers = $builder->getHelpers();
         $expected = [
-            'Form',
-            'Time',
-            'Text',
+            'Form' => [],
+            'Time' => [],
+            'Text' => [],
         ];
         $this->assertSame($expected, $helpers);
     }

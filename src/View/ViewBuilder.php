@@ -310,13 +310,7 @@ class ViewBuilder implements JsonSerializable
      */
     public function addHelper(string $helper, array $options = [])
     {
-        if ($options) {
-            $array = [$helper => $options];
-        } else {
-            $array = [$helper];
-        }
-
-        $this->_helpers = array_merge($this->_helpers, $array);
+        $this->_helpers[$helper] = $options;
 
         return $this;
     }
@@ -345,15 +339,10 @@ class ViewBuilder implements JsonSerializable
      * Sets the helpers to use.
      *
      * @param array $helpers Helpers to use.
-     * @param bool $merge Whether to merge existing data with the new data.
      * @return $this
      */
-    public function setHelpers(array $helpers, bool $merge = true)
+    public function setHelpers(array $helpers)
     {
-        if ($merge) {
-            deprecationWarning('The $merge param is deprecated, use addHelper()/addHelpers() instead.');
-            $helpers = array_merge($this->_helpers, $helpers);
-        }
         $this->_helpers = $helpers;
 
         return $this;

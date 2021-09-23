@@ -101,7 +101,7 @@ class Renderer
         $this->viewBuilder()
             ->setClassName(View::class)
             ->setLayout('default')
-            ->setHelpers(['Html'], false);
+            ->setHelpers(['Html']);
 
         return $this;
     }

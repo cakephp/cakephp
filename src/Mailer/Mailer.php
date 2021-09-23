@@ -425,7 +425,7 @@ class Mailer implements EventListenerInterface
         }
 
         if (array_key_exists('helpers', $config)) {
-            $this->viewBuilder()->setHelpers($config['helpers'], false);
+            $this->viewBuilder()->setHelpers($config['helpers']);
             unset($config['helpers']);
         }
         if (array_key_exists('viewRenderer', $config)) {
