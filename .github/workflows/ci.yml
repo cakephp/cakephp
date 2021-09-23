@@ -108,6 +108,10 @@ jobs:
       if: matrix.php-version == '7.2' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
+    - name: Wait for MySQL
+      if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
+      run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
+
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
@@ -195,7 +199,7 @@ jobs:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
           vendor/bin/phpunit --verbose
-          
+
     - name: Run PHPUnit (autoquote enabled)
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
