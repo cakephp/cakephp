@@ -21,7 +21,6 @@ use Closure;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
-use ReturnTypeWillChange;
 use RuntimeException;
 
 /**
@@ -444,7 +443,7 @@ trait DateFormatTrait
      *
      * @return string|int
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if (static::$_jsonEncodeFormat instanceof Closure) {

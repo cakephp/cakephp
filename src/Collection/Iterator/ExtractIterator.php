@@ -19,7 +19,6 @@ namespace Cake\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
-use ReturnTypeWillChange;
 use Traversable;
 
 /**
@@ -69,7 +68,7 @@ class ExtractIterator extends Collection
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $extractor = $this->_extractor;

@@ -20,7 +20,6 @@ namespace Cake\Http\Session;
 
 use Cake\Cache\Cache;
 use InvalidArgumentException;
-use ReturnTypeWillChange;
 use SessionHandlerInterface;
 
 /**
@@ -81,7 +80,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in cache.
      * @return string|false Session data or false if it does not exist.
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function read($id)
     {
         $value = Cache::read($id, $this->_options['config']);
@@ -128,7 +127,7 @@ class CacheSession implements SessionHandlerInterface
      * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
         return 0;

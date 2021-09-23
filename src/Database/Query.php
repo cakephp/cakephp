@@ -28,7 +28,6 @@ use Cake\Database\Statement\CallbackStatement;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
-use ReturnTypeWillChange;
 use RuntimeException;
 
 /**
@@ -1933,7 +1932,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @return \Cake\Database\StatementInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         if ($this->_iterator === null || $this->_dirty) {
