@@ -115,11 +115,12 @@ class Route
      * - `_ext` - Defines the extensions used for this route.
      * - `_middleware` - Define the middleware names for this route.
      * - `pass` - Copies the listed parameters into params['pass'].
+     * - `_method` - Defines the HTTP method(s) the route applies to. It can be
+     *   a string or array of valid HTTP method name.
      * - `_host` - Define the host name pattern if you want this route to only match
      *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
      *   e.g. `*.example.com` matches all subdomains on `example.com`.
-     * - `_method` - Defines the HTTP method(s) the route applies to. It can be
-     *   a string or array of valid HTTP method name.
+     * - '_port` - Define the port if you want this route to only match specific port number.
      *
      * @param string $template Template string with parameter placeholders
      * @param array $defaults Defaults for the route.
