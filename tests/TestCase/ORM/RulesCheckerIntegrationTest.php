@@ -394,7 +394,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('UniqueAuthors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(
-            ['first_author_id', 'second_author_id']
+            ['first_author_id', 'second_author_id'],
+            ['allowMultipleNulls' => false]
         ));
 
         $entity = new Entity([
@@ -417,8 +418,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('UniqueAuthors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(
-            ['first_author_id', 'second_author_id'],
-            ['allowMultipleNulls' => true]
+            ['first_author_id', 'second_author_id']
         ));
 
         $entity = new Entity([

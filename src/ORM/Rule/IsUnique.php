@@ -37,7 +37,7 @@ class IsUnique
      * @var array<string, mixed>
      */
     protected array $_options = [
-        'allowMultipleNulls' => false,
+        'allowMultipleNulls' => true,
     ];
 
     /**
@@ -45,7 +45,7 @@ class IsUnique
      *
      * ### Options
      *
-     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
+     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to true.
      *
      * @param array<string> $fields The list of fields to check uniqueness for
      * @param array<string, mixed> $options The options for unique checks.
