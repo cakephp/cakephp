@@ -440,13 +440,13 @@ class Response extends Message implements ResponseInterface
         }
         libxml_use_internal_errors();
         $data = simplexml_load_string($this->_getBody());
-        if ($data) {
-            $this->_xml = $data;
-
-            return $this->_xml;
+        if (!$data) {
+            return null;
         }
 
-        return null;
+        $this->_xml = $data;
+
+        return $this->_xml;
     }
 
     /**

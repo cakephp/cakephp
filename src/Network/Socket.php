@@ -220,11 +220,11 @@ class Socket
             $context
         );
 
-        if ($resource) {
-            return $resource;
+        if (!$resource) {
+            return null;
         }
 
-        return null;
+        return $resource;
     }
 
     /**
@@ -338,11 +338,11 @@ class Socket
      */
     public function lastError(): ?string
     {
-        if (!empty($this->lastError)) {
-            return $this->lastError['num'] . ': ' . $this->lastError['str'];
+        if (empty($this->lastError)) {
+            return null;
         }
 
-        return null;
+        return $this->lastError['num'] . ': ' . $this->lastError['str'];
     }
 
     /**
@@ -396,19 +396,19 @@ class Socket
         }
 
         /** @psalm-suppress PossiblyNullArgument */
-        if (!feof($this->connection)) {
-            $buffer = fread($this->connection, $length);
-            $info = stream_get_meta_data($this->connection);
-            if ($info['timed_out']) {
-                $this->setLastError(E_WARNING, 'Connection timed out');
-
-                return null;
-            }
-
-            return $buffer;
+        if (feof($this->connection)) {
+            return null;
         }
 
-        return null;
+        $buffer = fread($this->connection, $length);
+        $info = stream_get_meta_data($this->connection);
+        if ($info['timed_out']) {
+            $this->setLastError(E_WARNING, 'Connection timed out');
+
+            return null;
+        }
+
+        return $buffer;
     }
 
     /**

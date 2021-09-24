@@ -490,7 +490,7 @@ class RequestHandlerComponent extends Component
     /**
      * Maps a content type alias back to its mime-type(s)
      *
-     * @param array|string $alias String alias to convert back into a content type. Or an array of aliases to map.
+     * @param array<string>|string $alias String alias to convert back into a content type. Or an array of aliases to map.
      * @return array|string|null Null on an undefined alias. String value of the mapped alias type. If an
      *   alias maps to more than one content type, the first one will be returned. If an array is provided
      *   for $alias, an array of mapped types will be returned.
@@ -502,14 +502,14 @@ class RequestHandlerComponent extends Component
         }
 
         $type = $this->getController()->getResponse()->getMimeType($alias);
-        if ($type) {
-            if (is_array($type)) {
-                return $type[0];
-            }
-
-            return $type;
+        if (!$type) {
+            return null;
         }
 
-        return null;
+        if (is_array($type)) {
+            return $type[0];
+        }
+
+        return $type;
     }
 }

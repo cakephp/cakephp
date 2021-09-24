@@ -285,11 +285,11 @@ class Log
     public static function engine(string $name): ?LoggerInterface
     {
         $registry = static::getRegistry();
-        if ($registry->{$name}) {
-            return $registry->{$name};
+        if (!$registry->{$name}) {
+            return null;
         }
 
-        return null;
+        return $registry->{$name};
     }
 
     /**
