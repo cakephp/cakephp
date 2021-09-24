@@ -266,6 +266,9 @@ abstract class TestCase extends BaseTestCase
         }
 
         if (static::$fixtureManager) {
+            if (!$this->autoFixtures) {
+                deprecationWarning('`$autoFixtures` is deprecated and will be removed in 5.0.', 0);
+            }
             if ($this->dropTables) {
                 deprecationWarning('`$dropTables` is deprecated and will be removed in 5.0.', 0);
             }
@@ -309,6 +312,7 @@ abstract class TestCase extends BaseTestCase
      * @return void
      * @see \Cake\TestSuite\TestCase::$autoFixtures
      * @throws \RuntimeException when no fixture manager is available.
+     * @deprecated 4.3.0 Disabling auto-fixtures is deprecated and only available using FixtureInjector fixture system.
      */
     public function loadFixtures(): void
     {

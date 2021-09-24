@@ -331,7 +331,8 @@
     </DeprecatedClass>
   </file>
   <file src="src/TestSuite/TestCase.php">
-    <DeprecatedProperty occurrences="6">
+    <DeprecatedProperty occurrences="7">
+      <code>$this-&gt;autoFixtures</code>
       <code>$this-&gt;autoFixtures</code>
       <code>$this-&gt;autoFixtures</code>
       <code>$this-&gt;autoFixtures</code>
