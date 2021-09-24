@@ -131,7 +131,7 @@ trait DateFormatTrait
      * It is possible to specify the desired format for the string to be displayed.
      * You can either pass `IntlDateFormatter` constants as the first argument of this
      * function, or pass a full ICU date formatting string as specified in the following
-     * resource: http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details.
+     * resource: https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax.
      *
      * Additional to `IntlDateFormatter` constants and date formatting string you can use
      * Time::UNIX_TIMESTAMP_FORMAT to get a unix timestamp
