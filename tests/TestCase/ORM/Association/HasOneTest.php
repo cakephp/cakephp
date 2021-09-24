@@ -31,7 +31,7 @@ class HasOneTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Users', 'core.Profiles'];
+    public $fixtures = ['core.Articles', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
 
     /**
      * @var bool
@@ -371,7 +371,38 @@ class HasOneTest extends TestCase
     }
 
     /**
-     * Test cascading delete with has many.
+     * Tests cascading deletes on entities with null binding and foreign key.
+     */
+    public function testCascadeDeleteNullBindingNullForeign()
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Authors = $this->getTableLocator()->get('NullableAuthors');
+
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $Authors,
+            'targetTable' => $Articles,
+            'bindingKey' => 'author_id',
+            'foreignKey' => 'author_id',
+            'cascadeCallbacks' => false,
+        ];
+        $association = $Authors->hasOne('Articles', $config);
+
+        // create article with null foreign key
+        $entity = new Entity(['author_id' => null, 'title' => 'this has no author', 'body' => 'I am abandoned', 'published' => 'N']);
+        $Articles->save($entity);
+
+        // get author with null binding key
+        $entity = $Authors->get(2, ['contain' => 'Articles']);
+        $this->assertNull($entity->article);
+        $this->assertTrue($association->cascadeDelete($entity));
+
+        $query = $Articles->query();
+        $this->assertSame(4, $query->count(), 'No articles should be deleted');
+    }
+
+    /**
+     * Test cascading delete with has one.
      *
      * @return void
      */
