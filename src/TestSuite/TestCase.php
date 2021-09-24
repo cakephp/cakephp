@@ -266,42 +266,6 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * Chooses which fixtures to load for a given test
-     *
-     * Each parameter is a model name that corresponds to a fixture, i.e. 'Posts', 'Authors', etc.
-     * Passing no parameters will cause all fixtures on the test case to load.
-     *
-     * @return void
-     * @see \Cake\TestSuite\TestCase::$autoFixtures
-     * @throws \RuntimeException when no fixture manager is available.
-     * @deprecated 4.3.0 Disabling auto-fixtures is deprecated and only available using FixtureInjector fixture system.
-     */
-    public function loadFixtures(): void
-    {
-        if ($this->autoFixtures) {
-            throw new RuntimeException('Cannot use `loadFixtures()` with `$autoFixtures` enabled.');
-        }
-        if (static::$fixtureManager === null) {
-            throw new RuntimeException('No fixture manager to load the test fixture');
-        }
-
-        $args = func_get_args();
-        foreach ($args as $class) {
-            static::$fixtureManager->loadSingle($class, null, $this->dropTables);
-        }
-
-        if (empty($args)) {
-            $autoFixtures = $this->autoFixtures;
-            $this->autoFixtures = true;
-            static::$fixtureManager->load($this);
-            $this->autoFixtures = $autoFixtures;
-        }
-    }
-
-    /**
->>>>>>> 4.next
      * Load routes for the application.
      *
      * If no application class can be found an exception will be raised.
