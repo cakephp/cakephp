@@ -48,7 +48,7 @@ use Cake\Utility\Xml;
  * $this->viewBuilder()->setOption('serialize', true);
  * ```
  *
- * The above would generate a XML object that looks like:
+ * The above would generate an XML object that looks like:
  *
  * `<response><posts>...</posts><users>...</users></response>`
  *
@@ -61,14 +61,14 @@ use Cake\Utility\Xml;
 class XmlView extends SerializedView
 {
     /**
-     * XML layouts are located in the `layouts/xml/` sub directory
+     * XML layouts are located in the `layouts/xml/` subdirectory
      *
      * @var string
      */
     protected string $layoutPath = 'xml';
 
     /**
-     * XML views are located in the 'xml' sub directory for controllers' views.
+     * XML views are located in the 'xml' subdirectory for controllers' views.
      *
      * @var string
      */
