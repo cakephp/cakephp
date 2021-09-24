@@ -21,7 +21,7 @@ namespace Cake\Core;
  *
  * Intended for use with Cake\Core\Container as
  * a typehintable way for services to have application
- * confiugration injected as arrays cannot be typehinted.
+ * configuration injected as arrays cannot be typehinted.
  */
 class ServiceConfig
 {
