@@ -122,14 +122,20 @@ class DatabaseSession implements SessionHandlerInterface
             ->first();
 
         if (empty($result)) {
-            return false;
+            return '';
         }
 
         if (is_string($result['data'])) {
             return $result['data'];
         }
 
-        return stream_get_contents($result['data']);
+        $session = stream_get_contents($result['data']);
+
+        if ($session === false) {
+            return '';
+        }
+
+        return $session;
     }
 
     /**
