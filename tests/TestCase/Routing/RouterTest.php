@@ -1625,6 +1625,27 @@ class RouterTest extends TestCase
     }
 
     /**
+     * testExtensions method for setting
+     *
+     * @deprecated
+     */
+    public function testSetExtensionsDeprecated(): void
+    {
+        Router::extensions('rss', false);
+        $this->assertContains('rss', Router::extensions());
+
+        $this->_connectDefaultRoutes();
+
+        $result = Router::parseRequest($this->makeRequest('/posts.rss', 'GET'));
+        $this->assertSame('rss', $result['_ext']);
+
+        $result = Router::parseRequest($this->makeRequest('/posts.xml', 'GET'));
+        $this->assertArrayNotHasKey('_ext', $result);
+
+        Router::extensions(['xml']);
+    }
+
+    /**
      * Test that route builders propagate extensions to the top.
      */
     public function testExtensionsWithScopedRoutes(): void
