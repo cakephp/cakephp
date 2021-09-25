@@ -441,7 +441,7 @@ trait QueryTrait
      * ```
      *
      * @param callable|null $formatter The formatting callable.
-     * @param int|true $mode Whether to overwrite, append or prepend the formatter.
+     * @param int|bool $mode Whether to overwrite, append or prepend the formatter.
      * @return $this
      * @throws \InvalidArgumentException
      */
