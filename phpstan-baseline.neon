@@ -76,11 +76,6 @@ parameters:
 			path: src/Collection/Iterator/TreePrinter.php
 
 		-
-			message: "#^Attribute class ReturnTypeWillChange does not exist\\.$#"
-			count: 1
-			path: src/Collection/Iterator/ZipIterator.php
-
-		-
 			message: "#^Method Cake\\\\Collection\\\\Iterator\\\\ZipIterator\\:\\:toArray\\(\\) should return array but returns array\\<array, array\\>\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ZipIterator.php
