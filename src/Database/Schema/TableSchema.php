@@ -290,7 +290,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * Constructor.
      *
      * @param string $table The table name.
-     * @param array $columns The list of columns for the schema.
+     * @param array<string, array> $columns The list of columns for the schema.
      */
     public function __construct(string $table, array $columns = [])
     {
@@ -674,7 +674,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function setOptions(array $options)
     {
-        $this->_options = array_merge($this->_options, $options);
+        $this->_options = $options + $this->_options;
 
         return $this;
     }
