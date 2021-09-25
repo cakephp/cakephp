@@ -56,7 +56,7 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^4.5",
-        "mikey179/vfsstream": "^1.6",
+        "mikey179/vfsstream": "^1.6.10",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "^8.5 || ^9.3"
     },
