@@ -542,6 +542,7 @@ class Response implements ResponseInterface
     /**
      * Sets a header.
      *
+     * @phpstan-param non-empty-string $header
      * @param string $header Header key.
      * @param string $value Header value.
      * @return void

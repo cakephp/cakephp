@@ -605,6 +605,7 @@ class Email implements JsonSerializable, Serializable
             }
         });
 
+        /** @psalm-var array */
         return $array;
     }
 

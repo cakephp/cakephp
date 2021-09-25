@@ -107,7 +107,7 @@ class DateType extends DateTimeType
         $date = parent::marshal($value);
         if ($date && !$date instanceof I18nDateTimeInterface) {
             // Clear time manually when I18n types aren't available and raw DateTime used
-            /** @psalm-var \DateTime|\DateTimeImmutable $date */
+            /** @var \DateTime|\DateTimeImmutable $date */
             $date->setTime(0, 0, 0);
         }
 

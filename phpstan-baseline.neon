@@ -291,31 +291,6 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: "#^Array \\(array\\<non\\-empty\\-string, non\\-empty\\-string\\>\\) does not accept \\(int\\|string\\)\\.$#"
-			count: 1
-			path: src/Http/Client/Request.php
-
-		-
-			message: "#^Array \\(array\\<string, string\\>\\) does not accept key string\\.$#"
-			count: 1
-			path: src/Http/Client/Request.php
-
-		-
-			message: "#^Array \\(array\\<non\\-empty\\-string, non\\-empty\\-string\\>\\) does not accept string\\.$#"
-			count: 1
-			path: src/Http/Client/Response.php
-
-		-
-			message: "#^Array \\(array\\<string, array\\<int, string\\>\\>\\) does not accept key string\\.$#"
-			count: 1
-			path: src/Http/Client/Response.php
-
-		-
-			message: "#^Array \\(array\\<string, string\\>\\) does not accept key string\\.$#"
-			count: 1
-			path: src/Http/Client/Response.php
-
-		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Cookie/Cookie.php
@@ -329,21 +304,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Http/Cookie/CookieCollection.php
-
-		-
-			message: "#^Array \\(array\\<non\\-empty\\-string, non\\-empty\\-string\\>\\) does not accept string\\.$#"
-			count: 1
-			path: src/Http/Response.php
-
-		-
-			message: "#^Array \\(array\\<string, array\\<int, string\\>\\>\\) does not accept key string\\.$#"
-			count: 1
-			path: src/Http/Response.php
-
-		-
-			message: "#^Array \\(array\\<string, string\\>\\) does not accept key string\\.$#"
-			count: 1
-			path: src/Http/Response.php
 
 		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
