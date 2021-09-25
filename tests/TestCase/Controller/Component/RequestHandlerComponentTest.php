@@ -154,7 +154,7 @@ class RequestHandlerComponentTest extends TestCase
             ->withHeader('Accept', 'application/json, application/javascript, */*; q=0.01')
             ->withHeader('X-Requested-With', 'XMLHttpRequest'));
         $this->RequestHandler->setExt(null);
-        Router::extensions('json', false);
+        Router::setExtensions('json', false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertSame('json', $this->RequestHandler->ext);
@@ -181,7 +181,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::reload();
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/json, application/javascript, */*; q=0.01'));
         $this->RequestHandler->setExt(null);
-        Router::extensions(['rss', 'json'], false);
+        Router::setExtensions(['rss', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertSame('json', $this->RequestHandler->ext);
@@ -213,13 +213,13 @@ class RequestHandlerComponentTest extends TestCase
             'application/json, application/javascript, application/xml, */*; q=0.01'
         ));
         $this->RequestHandler->setExt(null);
-        Router::extensions(['xml', 'json'], false);
+        Router::setExtensions(['xml', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertSame('xml', $this->RequestHandler->ext);
 
         $this->RequestHandler->setExt(null);
-        Router::extensions(['json', 'xml'], false);
+        Router::setExtensions(['json', 'xml'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertSame('json', $this->RequestHandler->ext);
@@ -263,7 +263,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testInititalizeFirefoxHeaderNotXml(): void
     {
         $_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
-        Router::extensions(['xml', 'json'], false);
+        Router::setExtensions(['xml', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
@@ -276,7 +276,7 @@ class RequestHandlerComponentTest extends TestCase
     {
         $this->assertNull($this->RequestHandler->ext);
         $extensions = Router::extensions();
-        Router::extensions('xml', false);
+        Router::setExtensions('xml', false);
 
         $request = new ServerRequest([
             'environment' => ['HTTP_ACCEPT' => 'text/plain'],
@@ -286,7 +286,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
 
-        Router::extensions($extensions, false);
+        Router::setExtensions($extensions, false);
     }
 
     /**
@@ -383,7 +383,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testDefaultExtensions($extension): void
     {
-        Router::extensions([$extension], false);
+        Router::setExtensions([$extension], false);
 
         $this->Controller->setRequest($this->request->withParam('_ext', $extension));
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
@@ -406,7 +406,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testDefaultExtensionsOverwrittenByAcceptHeader($extension): void
     {
-        Router::extensions([$extension], false);
+        Router::setExtensions([$extension], false);
 
         $request = $this->request->withHeader(
             'Accept',
@@ -432,7 +432,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testJsonViewLoaded(): void
     {
-        Router::extensions(['json', 'xml', 'ajax'], false);
+        Router::setExtensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'json'));
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
@@ -451,7 +451,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testXmlViewLoaded(): void
     {
-        Router::extensions(['json', 'xml', 'ajax'], false);
+        Router::setExtensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'xml'));
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
@@ -470,7 +470,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAjaxViewLoaded(): void
     {
-        Router::extensions(['json', 'xml', 'ajax'], false);
+        Router::setExtensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'ajax'));
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
@@ -488,7 +488,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testNoViewClassExtension(): void
     {
-        Router::extensions(['json', 'xml', 'ajax', 'csv'], false);
+        Router::setExtensions(['json', 'xml', 'ajax', 'csv'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'csv'));
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
@@ -508,7 +508,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('Invoked extension not recognized/configured: foo');
 
-        Router::extensions(['json', 'foo'], false);
+        Router::setExtensions(['json', 'foo'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'foo'));
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);

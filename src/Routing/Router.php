@@ -720,38 +720,68 @@ class Router
     }
 
     /**
-     * Get or set valid extensions for all routes connected later.
+     * Gets or sets valid extensions for all routes connected later.
      *
      * Instructs the router to parse out file extensions
      * from the URL. For example, http://example.com/posts.rss would yield a file
      * extension of "rss". The file extension itself is made available in the
      * controller as `$this->request->getParam('_ext')`, and is used by the RequestHandler
      * component to automatically switch to alternate layouts and templates, and
-     * load helpers corresponding to the given content, i.e. RssHelper. Switching
+     * load helpers corresponding to the given content, i.e. RSS/CSV/JSON. Switching
      * layouts and helpers requires that the chosen extension has a defined mime type
-     * in `Cake\Http\Response`.
+     * in `\Cake\Http\Response`.
      *
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.
      *
-     * @param array<string>|string|null $extensions List of extensions to be added.
+     * Deprecated: Setting extensions is deprecated since 4.3.0. Use setExtensions() instead.
+     *
+     * @param array<string>|string|null $extensions List of extensions to be added. Deprecated since 4.3.0.
      * @param bool $merge Whether to merge with or override existing extensions.
-     *   Defaults to `true`.
+     *   Defaults to `true`. Deprecated since 4.3.0.
      * @return array<string> Array of extensions Router is configured to parse.
      */
     public static function extensions($extensions = null, $merge = true): array
     {
-        $collection = static::$_collection;
-        if ($extensions === null) {
-            return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
+        if ($extensions !== null) {
+            deprecationWarning('Setting extensions is deprecated, use setExtensions() instead.');
+            static::setExtensions($extensions, $merge);
+
+            return static::$_defaultExtensions;
         }
 
+        $collection = static::$_collection;
+
+        return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
+    }
+
+    /**
+     * Sets valid extensions for all routes connected later.
+     *
+     * Instructs the router to parse out file extensions from the URL.
+     * For example, http://example.com/posts.rss would yield a file
+     * extension of "rss". The file extension itself is made available in the
+     * controller as `$this->request->getParam('_ext')`, and is used by the RequestHandler
+     * component to automatically switch to alternate layouts and templates, and
+     * load helpers corresponding to the given content, i.e. RSS/CSV/JSON. Switching
+     * layouts and helpers requires that the chosen extension has a defined mime type
+     * in `\Cake\Http\Response`.
+     *
+     * A string or an array of valid extensions can be passed to this method.
+     *
+     * @param array<string>|string|null $extensions List of extensions to be added.
+     * @param bool $merge Whether to merge with or override existing extensions.
+     *   Defaults to `true`.
+     * @return void
+     */
+    public static function setExtensions($extensions = null, bool $merge = true): void
+    {
         $extensions = (array)$extensions;
         if ($merge) {
             $extensions = array_unique(array_merge(static::$_defaultExtensions, $extensions));
         }
 
-        return static::$_defaultExtensions = $extensions;
+        static::$_defaultExtensions = $extensions;
     }
 
     /**

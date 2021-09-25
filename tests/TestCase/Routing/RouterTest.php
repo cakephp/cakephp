@@ -670,7 +670,7 @@ class RouterTest extends TestCase
         Router::connect('/reset/*', ['admin' => true, 'controller' => 'Users', 'action' => 'reset']);
         Router::connect('/tests', ['controller' => 'Tests', 'action' => 'index']);
         Router::connect('/admin/{controller}/{action}/*', ['prefix' => 'Admin']);
-        Router::extensions('rss', false);
+        Router::setExtensions('rss', false);
 
         $request = new ServerRequest([
             'params' => [
@@ -926,7 +926,7 @@ class RouterTest extends TestCase
      */
     public function testUrlGenerationWithExtensionInCurrentRequest(): void
     {
-        Router::extensions('rss');
+        Router::setExtensions('rss');
         Router::scope('/', function (RouteBuilder $r): void {
             $r->fallbacks('InflectedRoute');
         });
@@ -1610,7 +1610,7 @@ class RouterTest extends TestCase
      */
     public function testSetExtensions(): void
     {
-        Router::extensions('rss', false);
+        Router::setExtensions('rss', false);
         $this->assertContains('rss', Router::extensions());
 
         $this->_connectDefaultRoutes();
@@ -1621,7 +1621,7 @@ class RouterTest extends TestCase
         $result = Router::parseRequest($this->makeRequest('/posts.xml', 'GET'));
         $this->assertArrayNotHasKey('_ext', $result);
 
-        Router::extensions(['xml']);
+        Router::setExtensions(['xml']);
     }
 
     /**
@@ -1629,7 +1629,7 @@ class RouterTest extends TestCase
      */
     public function testExtensionsWithScopedRoutes(): void
     {
-        Router::extensions(['json']);
+        Router::setExtensions(['json']);
 
         Router::scope('/', function (RouteBuilder $routes): void {
             $routes->setExtensions('rss');
@@ -1678,7 +1678,7 @@ class RouterTest extends TestCase
      */
     public function testExtensionParsing(): void
     {
-        Router::extensions('rss', false);
+        Router::setExtensions('rss', false);
         $this->_connectDefaultRoutes();
 
         $result = Router::parseRequest($this->makeRequest('/posts.rss', 'GET'));
@@ -1708,7 +1708,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::extensions(['rss', 'xml'], false);
+        Router::setExtensions(['rss', 'xml'], false);
         $this->_connectDefaultRoutes();
 
         $result = Router::parseRequest($this->makeRequest('/posts.xml', 'GET'));
@@ -1760,7 +1760,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::extensions('rss', false);
+        Router::setExtensions('rss', false);
         Router::connect('/controller/action', ['controller' => 'Controller', 'action' => 'action', '_ext' => 'rss']);
         $result = Router::parseRequest($this->makeRequest('/controller/action', 'GET'));
         $expected = [
@@ -2553,7 +2553,7 @@ class RouterTest extends TestCase
     public function testReverseWithExtension(): void
     {
         Router::connect('/{controller}/{action}/*');
-        Router::extensions('json', false);
+        Router::setExtensions('json', false);
 
         $request = new ServerRequest([
             'url' => '/posts/view/1.json',
@@ -2748,7 +2748,7 @@ class RouterTest extends TestCase
      */
     public function testScopeExtensionsContained(): void
     {
-        Router::extensions(['json']);
+        Router::setExtensions(['json']);
         Router::scope('/', function (RouteBuilder $routes): void {
             $this->assertEquals(['json'], $routes->getExtensions(), 'Should default to global extensions.');
             $routes->setExtensions(['rss']);
