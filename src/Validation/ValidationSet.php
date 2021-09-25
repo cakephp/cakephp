@@ -215,8 +215,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns an iterator for each of the rules to be applied
      *
-     * @return array<\Cake\Validation\ValidationRule>
-     * @psalm-return \Traversable<string, \Cake\Validation\ValidationRule>
+     * @return \Traversable<string, \Cake\Validation\ValidationRule>
      */
     public function getIterator(): Traversable
     {

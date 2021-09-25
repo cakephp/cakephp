@@ -138,5 +138,7 @@ class SessionStorage implements StorageInterface
         }
 
         $this->_session->write($this->_config['redirect'], $url);
+
+        return null;
     }
 }

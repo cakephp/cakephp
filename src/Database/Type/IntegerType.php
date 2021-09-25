@@ -72,7 +72,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     public function toPHP($value, DriverInterface $driver): ?int
     {
         if ($value === null) {
-            return $value;
+            return null;
         }
 
         return (int)$value;

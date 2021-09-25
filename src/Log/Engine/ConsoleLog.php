@@ -92,7 +92,7 @@ class ConsoleLog extends BaseLog
      * @param string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void success of write.
-     * @see Cake\Log\Log::$_levels
+     * @see \Cake\Log\Log::$_levels
      */
     public function log($level, $message, array $context = [])
     {

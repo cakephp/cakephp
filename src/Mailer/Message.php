@@ -955,7 +955,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @param array<string> $include List of headers.
      * @param string $eol End of line string for concatenating headers.
-     * @param \Closure $callback Callback to run each header value through before stringifying.
+     * @param \Closure|null $callback Callback to run each header value through before stringifying.
      * @return string
      * @see Message::getHeaders()
      */

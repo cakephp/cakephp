@@ -461,8 +461,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns an iterator for each of the fields to be validated
      *
-     * @return array<\Cake\Validation\ValidationSet>
-     * @psalm-return \Traversable<string, \Cake\Validation\ValidationSet>
+     * @return \Traversable<string, \Cake\Validation\ValidationSet>
      */
     public function getIterator(): Traversable
     {

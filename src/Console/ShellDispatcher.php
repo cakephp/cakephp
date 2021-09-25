@@ -279,7 +279,6 @@ class ShellDispatcher
 
             $other = static::alias($shell);
             if ($other) {
-                $other = $aliases[$shell];
                 if ($other !== $plugin) {
                     Log::write(
                         'debug',

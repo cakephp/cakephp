@@ -59,7 +59,7 @@ class FixtureManager
     /**
      * A map of connection names and the fixture currently in it.
      *
-     * @var array
+     * @var array<string, array<\Cake\Datasource\FixtureInterface>>
      */
     protected $_insertionMap = [];
 
@@ -90,7 +90,8 @@ class FixtureManager
     }
 
     /**
-     * @inheritDoc
+     * @param \Cake\TestSuite\TestCase $test Test case
+     * @return void
      */
     public function fixturize(TestCase $test): void
     {
@@ -103,7 +104,7 @@ class FixtureManager
     }
 
     /**
-     * @inheritDoc
+     * @return \Cake\Datasource\FixtureInterface[]
      */
     public function loaded(): array
     {
@@ -111,13 +112,14 @@ class FixtureManager
     }
 
     /**
-     * @inheritDoc
+     * @return array<string>
      */
     public function getInserted(): array
     {
         $inserted = [];
         foreach ($this->_insertionMap as $fixtures) {
             foreach ($fixtures as $fixture) {
+                /** @var \Cake\TestSuite\Fixture\TestFixture $fixture */
                 $inserted[] = $fixture->table;
             }
         }
@@ -280,7 +282,9 @@ class FixtureManager
     }
 
     /**
-     * @inheritDoc
+     * @param \Cake\TestSuite\TestCase $test Test case
+     * @return void
+     * @throws \RuntimeException
      */
     public function load(TestCase $test): void
     {
@@ -440,7 +444,7 @@ class FixtureManager
         $truncate = function (ConnectionInterface $db, array $fixtures): void {
             $configName = $db->configName();
 
-            foreach ($fixtures as $name => $fixture) {
+            foreach ($fixtures as $fixture) {
                 if (
                     $this->isFixtureSetup($configName, $fixture)
                     && $fixture instanceof ConstraintsInterface
@@ -453,7 +457,11 @@ class FixtureManager
     }
 
     /**
-     * @inheritDoc
+     * @param string $name Name
+     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection
+     * @param bool $dropTables Drop all tables prior to loading schema files
+     * @return void
+     * @throws \UnexpectedValueException
      */
     public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
     {
