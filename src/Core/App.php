@@ -126,11 +126,11 @@ class App
             return $class;
         }
 
-        $pluginName = substr($class, 0, $pos);
-        $name = substr($class, $pos + strlen($type));
+        $pluginName = (string)substr($class, 0, $pos);
+        $name = (string)substr($class, $pos + strlen($type));
 
         if ($suffix) {
-            $name = substr($name, 0, -strlen($suffix));
+            $name = (string)substr($name, 0, -strlen($suffix));
         }
 
         $nonPluginNamespaces = [

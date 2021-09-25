@@ -66,7 +66,7 @@ class FixtureManager
     /**
      * List of TestCase class name that have been processed
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $_processed = [];
 
