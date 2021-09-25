@@ -3,7 +3,8 @@
     colors="true"
     bootstrap="tests/bootstrap.php"
     backupGlobals="true"
->
+    convertDeprecationsToExceptions="true"
+    >
     <testsuites>
         <testsuite name="cakephp">
             <directory>tests/TestCase/</directory>

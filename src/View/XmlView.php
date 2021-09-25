@@ -82,15 +82,6 @@ class XmlView extends SerializedView
     protected string $_responseType = 'xml';
 
     /**
-     * Option to allow setting an array of custom options for Xml::fromArray()
-     *
-     * For e.g. 'format' as 'attributes' instead of 'tags'.
-     *
-     * @var array|null
-     */
-    protected ?array $xmlOptions = null;
-
-    /**
      * Default config options.
      *
      * Use ViewBuilder::setOption()/setOptions() in your controller to set these options.

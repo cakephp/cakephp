@@ -619,6 +619,7 @@ class Client implements ClientInterface
      */
     protected function _createRequest(string $method, string $url, mixed $data, array $options): Request
     {
+        /** @var array<non-empty-string, non-empty-string> $headers */
         $headers = (array)($options['headers'] ?? []);
         if (isset($options['type'])) {
             $headers = array_merge($headers, $this->_typeHeaders($options['type']));
@@ -647,10 +648,11 @@ class Client implements ClientInterface
      * Returns headers for Accept/Content-Type based on a short type
      * or full mime-type.
      *
+     * @phpstan-param non-empty-string $type
      * @param string $type short type alias or full mimetype.
      * @return array<string, string> Headers to set on the request.
      * @throws \Cake\Core\Exception\CakeException When an unknown type alias is used.
-     * @psalm-return array{Accept: string, Content-Type: string}
+     * @psalm-return array<non-empty-string, non-empty-string>
      */
     protected function _typeHeaders(string $type): array
     {

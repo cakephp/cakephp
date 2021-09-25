@@ -1900,6 +1900,7 @@ class Message implements JsonSerializable
             }
         });
 
+        /** @psalm-var array */
         return $array;
     }
 

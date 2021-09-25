@@ -34,6 +34,7 @@ class Request extends Message implements RequestInterface
      *
      * Provides backwards compatible defaults for some properties.
      *
+     * @phpstan-param array<non-empty-string, non-empty-string> $headers
      * @param string $url The request URL
      * @param string $method The HTTP method to use.
      * @param array $headers The HTTP headers to set.
@@ -63,7 +64,8 @@ class Request extends Message implements RequestInterface
     /**
      * Add an array of headers to the request.
      *
-     * @param array $headers The headers to add.
+     * @phpstan-param array<non-empty-string, non-empty-string> $headers
+     * @param array<string, string> $headers The headers to add.
      * @return void
      */
     protected function addHeaders(array $headers): void
@@ -89,7 +91,9 @@ class Request extends Message implements RequestInterface
         if (is_array($content)) {
             $formData = new FormData();
             $formData->addMany($content);
-            $this->addHeaders(['Content-Type' => $formData->contentType()]);
+            /** @phpstan-var array<non-empty-string, non-empty-string> $headers */
+            $headers = ['Content-Type' => $formData->contentType()];
+            $this->addHeaders($headers);
             $content = (string)$formData;
         }
 
