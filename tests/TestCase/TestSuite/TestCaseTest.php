@@ -152,7 +152,7 @@ class TestCaseTest extends TestCase
     public function testDeprecated(): void
     {
         $this->deprecated(function () {
-            deprecationWarning('test');
+            trigger_error('deprecation message', E_USER_DEPRECATED);
         });
     }
 
@@ -161,14 +161,13 @@ class TestCaseTest extends TestCase
      */
     public function testDeprecatedWithNoDeprecation(): void
     {
-        $message = '';
         try {
             $this->deprecated(function () {
             });
+
+            $this->fail();
         } catch (\Exception $e) {
-            $message = $e->getMessage();
-        } finally {
-            $this->assertStringStartsWith('Should have at least one deprecation warning', $message);
+            $this->assertStringStartsWith('Should have at least one deprecation warning', $e->getMessage());
         }
     }
 
