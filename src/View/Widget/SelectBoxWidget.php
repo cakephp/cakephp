@@ -147,7 +147,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of the select element.
      *
      * @param array<string, mixed> $data The context for rendering a select.
-     * @return array
+     * @return array<string>
      */
     protected function _renderContent(array $data): array
     {
@@ -237,7 +237,7 @@ class SelectBoxWidget extends BasicWidget
      * Will recursively call itself when option groups are in use.
      *
      * @param iterable $options The options to render.
-     * @param array|null $disabled The options to disable.
+     * @param array<string>|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.

@@ -108,7 +108,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * This options array lets you provide custom constructor
      * arguments to application/plugin view classes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_options = [];
 
@@ -122,7 +122,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * View vars
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_vars = [];
 
@@ -183,7 +183,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Get all view vars.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getVars(): array
     {
@@ -491,7 +491,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets additional options for the view.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOptions(): array
     {
