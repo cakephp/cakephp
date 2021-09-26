@@ -41,7 +41,6 @@ class TableComplexIdTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->connection = ConnectionManager::get('test');
         static::setAppNamespace();
     }
 

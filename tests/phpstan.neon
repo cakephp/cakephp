@@ -4,7 +4,15 @@ parameters:
 	bootstrapFiles:
 		- bootstrap.php
 	paths:
-		- TestCase/
+		- TestCase/Collection/
+		- TestCase/Core/
+		- TestCase/Database/
+		- TestCase/Datasource/
+		- TestCase/Event/
+		- TestCase/ORM/
+		- TestCase/Utility/
+		- TestCase/Validation/
+
 	earlyTerminatingMethodCalls:
 		Cake\Console\Shell:
 			- abort

@@ -4917,6 +4917,7 @@ class QueryTest extends TestCase
     public function testStringExpression(): void
     {
         $driver = $this->connection->getDriver();
+        $collation = null;
         if ($driver instanceof Mysql) {
             if (version_compare($this->connection->getDriver()->version(), '5.7.0', '<')) {
                 $collation = 'utf8_general_ci';
@@ -4953,6 +4954,7 @@ class QueryTest extends TestCase
     public function testIdentifierCollation(): void
     {
         $driver = $this->connection->getDriver();
+        $collation = null;
         if ($driver instanceof Mysql) {
             if (version_compare($this->connection->getDriver()->version(), '5.7.0', '<')) {
                 $collation = 'utf8_general_ci';

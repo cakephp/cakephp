@@ -35,6 +35,16 @@ class BehaviorRegistryTest extends TestCase
     protected $Behaviors;
 
     /**
+     * @var \Cake\ORM\Table
+     */
+    protected $Table;
+
+    /**
+     * @var \Cake\Event\EventManagerInterface
+     */
+    protected $EventManager;
+
+    /**
      * setup method.
      */
     public function setUp(): void
