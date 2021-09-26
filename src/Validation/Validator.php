@@ -2180,14 +2180,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a validation rule to ensure the field is an uploaded file
      *
-     * For options see Cake\Validation\Validation::uploadedFile()
-     *
      * @param string $field The field you want to apply the rule to.
      * @param array<string, mixed> $options An array of options.
      * @param string|null $message The error message when the rule fails.
      * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
-     * @see \Cake\Validation\Validation::uploadedFile()
+     * @see \Cake\Validation\Validation::uploadedFile() For options
      * @return $this
      */
     public function uploadedFile(string $field, array $options, ?string $message = null, $when = null)

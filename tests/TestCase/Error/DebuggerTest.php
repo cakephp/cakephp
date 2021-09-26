@@ -749,7 +749,7 @@ eos;
         Debugger::setOutputMask(['serial' => 'XXXXXX']);
         $this->assertEquals(['password' => '[**********]', 'serial' => 'XXXXXX'], Debugger::outputMask());
         Debugger::setOutputMask([], false);
-        $this->assertEquals([], Debugger::outputMask());
+        $this->assertSame([], Debugger::outputMask());
     }
 
     /**

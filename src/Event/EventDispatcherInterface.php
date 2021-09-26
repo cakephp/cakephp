@@ -22,7 +22,7 @@ namespace Cake\Event;
  * Objects with this interface can trigger events, and have
  * an event manager retrieved from them.
  *
- * The Cake\Event\EventDispatcherTrait lets you easily implement
+ * The {@link \Cake\Event\EventDispatcherTrait} lets you easily implement
  * this interface.
  */
 interface EventDispatcherInterface

@@ -94,7 +94,7 @@ class DateTimeWidget extends BasicWidget
      * - `step` The "step" attribute. Defaults to `1` for "time" and "datetime-local" type inputs.
      *   You can set it to `null` or `false` to prevent explicit step attribute being added in HTML.
      * - `format` A `date()` function compatible datetime format string.
-     *   By default the widget will use a suitable format based on the input type and
+     *   By default, the widget will use a suitable format based on the input type and
      *   database type for the context. If an explicit format is provided, then no
      *   default value will be set for the `step` attribute, and it needs to be
      *   explicitly set if required.

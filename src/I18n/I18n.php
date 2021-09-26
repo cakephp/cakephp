@@ -272,7 +272,7 @@ class I18n
 
     /**
      * Sets the name of the default messages formatter to use for future
-     * translator instances. By default the `default` and `sprintf` formatters
+     * translator instances. By default, the `default` and `sprintf` formatters
      * are available.
      *
      * @param string $name The name of the formatter to use.

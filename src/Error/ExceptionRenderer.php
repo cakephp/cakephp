@@ -75,7 +75,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected $controller;
 
     /**
-     * Template to render for Cake\Core\Exception\CakeException
+     * Template to render for {@link \Cake\Core\Exception\CakeException}
      *
      * @var string
      */

@@ -25,7 +25,7 @@ use Traversable;
 /**
  * Handles caching queries and loading results from the cache.
  *
- * Used by Cake\Datasource\QueryTrait internally.
+ * Used by {@link \Cake\Datasource\QueryTrait} internally.
  *
  * @internal
  * @see \Cake\Datasource\QueryTrait::cache() for the public interface.

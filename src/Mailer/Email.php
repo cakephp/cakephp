@@ -482,13 +482,13 @@ class Email implements JsonSerializable, Serializable
     /**
      * Static method to fast create an instance of \Cake\Mailer\Email
      *
-     * @param array|string|null $to Address to send (see Cake\Mailer\Email::to()).
+     * @param array|string|null $to Address to send ({@see \Cake\Mailer\Email::setTo()}).
      *   If null, will try to use 'to' from transport config
      * @param string|null $subject String of subject or null to use 'subject' from transport config
      * @param array|string|null $message String with message or array with variables to be used in render
      * @param array|string $config String to use Email delivery profile from app.php or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
-     * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
+     * @return \Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
     public static function deliver(

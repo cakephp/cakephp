@@ -25,8 +25,8 @@ use ReflectionClass;
 /**
  * Base Plugin Class
  *
- * Every plugin should extends from this class or implement the interfaces and
- * include a plugin class in it's src root folder.
+ * Every plugin should extend from this class or implement the interfaces and
+ * include a plugin class in its src root folder.
  */
 class BasePlugin implements PluginInterface
 {

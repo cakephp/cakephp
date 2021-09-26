@@ -236,7 +236,7 @@ class Debugger
     /**
      * Reads the current output masking.
      *
-     * @return array
+     * @return array<string, string>
      */
     public static function outputMask(): array
     {
@@ -250,7 +250,7 @@ class Debugger
      *
      * Debugger::setOutputMask(['password' => '[*************]');
      *
-     * @param array $value An array where keys are replaced by their values in output.
+     * @param array<string, string> $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return void
      */
@@ -335,7 +335,7 @@ class Debugger
 
     /**
      * Creates an entry in the log file. The log entry will contain a stack trace from where it was called.
-     * as well as export the variable using exportVar. By default the log is written to the debug log.
+     * as well as export the variable using exportVar. By default, the log is written to the debug log.
      *
      * @param mixed $var Variable or content to log.
      * @param string|int $level Type of log to use. Defaults to 'debug'.
@@ -499,7 +499,7 @@ class Debugger
      * ```
      *
      * The above would return an array of 8 items. The 4th item would be the provided line,
-     * and would be wrapped in `<span class="code-highlight"></span>`. All of the lines
+     * and would be wrapped in `<span class="code-highlight"></span>`. All the lines
      * are processed with highlight_string() as well, so they have basic PHP syntax highlighting
      * applied.
      *

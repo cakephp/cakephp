@@ -105,7 +105,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Additional options used when constructing the view.
      *
-     * This options array lets you provide custom constructor
+     * These options array lets you provide custom constructor
      * arguments to application/plugin view classes.
      *
      * @var array
@@ -552,7 +552,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Using the data in the builder, create a view instance.
      *
      * If className() is null, App\View\AppView will be used.
-     * If that class does not exist, then Cake\View\View will be used.
+     * If that class does not exist, then {@link \Cake\View\View} will be used.
      *
      * @param array $vars The view variables/context to use.
      * @param \Cake\Http\ServerRequest|null $request The request to use.

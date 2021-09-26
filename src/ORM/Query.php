@@ -492,7 +492,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param \Cake\ORM\Table $table The table instance to pluck associations from.
      * @param \Cake\Database\TypeMap $typeMap The typemap to check for columns in.
-     *   This typemap is indirectly mutated via Cake\ORM\Query::addDefaultTypes()
+     *   This typemap is indirectly mutated via {@link \Cake\ORM\Query::addDefaultTypes()}
      * @param array $associations The nested tree of associations to walk.
      * @return void
      */

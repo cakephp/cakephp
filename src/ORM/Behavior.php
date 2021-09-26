@@ -46,7 +46,7 @@ use ReflectionMethod;
  *
  * ### Callback methods
  *
- * Behaviors can listen to any events fired on a Table. By default
+ * Behaviors can listen to any events fired on a Table. By default,
  * CakePHP provides a number of lifecycle events your behaviors can
  * listen to:
  *

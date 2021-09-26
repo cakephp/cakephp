@@ -24,7 +24,7 @@ use IntlDateFormatter;
  *
  * Adds handy methods and locale-aware formatting helpers
  *
- * This object provides an immutable variant of Cake\I18n\Date
+ * This object provides an immutable variant of {@link \Cake\I18n\Date}
  */
 class FrozenDate extends ChronosDate implements I18nDateTimeInterface
 {

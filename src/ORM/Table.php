@@ -219,7 +219,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected $_primaryKey;
 
     /**
-     * The name of the field that represents a human readable representation of a row
+     * The name of the field that represents a human-readable representation of a row
      *
      * @var array<string>|string|null
      */
@@ -792,7 +792,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]);
      * ```
      *
-     * @param array $behaviors All of the behaviors to load.
+     * @param array $behaviors All the behaviors to load.
      * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      */
@@ -1287,7 +1287,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * When calling this finder, the fields passed are used to determine what should
      * be used as the array key, value and optionally what to group the results by.
-     * By default the primary key for the model is used for the key, and the display
+     * By default, the primary key for the model is used for the key, and the display
      * field as value.
      *
      * The results of this finder will be in the following form:
@@ -1312,7 +1312,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * The `valueField` can also be an array, in which case you can also specify
-     * the `valueSeparator` option to control how the values will be concatinated:
+     * the `valueSeparator` option to control how the values will be concatenated:
      *
      * ```
      * $table->find('list', [
@@ -2510,6 +2510,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options List of options to pass to the finder
      * @return \Cake\ORM\Query
      * @throws \BadMethodCallException
+     * @uses findAll()
+     * @uses findList()
+     * @uses findThreaded()
      */
     public function callFinder(string $type, Query $query, array $options = []): Query
     {

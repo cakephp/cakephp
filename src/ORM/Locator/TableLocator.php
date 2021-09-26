@@ -171,7 +171,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * This is important because table associations are resolved at runtime
      * and cyclic references need to be handled correctly.
      *
-     * The options that can be passed are the same as in Cake\ORM\Table::__construct(), but the
+     * The options that can be passed are the same as in {@link \Cake\ORM\Table::__construct()}, but the
      * `className` key is also recognized.
      *
      * ### Options

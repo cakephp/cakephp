@@ -284,11 +284,11 @@ class EagerLoader
      * loaded for a table. The normalized array will restructure the original array
      * by sorting all associations under one key and special options under another.
      *
-     * Each of the levels of the associations tree will converted to a Cake\ORM\EagerLoadable
+     * Each of the levels of the associations tree will be converted to a {@link \Cake\ORM\EagerLoadable}
      * object, that contains all the information required for the association objects
      * to load the information from the database.
      *
-     * Additionally it will set an 'instance' key per association containing the
+     * Additionally, it will set an 'instance' key per association containing the
      * association instance from the corresponding source table
      *
      * @param \Cake\ORM\Table $repository The table containing the association that
@@ -452,7 +452,7 @@ class EagerLoader
 
     /**
      * Returns an array with the associations that need to be fetched using a
-     * separate query, each array value will contain a Cake\ORM\EagerLoadable object.
+     * separate query, each array value will contain a {@link \Cake\ORM\EagerLoadable} object.
      *
      * @param \Cake\ORM\Table $repository The table containing the associations
      * to be loaded

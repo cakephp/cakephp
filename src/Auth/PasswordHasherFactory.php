@@ -31,7 +31,7 @@ class PasswordHasherFactory
      * at least the key `className` set to the name of the class to use
      * @return \Cake\Auth\AbstractPasswordHasher Password hasher instance
      * @throws \RuntimeException If password hasher class not found or
-     *   it does not extend Cake\Auth\AbstractPasswordHasher
+     *   it does not extend {@link \Cake\Auth\AbstractPasswordHasher}
      */
     public static function build($passwordHasher): AbstractPasswordHasher
     {
