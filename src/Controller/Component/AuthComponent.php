@@ -79,7 +79,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *   ```
      *
      *   Using the class name without 'Authenticate' as the key, you can pass in an
-     *   array of config for each authentication object. Additionally you can define
+     *   array of config for each authentication object. Additionally, you can define
      *   config that should be set to all authentications objects using the 'all' key:
      *
      *   ```

@@ -53,7 +53,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * Fields / Schema for the fixture.
      *
-     * This array should be compatible with Cake\Database\Schema\Schema.
+     * This array should be compatible with {@link \Cake\Database\Schema\Schema}.
      * The `_constraints`, `_options` and `_indexes` keys are reserved for defining
      * constraints, options and indexes respectively.
      *

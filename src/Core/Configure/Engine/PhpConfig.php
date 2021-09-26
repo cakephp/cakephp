@@ -25,7 +25,7 @@ use Cake\Core\Exception\CakeException;
  * files containing simple PHP arrays.
  *
  * Files compatible with PhpConfig should return an array that
- * contains all of the configuration data contained in the file.
+ * contains all the configuration data contained in the file.
  *
  * An example configuration file would look like::
  *

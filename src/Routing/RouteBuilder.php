@@ -322,7 +322,7 @@ class RouteBuilder
      * ```
      *
      * In addition to the default routes, this would also connect a route for `/articles/delete_all`.
-     * By default the path segment will match the key name. You can use the 'path' key inside the resource
+     * By default, the path segment will match the key name. You can use the 'path' key inside the resource
      * definition to customize the path name.
      *
      * You can use the `inflect` option to change how path segments are generated:

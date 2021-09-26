@@ -228,7 +228,7 @@ class TextHelper extends Helper
     }
 
     /**
-     * Adds email links (<a href="mailto:....) to a given text.
+     * Adds email links (<a href="mailto:....") to a given text.
      *
      * ### Options
      *
@@ -407,12 +407,12 @@ class TextHelper extends Helper
      * - `transliteratorId`: A valid transliterator id string.
      *   If `null` (default) the transliterator (identifier) set via
      *   `Text::setTransliteratorId()` or `Text::setTransliterator()` will be used.
-     *   If `false` no transliteration will be done, only non words will be removed.
+     *   If `false` no transliteration will be done, only non-words will be removed.
      * - `preserve`: Specific non-word character to preserve. Default `null`.
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
      * @param string $string the string you want to slug
-     * @param array|string $options If string it will be use as replacement character
+     * @param array|string $options If string it will be used as replacement character
      *   or an array of options.
      * @return string
      * @see \Cake\Utility\Text::setTransliterator()

@@ -619,7 +619,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function match(array $conditions): CollectionInterface;
 
     /**
-     * Returns the first result matching all of the key-value pairs listed in
+     * Returns the first result matching all the key-value pairs listed in
      * conditions.
      *
      * @param array $conditions a key-value list of conditions where the key is

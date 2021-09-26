@@ -58,7 +58,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * If a subclass provides event support, you can use `$config['enabled'] = false`
      * to exclude constructed objects from being registered for events.
      *
-     * Using Cake\Controller\Controller::$components as an example. You can alias
+     * Using {@link \Cake\Controller\Component::$components} as an example. You can alias
      * an object by setting the 'className' key, i.e.,
      *
      * ```

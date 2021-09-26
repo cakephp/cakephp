@@ -151,7 +151,7 @@ class EventManager implements EventManagerInterface
 
     /**
      * Auxiliary function to extract and return a PHP callback type out of the callable definition
-     * from the return value of the `implementedEvents` method on a Cake\Event\EventListenerInterface
+     * from the return value of the `implementedEvents()` method on a {@link \Cake\Event\EventListenerInterface}
      *
      * @param array $function the array taken from a handler definition for an event
      * @param \Cake\Event\EventListenerInterface $object The handler object

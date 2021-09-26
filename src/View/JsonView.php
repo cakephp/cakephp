@@ -59,14 +59,14 @@ use RuntimeException;
 class JsonView extends SerializedView
 {
     /**
-     * JSON layouts are located in the JSON sub directory of `Layouts/`
+     * JSON layouts are located in the JSON subdirectory of `Layouts/`
      *
      * @var string
      */
     protected $layoutPath = 'json';
 
     /**
-     * JSON views are located in the 'json' sub directory for controllers' views.
+     * JSON views are located in the 'json' subdirectory for controllers' views.
      *
      * @var string
      */

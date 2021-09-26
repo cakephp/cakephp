@@ -183,12 +183,12 @@ class RequestHandlerComponent extends Component
      * - If Router::extensions() is enabled, the layout and template type are
      *   switched based on the parsed extension or `Accept` header. For example,
      *   if `controller/action.xml` is requested, the view path becomes
-     *   `templates/Controller/xml/action.php`. Also if `controller/action` is
+     *   `templates/Controller/xml/action.php`. Also, if `controller/action` is
      *   requested with `Accept: application/xml` in the headers the view
      *   path will become `templates/Controller/xml/action.php`. Layout and template
-     *   types will only switch to mime-types recognized by Cake\Http\Response.
+     *   types will only switch to mime-types recognized by \Cake\Http\Response.
      *   If you need to declare additional mime-types, you can do so using
-     *   Cake\Http\Response::setTypeMap() in your controller's beforeFilter() method.
+     *   {@link \Cake\Http\Response::setTypeMap()} in your controller's beforeFilter() method.
      * - If a helper with the same name as the extension exists, it is added to
      *   the controller.
      * - If the extension is of a type that RequestHandler understands, it will
@@ -230,7 +230,7 @@ class RequestHandlerComponent extends Component
     /**
      * Determines which content types the client accepts. Acceptance is based on
      * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
-     * header. Unlike Cake\Http\ServerRequest::accepts() this method deals entirely with mapped content types.
+     * header. Unlike {@link \Cake\Http\ServerRequest::accepts()} this method deals entirely with mapped content types.
      *
      * Usage:
      *
@@ -446,7 +446,7 @@ class RequestHandlerComponent extends Component
 
     /**
      * Sets the response header based on type map index name. This wraps several methods
-     * available on Cake\Http\Response. It also allows you to use Content-Type aliases.
+     * available on {@link \Cake\Http\Response}. It also allows you to use Content-Type aliases.
      *
      * @param string $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
      *    like 'application/x-shockwave'.

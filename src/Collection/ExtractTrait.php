@@ -123,7 +123,7 @@ trait ExtractTrait
     }
 
     /**
-     * Returns a callable that receives a value and will return whether or not
+     * Returns a callable that receives a value and will return whether
      * it matches certain condition.
      *
      * @param array $conditions A key-value list of conditions to match where the

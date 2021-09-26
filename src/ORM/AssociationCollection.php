@@ -175,7 +175,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Drop/remove an association.
      *
-     * Once removed the association will not longer be reachable
+     * Once removed the association will no longer be reachable
      *
      * @param string $alias The alias name.
      * @return void
@@ -188,7 +188,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Remove all registered associations.
      *
-     * Once removed associations will not longer be reachable
+     * Once removed associations will no longer be reachable
      *
      * @return void
      */

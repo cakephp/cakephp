@@ -25,7 +25,7 @@ use SimpleXMLElement;
 /**
  * Implements methods for HTTP responses.
  *
- * All of the following examples assume that `$response` is an
+ * All the following examples assume that `$response` is an
  * instance of this class.
  *
  * ### Get header values

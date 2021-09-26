@@ -77,7 +77,7 @@ class ConnectionTest extends TestCase
     protected $connection;
 
     /**
-     * @var use Cake\Database\Log\QueryLogger
+     * @var \Cake\Database\Log\QueryLogger
      */
     protected $defaultLogger;
 

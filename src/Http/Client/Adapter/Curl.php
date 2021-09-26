@@ -28,7 +28,7 @@ use Psr\Http\Message\RequestInterface;
 /**
  * Implements sending Cake\Http\Client\Request via ext/curl.
  *
- * In addition to the standard options documented in Cake\Http\Client,
+ * In addition to the standard options documented in {@link \Cake\Http\Client},
  * this adapter supports all available curl options. Additional curl options
  * can be set via the `curl` option key when making requests or configuring
  * a client.

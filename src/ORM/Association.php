@@ -1195,7 +1195,7 @@ abstract class Association
 
     /**
      * Eager loads a list of records in the target table that are related to another
-     * set of records in the source table. Source records can specified in two ways:
+     * set of records in the source table. Source records can be specified in two ways:
      * first one is by passing a Query object setup to find on the source table and
      * the other way is by explicitly passing an array of primary key values from
      * the source table.
