@@ -62,7 +62,7 @@ class Translator
      * @param string $locale The locale being used.
      * @param \Cake\I18n\Package $package The Package containing keys and translations.
      * @param \Cake\I18n\FormatterInterface $formatter A message formatter.
-     * @param \Cake\I18n\Translator $fallback A fallback translator.
+     * @param \Cake\I18n\Translator|null $fallback A fallback translator.
      */
     public function __construct(
         string $locale,

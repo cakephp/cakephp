@@ -11,6 +11,8 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @var string $file
+ * @var array<string> $paths
  */
 use Cake\Utility\Inflector;
 

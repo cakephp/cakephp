@@ -146,7 +146,7 @@ class TextHelper extends Helper
         );
         // phpcs:disable Generic.Files.LineLength
         $text = preg_replace_callback(
-            '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ <](?<!\))#i',
+            '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ ](?<!\))#i',
             [&$this, '_insertPlaceHolder'],
             $text
         );

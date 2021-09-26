@@ -855,6 +855,7 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
+                /** @var array|false $data */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new RuntimeException(
@@ -1077,16 +1078,18 @@ class View implements EventDispatcherInterface
      * Magic accessor for helpers.
      *
      * @param string $name Name of the attribute to get.
-     * @return mixed
+     * @return \Cake\View\Helper|null
      */
     public function __get(string $name)
     {
         $registry = $this->helpers();
-        if (isset($registry->{$name})) {
-            $this->{$name} = $registry->{$name};
-
-            return $registry->{$name};
+        if (!isset($registry->{$name})) {
+            return null;
         }
+
+        $this->{$name} = $registry->{$name};
+
+        return $registry->{$name};
     }
 
     /**
@@ -1169,6 +1172,7 @@ class View implements EventDispatcherInterface
         ob_start();
 
         try {
+            // Avoiding $templateFile here due to collision with extract() vars.
             include func_get_arg(0);
         } catch (Throwable $exception) {
             while (ob_get_level() > $bufferLevel) {

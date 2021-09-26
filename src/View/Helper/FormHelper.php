@@ -2329,9 +2329,6 @@ class FormHelper extends Helper
         if ($isDisabled) {
             $options['secure'] = self::SECURE_SKIP;
         }
-        if ($options['secure'] === self::SECURE_SKIP) {
-            return $options;
-        }
 
         return $options;
     }

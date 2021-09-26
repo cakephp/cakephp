@@ -94,11 +94,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Invoke a controller's action and wrapping methods.
      *
-     * @param mixed $controller The controller to invoke.
+     * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
-     * @psalm-param \Cake\Controller\Controller $controller
      */
     public function invoke($controller): ResponseInterface
     {
@@ -160,7 +159,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $args = [];
         $reflection = new ReflectionFunction($action);
 
-        foreach ($reflection->getParameters() as $i => $parameter) {
+        foreach ($reflection->getParameters() as $parameter) {
             $position = $parameter->getPosition();
             $hasDefault = $parameter->isDefaultValueAvailable();
 

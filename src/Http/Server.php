@@ -68,7 +68,7 @@ class Server implements EventDispatcherInterface
      * - Run the middleware queue including the application.
      *
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueue MiddlewareQueue or null.
+     * @param \Cake\Http\MiddlewareQueue|null $middlewareQueue MiddlewareQueue or null.
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */

@@ -32,7 +32,7 @@ class ExitCode extends Constraint
     /**
      * Constructor
      *
-     * @param int $exitCode Exit code
+     * @param int|null $exitCode Exit code
      */
     public function __construct(?int $exitCode)
     {

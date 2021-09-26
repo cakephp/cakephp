@@ -389,7 +389,7 @@ abstract class Driver implements DriverInterface
             return $this->_connection->lastInsertId($table);
         }
 
-        return $this->_connection->lastInsertId($table, $column);
+        return $this->_connection->lastInsertId($table);
     }
 
     /**

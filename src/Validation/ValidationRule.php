@@ -190,7 +190,7 @@ class ValidationRule
     protected function _addValidatorProps(array $validator = []): void
     {
         foreach ($validator as $key => $value) {
-            if (!isset($value) || empty($value)) {
+            if (empty($value)) {
                 continue;
             }
             if ($key === 'rule' && is_array($value) && !is_callable($value)) {

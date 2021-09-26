@@ -246,9 +246,9 @@ class RequestHandlerComponent extends Component
      *
      * Returns true if the client accepts XML.
      *
-     * @param array|string|null $type Can be null (or no parameter), a string type name, or an
+     * @param array<string>|string|null $type Can be null (or no parameter), a string type name, or an
      *   array of types
-     * @return mixed If null or no parameter is passed, returns an array of content
+     * @return array|bool|string|null If null or no parameter is passed, returns an array of content
      *   types the client accepts. If a string is passed, returns true
      *   if the client accepts it. If an array is passed, returns true
      *   if the client accepts one or more elements in the array.
@@ -317,9 +317,11 @@ class RequestHandlerComponent extends Component
             return $controller->getResponse()->mapType($contentType);
         }
 
-        if (is_string($type)) {
-            return $type === $controller->getResponse()->mapType($contentType);
+        if (!is_string($type)) {
+            return null;
         }
+
+        return $type === $controller->getResponse()->mapType($contentType);
     }
 
     /**

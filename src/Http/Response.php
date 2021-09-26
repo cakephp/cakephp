@@ -1434,7 +1434,7 @@ class Response implements ResponseInterface
         if ($options['download']) {
             $agent = (string)env('HTTP_USER_AGENT');
 
-            if ($agent && preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+            if ($agent && preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
             } elseif ($agent && preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/force-download';
@@ -1464,7 +1464,7 @@ class Response implements ResponseInterface
     /**
      * Convenience method to set a string into the response body
      *
-     * @param string $string The string to be sent
+     * @param string|null $string The string to be sent
      * @return static
      */
     public function withStringBody(?string $string)

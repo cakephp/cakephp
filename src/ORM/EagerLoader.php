@@ -137,7 +137,7 @@ class EagerLoader
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
-                    sprintf('Cannot set containments. To use $queryBuilder, $associations must be a string')
+                    'Cannot set containments. To use $queryBuilder, $associations must be a string'
                 );
             }
 
@@ -754,7 +754,7 @@ class EagerLoader
      * will be normalized
      * @param bool $asMatching Whether this join results should be treated as a
      * 'matching' association.
-     * @param string $targetProperty The property name where the results of the join should be nested at.
+     * @param string|null $targetProperty The property name where the results of the join should be nested at.
      * If not passed, the default property for the association will be used.
      * @return void
      */

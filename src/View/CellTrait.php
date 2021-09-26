@@ -54,7 +54,6 @@ trait CellTrait
      * @param array<string, mixed> $options Options for Cell's constructor
      * @return \Cake\View\Cell The cell instance
      * @throws \Cake\View\Exception\MissingCellException If Cell class was not found.
-     * @throws \BadMethodCallException If Cell class does not specified cell action.
      */
     protected function cell(string $cell, array $data = [], array $options = []): Cell
     {

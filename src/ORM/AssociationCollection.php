@@ -369,8 +369,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Allow looping through the associations
      *
-     * @return array<\Cake\ORM\Association>
-     * @psalm-return \Traversable<string, \Cake\ORM\Association>
+     * @return \Traversable<string, \Cake\ORM\Association>
      */
     public function getIterator(): Traversable
     {
