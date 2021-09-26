@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
-use ArgumentCountError;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\Container;
 use Cake\Http\Exception\MissingControllerException;
@@ -499,7 +498,7 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Could not resolve action argument `dep`');
+        $this->expectExceptionMessage('Unable to find argument for parameter `dep`');
         $this->factory->invoke($controller);
     }
 
@@ -515,8 +514,8 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Too few arguments');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to find argument for parameter `one`');
         $this->factory->invoke($controller);
     }
 
@@ -664,8 +663,29 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Too few arguments');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to find argument for parameter `str`');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test that required int (non-string)
+     */
+    public function testInvokeRequiredIntParam(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredInt',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredInt',
+                'pass' => ['one'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Coercing argument to `int` is not supported');
         $this->factory->invoke($controller);
     }
 

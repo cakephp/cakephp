@@ -18,19 +18,16 @@ namespace Cake\Controller;
 
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
+use Cake\Core\Invoker;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
-use Closure;
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
-use ReflectionFunction;
-use ReflectionNamedType;
 
 /**
  * Factory method for building controllers for request.
@@ -133,9 +130,11 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         }
 
         $action = $controller->getAction();
-        $args = $this->getActionArgs(
+        $invoker = new Invoker($this->container);
+        $args = $invoker->resolveArguments(
             $action,
-            array_values((array)$controller->getRequest()->getParam('pass'))
+            (array)$controller->getRequest()->getParam('pass'),
+            ['coerce' => true]
         );
         $controller->invokeAction($action, $args);
 
@@ -145,69 +144,6 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         }
 
         return $controller->getResponse();
-    }
-
-    /**
-     * Get the arguments for the controller action invocation.
-     *
-     * @param \Closure $action Controller action.
-     * @param array $passedParams Params passed by the router.
-     * @return array
-     */
-    protected function getActionArgs(Closure $action, array $passedParams): array
-    {
-        $args = [];
-        $reflection = new ReflectionFunction($action);
-
-        foreach ($reflection->getParameters() as $i => $parameter) {
-            $position = $parameter->getPosition();
-            $hasDefault = $parameter->isDefaultValueAvailable();
-
-            // If there is no type we can't look in the container
-            // assume the parameter is a passed param
-            $type = $parameter->getType();
-            if (!$type) {
-                if (count($passedParams)) {
-                    $args[$position] = array_shift($passedParams);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
-                }
-                continue;
-            }
-
-            $typeName = $type instanceof ReflectionNamedType ? ltrim($type->getName(), '?') : null;
-
-            // Primitive types are passed args as they can't be looked up in the container.
-            // We only handle strings currently.
-            if ($typeName === 'string') {
-                if (count($passedParams)) {
-                    $args[$position] = array_shift($passedParams);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
-                }
-                continue;
-            }
-
-            // Check the container and parameter default value.
-            if ($typeName && $this->container->has($typeName)) {
-                $args[$position] = $this->container->get($typeName);
-            } elseif ($hasDefault) {
-                $args[$position] = $parameter->getDefaultValue();
-            }
-
-            if (!array_key_exists($position, $args)) {
-                throw new InvalidArgumentException(
-                    "Could not resolve action argument `{$parameter->getName()}`. " .
-                    'It has no definition in the container, no passed parameter, and no default value.'
-                );
-            }
-        }
-
-        if (count($passedParams)) {
-            $args = array_merge($args, $passedParams);
-        }
-
-        return $args;
     }
 
     /**
