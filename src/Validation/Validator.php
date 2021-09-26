@@ -138,14 +138,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * An associative array of objects or classes containing methods
      * used for validation
      *
-     * @var array
+     * @var array<string, object|string>
+     * @psalm-var array<string, object|class-string>
      */
     protected $_providers = [];
 
     /**
      * An associative array of objects or classes used as a default provider list
      *
-     * @var array
+     * @var array<string, object|string>
+     * @psalm-var array<string, object|class-string>
      */
     protected static $_defaultProviders = [];
 

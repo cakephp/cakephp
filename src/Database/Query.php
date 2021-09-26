@@ -1639,7 +1639,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * with Query::values().
      *
      * @param array $columns The columns to insert into.
-     * @param array<string> $types A map between columns & their datatypes.
+     * @param array<string, string> $types A map between columns & their datatypes.
      * @return $this
      * @throws \RuntimeException When there are 0 columns.
      */

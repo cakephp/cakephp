@@ -573,7 +573,7 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
+        /** @var array<string, mixed> $data */
         $data = $schema->getConstraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
@@ -590,7 +590,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * Helper method for generating key SQL snippets.
      *
      * @param string $prefix The key prefix
-     * @param array $data Key data.
+     * @param array<string, mixed> $data Key data.
      * @return string
      */
     protected function _keySql(string $prefix, array $data): string

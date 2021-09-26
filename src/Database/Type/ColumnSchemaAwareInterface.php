@@ -23,7 +23,7 @@ interface ColumnSchemaAwareInterface
      *
      * @param array $definition The column definition.
      * @param \Cake\Database\DriverInterface $driver The driver instance being used.
-     * @return array|null Array of column information, or `null` in case the column isn't processed by this type.
+     * @return array<string, mixed>|null Array of column information, or `null` in case the column isn't processed by this type.
      */
     public function convertColumnDefinition(array $definition, DriverInterface $driver): ?array;
 }

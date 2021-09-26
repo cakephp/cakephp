@@ -868,7 +868,7 @@ class PaginatorHelper extends Helper
      * Generates the numbers for the paginator numbers() method.
      *
      * @param \Cake\View\StringTemplate $templater StringTemplate instance.
-     * @param array $params Params from the numbers() method.
+     * @param array<string, mixed> $params Params from the numbers() method.
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
      */
@@ -929,7 +929,7 @@ class PaginatorHelper extends Helper
      * Generates the first number for the paginator numbers() method.
      *
      * @param string $ellipsis Ellipsis character.
-     * @param array $params Params from the numbers() method.
+     * @param array<string, mixed> $params Params from the numbers() method.
      * @param int $start Start number.
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
@@ -953,7 +953,7 @@ class PaginatorHelper extends Helper
      * Generates the last number for the paginator numbers() method.
      *
      * @param string $ellipsis Ellipsis character.
-     * @param array $params Params from the numbers() method.
+     * @param array<string, mixed> $params Params from the numbers() method.
      * @param int $end End number.
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
@@ -977,7 +977,7 @@ class PaginatorHelper extends Helper
      * Generates the numbers for the paginator numbers() method.
      *
      * @param \Cake\View\StringTemplate $templater StringTemplate instance.
-     * @param array $params Params from the numbers() method.
+     * @param array<string, mixed> $params Params from the numbers() method.
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
      */

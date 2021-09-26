@@ -293,7 +293,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @param \Cake\ORM\Association $association The association object to save with.
      * @param \Cake\Datasource\EntityInterface $entity The entity to save
-     * @param array $nested Options for deeper associations
+     * @param array<string, mixed> $nested Options for deeper associations
      * @param array<string, mixed> $options Original options
      * @return bool Success
      */

@@ -24,7 +24,7 @@ class Schema
     /**
      * The fields in this schema.
      *
-     * @var array<string, array>
+     * @var array<string, array<string, mixed>>
      */
     protected $_fields = [];
 
@@ -43,7 +43,7 @@ class Schema
     /**
      * Add multiple fields to the schema.
      *
-     * @param array $fields The fields to add.
+     * @param array<string, array<string, mixed>|string> $fields The fields to add.
      * @return $this
      */
     public function addFields(array $fields)
@@ -59,7 +59,7 @@ class Schema
      * Adds a field to the schema.
      *
      * @param string $name The field name.
-     * @param array|string $attrs The attributes for the field, or the type
+     * @param array<string, mixed>|string $attrs The attributes for the field, or the type
      *   as a string.
      * @return $this
      */
@@ -101,7 +101,7 @@ class Schema
      * Get the attributes for a given field.
      *
      * @param string $name The field name.
-     * @return array|null The attributes for a field, or null.
+     * @return array<string, mixed>|null The attributes for a field, or null.
      */
     public function field(string $name): ?array
     {

@@ -493,7 +493,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param \Cake\ORM\Table $table The table instance to pluck associations from.
      * @param \Cake\Database\TypeMap $typeMap The typemap to check for columns in.
      *   This typemap is indirectly mutated via Cake\ORM\Query::addDefaultTypes()
-     * @param array $associations The nested tree of associations to walk.
+     * @param array<string, array> $associations The nested tree of associations to walk.
      * @return void
      */
     protected function _addAssociationsToTypeMap(Table $table, TypeMap $typeMap, array $associations): void
@@ -1306,7 +1306,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with the where() method to create delete queries.
      *
      * @param array $columns The columns to insert into.
-     * @param array $types A map between columns & their datatypes.
+     * @param array<string, string> $types A map between columns & their datatypes.
      * @return $this
      */
     public function insert(array $columns, array $types = [])
