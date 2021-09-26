@@ -157,6 +157,23 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * test deprecated with assert after trigger warning
+     */
+    public function testDeprecatedWithAssertAfterTriggerWarning(): void
+    {
+        try {
+            $this->deprecated(function () {
+                trigger_error('deprecation message', E_USER_DEPRECATED);
+                $this->assertTrue(false, 'A random message');
+            });
+
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('A random message', $e->getMessage());
+        }
+    }
+
+    /**
      * test deprecated
      */
     public function testDeprecatedWithNoDeprecation(): void
