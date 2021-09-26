@@ -33,7 +33,7 @@ use RuntimeException;
  *
  * ```
  * Cache::config('shared', [
- *    'className' => \Cake\Cache\Engine\ApcuEngine::class,
+ *    'className' => Cake\Cache\Engine\ApcuEngine::class,
  *    'prefix' => 'my_app_'
  * ]);
  * ```
