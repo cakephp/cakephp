@@ -261,11 +261,8 @@ abstract class TestCase extends BaseTestCase
     protected function setupFixtures(): void
     {
         $fixtureNames = $this->getFixtures();
-        if (empty($fixtureNames)) {
-            return;
-        }
 
-        if (static::$fixtureManager) {
+        if (!empty($fixtureNames) && static::$fixtureManager) {
             if (!$this->autoFixtures) {
                 deprecationWarning('`$autoFixtures` is deprecated and will be removed in 5.0.', 0);
             }
