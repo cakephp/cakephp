@@ -98,7 +98,7 @@ class ValidationRule
      * it is assumed that the rule failed and the error message was given as a result.
      *
      * @param mixed $value The data to validate
-     * @param array $providers associative array with objects or class names that will
+     * @param array<string, mixed> $providers Associative array with objects or class names that will
      * be passed as the last argument for the validation method
      * @param array $context A key value list of data that could be used as context
      * during validation. Recognized keys are:

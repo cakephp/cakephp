@@ -36,7 +36,7 @@ class ConsoleOutput extends ConsoleOutputBase
     /**
      * Buffered messages.
      *
-     * @var array
+     * @var array<string>
      */
     protected $_out = [];
 
@@ -65,7 +65,7 @@ class ConsoleOutput extends ConsoleOutputBase
     /**
      * Get the buffered output.
      *
-     * @return array
+     * @return array<string>
      */
     public function messages(): array
     {

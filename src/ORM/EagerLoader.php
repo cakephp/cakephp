@@ -34,7 +34,7 @@ class EagerLoader
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_containments = [];
 
@@ -819,7 +819,7 @@ class EagerLoader
      * defined in $collectKeys
      *
      * @param \Cake\Database\Statement\BufferedStatement $statement The statement to read from.
-     * @param array $collectKeys The keys to collect
+     * @param array<string, array> $collectKeys The keys to collect
      * @return array
      */
     protected function _groupKeys(BufferedStatement $statement, array $collectKeys): array

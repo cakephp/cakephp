@@ -794,6 +794,9 @@ abstract class TestCase extends BaseTestCase
                 ];
             }
         }
+        /**
+         * @var array<string, mixed> $assertion
+         */
         foreach ($regex as $i => $assertion) {
             $matches = false;
             if (isset($assertion['attrs'])) {
@@ -840,7 +843,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Check the attributes as part of an assertTags() check.
      *
-     * @param array $assertions Assertions to run.
+     * @param array<string, mixed> $assertions Assertions to run.
      * @param string $string The HTML string to check.
      * @param bool $fullDebug Whether more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
