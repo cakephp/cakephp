@@ -555,7 +555,7 @@ class FormHelper extends Helper
      *
      * Resets some parts of the state, shared among multiple FormHelper::create() calls, to defaults.
      *
-     * @param array $secureAttributes Secure attributes which will be passed as HTML attributes
+     * @param array<string, mixed> $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
      * @return string A closing FORM tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#closing-the-form
@@ -589,7 +589,7 @@ class FormHelper extends Helper
      *
      * @param array $fields If set specifies the list of fields to be added to
      *    FormProtector for generating the hash.
-     * @param array $secureAttributes will be passed as HTML attributes into the hidden
+     * @param array<string, mixed> $secureAttributes will be passed as HTML attributes into the hidden
      *    input elements generated for the Security Component.
      * @return string A hidden input field with a security hash, or empty string when
      *   secured forms are not in use.
@@ -656,7 +656,7 @@ class FormHelper extends Helper
     /**
      * Create FormProtector instance.
      *
-     * @param array $formTokenData Token data.
+     * @param array<string, mixed> $formTokenData Token data.
      * @return \Cake\Form\FormProtector
      */
     protected function createFormProtector(array $formTokenData): FormProtector
@@ -1546,7 +1546,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param iterable $options Radio button options array.
-     * @param array $attributes Array of attributes.
+     * @param array<string, mixed> $attributes Array of attributes.
      * @return string Completed radio widget set.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-radio-buttons
      */
@@ -2020,7 +2020,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name attribute of the SELECT
      * @param iterable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
      *   SELECT element
-     * @param array $attributes The HTML attributes of the select element.
+     * @param array<string, mixed> $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-select-pickers
@@ -2099,7 +2099,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name attribute of the SELECT
      * @param iterable $options Array of the OPTION elements
      *   (as 'value'=>'Text' pairs) to be used in the checkboxes element.
-     * @param array $attributes The HTML attributes of the select element.
+     * @param array<string, mixed> $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
      */
@@ -2328,9 +2328,6 @@ class FormHelper extends Helper
         $isDisabled = $this->_isDisabled($options);
         if ($isDisabled) {
             $options['secure'] = self::SECURE_SKIP;
-        }
-        if ($options['secure'] === self::SECURE_SKIP) {
-            return $options;
         }
 
         return $options;

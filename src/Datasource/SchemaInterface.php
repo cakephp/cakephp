@@ -53,7 +53,7 @@ interface SchemaInterface
      * - `comment` The comment for the column.
      *
      * @param string $name The name of the column
-     * @param array|string $attrs The attributes for the column or the type name.
+     * @param array<string, mixed>|string $attrs The attributes for the column or the type name.
      * @return $this
      */
     public function addColumn(string $name, $attrs);
@@ -62,7 +62,7 @@ interface SchemaInterface
      * Get column data in the table.
      *
      * @param string $name The column name.
-     * @return array|null Column data or null.
+     * @return array<string, mixed>|null Column data or null.
      */
     public function getColumn(string $name): ?array;
 
@@ -132,14 +132,14 @@ interface SchemaInterface
      * Returns an array where the keys are the column names in the schema
      * and the values the database type they have.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function typeMap(): array;
 
     /**
      * Get a hash of columns and their default values.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function defaultValues(): array;
 
@@ -160,7 +160,7 @@ interface SchemaInterface
      * Table options allow you to set platform specific table level options.
      * For example the engine type in MySQL.
      *
-     * @return array An array of options.
+     * @return array<string, mixed> An array of options.
      */
     public function getOptions(): array;
 }

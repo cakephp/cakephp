@@ -406,7 +406,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $table the table to insert values in
      * @param array $values values to be inserted
-     * @param array $types list of associative array containing the types to be used for casting
+     * @param array<string, string> $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface

@@ -717,7 +717,7 @@ class I18nExtractCommand extends Command
     protected function _getStrings(int &$position, int $target): array
     {
         $strings = [];
-        $count = count($strings);
+        $count = 0;
         while (
             $count < $target
             && ($this->_tokens[$position] === ','

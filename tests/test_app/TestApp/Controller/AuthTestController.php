@@ -114,9 +114,10 @@ class AuthTestController extends Controller
     /**
      * isAuthorized method
      *
+     * @param \ArrayAccess|array $user User
      * @return void
      */
-    public function isAuthorized()
+    public function isAuthorized($user)
     {
     }
 }

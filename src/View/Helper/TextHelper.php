@@ -146,7 +146,7 @@ class TextHelper extends Helper
         );
         // phpcs:disable Generic.Files.LineLength
         $text = preg_replace_callback(
-            '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ <](?<!\))#i',
+            '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ ](?<!\))#i',
             [&$this, '_insertPlaceHolder'],
             $text
         );
@@ -189,7 +189,7 @@ class TextHelper extends Helper
      * Replace placeholders with links.
      *
      * @param string $text The text to operate on.
-     * @param array $htmlOptions The options for the generated links.
+     * @param array<string, mixed> $htmlOptions The options for the generated links.
      * @return string The text with links inserted.
      */
     protected function _linkUrls(string $text, array $htmlOptions): string

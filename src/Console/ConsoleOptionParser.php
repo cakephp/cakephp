@@ -212,7 +212,7 @@ class ConsoleOptionParser
      * ];
      * ```
      *
-     * @param array $spec The spec to build the OptionParser with.
+     * @param array<string, mixed> $spec The spec to build the OptionParser with.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
      */
@@ -477,7 +477,7 @@ class ConsoleOptionParser
      *
      * @param \Cake\Console\ConsoleInputArgument|string $name The name of the argument.
      *   Will also accept an instance of ConsoleInputArgument.
-     * @param array $params Parameters for the argument, see above.
+     * @param array<string, mixed> $params Parameters for the argument, see above.
      * @return $this
      */
     public function addArgument($name, array $params = [])
@@ -610,7 +610,7 @@ class ConsoleOptionParser
     /**
      * Add multiple subcommands at once.
      *
-     * @param array $commands Array of subcommands.
+     * @param array<string, mixed> $commands Array of subcommands.
      * @return $this
      */
     public function addSubcommands(array $commands)
@@ -815,7 +815,7 @@ class ConsoleOptionParser
      * options with an `=` in them.
      *
      * @param string $option The option to parse.
-     * @param array $params The params to append the parsed value into
+     * @param array<string, mixed> $params The params to append the parsed value into
      * @return array Params with $option added in.
      */
     protected function _parseLongOption(string $option, array $params): array
@@ -835,8 +835,8 @@ class ConsoleOptionParser
      * they will be shifted onto the token stack and parsed individually.
      *
      * @param string $option The option to parse.
-     * @param array $params The params to append the parsed value into
-     * @return array Params with $option added in.
+     * @param array<string, mixed> $params The params to append the parsed value into
+     * @return array<string, mixed> Params with $option added in.
      * @throws \Cake\Console\Exception\ConsoleException When unknown short options are encountered.
      */
     protected function _parseShortOption(string $option, array $params): array
@@ -869,8 +869,8 @@ class ConsoleOptionParser
      * Parse an option by its name index.
      *
      * @param string $name The name to parse.
-     * @param array $params The params to append the parsed value into
-     * @return array Params with $option added in.
+     * @param array<string, mixed> $params The params to append the parsed value into
+     * @return array<string, mixed> Params with $option added in.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseOption(string $name, array $params): array

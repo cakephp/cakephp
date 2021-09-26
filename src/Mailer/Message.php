@@ -304,7 +304,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Constructor
      *
-     * @param array|null $config Array of configs, or string to load configs from app.php
+     * @param array<string,mixed>|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct(?array $config = null)
     {
@@ -955,7 +955,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @param array<string> $include List of headers.
      * @param string $eol End of line string for concatenating headers.
-     * @param \Closure $callback Callback to run each header value through before stringifying.
+     * @param \Closure|null $callback Callback to run each header value through before stringifying.
      * @return string
      * @see Message::getHeaders()
      */
@@ -1504,7 +1504,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Set message body.
      *
-     * @param array $content Content array with keys "text" and/or "html" with
+     * @param array<string, string> $content Content array with keys "text" and/or "html" with
      *   content string of respective type.
      * @return $this
      */

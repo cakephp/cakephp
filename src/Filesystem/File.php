@@ -416,7 +416,7 @@ class File
     /**
      * Returns the full path of the file.
      *
-     * @return string|false Full path to the file, or false on failure
+     * @return string|null Full path to the file, or null on failure
      */
     public function pwd()
     {

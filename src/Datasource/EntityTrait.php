@@ -1058,6 +1058,8 @@ trait EntityTrait
                 if ($val instanceof EntityInterface) {
                     return $val->getErrors();
                 }
+
+                return null;
             }, (array)$object);
 
             return array_filter($array);

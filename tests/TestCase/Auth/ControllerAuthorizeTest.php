@@ -76,7 +76,6 @@ class ControllerAuthorizeTest extends TestCase
 
         $this->controller->expects($this->once())
             ->method('isAuthorized')
-            ->with($user)
             ->will($this->returnValue(true));
 
         $this->assertTrue($this->auth->authorize($user, $request));

@@ -88,8 +88,8 @@ abstract class BaseApplication implements
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
-     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
-     * @param \Cake\Http\ControllerFactoryInterface $controllerFactory Controller factory.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager Application event manager instance.
+     * @param \Cake\Http\ControllerFactoryInterface|null $controllerFactory Controller factory.
      */
     public function __construct(
         string $configDir,

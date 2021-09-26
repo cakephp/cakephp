@@ -697,8 +697,8 @@ class HtmlHelper extends Helper
      *
      * @param array $names Array of tablenames. Each tablename can be string, or array with name and an array with a set
      *     of attributes to its specific tag
-     * @param array|null $trOptions HTML options for TR elements.
-     * @param array|null $thOptions HTML options for TH elements.
+     * @param array<string, mixed>|null $trOptions HTML options for TR elements.
+     * @param array<string, mixed>|null $thOptions HTML options for TH elements.
      * @return string Completed table headers
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-table-headings
      */
@@ -1078,7 +1078,7 @@ class HtmlHelper extends Helper
      *
      * @param array $list Set of elements to list
      * @param array<string, mixed> $options Options and additional HTML attributes of the list (ol/ul) tag.
-     * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
+     * @param array<string, mixed> $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-nested-lists
      */
@@ -1098,7 +1098,7 @@ class HtmlHelper extends Helper
      *
      * @param array $items Set of elements to list.
      * @param array<string, mixed> $options Additional HTML attributes of the list (ol/ul) tag.
-     * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
+     * @param array<string, mixed> $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list element
      * @see \Cake\View\Helper\HtmlHelper::nestedList()
      */

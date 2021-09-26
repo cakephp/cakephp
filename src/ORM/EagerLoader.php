@@ -34,7 +34,7 @@ class EagerLoader
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_containments = [];
 
@@ -137,7 +137,7 @@ class EagerLoader
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
-                    sprintf('Cannot set containments. To use $queryBuilder, $associations must be a string')
+                    'Cannot set containments. To use $queryBuilder, $associations must be a string'
                 );
             }
 
@@ -754,7 +754,7 @@ class EagerLoader
      * will be normalized
      * @param bool $asMatching Whether this join results should be treated as a
      * 'matching' association.
-     * @param string $targetProperty The property name where the results of the join should be nested at.
+     * @param string|null $targetProperty The property name where the results of the join should be nested at.
      * If not passed, the default property for the association will be used.
      * @return void
      */
@@ -819,7 +819,7 @@ class EagerLoader
      * defined in $collectKeys
      *
      * @param \Cake\Database\Statement\BufferedStatement $statement The statement to read from.
-     * @param array $collectKeys The keys to collect
+     * @param array<string, array> $collectKeys The keys to collect
      * @return array
      */
     protected function _groupKeys(BufferedStatement $statement, array $collectKeys): array

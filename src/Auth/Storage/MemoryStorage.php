@@ -75,5 +75,7 @@ class MemoryStorage implements StorageInterface
         }
 
         $this->_redirectUrl = $url;
+
+        return null;
     }
 }

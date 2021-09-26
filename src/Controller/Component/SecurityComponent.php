@@ -409,7 +409,7 @@ class SecurityComponent extends Component
      * Create a message for humans to understand why Security token is not matching
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
-     * @param array $hashParts Elements used to generate the Token hash
+     * @param array<string> $hashParts Elements used to generate the Token hash
      * @return string Message explaining why the tokens are not matching
      */
     protected function _debugPostTokenNotMatching(Controller $controller, array $hashParts): string

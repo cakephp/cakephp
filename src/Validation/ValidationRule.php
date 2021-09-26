@@ -98,7 +98,7 @@ class ValidationRule
      * it is assumed that the rule failed and the error message was given as a result.
      *
      * @param mixed $value The data to validate
-     * @param array $providers associative array with objects or class names that will
+     * @param array<string, mixed> $providers Associative array with objects or class names that will
      * be passed as the last argument for the validation method
      * @param array $context A key value list of data that could be used as context
      * during validation. Recognized keys are:
@@ -190,7 +190,7 @@ class ValidationRule
     protected function _addValidatorProps(array $validator = []): void
     {
         foreach ($validator as $key => $value) {
-            if (!isset($value) || empty($value)) {
+            if (empty($value)) {
                 continue;
             }
             if ($key === 'rule' && is_array($value) && !is_callable($value)) {

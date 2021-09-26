@@ -485,6 +485,8 @@ class EntityContext implements ContextInterface
 
             return false;
         }
+
+        return null;
     }
 
     /**

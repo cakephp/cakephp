@@ -138,14 +138,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * An associative array of objects or classes containing methods
      * used for validation
      *
-     * @var array
+     * @var array<string, object|string>
+     * @psalm-var array<string, object|class-string>
      */
     protected $_providers = [];
 
     /**
      * An associative array of objects or classes used as a default provider list
      *
-     * @var array
+     * @var array<string, object|string>
+     * @psalm-var array<string, object|class-string>
      */
     protected static $_defaultProviders = [];
 
@@ -461,8 +463,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns an iterator for each of the fields to be validated
      *
-     * @return array<\Cake\Validation\ValidationSet>
-     * @psalm-return \Traversable<string, \Cake\Validation\ValidationSet>
+     * @return \Traversable<string, \Cake\Validation\ValidationSet>
      */
     public function getIterator(): Traversable
     {
@@ -2697,7 +2698,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationSet $rules the list of rules for a field
      * @param array $data the full data passed to the validator
      * @param bool $newRecord whether is it a new record or an existing one
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array
     {
@@ -2710,6 +2711,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $message = __d('cake', 'The provided value is invalid');
         }
 
+        /**
+         * @var \Cake\Validation\ValidationRule $rule
+         */
         foreach ($rules as $name => $rule) {
             $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
             if ($result === true) {

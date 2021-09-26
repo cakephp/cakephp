@@ -930,12 +930,13 @@ class BelongsToMany extends Association
             }
         );
 
+        /** @var array<\Cake\Datasource\EntityInterface> $existing */
         $existing = $sourceEntity->get($property) ?: [];
         if (!$options['cleanProperty'] || empty($existing)) {
             return true;
         }
 
-        /** @var \SplObjectStorage<\Cake\Datasource\EntityInterface, null> $storage*/
+        /** @var \SplObjectStorage<\Cake\Datasource\EntityInterface, null> $storage */
         $storage = new SplObjectStorage();
         foreach ($targetEntities as $e) {
             $storage->attach($e);
@@ -993,7 +994,7 @@ class BelongsToMany extends Association
      * Any string expressions, or expression objects will
      * also be returned in this list.
      *
-     * @return mixed Generally an array. If the conditions
+     * @return array|\Closure|null Generally an array. If the conditions
      *   are not an array, the association conditions will be
      *   returned unmodified.
      */

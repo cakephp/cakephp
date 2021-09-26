@@ -453,7 +453,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The method called
      * @param array $params Array of parameters for the method call
-     * @return mixed
+     * @return bool
      * @throws \BadMethodCallException when an invalid method is called.
      */
     public function __call(string $name, array $params)

@@ -349,7 +349,7 @@ class Folder
      */
     public static function isRegisteredStreamWrapper(string $path): bool
     {
-        return preg_match('/^[^:\/\/]+?(?=:\/\/)/', $path, $matches) &&
+        return preg_match('/^[^:\/]+?(?=:\/\/)/', $path, $matches) &&
             in_array($matches[0], stream_get_wrappers(), true);
     }
 
@@ -646,13 +646,12 @@ class Folder
         if ($this->create($nextPathname, $mode)) {
             if (!file_exists($pathname)) {
                 $old = umask(0);
+                umask($old);
                 if (mkdir($pathname, $mode, true)) {
-                    umask($old);
                     $this->_messages[] = sprintf('%s created', $pathname);
 
                     return true;
                 }
-                umask($old);
                 $this->_errors[] = sprintf('%s NOT created', $pathname);
 
                 return false;
