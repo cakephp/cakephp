@@ -744,7 +744,7 @@ class Router
     public static function extensions($extensions = null, $merge = true): array
     {
         if ($extensions !== null) {
-            deprecationWarning('Setting extensions is deprecated, use setExtensions() instead.');
+            deprecationWarning('Setting extensions with extensions() is deprecated, use setExtensions() instead.');
             static::setExtensions($extensions, $merge);
 
             return static::$_defaultExtensions;
