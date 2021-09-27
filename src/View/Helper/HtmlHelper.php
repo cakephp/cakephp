@@ -395,12 +395,8 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (strpos($path, '//') !== false) {
-            $url = $path;
-        } else {
-            $url = $this->Url->css($path, $options);
-            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
-        }
+        $url = $this->Url->css($path, $options);
+        $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
             return null;
@@ -499,10 +495,9 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (strpos($url, '//') === false) {
-            $url = $this->Url->script($url, $options);
-            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
-        }
+        $url = $this->Url->script($url, $options);
+        $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
+
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
             return null;
         }
