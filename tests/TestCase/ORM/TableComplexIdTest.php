@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use DateTime;
@@ -41,7 +40,6 @@ class TableComplexIdTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->connection = ConnectionManager::get('test');
         static::setAppNamespace();
     }
 

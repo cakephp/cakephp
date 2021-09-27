@@ -38,6 +38,16 @@ class HasOneTest extends TestCase
     protected $fixtures = ['core.Users', 'core.Profiles'];
 
     /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $user;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $profile;
+
+    /**
      * @var bool
      */
     protected $listenerCalled = false;

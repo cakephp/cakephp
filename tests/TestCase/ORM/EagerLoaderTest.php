@@ -31,6 +31,51 @@ use InvalidArgumentException;
 class EagerLoaderTest extends TestCase
 {
     /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
+     * @var \Cake\ORM\Table
+     */
+    protected $table;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $clientsTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $ordersTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $orderTypesTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $stuffTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $stuffTypesTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $companiesTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $categoriesTypeMap;
+
+    /**
      * setUp method
      */
     public function setUp(): void
