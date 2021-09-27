@@ -67,7 +67,7 @@ class CommandCollection implements IteratorAggregate, Countable
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(sprintf(
                 "Cannot use '%s' for command '%s'. " .
-                "It is not a subclass of Cake\Console\Shell or Cake\Command\CommandInterface.",
+                "It is not a subclass of Cake\Console\Shell or Cake\Command\Command.",
                 $class,
                 $name
             ));
