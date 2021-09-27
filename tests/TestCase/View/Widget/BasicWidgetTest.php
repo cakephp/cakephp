@@ -26,6 +26,16 @@ use Cake\View\Widget\BasicWidget;
  */
 class BasicWidgetTest extends TestCase
 {
+    /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
     public function setUp(): void
     {
         parent::setUp();

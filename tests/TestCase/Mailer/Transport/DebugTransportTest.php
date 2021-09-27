@@ -28,6 +28,11 @@ use Cake\TestSuite\TestCase;
 class DebugTransportTest extends TestCase
 {
     /**
+     * @var \Cake\Mailer\Transport\DebugTransport
+     */
+    protected $DebugTransport;
+
+    /**
      * Setup
      */
     public function setUp(): void

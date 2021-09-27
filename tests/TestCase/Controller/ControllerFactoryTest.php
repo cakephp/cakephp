@@ -38,6 +38,11 @@ class ControllerFactoryTest extends TestCase
     protected $factory;
 
     /**
+     * @var \Cake\Core\Container
+     */
+    protected $container;
+
+    /**
      * Setup
      */
     public function setUp(): void

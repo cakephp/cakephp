@@ -55,7 +55,12 @@ class ExceptionRendererTest extends TestCase
     /**
      * @var bool
      */
-    protected $_restoreError = false;
+    protected $restoreError = false;
+
+    /**
+     * @var bool
+     */
+    protected $called;
 
     /**
      * setup create a request object to get out of router later.
@@ -78,7 +83,7 @@ class ExceptionRendererTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        if ($this->_restoreError) {
+        if ($this->restoreError) {
             restore_error_handler();
         }
     }

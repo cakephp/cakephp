@@ -26,6 +26,11 @@ use Cake\TestSuite\TestCase;
 class ShellDispatcherTest extends TestCase
 {
     /**
+     * @var \Cake\Console\ShellDispatcher|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $dispatcher;
+
+    /**
      * setUp method
      */
     public function setUp(): void

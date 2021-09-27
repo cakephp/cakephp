@@ -40,6 +40,11 @@ class FlashComponentTest extends TestCase
     protected $Session;
 
     /**
+     * @var \Cake\Controller\Controller
+     */
+    protected $Controller;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -47,8 +52,8 @@ class FlashComponentTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         $this->Controller = new Controller(new ServerRequest(['session' => new Session()]));
-        $this->ComponentRegistry = new ComponentRegistry($this->Controller);
-        $this->Flash = new FlashComponent($this->ComponentRegistry);
+        $ComponentRegistry = new ComponentRegistry($this->Controller);
+        $this->Flash = new FlashComponent($ComponentRegistry);
         $this->Session = new Session();
     }
 

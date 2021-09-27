@@ -29,6 +29,16 @@ use Cake\View\Widget\SelectBoxWidget;
 class SelectBoxWidgetTest extends TestCase
 {
     /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
      * setup method.
      */
     public function setUp(): void

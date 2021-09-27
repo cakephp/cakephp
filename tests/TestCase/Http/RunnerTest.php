@@ -29,6 +29,26 @@ use RuntimeException;
 class RunnerTest extends TestCase
 {
     /**
+     * @var \Cake\Http\MiddlewareQueue
+     */
+    protected $queue;
+
+    /**
+     * @var \Closure
+     */
+    protected $ok;
+
+    /**
+     * @var \Closure
+     */
+    protected $pass;
+
+    /**
+     * @var \Closure
+     */
+    protected $fail;
+
+    /**
      * setup
      */
     public function setUp(): void

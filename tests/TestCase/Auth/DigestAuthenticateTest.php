@@ -133,6 +133,7 @@ class DigestAuthenticateTest extends TestCase
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
+        $e = null;
         try {
             $this->auth->unauthenticated($request, new Response());
         } catch (UnauthorizedException $e) {
@@ -166,6 +167,7 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
+        $e = null;
         try {
             $this->auth->unauthenticated($request, new Response());
         } catch (UnauthorizedException $e) {

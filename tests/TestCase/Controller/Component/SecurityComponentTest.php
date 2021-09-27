@@ -1288,7 +1288,7 @@ class SecurityComponentTest extends TestCase
     public function testBlackholeThrowsBadRequest(): void
     {
         $this->Security->setConfig('blackHoleCallback', '');
-        $message = '';
+        $message = $reason = null;
 
         Configure::write('debug', false);
         try {

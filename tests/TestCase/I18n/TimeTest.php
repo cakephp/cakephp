@@ -32,6 +32,11 @@ use IntlDateFormatter;
 class TimeTest extends TestCase
 {
     /**
+     * @var \Cake\Chronos\ChronosInterface|null
+     */
+    protected $now;
+
+    /**
      * setUp method
      */
     public function setUp(): void

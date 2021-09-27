@@ -29,6 +29,11 @@ use TestApp\Middleware\SampleMiddleware;
 class MiddlewareQueueTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $previousNamespace;
+
+    /**
      * setUp
      */
     public function setUp(): void
