@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use DateTime;
