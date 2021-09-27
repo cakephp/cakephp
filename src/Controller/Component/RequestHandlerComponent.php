@@ -64,12 +64,17 @@ class RequestHandlerComponent extends Component
      * - `checkHttpCache` - Whether to check for HTTP cache. Default `true`.
      * - `viewClassMap` - Mapping between type and view classes. If undefined
      *   JSON, XML, and AJAX will be mapped. Defining any types will omit the defaults.
+     * - `acceptTypes` - The content type aliases for which the `Accept` header
+     *   should be checked for extension detection. For e.g. setting the
+     *   value to `['csv']` would mean for `Accept` header with value `text/csv`
+     *   the `csv` extension would be set.
      *
      * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'checkHttpCache' => true,
         'viewClassMap' => [],
+        'acceptTypes' => [],
     ];
 
     /**
@@ -80,6 +85,11 @@ class RequestHandlerComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
+        $extensions = Router::extensions();
+        if ($extensions) {
+            $this->_defaultConfig['acceptTypes'] = $extensions;
+        }
+
         $config += [
             'viewClassMap' => [
                 'json' => 'Json',
@@ -133,9 +143,10 @@ class RequestHandlerComponent extends Component
             return;
         }
 
-        $extensions = array_unique(
-            array_merge(Router::extensions(), array_keys($this->getConfig('viewClassMap')))
-        );
+        $extensions = array_unique(array_merge(
+            (array)$this->getConfig('acceptTypes'),
+            array_keys($this->getConfig('viewClassMap'))
+        ));
         foreach ($accepts as $types) {
             $ext = array_intersect($extensions, $types);
             if ($ext) {
