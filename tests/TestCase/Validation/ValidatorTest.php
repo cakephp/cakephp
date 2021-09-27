@@ -1301,28 +1301,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * test allowEmptyDateTime with deprecated argument order
-     */
-    public function testAllowEmptyDateTimeDeprecated(): void
-    {
-        $validator = new Validator();
-        $this->deprecated(function () use ($validator): void {
-            $validator->allowEmptyDateTime('published', 'datetime required', 'update');
-        });
-        $this->assertFalse($validator->isEmptyAllowed('published', true));
-        $this->assertTrue($validator->isEmptyAllowed('published', false));
-
-        $data = [
-            'published' => null,
-        ];
-        $expected = [
-            'published' => ['_empty' => 'datetime required'],
-        ];
-        $this->assertSame($expected, $validator->validate($data, true));
-        $this->assertEmpty($validator->validate($data, false));
-    }
-
-    /**
      * Tests the notEmptyDateTime method
      */
     public function testNotEmptyDateTime(): void
