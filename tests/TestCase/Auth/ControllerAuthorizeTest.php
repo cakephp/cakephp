@@ -30,6 +30,11 @@ use Cake\TestSuite\TestCase;
 class ControllerAuthorizeTest extends TestCase
 {
     /**
+     * @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $controller;
+
+    /**
      * @var \Cake\Auth\ControllerAuthorize
      */
     protected $auth;
@@ -44,9 +49,9 @@ class ControllerAuthorizeTest extends TestCase
             ->addMethods(['isAuthorized'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->components = new ComponentRegistry($this->controller);
+        $components = new ComponentRegistry($this->controller);
 
-        $this->auth = new ControllerAuthorize($this->components);
+        $this->auth = new ControllerAuthorize($components);
     }
 
     public function testControllerErrorOnMissingMethod(): void

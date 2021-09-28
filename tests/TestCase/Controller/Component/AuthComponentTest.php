@@ -52,6 +52,11 @@ class AuthComponentTest extends TestCase
     protected $Auth;
 
     /**
+     * @var \Cake\Http\ServerRequest
+     */
+    protected $request;
+
+    /**
      * fixtures property
      *
      * @var array<string>

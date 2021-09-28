@@ -41,6 +41,11 @@ class TextHelperTest extends TestCase
     protected $View;
 
     /**
+     * @var string
+     */
+    protected $appNamespace;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -49,7 +54,7 @@ class TextHelperTest extends TestCase
         $this->View = new View();
         $this->Text = new TextHelper($this->View);
 
-        $this->_appNamespace = Configure::read('App.namespace');
+        $this->appNamespace = Configure::read('App.namespace');
         static::setAppNamespace();
     }
 
@@ -59,7 +64,7 @@ class TextHelperTest extends TestCase
     public function tearDown(): void
     {
         unset($this->Text, $this->View);
-        static::setAppNamespace($this->_appNamespace);
+        static::setAppNamespace($this->appNamespace);
         parent::tearDown();
     }
 

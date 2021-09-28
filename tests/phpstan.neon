@@ -4,14 +4,13 @@ parameters:
 	bootstrapFiles:
 		- bootstrap.php
 	paths:
-		- TestCase/Collection/
-		- TestCase/Core/
-		- TestCase/Database/
-		- TestCase/Datasource/
-		- TestCase/Event/
-		- TestCase/ORM/
-		- TestCase/Utility/
-		- TestCase/Validation/
+		- TestCase/
+
+	excludePaths:
+		- TestCase/Error/DebuggerTest.php
+		- TestCase/Error/ErrorHandlerTest.php
+		- TestCase/Filesystem/FolderTest.php
+		- TestCase/Routing/RouterTest.php
 
 	earlyTerminatingMethodCalls:
 		Cake\Console\Shell:

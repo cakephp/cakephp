@@ -28,9 +28,19 @@ use Cake\TestSuite\TestCase;
 class SessionStorageTest extends TestCase
 {
     /**
+     * @var \Cake\Http\Session|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $session;
+
+    /**
      * @var \Cake\Auth\Storage\SessionStorage
      */
     protected $storage;
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected $user;
 
     /**
      * setup
@@ -40,9 +50,9 @@ class SessionStorageTest extends TestCase
         parent::setUp();
 
         $this->session = $this->getMockBuilder(Session::class)->getMock();
-        $this->request = new ServerRequest(['session' => $this->session]);
-        $this->response = new Response();
-        $this->storage = new SessionStorage($this->request, $this->response, ['key' => 'Auth.AuthUser']);
+        $request = new ServerRequest(['session' => $this->session]);
+        $response = new Response();
+        $this->storage = new SessionStorage($request, $response, ['key' => 'Auth.AuthUser']);
         $this->user = ['id' => 1];
     }
 
