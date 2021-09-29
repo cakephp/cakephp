@@ -266,7 +266,7 @@ class PaginatorHelper extends Helper
      * @param string|false $text The enabled text for the link.
      * @param bool $enabled Whether the enabled/disabled version should be created.
      * @param array<string, mixed> $options An array of options from the calling method.
-     * @param array $templates An array of templates with the 'active' and 'disabled' keys.
+     * @param array<string, mixed> $templates An array of templates with the 'active' and 'disabled' keys.
      * @return string Generated HTML
      */
     protected function _toggledLink($text, $enabled, $options, $templates): string

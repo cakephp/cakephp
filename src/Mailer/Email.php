@@ -562,7 +562,7 @@ class Email implements JsonSerializable, Serializable
      * Configures an email instance object from serialized config.
      *
      * @param array<string, mixed> $config Email configuration array.
-     * @return $this Configured email instance.
+     * @return $this
      */
     public function createFromArray(array $config)
     {

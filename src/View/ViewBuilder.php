@@ -143,7 +143,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Saves view vars for use inside templates.
      *
-     * @param array $data Array of data.
+     * @param array<string, mixed> $data Array of data.
      * @param bool $merge Whether to merge with existing vars, default true.
      * @return $this
      */
@@ -554,7 +554,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * If className() is null, App\View\AppView will be used.
      * If that class does not exist, then {@link \Cake\View\View} will be used.
      *
-     * @param array $vars The view variables/context to use.
+     * @param array<string, mixed> $vars The view variables/context to use.
      * @param \Cake\Http\ServerRequest|null $request The request to use.
      * @param \Cake\Http\Response|null $response The response to use.
      * @param \Cake\Event\EventManagerInterface|null $events The event manager to use.
@@ -668,7 +668,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Configures a view builder instance from serialized config.
      *
      * @param array<string, mixed> $config View builder configuration array.
-     * @return $this Configured view builder instance.
+     * @return $this
      */
     public function createFromArray(array $config)
     {
@@ -715,7 +715,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Magic method used to rebuild the view builder object.
      *
-     * @param array $data Data array.
+     * @param array<string, mixed> $data Data array.
      * @return void
      */
     public function __unserialize(array $data): void

@@ -2573,7 +2573,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * due to the field missing in the data array
      *
      * @param \Cake\Validation\ValidationSet $field The set of rules for a field.
-     * @param array $context A key value list of data containing the validation context.
+     * @param array<string, mixed> $context A key value list of data containing the validation context.
      * @return bool
      */
     protected function _checkPresence(ValidationSet $field, array $context): bool
@@ -2597,7 +2597,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Returns whether the field can be left blank according to `allowEmpty`
      *
      * @param \Cake\Validation\ValidationSet $field the set of rules for a field
-     * @param array $context a key value list of data containing the validation context.
+     * @param array<string, mixed> $context a key value list of data containing the validation context.
      * @return bool
      */
     protected function _canBeEmpty(ValidationSet $field, array $context): bool

@@ -602,7 +602,7 @@ class HtmlHelper extends Helper
      * 'margin:10px;padding:10px;'
      * ```
      *
-     * @param array $data Style data array, keys will be used as property names, values as property values.
+     * @param array<string, string> $data Style data array, keys will be used as property names, values as property values.
      * @param bool $oneLine Whether the style block should be displayed on one line.
      * @return string CSS styling data
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-css-programatically
