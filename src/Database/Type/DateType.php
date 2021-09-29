@@ -75,13 +75,13 @@ class DateType extends DateTimeType
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
     public function marshal($value)
     {
         $date = parent::marshal($value);
-        if ($date instanceof DateTime) {
-            $date->setTime(0, 0, 0);
+        if ($date) {
+            $date = $date->setTime(0, 0, 0);
         }
 
         return $date;
