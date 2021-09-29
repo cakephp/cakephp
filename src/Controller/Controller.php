@@ -201,9 +201,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
-        $plugin = $this->request->getParam('plugin');
-        $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
-        $this->_setModelClass($modelClass);
+
+        if ($this->defaultTable !== null) {
+            $this->modelClass = $this->defaultTable;
+        }
+
+        if ($this->modelClass === null) {
+            $plugin = $this->request->getParam('plugin');
+            $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
+            $this->_setModelClass($modelClass);
+        }
 
         if ($components !== null) {
             $this->components($components);
