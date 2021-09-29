@@ -51,6 +51,7 @@ class DateTypeTest extends TestCase
             'src/Database/Type/DateType.php',
             'src/I18n/Date.php',
             'src/I18n/Time.php',
+            'tests/TestCase/Database/Type/DateTypeTest.php',
         ]);
     }
 
