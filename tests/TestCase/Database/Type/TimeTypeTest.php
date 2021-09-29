@@ -50,6 +50,7 @@ class TimeTypeTest extends TestCase
         Configure::write('Error.ignoredDeprecationPaths', [
             'src/Database/Type/DateTimeType.php',
             'src/I18n/Time.php',
+            'tests/TestCase/Database/Type/TimeTypeTest.php',
         ]);
     }
 
