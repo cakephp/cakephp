@@ -15,6 +15,7 @@
 namespace Cake\Database\Type;
 
 use DateTime;
+use DateTimeImmutable;
 
 /**
  * Class DateType
@@ -80,8 +81,8 @@ class DateType extends DateTimeType
     public function marshal($value)
     {
         $date = parent::marshal($value);
-        if ($date instanceof DateTime) {
-            $date->setTime(0, 0, 0);
+        if ($date instanceof DateTime || $date instanceof DateTimeImmutable) {
+            $date = $date->setTime(0, 0, 0);
         }
 
         return $date;
