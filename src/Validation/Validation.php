@@ -395,7 +395,7 @@ class Validation
      *
      * @param mixed $check The value to find in $field.
      * @param string $field The field to check $check against. This field must be present in $context.
-     * @param array $context The validation context.
+     * @param array<string, mixed> $context The validation context.
      * @return bool
      */
     public static function compareWith($check, string $field, array $context): bool
@@ -411,7 +411,7 @@ class Validation
      * @param mixed $check The value to find in $field.
      * @param string $field The field to check $check against. This field must be present in $context.
      * @param string $operator Comparison operator. See Validation::comparison().
-     * @param array $context The validation context.
+     * @param array<string, mixed> $context The validation context.
      * @return bool
      * @since 3.6.0
      */

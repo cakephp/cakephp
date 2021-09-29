@@ -100,7 +100,7 @@ class ValidationRule
      * @param mixed $value The data to validate
      * @param array<string, mixed> $providers Associative array with objects or class names that will
      * be passed as the last argument for the validation method
-     * @param array $context A key value list of data that could be used as context
+     * @param array<string, mixed> $context A key value list of data that could be used as context
      * during validation. Recognized keys are:
      * - newRecord: (boolean) whether the data to be validated belongs to a
      *   new record
@@ -155,7 +155,7 @@ class ValidationRule
     /**
      * Checks if the validation rule should be skipped
      *
-     * @param array $context A key value list of data that could be used as context
+     * @param array<string, mixed> $context A key value list of data that could be used as context
      * during validation. Recognized keys are:
      * - newRecord: (boolean) whether the data to be validated belongs to a
      *   new record
