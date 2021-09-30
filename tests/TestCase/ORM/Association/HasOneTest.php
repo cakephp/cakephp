@@ -35,7 +35,17 @@ class HasOneTest extends TestCase
      *
      * @var array<string>
      */
-    protected array $fixtures = ['core.Users', 'core.Profiles'];
+    protected array $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $user;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $profile;
 
     /**
      * @var bool
@@ -327,6 +337,37 @@ class HasOneTest extends TestCase
         $this->assertTrue($association->cascadeDelete($user));
         $query = $this->profile->query()->where(['user_id' => 3]);
         $this->assertSame(0, $query->count(), 'Matching record was deleted.');
+    }
+
+    /**
+     * Tests cascading deletes on entities with null binding and foreign key.
+     */
+    public function testCascadeDeleteNullBindingNullForeign(): void
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Authors = $this->getTableLocator()->get('NullableAuthors');
+
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $Authors,
+            'targetTable' => $Articles,
+            'bindingKey' => 'author_id',
+            'foreignKey' => 'author_id',
+            'cascadeCallbacks' => false,
+        ];
+        $association = $Authors->hasOne('Articles', $config);
+
+        // create article with null foreign key
+        $entity = new Entity(['author_id' => null, 'title' => 'this has no author', 'body' => 'I am abandoned', 'published' => 'N']);
+        $Articles->save($entity);
+
+        // get author with null binding key
+        $entity = $Authors->get(2, ['contain' => 'Articles']);
+        $this->assertNull($entity->article);
+        $this->assertTrue($association->cascadeDelete($entity));
+
+        $query = $Articles->query();
+        $this->assertSame(4, $query->count(), 'No articles should be deleted');
     }
 
     /**

@@ -465,7 +465,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The method called
      * @param array $params Array of parameters for the method call
-     * @return mixed
+     * @return bool
      * @throws \BadMethodCallException when an invalid method is called.
      */
     public function __call(string $name, array $params): mixed
@@ -483,8 +483,8 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Check whether a Request is a certain type.
      *
-     * Uses the built in detection rules as well as additional rules
-     * defined with Cake\Http\ServerRequest::addDetector(). Any detector can be called
+     * Uses the built-in detection rules as well as additional rules
+     * defined with {@link \Cake\Http\ServerRequest::addDetector()}. Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
      * @param array<string>|string $type The type of request you want to check. If an array
@@ -1121,10 +1121,10 @@ class ServerRequest implements ServerRequestInterface
      * Parse the HTTP_ACCEPT header and return a sorted array with content types
      * as the keys, and pref values as the values.
      *
-     * Generally you want to use Cake\Http\ServerRequest::accept() to get a simple list
+     * Generally you want to use {@link \Cake\Http\ServerRequest::accepts()} to get a simple list
      * of the accepted content types.
      *
-     * @return array An array of prefValue => [content/types]
+     * @return array An array of `prefValue => [content/types]`
      */
     public function parseAccept(): array
     {

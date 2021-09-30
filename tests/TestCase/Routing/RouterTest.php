@@ -1234,6 +1234,7 @@ class RouterTest extends TestCase
          * @var string $UUID
          * @var string $Year
          * @var string $Month
+         * @var string $Day
          * @var string $Action
          */
         extract(Router::getNamedExpressions());

@@ -307,7 +307,7 @@ abstract class BaseErrorHandler
      * Log an error for the exception if applicable.
      *
      * @param \Throwable $exception The exception to log a message for.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request.
      * @return bool
      */
     public function logException(Throwable $exception, ?ServerRequestInterface $request = null): bool

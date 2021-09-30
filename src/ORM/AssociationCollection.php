@@ -175,7 +175,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Drop/remove an association.
      *
-     * Once removed the association will not longer be reachable
+     * Once removed the association will no longer be reachable
      *
      * @param string $alias The alias name.
      * @return void
@@ -188,7 +188,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Remove all registered associations.
      *
-     * Once removed associations will not longer be reachable
+     * Once removed associations will no longer be reachable
      *
      * @return void
      */
@@ -293,7 +293,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @param \Cake\ORM\Association $association The association object to save with.
      * @param \Cake\Datasource\EntityInterface $entity The entity to save
-     * @param array $nested Options for deeper associations
+     * @param array<string, mixed> $nested Options for deeper associations
      * @param array<string, mixed> $options Original options
      * @return bool Success
      */
@@ -369,8 +369,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Allow looping through the associations
      *
-     * @return array<\Cake\ORM\Association>
-     * @psalm-return \Traversable<string, \Cake\ORM\Association>
+     * @return \Traversable<string, \Cake\ORM\Association>
      */
     public function getIterator(): Traversable
     {

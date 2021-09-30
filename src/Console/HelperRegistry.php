@@ -52,7 +52,7 @@ class HelperRegistry extends ObjectRegistry
      * Will prefer helpers defined in Command\Helper over those
      * defined in Shell\Helper.
      *
-     * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}.
      *
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.

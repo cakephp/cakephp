@@ -89,8 +89,8 @@ abstract class BaseApplication implements
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
-     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
-     * @param \Cake\Http\ControllerFactoryInterface $controllerFactory Controller factory.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager Application event manager instance.
+     * @param \Cake\Http\ControllerFactoryInterface|null $controllerFactory Controller factory.
      */
     public function __construct(
         string $configDir,
@@ -187,7 +187,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      *
-     * By default this will load `config/routes.php` for ease of use and backwards compatibility.
+     * By default, this will load `config/routes.php` for ease of use and backwards compatibility.
      *
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
@@ -218,7 +218,7 @@ abstract class BaseApplication implements
     /**
      * Define the console commands for an application.
      *
-     * By default all commands in CakePHP, plugins and the application will be
+     * By default, all commands in CakePHP, plugins and the application will be
      * loaded using conventions based names.
      *
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.

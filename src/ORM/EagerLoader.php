@@ -34,7 +34,7 @@ class EagerLoader
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_containments = [];
 
@@ -137,7 +137,7 @@ class EagerLoader
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
-                    sprintf('Cannot set containments. To use $queryBuilder, $associations must be a string')
+                    'Cannot set containments. To use $queryBuilder, $associations must be a string'
                 );
             }
 
@@ -284,11 +284,11 @@ class EagerLoader
      * loaded for a table. The normalized array will restructure the original array
      * by sorting all associations under one key and special options under another.
      *
-     * Each of the levels of the associations tree will converted to a Cake\ORM\EagerLoadable
+     * Each of the levels of the associations tree will be converted to a {@link \Cake\ORM\EagerLoadable}
      * object, that contains all the information required for the association objects
      * to load the information from the database.
      *
-     * Additionally it will set an 'instance' key per association containing the
+     * Additionally, it will set an 'instance' key per association containing the
      * association instance from the corresponding source table
      *
      * @param \Cake\ORM\Table $repository The table containing the association that
@@ -452,7 +452,7 @@ class EagerLoader
 
     /**
      * Returns an array with the associations that need to be fetched using a
-     * separate query, each array value will contain a Cake\ORM\EagerLoadable object.
+     * separate query, each array value will contain a {@link \Cake\ORM\EagerLoadable} object.
      *
      * @param \Cake\ORM\Table $repository The table containing the associations
      * to be loaded
@@ -754,7 +754,7 @@ class EagerLoader
      * will be normalized
      * @param bool $asMatching Whether this join results should be treated as a
      * 'matching' association.
-     * @param string $targetProperty The property name where the results of the join should be nested at.
+     * @param string|null $targetProperty The property name where the results of the join should be nested at.
      * If not passed, the default property for the association will be used.
      * @return void
      */
@@ -820,7 +820,7 @@ class EagerLoader
      * defined in $collectKeys
      *
      * @param \Cake\Database\Statement\BufferedStatement $statement The statement to read from.
-     * @param array $collectKeys The keys to collect
+     * @param array<string, array> $collectKeys The keys to collect
      * @return array
      */
     protected function _groupKeys(BufferedStatement $statement, array $collectKeys): array

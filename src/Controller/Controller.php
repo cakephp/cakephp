@@ -209,9 +209,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
-        $plugin = $this->request->getParam('plugin');
-        $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
-        $this->_setModelClass($modelClass);
+
+        if ($this->defaultTable !== null) {
+            $this->modelClass = $this->defaultTable;
+        }
+
+        if ($this->modelClass === null) {
+            $plugin = $this->request->getParam('plugin');
+            $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
+            $this->_setModelClass($modelClass);
+        }
 
         if ($components !== null) {
             $this->components($components);
@@ -267,7 +274,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * $this->loadComponent('Authentication.Authentication');
      * ```
      *
-     * Will result in a `Toolbar` property being set.
+     * Will result in a `Authentication` property being set.
      *
      * @param string $name The name of the component to load.
      * @param array<string, mixed> $config The config for the component.
@@ -751,7 +758,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Query|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
-     * @param array $settings The settings/configuration used for pagination.
+     * @param array<string, mixed> $settings The settings/configuration used for pagination.
      * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.

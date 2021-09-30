@@ -48,10 +48,10 @@ class SaveOptionsBuilderTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->connection = ConnectionManager::get('test');
+        $connection = ConnectionManager::get('test');
         $this->table = new Table([
             'table' => 'articles',
-            'connection' => $this->connection,
+            'connection' => $connection,
         ]);
 
         $this->table->belongsTo('Authors');

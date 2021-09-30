@@ -195,7 +195,7 @@ interface TableSchemaInterface extends SchemaInterface
     /**
      * Get the column(s) used for the primary key.
      *
-     * @return array Column name(s) for the primary key. An
+     * @return array<string> Column name(s) for the primary key. An
      *   empty list will be returned when the table has no primary key.
      */
     public function getPrimaryKey(): array;
@@ -212,7 +212,7 @@ interface TableSchemaInterface extends SchemaInterface
      * - `columns` The columns in the index.
      *
      * @param string $name The name of the index.
-     * @param array|string $attrs The attributes for the index.
+     * @param array<string, mixed>|string $attrs The attributes for the index.
      *   If string it will be used as `type`.
      * @return $this
      * @throws \Cake\Database\Exception\DatabaseException
@@ -223,7 +223,7 @@ interface TableSchemaInterface extends SchemaInterface
      * Read information about an index based on name.
      *
      * @param string $name The name of the index.
-     * @return array|null Array of index data, or null
+     * @return array<string, mixed>|null Array of index data, or null
      */
     public function getIndex(string $name): ?array;
 
@@ -251,7 +251,7 @@ interface TableSchemaInterface extends SchemaInterface
      * The default for 'update' & 'delete' is 'cascade'.
      *
      * @param string $name The name of the constraint.
-     * @param array|string $attrs The attributes for the constraint.
+     * @param array<string, mixed>|string $attrs The attributes for the constraint.
      *   If string it will be used as `type`.
      * @return $this
      * @throws \Cake\Database\Exception\DatabaseException
@@ -262,7 +262,7 @@ interface TableSchemaInterface extends SchemaInterface
      * Read information about a constraint based on name.
      *
      * @param string $name The name of the constraint.
-     * @return array|null Array of constraint data, or null
+     * @return array<string, mixed>|null Array of constraint data, or null
      */
     public function getConstraint(string $name): ?array;
 

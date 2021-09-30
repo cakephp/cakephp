@@ -80,7 +80,7 @@ class Request extends Message implements RequestInterface
     /**
      * Set the body/payload for the message.
      *
-     * Array data will be serialized with Cake\Http\FormData,
+     * Array data will be serialized with {@link \Cake\Http\FormData},
      * and the content-type will be set.
      *
      * @param array|string $content The body for the request.

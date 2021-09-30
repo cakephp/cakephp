@@ -748,7 +748,7 @@ eos;
         Debugger::setOutputMask(['serial' => 'XXXXXX']);
         $this->assertEquals(['password' => '[**********]', 'serial' => 'XXXXXX'], Debugger::outputMask());
         Debugger::setOutputMask([], false);
-        $this->assertEquals([], Debugger::outputMask());
+        $this->assertSame([], Debugger::outputMask());
     }
 
     /**
@@ -834,7 +834,6 @@ EXPECTED;
 <div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
-        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertSame($expected, $result);
 
         ob_start();
@@ -860,7 +859,6 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertSame($expected, $result);
     }
 

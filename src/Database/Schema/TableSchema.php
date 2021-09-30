@@ -290,7 +290,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * Constructor.
      *
      * @param string $table The table name.
-     * @param array<string, array> $columns The list of columns for the schema.
+     * @param array<string, array|string> $columns The list of columns for the schema.
      */
     public function __construct(string $table, array $columns = [])
     {
@@ -628,8 +628,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Helper method to check/validate foreign keys.
      *
-     * @param array $attrs Attributes to set.
-     * @return array
+     * @param array<string, mixed> $attrs Attributes to set.
+     * @return array<string, mixed>
      * @throws \Cake\Database\Exception\DatabaseException When foreign key definition is not valid.
      */
     protected function _checkForeignKey(array $attrs): array

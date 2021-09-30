@@ -75,7 +75,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected Controller $controller;
 
     /**
-     * Template to render for Cake\Core\Exception\CakeException
+     * Template to render for {@link \Cake\Core\Exception\CakeException}
      *
      * @var string
      */
@@ -121,7 +121,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Creates the controller to perform rendering on the error response.
      *
      * @param \Throwable $exception Exception.
-     * @param \Cake\Http\ServerRequest $request The request if this is set it will be used
+     * @param \Cake\Http\ServerRequest|null $request The request if this is set it will be used
      *   instead of creating a new one.
      */
     public function __construct(Throwable $exception, ?ServerRequest $request = null)

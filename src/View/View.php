@@ -320,7 +320,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
-     * @param array $viewOptions View options. See View::$_passedVars for list of
+     * @param array<string, mixed> $viewOptions View options. See {@link View::$_passedVars} for list of
      *   options which get set as class properties.
      */
     public function __construct(
@@ -823,6 +823,7 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
+                /** @var array|false $data */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new RuntimeException(
@@ -1045,7 +1046,7 @@ class View implements EventDispatcherInterface
      * Magic accessor for helpers.
      *
      * @param string $name Name of the attribute to get.
-     * @return mixed
+     * @return \Cake\View\Helper|null
      */
     public function __get(string $name): mixed
     {
@@ -1139,6 +1140,7 @@ class View implements EventDispatcherInterface
         ob_start();
 
         try {
+            // Avoiding $templateFile here due to collision with extract() vars.
             include func_get_arg(0);
         } catch (Throwable $exception) {
             while (ob_get_level() > $bufferLevel) {

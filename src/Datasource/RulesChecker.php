@@ -29,8 +29,8 @@ use InvalidArgumentException;
  *
  * ### Adding rules
  *
- * Rules must be callable objects that return true/false depending on whether or
- * not the rule has been satisfied. You can use RulesChecker::add(), RulesChecker::addCreate(),
+ * Rules must be callable objects that return true/false depending on whether
+ * the rule has been satisfied. You can use RulesChecker::add(), RulesChecker::addCreate(),
  * RulesChecker::addUpdate() and RulesChecker::addDelete to add rules to a checker.
  *
  * ### Running checks
@@ -307,7 +307,7 @@ class RulesChecker
      * Utility method for decorating any callable so that if it returns false, the correct
      * property in the entity is marked as invalid.
      *
-     * @param callable $rule The rule to decorate
+     * @param callable|\Cake\Datasource\RuleInvoker $rule The rule to decorate
      * @param array|string|null $name The alias for a rule or an array of options
      * @param array<string, mixed> $options The options containing the error message and field.
      * @return \Cake\Datasource\RuleInvoker

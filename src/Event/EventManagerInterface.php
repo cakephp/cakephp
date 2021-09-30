@@ -45,7 +45,7 @@ interface EventManagerInterface
      *
      * @param \Cake\Event\EventListenerInterface|string $eventKey The event unique identifier name
      * with which the callback will be associated. If $eventKey is an instance of
-     * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents` methods.
+     * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents()` methods.
      *
      * @param callable|array $options Either an array of options or the callable you wish to
      * bind to $eventKey. If an array of options, the `priority` key can be used to define the order.

@@ -187,7 +187,7 @@ interface DriverInterface
     /**
      * Get the schema dialect.
      *
-     * Used by Cake\Database\Schema package to reflect schema and
+     * Used by {@link \Cake\Database\Schema} package to reflect schema and
      * generate schema.
      *
      * If all the tables that use this Driver specify their

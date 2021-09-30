@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
@@ -24,7 +25,6 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
 use Closure;
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -93,11 +93,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Invoke a controller's action and wrapping methods.
      *
-     * @param mixed $controller The controller to invoke.
+     * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
-     * @psalm-param \Cake\Controller\Controller $controller
      */
     public function invoke(mixed $controller): ResponseInterface
     {
@@ -156,58 +155,102 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      */
     protected function getActionArgs(Closure $action, array $passedParams): array
     {
-        $args = [];
-        $reflection = new ReflectionFunction($action);
-
-        foreach ($reflection->getParameters() as $i => $parameter) {
-            $position = $parameter->getPosition();
-            $hasDefault = $parameter->isDefaultValueAvailable();
-
-            // If there is no type we can't look in the container
-            // assume the parameter is a passed param
+        $resolved = [];
+        $function = new ReflectionFunction($action);
+        foreach ($function->getParameters() as $parameter) {
             $type = $parameter->getType();
-            if (!$type) {
-                if (count($passedParams)) {
-                    $args[$position] = array_shift($passedParams);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
+            if ($type && !$type instanceof ReflectionNamedType) {
+                // Only single types are supported
+                throw new MissingActionException(sprintf(
+                    'Action %s::%s() has an unsupported type for parameter `%s`.',
+                    $this->controller->getName(),
+                    $function->getName(),
+                    $parameter->getName()
+                ));
+            }
+
+            // Check for dependency injection for classes
+            if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+                if ($this->container->has($type->getName())) {
+                    $resolved[] = $this->container->get($type->getName());
+                    continue;
                 }
+
+                // Add default value if provided
+                // Do not allow positional arguments for classes
+                if ($parameter->isDefaultValueAvailable()) {
+                    $resolved[] = $parameter->getDefaultValue();
+                    continue;
+                }
+
+                throw new MissingActionException(sprintf(
+                    'Action %s::%s() cannot inject parameter `%s` from service container.',
+                    $this->controller->getName(),
+                    $function->getName(),
+                    $parameter->getName()
+                ));
+            }
+
+            // Use any passed params as positional arguments
+            if ($passedParams) {
+                $argument = array_shift($passedParams);
+                if ($type instanceof ReflectionNamedType) {
+                    $typedArgument = $this->coerceStringToType($argument, $type);
+
+                    if ($typedArgument === null) {
+                        throw new MissingActionException(sprintf(
+                            'Action %s::%s() cannot coerce "%s" to `%s` for parameter `%s`.',
+                            $this->controller->getName(),
+                            $function->getName(),
+                            $argument,
+                            $type->getName(),
+                            $parameter->getName()
+                        ));
+                    }
+                    $argument = $typedArgument;
+                }
+
+                $resolved[] = $argument;
                 continue;
             }
 
-            $typeName = $type instanceof ReflectionNamedType ? ltrim($type->getName(), '?') : null;
-
-            // Primitive types are passed args as they can't be looked up in the container.
-            // We only handle strings currently.
-            if ($typeName === 'string') {
-                if (count($passedParams)) {
-                    $args[$position] = array_shift($passedParams);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
-                }
+            // Add default value if provided
+            if ($parameter->isDefaultValueAvailable()) {
+                $resolved[] = $parameter->getDefaultValue();
                 continue;
             }
 
-            // Check the container and parameter default value.
-            if ($typeName && $this->container->has($typeName)) {
-                $args[$position] = $this->container->get($typeName);
-            } elseif ($hasDefault) {
-                $args[$position] = $parameter->getDefaultValue();
+            // Variadic parameter can have 0 arguments
+            if ($parameter->isVariadic()) {
+                continue;
             }
 
-            if (!array_key_exists($position, $args)) {
-                throw new InvalidArgumentException(
-                    "Could not resolve action argument `{$parameter->getName()}`. " .
-                    'It has no definition in the container, no passed parameter, and no default value.'
-                );
-            }
+            throw new MissingActionException(sprintf(
+                'Action %s::%s() expected passed parameter for `%s`.',
+                $this->controller->getName(),
+                $function->getName(),
+                $parameter->getName()
+            ));
         }
 
-        if (count($passedParams)) {
-            $args = array_merge($args, $passedParams);
+        return array_merge($resolved, $passedParams);
+    }
+
+    /**
+     * Coerces string argument to primitive type.
+     *
+     * @param string $argument Argument to coerce
+     * @param \ReflectionNamedType $type Parameter type
+     * @return string|float|int|bool|null
+     */
+    protected function coerceStringToType(string $argument, ReflectionNamedType $type)
+    {
+        switch ($type->getName()) {
+            case 'string':
+                return $argument;
         }
 
-        return $args;
+        return null;
     }
 
     /**

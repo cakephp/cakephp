@@ -90,7 +90,7 @@ class BufferedStatement implements Iterator, StatementInterface
      * Magic getter to return $queryString as read-only.
      *
      * @param string $property internal property to get
-     * @return mixed
+     * @return string|null
      */
     public function __get(string $property): mixed
     {
@@ -225,7 +225,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * @inheritDoc
+     * @return array
      */
     public function fetchAssoc(): array
     {

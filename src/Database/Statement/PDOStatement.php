@@ -51,7 +51,7 @@ class PDOStatement extends StatementDecorator
      * Magic getter to return PDOStatement::$queryString as read-only.
      *
      * @param string $property internal property to get
-     * @return mixed
+     * @return string|null
      */
     public function __get(string $property): mixed
     {

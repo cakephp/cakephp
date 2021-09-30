@@ -41,6 +41,7 @@ trait ModelAwareTrait
      * controller name.
      *
      * @var string|null
+     * @deprecated 4.3.0 Use `Cake\ORM\Locator\LocatorAwareTrait::$defaultTable` instead.
      */
     protected ?string $modelClass = null;
 
@@ -89,6 +90,7 @@ trait ModelAwareTrait
      * @throws \Cake\Datasource\Exception\MissingModelException If the model class cannot be found.
      * @throws \UnexpectedValueException If $modelClass argument is not provided
      *   and ModelAwareTrait::$modelClass property value is empty.
+     * @deprecated 4.3.0 Use `LocatorAwareTrait::getTable()` instead.
      */
     public function loadModel(?string $modelClass = null, ?string $modelType = null): RepositoryInterface
     {

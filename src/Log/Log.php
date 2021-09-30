@@ -293,7 +293,7 @@ class Log
     }
 
     /**
-     * Writes the given message and type to all of the configured log adapters.
+     * Writes the given message and type to all the configured log adapters.
      * Configured adapters are passed both the $level and $message variables. $level
      * is one of the following strings/values.
      *
@@ -342,7 +342,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      * @throws \InvalidArgumentException If invalid level is passed.
      */
@@ -395,7 +395,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function emergency(Stringable|string $message, array|string $context = []): bool
@@ -411,7 +411,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function alert(Stringable|string $message, array|string $context = []): bool
@@ -427,7 +427,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function critical(Stringable|string $message, array|string $context = []): bool
@@ -443,7 +443,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function error(Stringable|string $message, array|string $context = []): bool
@@ -459,7 +459,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function warning(Stringable|string $message, array|string $context = []): bool
@@ -475,7 +475,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function notice(Stringable|string $message, array|string $context = []): bool
@@ -491,7 +491,7 @@ class Log
      *  The special `scope` key can be passed to be used for further filtering of the
      *  log engines to be used. If a string or a numerically index array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function debug(Stringable|string $message, array|string $context = []): bool
@@ -505,9 +505,9 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
-     *  See Cake\Log\Log::setConfig() for more information on logging scopes.
+     *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
      */
     public static function info(Stringable|string $message, array|string $context = []): bool

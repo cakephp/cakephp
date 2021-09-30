@@ -62,12 +62,12 @@ use Psr\Http\Message\ResponseInterface;
  * CookieCollection using cookies()
  *
  * You can use the 'cookieJar' constructor option to provide a custom
- * cookie jar instance you've restored from cache/disk. By default
- * an empty instance of Cake\Http\Client\CookieCollection will be created.
+ * cookie jar instance you've restored from cache/disk. By default,
+ * an empty instance of {@link \Cake\Http\Client\CookieCollection} will be created.
  *
  * ### Sending request bodies
  *
- * By default any POST/PUT/PATCH/DELETE request with $data will
+ * By default, any POST/PUT/PATCH/DELETE request with $data will
  * send their data as `application/x-www-form-urlencoded` unless
  * there are attached files. In that case `multipart/form-data`
  * will be used.

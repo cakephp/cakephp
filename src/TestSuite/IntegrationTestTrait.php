@@ -664,7 +664,6 @@ trait IntegrationTestTrait
 
         if ($this->_csrfToken === true) {
             $middleware = new CsrfProtectionMiddleware();
-            $token = null;
             if (!isset($this->_cookie[$this->_csrfKeyName]) && !isset($this->_session[$this->_csrfKeyName])) {
                 $token = $middleware->createToken();
             } elseif (isset($this->_cookie[$this->_csrfKeyName])) {

@@ -847,7 +847,7 @@ abstract class Association
      * Proxies the operation to the target table's exists method after
      * appending the default conditions for this association
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array $conditions The conditions to use
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to use
      * for checking if any record matches.
      * @see \Cake\ORM\Table::exists()
      * @return bool
@@ -1166,7 +1166,7 @@ abstract class Association
 
     /**
      * Eager loads a list of records in the target table that are related to another
-     * set of records in the source table. Source records can specified in two ways:
+     * set of records in the source table. Source records can be specified in two ways:
      * first one is by passing a Query object setup to find on the source table and
      * the other way is by explicitly passing an array of primary key values from
      * the source table.

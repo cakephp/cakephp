@@ -139,14 +139,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * An associative array of objects or classes containing methods
      * used for validation
      *
-     * @var array
+     * @var array<string, object|string>
+     * @psalm-var array<string, object|class-string>
      */
     protected array $_providers = [];
 
     /**
      * An associative array of objects or classes used as a default provider list
      *
-     * @var array
+     * @var array<string, object|string>
+     * @psalm-var array<string, object|class-string>
      */
     protected static array $_defaultProviders = [];
 
@@ -433,8 +435,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns an iterator for each of the fields to be validated
      *
-     * @return array<\Cake\Validation\ValidationSet>
-     * @psalm-return \Traversable<string, \Cake\Validation\ValidationSet>
+     * @return \Traversable<string, \Cake\Validation\ValidationSet>
      */
     public function getIterator(): Traversable
     {
@@ -2014,14 +2015,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a validation rule to ensure the field is an uploaded file
      *
-     * For options see Cake\Validation\Validation::uploadedFile()
-     *
      * @param string $field The field you want to apply the rule to.
      * @param array<string, mixed> $options An array of options.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
-     * @see \Cake\Validation\Validation::uploadedFile()
+     * @see \Cake\Validation\Validation::uploadedFile() For options
      * @return $this
      */
     public function uploadedFile(
@@ -2416,7 +2415,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * due to the field missing in the data array
      *
      * @param \Cake\Validation\ValidationSet $field The set of rules for a field.
-     * @param array $context A key value list of data containing the validation context.
+     * @param array<string, mixed> $context A key value list of data containing the validation context.
      * @return bool
      */
     protected function _checkPresence(ValidationSet $field, array $context): bool
@@ -2440,7 +2439,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Returns whether the field can be left blank according to `allowEmpty`
      *
      * @param \Cake\Validation\ValidationSet $field the set of rules for a field
-     * @param array $context a key value list of data containing the validation context.
+     * @param array<string, mixed> $context a key value list of data containing the validation context.
      * @return bool
      */
     protected function _canBeEmpty(ValidationSet $field, array $context): bool
@@ -2529,7 +2528,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationSet $rules the list of rules for a field
      * @param array $data the full data passed to the validator
      * @param bool $newRecord whether is it a new record or an existing one
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array
     {
@@ -2542,6 +2541,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $message = __d('cake', 'The provided value is invalid');
         }
 
+        /**
+         * @var \Cake\Validation\ValidationRule $rule
+         */
         foreach ($rules as $name => $rule) {
             $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
             if ($result === true) {

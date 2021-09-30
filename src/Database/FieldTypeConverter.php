@@ -46,7 +46,7 @@ class FieldTypeConverter
      * at the moment this object is created. Used so that the types list
      * is not fetched on each single row of the results.
      *
-     * @var array<\Cake\Database\TypeInterface>|array<\Cake\Database\Type\BatchCastingInterface>
+     * @var array<\Cake\Database\TypeInterface|\Cake\Database\Type\BatchCastingInterface>
      */
     protected array $types;
 

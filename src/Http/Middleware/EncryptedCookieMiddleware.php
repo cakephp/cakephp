@@ -32,7 +32,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * times.
  *
  * Cookies in request data will be decrypted, while cookies in response headers will
- * be encrypted automatically. If the response is a Cake\Http\Response, the cookie
+ * be encrypted automatically. If the response is a {@link \Cake\Http\Response}, the cookie
  * data set with `withCookie()` and `cookie()`` will also be encrypted.
  *
  * The encryption types and padding are compatible with those used by CookieComponent

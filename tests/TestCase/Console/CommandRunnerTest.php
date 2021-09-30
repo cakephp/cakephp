@@ -30,6 +30,7 @@ use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use RuntimeException;
+use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;

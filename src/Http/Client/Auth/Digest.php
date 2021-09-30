@@ -21,7 +21,7 @@ use Cake\Http\Client\Request;
 /**
  * Digest authentication adapter for Cake\Http\Client
  *
- * Generally not directly constructed, but instead used by Cake\Http\Client
+ * Generally not directly constructed, but instead used by {@link \Cake\Http\Client}
  * when $options['auth']['type'] is 'digest'
  */
 class Digest

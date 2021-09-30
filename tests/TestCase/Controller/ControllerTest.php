@@ -33,7 +33,9 @@ use TestApp\Controller\ArticlesController;
 use TestApp\Controller\PagesController;
 use TestApp\Controller\PostsController;
 use TestApp\Controller\TestController;
+use TestApp\Controller\WithDefaultTableController;
 use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\PostsTable;
 use TestPlugin\Controller\Admin\CommentsController;
 use TestPlugin\Controller\TestPluginController;
 use UnexpectedValueException;
@@ -126,6 +128,16 @@ class ControllerTest extends TestCase
             'TestApp\Model\Table\ArticlesTable',
             $Controller->Articles
         );
+    }
+
+    public function testAutoLoadModelUsingDefaultTable()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        $Controller = new WithDefaultTableController(new ServerRequest(), new Response());
+
+        $this->assertInstanceOf(PostsTable::class, $Controller->Posts);
+
+        Configure::write('App.namespace', 'App');
     }
 
     /**

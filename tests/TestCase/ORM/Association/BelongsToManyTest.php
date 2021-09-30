@@ -55,6 +55,16 @@ class BelongsToManyTest extends TestCase
     ];
 
     /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $tag;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $article;
+
+    /**
      * Set up
      */
     public function setUp(): void

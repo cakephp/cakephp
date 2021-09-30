@@ -104,7 +104,7 @@ class ViewBuilder implements JsonSerializable
     /**
      * Additional options used when constructing the view.
      *
-     * This options array lets you provide custom constructor
+     * These options array lets you provide custom constructor
      * arguments to application/plugin view classes.
      *
      * @var array<string, mixed>
@@ -121,7 +121,7 @@ class ViewBuilder implements JsonSerializable
     /**
      * View vars
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_vars = [];
 
@@ -142,7 +142,7 @@ class ViewBuilder implements JsonSerializable
     /**
      * Saves view vars for use inside templates.
      *
-     * @param array $data Array of data.
+     * @param array<string, mixed> $data Array of data.
      * @param bool $merge Whether to merge with existing vars, default true.
      * @return $this
      */
@@ -182,7 +182,7 @@ class ViewBuilder implements JsonSerializable
     /**
      * Get all view vars.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getVars(): array
     {
@@ -540,7 +540,7 @@ class ViewBuilder implements JsonSerializable
      * Using the data in the builder, create a view instance.
      *
      * If className() is null, App\View\AppView will be used.
-     * If that class does not exist, then Cake\View\View will be used.
+     * If that class does not exist, then {@link \Cake\View\View} will be used.
      *
      * @param \Cake\Http\ServerRequest|null $request The request to use.
      * @param \Cake\Http\Response|null $response The response to use.
@@ -648,7 +648,7 @@ class ViewBuilder implements JsonSerializable
      * Configures a view builder instance from serialized config.
      *
      * @param array<string, mixed> $config View builder configuration array.
-     * @return $this Configured view builder instance.
+     * @return $this
      */
     public function createFromArray(array $config)
     {
@@ -672,7 +672,7 @@ class ViewBuilder implements JsonSerializable
     /**
      * Magic method used to rebuild the view builder object.
      *
-     * @param array $data Data array.
+     * @param array<string, mixed> $data Data array.
      * @return void
      */
     public function __unserialize(array $data): void

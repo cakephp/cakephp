@@ -159,7 +159,7 @@ class Stream implements AdapterInterface
      * Builds the request content based on the request object.
      *
      * If the $request->body() is a string, it will be used as is.
-     * Array data will be processed with Cake\Http\Client\FormData
+     * Array data will be processed with {@link \Cake\Http\Client\FormData}
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array<string, mixed> $options Array of options to use.

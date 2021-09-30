@@ -72,6 +72,11 @@ class ViewTest extends TestCase
     protected $ThemePostsController;
 
     /**
+     * @var \Cake\Controller\Controller
+     */
+    protected $ThemeController;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -79,7 +84,6 @@ class ViewTest extends TestCase
         parent::setUp();
 
         $request = new ServerRequest();
-        $this->Controller = new Controller($request);
         $this->PostsController = new ViewPostsController($request);
         $this->PostsController->index();
         $this->View = $this->PostsController->createView();
@@ -89,8 +93,6 @@ class ViewTest extends TestCase
         $this->ThemeController = new Controller($themeRequest);
         $this->ThemePostsController = new ThemePostsController($themeRequest);
         $this->ThemePostsController->index();
-        $this->ThemeView = $this->ThemePostsController->createView();
-        $this->ThemeView->setTemplatePath('Posts');
 
         $this->loadPlugins(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
         Configure::write('debug', true);
@@ -105,8 +107,6 @@ class ViewTest extends TestCase
         $this->clearPlugins();
         unset($this->View);
         unset($this->PostsController);
-        unset($this->Controller);
-        unset($this->ThemeView);
         unset($this->ThemePostsController);
         unset($this->ThemeController);
     }

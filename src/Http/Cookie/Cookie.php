@@ -241,7 +241,7 @@ class Cookie implements CookieInterface
     protected static function dateTimeInstance(DateTimeInterface|string|int|null $expires): ?DateTimeInterface
     {
         if ($expires === null) {
-            return $expires;
+            return null;
         }
 
         if ($expires instanceof DateTimeInterface) {
@@ -710,7 +710,7 @@ class Cookie implements CookieInterface
      * This method will expand serialized complex data,
      * on first use.
      *
-     * @param string $path Path to read the data from
+     * @param string|null $path Path to read the data from
      * @return mixed
      */
     public function read(?string $path = null): mixed

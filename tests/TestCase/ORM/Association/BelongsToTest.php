@@ -41,6 +41,21 @@ class BelongsToTest extends TestCase
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
     /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $company;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $client;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $companiesTypeMap;
+
+    /**
      * Set up
      */
     public function setUp(): void

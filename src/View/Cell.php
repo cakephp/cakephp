@@ -110,7 +110,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * @param \Cake\Http\ServerRequest $request The request to use in the cell.
      * @param \Cake\Http\Response $response The response to use in the cell.
-     * @param \Cake\Event\EventManagerInterface $eventManager The eventManager to bind events to.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager The eventManager to bind events to.
      * @param array<string, mixed> $cellOptions Cell options to apply.
      */
     public function __construct(
@@ -159,6 +159,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * @return string The rendered cell.
      * @throws \Cake\View\Exception\MissingCellTemplateException
      *   When a MissingTemplateException is raised during rendering.
+     * @throws \BadMethodCallException
      */
     public function render(?string $template = null): string
     {

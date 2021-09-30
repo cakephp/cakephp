@@ -165,7 +165,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * A hook method intended to be implemented by subclasses.
      *
      * You can use this method to define the schema using
-     * the methods on Cake\Form\Schema, or loads a pre-defined
+     * the methods on {@link \Cake\Form\Schema}, or loads a pre-defined
      * schema from a concrete class.
      *
      * @param \Cake\Form\Schema $schema The schema to customize.

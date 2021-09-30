@@ -7,10 +7,9 @@ use Cake\Log\Engine\BaseLog;
 use Stringable;
 
 /**
- * Class TestBaseLog
- *
- * Implementation of abstract class {@see Cake\Log\Engine\BaseLog},
- * required by test case {@see Cake\Test\TestCase\Log\Engine\BaseLogTest}.
+ * Class BaseLogImpl
+ * Implementation of abstract class {@see \Cake\Log\Engine\BaseLog},
+ * required by test case {@see \Cake\Test\TestCase\Log\Engine\BaseLogTest}.
  */
 class TestBaseLog extends BaseLog
 {

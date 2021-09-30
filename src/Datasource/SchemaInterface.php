@@ -62,7 +62,7 @@ interface SchemaInterface
      * Get column data in the table.
      *
      * @param string $name The column name.
-     * @return array|null Column data or null.
+     * @return array<string, mixed>|null Column data or null.
      */
     public function getColumn(string $name): ?array;
 

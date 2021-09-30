@@ -210,8 +210,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Gets the iterator
      *
-     * @return array<\Cake\Http\Cookie\CookieInterface>
-     * @psalm-return \Traversable<string, \Cake\Http\Cookie\CookieInterface>
+     * @return \Traversable<string, \Cake\Http\Cookie\CookieInterface>
      */
     public function getIterator(): Traversable
     {

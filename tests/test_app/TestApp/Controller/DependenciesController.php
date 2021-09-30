@@ -85,4 +85,9 @@ class DependenciesController extends Controller
     {
         return $this->response->withStringBody(json_encode(compact('one')));
     }
+
+    public function requiredInt(int $one)
+    {
+        return $this->response->withStringBody(json_encode(compact('one')));
+    }
 }

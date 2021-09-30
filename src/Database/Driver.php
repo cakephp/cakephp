@@ -436,7 +436,7 @@ abstract class Driver implements DriverInterface
 
     /**
      * Returns the maximum alias length allowed.
-     * This can be different than the maximum identifier length for columns.
+     * This can be different from the maximum identifier length for columns.
      *
      * @return int|null Maximum alias length or null if no limit
      */

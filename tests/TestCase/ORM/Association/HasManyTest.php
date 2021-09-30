@@ -51,6 +51,26 @@ class HasManyTest extends TestCase
     ];
 
     /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $author;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $article;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $articlesTypeMap;
+
+    /**
+     * @var bool
+     */
+    protected $autoQuote;
+
+    /**
      * Set up
      */
     public function setUp(): void

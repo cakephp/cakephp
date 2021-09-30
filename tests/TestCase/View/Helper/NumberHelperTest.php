@@ -33,6 +33,11 @@ class NumberHelperTest extends TestCase
     protected $View;
 
     /**
+     * @var string
+     */
+    protected $appNamespace;
+
+    /**
      * setUp method
      */
     public function setUp(): void

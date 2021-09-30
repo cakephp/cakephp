@@ -19,7 +19,7 @@ namespace Cake\Datasource;
 /**
  * Contains logic for invoking an application rule.
  *
- * Combined with Cake\Datasource\RuleChecker as an implementation
+ * Combined with {@link \Cake\Datasource\RulesChecker} as an implementation
  * detail to de-duplicate rule decoration and provide cleaner separation
  * of duties.
  *
@@ -61,7 +61,7 @@ class RuleInvoker
      * rule $scope.
      *
      * @param callable $rule The rule to be invoked.
-     * @param ?string $name The name of the rule. Used in error messsages.
+     * @param ?string $name The name of the rule. Used in error messages.
      * @param array<string, mixed> $options The options for the rule. See above.
      */
     public function __construct(callable $rule, ?string $name, array $options = [])

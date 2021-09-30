@@ -48,6 +48,9 @@ class Command extends BaseCommand
             return $this->getTableLocator()->get($alias);
         });
 
+        if ($this->defaultTable !== null) {
+            $this->modelClass = $this->defaultTable;
+        }
         if (isset($this->modelClass)) {
             $this->loadModel();
         }

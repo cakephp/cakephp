@@ -68,7 +68,7 @@ class Socket
     protected array $lastError = [];
 
     /**
-     * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
+     * True if the socket stream is encrypted after a {@link \Cake\Network\Socket::enableCrypto()} call
      *
      * @var bool
      */

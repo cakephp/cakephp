@@ -164,7 +164,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *
      * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
      * @param string $option Option value. Available Values: 'deny', 'sameorigin', 'allow-from <uri>'
-     * @param string $url URL if mode is `allow-from`
+     * @param string|null $url URL if mode is `allow-from`
      * @return $this
      */
     public function setXFrameOptions(string $option = self::SAMEORIGIN, ?string $url = null)
@@ -192,8 +192,6 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      */
     public function setXssProtection(string $mode = self::XSS_BLOCK)
     {
-        $mode = $mode;
-
         if ($mode === self::XSS_BLOCK) {
             $mode = self::XSS_ENABLED_BLOCK;
         }

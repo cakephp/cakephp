@@ -316,7 +316,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An `<a />` element.
      * @see \Cake\Routing\Router::pathUrl()
-     * @link https://book.cakephp.org/3/en/views/helpers/html.html#creating-links
+     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-links
      */
     public function linkFromPath(string $title, string $path, array $params = [], array $options = []): string
     {
@@ -395,12 +395,8 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (str_contains($path, '//')) {
-            $url = $path;
-        } else {
-            $url = $this->Url->css($path, $options);
-            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
-        }
+        $url = $this->Url->css($path, $options);
+        $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
             return null;
@@ -499,10 +495,9 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (!str_contains($url, '//')) {
-            $url = $this->Url->script($url, $options);
-            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
-        }
+        $url = $this->Url->script($url, $options);
+        $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
+
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
             return null;
         }
@@ -607,7 +602,7 @@ class HtmlHelper extends Helper
      * 'margin:10px;padding:10px;'
      * ```
      *
-     * @param array $data Style data array, keys will be used as property names, values as property values.
+     * @param array<string, string> $data Style data array, keys will be used as property names, values as property values.
      * @param bool $oneLine Whether the style block should be displayed on one line.
      * @return string CSS styling data
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-css-programatically
@@ -697,8 +692,8 @@ class HtmlHelper extends Helper
      *
      * @param array $names Array of tablenames. Each tablename can be string, or array with name and an array with a set
      *     of attributes to its specific tag
-     * @param array|null $trOptions HTML options for TR elements.
-     * @param array|null $thOptions HTML options for TH elements.
+     * @param array<string, mixed>|null $trOptions HTML options for TR elements.
+     * @param array<string, mixed>|null $thOptions HTML options for TH elements.
      * @return string Completed table headers
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-table-headings
      */
@@ -1079,7 +1074,7 @@ class HtmlHelper extends Helper
      *
      * @param array $list Set of elements to list
      * @param array<string, mixed> $options Options and additional HTML attributes of the list (ol/ul) tag.
-     * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
+     * @param array<string, mixed> $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-nested-lists
      */
@@ -1099,7 +1094,7 @@ class HtmlHelper extends Helper
      *
      * @param array $items Set of elements to list.
      * @param array<string, mixed> $options Additional HTML attributes of the list (ol/ul) tag.
-     * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
+     * @param array<string, mixed> $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list element
      * @see \Cake\View\Helper\HtmlHelper::nestedList()
      */

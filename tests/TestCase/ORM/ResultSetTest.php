@@ -46,6 +46,11 @@ class ResultSetTest extends TestCase
     protected $fixtureData;
 
     /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
      * setup
      */
     public function setUp(): void

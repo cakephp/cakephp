@@ -37,6 +37,31 @@ class CounterCacheBehaviorTest extends TestCase
     protected $post;
 
     /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $user;
+
+    /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $category;
+
+    /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $comment;
+
+    /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $userCategoryPosts;
+
+    /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
      * Fixture
      *
      * @var array<string>

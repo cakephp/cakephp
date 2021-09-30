@@ -221,7 +221,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     protected function _defaultValue(string $type, ?string $default): string|int|null
     {
         if ($default === null) {
-            return $default;
+            return null;
         }
 
         // remove () surrounding value (NULL) but leave () at the end of functions

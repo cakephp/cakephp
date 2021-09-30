@@ -53,10 +53,10 @@ class Text
      * Generate a random UUID version 4
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
-     * Instead you should use the openssl or mcrypt extensions.
+     * Instead, you should use the openssl or mcrypt extensions.
      *
      * It should also not be used to create identifiers that have security implications, such as
-     * 'unguessable' URL identifiers. Instead you should use `Security::randomBytes()` for that.
+     * 'unguessable' URL identifiers. Instead, you should use {@link \Cake\Utility\Security::randomBytes()}` for that.
      *
      * @see https://www.ietf.org/rfc/rfc4122.txt
      * @return string RFC 4122 UUID
@@ -425,8 +425,8 @@ class Text
      */
     protected static function _wordWrap(string $text, int $width = 72, string $break = "\n", bool $cut = false): string
     {
+        $parts = [];
         if ($cut) {
-            $parts = [];
             while (mb_strlen($text) > 0) {
                 $part = mb_substr($text, 0, $width);
                 $parts[] = trim($part);
@@ -436,7 +436,6 @@ class Text
             return implode($break, $parts);
         }
 
-        $parts = [];
         while (mb_strlen($text) > 0) {
             if ($width >= mb_strlen($text)) {
                 $parts[] = trim($text);

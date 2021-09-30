@@ -302,7 +302,7 @@ class Message implements JsonSerializable
     /**
      * Constructor
      *
-     * @param array|null $config Array of configs, or string to load configs from app.php
+     * @param array<string,mixed>|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct(?array $config = null)
     {
@@ -953,7 +953,7 @@ class Message implements JsonSerializable
      *
      * @param array<string> $include List of headers.
      * @param string $eol End of line string for concatenating headers.
-     * @param \Closure $callback Callback to run each header value through before stringifying.
+     * @param \Closure|null $callback Callback to run each header value through before stringifying.
      * @return string
      * @see Message::getHeaders()
      */
@@ -1502,7 +1502,7 @@ class Message implements JsonSerializable
     /**
      * Set message body.
      *
-     * @param array $content Content array with keys "text" and/or "html" with
+     * @param array<string, string> $content Content array with keys "text" and/or "html" with
      *   content string of respective type.
      * @return $this
      */
@@ -1875,7 +1875,7 @@ class Message implements JsonSerializable
      * Configures an email instance object from serialized config.
      *
      * @param array<string, mixed> $config Email configuration array.
-     * @return $this Configured email instance.
+     * @return $this
      */
     public function createFromArray(array $config)
     {

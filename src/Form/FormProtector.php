@@ -54,18 +54,6 @@ class FormProtector
     protected ?string $debugMessage = null;
 
     /**
-     * Construct.
-     *
-     * @param array $data Data array, can contain key `unlockedFields` with list of unlocked fields.
-     */
-    public function __construct(array $data = [])
-    {
-        if (!empty($data['unlockedFields'])) {
-            $this->unlockedFields = $data['unlockedFields'];
-        }
-    }
-
-    /**
      * Validate submitted form data.
      *
      * @param mixed $formData Form data.
@@ -102,6 +90,18 @@ class FormProtector
         }
 
         return false;
+    }
+
+    /**
+     * Construct.
+     *
+     * @param array<string, mixed> $data Data array, can contain key `unlockedFields` with list of unlocked fields.
+     */
+    public function __construct(array $data = [])
+    {
+        if (!empty($data['unlockedFields'])) {
+            $this->unlockedFields = $data['unlockedFields'];
+        }
     }
 
     /**

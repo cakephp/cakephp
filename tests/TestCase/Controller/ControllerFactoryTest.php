@@ -16,14 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
-use ArgumentCountError;
 use Cake\Controller\ControllerFactory;
+use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Container;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use stdClass;
 use TestApp\Controller\DependenciesController;
 
@@ -36,6 +35,11 @@ class ControllerFactoryTest extends TestCase
      * @var \Cake\Controller\ControllerFactory
      */
     protected $factory;
+
+    /**
+     * @var \Cake\Core\Container
+     */
+    protected $container;
 
     /**
      * Setup
@@ -498,8 +502,8 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Could not resolve action argument `dep`');
+        $this->expectException(MissingActionException::class);
+        $this->expectExceptionMessage('Action Dependencies::requiredDep() cannot inject parameter `dep` from service container');
         $this->factory->invoke($controller);
     }
 
@@ -515,8 +519,8 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Too few arguments');
+        $this->expectException(MissingActionException::class);
+        $this->expectExceptionMessage('Action Dependencies::requiredParam() expected passed parameter for `one`');
         $this->factory->invoke($controller);
     }
 
@@ -664,8 +668,29 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Too few arguments');
+        $this->expectException(MissingActionException::class);
+        $this->expectExceptionMessage('Action Dependencies::requiredString() expected passed parameter for `str`');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test that required int (non-string)
+     */
+    public function testInvokeRequiredIntParam(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredInt',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredInt',
+                'pass' => ['one'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(MissingActionException::class);
+        $this->expectExceptionMessage('Action Dependencies::requiredInt() cannot coerce "one" to `int` for parameter `one`');
         $this->factory->invoke($controller);
     }
 

@@ -50,6 +50,10 @@ class TransactionStrategy implements FixtureStrategyInterface
      */
     public function setupTest(array $fixtureNames): void
     {
+        if (empty($fixtureNames)) {
+            return;
+        }
+
         $this->fixtures = $this->helper->loadFixtures($fixtureNames);
 
         $this->helper->runPerConnection(function ($connection): void {

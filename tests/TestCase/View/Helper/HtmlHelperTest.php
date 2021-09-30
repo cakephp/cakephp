@@ -615,8 +615,8 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;';
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->css('http://whatever.com/screen.css?1234');
-        $expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
+        $result = $this->Html->css('http://whatever.com/screen.css?1234&a=b');
+        $expected['link']['href'] = 'http://whatever.com/screen.css?1234&amp;a=b';
         $this->assertHtml($expected, $result);
 
         Configure::write('App.cssBaseUrl', '//cdn.cakephp.org/css/');
@@ -959,6 +959,18 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->script('test.json.js?foo=bar&other=test');
         $expected = [
             'script' => ['src' => 'js/test.json.js?foo=bar&amp;other=test'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->script('//domain.com/test.json.js?foo=bar&other=test');
+        $expected = [
+            'script' => ['src' => '//domain.com/test.json.js?foo=bar&amp;other=test'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->script('https://domain.com/test.json.js?foo=bar&other=test');
+        $expected = [
+            'script' => ['src' => 'https://domain.com/test.json.js?foo=bar&amp;other=test'],
         ];
         $this->assertHtml($expected, $result);
 

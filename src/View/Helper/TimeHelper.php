@@ -376,7 +376,7 @@ class TimeHelper extends Helper
      * @param \DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string
      *   or DateTime object (or a date format string).
      * @param string|int|null $format date format string (or a UNIX timestamp,
-     *   strtotime() valid string or DateTime object).
+     *   `strtotime()` valid string or DateTime object).
      * @param string|false $invalid Default value to display on invalid dates
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string

@@ -373,7 +373,7 @@ class Xml
     /**
      * Helper to _fromArray(). It will create children of arrays
      *
-     * @param array $data Array with information to create children
+     * @param array<string, mixed> $data Array with information to create children
      * @return void
      */
     protected static function _createChild(array $data): void

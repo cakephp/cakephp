@@ -27,6 +27,21 @@ use DateTime;
  */
 class DateTimeWidgetTest extends TestCase
 {
+    /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
+     * @var \Cake\View\Widget\DateTimeWidget
+     */
+    protected $DateTime;
+
     public function setUp(): void
     {
         parent::setUp();

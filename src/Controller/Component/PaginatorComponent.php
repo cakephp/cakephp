@@ -188,7 +188,7 @@ class PaginatorComponent extends Component
      * ```
      *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object Table or query to paginate.
-     * @param array $settings The settings/configuration used for pagination.
+     * @param array<string, mixed> $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
      * @throws \Cake\Http\Exception\NotFoundException
      */
@@ -226,8 +226,8 @@ class PaginatorComponent extends Component
      *
      * @param string $alias Model alias being paginated, if the general settings has a key with this value
      *   that key's settings will be used for pagination instead of the general ones.
-     * @param array $settings The settings to merge with the request data.
-     * @return array Array of merged options.
+     * @param array<string, mixed> $settings The settings to merge with the request data.
+     * @return array<string, mixed> Array of merged options.
      */
     public function mergeOptions(string $alias, array $settings): array
     {

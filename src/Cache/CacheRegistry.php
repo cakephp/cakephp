@@ -24,7 +24,7 @@ use RuntimeException;
 /**
  * An object registry for cache engines.
  *
- * Used by Cake\Cache\Cache to load and manage cache engines.
+ * Used by {@link \Cake\Cache\Cache} to load and manage cache engines.
  *
  * @extends \Cake\Core\ObjectRegistry<\Cake\Cache\CacheEngine>
  */

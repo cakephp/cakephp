@@ -21,7 +21,7 @@ use Cake\Database\ValueBinder;
 use Closure;
 
 /**
- * This represents a SQL aggregate function expression in a SQL statement.
+ * This represents an SQL aggregate function expression in an SQL statement.
  * Calls can be constructed by passing the name of the function and a list of params.
  * For security reasons, all params passed are quoted by default unless
  * explicitly told otherwise.

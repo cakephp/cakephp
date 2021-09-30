@@ -199,7 +199,7 @@ class Paginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository instance.
      * @param \Cake\Datasource\QueryInterface|null $query Query Instance.
-     * @param array $data Pagination data.
+     * @param array<string, mixed> $data Pagination data.
      * @return \Cake\Datasource\QueryInterface
      */
     protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface
@@ -229,8 +229,8 @@ class Paginator implements PaginatorInterface
      * Extract pagination data needed
      *
      * @param \Cake\Datasource\RepositoryInterface $object The repository object.
-     * @param array $params Request params
-     * @param array $settings The settings/configuration used for pagination.
+     * @param array<string, mixed> $params Request params
+     * @param array<string, mixed> $settings The settings/configuration used for pagination.
      * @return array Array with keys 'defaults', 'options' and 'finder'
      */
     protected function extractData(RepositoryInterface $object, array $params, array $settings): array
