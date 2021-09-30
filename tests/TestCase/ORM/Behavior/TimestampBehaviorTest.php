@@ -51,7 +51,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsDefault(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
 
         $expected = [
@@ -67,7 +67,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsCustom(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
 
@@ -84,7 +84,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testCreatedAbsent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
         $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
@@ -105,7 +105,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testCreatedPresent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
         $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
@@ -126,7 +126,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testCreatedNotNew(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
         $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
@@ -147,7 +147,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testModifiedAbsent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
         $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
@@ -169,7 +169,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testModifiedPresent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
         $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
@@ -191,7 +191,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testModifiedMissingColumn(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $table->getSchema()->removeColumn('created')->removeColumn('modified');
         $this->Behavior = new TimestampBehavior($table);
         $ts = new NativeDateTime('2000-01-01');
@@ -214,7 +214,7 @@ class TimestampBehaviorTest extends TestCase
     public function testUseImmutable(): void
     {
         $this->deprecated(function () {
-            $table = $this->getTable();
+            $table = $this->getTableInstance();
             $this->Behavior = new TimestampBehavior($table);
             $entity = new Entity();
             $event = new Event('Model.beforeSave');
@@ -241,7 +241,7 @@ class TimestampBehaviorTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('TimestampBehavior only supports columns of type DateTimeType.');
 
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table, [
             'events' => [
                 'Model.beforeSave' => [
@@ -265,7 +265,7 @@ class TimestampBehaviorTest extends TestCase
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid');
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $settings = ['events' => ['Model.beforeSave' => ['created' => 'fat fingers']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
 
@@ -279,7 +279,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testGetTimestamp(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $behavior = new TimestampBehavior($table);
 
         $return = $behavior->timestamp();
@@ -298,7 +298,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testGetTimestampPersists(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $behavior = new TimestampBehavior($table);
 
         $initialValue = $behavior->timestamp();
@@ -316,7 +316,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testGetTimestampRefreshes(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $behavior = new TimestampBehavior($table);
 
         $initialValue = $behavior->timestamp();
@@ -334,7 +334,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testSetTimestampExplicit(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
 
         $ts = new NativeDateTime();
@@ -353,7 +353,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testTouch(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
         $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
@@ -374,7 +374,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testTouchNoop(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $config = [
             'events' => [
                 'Model.beforeSave' => [
@@ -399,7 +399,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testTouchCustomEvent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
         $ts = new NativeDateTime('2000-01-01');
@@ -445,7 +445,7 @@ class TimestampBehaviorTest extends TestCase
     /**
      * Helper method to get Table instance with created/modified column
      */
-    protected function getTable(): Table
+    protected function getTableInstance(): Table
     {
         $schema = [
             'created' => ['type' => 'datetime'],

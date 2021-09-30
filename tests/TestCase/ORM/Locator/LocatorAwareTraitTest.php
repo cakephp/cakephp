@@ -16,9 +16,13 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\ORM\Locator;
 
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Table\PaginatorPostsTable;
+use TestApp\Stub\LocatorAwareStub;
 
 /**
  * LocatorAwareTrait test case
@@ -58,5 +62,28 @@ class LocatorAwareTraitTest extends TestCase
         $this->subject->setTableLocator($newLocator);
         $subjectLocator = $this->subject->getTableLocator();
         $this->assertSame($newLocator, $subjectLocator);
+    }
+
+    public function testGetTable(): void
+    {
+        $stub = new LocatorAwareStub('Articles');
+
+        $result = $stub->getTable();
+        $this->assertInstanceOf(Table::class, $result);
+
+        $result = $stub->getTable('Comments');
+        $this->assertInstanceOf(Table::class, $result);
+
+        $result = $stub->getTable(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
+    }
+
+    public function testGetTableException()
+    {
+        $this->expectException(CakeException::class);
+
+        $stub = new LocatorAwareStub();
+        $stub->getTable();
     }
 }
