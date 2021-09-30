@@ -22,5 +22,5 @@ class WithDefaultTableController extends Controller
     /**
      * @var string|null
      */
-    protected $defaultTable = 'Posts';
+    protected ?string $defaultTable = 'Posts';
 }
