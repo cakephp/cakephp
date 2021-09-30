@@ -296,6 +296,11 @@ parameters:
 			path: src/Mailer/Renderer.php
 
 		-
+			message: "#^PHPDoc tag @param for parameter \\$conditions with type array\\|Cake\\\\Database\\\\ExpressionInterface\\|Closure\\|string\\|null is not subtype of native type array\\|Cake\\\\Database\\\\ExpressionInterface\\|Closure\\.$#"
+			count: 1
+			path: src/ORM/Association.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/ORM/EagerLoader.php
@@ -379,11 +384,6 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between array and false will always evaluate to false\\.$#"
-			count: 1
-			path: src/View/View.php
 
 		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"

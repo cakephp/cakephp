@@ -212,7 +212,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testTimeInstanceCreation(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
         $entity = new Entity();
         $event = new Event('Model.beforeSave');

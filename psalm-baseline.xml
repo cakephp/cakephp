@@ -43,6 +43,15 @@
       <code>ReturnTypeWillChange</code>
     </UndefinedAttributeClass>
   </file>
+  <file src="src/Command/Command.php">
+    <DeprecatedMethod occurrences="1">
+      <code>loadModel</code>
+    </DeprecatedMethod>
+    <DeprecatedProperty occurrences="2">
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+  </file>
   <file src="src/Controller/Controller.php">
     <DeprecatedMethod occurrences="2">
       <code>loadModel</code>
@@ -57,9 +66,6 @@
       <code>$this-&gt;modelClass</code>
       <code>$this-&gt;modelClass</code>
     </DeprecatedProperty>
-    <DeprecatedTrait occurrences="1">
-      <code>ModelAwareTrait</code>
-    </DeprecatedTrait>
     <PropertyTypeCoercion occurrences="1">
       <code>$result</code>
     </PropertyTypeCoercion>
@@ -71,54 +77,22 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Core/Retry/CommandRetry.php">
-    <InvalidReturnType occurrences="1">
-      <code>mixed</code>
-    </InvalidReturnType>
-  </file>
-  <file src="src/Database/Connection.php">
-    <DeprecatedMethod occurrences="1">
-      <code>supportsDynamicConstraints</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Database/Driver.php">
-    <InvalidScalarArgument occurrences="2">
-      <code>$value</code>
-      <code>$value</code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="src/Database/Query.php">
-    <ParamNameMismatch occurrences="2">
-      <code>$limit</code>
-      <code>$offset</code>
-    </ParamNameMismatch>
-  </file>
   <file src="src/Database/Statement/PDOStatement.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$_statement</code>
     </NonInvariantDocblockPropertyType>
   </file>
-  <file src="src/Datasource/ConnectionRegistry.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>object</code>
-    </LessSpecificImplementedReturnType>
+  <file src="src/Datasource/ModelAwareTrait.php">
+    <DeprecatedProperty occurrences="3">
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
   </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Http/Client/Request.php">
-    <PropertyTypeCoercion occurrences="1">
-      <code>$this-&gt;headerNames</code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Http/Client/Response.php">
-    <PropertyTypeCoercion occurrences="3">
-      <code>$this-&gt;headerNames</code>
-      <code>$this-&gt;headers</code>
-      <code>$this-&gt;headers</code>
-    </PropertyTypeCoercion>
   </file>
   <file src="src/Http/Cookie/Cookie.php">
     <InvalidReturnStatement occurrences="1">
@@ -153,6 +127,16 @@
       <code>translate</code>
       <code>translate</code>
     </InternalMethod>
+  </file>
+  <file src="src/Mailer/Mailer.php">
+    <DeprecatedProperty occurrences="1">
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+  </file>
+  <file src="src/ORM/Association.php">
+    <MismatchingDocblockParamType occurrences="1">
+      <code>\Cake\Database\ExpressionInterface|\Closure|array|string|null</code>
+    </MismatchingDocblockParamType>
   </file>
   <file src="src/ORM/Locator/TableLocator.php">
     <NonInvariantDocblockPropertyType occurrences="1">
@@ -219,11 +203,6 @@
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
-  <file src="src/TestSuite/Fixture/TestFixture.php">
-    <DeprecatedMethod occurrences="1">
-      <code>supportsDynamicConstraints</code>
-    </DeprecatedMethod>
-  </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">
       <code>BaseTestSuite</code>
@@ -237,5 +216,10 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$options</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/View/Widget/SelectBoxWidget.php">
+    <InvalidScalarArgument occurrences="1">
+      <code>$selected</code>
+    </InvalidScalarArgument>
   </file>
 </files>
