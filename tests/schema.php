@@ -1512,4 +1512,24 @@ return [
             ],
         ],
     ],
+    [
+        'table' => 'nullable_authors',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'author_id' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
 ];

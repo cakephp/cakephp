@@ -28,9 +28,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Parse encoded request body data.
  *
- * Enables JSON and XML request payloads to be parsed into the request's
- * Provides CSRF protection & validation.
- *
+ * Enables JSON and XML request payloads to be parsed into the request's body.
  * You can also add your own request body parsers using the `addParser()` method.
  */
 class BodyParserMiddleware implements MiddlewareInterface
