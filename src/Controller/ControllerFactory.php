@@ -249,6 +249,12 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         switch ($type->getName()) {
             case 'string':
                 return $argument;
+            case 'float':
+                return is_numeric($argument) ? (float)$argument : null;
+            case 'int':
+                return filter_var($argument, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+            case 'bool':
+                return $argument === '0' ? false : ($argument === '1' ? true : null);
         }
 
         return null;
