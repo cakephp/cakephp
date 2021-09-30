@@ -42,7 +42,11 @@ class DependentDeleteHelper
         $table = $association->getTarget();
         $foreignKey = array_map([$association, 'aliasField'], (array)$association->getForeignKey());
         $bindingKey = (array)$association->getBindingKey();
-        $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
+        $bindingValue = $entity->extract($bindingKey);
+        if (in_array(null, $bindingValue, true)) {
+            return true;
+        }
+        $conditions = array_combine($foreignKey, $bindingValue);
 
         if ($association->getCascadeCallbacks()) {
             foreach ($association->find()->where($conditions)->all()->toList() as $related) {
