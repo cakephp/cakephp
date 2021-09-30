@@ -18,7 +18,6 @@ namespace Cake\View;
 
 use BadMethodCallException;
 use Cake\Cache\Cache;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManagerInterface;
@@ -41,7 +40,6 @@ abstract class Cell implements EventDispatcherInterface, Stringable
 {
     use EventDispatcherTrait;
     use LocatorAwareTrait;
-    use ModelAwareTrait;
     use ViewVarsTrait;
 
     /**
@@ -124,7 +122,6 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         }
         $this->request = $request;
         $this->response = $response;
-        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
 
         $this->_validCellOptions = array_merge(['action', 'args'], $this->_validCellOptions);
         foreach ($this->_validCellOptions as $var) {

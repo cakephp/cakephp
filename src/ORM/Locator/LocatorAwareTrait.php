@@ -30,7 +30,7 @@ trait LocatorAwareTrait
      *
      * @var string|null
      */
-    protected $defaultTable = null;
+    protected ?string $defaultTable = null;
 
     /**
      * Table locator instance

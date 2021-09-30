@@ -14,7 +14,6 @@ class DependencyCommand extends Command
 
     public function __construct(stdClass $inject)
     {
-        parent::__construct();
         $this->inject = $inject;
     }
 

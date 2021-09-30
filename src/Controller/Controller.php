@@ -18,8 +18,6 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
-use Cake\Datasource\ModelAwareTrait;
-use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -96,7 +94,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
-    use ModelAwareTrait;
     use ViewVarsTrait;
 
     /**
@@ -208,16 +205,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->setEventManager($eventManager);
         }
 
-        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
-
-        if ($this->defaultTable !== null) {
-            $this->modelClass = $this->defaultTable;
-        }
-
-        if ($this->modelClass === null) {
+        if ($this->defaultTable === null) {
             $plugin = $this->request->getParam('plugin');
-            $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
-            $this->_setModelClass($modelClass);
+            $tableAlias = ($plugin ? $plugin . '.' : '') . $this->name;
+            $this->defaultTable = $tableAlias;
         }
 
         if ($components !== null) {
@@ -289,22 +280,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Magic accessor for model autoloading.
+     * Magic accessor for the default table.
      *
      * @param string $name Property name
-     * @return \Cake\Datasource\RepositoryInterface|null The model instance or null
+     * @return \Cake\ORM\Table|null
      */
-    public function __get(string $name): ?RepositoryInterface
+    public function __get(string $name)
     {
-        if (!empty($this->modelClass)) {
-            if (!str_contains($this->modelClass, '\\')) {
-                [, $class] = pluginSplit($this->modelClass, true);
+        if (!empty($this->defaultTable)) {
+            if (str_contains($this->defaultTable, '\\')) {
+                $class = App::shortName($this->defaultTable, 'Model/Table', 'Table');
             } else {
-                $class = App::shortName($this->modelClass, 'Model/Table', 'Table');
+                [, $class] = pluginSplit($this->defaultTable, true);
             }
 
             if ($class === $name) {
-                return $this->loadModel();
+                return $this->getTable();
             }
         }
 
@@ -770,12 +761,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if (is_string($object) || $object === null) {
-            $try = [$object, $this->modelClass];
+            $try = [$object, $this->defaultTable];
             foreach ($try as $tableName) {
                 if (empty($tableName)) {
                     continue;
                 }
-                $table = $this->loadModel($tableName);
+                $table = $this->getTable($tableName);
                 break;
             }
         }
@@ -786,6 +777,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         $settings += $this->paginate;
 
+        /** @psalm-suppress UndefinedThisPropertyFetch */
         return $this->Paginator->paginate($table, $settings);
     }
 
