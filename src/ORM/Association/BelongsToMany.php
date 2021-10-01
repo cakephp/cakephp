@@ -1193,20 +1193,17 @@ class BelongsToMany extends Association
                     $keys[$key] = $junction->aliasField($key);
                 }
 
-                // Find existing rows so that we can diff with new entities.
-                // Only hydrate primary/foreign key columns to save time.
-                // Attach joins first to ensure where conditions have correct
-                // column types set.
-                $existing = $this->_appendJunctionJoin($this->find())
-                    ->select($keys)
+                // Find junction records. We join with the association target so that junction
+                // conditions from `targetConditions()` or the finder work.
+                $existing = $junction->find()
+                    ->innerJoinWith($target->getAlias())
+                    ->where($this->targetConditions())
+                    ->where($this->junctionConditions())
                     ->where(array_combine($prefixedForeignKey, $primaryValue));
-
-                // Because we're aliasing key fields to look like they are not
-                // from joined table we need to overwrite the type map as the junction
-                // table can have a surrogate primary key that doesn't share a type
-                // with the target table.
-                $junctionTypes = array_intersect_key($junction->getSchema()->typeMap(), $keys);
-                $existing->getSelectTypeMap()->setTypes($junctionTypes);
+                $finder = $this->getFinder();
+                if ($finder) {
+                    $existing = $target->callFinder($finder, $existing);
+                }
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);
