@@ -64,26 +64,27 @@ class LocatorAwareTraitTest extends TestCase
         $this->assertSame($newLocator, $subjectLocator);
     }
 
-    public function testGetTable(): void
+    public function testFetchTable(): void
     {
         $stub = new LocatorAwareStub('Articles');
 
-        $result = $stub->getTable();
+        $result = $stub->fetchTable();
         $this->assertInstanceOf(Table::class, $result);
 
-        $result = $stub->getTable('Comments');
+        $result = $stub->fetchTable('Comments');
         $this->assertInstanceOf(Table::class, $result);
 
-        $result = $stub->getTable(PaginatorPostsTable::class);
+        $result = $stub->fetchTable(PaginatorPostsTable::class);
         $this->assertInstanceOf(PaginatorPostsTable::class, $result);
         $this->assertSame('PaginatorPosts', $result->getAlias());
     }
 
-    public function testGetTableException()
+    public function testfetchTableException()
     {
         $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('You must provide an `$alias` or set the `$defaultTable` property.');
 
         $stub = new LocatorAwareStub();
-        $stub->getTable();
+        $stub->fetchTable();
     }
 }
