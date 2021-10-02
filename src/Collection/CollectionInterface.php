@@ -775,13 +775,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
     /**
      * Returns an array representation of the results
      *
-     * @param bool $preserveKeys whether to use the keys returned by this
+     * @param bool $keepKeys Whether to use the keys returned by this
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
      * @return array
      */
-    public function toArray(bool $preserveKeys = true): array;
+    public function toArray(bool $keepKeys = true): array;
 
     /**
      * Returns an numerically-indexed array representation of the results.
@@ -827,13 +827,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * You can think of this method as a way to create save points for complex
      * calculations in a collection.
      *
-     * @param bool $preserveKeys whether to use the keys returned by this
+     * @param bool $keepKeys Whether to use the keys returned by this
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
      * @return self
      */
-    public function compile(bool $preserveKeys = true): CollectionInterface;
+    public function compile(bool $keepKeys = true): CollectionInterface;
 
     /**
      * Returns a new collection where any operations chained after it are guaranteed
@@ -1052,10 +1052,10 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param int $chunkSize The maximum size for each chunk
-     * @param bool $preserveKeys If the keys of the array should be preserved
+     * @param bool $keepKeys If the keys of the array should be kept
      * @return self
      */
-    public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface;
+    public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface;
 
     /**
      * Returns whether there are elements in this collection
