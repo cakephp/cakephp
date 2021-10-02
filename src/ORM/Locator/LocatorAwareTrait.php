@@ -80,7 +80,7 @@ trait LocatorAwareTrait
      * @see \Cake\ORM\TableLocator::get()
      * @since 4.3.0
      */
-    public function getTable(?string $alias = null, array $options = []): Table
+    public function fetchTable(?string $alias = null, array $options = []): Table
     {
         $alias = $alias ?? $this->defaultTable;
         if ($alias === null) {
