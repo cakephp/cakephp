@@ -43,6 +43,21 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(compact('str')));
     }
 
+    public function requiredTyped(float $one, int $two, bool $three)
+    {
+        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+    }
+
+    public function optionalTyped(float $one = 1.0, int $two = 2, bool $three = true)
+    {
+        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+    }
+
+    public function unsupportedTyped(array $one)
+    {
+        return $this->response->withStringBody(json_encode(compact('one')));
+    }
+
     /**
      * @param mixed $any
      * @return \Cake\Http\Response
@@ -82,11 +97,6 @@ class DependenciesController extends Controller
      * @return \Cake\Http\Response
      */
     public function requiredParam($one)
-    {
-        return $this->response->withStringBody(json_encode(compact('one')));
-    }
-
-    public function requiredInt(int $one)
     {
         return $this->response->withStringBody(json_encode(compact('one')));
     }
