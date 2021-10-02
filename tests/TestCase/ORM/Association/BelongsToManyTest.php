@@ -942,6 +942,37 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test that replaceLinks() loads junction records with the correct entity class
+     */
+    public function testReplaceLinksFinderCondition(): void
+    {
+        $this->setAppNamespace('TestApp');
+
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'through' => $joint,
+            'joinTable' => 'articles_tags',
+            'finder' => ['published' => ['title' => 'First Article']],
+        ]);
+        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $entity->articles);
+
+        $assoc->replaceLinks($entity, []);
+
+        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(0, $fresh->articles, 'Association should be empty');
+
+        $other = $joint->find()->where(['tag_id' => 1])->toArray();
+        $this->assertCount(1, $other, 'Non matching joint record should remain.');
+        $this->assertSame(2, $other[0]->article_id);
+    }
+
+    /**
      * Tests replaceLinks with failing domain rules and new link targets.
      */
     public function testReplaceLinkFailingDomainRules(): void

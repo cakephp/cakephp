@@ -1200,15 +1200,9 @@ class BelongsToMany extends Association
                     ->where($this->targetConditions())
                     ->where($this->junctionConditions())
                     ->where(array_combine($prefixedForeignKey, $primaryValue));
-                $finder = $this->getFinder();
+                [$finder, $finderOptions] = $this->_extractFinder($this->getFinder());
                 if ($finder) {
-                    if (is_array($finder)) {
-                        /** @var array<string, mixed> $finderOptions */
-                        $finderOptions = key($finder);
-                        /** @var string $finder */
-                        $finder = current($finder);
-                    }
-                    $existing = $target->callFinder($finder, $existing, $finderOptions ?? []);
+                    $existing = $target->callFinder($finder, $existing, $finderOptions);
                 }
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
