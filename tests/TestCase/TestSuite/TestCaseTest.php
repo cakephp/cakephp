@@ -189,6 +189,26 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * test deprecated() with duplicate deprecation with same messsage and line
+     */
+    public function testDeprecatedWithDuplicatedDeprecation(): void
+    {
+        /**
+         * setting stackframe = 0 and having same method
+         * to have same deprecation message and same line for all cases
+         */
+        $fun = function () {
+            deprecationWarning('Test same deprecation message', 0);
+        };
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
+    }
+
+    /**
      * Test that TestCase::setUp() backs up values.
      */
     public function testSetupBackUpValues(): void

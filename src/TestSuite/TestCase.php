@@ -203,8 +203,14 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated(callable $callable): void
     {
+        $duplicate = Configure::read('Error.enableDuplicatedDeprecations');
+        Configure::write('Error.enableDuplicatedDeprecations', true);
         /** @var bool $deprecation */
         $deprecation = false;
+
+        /**
+         * @psalm-suppress InvalidArgument
+         */
         $previousHandler = set_error_handler(
             function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation) {
                 if ($code == E_USER_DEPRECATED) {
@@ -223,6 +229,9 @@ abstract class TestCase extends BaseTestCase
             $callable();
         } finally {
             restore_error_handler();
+            if ($duplicate !== Configure::read('Error.enableDuplicatedDeprecations')) {
+                Configure::write('Error.enableDuplicatedDeprecations', $duplicate);
+            }
         }
         $this->assertTrue($deprecation, 'Should have at least one deprecation warning');
     }
