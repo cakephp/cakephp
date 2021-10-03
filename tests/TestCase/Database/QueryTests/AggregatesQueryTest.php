@@ -22,9 +22,9 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tests AggregateExpression queries class
+ * Tests AggregateExpression queries
  */
-class AggregatesQueryTests extends TestCase
+class AggregatesQueryTest extends TestCase
 {
     protected $fixtures = [
         'core.Comments',
@@ -68,6 +68,6 @@ class AggregatesQueryTests extends TestCase
             ->from('comments')
             ->execute()
             ->fetchAll('assoc');
-        $this->assertSame(2, $result[0]['num_rows']);
+        $this->assertSame(2, (int)$result[0]['num_rows']);
     }
 }
