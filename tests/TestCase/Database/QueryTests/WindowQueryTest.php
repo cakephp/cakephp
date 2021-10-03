@@ -25,7 +25,7 @@ use RuntimeException;
 /**
  * Tests WindowExpression class
  */
-class WindowQueryTests extends TestCase
+class WindowQueryTest extends TestCase
 {
     protected $fixtures = [
         'core.Comments',
