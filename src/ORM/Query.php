@@ -19,7 +19,6 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Database\Connection;
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
@@ -855,7 +854,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Creates a copy of this current query, triggers beforeFind and resets some state.
+     * Creates a copy of this current query and resets some state.
      *
      * The following state will be cleared:
      *
@@ -874,7 +873,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function cleanCopy()
     {
         $clone = clone $this;
-        $clone->triggerBeforeFind();
         $clone->disableAutoFields();
         $clone->limit(null);
         $clone->order([], true);
@@ -946,42 +944,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return (int)$counter($query);
         }
 
-        $complex = (
-            $query->clause('distinct') ||
-            count($query->clause('group')) ||
-            count($query->clause('union')) ||
-            $query->clause('having')
-        );
-
-        if (!$complex) {
-            // Expression fields could have bound parameters.
-            foreach ($query->clause('select') as $field) {
-                if ($field instanceof ExpressionInterface) {
-                    $complex = true;
-                    break;
-                }
-            }
-        }
-
-        if (!$complex && $this->_valueBinder !== null) {
-            $order = $this->clause('order');
-            $complex = $order === null ? false : $order->hasNestedExpression();
-        }
-
-        $count = ['count' => $query->func()->count('*')];
-
-        if (!$complex) {
-            $query->getEagerLoader()->disableAutoFields();
-            $statement = $query
-                ->select($count, true)
-                ->disableAutoFields()
-                ->execute();
-        } else {
-            $statement = $this->getConnection()->newQuery()
-                ->select($count)
-                ->from(['count_source' => $query])
-                ->execute();
-        }
+        $query->triggerBeforeFind();
+        $statement = $this->getConnection()->newQuery()
+            ->select(['count' => $query->func()->count('*')])
+            ->from(['count_source' => $query])
+            ->execute();
 
         $result = $statement->fetch('assoc');
         $statement->closeCursor();

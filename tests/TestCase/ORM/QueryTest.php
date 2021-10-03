@@ -1623,7 +1623,7 @@ class QueryTest extends TestCase
 
         $query = $table->find();
         $result = $query->count();
-        $this->assertSame(3, $result);
+        $this->assertSame(1, $result);
     }
 
     /**
