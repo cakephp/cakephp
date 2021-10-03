@@ -10,42 +10,24 @@ declare(strict_types=1);
  */
 return [
     [
-        'table' => 'binary_uuid_items',
-        'columns' => [
-            'id' => [
-                'type' => 'binaryuuid',
-            ],
-            'name' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'published' => [
-                'type' => 'boolean',
-                'null' => false,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'unique_authors',
+        'table' => 'articles',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'first_author_id' => [
+            'author_id' => [
                 'type' => 'integer',
                 'null' => true,
             ],
-            'second_author_id' => [
-                'type' => 'integer',
-                'null' => false,
+            'title' => [
+                'type' => 'string',
+                'null' => true,
+            ],
+            'body' => 'text',
+            'published' => [
+                'type' => 'string',
+                'length' => 1,
+                'default' => 'N',
             ],
         ],
         'constraints' => [
@@ -53,13 +35,6 @@ return [
                 'type' => 'primary',
                 'columns' => [
                     'id',
-                ],
-            ],
-            'nullable_non_nullable_unique' => [
-                'type' => 'unique',
-                'columns' => [
-                    'first_author_id',
-                    'second_author_id',
                 ],
             ],
         ],
@@ -95,103 +70,7 @@ return [
         ],
     ],
     [
-        'table' => 'users',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'username' => [
-                'type' => 'string',
-                'null' => true,
-            ],
-            'password' => [
-                'type' => 'string',
-                'null' => true,
-            ],
-            'created' => [
-                'type' => 'timestamp',
-                'null' => true,
-            ],
-            'updated' => [
-                'type' => 'timestamp',
-                'null' => true,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'featured_tags',
-        'columns' => [
-            'tag_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'priority' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'tag_id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'column_schema_aware_type_values',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'val' => [
-                'type' => 'text',
-                'null' => false,
-                'comment' => 'Fixture comment',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'sections_members',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'section_id' => [
-                'type' => 'integer',
-            ],
-            'member_id' => [
-                'type' => 'integer',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'site_articles_tags',
+        'table' => 'articles_tags',
         'columns' => [
             'article_id' => [
                 'type' => 'integer',
@@ -201,19 +80,153 @@ return [
                 'type' => 'integer',
                 'null' => false,
             ],
-            'site_id' => [
+        ],
+        'constraints' => [
+            'unique_tag' => [
+                'type' => 'primary',
+                'columns' => [
+                    'article_id',
+                    'tag_id',
+                ],
+            ],
+            'tag_id_fk' => [
+                'type' => 'foreign',
+                'columns' => [
+                    'tag_id',
+                ],
+                'references' => [
+                    'tags',
+                    'id',
+                ],
+                'update' => 'cascade',
+                'delete' => 'cascade',
+            ],
+        ],
+    ],
+    [
+        'table' => 'articles_translations',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'locale' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'title' => [
+                'type' => 'string',
+                'null' => true,
+            ],
+            'body' => 'text',
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                    'locale',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'attachments',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'comment_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'attachment' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'created' => 'datetime',
+            'updated' => 'datetime',
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'auth_users',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'username' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'password' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'created' => 'datetime',
+            'updated' => 'datetime',
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'authors',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'name' => [
+                'type' => 'string',
+                'default' => null,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'authors_tags',
+        'columns' => [
+            'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'tag_id' => [
                 'type' => 'integer',
                 'null' => false,
             ],
         ],
         'constraints' => [
-            'UNIQUE_TAG2' => [
+            'unique_tag' => [
                 'type' => 'primary',
                 'columns' => [
-                    'article_id',
+                    'author_id',
                     'tag_id',
-                    'site_id',
                 ],
+            ],
+            'author_id_fk' => [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade',
             ],
         ],
     ],
@@ -238,6 +251,30 @@ return [
                 'columns' => [
                     'id',
                     'locale',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'binary_uuid_items',
+        'columns' => [
+            'id' => [
+                'type' => 'binaryuuid',
+            ],
+            'name' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'published' => [
+                'type' => 'boolean',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
                 ],
             ],
         ],
@@ -274,16 +311,62 @@ return [
         ],
     ],
     [
-        'table' => 'auth_users',
+        'table' => 'binary_uuid_tags',
+        'columns' => [
+            'id' => [
+                'type' => 'binaryuuid',
+            ],
+            'name' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'cake_sessions',
+        'columns' => [
+            'id' => [
+                'type' => 'string',
+                'length' => 128,
+            ],
+            'data' => [
+                'type' => 'text',
+                'null' => true,
+            ],
+            'expires' => [
+                'type' => 'integer',
+                'length' => 11,
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'categories',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'username' => [
-                'type' => 'string',
+            'parent_id' => [
+                'type' => 'integer',
                 'null' => false,
             ],
-            'password' => [
+            'name' => [
                 'type' => 'string',
                 'null' => false,
             ],
@@ -295,6 +378,114 @@ return [
                 'type' => 'primary',
                 'columns' => [
                     'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'column_schema_aware_type_values',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'val' => [
+                'type' => 'text',
+                'null' => false,
+                'comment' => 'Fixture comment',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'comments',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'article_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'user_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'comment' => [
+                'type' => 'text',
+            ],
+            'published' => [
+                'type' => 'string',
+                'length' => 1,
+                'default' => 'N',
+            ],
+            'created' => [
+                'type' => 'datetime',
+            ],
+            'updated' => [
+                'type' => 'datetime',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'comments_translations',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'locale' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'comment' => 'text',
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                    'locale',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'composite_increments',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+                'null' => false,
+                'autoIncrement' => true,
+            ],
+            'account_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'name' => [
+                'type' => 'string',
+                'default' => null,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                    'account_id',
                 ],
             ],
         ],
@@ -325,13 +516,17 @@ return [
         ],
     ],
     [
-        'table' => 'date_keys',
+        'table' => 'counter_cache_comments',
         'columns' => [
             'id' => [
-                'type' => 'date',
+                'type' => 'integer',
             ],
             'title' => [
                 'type' => 'string',
+                'length' => 255,
+            ],
+            'user_id' => [
+                'type' => 'integer',
                 'null' => true,
             ],
         ],
@@ -378,27 +573,171 @@ return [
         ],
     ],
     [
-        'table' => 'test_plugin_comments',
+        'table' => 'counter_cache_user_category_posts',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'article_id' => [
+            'category_id' => [
                 'type' => 'integer',
-                'null' => false,
             ],
             'user_id' => [
                 'type' => 'integer',
+            ],
+            'post_count' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'counter_cache_users',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'name' => [
+                'type' => 'string',
+                'length' => 255,
                 'null' => false,
             ],
-            'comment' => 'text',
-            'published' => [
-                'type' => 'string',
-                'length' => 1,
-                'default' => 'N',
+            'post_count' => [
+                'type' => 'integer',
+                'null' => true,
             ],
-            'created' => 'datetime',
-            'updated' => 'datetime',
+            'comment_count' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+            'posts_published' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'datatypes',
+        'columns' => [
+            'id' => [
+                'type' => 'biginteger',
+            ],
+            'cost' => [
+                'type' => 'decimal',
+                'length' => 20,
+                'precision' => 1,
+                'null' => true,
+            ],
+            'fraction' => [
+                'type' => 'decimal',
+                'length' => 20,
+                'precision' => 19,
+                'null' => true,
+            ],
+            'floaty' => [
+                'type' => 'float',
+                'null' => true,
+            ],
+            'small' => [
+                'type' => 'smallinteger',
+                'null' => true,
+            ],
+            'tiny' => [
+                'type' => 'tinyinteger',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'date_keys',
+        'columns' => [
+            'id' => [
+                'type' => 'date',
+            ],
+            'title' => [
+                'type' => 'string',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'featured_tags',
+        'columns' => [
+            'tag_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'priority' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'tag_id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'i18n',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'locale' => [
+                'type' => 'string',
+                'length' => 6,
+                'null' => false,
+            ],
+            'model' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'foreign_key' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'field' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'content' => [
+                'type' => 'text',
+            ],
         ],
         'constraints' => [
             'primary' => [
@@ -429,10 +768,96 @@ return [
         ],
     ],
     [
-        'table' => 'uuid_items',
+        'table' => 'menu_link_trees',
         'columns' => [
             'id' => [
-                'type' => 'uuid',
+                'type' => 'integer',
+            ],
+            'menu' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'lft' => [
+                'type' => 'integer',
+            ],
+            'rght' => [
+                'type' => 'integer',
+            ],
+            'parent_id' => 'integer',
+            'url' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'title' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'nullable_authors',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'author_id' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'number_trees',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'name' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'parent_id' => 'integer',
+            'lft' => [
+                'type' => 'integer',
+            ],
+            'rght' => [
+                'type' => 'integer',
+            ],
+            'depth' => [
+                'type' => 'integer',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'ordered_uuid_items',
+        'columns' => [
+            'id' => [
+                'type' => 'string',
+                'length' => 32,
             ],
             'published' => [
                 'type' => 'boolean',
@@ -447,114 +872,6 @@ return [
             'primary' => [
                 'type' => 'primary',
                 'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'special_tags_translations',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'locale' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'extra_info' => [
-                'type' => 'string',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                    'locale',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'articles',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'author_id' => [
-                'type' => 'integer',
-                'null' => true,
-            ],
-            'title' => [
-                'type' => 'string',
-                'null' => true,
-            ],
-            'body' => 'text',
-            'published' => [
-                'type' => 'string',
-                'length' => 1,
-                'default' => 'N',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'articles_translations',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'locale' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'title' => [
-                'type' => 'string',
-                'null' => true,
-            ],
-            'body' => 'text',
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                    'locale',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'products',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'category' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'name' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'price' => [
-                'type' => 'integer',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'category',
                     'id',
                 ],
             ],
@@ -610,33 +927,54 @@ return [
         ],
     ],
     [
-        'table' => 'comments',
+        'table' => 'polymorphic_tagged',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'article_id' => [
+            'tag_id' => [
+                'type' => 'integer',
+            ],
+            'foreign_key' => [
+                'type' => 'integer',
+            ],
+            'foreign_model' => [
+                'type' => 'string',
+            ],
+            'position' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'posts',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'author_id' => [
                 'type' => 'integer',
                 'null' => false,
             ],
-            'user_id' => [
-                'type' => 'integer',
+            'title' => [
+                'type' => 'string',
                 'null' => false,
             ],
-            'comment' => [
-                'type' => 'text',
-            ],
+            'body' => 'text',
             'published' => [
                 'type' => 'string',
                 'length' => 1,
                 'default' => 'N',
             ],
-            'created' => [
-                'type' => 'datetime',
-            ],
-            'updated' => [
-                'type' => 'datetime',
-            ],
         ],
         'constraints' => [
             'primary' => [
@@ -648,33 +986,148 @@ return [
         ],
     ],
     [
-        'table' => 'datatypes',
+        'table' => 'products',
         'columns' => [
             'id' => [
-                'type' => 'biginteger',
+                'type' => 'integer',
             ],
-            'cost' => [
-                'type' => 'decimal',
-                'length' => 20,
-                'precision' => 1,
+            'category' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'name' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'price' => [
+                'type' => 'integer',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'category',
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'profiles',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+                'null' => false,
+                'autoIncrement' => true,
+            ],
+            'user_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'first_name' => [
+                'type' => 'string',
                 'null' => true,
             ],
-            'fraction' => [
-                'type' => 'decimal',
-                'length' => 20,
-                'precision' => 19,
+            'last_name' => [
+                'type' => 'string',
                 'null' => true,
             ],
-            'floaty' => [
-                'type' => 'float',
+            'is_active' => [
+                'type' => 'boolean',
+                'null' => false,
+                'default' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'sections',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'title' => [
+                'type' => 'string',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'sections_members',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'section_id' => [
+                'type' => 'integer',
+            ],
+            'member_id' => [
+                'type' => 'integer',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'sections_translations',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'locale' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+            'title' => [
+                'type' => 'string',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                    'locale',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'sessions',
+        'columns' => [
+            'id' => [
+                'type' => 'string',
+                'length' => 128,
+            ],
+            'data' => [
+                'type' => 'binary',
+                'length' => 16777215,
                 'null' => true,
             ],
-            'small' => [
-                'type' => 'smallinteger',
-                'null' => true,
-            ],
-            'tiny' => [
-                'type' => 'tinyinteger',
+            'expires' => [
+                'type' => 'integer',
+                'length' => 11,
                 'null' => true,
             ],
         ],
@@ -688,7 +1141,64 @@ return [
         ],
     ],
     [
-        'table' => 'authors',
+        'table' => 'site_articles',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'author_id' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+            'site_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'title' => [
+                'type' => 'string',
+                'null' => true,
+            ],
+            'body' => 'text',
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                    'site_id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'site_articles_tags',
+        'columns' => [
+            'article_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'tag_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'site_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'UNIQUE_TAG2' => [
+                'type' => 'primary',
+                'columns' => [
+                    'article_id',
+                    'tag_id',
+                    'site_id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'site_authors',
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -697,29 +1207,33 @@ return [
                 'type' => 'string',
                 'default' => null,
             ],
+            'site_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
         ],
         'constraints' => [
             'primary' => [
                 'type' => 'primary',
                 'columns' => [
                     'id',
+                    'site_id',
                 ],
             ],
         ],
     ],
     [
-        'table' => 'counter_cache_comments',
+        'table' => 'site_tags',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'title' => [
-                'type' => 'string',
-                'length' => 255,
-            ],
-            'user_id' => [
+            'site_id' => [
                 'type' => 'integer',
-                'null' => true,
+            ],
+            'name' => [
+                'type' => 'string',
+                'null' => false,
             ],
         ],
         'constraints' => [
@@ -727,6 +1241,7 @@ return [
                 'type' => 'primary',
                 'columns' => [
                     'id',
+                    'site_id',
                 ],
             ],
         ],
@@ -778,19 +1293,17 @@ return [
         ],
     ],
     [
-        'table' => 'ordered_uuid_items',
+        'table' => 'special_tags_translations',
         'columns' => [
             'id' => [
-                'type' => 'string',
-                'length' => 32,
+                'type' => 'integer',
             ],
-            'published' => [
-                'type' => 'boolean',
-                'null' => false,
-            ],
-            'name' => [
+            'locale' => [
                 'type' => 'string',
                 'null' => false,
+            ],
+            'extra_info' => [
+                'type' => 'string',
             ],
         ],
         'constraints' => [
@@ -798,39 +1311,7 @@ return [
                 'type' => 'primary',
                 'columns' => [
                     'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'counter_cache_users',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'name' => [
-                'type' => 'string',
-                'length' => 255,
-                'null' => false,
-            ],
-            'post_count' => [
-                'type' => 'integer',
-                'null' => true,
-            ],
-            'comment_count' => [
-                'type' => 'integer',
-                'null' => true,
-            ],
-            'posts_published' => [
-                'type' => 'integer',
-                'null' => true,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
+                    'locale',
                 ],
             ],
         ],
@@ -866,405 +1347,6 @@ return [
         ],
     ],
     [
-        'table' => 'articles_tags',
-        'columns' => [
-            'article_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'tag_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-        ],
-        'constraints' => [
-            'unique_tag' => [
-                'type' => 'primary',
-                'columns' => [
-                    'article_id',
-                    'tag_id',
-                ],
-            ],
-            'tag_id_fk' => [
-                'type' => 'foreign',
-                'columns' => [
-                    'tag_id',
-                ],
-                'references' => [
-                    'tags',
-                    'id',
-                ],
-                'update' => 'cascade',
-                'delete' => 'cascade',
-            ],
-        ],
-    ],
-    [
-        'table' => 'profiles',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-                'null' => false,
-                'autoIncrement' => true,
-            ],
-            'user_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'first_name' => [
-                'type' => 'string',
-                'null' => true,
-            ],
-            'last_name' => [
-                'type' => 'string',
-                'null' => true,
-            ],
-            'is_active' => [
-                'type' => 'boolean',
-                'null' => false,
-                'default' => true,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'sessions',
-        'columns' => [
-            'id' => [
-                'type' => 'string',
-                'length' => 128,
-            ],
-            'data' => [
-                'type' => 'binary',
-                'length' => 16777215,
-                'null' => true,
-            ],
-            'expires' => [
-                'type' => 'integer',
-                'length' => 11,
-                'null' => true,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'comments_translations',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'locale' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'comment' => 'text',
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                    'locale',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'menu_link_trees',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'menu' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'lft' => [
-                'type' => 'integer',
-            ],
-            'rght' => [
-                'type' => 'integer',
-            ],
-            'parent_id' => 'integer',
-            'url' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'title' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'polymorphic_tagged',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'tag_id' => [
-                'type' => 'integer',
-            ],
-            'foreign_key' => [
-                'type' => 'integer',
-            ],
-            'foreign_model' => [
-                'type' => 'string',
-            ],
-            'position' => [
-                'type' => 'integer',
-                'null' => true,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'things',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'title' => [
-                'type' => 'string',
-                'length' => 20,
-            ],
-            'body' => [
-                'type' => 'string',
-                'length' => 50,
-            ],
-        ],
-    ],
-    [
-        'table' => 'site_articles',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'author_id' => [
-                'type' => 'integer',
-                'null' => true,
-            ],
-            'site_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'title' => [
-                'type' => 'string',
-                'null' => true,
-            ],
-            'body' => 'text',
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                    'site_id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'sections_translations',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'locale' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'title' => [
-                'type' => 'string',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                    'locale',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'authors_tags',
-        'columns' => [
-            'author_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'tag_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-        ],
-        'constraints' => [
-            'unique_tag' => [
-                'type' => 'primary',
-                'columns' => [
-                    'author_id',
-                    'tag_id',
-                ],
-            ],
-            'author_id_fk' => [
-                'type' => 'foreign',
-                'columns' => ['author_id'],
-                'references' => ['authors', 'id'],
-                'update' => 'cascade',
-                'delete' => 'cascade',
-            ],
-        ],
-    ],
-    [
-        'table' => 'site_authors',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'name' => [
-                'type' => 'string',
-                'default' => null,
-            ],
-            'site_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                    'site_id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'i18n',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'locale' => [
-                'type' => 'string',
-                'length' => 6,
-                'null' => false,
-            ],
-            'model' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'foreign_key' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'field' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'content' => [
-                'type' => 'text',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'number_trees',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'name' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'parent_id' => 'integer',
-            'lft' => [
-                'type' => 'integer',
-            ],
-            'rght' => [
-                'type' => 'integer',
-            ],
-            'depth' => [
-                'type' => 'integer',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'composite_increments',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-                'null' => false,
-                'autoIncrement' => true,
-            ],
-            'account_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'name' => [
-                'type' => 'string',
-                'default' => null,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                    'account_id',
-                ],
-            ],
-        ],
-    ],
-    [
         'table' => 'tags_shadow_translations',
         'columns' => [
             'id' => [
@@ -1285,56 +1367,6 @@ return [
                 'columns' => [
                     'id',
                     'locale',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'posts',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'author_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'title' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'body' => 'text',
-            'published' => [
-                'type' => 'string',
-                'length' => 1,
-                'default' => 'N',
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'binary_uuid_tags',
-        'columns' => [
-            'id' => [
-                'type' => 'binaryuuid',
-            ],
-            'name' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
                 ],
             ],
         ],
@@ -1366,44 +1398,24 @@ return [
         ],
     ],
     [
-        'table' => 'cake_sessions',
-        'columns' => [
-            'id' => [
-                'type' => 'string',
-                'length' => 128,
-            ],
-            'data' => [
-                'type' => 'text',
-                'null' => true,
-            ],
-            'expires' => [
-                'type' => 'integer',
-                'length' => 11,
-                'null' => true,
-            ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'attachments',
+        'table' => 'test_plugin_comments',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'comment_id' => [
+            'article_id' => [
                 'type' => 'integer',
                 'null' => false,
             ],
-            'attachment' => [
-                'type' => 'string',
+            'user_id' => [
+                'type' => 'integer',
                 'null' => false,
+            ],
+            'comment' => 'text',
+            'published' => [
+                'type' => 'string',
+                'length' => 1,
+                'default' => 'N',
             ],
             'created' => 'datetime',
             'updated' => 'datetime',
@@ -1418,87 +1430,33 @@ return [
         ],
     ],
     [
-        'table' => 'categories',
-        'columns' => [
-            'id' => [
-                'type' => 'integer',
-            ],
-            'parent_id' => [
-                'type' => 'integer',
-                'null' => false,
-            ],
-            'name' => [
-                'type' => 'string',
-                'null' => false,
-            ],
-            'created' => 'datetime',
-            'updated' => 'datetime',
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'sections',
+        'table' => 'things',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
             'title' => [
                 'type' => 'string',
+                'length' => 20,
             ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
+            'body' => [
+                'type' => 'string',
+                'length' => 50,
             ],
         ],
     ],
     [
-        'table' => 'counter_cache_user_category_posts',
+        'table' => 'unique_authors',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'category_id' => [
-                'type' => 'integer',
-            ],
-            'user_id' => [
-                'type' => 'integer',
-            ],
-            'post_count' => [
+            'first_author_id' => [
                 'type' => 'integer',
                 'null' => true,
             ],
-        ],
-        'constraints' => [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-            ],
-        ],
-    ],
-    [
-        'table' => 'site_tags',
-        'columns' => [
-            'id' => [
+            'second_author_id' => [
                 'type' => 'integer',
-            ],
-            'site_id' => [
-                'type' => 'integer',
-            ],
-            'name' => [
-                'type' => 'string',
                 'null' => false,
             ],
         ],
@@ -1507,20 +1465,62 @@ return [
                 'type' => 'primary',
                 'columns' => [
                     'id',
-                    'site_id',
+                ],
+            ],
+            'nullable_non_nullable_unique' => [
+                'type' => 'unique',
+                'columns' => [
+                    'first_author_id',
+                    'second_author_id',
                 ],
             ],
         ],
     ],
     [
-        'table' => 'nullable_authors',
+        'table' => 'users',
         'columns' => [
             'id' => [
                 'type' => 'integer',
             ],
-            'author_id' => [
-                'type' => 'integer',
+            'username' => [
+                'type' => 'string',
                 'null' => true,
+            ],
+            'password' => [
+                'type' => 'string',
+                'null' => true,
+            ],
+            'created' => [
+                'type' => 'timestamp',
+                'null' => true,
+            ],
+            'updated' => [
+                'type' => 'timestamp',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'uuid_items',
+        'columns' => [
+            'id' => [
+                'type' => 'uuid',
+            ],
+            'published' => [
+                'type' => 'boolean',
+                'null' => false,
+            ],
+            'name' => [
+                'type' => 'string',
+                'null' => false,
             ],
         ],
         'constraints' => [
