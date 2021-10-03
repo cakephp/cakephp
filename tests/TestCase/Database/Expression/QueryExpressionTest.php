@@ -200,4 +200,15 @@ class QueryExpressionTest extends TestCase
             $expr->sql(new ValueBinder())
         );
     }
+
+    /**
+     * Test deprecated adding of case statement.
+     */
+    public function testDeprecatedAddCaseStatement(): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('QueryExpression::addCase() is deprecated, use case() instead.');
+
+        (new QueryExpression())->addCase([]);
+    }
 }
