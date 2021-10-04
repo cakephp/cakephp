@@ -147,6 +147,68 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * test deprecated
+     */
+    public function testDeprecated(): void
+    {
+        $this->deprecated(function () {
+            trigger_error('deprecation message', E_USER_DEPRECATED);
+        });
+    }
+
+    /**
+     * test deprecated with assert after trigger warning
+     */
+    public function testDeprecatedWithAssertAfterTriggerWarning(): void
+    {
+        try {
+            $this->deprecated(function () {
+                trigger_error('deprecation message', E_USER_DEPRECATED);
+                $this->assertTrue(false, 'A random message');
+            });
+
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('A random message', $e->getMessage());
+        }
+    }
+
+    /**
+     * test deprecated
+     */
+    public function testDeprecatedWithNoDeprecation(): void
+    {
+        try {
+            $this->deprecated(function () {
+            });
+
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertStringStartsWith('Should have at least one deprecation warning', $e->getMessage());
+        }
+    }
+
+    /**
+     * test deprecated() with duplicate deprecation with same messsage and line
+     */
+    public function testDeprecatedWithDuplicatedDeprecation(): void
+    {
+        /**
+         * setting stackframe = 0 and having same method
+         * to have same deprecation message and same line for all cases
+         */
+        $fun = function () {
+            deprecationWarning('Test same deprecation message', 0);
+        };
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
+    }
+
+    /**
      * Test that TestCase::setUp() backs up values.
      */
     public function testSetupBackUpValues(): void
