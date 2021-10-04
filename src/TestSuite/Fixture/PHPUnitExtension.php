@@ -38,6 +38,7 @@ class PHPUnitExtension implements BeforeFirstTestHook
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
         if ($enableLogging) {
             $helper->enableQueryLogging();
+            Log::drop('queries');
             Log::setConfig('queries', [
                 'className' => 'Console',
                 'stream' => 'php://stderr',
