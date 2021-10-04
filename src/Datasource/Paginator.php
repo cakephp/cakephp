@@ -176,10 +176,9 @@ class Paginator implements PaginatorInterface
         $data = $this->extractData($object, $params, $settings);
         $query = $this->getQuery($object, $query, $data);
 
-        $cleanQuery = clone $query;
         $results = $query->all();
         $data['numResults'] = count($results);
-        $data['count'] = $this->getCount($cleanQuery, $data);
+        $data['count'] = $this->getCount($query, $data);
 
         $pagingParams = $this->buildParams($data);
         $alias = $object->getAlias();
