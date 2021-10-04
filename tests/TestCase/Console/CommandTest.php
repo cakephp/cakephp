@@ -51,7 +51,7 @@ class CommandTest extends TestCase
     public function testConstructorAutoLoadModel(): void
     {
         $command = new AutoLoadModelCommand();
-        $this->assertInstanceOf(Table::class, $command->getTable());
+        $this->assertInstanceOf(Table::class, $command->fetchTable());
     }
 
     /**
