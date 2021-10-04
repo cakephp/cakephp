@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
@@ -514,6 +515,20 @@ class ExceptionRendererTest extends TestCase
                     '/Missing Method in PostsController/',
                     '/<em>PostsController::index\(\)<\/em>/',
                 ],
+                404,
+            ],
+            [
+                new InvalidParameterException([
+                    'template' => 'failed_coercion',
+                    'passed' => 'test',
+                    'type' => 'float',
+                    'parameter' => 'age',
+                    'controller' => 'TestController',
+                    'action' => 'checkAge',
+                    'prefix' => null,
+                    'plugin' => null,
+                ]),
+                ['/The passed parameter or parameter type is invalid in <em>TestController::checkAge\(\)/'],
                 404,
             ],
             [
