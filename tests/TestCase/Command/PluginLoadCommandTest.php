@@ -79,7 +79,7 @@ class PluginLoadCommandTest extends TestCase
         $this->assertExitCode(Command::CODE_SUCCESS);
 
         $contents = file_get_contents($this->app);
-        $this->assertStringContainsString("\$this->addPlugin('TestPlugin');", $contents);
+        $this->assertMatchesRegularExpression('/Check plugins added here\n {8}\$this->addPlugin\(\'TestPlugin\'\);\n {4}\}\n/u', $contents);
     }
 
     /**
