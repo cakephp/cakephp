@@ -158,12 +158,16 @@ class ViewBuilderTest extends TestCase
         $get = 'get' . ucfirst($property);
         $set = 'set' . ucfirst($property);
 
-        $this->deprecated(function () use ($get, $set, $value) {
-            $builder = new ViewBuilder();
-            $this->assertSame([], $builder->{$get}(), 'Default value should be empty list');
+        $builder = new ViewBuilder();
+        $this->assertSame([], $builder->{$get}(), 'Default value should be empty list');
+        $this->deprecated(function () use ($set, $value, $builder) {
+            // only deprecated wrapper should remove in cake 5, assert should kept
+            if ($set !== 'setHelpers') {
+                trigger_error('Only setHelpers has deprecation warning in cake +4.x', E_USER_DEPRECATED);
+            }
             $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
-            $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
         });
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
     }
 
     /**
@@ -177,6 +181,10 @@ class ViewBuilderTest extends TestCase
         $set = 'set' . ucfirst($property);
 
         $this->deprecated(function () use ($get, $set, $value) {
+            // only deprecated wrapper and setHelpers testing should remove in cake 5, other asserts should kept
+            if ($set !== 'setHelpers') {
+                trigger_error('Only setHelpers has deprecation warning in cake 4.x', E_USER_DEPRECATED);
+            }
             $builder = new ViewBuilder();
             $builder->{$set}($value);
 

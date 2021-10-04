@@ -92,6 +92,27 @@ class FunctionsTest extends TestCase
     }
 
     /**
+     * Test deprecation warnings trigger only once
+     */
+    public function testDeprecationWarningTriggerOnlyOnce(): void
+    {
+        $message = 'Test deprecation warnings trigger only once';
+        try {
+            $this->withErrorReporting(E_ALL, function () use ($message): void {
+                deprecationWarning($message);
+            });
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertStringContainsString($message, $e->getMessage());
+            $this->assertStringContainsString('TestCase.php', $e->getMessage());
+        }
+
+        $this->withErrorReporting(E_ALL, function () use ($message): void {
+            deprecationWarning($message);
+        });
+    }
+
+    /**
      * Test error messages coming out when deprecated level is on, not setting the stack frame manually
      */
     public function testDeprecationWarningEnabledDefaultFrame(): void

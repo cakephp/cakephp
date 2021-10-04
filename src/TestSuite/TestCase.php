@@ -176,13 +176,37 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated(Closure $callable): void
     {
-        $errorLevel = error_reporting();
-        error_reporting($errorLevel & ~E_USER_DEPRECATED);
+        $duplicate = Configure::read('Error.enableDuplicatedDeprecations');
+        Configure::write('Error.enableDuplicatedDeprecations', true);
+        /** @var bool $deprecation */
+        $deprecation = false;
+
+        /**
+         * @psalm-suppress InvalidArgument
+         */
+        $previousHandler = set_error_handler(
+            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation) {
+                if ($code == E_USER_DEPRECATED) {
+                    $deprecation = true;
+
+                    return;
+                }
+                if ($previousHandler) {
+                    return $previousHandler($code, $message, $file, $line, $context);
+                }
+
+                return false;
+            }
+        );
         try {
             $callable();
         } finally {
-            error_reporting($errorLevel);
+            restore_error_handler();
+            if ($duplicate !== Configure::read('Error.enableDuplicatedDeprecations')) {
+                Configure::write('Error.enableDuplicatedDeprecations', $duplicate);
+            }
         }
+        $this->assertTrue($deprecation, 'Should have at least one deprecation warning');
     }
 
     /**

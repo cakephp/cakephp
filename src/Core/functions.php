@@ -313,10 +313,13 @@ if (!function_exists('deprecationWarning')) {
 
         static $errors = [];
         $checksum = md5($message);
-        if (isset($errors[$checksum])) {
+        $duplicate = (bool)Configure::read('Error.enableDuplicatedDeprecations', false);
+        if (isset($errors[$checksum]) && !$duplicate) {
             return;
         }
-        $errors[$checksum] = true;
+        if (!$duplicate) {
+            $errors[$checksum] = true;
+        }
 
         trigger_error($message, E_USER_DEPRECATED);
     }
