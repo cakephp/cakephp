@@ -118,7 +118,7 @@ class ControllerTest extends TestCase
 
         $this->assertFalse(isset($Controller->Articles));
 
-        $result = $Controller->getTable('Articles');
+        $result = $Controller->fetchTable('Articles');
         $this->assertInstanceOf(
             'TestApp\Model\Table\ArticlesTable',
             $result
@@ -143,7 +143,7 @@ class ControllerTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
         $Controller = new ArticlesController(new ServerRequest(), new Response());
 
-        $this->assertInstanceOf(ArticlesTable::class, $Controller->getTable());
+        $this->assertInstanceOf(ArticlesTable::class, $Controller->fetchTable());
 
         Configure::write('App.namespace', 'App');
     }
@@ -157,7 +157,7 @@ class ControllerTest extends TestCase
 
         $this->assertFalse(isset($Controller->TestPluginComments));
 
-        $result = $Controller->getTable('TestPlugin.TestPluginComments');
+        $result = $Controller->fetchTable('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $result
@@ -174,14 +174,14 @@ class ControllerTest extends TestCase
         $request = new ServerRequest();
         $response = new Response();
         $controller = new PostsController($request, $response);
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->getTable());
+        $this->assertInstanceOf('Cake\ORM\Table', $controller->fetchTable());
 
         $controller = new AdminPostsController($request, $response);
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->getTable());
+        $this->assertInstanceOf('Cake\ORM\Table', $controller->fetchTable());
 
         $request = $request->withParam('plugin', 'TestPlugin');
         $controller = new CommentsController($request, $response);
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->getTable());
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->fetchTable());
     }
 
     /**

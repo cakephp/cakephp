@@ -295,7 +295,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
 
             if ($class === $name) {
-                return $this->getTable();
+                return $this->fetchTable();
             }
         }
 
@@ -766,7 +766,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 if (empty($tableName)) {
                     continue;
                 }
-                $table = $this->getTable($tableName);
+                $table = $this->fetchTable($tableName);
                 break;
             }
         }
