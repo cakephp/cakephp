@@ -63,14 +63,7 @@ class PluginLoadCommand extends Command
         $this->io = $io;
         $this->args = $args;
 
-        $plugin = $args->getArgument('plugin');
-        if (!$plugin) {
-            $this->io->err('You must provide a plugin name in CamelCase format.');
-            $this->io->err('To load an "Example" plugin, run `cake plugin load Example`.');
-
-            return static::CODE_ERROR;
-        }
-
+        $plugin = $args->getArgument('plugin') ?? '';
         try {
             Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
@@ -101,19 +94,27 @@ class PluginLoadCommand extends Command
     {
         $contents = file_get_contents($app);
 
-        $append = "\n        \$this->addPlugin('%s');\n";
-        $insert = str_replace(', []', '', sprintf($append, $plugin));
-
-        if (!preg_match('/function bootstrap(?:\s*)\(\)(?:\s*)\:(?:\s*)void/m', $contents)) {
+        // Find start of bootstrap
+        if (!preg_match('/^(\s+)public function bootstrap(?:\s*)\(\)/mu', $contents, $matches, PREG_OFFSET_CAPTURE)) {
             $this->io->err('Your Application class does not have a bootstrap() method. Please add one.');
             $this->abort();
-        } else {
-            $contents = preg_replace(
-                '/(function bootstrap(?:\s*)\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m',
-                '$1' . $insert,
-                $contents
-            );
         }
+
+        $offset = $matches[0][1];
+        $indent = $matches[1][0];
+
+        // Find closing function bracket
+        if (!preg_match("/^$indent\}\n$/mu", $contents, $matches, PREG_OFFSET_CAPTURE, $offset)) {
+            $this->io->err('Your Application class does not have a bootstrap() method. Please add one.');
+            $this->abort();
+        }
+
+        $append = "$indent    \$this->addPlugin('%s');\n";
+        $insert = str_replace(', []', '', sprintf($append, $plugin));
+
+        $offset = $matches[0][1];
+        $contents = substr_replace($contents, $insert, $offset, 0);
+
         file_put_contents($app, $contents);
 
         $this->io->out('');
@@ -132,7 +133,8 @@ class PluginLoadCommand extends Command
             'Command for loading plugins.',
         ])
         ->addArgument('plugin', [
-            'help' => 'Name of the plugin to load.',
+            'help' => 'Name of the plugin to load. Must be in CamelCase format. Example: cake plugin load Example',
+            'required' => true,
         ]);
 
         return $parser;

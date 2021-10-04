@@ -18,6 +18,7 @@ namespace Cake\Error;
 
 use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory;
+use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -107,6 +108,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected array $exceptionHttpCodes = [
         // Controller exceptions
+        InvalidParameterException::class => 404,
         MissingActionException::class => 404,
         // Datasource exceptions
         PageOutOfBoundsException::class => 404,

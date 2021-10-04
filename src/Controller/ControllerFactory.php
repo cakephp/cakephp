@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
-use Cake\Controller\Exception\MissingActionException;
+use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
@@ -161,12 +161,14 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             $type = $parameter->getType();
             if ($type && !$type instanceof ReflectionNamedType) {
                 // Only single types are supported
-                throw new MissingActionException(sprintf(
-                    'Action %s::%s() has an unsupported type for parameter `%s`.',
-                    $this->controller->getName(),
-                    $function->getName(),
-                    $parameter->getName()
-                ));
+                throw new InvalidParameterException([
+                    'template' => 'unsupported_type',
+                    'parameter' => $parameter->getName(),
+                    'controller' => $this->controller->getName(),
+                    'action' => $this->controller->getRequest()->getParam('action'),
+                    'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                    'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                ]);
             }
 
             // Check for dependency injection for classes
@@ -183,12 +185,14 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                     continue;
                 }
 
-                throw new MissingActionException(sprintf(
-                    'Action %s::%s() cannot inject parameter `%s` from service container.',
-                    $this->controller->getName(),
-                    $function->getName(),
-                    $parameter->getName()
-                ));
+                throw new InvalidParameterException([
+                    'template' => 'missing_dependency',
+                    'parameter' => $parameter->getName(),
+                    'controller' => $this->controller->getName(),
+                    'action' => $this->controller->getRequest()->getParam('action'),
+                    'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                    'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                ]);
             }
 
             // Use any passed params as positional arguments
@@ -198,14 +202,16 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                     $typedArgument = $this->coerceStringToType($argument, $type);
 
                     if ($typedArgument === null) {
-                        throw new MissingActionException(sprintf(
-                            'Action %s::%s() cannot coerce "%s" to `%s` for parameter `%s`.',
-                            $this->controller->getName(),
-                            $function->getName(),
-                            $argument,
-                            $type->getName(),
-                            $parameter->getName()
-                        ));
+                        throw new InvalidParameterException([
+                            'template' => 'failed_coercion',
+                            'passed' => $argument,
+                            'type' => $type->getName(),
+                            'parameter' => $parameter->getName(),
+                            'controller' => $this->controller->getName(),
+                            'action' => $this->controller->getRequest()->getParam('action'),
+                            'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                            'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                        ]);
                     }
                     $argument = $typedArgument;
                 }
@@ -225,12 +231,14 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                 continue;
             }
 
-            throw new MissingActionException(sprintf(
-                'Action %s::%s() expected passed parameter for `%s`.',
-                $this->controller->getName(),
-                $function->getName(),
-                $parameter->getName()
-            ));
+            throw new InvalidParameterException([
+                'template' => 'missing_parameter',
+                'parameter' => $parameter->getName(),
+                'controller' => $this->controller->getName(),
+                'action' => $this->controller->getRequest()->getParam('action'),
+                'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                'plugin' => $this->controller->getRequest()->getParam('plugin'),
+            ]);
         }
 
         return array_merge($resolved, $passedParams);
@@ -248,6 +256,12 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         switch ($type->getName()) {
             case 'string':
                 return $argument;
+            case 'float':
+                return is_numeric($argument) ? (float)$argument : null;
+            case 'int':
+                return filter_var($argument, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+            case 'bool':
+                return $argument === '0' ? false : ($argument === '1' ? true : null);
         }
 
         return null;

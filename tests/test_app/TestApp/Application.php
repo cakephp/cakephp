@@ -42,6 +42,8 @@ class Application extends BaseApplication
                 $this->addPlugin($value);
             }
         }
+
+        // Check plugins added here
     }
 
     public function console(CommandCollection $commands): CommandCollection

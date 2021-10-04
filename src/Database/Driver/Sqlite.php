@@ -106,7 +106,7 @@ class Sqlite extends Driver
      */
     protected array $featureVersions = [
         'cte' => '3.8.3',
-        'window' => '3.25.0',
+        'window' => '3.28.0',
     ];
 
     /**

@@ -33,6 +33,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use RuntimeException;
+use TestApp\Model\Entity\ArticlesTag;
 
 /**
  * Tests BelongsToMany class
@@ -909,6 +910,66 @@ class BelongsToManyTest extends TestCase
         $other = $joint->find()->where(['tag_id' => 1])->toArray();
         $this->assertCount(1, $other, 'Non matching joint record should remain.');
         $this->assertSame(1, $other[0]->article_id);
+    }
+
+    /**
+     * Test that replaceLinks() loads junction records with the correct entity class
+     */
+    public function testReplaceLinksFetchCorrectJunctionEntity(): void
+    {
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'through' => $joint,
+            'joinTable' => 'articles_tags',
+        ]);
+        $joint->setEntityClass(ArticlesTag::class);
+
+        $joint->getEventManager()->on('Model.afterDelete', function ($event, $entity) {
+            $this->assertInstanceOf(ArticlesTag::class, $entity);
+            $this->assertNotEmpty($entity->tag_id);
+            $this->assertNotEmpty($entity->article_id);
+        });
+
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertCount(2, $entity->tags);
+
+        $assoc->replaceLinks($entity, []);
+    }
+
+    /**
+     * Test that replaceLinks() loads junction records with the correct entity class
+     */
+    public function testReplaceLinksFinderCondition(): void
+    {
+        $this->setAppNamespace('TestApp');
+
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'through' => $joint,
+            'joinTable' => 'articles_tags',
+            'finder' => ['published' => ['title' => 'First Article']],
+        ]);
+        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $entity->articles);
+
+        $assoc->replaceLinks($entity, []);
+
+        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(0, $fresh->articles, 'Association should be empty');
+
+        $other = $joint->find()->where(['tag_id' => 1])->toArray();
+        $this->assertCount(1, $other, 'Non matching joint record should remain.');
+        $this->assertSame(2, $other[0]->article_id);
     }
 
     /**

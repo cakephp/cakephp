@@ -678,21 +678,21 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function toArray(bool $preserveKeys = true): array
+    public function toArray(bool $keepKeys = true): array
     {
         $iterator = $this->unwrap();
         if ($iterator instanceof ArrayIterator) {
             $items = $iterator->getArrayCopy();
 
-            return $preserveKeys ? $items : array_values($items);
+            return $keepKeys ? $items : array_values($items);
         }
         // RecursiveIteratorIterator can return duplicate key values causing
         // data loss when converted into an array
-        if ($preserveKeys && get_class($iterator) === RecursiveIteratorIterator::class) {
-            $preserveKeys = false;
+        if ($keepKeys && get_class($iterator) === RecursiveIteratorIterator::class) {
+            $keepKeys = false;
         }
 
-        return iterator_to_array($this, $preserveKeys);
+        return iterator_to_array($this, $keepKeys);
     }
 
     /**
@@ -714,9 +714,9 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function compile(bool $preserveKeys = true): CollectionInterface
+    public function compile(bool $keepKeys = true): CollectionInterface
     {
-        return $this->newCollection($this->toArray($preserveKeys));
+        return $this->newCollection($this->toArray($keepKeys));
     }
 
     /**
@@ -855,11 +855,11 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface
+    public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface
     {
-        return $this->map(function ($v, $k, $iterator) use ($chunkSize, $preserveKeys) {
+        return $this->map(function ($v, $k, $iterator) use ($chunkSize, $keepKeys) {
             $key = 0;
-            if ($preserveKeys) {
+            if ($keepKeys) {
                 $key = $k;
             }
             $values = [$key => $v];
@@ -868,7 +868,7 @@ trait CollectionTrait
                 if (!$iterator->valid()) {
                     break;
                 }
-                if ($preserveKeys) {
+                if ($keepKeys) {
                     $values[$iterator->key()] = $iterator->current();
                 } else {
                     $values[] = $iterator->current();
