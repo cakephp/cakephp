@@ -475,6 +475,21 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Tests that translations aren't limited by first()
+     * and the matching translation is found for entity
+     * where there is no order.
+     */
+    public function testFindTranslationsFirstLimit(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate');
+        $result = $table->find('translations')->disableHydration()->first();
+        $this->assertNotEmpty($result['_i18n']);
+        $result = $table->find('translations')->disableHydration()->where(['author_id <' => 4])->first();
+        $this->assertNotEmpty($result['_i18n']);
+    }
+
+    /**
      * Tests that it is possible to request just a few translations
      */
     public function testFindFilteredTranslations(): void
