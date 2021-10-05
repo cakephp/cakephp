@@ -102,7 +102,6 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-
 //$testDbName = 'cake_test';
 $testDbName = 'cakephp';
 $dbDsn = getenv('db_dsn');
