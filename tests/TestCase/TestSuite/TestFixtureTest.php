@@ -35,7 +35,7 @@ class TestFixtureTest extends TestCase
      *
      * @var array<string>
      */
-    protected array $fixtures = ['core.Posts'];
+    protected array $fixtures = ['core.Articles', 'core.Posts'];
 
     /**
      * Set up
@@ -168,26 +168,9 @@ class TestFixtureTest extends TestCase
     public function testTruncate(): void
     {
         $fixture = new ArticlesFixture();
+        $articles = $this->getTableLocator()->get('Articles');
 
-        $db = $this->getMockBuilder('Cake\Database\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $statement = $this->createMock(StatementInterface::class);
-        $statement->expects($this->once())->method('closeCursor');
-
-        $db->expects($this->once())->method('execute')
-            ->with('sql')
-            ->will($this->returnValue($statement));
-
-        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
-            ->setConstructorArgs(['articles'])
-            ->getMock();
-        $table->expects($this->once())
-            ->method('truncateSql')
-            ->with($db)
-            ->will($this->returnValue(['sql']));
-        $fixture->setTableSchema($table);
-
-        $this->assertTrue($fixture->truncate($db));
+        $this->assertTrue($fixture->truncate(ConnectionManager::get('test')));
+        $this->assertEmpty($articles->find()->all());
     }
 }
