@@ -681,6 +681,51 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Tests using subquery strategy when parent query
+     * that contains limit without order.
+     */
+    public function testSubqueryWithLimit()
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $query = $Authors->find();
+        $result = $query
+            ->contain('Articles')
+            ->first();
+
+        if (in_array($result->name, ['mariano', 'larry'])) {
+            $this->assertNotEmpty($result->articles);
+        } else {
+            $this->assertEmpty($result->articles);
+        }
+    }
+
+    /**
+     * Tests using subquery strategy when parent query
+     * that contains limit with order.
+     */
+    public function testSubqueryWithLimitAndOrder()
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $query = $Authors->find();
+        $result = $query
+            ->contain('Articles')
+            ->order(['name' => 'ASC'])
+            ->limit(2)
+            ->toArray();
+
+        $this->assertCount(0, $result[0]->articles);
+        $this->assertCount(1, $result[1]->articles);
+    }
+
+    /**
      * Assertion method for order by clause contents.
      *
      * @param array $expected The expected join clause.

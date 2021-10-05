@@ -404,7 +404,8 @@ class SelectLoader
         $filterQuery->contain([], true);
         $filterQuery->setValueBinder(new ValueBinder());
 
-        if (!$filterQuery->clause('limit')) {
+        // Ignore limit if there is no order since we need all rows to find matches
+        if (!$filterQuery->clause('limit') || !$filterQuery->clause('order')) {
             $filterQuery->limit(null);
             $filterQuery->order([], true);
             $filterQuery->offset(null);
