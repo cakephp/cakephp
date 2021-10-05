@@ -803,6 +803,27 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
+    /**
+     * Test using an unsupported reflection type.
+     */
+    public function testInvokePassedParamUnsupportedReflectionType(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/unsupportedTypedUnion',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'unsupportedTypedUnion',
+                'pass' => ['test'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Type declaration for `one` in action Dependencies::unsupportedTypedUnion() is unsupported.');
+        $this->factory->invoke($controller);
+    }
+
     public function testMiddleware(): void
     {
         $request = new ServerRequest([
