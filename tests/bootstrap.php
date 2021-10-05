@@ -19,6 +19,7 @@ use Cake\Chronos\MutableDateTime;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
+use Cake\TestSuite\DatabaseFactory;
 use Cake\Utility\Security;
 
 if (is_file('vendor/autoload.php')) {
@@ -101,8 +102,23 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-ConnectionManager::setConfig('test', ['url' => getenv('db_dsn')]);
-ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('db_dsn')]);
+
+//$testDbName = 'cake_test';
+$testDbName = 'cakephp';
+$dbDsn = getenv('db_dsn');
+//$dbFactory = getenv('db_factory');
+//$dbFactory = 'mysql://root:admin@localhost/test?timezone=UTC';
+$dbFactory = $dbDsn;
+ConnectionManager::setConfig('db_factory', ['url' => $dbFactory]);
+$DatabaseFactory = new DatabaseFactory();
+$DatabaseFactory->createTestDatabases('db_factory', [$testDbName]);
+unset($DatabaseFactory);
+
+//$dbDsn = getenv('db_dsn');
+//$dbDsn = 'mysql://root:admin@localhost/cake_test'.getenv('TEST_TOKEN').'?timezone=UTC';
+$dbDsn = str_replace($testDbName, $testDbName . getenv('TEST_TOKEN'), $dbDsn);
+ConnectionManager::setConfig('test', ['url' => $dbDsn]);
+ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => $dbDsn]);
 
 Configure::write('Session', [
     'defaults' => 'php',
