@@ -109,9 +109,9 @@ jobs:
 
         if [[ ${{ matrix.php-version }} == '7.4' ]]; then
           export CODECOVERAGE=1 && vendor/bin/pcov clobber; vendor/bin/phpunit --coverage-clover=coverage.xml
+          vendor/bin/paratest tests/TestCase --runner=WrapperRunner
         else
           vendor/bin/phpunit
-          vendor/bin/paratest tests/TestCase --runner=WrapperRunner
         fi
 
     - name: Submit code coverage
