@@ -58,6 +58,11 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(compact('one')));
     }
 
+    public function unsupportedTypedUnion(string|int $one)
+    {
+        return $this->response->withStringBody(json_encode(compact('one')));
+    }
+
     /**
      * @param mixed $any
      * @return \Cake\Http\Response

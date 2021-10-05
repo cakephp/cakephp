@@ -251,7 +251,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @param \ReflectionNamedType $type Parameter type
      * @return string|float|int|bool|null
      */
-    protected function coerceStringToType(string $argument, ReflectionNamedType $type)
+    protected function coerceStringToType(string $argument, ReflectionNamedType $type): string|float|int|bool|null
     {
         switch ($type->getName()) {
             case 'string':
