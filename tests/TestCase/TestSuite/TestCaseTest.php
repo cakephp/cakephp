@@ -27,6 +27,7 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PHPUnit\Framework\AssertionFailedError;
 use TestApp\Model\Table\SecondaryPostsTable;
 
@@ -168,7 +169,7 @@ class TestCaseTest extends TestCase
             });
 
             $this->fail();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertStringContainsString('A random message', $e->getMessage());
         }
     }
@@ -183,7 +184,7 @@ class TestCaseTest extends TestCase
             });
 
             $this->fail();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertStringStartsWith('Should have at least one deprecation warning', $e->getMessage());
         }
     }
@@ -198,7 +199,7 @@ class TestCaseTest extends TestCase
          * to have same deprecation message and same line for all cases
          */
         $fun = function () {
-            deprecationWarning('Test same deprecation message', 0);
+            deprecationWarning('5.0.0', 'Test same deprecation message', 0);
         };
         $this->deprecated(function () use ($fun) {
             $fun();

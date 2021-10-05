@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use Exception;
 use stdClass;
 
 /**
@@ -99,16 +100,16 @@ class FunctionsTest extends TestCase
         $message = 'Test deprecation warnings trigger only once';
         try {
             $this->withErrorReporting(E_ALL, function () use ($message): void {
-                deprecationWarning($message);
+                deprecationWarning('5.0.0', $message);
             });
             $this->fail();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertStringContainsString($message, $e->getMessage());
             $this->assertStringContainsString('TestCase.php', $e->getMessage());
         }
 
         $this->withErrorReporting(E_ALL, function () use ($message): void {
-            deprecationWarning($message);
+            deprecationWarning('5.0.0', $message);
         });
     }
 
