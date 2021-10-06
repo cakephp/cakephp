@@ -696,7 +696,7 @@ class HasManyTest extends TestCase
             ->contain('Articles')
             ->first();
 
-        if (in_array($result->name, ['mariano', 'lary'])) {
+        if (in_array($result->name, ['mariano', 'larry'])) {
             $this->assertNotEmpty($result->articles);
         } else {
             $this->assertEmpty($result->articles);
