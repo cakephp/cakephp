@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
-use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -28,7 +27,7 @@ use Cake\Utility\Inflector;
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements FixtureInterface, TableSchemaAwareInterface
+class TestFixture implements FixtureInterface
 {
     use LocatorAwareTrait;
 
@@ -219,20 +218,12 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * Returns the table schema for this fixture.
+     *
+     * @return \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      */
     public function getTableSchema()
     {
         return $this->_schema;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setTableSchema($schema)
-    {
-        $this->_schema = $schema;
-
-        return $this;
     }
 }
