@@ -95,9 +95,10 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function __construct(?TypeMap $typeMap = null)
     {
-        if ($typeMap !== null) {
-            $this->setTypeMap($typeMap);
+        if ($typeMap === null) {
+            $typeMap = new TypeMap();
         }
+        $this->_typeMap = $typeMap;
     }
 
     /**

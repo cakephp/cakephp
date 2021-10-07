@@ -26,6 +26,10 @@ use DateTimeInterface;
 /**
  * Trait that holds shared functionality for case related expressions.
  *
+ * @property array<string> $validClauseNames The names of the clauses that are valid for use with the
+ * `clause()` method.
+ * @property \Cake\Database\TypeMap $_typeMap The type map to use when using an array of conditions for the `WHEN`
+ *  value.
  * @internal
  */
 trait CaseExpressionTrait
@@ -61,7 +65,7 @@ trait CaseExpressionTrait
         ) {
             $type = 'string';
         } elseif ($value instanceof IdentifierExpression) {
-            $type = $this->getTypeMap()->type($value->getIdentifier());
+            $type = $this->_typeMap->type($value->getIdentifier());
         }
 
         return $type;

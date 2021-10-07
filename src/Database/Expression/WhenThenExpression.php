@@ -226,16 +226,6 @@ class WhenThenExpression implements WhenThenExpressionInterface
     }
 
     /**
-     * Returns the type map.
-     *
-     * @return \Cake\Database\TypeMap
-     */
-    protected function getTypeMap(): TypeMap
-    {
-        return $this->_typeMap;
-    }
-
-    /**
      * @inheritDoc
      */
     public function sql(ValueBinder $binder): string
