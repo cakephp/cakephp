@@ -43,21 +43,21 @@ class WhenThenExpression implements WhenThenExpressionInterface
      *
      * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
-    protected $_when = null;
+    protected $when = null;
 
     /**
      * The `WHEN` value type.
      *
      * @var array|string|null
      */
-    protected $_whenType = null;
+    protected $whenType = null;
 
     /**
      * The `THEN` value.
      *
      * @var mixed
      */
-    protected $_then = null;
+    protected $then = null;
 
     /**
      * Whether the `THEN` value has been defined, eg whether `then()`
@@ -65,14 +65,14 @@ class WhenThenExpression implements WhenThenExpressionInterface
      *
      * @var bool
      */
-    protected $_hasThenBeenDefined = false;
+    protected $hasThenBeenDefined = false;
 
     /**
      * The `THEN` result type.
      *
      * @var string|null
      */
-    protected $_thenType = null;
+    protected $thenType = null;
 
     /**
      * Constructor.
@@ -93,7 +93,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
      */
     public function getWhen()
     {
-        return $this->_when;
+        return $this->when;
     }
 
     /**
@@ -160,12 +160,12 @@ class WhenThenExpression implements WhenThenExpressionInterface
             }
 
             if ($type === null) {
-                $type = $this->_inferType($when);
+                $type = $this->inferType($when);
             }
         }
 
-        $this->_when = $when;
-        $this->_whenType = $type;
+        $this->when = $when;
+        $this->whenType = $type;
 
         return $this;
     }
@@ -175,7 +175,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
      */
     public function getWhenType()
     {
-        return $this->_whenType;
+        return $this->whenType;
     }
 
     /**
@@ -183,7 +183,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
      */
     public function getThen()
     {
-        return $this->_then;
+        return $this->then;
     }
 
     /**
@@ -204,15 +204,15 @@ class WhenThenExpression implements WhenThenExpressionInterface
             ));
         }
 
-        $this->_then = $result;
+        $this->then = $result;
 
         if ($type === null) {
-            $type = $this->_inferType($result);
+            $type = $this->inferType($result);
         }
 
-        $this->_thenType = $type;
+        $this->thenType = $type;
 
-        $this->_hasThenBeenDefined = true;
+        $this->hasThenBeenDefined = true;
 
         return $this;
     }
@@ -222,7 +222,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
      */
     public function getThenType(): ?string
     {
-        return $this->_thenType;
+        return $this->thenType;
     }
 
     /**
@@ -240,7 +240,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        if ($this->_when === null) {
+        if ($this->when === null) {
             throw new LogicException(
                 sprintf(
                     'Cannot compile incomplete `\%s`, the value for `WHEN` is missing.',
@@ -249,7 +249,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
             );
         }
 
-        if (!$this->_hasThenBeenDefined) {
+        if (!$this->hasThenBeenDefined) {
             throw new LogicException(
                 sprintf(
                     'Cannot compile incomplete `\%s`, the value for `THEN` is missing.',
@@ -258,12 +258,12 @@ class WhenThenExpression implements WhenThenExpressionInterface
             );
         }
 
-        $when = $this->_when;
+        $when = $this->when;
         if (
-            is_string($this->_whenType) &&
+            is_string($this->whenType) &&
             !($when instanceof ExpressionInterface)
         ) {
-            $when = $this->_castToExpression($when, $this->_whenType);
+            $when = $this->_castToExpression($when, $this->whenType);
         }
         if ($when instanceof Query) {
             $when = sprintf('(%s)', $when->sql($binder));
@@ -271,8 +271,8 @@ class WhenThenExpression implements WhenThenExpressionInterface
             $when = $when->sql($binder);
         } else {
             $placeholder = $binder->placeholder('c');
-            if (is_string($this->_whenType)) {
-                $whenType = $this->_whenType;
+            if (is_string($this->whenType)) {
+                $whenType = $this->whenType;
             } else {
                 $whenType = null;
             }
@@ -280,7 +280,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
             $when = $placeholder;
         }
 
-        $then = $this->_compileNullableValue($binder, $this->_then, $this->_thenType);
+        $then = $this->compileNullableValue($binder, $this->then, $this->thenType);
 
         return "WHEN $when THEN $then";
     }
@@ -290,14 +290,14 @@ class WhenThenExpression implements WhenThenExpressionInterface
      */
     public function traverse(Closure $callback)
     {
-        if ($this->_when instanceof ExpressionInterface) {
-            $callback($this->_when);
-            $this->_when->traverse($callback);
+        if ($this->when instanceof ExpressionInterface) {
+            $callback($this->when);
+            $this->when->traverse($callback);
         }
 
-        if ($this->_then instanceof ExpressionInterface) {
-            $callback($this->_then);
-            $this->_then->traverse($callback);
+        if ($this->then instanceof ExpressionInterface) {
+            $callback($this->then);
+            $this->then->traverse($callback);
         }
 
         return $this;
@@ -310,12 +310,12 @@ class WhenThenExpression implements WhenThenExpressionInterface
      */
     public function __clone()
     {
-        if ($this->_when instanceof ExpressionInterface) {
-            $this->_when = clone $this->_when;
+        if ($this->when instanceof ExpressionInterface) {
+            $this->when = clone $this->when;
         }
 
-        if ($this->_then instanceof ExpressionInterface) {
-            $this->_then = clone $this->_then;
+        if ($this->then instanceof ExpressionInterface) {
+            $this->then = clone $this->then;
         }
     }
 }

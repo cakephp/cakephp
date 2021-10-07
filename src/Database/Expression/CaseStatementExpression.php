@@ -36,56 +36,56 @@ class CaseStatementExpression implements CaseExpressionInterface
      *
      * @var bool
      */
-    protected $_isSimpleVariant = false;
+    protected $isSimpleVariant = false;
 
     /**
      * The case value.
      *
      * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
-    protected $_value = null;
+    protected $value = null;
 
     /**
      * The case value type.
      *
      * @var string|null
      */
-    protected $_valueType = null;
+    protected $valueType = null;
 
     /**
      * The `WHEN ... THEN ...` expressions.
      *
      * @var \Cake\Database\Expression\WhenThenExpressionInterface[]
      */
-    protected $_when = [];
+    protected $when = [];
 
     /**
      * Buffer that holds values and types for use with `then()`.
      *
      * @var array|null
      */
-    protected $_whenBuffer = null;
+    protected $whenBuffer = null;
 
     /**
      * The else part result value.
      *
      * @var mixed|null
      */
-    protected $_else = null;
+    protected $else = null;
 
     /**
      * The else part result type.
      *
      * @var string|null
      */
-    protected $_elseType = null;
+    protected $elseType = null;
 
     /**
      * The return type.
      *
      * @var string|null
      */
-    protected $_returnType = null;
+    protected $returnType = null;
 
     /**
      * Constructor.
@@ -105,7 +105,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function getValue()
     {
-        return $this->_value;
+        return $this->value;
     }
 
     /**
@@ -126,17 +126,17 @@ class CaseStatementExpression implements CaseExpressionInterface
             ));
         }
 
-        $this->_value = $value;
+        $this->value = $value;
 
         if (
             $value !== null &&
             $valueType === null
         ) {
-            $valueType = $this->_inferType($value);
+            $valueType = $this->inferType($value);
         }
-        $this->_valueType = $valueType;
+        $this->valueType = $valueType;
 
-        $this->_isSimpleVariant = true;
+        $this->isSimpleVariant = true;
 
         return $this;
     }
@@ -146,7 +146,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function getValueType(): ?string
     {
-        return $this->_valueType;
+        return $this->valueType;
     }
 
     /**
@@ -154,7 +154,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function getWhen(): array
     {
-        return $this->_when;
+        return $this->when;
     }
 
     /**
@@ -162,7 +162,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function when($when, $type = null)
     {
-        if ($this->_whenBuffer !== null) {
+        if ($this->whenBuffer !== null) {
             throw new LogicException(
                 'Cannot add new `WHEN` value while an open `when()` buffer is present, ' .
                 'it must first be closed using `then()`.'
@@ -181,9 +181,9 @@ class CaseStatementExpression implements CaseExpressionInterface
         }
 
         if ($when instanceof WhenThenExpressionInterface) {
-            $this->_when[] = $when;
+            $this->when[] = $when;
         } else {
-            $this->_whenBuffer = ['when' => $when, 'type' => $type];
+            $this->whenBuffer = ['when' => $when, 'type' => $type];
         }
 
         return $this;
@@ -194,7 +194,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function then($result, ?string $type = null)
     {
-        if ($this->_whenBuffer === null) {
+        if ($this->whenBuffer === null) {
             throw new LogicException(
                 'There is no `when()` buffer present, ' .
                 'you must first open one before calling `then()`.'
@@ -202,10 +202,10 @@ class CaseStatementExpression implements CaseExpressionInterface
         }
 
         $whenThen = (new WhenThenExpression($this->getTypeMap()))
-            ->when($this->_whenBuffer['when'], $this->_whenBuffer['type'])
+            ->when($this->whenBuffer['when'], $this->whenBuffer['type'])
             ->then($result, $type);
 
-        $this->_whenBuffer = null;
+        $this->whenBuffer = null;
 
         $this->when($whenThen);
 
@@ -217,7 +217,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function getElse()
     {
-        return $this->_else;
+        return $this->else;
     }
 
     /**
@@ -225,7 +225,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function else($result, ?string $type = null)
     {
-        if ($this->_whenBuffer !== null) {
+        if ($this->whenBuffer !== null) {
             throw new LogicException(
                 'Cannot set `ELSE` value when an open `when()` buffer is present, ' .
                 'it must first be closed using `then()`.'
@@ -246,13 +246,13 @@ class CaseStatementExpression implements CaseExpressionInterface
         }
 
         if ($type === null) {
-            $type = $this->_inferType($result);
+            $type = $this->inferType($result);
         }
 
-        $this->_whenBuffer = null;
+        $this->whenBuffer = null;
 
-        $this->_else = $result;
-        $this->_elseType = $type;
+        $this->else = $result;
+        $this->elseType = $type;
 
         return $this;
     }
@@ -262,7 +262,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function getElseType(): ?string
     {
-        return $this->_elseType;
+        return $this->elseType;
     }
 
     /**
@@ -270,20 +270,20 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function getReturnType(): string
     {
-        if ($this->_returnType !== null) {
-            return $this->_returnType;
+        if ($this->returnType !== null) {
+            return $this->returnType;
         }
 
         $types = [];
-        foreach ($this->_when as $when) {
+        foreach ($this->when as $when) {
             $type = $when->getThenType();
             if ($type !== null) {
                 $types[] = $type;
             }
         }
 
-        if ($this->_elseType !== null) {
-            $types[] = $this->_elseType;
+        if ($this->elseType !== null) {
+            $types[] = $this->elseType;
         }
 
         $types = array_unique($types);
@@ -299,7 +299,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function setReturnType(string $type)
     {
-        $this->_returnType = $type;
+        $this->returnType = $type;
 
         return $this;
     }
@@ -309,7 +309,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        if ($this->_whenBuffer !== null) {
+        if ($this->whenBuffer !== null) {
             throw new LogicException(
                 sprintf(
                     'Cannot compile incomplete `\%s` expression, there is an open `when()` buffer present ' .
@@ -319,7 +319,7 @@ class CaseStatementExpression implements CaseExpressionInterface
             );
         }
 
-        if (empty($this->_when)) {
+        if (empty($this->when)) {
             throw new LogicException(
                 sprintf(
                     'Cannot compile incomplete `\%s` expression, there are no `WHEN ... THEN ...` statements.',
@@ -329,17 +329,17 @@ class CaseStatementExpression implements CaseExpressionInterface
         }
 
         $value = '';
-        if ($this->_isSimpleVariant) {
-            $value = $this->_compileNullableValue($binder, $this->_value, $this->_valueType) . ' ';
+        if ($this->isSimpleVariant) {
+            $value = $this->compileNullableValue($binder, $this->value, $this->valueType) . ' ';
         }
 
         $whenThenExpressions = [];
-        foreach ($this->_when as $whenThen) {
+        foreach ($this->when as $whenThen) {
             $whenThenExpressions[] = $whenThen->sql($binder);
         }
         $whenThen = implode(' ', $whenThenExpressions);
 
-        $else = $this->_compileNullableValue($binder, $this->_else, $this->_elseType);
+        $else = $this->compileNullableValue($binder, $this->else, $this->elseType);
 
         return "CASE {$value}{$whenThen} ELSE $else END";
     }
@@ -349,7 +349,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function traverse(Closure $callback)
     {
-        if ($this->_whenBuffer !== null) {
+        if ($this->whenBuffer !== null) {
             throw new LogicException(
                 sprintf(
                     'Cannot traverse incomplete `\%s` expression, there is an open `when()` buffer present ' .
@@ -359,19 +359,19 @@ class CaseStatementExpression implements CaseExpressionInterface
             );
         }
 
-        if ($this->_value instanceof ExpressionInterface) {
-            $callback($this->_value);
-            $this->_value->traverse($callback);
+        if ($this->value instanceof ExpressionInterface) {
+            $callback($this->value);
+            $this->value->traverse($callback);
         }
 
-        foreach ($this->_when as $when) {
+        foreach ($this->when as $when) {
             $callback($when);
             $when->traverse($callback);
         }
 
-        if ($this->_else instanceof ExpressionInterface) {
-            $callback($this->_else);
-            $this->_else->traverse($callback);
+        if ($this->else instanceof ExpressionInterface) {
+            $callback($this->else);
+            $this->else->traverse($callback);
         }
 
         return $this;
@@ -384,7 +384,7 @@ class CaseStatementExpression implements CaseExpressionInterface
      */
     public function __clone()
     {
-        if ($this->_whenBuffer !== null) {
+        if ($this->whenBuffer !== null) {
             throw new LogicException(
                 sprintf(
                     'Cannot clone incomplete `\%s` expression, there is an open `when()` buffer present ' .
@@ -394,16 +394,16 @@ class CaseStatementExpression implements CaseExpressionInterface
             );
         }
 
-        if ($this->_value instanceof ExpressionInterface) {
-            $this->_value = clone $this->_value;
+        if ($this->value instanceof ExpressionInterface) {
+            $this->value = clone $this->value;
         }
 
-        foreach ($this->_when as $key => $when) {
-            $this->_when[$key] = clone $this->_when[$key];
+        foreach ($this->when as $key => $when) {
+            $this->when[$key] = clone $this->when[$key];
         }
 
-        if ($this->_else instanceof ExpressionInterface) {
-            $this->_else = clone $this->_else;
+        if ($this->else instanceof ExpressionInterface) {
+            $this->else = clone $this->else;
         }
     }
 }
