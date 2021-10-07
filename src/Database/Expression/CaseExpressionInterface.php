@@ -23,11 +23,23 @@ use Cake\Database\TypeMap;
 interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterface
 {
     /**
-     * Returns the case value for a `CASE case_value WHEN ...` expression.
+     * Returns the available data for the given clause.
      *
-     * @return \Cake\Database\ExpressionInterface|object|scalar|null
+     * ### Available clauses
+     *
+     * The following clause names are available:
+     *
+     * * `value` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The case value for a
+     *   `CASE case_value WHEN ...` expression.
+     * * `when (`array<\Cake\Database\Expression\WhenThenExpressionInterface>`)`: An array of self-contained
+     *   `WHEN ... THEN ...` expressions.
+     * * `else` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `ELSE` result value.
+     *
+     * @param string $clause The name of the clause to obtain.
+     * @return array<\Cake\Database\Expression\WhenThenExpressionInterface>|\Cake\Database\ExpressionInterface|object|scalar|null
+     * @throws \InvalidArgumentException In case the given clause name is invalid.
      */
-    public function getValue();
+    public function clause(string $clause);
 
     /**
      * Sets the value for the case expression.
@@ -52,13 +64,6 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * @return string|null
      */
     public function getValueType(): ?string;
-
-    /**
-     * Returns the `WHEN ... THEN ...` statement expressions.
-     *
-     * @return \Cake\Database\Expression\WhenThenExpressionInterface[]
-     */
-    public function getWhen(): array;
 
     /**
      * Sets the `WHEN` value for a `WHEN ... THEN ...` expression, or a
@@ -257,14 +262,6 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * @see when()
      */
     public function then($result, ?string $type = null);
-
-    /**
-     * Returns the `ELSE` result value.
-     *
-     * @return \Cake\Database\ExpressionInterface|object|scalar|null The result value, or `null` if none has been set
-     *  yet.
-     */
-    public function getElse();
 
     /**
      * Sets the `ELSE` result value.

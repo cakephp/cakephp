@@ -31,6 +31,17 @@ class WhenThenExpression implements WhenThenExpressionInterface
     use ExpressionTypeCasterTrait;
 
     /**
+     * The names of the clauses that are valid for use with the
+     * `clause()` method.
+     *
+     * @var array<string>
+     */
+    protected $validClauseNames = [
+        'when',
+        'then',
+    ];
+
+    /**
      * The type map to use when using an array of conditions for the
      * `WHEN` value.
      *
@@ -86,14 +97,6 @@ class WhenThenExpression implements WhenThenExpressionInterface
             $typeMap = new TypeMap();
         }
         $this->_typeMap = $typeMap;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhen()
-    {
-        return $this->when;
     }
 
     /**
@@ -176,14 +179,6 @@ class WhenThenExpression implements WhenThenExpressionInterface
     public function getWhenType()
     {
         return $this->whenType;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getThen()
-    {
-        return $this->then;
     }
 
     /**

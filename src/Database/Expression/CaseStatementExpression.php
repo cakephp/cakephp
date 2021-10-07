@@ -32,6 +32,18 @@ class CaseStatementExpression implements CaseExpressionInterface
     use TypeMapTrait;
 
     /**
+     * The names of the clauses that are valid for use with the
+     * `clause()` method.
+     *
+     * @var array<string>
+     */
+    protected $validClauseNames = [
+        'value',
+        'when',
+        'else',
+    ];
+
+    /**
      * Whether this is a simple case expression.
      *
      * @var bool
@@ -104,14 +116,6 @@ class CaseStatementExpression implements CaseExpressionInterface
     /**
      * @inheritDoc
      */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function value($value, ?string $valueType = null)
     {
         if (
@@ -148,14 +152,6 @@ class CaseStatementExpression implements CaseExpressionInterface
     public function getValueType(): ?string
     {
         return $this->valueType;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhen(): array
-    {
-        return $this->when;
     }
 
     /**
@@ -211,14 +207,6 @@ class CaseStatementExpression implements CaseExpressionInterface
         $this->when[] = $whenThen;
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getElse()
-    {
-        return $this->else;
     }
 
     /**

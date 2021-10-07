@@ -21,11 +21,20 @@ use Cake\Database\ExpressionInterface;
 interface WhenThenExpressionInterface extends ExpressionInterface
 {
     /**
-     * Returns the `WHEN` value.
+     * Returns the available data for the given clause.
      *
+     * ### Available clauses
+     *
+     * The following clause names are available:
+     *
+     * * `when` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `WHEN` value.
+     * * `then` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `THEN` result value.
+     *
+     * @param string $clause The name of the clause to obtain.
      * @return \Cake\Database\ExpressionInterface|object|scalar|null
+     * @throws \InvalidArgumentException In case the given clause name is invalid.
      */
-    public function getWhen();
+    public function clause(string $clause);
 
     /**
      * Sets the `WHEN` value.
@@ -57,13 +66,6 @@ interface WhenThenExpressionInterface extends ExpressionInterface
      * @see when()
      */
     public function getWhenType();
-
-    /**
-     * Returns the `THEN` result value.
-     *
-     * @return \Cake\Database\ExpressionInterface|object|scalar|null The result value.
-     */
-    public function getThen();
 
     /**
      * Sets the `THEN` result value.

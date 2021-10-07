@@ -252,7 +252,7 @@ class CaseStatementExpressionTest extends TestCase
         $expression = (new CaseStatementExpression(new TypeMap(['Table.column' => 'boolean'])))
             ->when($value)
             ->then(1);
-        $this->assertSame($type, $expression->getWhen()[0]->getWhenType());
+        $this->assertSame($type, $expression->clause('when')[0]->getWhenType());
     }
 
     /**
@@ -265,7 +265,7 @@ class CaseStatementExpressionTest extends TestCase
         $expression = (new CaseStatementExpression(new TypeMap(['Table.column' => 'boolean'])))
             ->when(['Table.column' => true])
             ->then($value);
-        $this->assertSame($type, $expression->getWhen()[0]->getThenType());
+        $this->assertSame($type, $expression->clause('when')[0]->getThenType());
     }
 
     /**
@@ -911,18 +911,38 @@ class CaseStatementExpressionTest extends TestCase
 
     // region Getters
 
-    public function testGetValue(): void
+    public function testGetInvalidCaseExpressionClause()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The `$clause` argument must be one of `value`, `when`, `else`, the given value `invalid` is invalid.'
+        );
+
+        (new CaseStatementExpression())->clause('invalid');
+    }
+
+    public function testGetInvalidWhenThenExpressionClause()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The `$clause` argument must be one of `when`, `then`, the given value `invalid` is invalid.'
+        );
+
+        (new WhenThenExpression())->clause('invalid');
+    }
+
+    public function testGetValueClause(): void
     {
         $expression = new CaseStatementExpression();
 
-        $this->assertNull($expression->getValue());
+        $this->assertNull($expression->clause('value'));
 
         $expression
             ->value(1)
             ->when(1)
             ->then(2);
 
-        $this->assertSame(1, $expression->getValue());
+        $this->assertSame(1, $expression->clause('value'));
     }
 
     public function testGetValueType(): void
@@ -936,27 +956,27 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame('integer', $expression->getValueType());
     }
 
-    public function testGetWhen(): void
+    public function testGetWhenClause(): void
     {
         $when = ['Table.column' => true];
 
         $expression = new CaseStatementExpression();
-        $this->assertSame([], $expression->getWhen());
+        $this->assertSame([], $expression->clause('when'));
 
         $expression
             ->when($when)
             ->then(1);
 
-        $this->assertCount(1, $expression->getWhen());
-        $this->assertInstanceOf(WhenThenExpressionInterface::class, $expression->getWhen()[0]);
+        $this->assertCount(1, $expression->clause('when'));
+        $this->assertInstanceOf(WhenThenExpressionInterface::class, $expression->clause('when')[0]);
     }
 
-    public function testWhenArrayValueGetWhen(): void
+    public function testWhenArrayValueGetWhenClause(): void
     {
         $when = ['Table.column' => true];
 
         $expression = new CaseStatementExpression();
-        $this->assertSame([], $expression->getWhen());
+        $this->assertSame([], $expression->clause('when'));
 
         $expression
             ->when($when)
@@ -964,20 +984,20 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->assertEquals(
             new QueryExpression($when),
-            $expression->getWhen()[0]->getWhen()
+            $expression->clause('when')[0]->clause('when')
         );
     }
 
-    public function testWhenNonArrayValueGetWhen(): void
+    public function testWhenNonArrayValueGetWhenClause(): void
     {
         $expression = new CaseStatementExpression();
-        $this->assertSame([], $expression->getWhen());
+        $this->assertSame([], $expression->clause('when'));
 
         $expression
             ->when(1)
             ->then(2);
 
-        $this->assertSame(1, $expression->getWhen()[0]->getWhen());
+        $this->assertSame(1, $expression->clause('when')[0]->clause('when'));
     }
 
     public function testWhenGetWhenType(): void
@@ -987,32 +1007,32 @@ class CaseStatementExpressionTest extends TestCase
                 return $whenThen;
             });
 
-        $this->assertNull($expression->getWhen()[0]->getWhenType());
+        $this->assertNull($expression->clause('when')[0]->getWhenType());
 
-        $expression->getWhen()[0]->when(1);
+        $expression->clause('when')[0]->when(1);
 
-        $this->assertSame('integer', $expression->getWhen()[0]->getWhenType());
+        $this->assertSame('integer', $expression->clause('when')[0]->getWhenType());
 
         $types = [
             'Table.column' => 'boolean',
         ];
-        $expression->getWhen()[0]->when(['Table.column' => true], $types);
+        $expression->clause('when')[0]->when(['Table.column' => true], $types);
 
-        $this->assertSame($types, $expression->getWhen()[0]->getWhenType());
+        $this->assertSame($types, $expression->clause('when')[0]->getWhenType());
     }
 
-    public function testWhenGetThen(): void
+    public function testWhenGetThenClause(): void
     {
         $expression = (new CaseStatementExpression())
             ->when(function (WhenThenExpressionInterface $whenThen) {
                 return $whenThen;
             });
 
-        $this->assertNull($expression->getWhen()[0]->getThen());
+        $this->assertNull($expression->clause('when')[0]->clause('then'));
 
-        $expression->getWhen()[0]->then(1);
+        $expression->clause('when')[0]->then(1);
 
-        $this->assertSame(1, $expression->getWhen()[0]->getThen());
+        $this->assertSame(1, $expression->clause('when')[0]->clause('then'));
     }
 
     public function testWhenGetThenType(): void
@@ -1022,21 +1042,25 @@ class CaseStatementExpressionTest extends TestCase
                 return $whenThen;
             });
 
-        $this->assertNull($expression->getWhen()[0]->getThenType());
+        $this->assertNull($expression->clause('when')[0]->getThenType());
 
-        $expression->getWhen()[0]->then(1);
+        $expression->clause('when')[0]->then(1);
 
-        $this->assertSame('integer', $expression->getWhen()[0]->getThenType());
+        $this->assertSame('integer', $expression->clause('when')[0]->getThenType());
     }
 
-    public function testGetElse(): void
+    public function testGetElseClause(): void
     {
-        $expression = (new CaseStatementExpression())
+        $expression = new CaseStatementExpression();
+
+        $this->assertNull($expression->clause('else'));
+
+        $expression
             ->when(['Table.column' => true])
             ->then(1)
             ->else(2);
 
-        $this->assertSame(2, $expression->getElse());
+        $this->assertSame(2, $expression->clause('else'));
     }
 
     public function testGetElseType(): void
