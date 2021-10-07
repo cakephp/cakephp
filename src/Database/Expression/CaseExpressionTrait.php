@@ -23,6 +23,11 @@ use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use DateTimeInterface;
 
+/**
+ * Trait that holds shared functionality for case related expressions.
+ *
+ * @internal
+ */
 trait CaseExpressionTrait
 {
     /**
