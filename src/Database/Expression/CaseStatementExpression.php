@@ -208,7 +208,7 @@ class CaseStatementExpression implements CaseExpressionInterface
 
         $this->whenBuffer = null;
 
-        $this->when($whenThen);
+        $this->when[] = $whenThen;
 
         return $this;
     }
