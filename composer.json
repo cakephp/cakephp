@@ -55,6 +55,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
+        "symfony/polyfill-php81": "^1.23.0",
         "cakephp/cakephp-codesniffer": "^4.5",
         "mikey179/vfsstream": "^1.6.10",
         "paragonie/csp-builder": "^2.3",
