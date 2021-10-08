@@ -336,7 +336,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Cake\Database\ExpressionInterface|array $values Associative array of values to be associated with the
      * conditions passed in $conditions. If there are more $values than $conditions,
      * the last $value is used as the `ELSE` value.
-     * @param array<string|int, string> $types Associative array of types to be associated with the values
+     * @param array<string> $types Associative array of types to be associated with the values
      * passed in $values
      * @return $this
      */
