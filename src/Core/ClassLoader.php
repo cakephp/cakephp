@@ -37,7 +37,9 @@ class ClassLoader
      */
     public function register(): void
     {
-        spl_autoload_register([$this, 'loadClass']);
+        /** @var callable $callable */
+        $callable = [$this, 'loadClass'];
+        spl_autoload_register($callable);
     }
 
     /**
