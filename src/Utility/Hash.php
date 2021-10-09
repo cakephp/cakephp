@@ -649,7 +649,7 @@ class Hash
      * @return array Filtered array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::filter
      */
-    public static function filter(array $data, $callback = ['self', '_filter']): array
+    public static function filter(array $data, $callback = [Hash::class, '_filter']): array
     {
         foreach ($data as $k => $v) {
             if (is_array($v)) {
