@@ -60,14 +60,6 @@ interface WhenThenExpressionInterface extends ExpressionInterface
     public function when($when, $type = null);
 
     /**
-     * Returns the `WHEN` value type.
-     *
-     * @return array|string|null
-     * @see when()
-     */
-    public function getWhenType();
-
-    /**
      * Sets the `THEN` result value.
      *
      * @param \Cake\Database\ExpressionInterface|object|scalar|null $result The result value.
@@ -78,10 +70,10 @@ interface WhenThenExpressionInterface extends ExpressionInterface
     public function then($result, ?string $type = null);
 
     /**
-     * Returns the `THEN` result value type.
+     * Returns the expression's result value type.
      *
      * @return string|null
      * @see then()
      */
-    public function getThenType(): ?string;
+    public function getResultType(): ?string;
 }

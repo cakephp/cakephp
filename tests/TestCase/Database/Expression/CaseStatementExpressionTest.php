@@ -34,6 +34,8 @@ use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\Test\test_app\TestApp\Database\Expression\CustomWhenThenExpression;
+use Cake\Test\test_app\TestApp\Stub\CaseStatementExpressionStub;
+use Cake\Test\test_app\TestApp\Stub\WhenThenExpressionStub;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use LogicException;
@@ -230,28 +232,49 @@ class CaseStatementExpressionTest extends TestCase
      */
     public function testInferValueType($value, ?string $type): void
     {
-        $expression = (new CaseStatementExpression(new TypeMap(['Table.column' => 'boolean'])))
+        $expression = new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean']));
+
+        $this->assertNull($expression->getValueType());
+
+        $expression
             ->value($value)
             ->when(1)
             ->then(2);
+
         $this->assertSame($type, $expression->getValueType());
     }
 
+    public function whenTypeInferenceDataProvider(): array
+    {
+        return [
+            ['1', 'string'],
+            [1, 'integer'],
+            [1.0, 'float'],
+            [true, 'boolean'],
+            [ChronosDate::now(), 'date'],
+            [Chronos::now(), 'datetime'],
+            [new IdentifierExpression('Table.column'), 'boolean'],
+            [['Table.column' => true], null],
+            [new stdClass(), null],
+        ];
+    }
+
     /**
-     * @dataProvider typeInferenceDataProvider
+     * @dataProvider whenTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
     public function testInferWhenType($value, ?string $type): void
     {
-        $this->skipIf(
-            $value === null,
-            '`\Cake\Database\Expression\CaseExpression::when()` does not accept `null`'
-        );
+        $expression = new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean']));
+        $expression->when(new WhenThenExpressionStub($expression->getTypeMap()));
 
-        $expression = (new CaseStatementExpression(new TypeMap(['Table.column' => 'boolean'])))
+        $this->assertNull($expression->clause('when')[0]->getWhenType());
+
+        $expression->clause('when')[0]
             ->when($value)
             ->then(1);
+
         $this->assertSame($type, $expression->clause('when')[0]->getWhenType());
     }
 
@@ -260,12 +283,20 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferThenType($value, ?string $type): void
+    public function testInferResultType($value, ?string $type): void
     {
-        $expression = (new CaseStatementExpression(new TypeMap(['Table.column' => 'boolean'])))
+        $expression = (new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean'])))
+            ->when(function (WhenThenExpressionInterface $whenThen) {
+                return $whenThen;
+            });
+
+        $this->assertNull($expression->clause('when')[0]->getResultType());
+
+        $expression->clause('when')[0]
             ->when(['Table.column' => true])
             ->then($value);
-        $this->assertSame($type, $expression->clause('when')[0]->getThenType());
+
+        $this->assertSame($type, $expression->clause('when')[0]->getResultType());
     }
 
     /**
@@ -275,8 +306,12 @@ class CaseStatementExpressionTest extends TestCase
      */
     public function testInferElseType($value, ?string $type): void
     {
-        $expression = (new CaseStatementExpression(new TypeMap(['Table.column' => 'boolean'])))
-            ->else($value);
+        $expression = new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean']));
+
+        $this->assertNull($expression->getElseType());
+
+        $expression->else($value);
+
         $this->assertSame($type, $expression->getElseType());
     }
 
@@ -945,17 +980,6 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame(1, $expression->clause('value'));
     }
 
-    public function testGetValueType(): void
-    {
-        $expression = new CaseStatementExpression();
-
-        $this->assertNull($expression->getValueType());
-
-        $expression->value(1);
-
-        $this->assertSame('integer', $expression->getValueType());
-    }
-
     public function testGetWhenClause(): void
     {
         $when = ['Table.column' => true];
@@ -1000,27 +1024,6 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame(1, $expression->clause('when')[0]->clause('when'));
     }
 
-    public function testWhenGetWhenType(): void
-    {
-        $expression = (new CaseStatementExpression())
-            ->when(function (WhenThenExpressionInterface $whenThen) {
-                return $whenThen;
-            });
-
-        $this->assertNull($expression->clause('when')[0]->getWhenType());
-
-        $expression->clause('when')[0]->when(1);
-
-        $this->assertSame('integer', $expression->clause('when')[0]->getWhenType());
-
-        $types = [
-            'Table.column' => 'boolean',
-        ];
-        $expression->clause('when')[0]->when(['Table.column' => true], $types);
-
-        $this->assertSame($types, $expression->clause('when')[0]->getWhenType());
-    }
-
     public function testWhenGetThenClause(): void
     {
         $expression = (new CaseStatementExpression())
@@ -1035,20 +1038,6 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame(1, $expression->clause('when')[0]->clause('then'));
     }
 
-    public function testWhenGetThenType(): void
-    {
-        $expression = (new CaseStatementExpression())
-            ->when(function (WhenThenExpressionInterface $whenThen) {
-                return $whenThen;
-            });
-
-        $this->assertNull($expression->clause('when')[0]->getThenType());
-
-        $expression->clause('when')[0]->then(1);
-
-        $this->assertSame('integer', $expression->clause('when')[0]->getThenType());
-    }
-
     public function testGetElseClause(): void
     {
         $expression = new CaseStatementExpression();
@@ -1061,17 +1050,6 @@ class CaseStatementExpressionTest extends TestCase
             ->else(2);
 
         $this->assertSame(2, $expression->clause('else'));
-    }
-
-    public function testGetElseType(): void
-    {
-        $expression = new CaseStatementExpression();
-
-        $this->assertNull($expression->getElseType());
-
-        $expression->else(1);
-
-        $this->assertSame('integer', $expression->getElseType());
     }
 
     // endregion

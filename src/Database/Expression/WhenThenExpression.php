@@ -176,14 +176,6 @@ class WhenThenExpression implements WhenThenExpressionInterface
     /**
      * @inheritDoc
      */
-    public function getWhenType()
-    {
-        return $this->whenType;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function then($result, ?string $type = null)
     {
         if (
@@ -215,7 +207,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
     /**
      * @inheritDoc
      */
-    public function getThenType(): ?string
+    public function getResultType(): ?string
     {
         return $this->thenType;
     }

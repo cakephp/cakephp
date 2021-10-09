@@ -149,14 +149,6 @@ class CaseStatementExpression implements CaseExpressionInterface
     /**
      * @inheritDoc
      */
-    public function getValueType(): ?string
-    {
-        return $this->valueType;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function when($when, $type = null)
     {
         if ($this->whenBuffer !== null) {
@@ -249,14 +241,6 @@ class CaseStatementExpression implements CaseExpressionInterface
     /**
      * @inheritDoc
      */
-    public function getElseType(): ?string
-    {
-        return $this->elseType;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getReturnType(): string
     {
         if ($this->returnType !== null) {
@@ -265,7 +249,7 @@ class CaseStatementExpression implements CaseExpressionInterface
 
         $types = [];
         foreach ($this->when as $when) {
-            $type = $when->getThenType();
+            $type = $when->getResultType();
             if ($type !== null) {
                 $types[] = $type;
             }

@@ -59,13 +59,6 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
     public function value($value, ?string $valueType = null);
 
     /**
-     * Returns the case value type.
-     *
-     * @return string|null
-     */
-    public function getValueType(): ?string;
-
-    /**
      * Sets the `WHEN` value for a `WHEN ... THEN ...` expression, or a
      * self-contained expression that holds both the value for `WHEN`
      * and the value for `THEN`.
@@ -276,13 +269,6 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * @see then()
      */
     public function else($result, ?string $type = null);
-
-    /**
-     * Returns the type of the `ELSE` result value.
-     *
-     * @return string|null The result type, or `null` if none has been set yet.
-     */
-    public function getElseType(): ?string;
 
     /**
      * Returns the abstract type that this expression will return.
