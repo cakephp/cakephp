@@ -66,7 +66,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
     /**
      * The `THEN` value.
      *
-     * @var mixed
+     * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
     protected $then = null;
 

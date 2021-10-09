@@ -67,7 +67,7 @@ class CaseStatementExpression implements CaseExpressionInterface
     /**
      * The `WHEN ... THEN ...` expressions.
      *
-     * @var \Cake\Database\Expression\WhenThenExpressionInterface[]
+     * @var array<\Cake\Database\Expression\WhenThenExpressionInterface>
      */
     protected $when = [];
 
@@ -81,7 +81,7 @@ class CaseStatementExpression implements CaseExpressionInterface
     /**
      * The else part result value.
      *
-     * @var mixed|null
+     * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
     protected $else = null;
 
