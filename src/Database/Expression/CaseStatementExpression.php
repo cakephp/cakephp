@@ -230,8 +230,6 @@ class CaseStatementExpression implements CaseExpressionInterface
             $type = $this->inferType($result);
         }
 
-        $this->whenBuffer = null;
-
         $this->else = $result;
         $this->elseType = $type;
 
