@@ -53,7 +53,8 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * hold the comparisons.
      *
      * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
-     * @param string|null $valueType The case value type.
+     * @param string|null $valueType The case value type. If no type is provided, the type will be tried to be inferred
+     *  from the value.
      * @return $this
      */
     public function value($value, ?string $valueType = null);
