@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
@@ -226,15 +225,15 @@ class QueryExpressionTest extends TestCase
         );
     }
 
-    public function testCaseWithValue(): void
+    public function testCaseWithNullValue(): void
     {
         $expression = (new QueryExpression())
-            ->case(new IdentifierExpression('Table.column'))
+            ->case(null)
             ->when(1)
             ->then('Yes');
 
         $this->assertEqualsSql(
-            'CASE Table.column WHEN :c0 THEN :c1 ELSE NULL END',
+            'CASE NULL WHEN :c0 THEN :c1 ELSE NULL END',
             $expression->sql(new ValueBinder())
         );
     }
