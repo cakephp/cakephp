@@ -83,7 +83,10 @@ trait CaseExpressionTrait
             method_exists($value, '__toString')
         ) {
             $type = 'string';
-        } elseif ($value instanceof IdentifierExpression) {
+        } elseif (
+            $this->_typeMap !== null &&
+            $value instanceof IdentifierExpression
+        ) {
             $type = $this->_typeMap->type($value->getIdentifier());
         }
 

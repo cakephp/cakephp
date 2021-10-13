@@ -18,7 +18,6 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
-use Cake\Database\TypeMap;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use Closure;
@@ -102,48 +101,52 @@ class CaseStatementExpression implements CaseExpressionInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Database\TypeMap|null $typeMap The type map to use when using an array of conditions for the `WHEN`
-     *  value.
+     * When a value is set, the syntax generated is
+     * `CASE case_value WHEN when_value ... END` (simple case),
+     * where the `when_value`'s are compared against the
+     * `case_value`.
+     *
+     * When no value is set, the syntax generated is
+     * `CASE WHEN when_conditions ... END` (searched case),
+     * where the conditions hold the comparisons.
+     *
+     * Note that `null` is a valid case value, and thus should
+     * only be passed if you actually want to create the simple
+     * case expression variant!
+     *
+     * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
+     * @param string|null $valueType The case value type. If no type is provided, the type will be tried to be inferred
+     *  from the value.
      */
-    public function __construct(?TypeMap $typeMap = null)
+    public function __construct($value = null, ?string $valueType = null)
     {
-        if ($typeMap === null) {
-            $typeMap = new TypeMap();
+        if (func_num_args() > 0) {
+            if (
+                $value !== null &&
+                !is_scalar($value) &&
+                !(is_object($value) && !($value instanceof Closure))
+            ) {
+                throw new InvalidArgumentException(sprintf(
+                    'The `$value` argument must be either `null`, a scalar value, an object, ' .
+                    'or an instance of `\%s`, `%s` given.',
+                    ExpressionInterface::class,
+                    getTypeName($value)
+                ));
+            }
+
+            $this->value = $value;
+
+            if (
+                $value !== null &&
+                $valueType === null &&
+                !($value instanceof ExpressionInterface)
+            ) {
+                $valueType = $this->inferType($value);
+            }
+            $this->valueType = $valueType;
+
+            $this->isSimpleVariant = true;
         }
-        $this->_typeMap = $typeMap;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function value($value, ?string $valueType = null)
-    {
-        if (
-            $value !== null &&
-            !is_scalar($value) &&
-            !(is_object($value) && !($value instanceof Closure))
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                'The `$value` argument must be either `null`, a scalar value, an object, ' .
-                'or an instance of `\%s`, `%s` given.',
-                ExpressionInterface::class,
-                getTypeName($value)
-            ));
-        }
-
-        $this->value = $value;
-
-        if (
-            $value !== null &&
-            $valueType === null
-        ) {
-            $valueType = $this->inferType($value);
-        }
-        $this->valueType = $valueType;
-
-        $this->isSimpleVariant = true;
-
-        return $this;
     }
 
     /**

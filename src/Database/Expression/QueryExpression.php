@@ -351,28 +351,32 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new case expression object.
      *
      * When a value is set, the syntax generated is
-     * `CASE case_value WHEN when_value ... END`, where the
-     * `when_value`'s are compared against the `case_value`.
+     * `CASE case_value WHEN when_value ... END` (simple case),
+     * where the `when_value`'s are compared against the
+     * `case_value`.
      *
      * When no value is set, the syntax generated is
-     * `CASE WHEN when_conditions ... END`, where the conditions
-     * hold the comparisons.
+     * `CASE WHEN when_conditions ... END` (searched case),
+     * where the conditions hold the comparisons.
+     *
+     * Note that `null` is a valid case value, and thus should
+     * only be passed if you actually want to create the simple
+     * case expression variant!
      *
      * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
      * @param string|null $valueType The case value type. If no type is provided, the type will be tried to be inferred
      *  from the value.
      * @return \Cake\Database\Expression\CaseExpressionInterface
-     * @see \Cake\Database\Expression\CaseExpressionInterface::value()
      */
     public function case($value = null, ?string $valueType = null): CaseExpressionInterface
     {
-        $expression = new CaseStatementExpression($this->getTypeMap());
-
         if (func_num_args() > 0) {
-            $expression->value($value, $valueType);
+            $expression = new CaseStatementExpression($value, $valueType);
+        } else {
+            $expression = new CaseStatementExpression();
         }
 
-        return $expression;
+        return $expression->setTypeMap($this->getTypeMap());
     }
 
     /**

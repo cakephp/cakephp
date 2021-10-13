@@ -42,24 +42,6 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
     public function clause(string $clause);
 
     /**
-     * Sets the value for the case expression.
-     *
-     * When a value is set, the syntax generated is
-     * `CASE case_value WHEN when_value ... END`, where the
-     * `when_value`'s are compared against the `case_value`.
-     *
-     * When no value is set, the syntax generated is
-     * `CASE WHEN when_conditions ... END`, where the conditions
-     * hold the comparisons.
-     *
-     * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
-     * @param string|null $valueType The case value type. If no type is provided, the type will be tried to be inferred
-     *  from the value.
-     * @return $this
-     */
-    public function value($value, ?string $valueType = null);
-
-    /**
      * Sets the `WHEN` value for a `WHEN ... THEN ...` expression, or a
      * self-contained expression that holds both the value for `WHEN`
      * and the value for `THEN`.
@@ -72,8 +54,8 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * a call to `then()` before invoking `when()` again or `else()`:
      *
      * ```
-     * $case
-     *     ->value($query->identifier('Table.column'))
+     * $queryExpression
+     *     ->case($query->identifier('Table.column'))
      *     ->when(true)
      *     ->then('Yes')
      *     ->when(false)
@@ -94,7 +76,8 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * and must return one, being it the same object, or a custom one:
      *
      * ```
-     * $case
+     * $queryExpression
+     *     ->case()
      *     ->when(function (\Cake\Database\Expression\WhenThenExpressionInterface $whenThen) {
      *         return $whenThen
      *             ->when(['Table.column' => true])
@@ -119,7 +102,8 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * `\Cake\Database\Expression\WhenThenExpressionInterface::when()`:
      *
      * ```
-     * $case
+     * $queryExpression
+     *     ->case()
      *     ->when(function (\Cake\Database\Expression\WhenThenExpressionInterface $whenThen) {
      *         return $whenThen
      *             ->when(['unmapped_column' => true], ['unmapped_column' => 'bool'])
