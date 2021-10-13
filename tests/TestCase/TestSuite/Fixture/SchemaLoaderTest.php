@@ -15,12 +15,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite\Fixture;
 
-use Cake\Console\ConsoleIo;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\Fixture\SchemaCleaner;
+use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -45,7 +44,7 @@ class SchemaLoaderTest extends TestCase
         $this->restore = $GLOBALS['__PHPUNIT_BOOTSTRAP'];
         unset($GLOBALS['__PHPUNIT_BOOTSTRAP']);
 
-        $this->loader = new SchemaLoader(['outputLevel' => ConsoleIo::QUIET]);
+        $this->loader = new SchemaLoader();
     }
 
     public function tearDown(): void
@@ -53,7 +52,7 @@ class SchemaLoaderTest extends TestCase
         parent::tearDown();
         $GLOBALS['__PHPUNIT_BOOTSTRAP'] = $this->restore;
 
-        (new SchemaCleaner())->dropTables('test', ['schema_loader_test_one', 'schema_loader_test_two']);
+        (new ConnectionHelper())->dropTables('test', ['schema_loader_test_one', 'schema_loader_test_two']);
         ConnectionManager::drop('test_schema_loader');
 
         if (file_exists($this->truncateDbFile)) {
