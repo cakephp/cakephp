@@ -115,10 +115,10 @@ class CaseStatementExpression implements CaseExpressionInterface
      * case expression variant!
      *
      * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
-     * @param string|null $valueType The case value type. If no type is provided, the type will be tried to be inferred
+     * @param string|null $type The case value type. If no type is provided, the type will be tried to be inferred
      *  from the value.
      */
-    public function __construct($value = null, ?string $valueType = null)
+    public function __construct($value = null, ?string $type = null)
     {
         if (func_num_args() > 0) {
             if (
@@ -138,12 +138,12 @@ class CaseStatementExpression implements CaseExpressionInterface
 
             if (
                 $value !== null &&
-                $valueType === null &&
+                $type === null &&
                 !($value instanceof ExpressionInterface)
             ) {
-                $valueType = $this->inferType($value);
+                $type = $this->inferType($value);
             }
-            $this->valueType = $valueType;
+            $this->valueType = $type;
 
             $this->isSimpleVariant = true;
         }

@@ -364,14 +364,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * case expression variant!
      *
      * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
-     * @param string|null $valueType The case value type. If no type is provided, the type will be tried to be inferred
+     * @param string|null $type The case value type. If no type is provided, the type will be tried to be inferred
      *  from the value.
      * @return \Cake\Database\Expression\CaseExpressionInterface
      */
-    public function case($value = null, ?string $valueType = null): CaseExpressionInterface
+    public function case($value = null, ?string $type = null): CaseExpressionInterface
     {
         if (func_num_args() > 0) {
-            $expression = new CaseStatementExpression($value, $valueType);
+            $expression = new CaseStatementExpression($value, $type);
         } else {
             $expression = new CaseStatementExpression();
         }
