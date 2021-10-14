@@ -100,14 +100,14 @@ class SchemaLoaderTest extends TestCase
         ]);
 
         $schemaFile = $this->createSchemaFile('schema_loader_first');
-        $this->loader->loadSqlFiles($schemaFile, 'test_schema_loader');
+        $this->loader->loadSqlFiles($schemaFile, 'test_schema_loader', true, true);
         $connection = ConnectionManager::get('test_schema_loader');
 
         $result = $connection->getSchemaCollection()->listTables();
         $this->assertEquals(['schema_loader_first'], $result);
 
         $schemaFile = $this->createSchemaFile('schema_loader_second');
-        $this->loader->loadSqlFiles($schemaFile, 'test_schema_loader');
+        $this->loader->loadSqlFiles($schemaFile, 'test_schema_loader', true, true);
 
         $result = $connection->getSchemaCollection()->listTables();
         $this->assertEquals(['schema_loader_second'], $result);
