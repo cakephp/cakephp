@@ -57,7 +57,7 @@ class SchemaLoader
      */
     public function loadSqlFiles(
         $paths,
-        string $connectionName,
+        string $connectionName = 'test',
         bool $dropTables = true,
         bool $truncateTables = false
     ): void {
@@ -99,7 +99,7 @@ class SchemaLoader
      * @return void
      * @internal
      */
-    public function loadInternalFile(string $file, string $connectionName): void
+    public function loadInternalFile(string $file, string $connectionName = 'test'): void
     {
         // Don't reload schema when we are in a separate process state.
         if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
