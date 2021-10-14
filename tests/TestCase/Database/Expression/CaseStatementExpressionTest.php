@@ -52,8 +52,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         TypeFactory::map('custom', CustomExpressionType::class);
 
-        $expression = (new CaseStatementExpression())
-            ->value(1, 'custom')
+        $expression = (new CaseStatementExpression(1, 'custom'))
             ->when(1, 'custom')
             ->then(2, 'custom')
             ->else(3, 'custom');
@@ -70,8 +69,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         TypeFactory::map('custom', CustomExpressionType::class);
 
-        $expression = (new CaseStatementExpression())
-            ->value(null, 'custom')
+        $expression = (new CaseStatementExpression(null, 'custom'))
             ->when(1, 'custom')
             ->then(null, 'custom')
             ->else(null, 'custom');
@@ -161,7 +159,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'boolean',
             'Table.column_c' => 'boolean',
         ]);
-        $expression = (new CaseStatementExpression($typeMap))
+        $expression = (new CaseStatementExpression())
+            ->setTypeMap($typeMap)
             ->when(['Table.column_a' => true])
             ->then(new IdentifierExpression('Table.column_a'))
             ->when(['Table.column_b' => true])
@@ -210,7 +209,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame('float', $expression->getReturnType());
     }
 
-    public function typeInferenceDataProvider(): array
+    public function valueTypeInferenceDataProvider(): array
     {
         return [
             ['1', 'string'],
@@ -219,25 +218,25 @@ class CaseStatementExpressionTest extends TestCase
             [true, 'boolean'],
             [ChronosDate::now(), 'date'],
             [Chronos::now(), 'datetime'],
-            [new IdentifierExpression('Table.column'), 'boolean'],
+            [new IdentifierExpression('Table.column'), null],
             [new stdClass(), null],
             [null, null],
         ];
     }
 
     /**
-     * @dataProvider typeInferenceDataProvider
+     * @dataProvider valueTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
     public function testInferValueType($value, ?string $type): void
     {
-        $expression = new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean']));
+        $expression = new CaseStatementExpressionStub();
 
         $this->assertNull($expression->getValueType());
 
-        $expression
-            ->value($value)
+        $expression = (new CaseStatementExpressionStub($value))
+            ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
             ->when(1)
             ->then(2);
 
@@ -253,7 +252,7 @@ class CaseStatementExpressionTest extends TestCase
             [true, 'boolean'],
             [ChronosDate::now(), 'date'],
             [Chronos::now(), 'datetime'],
-            [new IdentifierExpression('Table.column'), 'boolean'],
+            [new IdentifierExpression('Table.column'), null],
             [['Table.column' => true], null],
             [new stdClass(), null],
         ];
@@ -266,7 +265,8 @@ class CaseStatementExpressionTest extends TestCase
      */
     public function testInferWhenType($value, ?string $type): void
     {
-        $expression = new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean']));
+        $expression = (new CaseStatementExpressionStub())
+            ->setTypeMap(new TypeMap(['Table.column' => 'boolean']));
         $expression->when(new WhenThenExpressionStub($expression->getTypeMap()));
 
         $this->assertNull($expression->clause('when')[0]->getWhenType());
@@ -278,14 +278,30 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame($type, $expression->clause('when')[0]->getWhenType());
     }
 
+    public function resultTypeInferenceDataProvider(): array
+    {
+        return [
+            ['1', 'string'],
+            [1, 'integer'],
+            [1.0, 'float'],
+            [true, 'boolean'],
+            [ChronosDate::now(), 'date'],
+            [Chronos::now(), 'datetime'],
+            [new IdentifierExpression('Table.column'), 'boolean'],
+            [new stdClass(), null],
+            [null, null],
+        ];
+    }
+
     /**
-     * @dataProvider typeInferenceDataProvider
+     * @dataProvider resultTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
     public function testInferResultType($value, ?string $type): void
     {
-        $expression = (new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean'])))
+        $expression = (new CaseStatementExpressionStub())
+            ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
             ->when(function (WhenThenExpressionInterface $whenThen) {
                 return $whenThen;
             });
@@ -300,13 +316,18 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider typeInferenceDataProvider
+     * @dataProvider resultTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
     public function testInferElseType($value, ?string $type): void
     {
-        $expression = new CaseStatementExpressionStub(new TypeMap(['Table.column' => 'boolean']));
+        $expression = new CaseStatementExpressionStub();
+
+        $this->assertNull($expression->getElseType());
+
+        $expression = (new CaseStatementExpressionStub())
+            ->setTypeMap(new TypeMap(['Table.column' => 'boolean']));
 
         $this->assertNull($expression->getElseType());
 
@@ -322,7 +343,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = (new CaseStatementExpression($typeMap))
+        $expression = (new CaseStatementExpression())
+            ->setTypeMap($typeMap)
             ->when(['Table.column_a' => true])
             ->then(1)
             ->when(['Table.column_b' => 'foo'])
@@ -374,7 +396,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = (new CaseStatementExpression($typeMap))
+        $expression = (new CaseStatementExpression())
+            ->setTypeMap($typeMap)
             ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
             ->then(1)
             ->when(['Table.column_b' => 'foo'])
@@ -426,7 +449,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = (new CaseStatementExpression($typeMap))
+        $expression = (new CaseStatementExpression())
+            ->setTypeMap($typeMap)
             ->when(function (WhenThenExpressionInterface $whenThen) {
                 return $whenThen
                     ->when(['Table.column_a' => true])
@@ -484,7 +508,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = (new CaseStatementExpression($typeMap))
+        $expression = (new CaseStatementExpression())
+            ->setTypeMap($typeMap)
             ->when(function (WhenThenExpressionInterface $whenThen) {
                 return $whenThen
                     ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
@@ -567,7 +592,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column' => 'integer',
         ]);
 
-        $expression = (new CaseStatementExpression($typeMap))
+        $expression = (new CaseStatementExpression())
+            ->setTypeMap($typeMap)
             ->when(['Table.column' => 123])
             ->then(1)
             ->when(['Table.column' => 'foo'], ['Table.column' => 'string'])
@@ -622,8 +648,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaTypedCaseValueIsNotPossible(): void
     {
-        $expression = (new CaseStatementExpression())
-            ->value('1 THEN 1 END; DELETE * FROM foo; --', 'integer')
+        $expression = (new CaseStatementExpression('1 THEN 1 END; DELETE * FROM foo; --', 'integer'))
             ->when(1)
             ->then(2);
 
@@ -657,8 +682,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaUntypedCaseValueIsNotPossible(): void
     {
-        $expression = (new CaseStatementExpression())
-            ->value('1 THEN 1 END; DELETE * FROM foo; --')
+        $expression = (new CaseStatementExpression('1 THEN 1 END; DELETE * FROM foo; --'))
             ->when(1)
             ->then(2);
 
@@ -792,8 +816,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaTypedThenValueIsNotPossible(): void
     {
-        $expression = (new CaseStatementExpression())
-            ->value(1)
+        $expression = (new CaseStatementExpression(1))
             ->when(2)
             ->then('1 THEN 1 END; DELETE * FROM foo; --', 'integer');
 
@@ -827,8 +850,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaUntypedThenValueIsNotPossible(): void
     {
-        $expression = (new CaseStatementExpression())
-            ->value(1)
+        $expression = (new CaseStatementExpression(1))
             ->when(2)
             ->then('1 THEN 1 END; DELETE * FROM foo; --');
 
@@ -862,8 +884,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaTypedElseValueIsNotPossible(): void
     {
-        $expression = (new CaseStatementExpression())
-            ->value(1)
+        $expression = (new CaseStatementExpression(1))
             ->when(2)
             ->then(3)
             ->else('1 THEN 1 END; DELETE * FROM foo; --', 'integer');
@@ -903,8 +924,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaUntypedElseValueIsNotPossible(): void
     {
-        $expression = (new CaseStatementExpression())
-            ->value(1)
+        $expression = (new CaseStatementExpression(1))
             ->when(2)
             ->then(3)
             ->else('1 THEN 1 END; DELETE * FROM foo; --');
@@ -972,8 +992,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->assertNull($expression->clause('value'));
 
-        $expression
-            ->value(1)
+        $expression = (new CaseStatementExpression(1))
             ->when(1)
             ->then(2);
 
@@ -1378,8 +1397,7 @@ class CaseStatementExpressionTest extends TestCase
      */
     public function testValidCaseValue($value, ?string $sqlValue, ?string $type): void
     {
-        $expression = (new CaseStatementExpression())
-            ->value($value)
+        $expression = (new CaseStatementExpression($value))
             ->when(1)
             ->then(2);
 
@@ -1550,8 +1568,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_a' => 'integer',
             'Table.column_b' => 'string',
         ]);
-        $expression = (new CaseStatementExpression($typeMap))
-            ->value(true)
+        $expression = (new CaseStatementExpression(true))
+            ->setTypeMap($typeMap)
             ->when($value)
             ->then(2);
 
@@ -1680,7 +1698,8 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_a' => 'integer',
             'Table.column_b' => 'string',
         ]);
-        $expression = (new CaseStatementExpression($typeMap))
+        $expression = (new CaseStatementExpression())
+            ->setTypeMap($typeMap)
             ->when($value)
             ->then(2);
 
@@ -1922,8 +1941,7 @@ class CaseStatementExpressionTest extends TestCase
             "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
         );
 
-        (new CaseStatementExpression())
-            ->value($value);
+        new CaseStatementExpression($value);
     }
 
     public function invalidWhenValueDataProvider(): array
@@ -2135,8 +2153,7 @@ class CaseStatementExpressionTest extends TestCase
         $resultB = new QueryExpression('2');
         $else = new QueryExpression('3');
 
-        $expression = (new CaseStatementExpression())
-            ->value($value)
+        $expression = (new CaseStatementExpression($value))
             ->when($conditionsA)
             ->then($resultA)
             ->when($conditionsB)
@@ -2194,8 +2211,7 @@ class CaseStatementExpressionTest extends TestCase
         $resultB = new QueryExpression('2');
         $else = new QueryExpression('3');
 
-        $expression = (new CaseStatementExpression())
-            ->value($value)
+        $expression = (new CaseStatementExpression($value))
             ->when($conditionsA)
             ->then($resultA)
             ->when($conditionsB)

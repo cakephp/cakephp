@@ -162,7 +162,10 @@ class WhenThenExpression implements WhenThenExpressionInterface
                 ));
             }
 
-            if ($type === null) {
+            if (
+                $type === null &&
+                !($when instanceof ExpressionInterface)
+            ) {
                 $type = $this->inferType($when);
             }
         }

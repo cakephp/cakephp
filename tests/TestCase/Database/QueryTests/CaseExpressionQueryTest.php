@@ -40,8 +40,7 @@ class CaseExpressionQueryTest extends TestCase
                 return [
                     'name',
                     'category_name' => $query->newExpr()
-                        ->case()
-                        ->value($query->identifier('Products.category'))
+                        ->case($query->identifier('Products.category'))
                         ->when(1)
                         ->then('Touring')
                         ->when(2)
@@ -119,15 +118,13 @@ class CaseExpressionQueryTest extends TestCase
             ->orderAsc('Comments.article_id')
             ->orderDesc(function (QueryExpression $exp, Query $query) {
                 return $query->newExpr()
-                    ->case()
-                    ->value($query->identifier('Comments.article_id'))
+                    ->case($query->identifier('Comments.article_id'))
                     ->when(1)
                     ->then($query->identifier('Comments.user_id'));
             })
             ->orderAsc(function (QueryExpression $exp, Query $query) {
                 return $query->newExpr()
-                    ->case()
-                    ->value($query->identifier('Comments.article_id'))
+                    ->case($query->identifier('Comments.article_id'))
                     ->when(2)
                     ->then($query->identifier('Comments.user_id'));
             })
@@ -328,8 +325,7 @@ class CaseExpressionQueryTest extends TestCase
             ->select(function (Query $query) {
                 return [
                     'val' => $query->newExpr()
-                        ->case()
-                        ->value($query->newExpr(':value'))
+                        ->case($query->newExpr(':value'))
                         ->when($query->newExpr(':when'))
                         ->then($query->newExpr(':then'))
                         ->else($query->newExpr(':else'))
