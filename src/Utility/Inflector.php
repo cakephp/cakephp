@@ -69,7 +69,7 @@ class Inflector
         '/(matr)ices$/i' => '\1ix',
         '/(vert|ind)ices$/i' => '\1ex',
         '/^(ox)en/i' => '\1',
-        '/(alias)(es)*$/i' => '\1',
+        '/(alias|lens)(es)*$/i' => '\1',
         '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
         '/([ftw]ax)es/i' => '\1',
         '/(cris|ax|test)es$/i' => '\1is',
