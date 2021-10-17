@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
@@ -1749,5 +1750,50 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first()->get('value');
         $this->assertSame('mariano appended', $result);
+    }
+
+    /**
+     * Tests that tuple comparisons can use multiple fields and subqueries
+     * for an `IN` lookup of multiple results.
+     *
+     * This test is specifically relevant in the context of Sqlite and
+     * Sqlserver, for which the tuple comparison will be transformed when
+     * composite keys are used.
+     *
+     * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::_transformTupleComparison()
+     */
+    public function testTupleComparisonWithCompositeKeysAndSubqueries(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $query = $articles
+            ->find()
+            ->select(['id', 'author_id'])
+            ->where(
+                new TupleComparison(
+                    ['Articles.id', 'Articles.author_id'],
+                    $articles
+                        ->subquery()
+                        ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
+                        ->from(['ArticlesAlias' => $articles->getTable()])
+                        ->where(['ArticlesAlias.author_id' => 1]),
+                    [],
+                    'IN'
+                )
+            )
+            ->orderAsc('id')
+            ->disableHydration();
+
+        $expected = [
+            [
+                'id' => 1,
+                'author_id' => 1,
+            ],
+            [
+                'id' => 3,
+                'author_id' => 1,
+            ],
+        ];
+        $this->assertSame($expected, $query->toArray());
     }
 }

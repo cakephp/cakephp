@@ -56,13 +56,16 @@ trait TupleComparisonTranslatorTrait
         }
 
         $value = $expression->getValue();
-        $op = $expression->getOperator();
         $true = new QueryExpression('1');
 
         if ($value instanceof Query) {
+            $op = $expression->getOperator();
+            if (strtolower($op) === 'in') {
+                $op = '=';
+            }
             $selected = array_values($value->clause('select'));
             foreach ($fields as $i => $field) {
-                $value->andWhere([$field . " $op" => new IdentifierExpression($selected[$i])]);
+                $value->andWhere(["$field $op" => new IdentifierExpression($selected[$i])]);
             }
             $value->select($true, true);
             $expression->setField($true);
