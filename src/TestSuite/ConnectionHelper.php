@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Database\Connection;
-use Cake\Database\Driver\Postgres;
+use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
 use Closure;
 
@@ -144,17 +144,17 @@ class ConnectionHelper
      * @param \Closure $callback callback
      * @return void
      */
-    protected function runWithoutConstraints(Connection $connection, Closure $callback): void
+    public function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
-        if ($connection->getDriver() instanceof Postgres) {
+        if ($connection->getDriver()->supports(DriverInterface::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
+            $connection->disableConstraints(function (Connection $connection) use ($callback) {
+                $callback($connection);
+            });
+        } else {
             $connection->transactional(function (Connection $connection) use ($callback) {
                 $connection->disableConstraints(function (Connection $connection) use ($callback) {
                     $callback($connection);
                 });
-            });
-        } else {
-            $connection->disableConstraints(function (Connection $connection) use ($callback) {
-                $callback($connection);
             });
         }
     }

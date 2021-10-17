@@ -195,6 +195,9 @@ class Postgres extends Driver
             case static::FEATURE_JSON:
             case static::FEATURE_WINDOW:
                 return true;
+
+            case static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION:
+                return false;
         }
 
         return parent::supports($feature);
