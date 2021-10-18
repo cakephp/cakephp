@@ -25,6 +25,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
+use Cake\TestSuite\ConnectionHelper;
 use Closure;
 use UnexpectedValueException;
 
@@ -135,27 +136,22 @@ class FixtureHelper
         $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
             if ($connection instanceof Connection) {
                 $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
-            }
-
-            if (isset($sortedFixtures)) {
-                foreach ($sortedFixtures as $fixture) {
-                    $fixture->insert($connection);
-                }
-            } elseif ($connection->getDriver() instanceof Postgres) {
-                // disabling foreign key constraints is only valid in a transaction
-                $connection->transactional(function () use ($connection, $groupFixtures) {
-                    $connection->disableConstraints(function () use ($connection, $groupFixtures) {
+                if ($sortedFixtures) {
+                    foreach ($sortedFixtures as $fixture) {
+                        $fixture->insert($connection);
+                    }
+                } else {
+                    $helper = new ConnectionHelper();
+                    $helper->runWithoutConstraints($connection, function (Connection $connection) use ($groupFixtures) {
                         foreach ($groupFixtures as $fixture) {
                             $fixture->insert($connection);
                         }
                     });
-                });
+                }
             } else {
-                $connection->disableConstraints(function () use ($connection, $groupFixtures) {
-                    foreach ($groupFixtures as $fixture) {
-                        $fixture->insert($connection);
-                    }
-                });
+                foreach ($groupFixtures as $fixture) {
+                    $fixture->insert($connection);
+                }
             }
         }, $fixtures);
     }

@@ -38,6 +38,13 @@ interface DriverInterface
     public const FEATURE_CTE = 'cte';
 
     /**
+     * Disabling constraints without being in transaction support.
+     *
+     * @var string
+     */
+    public const FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION = 'disable-constraint-without-transaction';
+
+    /**
      * Native JSON data type support.
      *
      * @var string
