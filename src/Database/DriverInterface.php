@@ -66,6 +66,13 @@ interface DriverInterface
     public const FEATURE_SAVEPOINT = 'savepoint';
 
     /**
+     * Truncate with foreign keys attached support.
+     *
+     * @var string
+     */
+    public const FEATURE_TRUNCATE_WITH_CONSTRAINTS = 'truncate-with-constraints';
+
+    /**
      * Window function support (all or partial clauses).
      *
      * @var string
