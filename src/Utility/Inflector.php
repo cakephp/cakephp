@@ -81,6 +81,7 @@ class Inflector
         '/(x|ch|ss|sh)es$/i' => '\1',
         '/(m)ovies$/i' => '\1\2ovie',
         '/(s)eries$/i' => '\1\2eries',
+        '/(s)pecies$/i' => '\1\2pecies',
         '/([^aeiouy]|qu)ies$/i' => '\1y',
         '/(tive)s$/i' => '\1',
         '/(hive)s$/i' => '\1',
