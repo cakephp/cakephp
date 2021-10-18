@@ -190,6 +190,8 @@ class InflectorTest extends TestCase
             ['', ''],
             ['cache', 'caches'],
             ['lens', 'lenses'],
+            ['species', 'species'],
+            ['animal_species', 'animal_species'],
         ];
     }
 
