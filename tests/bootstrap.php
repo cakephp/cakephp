@@ -99,7 +99,7 @@ Cache::setConfig([
 
 // Ensure default test connection is defined
 if (!getenv('DB_URL')) {
-    putenv('DB_URL=sqlite:///:memory:');
+    putenv('DB_URL=sqlite:///:memory:?init[]=PRAGMA foreign_keys = ON;');
 }
 
 ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
