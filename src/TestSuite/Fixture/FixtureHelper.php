@@ -18,9 +18,7 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
-use Cake\Database\Driver\Postgres;
-use Cake\Database\Driver\Sqlite;
-use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -167,27 +165,27 @@ class FixtureHelper
     {
         $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
             if ($connection instanceof Connection) {
-                $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
-            }
-
-            $driver = $connection->getDriver();
-            if (
-                isset($sortedFixtures) &&
-                (
-                    $driver instanceof Postgres ||
-                    $driver instanceof Sqlite ||
-                    $driver instanceof Sqlserver
-                )
-            ) {
-                foreach (array_reverse($sortedFixtures) as $fixture) {
-                    $fixture->truncate($connection);
+                $sortedFixtures = null;
+                if ($connection->getDriver()->supports(DriverInterface::FEATURE_TRUNCATE_WITH_CONSTRAINTS)) {
+                    $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
                 }
-            } else {
-                $connection->disableConstraints(function () use ($connection, $groupFixtures) {
-                    foreach ($groupFixtures as $fixture) {
+
+                if ($sortedFixtures !== null) {
+                    foreach (array_reverse($sortedFixtures) as $fixture) {
                         $fixture->truncate($connection);
                     }
-                });
+                } else {
+                    $helper = new ConnectionHelper();
+                    $helper->runWithoutConstraints($connection, function (Connection $connection) use ($groupFixtures) {
+                        foreach ($groupFixtures as $fixture) {
+                            $fixture->truncate($connection);
+                        }
+                    });
+                }
+            } else {
+                foreach ($groupFixtures as $fixture) {
+                    $fixture->truncate($connection);
+                }
             }
         }, $fixtures);
     }
