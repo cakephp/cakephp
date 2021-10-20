@@ -684,7 +684,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '02', '0'],
+                'pass' => ['1.0', '02', '0', '8,9'],
             ],
         ]);
         $controller = $this->factory->create($request);
@@ -693,7 +693,7 @@ class ControllerFactoryTest extends TestCase
         $data = json_decode((string)$result->getBody(), true);
 
         $this->assertNotNull($data);
-        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false], $data);
+        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => ['8', '9']], $data);
     }
 
     /**
@@ -799,7 +799,7 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce "test" to `array` for `one` in action Dependencies::unsupportedTyped()');
+        $this->expectExceptionMessage('Unable to coerce "test" to `iterable` for `one` in action Dependencies::unsupportedTyped()');
         $this->factory->invoke($controller);
     }
 

@@ -250,7 +250,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      *
      * @param string $argument Argument to coerce
      * @param \ReflectionNamedType $type Parameter type
-     * @return string|float|int|bool|null
+     * @return array|string|float|int|bool|null
      */
     protected function coerceStringToType(string $argument, ReflectionNamedType $type)
     {
@@ -263,6 +263,8 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                 return ctype_digit($argument) ? (int)$argument : null;
             case 'bool':
                 return $argument === '0' ? false : ($argument === '1' ? true : null);
+            case 'array':
+                return explode(',', $argument);
         }
 
         return null;
