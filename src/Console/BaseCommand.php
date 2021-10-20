@@ -152,18 +152,11 @@ abstract class BaseCommand implements CommandInterface
         $this->initialize();
 
         $parser = $this->getOptionParser();
-        try {
-            [$options, $arguments] = $parser->parse($argv);
-            $args = new Arguments(
-                $arguments,
-                $options,
-                $parser->argumentNames()
-            );
-        } catch (ConsoleException $e) {
-            $io->err('Error: ' . $e->getMessage());
-
-            return static::CODE_ERROR;
+        $args = $this->parseArgv($argv, $io, $parser);
+        if (!$args instanceof Arguments) {
+            return $args;
         }
+
         $this->setOutputLevel($args, $io);
 
         if ($args->getOption('help')) {
@@ -177,6 +170,31 @@ abstract class BaseCommand implements CommandInterface
         }
 
         return $this->execute($args, $io);
+    }
+
+    /**
+     * Parse arguments from the CLI environment into \Cake\Console\Arguments instance.
+     *
+     * @param array $argv Arguments from the CLI environment.
+     * @param \Cake\Console\ConsoleIo $io The console io.
+     * @param \Cake\Console\ConsoleOptionParser $parser The options parser.
+     * @return int|\Cake\Console\Arguments
+     */
+    protected function parseArgv(array $argv, ConsoleIo $io, ConsoleOptionParser $parser)
+    {
+        try {
+            [$options, $arguments] = $parser->parse($argv);
+
+            return new Arguments(
+                $arguments,
+                $options,
+                $parser->argumentNames()
+            );
+        } catch (ConsoleException $e) {
+            $io->err('Error: ' . $e->getMessage());
+
+            return static::CODE_ERROR;
+        }
     }
 
     /**

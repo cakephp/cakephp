@@ -57,7 +57,7 @@ class CompletionCommandTest extends TestCase
     public function testStartup(): void
     {
         $this->exec('completion');
-        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertExitCode(Command::CODE_SUCCESS);
 
         $this->assertOutputNotContains('Welcome to CakePHP');
     }

@@ -48,6 +48,20 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function parseArgv(array $argv, ConsoleIo $io, ConsoleOptionParser $parser)
+    {
+        $args = parent::parseArgv($argv, $io, $parser);
+
+        if (!$args instanceof Arguments) {
+            return static::CODE_SUCCESS;
+        }
+
+        return $args;
+    }
+
+    /**
      * Gets the option parser instance and configures it.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
