@@ -248,7 +248,7 @@ class RequestHandlerComponent extends Component
      *
      * @param array<string>|string|null $type Can be null (or no parameter), a string type name, or an
      *   array of types
-     * @return array|bool|string|null If null or no parameter is passed, returns an array of content
+     * @return array|string|bool|null If null or no parameter is passed, returns an array of content
      *   types the client accepts. If a string is passed, returns true
      *   if the client accepts it. If an array is passed, returns true
      *   if the client accepts one or more elements in the array.

@@ -35,7 +35,7 @@ class InvalidParameterException extends CakeException
     /**
      * Switches message template based on `template` key in message array.
      *
-     * @param string|array $message Either the string of the error message, or an array of attributes
+     * @param array|string $message Either the string of the error message, or an array of attributes
      *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
      * @param int|null $code The error code
      * @param \Throwable|null $previous the previous exception.

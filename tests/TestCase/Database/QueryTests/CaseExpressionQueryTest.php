@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
 
 class CaseExpressionQueryTest extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         ArticlesFixture::class,
         CommentsFixture::class,
         ProductsFixture::class,

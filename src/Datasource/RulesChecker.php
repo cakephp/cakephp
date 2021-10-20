@@ -307,7 +307,7 @@ class RulesChecker
      * Utility method for decorating any callable so that if it returns false, the correct
      * property in the entity is marked as invalid.
      *
-     * @param callable|\Cake\Datasource\RuleInvoker $rule The rule to decorate
+     * @param \Cake\Datasource\RuleInvoker|callable $rule The rule to decorate
      * @param array|string|null $name The alias for a rule or an array of options
      * @param array<string, mixed> $options The options containing the error message and field.
      * @return \Cake\Datasource\RuleInvoker

@@ -31,7 +31,7 @@ interface WhenThenExpressionInterface extends ExpressionInterface
      * * `then` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `THEN` result value.
      *
      * @param string $clause The name of the clause to obtain.
-     * @return \Cake\Database\ExpressionInterface|object|scalar|null
+     * @return \Cake\Database\ExpressionInterface|scalar|object|null
      * @throws \InvalidArgumentException In case the given clause name is invalid.
      */
     public function clause(string $clause);
@@ -39,7 +39,7 @@ interface WhenThenExpressionInterface extends ExpressionInterface
     /**
      * Sets the `WHEN` value.
      *
-     * @param \Cake\Database\ExpressionInterface|array|object|scalar $when The `WHEN` value. When using an array of
+     * @param \Cake\Database\ExpressionInterface|scalar|object|array $when The `WHEN` value. When using an array of
      *  conditions, it must be compatible with `\Cake\Database\Query::where()`. Note that this argument is _not_
      *  completely safe for use with user data, as a user supplied array would allow for raw SQL to slip in! If you
      *  plan to use user data, either pass a single type for the `$type` argument (which forces the `$when` value to be
@@ -62,7 +62,7 @@ interface WhenThenExpressionInterface extends ExpressionInterface
     /**
      * Sets the `THEN` result value.
      *
-     * @param \Cake\Database\ExpressionInterface|object|scalar|null $result The result value.
+     * @param \Cake\Database\ExpressionInterface|scalar|object|null $result The result value.
      * @param string|null $type The result type. If no type is provided, the type will be inferred from the given
      *  result value.
      * @return $this

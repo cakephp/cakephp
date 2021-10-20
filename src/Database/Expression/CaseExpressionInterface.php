@@ -36,7 +36,7 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * * `else` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `ELSE` result value.
      *
      * @param string $clause The name of the clause to obtain.
-     * @return array<\Cake\Database\Expression\WhenThenExpressionInterface>|\Cake\Database\ExpressionInterface|object|scalar|null
+     * @return \Cake\Database\ExpressionInterface|scalar|object|array<\Cake\Database\Expression\WhenThenExpressionInterface>|null
      * @throws \InvalidArgumentException In case the given clause name is invalid.
      */
     public function clause(string $clause);
@@ -166,7 +166,7 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      *      ->bind(':userData', $userData, 'integer')
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|object|scalar $when The `WHEN` value. When using an
+     * @param \Cake\Database\ExpressionInterface|scalar|\Closure|object|array $when The `WHEN` value. When using an
      *  array of conditions, it must be compatible with `\Cake\Database\Query::where()`. Note that this argument is
      *  _not_ completely safe for use with user data, as a user supplied array would allow for raw SQL to slip in! If
      *  you plan to use user data, either pass a single type for the `$type` argument (which forces the `$when` value to
@@ -231,7 +231,7 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      *     // ...
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|object|scalar|null $result The result value.
+     * @param \Cake\Database\ExpressionInterface|scalar|object|null $result The result value.
      * @param string|null $type The result type. If no type is provided, the type will be tried to be inferred from the
      *  value.
      * @return $this
@@ -244,7 +244,7 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
     /**
      * Sets the `ELSE` result value.
      *
-     * @param \Cake\Database\ExpressionInterface|object|scalar|null $result The result value.
+     * @param \Cake\Database\ExpressionInterface|scalar|object|null $result The result value.
      * @param string|null $type The result type. If no type is provided, the type will be tried to be inferred from the
      *  value.
      * @return $this
@@ -285,7 +285,7 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      * Sets the type map to use when using an array of conditions
      * for the `WHEN` value.
      *
-     * @param array|\Cake\Database\TypeMap $typeMap Either an array that is used to create a new
+     * @param \Cake\Database\TypeMap|array $typeMap Either an array that is used to create a new
      *  `\Cake\Database\TypeMap` instance, or an instance of `\Cake\Database\TypeMap`.
      * @return $this
      */

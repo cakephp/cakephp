@@ -997,7 +997,7 @@ class BelongsToMany extends Association
      * Any string expressions, or expression objects will
      * also be returned in this list.
      *
-     * @return array|\Closure|null Generally an array. If the conditions
+     * @return \Closure|array|null Generally an array. If the conditions
      *   are not an array, the association conditions will be
      *   returned unmodified.
      */
