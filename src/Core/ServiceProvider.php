@@ -55,7 +55,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
             $message = sprintf(
                 'Unexpected container type. Expected `%s` got `%s` instead.',
                 ContainerInterface::class,
-                getTypeName($container)
+                get_debug_type($container)
             );
             throw new RuntimeException($message);
         }

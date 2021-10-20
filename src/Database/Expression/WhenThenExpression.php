@@ -113,7 +113,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
                 'The `$when` argument must be either a non-empty array, a scalar value, an object, ' .
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
-                is_array($when) ? '[]' : getTypeName($when)
+                is_array($when) ? '[]' : get_debug_type($when)
             ));
         }
 
@@ -124,7 +124,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
         ) {
             throw new InvalidArgumentException(sprintf(
                 'The `$type` argument must be either an array, a string, or `null`, `%s` given.',
-                getTypeName($type)
+                get_debug_type($type)
             ));
         }
 
@@ -136,7 +136,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'When using an array for the `$when` argument, the `$type` argument must be an ' .
                     'array too, `%s` given.',
-                    getTypeName($type)
+                    get_debug_type($type)
                 ));
             }
 
@@ -158,7 +158,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'When using a non-array value for the `$when` argument, the `$type` argument must ' .
                     'be a string, `%s` given.',
-                    getTypeName($type)
+                    get_debug_type($type)
                 ));
             }
 
@@ -190,7 +190,7 @@ class WhenThenExpression implements WhenThenExpressionInterface
                 'The `$result` argument must be either `null`, a scalar value, an object, ' .
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
-                getTypeName($result)
+                get_debug_type($result)
             ));
         }
 

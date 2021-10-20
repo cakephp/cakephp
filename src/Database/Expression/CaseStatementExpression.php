@@ -130,7 +130,7 @@ class CaseStatementExpression implements CaseExpressionInterface
                     'The `$value` argument must be either `null`, a scalar value, an object, ' .
                     'or an instance of `\%s`, `%s` given.',
                     ExpressionInterface::class,
-                    getTypeName($value)
+                    get_debug_type($value)
                 ));
             }
 
@@ -167,7 +167,7 @@ class CaseStatementExpression implements CaseExpressionInterface
                 throw new LogicException(sprintf(
                     '`when()` callables must return an instance of `\%s`, `%s` given.',
                     WhenThenExpressionInterface::class,
-                    getTypeName($when)
+                    get_debug_type($when)
                 ));
             }
         }
@@ -225,7 +225,7 @@ class CaseStatementExpression implements CaseExpressionInterface
                 'The `$result` argument must be either `null`, a scalar value, an object, ' .
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
-                getTypeName($result)
+                get_debug_type($result)
             ));
         }
 

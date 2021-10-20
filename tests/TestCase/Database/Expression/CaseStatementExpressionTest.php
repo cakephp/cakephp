@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Chronos\Chronos;
 use Cake\Chronos\Date as ChronosDate;
-use Cake\Chronos\MutableDate as ChronosMutableDate;
 use Cake\Database\Expression\CaseStatementExpression;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -30,9 +29,7 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\Date;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\Test\test_app\TestApp\Database\Expression\CustomWhenThenExpression;
 use Cake\Test\test_app\TestApp\Stub\CaseStatementExpressionStub;
 use Cake\Test\test_app\TestApp\Stub\WhenThenExpressionStub;
@@ -1209,7 +1206,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             '`when()` callables must return an instance of ' .
-            '`\Cake\Database\Expression\WhenThenExpressionInterface`, `NULL` given.'
+            '`\Cake\Database\Expression\WhenThenExpressionInterface`, `null` given.'
         );
 
         $this->deprecated(function () {
@@ -1362,31 +1359,23 @@ class CaseStatementExpressionTest extends TestCase
 
     public function validCaseValuesDataProvider(): array
     {
-        $values = [];
-        $this->deprecated(function () use (&$values) {
-            $values = [
-                [null, 'NULL', null],
-                ['0', null, 'string'],
-                [0, null, 'integer'],
-                [0.0, null, 'float'],
-                ['foo', null, 'string'],
-                [true, null, 'boolean'],
-                [Date::now(), null, 'date'],
-                [FrozenDate::now(), null, 'date'],
-                [ChronosDate::now(), null, 'date'],
-                [ChronosMutableDate::now(), null, 'date'],
-                [Time::now(), null, 'datetime'],
-                [FrozenTime::now(), null, 'datetime'],
-                [Chronos::now(), null, 'datetime'],
-                [new IdentifierExpression('Table.column'), 'Table.column', null],
-                [new QueryExpression('Table.column'), 'Table.column', null],
-                [ConnectionManager::get('test')->newQuery()->select('a'), '(SELECT a)', null],
-                [new TestObjectWithToString(), null, 'string'],
-                [new stdClass(), null, null],
-            ];
-        });
-
-        return $values;
+        return [
+            [null, 'NULL', null],
+            ['0', null, 'string'],
+            [0, null, 'integer'],
+            [0.0, null, 'float'],
+            ['foo', null, 'string'],
+            [true, null, 'boolean'],
+            [Date::now(), null, 'date'],
+            [ChronosDate::now(), null, 'date'],
+            [DateTime::now(), null, 'datetime'],
+            [Chronos::now(), null, 'datetime'],
+            [new IdentifierExpression('Table.column'), 'Table.column', null],
+            [new QueryExpression('Table.column'), 'Table.column', null],
+            [ConnectionManager::get('test')->newQuery()->select('a'), '(SELECT a)', null],
+            [new TestObjectWithToString(), null, 'string'],
+            [new stdClass(), null, null],
+        ];
     }
 
     /**
@@ -1456,104 +1445,96 @@ class CaseStatementExpressionTest extends TestCase
 
     public function validWhenValuesSimpleCaseDataProvider(): array
     {
-        $values = [];
-        $this->deprecated(function () use (&$values) {
-            $values = [
-                ['0', null, 'string'],
-                [0, null, 'integer'],
-                [0.0, null, 'float'],
-                ['foo', null, 'string'],
-                [true, null, 'boolean'],
-                [new stdClass(), null, null],
-                [new TestObjectWithToString(), null, 'string'],
-                [Date::now(), null, 'date'],
-                [FrozenDate::now(), null, 'date'],
-                [ChronosDate::now(), null, 'date'],
-                [ChronosMutableDate::now(), null, 'date'],
-                [Time::now(), null, 'datetime'],
-                [FrozenTime::now(), null, 'datetime'],
-                [Chronos::now(), null, 'datetime'],
+        return [
+            ['0', null, 'string'],
+            [0, null, 'integer'],
+            [0.0, null, 'float'],
+            ['foo', null, 'string'],
+            [true, null, 'boolean'],
+            [new stdClass(), null, null],
+            [new TestObjectWithToString(), null, 'string'],
+            [Date::now(), null, 'date'],
+            [ChronosDate::now(), null, 'date'],
+            [DateTime::now(), null, 'datetime'],
+            [Chronos::now(), null, 'datetime'],
+            [
+                new IdentifierExpression('Table.column'),
+                'CASE :c0 WHEN Table.column THEN :c1 ELSE NULL END',
                 [
-                    new IdentifierExpression('Table.column'),
-                    'CASE :c0 WHEN Table.column THEN :c1 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => true,
-                            'type' => 'boolean',
-                            'placeholder' => 'c0',
-                        ],
-                        ':c1' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c1',
-                        ],
+                    ':c0' => [
+                        'value' => true,
+                        'type' => 'boolean',
+                        'placeholder' => 'c0',
+                    ],
+                    ':c1' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c1',
                     ],
                 ],
+            ],
+            [
+                new QueryExpression('Table.column'),
+                'CASE :c0 WHEN Table.column THEN :c1 ELSE NULL END',
                 [
-                    new QueryExpression('Table.column'),
-                    'CASE :c0 WHEN Table.column THEN :c1 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => true,
-                            'type' => 'boolean',
-                            'placeholder' => 'c0',
-                        ],
-                        ':c1' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c1',
-                        ],
+                    ':c0' => [
+                        'value' => true,
+                        'type' => 'boolean',
+                        'placeholder' => 'c0',
+                    ],
+                    ':c1' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c1',
                     ],
                 ],
+            ],
+            [
+                ConnectionManager::get('test')->newQuery()->select('a'),
+                'CASE :c0 WHEN (SELECT a) THEN :c1 ELSE NULL END',
                 [
-                    ConnectionManager::get('test')->newQuery()->select('a'),
-                    'CASE :c0 WHEN (SELECT a) THEN :c1 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => true,
-                            'type' => 'boolean',
-                            'placeholder' => 'c0',
-                        ],
-                        ':c1' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c1',
-                        ],
+                    ':c0' => [
+                        'value' => true,
+                        'type' => 'boolean',
+                        'placeholder' => 'c0',
+                    ],
+                    ':c1' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c1',
                     ],
                 ],
+            ],
+            [
                 [
-                    [
-                        'Table.column_a' => 1,
-                        'Table.column_b' => 'foo',
+                    'Table.column_a' => 1,
+                    'Table.column_b' => 'foo',
+                ],
+                'CASE :c0 WHEN (Table.column_a = :c1 AND Table.column_b = :c2) THEN :c3 ELSE NULL END',
+                [
+                    ':c0' => [
+                        'value' => true,
+                        'type' => 'boolean',
+                        'placeholder' => 'c0',
                     ],
-                    'CASE :c0 WHEN (Table.column_a = :c1 AND Table.column_b = :c2) THEN :c3 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => true,
-                            'type' => 'boolean',
-                            'placeholder' => 'c0',
-                        ],
-                        ':c1' => [
-                            'value' => 1,
-                            'type' => 'integer',
-                            'placeholder' => 'c1',
-                        ],
-                        ':c2' => [
-                            'value' => 'foo',
-                            'type' => 'string',
-                            'placeholder' => 'c2',
-                        ],
-                        ':c3' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c3',
-                        ],
+                    ':c1' => [
+                        'value' => 1,
+                        'type' => 'integer',
+                        'placeholder' => 'c1',
+                    ],
+                    ':c2' => [
+                        'value' => 'foo',
+                        'type' => 'string',
+                        'placeholder' => 'c2',
+                    ],
+                    ':c3' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c3',
                     ],
                 ],
-            ];
-        });
-
-        return $values;
+            ],
+        ];
     }
 
     /**
@@ -1606,84 +1587,76 @@ class CaseStatementExpressionTest extends TestCase
 
     public function validWhenValuesSearchedCaseDataProvider(): array
     {
-        $values = [];
-        $this->deprecated(function () use (&$values) {
-            $values = [
-                ['0', null, 'string'],
-                [0, null, 'integer'],
-                [0.0, null, 'float'],
-                ['foo', null, 'string'],
-                [true, null, 'boolean'],
-                [new stdClass(), null, null],
-                [new TestObjectWithToString(), null, 'string'],
-                [Date::now(), null, 'date'],
-                [FrozenDate::now(), null, 'date'],
-                [ChronosDate::now(), null, 'date'],
-                [ChronosMutableDate::now(), null, 'date'],
-                [Time::now(), null, 'datetime'],
-                [FrozenTime::now(), null, 'datetime'],
-                [Chronos::now(), null, 'datetime'],
+        return [
+            ['0', null, 'string'],
+            [0, null, 'integer'],
+            [0.0, null, 'float'],
+            ['foo', null, 'string'],
+            [true, null, 'boolean'],
+            [new stdClass(), null, null],
+            [new TestObjectWithToString(), null, 'string'],
+            [Date::now(), null, 'date'],
+            [ChronosDate::now(), null, 'date'],
+            [DateTime::now(), null, 'datetime'],
+            [Chronos::now(), null, 'datetime'],
+            [
+                new IdentifierExpression('Table.column'),
+                'CASE WHEN Table.column THEN :c0 ELSE NULL END',
                 [
-                    new IdentifierExpression('Table.column'),
-                    'CASE WHEN Table.column THEN :c0 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c0',
-                        ],
+                    ':c0' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c0',
                     ],
                 ],
+            ],
+            [
+                new QueryExpression('Table.column'),
+                'CASE WHEN Table.column THEN :c0 ELSE NULL END',
                 [
-                    new QueryExpression('Table.column'),
-                    'CASE WHEN Table.column THEN :c0 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c0',
-                        ],
+                    ':c0' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c0',
                     ],
                 ],
+            ],
+            [
+                ConnectionManager::get('test')->newQuery()->select('a'),
+                'CASE WHEN (SELECT a) THEN :c0 ELSE NULL END',
                 [
-                    ConnectionManager::get('test')->newQuery()->select('a'),
-                    'CASE WHEN (SELECT a) THEN :c0 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c0',
-                        ],
+                    ':c0' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c0',
                     ],
                 ],
+            ],
+            [
                 [
-                    [
-                        'Table.column_a' => 1,
-                        'Table.column_b' => 'foo',
+                    'Table.column_a' => 1,
+                    'Table.column_b' => 'foo',
+                ],
+                'CASE WHEN (Table.column_a = :c0 AND Table.column_b = :c1) THEN :c2 ELSE NULL END',
+                [
+                    ':c0' => [
+                        'value' => 1,
+                        'type' => 'integer',
+                        'placeholder' => 'c0',
                     ],
-                    'CASE WHEN (Table.column_a = :c0 AND Table.column_b = :c1) THEN :c2 ELSE NULL END',
-                    [
-                        ':c0' => [
-                            'value' => 1,
-                            'type' => 'integer',
-                            'placeholder' => 'c0',
-                        ],
-                        ':c1' => [
-                            'value' => 'foo',
-                            'type' => 'string',
-                            'placeholder' => 'c1',
-                        ],
-                        ':c2' => [
-                            'value' => 2,
-                            'type' => 'integer',
-                            'placeholder' => 'c2',
-                        ],
+                    ':c1' => [
+                        'value' => 'foo',
+                        'type' => 'string',
+                        'placeholder' => 'c1',
+                    ],
+                    ':c2' => [
+                        'value' => 2,
+                        'type' => 'integer',
+                        'placeholder' => 'c2',
                     ],
                 ],
-            ];
-        });
-
-        return $values;
+            ],
+        ];
     }
 
     /**
@@ -1731,31 +1704,23 @@ class CaseStatementExpressionTest extends TestCase
 
     public function validThenValuesDataProvider(): array
     {
-        $values = [];
-        $this->deprecated(function () use (&$values) {
-            $values = [
-                [null, 'NULL', null],
-                ['0', null, 'string'],
-                [0, null, 'integer'],
-                [0.0, null, 'float'],
-                ['foo', null, 'string'],
-                [true, null, 'boolean'],
-                [Date::now(), null, 'date'],
-                [FrozenDate::now(), null, 'date'],
-                [ChronosDate::now(), null, 'date'],
-                [ChronosMutableDate::now(), null, 'date'],
-                [Time::now(), null, 'datetime'],
-                [FrozenTime::now(), null, 'datetime'],
-                [Chronos::now(), null, 'datetime'],
-                [new IdentifierExpression('Table.column'), 'Table.column', null],
-                [new QueryExpression('Table.column'), 'Table.column', null],
-                [ConnectionManager::get('test')->newQuery()->select('a'), '(SELECT a)', null],
-                [new TestObjectWithToString(), null, 'string'],
-                [new stdClass(), null, null],
-            ];
-        });
-
-        return $values;
+        return [
+            [null, 'NULL', null],
+            ['0', null, 'string'],
+            [0, null, 'integer'],
+            [0.0, null, 'float'],
+            ['foo', null, 'string'],
+            [true, null, 'boolean'],
+            [Date::now(), null, 'date'],
+            [ChronosDate::now(), null, 'date'],
+            [DateTime::now(), null, 'datetime'],
+            [Chronos::now(), null, 'datetime'],
+            [new IdentifierExpression('Table.column'), 'Table.column', null],
+            [new QueryExpression('Table.column'), 'Table.column', null],
+            [ConnectionManager::get('test')->newQuery()->select('a'), '(SELECT a)', null],
+            [new TestObjectWithToString(), null, 'string'],
+            [new stdClass(), null, null],
+        ];
     }
 
     /**
@@ -1815,31 +1780,23 @@ class CaseStatementExpressionTest extends TestCase
 
     public function validElseValuesDataProvider(): array
     {
-        $values = [];
-        $this->deprecated(function () use (&$values) {
-            $values = [
-                [null, 'NULL', null],
-                ['0', null, 'string'],
-                [0, null, 'integer'],
-                [0.0, null, 'float'],
-                ['foo', null, 'string'],
-                [true, null, 'boolean'],
-                [Date::now(), null, 'date'],
-                [FrozenDate::now(), null, 'date'],
-                [ChronosDate::now(), null, 'date'],
-                [ChronosMutableDate::now(), null, 'date'],
-                [Time::now(), null, 'datetime'],
-                [FrozenTime::now(), null, 'datetime'],
-                [Chronos::now(), null, 'datetime'],
-                [new IdentifierExpression('Table.column'), 'Table.column', null],
-                [new QueryExpression('Table.column'), 'Table.column', null],
-                [ConnectionManager::get('test')->newQuery()->select('a'), '(SELECT a)', null],
-                [new TestObjectWithToString(), null, 'string'],
-                [new stdClass(), null, null],
-            ];
-        });
-
-        return $values;
+        return [
+            [null, 'NULL', null],
+            ['0', null, 'string'],
+            [0, null, 'integer'],
+            [0.0, null, 'float'],
+            ['foo', null, 'string'],
+            [true, null, 'boolean'],
+            [Date::now(), null, 'date'],
+            [ChronosDate::now(), null, 'date'],
+            [DateTime::now(), null, 'datetime'],
+            [Chronos::now(), null, 'datetime'],
+            [new IdentifierExpression('Table.column'), 'Table.column', null],
+            [new QueryExpression('Table.column'), 'Table.column', null],
+            [ConnectionManager::get('test')->newQuery()->select('a'), '(SELECT a)', null],
+            [new TestObjectWithToString(), null, 'string'],
+            [new stdClass(), null, null],
+        ];
     }
 
     /**
@@ -1950,7 +1907,7 @@ class CaseStatementExpressionTest extends TestCase
         fclose($res);
 
         return [
-            [null, 'NULL'],
+            [null, 'null'],
             [[], '[]'],
             [$res, 'resource (closed)'],
         ];
@@ -1980,8 +1937,8 @@ class CaseStatementExpressionTest extends TestCase
         fclose($res);
 
         return [
-            [1, 'integer'],
-            [1.0, 'double'],
+            [1, 'int'],
+            [1.0, 'float'],
             [new stdClass(), 'stdClass'],
             [
                 function () {
