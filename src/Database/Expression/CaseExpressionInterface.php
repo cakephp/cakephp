@@ -289,7 +289,7 @@ interface CaseExpressionInterface extends ExpressionInterface, TypedResultInterf
      *  `\Cake\Database\TypeMap` instance, or an instance of `\Cake\Database\TypeMap`.
      * @return $this
      */
-    public function setTypeMap($typeMap);
+    public function setTypeMap(TypeMap|array $typeMap);
 
     /**
      * Returns the type map.
