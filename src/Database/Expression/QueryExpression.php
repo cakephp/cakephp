@@ -343,7 +343,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Cake\Database\ExpressionInterface|array|string|float|int|bool|null $values Associative array of values to be associated with the.
      * conditions passed in $conditions. If there are more $values than $conditions,
      * the last $value is used as the `ELSE` value.
-     * @param array<string, string> $types Associative array of types to be associated with the values
+     * @param array<string> $types Associative array of types to be associated with the values
      * passed in $values
      * @return $this
      */
@@ -352,7 +352,41 @@ class QueryExpression implements ExpressionInterface, Countable
         ExpressionInterface|array|string|float|int|bool|null $values = [],
         array|string $types = []
     ) {
+        deprecationWarning('4.3.0', 'QueryExpression::addCase() is deprecated, use case() instead.');
+
         return $this->add(new CaseExpression($conditions, $values, $types));
+    }
+
+    /**
+     * Returns a new case expression object.
+     *
+     * When a value is set, the syntax generated is
+     * `CASE case_value WHEN when_value ... END` (simple case),
+     * where the `when_value`'s are compared against the
+     * `case_value`.
+     *
+     * When no value is set, the syntax generated is
+     * `CASE WHEN when_conditions ... END` (searched case),
+     * where the conditions hold the comparisons.
+     *
+     * Note that `null` is a valid case value, and thus should
+     * only be passed if you actually want to create the simple
+     * case expression variant!
+     *
+     * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
+     * @param string|null $type The case value type. If no type is provided, the type will be tried to be inferred
+     *  from the value.
+     * @return \Cake\Database\Expression\CaseExpressionInterface
+     */
+    public function case($value = null, ?string $type = null): CaseExpressionInterface
+    {
+        if (func_num_args() > 0) {
+            $expression = new CaseStatementExpression($value, $type);
+        } else {
+            $expression = new CaseStatementExpression();
+        }
+
+        return $expression->setTypeMap($this->getTypeMap());
     }
 
     /**

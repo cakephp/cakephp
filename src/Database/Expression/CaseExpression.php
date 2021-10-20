@@ -59,7 +59,7 @@ class CaseExpression implements ExpressionInterface
      * @param \Cake\Database\ExpressionInterface|array|string|float|int|bool|null $values Associative array of values to be associated with the.
      * conditions passed in $conditions. If there are more $values than $conditions,
      * the last $value is used as the `ELSE` value.
-     * @param array<string, string> $types Associative array of types to be associated with the values
+     * @param array<string> $types Associative array of types to be associated with the values
      * passed in $values
      */
     public function __construct(
@@ -86,7 +86,7 @@ class CaseExpression implements ExpressionInterface
      * @param \Cake\Database\ExpressionInterface|array $conditions Must be a ExpressionInterface instance,
      *   or an array of ExpressionInterface instances.
      * @param \Cake\Database\ExpressionInterface|array|string|float|int|bool|null $values Associative array of values of each condition.
-     * @param array<string, string>|string $types Associative array of types to be associated with the values.
+     * @param array<string>|string $types Associative array of types to be associated with the values.
      * @return $this
      */
     public function add(
@@ -114,8 +114,8 @@ class CaseExpression implements ExpressionInterface
      * If no matching true value, then it is defaulted to '1'.
      *
      * @param array $conditions Array of ExpressionInterface instances.
-     * @param array<string, mixed> $values Associative array of values of each condition
-     * @param array<string, string>|array<string> $types Associative array of types to be associated with the values
+     * @param array<mixed> $values Associative array of values of each condition
+     * @param array<string> $types Associative array of types to be associated with the values
      * @return void
      */
     protected function _addExpressions(array $conditions, array $values, array $types): void
@@ -144,7 +144,9 @@ class CaseExpression implements ExpressionInterface
             }
 
             if ($value === 'identifier') {
-                $value = new IdentifierExpression($keyValues[$k]);
+                /** @var string $identifier */
+                $identifier = $keyValues[$k];
+                $value = new IdentifierExpression($identifier);
                 $this->_values[] = $value;
                 continue;
             }

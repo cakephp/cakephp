@@ -265,6 +265,7 @@ class Sqlserver extends Driver
     {
         switch ($feature) {
             case static::FEATURE_CTE:
+            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
             case static::FEATURE_WINDOW:
                 return true;
 

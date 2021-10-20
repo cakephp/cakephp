@@ -15,10 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Console\ConsoleIo;
-use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\ConnectionHelper;
 use InvalidArgumentException;
 
 /**
@@ -34,57 +33,35 @@ use InvalidArgumentException;
  */
 class SchemaLoader
 {
-    use InstanceConfigTrait;
-
     /**
-     * @var \Cake\Console\ConsoleIo
+     * @var \Cake\TestSuite\ConnectionHelper
      */
-    protected ConsoleIo $io;
-
-    /**
-     * @var \Cake\TestSuite\Fixture\SchemaCleaner
-     */
-    protected SchemaCleaner $schemaCleaner;
-
-    /**
-     * @var array<string, mixed>
-     */
-    protected array $_defaultConfig = [
-        'dropTables' => true,
-        'outputLevel' => ConsoleIo::QUIET,
-    ];
+    protected $helper;
 
     /**
      * Constructor.
-     *
-     * @param array<string, mixed> $config Config settings
      */
-    public function __construct(array $config = [])
+    public function __construct()
     {
-        $this->setConfig($config);
-
-        $this->io = new ConsoleIo();
-        $this->io->level($this->getConfig('outputLevel'));
-
-        $this->schemaCleaner = new SchemaCleaner($this->io);
+        $this->helper = new ConnectionHelper();
     }
 
     /**
      * Load and apply schema sql file, or an array of files.
      *
-     * @param array<string>|string $files Schema files to load
+     * @param array<string>|string $paths Schema files to load
      * @param string $connectionName Connection name
      * @param bool $dropTables Drop all tables prior to loading schema files
      * @param bool $truncateTables Truncate all tables after loading schema files
      * @return void
      */
     public function loadSqlFiles(
-        array|string $files,
-        string $connectionName,
+        array|string $paths,
+        string $connectionName = 'test',
         bool $dropTables = true,
-        bool $truncateTables = true
+        bool $truncateTables = false
     ): void {
-        $files = (array)$files;
+        $files = (array)$paths;
 
         // Don't create schema if we are in a phpunit separate process test method.
         if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
@@ -92,7 +69,7 @@ class SchemaLoader
         }
 
         if ($dropTables) {
-            $this->schemaCleaner->dropTables($connectionName);
+            $this->helper->dropTables($connectionName);
         }
 
         /** @var \Cake\Database\Connection $connection */
@@ -110,7 +87,7 @@ class SchemaLoader
         }
 
         if ($truncateTables) {
-            $this->schemaCleaner->truncateTables($connectionName);
+            $this->helper->truncateTables($connectionName);
         }
     }
 
@@ -122,14 +99,14 @@ class SchemaLoader
      * @return void
      * @internal
      */
-    public function loadInternalFile(string $file, string $connectionName): void
+    public function loadInternalFile(string $file, string $connectionName = 'test'): void
     {
         // Don't reload schema when we are in a separate process state.
         if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
             return;
         }
 
-        $this->schemaCleaner->dropTables($connectionName);
+        $this->helper->dropTables($connectionName);
 
         $tables = include $file;
 

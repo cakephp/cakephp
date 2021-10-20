@@ -200,4 +200,65 @@ class QueryExpressionTest extends TestCase
             $expr->sql(new ValueBinder())
         );
     }
+
+    /**
+     * Test deprecated adding of case statement.
+     */
+    public function testDeprecatedAddCaseStatement(): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('QueryExpression::addCase() is deprecated, use case() instead.');
+
+        (new QueryExpression())->addCase([]);
+    }
+
+    public function testCaseWithoutValue(): void
+    {
+        $expression = (new QueryExpression())
+            ->case()
+            ->when(1)
+            ->then(2);
+
+        $this->assertEqualsSql(
+            'CASE WHEN :c0 THEN :c1 ELSE NULL END',
+            $expression->sql(new ValueBinder())
+        );
+    }
+
+    public function testCaseWithNullValue(): void
+    {
+        $expression = (new QueryExpression())
+            ->case(null)
+            ->when(1)
+            ->then('Yes');
+
+        $this->assertEqualsSql(
+            'CASE NULL WHEN :c0 THEN :c1 ELSE NULL END',
+            $expression->sql(new ValueBinder())
+        );
+    }
+
+    public function testCaseWithValueAndType(): void
+    {
+        $expression = (new QueryExpression())
+            ->case('1', 'integer')
+            ->when(1)
+            ->then('Yes');
+
+        $valueBinder = new ValueBinder();
+
+        $this->assertEqualsSql(
+            'CASE :c0 WHEN :c1 THEN :c2 ELSE NULL END',
+            $expression->sql($valueBinder)
+        );
+
+        $this->assertSame(
+            [
+                'value' => '1',
+                'type' => 'integer',
+                'placeholder' => 'c0',
+            ],
+            $valueBinder->bindings()[':c0']
+        );
+    }
 }

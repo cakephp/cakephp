@@ -1872,16 +1872,18 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $query = new Query($this->connection);
-        $query->select(['id'])
-            ->from('articles')
-            ->orderAsc(function (QueryExpression $exp, Query $query) {
-                return $exp->addCase(
-                    [$query->newExpr()->add(['author_id' => 1])],
-                    [1, $query->identifier('id')],
-                    ['integer', null]
-                );
-            })
-            ->orderAsc('id');
+        $this->deprecated(function () use ($query) {
+            $query->select(['id'])
+                ->from('articles')
+                ->orderAsc(function (QueryExpression $exp, Query $query) {
+                    return $exp->addCase(
+                        [$query->newExpr()->add(['author_id' => 1])],
+                        [1, $query->identifier('id')],
+                        ['integer', null]
+                    );
+                })
+                ->orderAsc('id');
+        });
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1934,16 +1936,18 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $query = new Query($this->connection);
-        $query->select(['id'])
-            ->from('articles')
-            ->orderDesc(function (QueryExpression $exp, Query $query) {
-                return $exp->addCase(
-                    [$query->newExpr()->add(['author_id' => 1])],
-                    [1, $query->identifier('id')],
-                    ['integer', null]
-                );
-            })
-            ->orderDesc('id');
+        $this->deprecated(function () use ($query) {
+            $query->select(['id'])
+                ->from('articles')
+                ->orderDesc(function (QueryExpression $exp, Query $query) {
+                    return $exp->addCase(
+                        [$query->newExpr()->add(['author_id' => 1])],
+                        [1, $query->identifier('id')],
+                        ['integer', null]
+                    );
+                })
+                ->orderDesc('id');
+        });
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -3475,7 +3479,7 @@ class QueryTest extends TestCase
         $this->assertWithinRange(
             date('U'),
             (new DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
-            5
+            10
         );
 
         $query = new Query($this->connection);
@@ -4096,24 +4100,28 @@ class QueryTest extends TestCase
     public function testSqlCaseStatement(): void
     {
         $query = new Query($this->connection);
-        $publishedCase = $query
-            ->newExpr()
-            ->addCase(
-                $query
+        $publishedCase = null;
+        $notPublishedCase = null;
+        $this->deprecated(function () use ($query, &$publishedCase, &$notPublishedCase) {
+            $publishedCase = $query
                 ->newExpr()
-                ->add(['published' => 'Y']),
-                1,
-                'integer'
-            );
-        $notPublishedCase = $query
-            ->newExpr()
-            ->addCase(
-                $query
-                    ->newExpr()
-                    ->add(['published' => 'N']),
-                1,
-                'integer'
-            );
+                ->addCase(
+                    $query
+                        ->newExpr()
+                        ->add(['published' => 'Y']),
+                    1,
+                    'integer'
+                );
+            $notPublishedCase = $query
+                ->newExpr()
+                ->addCase(
+                    $query
+                        ->newExpr()
+                        ->add(['published' => 'N']),
+                    1,
+                    'integer'
+                );
+        });
 
         // Postgres requires the case statement to be cast to a integer
         if ($this->connection->getDriver() instanceof Postgres) {
@@ -4160,13 +4168,16 @@ class QueryTest extends TestCase
             'Not published',
             'None',
         ];
+        $this->deprecated(function () use ($query, $conditions, $values) {
+            $query
+                ->select([
+                    'id',
+                    'comment',
+                    'status' => $query->newExpr()->addCase($conditions, $values),
+                ])
+                ->from(['comments']);
+        });
         $results = $query
-            ->select([
-                'id',
-                'comment',
-                'status' => $query->newExpr()->addCase($conditions, $values),
-            ])
-            ->from(['comments'])
             ->execute()
             ->fetchAll('assoc');
 
@@ -4747,18 +4758,20 @@ class QueryTest extends TestCase
         $stmt->closeCursor();
 
         $subquery = new Query($connection);
-        $subquery
-            ->select(
-                $subquery->newExpr()->addCase(
-                    [$subquery->newExpr()->add(['a.published' => 'N'])],
-                    [1, 0],
-                    ['integer', 'integer']
+        $this->deprecated(function () use ($subquery) {
+            $subquery
+                ->select(
+                    $subquery->newExpr()->addCase(
+                        [$subquery->newExpr()->add(['a.published' => 'N'])],
+                        [1, 0],
+                        ['integer', 'integer']
+                    )
                 )
-            )
-            ->from(['a' => 'articles'])
-            ->where([
-                'a.id = articles.id',
-            ]);
+                ->from(['a' => 'articles'])
+                ->where([
+                    'a.id = articles.id',
+                ]);
+        });
 
         $query
             ->select(['id'])

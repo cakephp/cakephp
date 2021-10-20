@@ -34,6 +34,13 @@ interface DriverInterface
     public const FEATURE_CTE = 'cte';
 
     /**
+     * Disabling constraints without being in transaction support.
+     *
+     * @var string
+     */
+    public const FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION = 'disable-constraint-without-transaction';
+
+    /**
      * Native JSON data type support.
      *
      * @var string
@@ -53,6 +60,13 @@ interface DriverInterface
      * @var string
      */
     public const FEATURE_SAVEPOINT = 'savepoint';
+
+    /**
+     * Truncate with foreign keys attached support.
+     *
+     * @var string
+     */
+    public const FEATURE_TRUNCATE_WITH_CONSTRAINTS = 'truncate-with-constraints';
 
     /**
      * Window function support (all or partial clauses).

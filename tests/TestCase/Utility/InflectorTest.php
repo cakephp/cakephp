@@ -92,6 +92,10 @@ class InflectorTest extends TestCase
     public function testInflectingSingulars(string $singular, string $plural): void
     {
         $this->assertSame($singular, Inflector::singularize($plural));
+
+        $singular = Inflector::camelize($singular);
+        $plural = Inflector::camelize($plural);
+        $this->assertSame($singular, Inflector::singularize($plural));
     }
 
     /**
@@ -189,6 +193,9 @@ class InflectorTest extends TestCase
             ['chef', 'chefs'],
             ['', ''],
             ['cache', 'caches'],
+            ['lens', 'lenses'],
+            ['species', 'species'],
+            ['animal_species', 'animal_species'],
         ];
     }
 
@@ -219,6 +226,10 @@ class InflectorTest extends TestCase
      */
     public function testInflectingPlurals(string $plural, string $singular): void
     {
+        $this->assertSame($plural, Inflector::pluralize($singular));
+
+        $plural = Inflector::camelize($plural);
+        $singular = Inflector::camelize($singular);
         $this->assertSame($plural, Inflector::pluralize($singular));
     }
 

@@ -650,7 +650,7 @@ class Hash
             }
         }
 
-        return array_filter($data, $callback ?? 'static::_filter');
+        return array_filter($data, $callback ?? [static::class, '_filter']);
     }
 
     /**

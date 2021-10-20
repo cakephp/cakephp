@@ -313,7 +313,7 @@ if (!function_exists('deprecationWarning')) {
 
         static $errors = [];
         $checksum = md5($message);
-        $duplicate = (bool)Configure::read('Error.enableDuplicatedDeprecations', false);
+        $duplicate = (bool)Configure::read('Error.allowDuplicateDeprecations', false);
         if (isset($errors[$checksum]) && !$duplicate) {
             return;
         }

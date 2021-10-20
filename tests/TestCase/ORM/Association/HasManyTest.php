@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
@@ -654,6 +655,53 @@ class HasManyTest extends TestCase
             ->first();
 
         $this->assertCount(2, $authorsAndArticles->get('articles'));
+    }
+
+    /**
+     * Tests using subquery strategy when parent query
+     * that contains limit without order.
+     */
+    public function testSubqueryWithLimit()
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $query = $Authors->find();
+        $result = $query
+            ->contain('Articles')
+            ->first();
+
+        if (in_array($result->name, ['mariano', 'larry'])) {
+            $this->assertNotEmpty($result->articles);
+        } else {
+            $this->assertEmpty($result->articles);
+        }
+    }
+
+    /**
+     * Tests using subquery strategy when parent query
+     * that contains limit with order.
+     */
+    public function testSubqueryWithLimitAndOrder()
+    {
+        $this->skipIf(ConnectionManager::get('test')->getDriver() instanceof Sqlserver, 'Sql Server does not support ORDER BY on field not in GROUP BY');
+
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $query = $Authors->find();
+        $result = $query
+            ->contain('Articles')
+            ->order(['name' => 'ASC'])
+            ->limit(2)
+            ->toArray();
+
+        $this->assertCount(0, $result[0]->articles);
+        $this->assertCount(1, $result[1]->articles);
     }
 
     /**

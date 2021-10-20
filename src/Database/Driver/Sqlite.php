@@ -211,6 +211,9 @@ class Sqlite extends Driver
                     $this->featureVersions[$feature],
                     '>='
                 );
+
+            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
+                return true;
         }
 
         return parent::supports($feature);

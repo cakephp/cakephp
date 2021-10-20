@@ -188,8 +188,12 @@ class Postgres extends Driver
         switch ($feature) {
             case static::FEATURE_CTE:
             case static::FEATURE_JSON:
+            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
             case static::FEATURE_WINDOW:
                 return true;
+
+            case static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION:
+                return false;
         }
 
         return parent::supports($feature);

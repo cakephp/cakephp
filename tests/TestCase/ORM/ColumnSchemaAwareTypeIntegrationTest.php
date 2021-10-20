@@ -11,7 +11,7 @@ use TestApp\Database\Type\ColumnSchemaAwareType;
 class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 {
     protected array $fixtures = [
-        //'core.ColumnSchemaAwareTypeValues',
+        'core.ColumnSchemaAwareTypeValues',
     ];
 
     /**
@@ -21,14 +21,12 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->textType = TypeFactory::build('text');
         TypeFactory::map('text', ColumnSchemaAwareType::class);
         // For SQLServer.
         TypeFactory::map('nvarchar', ColumnSchemaAwareType::class);
 
-        $this->markTestSkipped('This test requires non-auto-fixtures');
+        parent::setUp();
     }
 
     public function tearDown(): void
