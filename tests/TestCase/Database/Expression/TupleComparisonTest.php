@@ -157,7 +157,7 @@ class TupleComparisonTest extends TestCase
         );
     }
 
-    public function tesSingleTupleComparisonRequiresSingleTupleValue(): void
+    public function testSingleTupleComparisonRequiresSingleTupleValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Single-tuple comparisons require a single-tuple value, multi-tuple given.');
