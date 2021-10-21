@@ -20,6 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests TupleComparison class
@@ -141,5 +142,31 @@ class TupleComparisonTest extends TestCase
         $f = new TupleComparison(new QueryExpression('a, b'), $value);
         $binder = new ValueBinder();
         $this->assertSame('(a, b) = (:tuple0, :tuple1)', $f->sql($binder));
+    }
+
+    public function testMultiTupleComparisonRequiresMultiTupleValue(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Multi-tuple comparisons require a multi-tuple value, single-tuple given.');
+
+        new TupleComparison(
+            ['field1', 'field2'],
+            [1, 1],
+            ['integer', 'integer'],
+            'IN'
+        );
+    }
+
+    public function tesSingleTupleComparisonRequiresSingleTupleValue(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Single-tuple comparisons require a single-tuple value, multi-tuple given.');
+
+        new TupleComparison(
+            ['field1', 'field2'],
+            [[1, 1], [2, 2]],
+            ['integer', 'integer'],
+            '='
+        );
     }
 }
