@@ -1329,7 +1329,13 @@ class ConnectionTest extends TestCase
             ->method('prepare')
             ->will($this->throwException(new Exception('server gone away')));
 
-        $this->expectException(Exception::class);
-        $conn->query('SELECT 1');
+        try {
+            $conn->query('SELECT 1');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(Exception::class, $e);
+        }
+
+        $prop->setValue($conn, $oldDriver);
+        $conn->rollback();
     }
 }
