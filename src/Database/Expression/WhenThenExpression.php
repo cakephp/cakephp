@@ -216,6 +216,36 @@ class WhenThenExpression implements WhenThenExpressionInterface
     }
 
     /**
+     * Returns the available data for the given clause.
+     *
+     * ### Available clauses
+     *
+     * The following clause names are available:
+     *
+     * * `when (`array<\Cake\Database\Expression\WhenThenExpressionInterface>`)`: An array of self-contained
+     *   `WHEN ... THEN ...` expressions.
+     * * `else` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `ELSE` result value.
+     *
+     * @param string $clause The name of the clause to obtain.
+     * @return array<\Cake\Database\Expression\WhenThenExpressionInterface>|\Cake\Database\ExpressionInterface|object|scalar|null
+     * @throws \InvalidArgumentException In case the given clause name is invalid.
+     */
+    public function clause(string $clause)
+    {
+        if (!in_array($clause, $this->validClauseNames, true)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'The `$clause` argument must be one of `%s`, the given value `%s` is invalid.',
+                    implode('`, `', $this->validClauseNames),
+                    $clause
+                )
+            );
+        }
+
+        return $this->{$clause};
+    }
+
+    /**
      * @inheritDoc
      */
     public function sql(ValueBinder $binder): string
