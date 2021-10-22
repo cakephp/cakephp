@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use InvalidArgumentException;
 
 /**
  * This expression represents SQL fragments that are used for comparing one tuple
@@ -47,8 +48,8 @@ class TupleComparison extends ComparisonExpression
     {
         $this->_type = $types;
         $this->setField($fields);
-        $this->setValue($values);
         $this->_operator = $conjunction;
+        $this->setValue($values);
     }
 
     /**
@@ -69,6 +70,20 @@ class TupleComparison extends ComparisonExpression
      */
     public function setValue($value): void
     {
+        if ($this->isMulti()) {
+            if (is_array($value) && !is_array(current($value))) {
+                throw new InvalidArgumentException(
+                    'Multi-tuple comparisons require a multi-tuple value, single-tuple given.'
+                );
+            }
+        } else {
+            if (is_array($value) && is_array(current($value))) {
+                throw new InvalidArgumentException(
+                    'Single-tuple comparisons require a single-tuple value, multi-tuple given.'
+                );
+            }
+        }
+
         $this->_value = $value;
     }
 
