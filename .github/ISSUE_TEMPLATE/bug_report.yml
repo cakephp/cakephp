@@ -1,0 +1,23 @@
+name: Bug Report
+description: Create a bug report
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: "Please provide a description and way to reproduce the problem."
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: CakePHP Version
+      description: "The CakePHP version used."
+      placeholder: "4.3.0"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: PHP Version
+      description: "The php verion used, if needed."
+      placeholder: "8.0"
+    validations:
+      required: false
