@@ -22,37 +22,16 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use DateTimeInterface;
-use InvalidArgumentException;
 
 /**
  * Trait that holds shared functionality for case related expressions.
  *
- * @property array<string> $validClauseNames The names of the clauses that are valid for use with the
- * `clause()` method.
  * @property \Cake\Database\TypeMap $_typeMap The type map to use when using an array of conditions for the `WHEN`
  *  value.
  * @internal
  */
 trait CaseExpressionTrait
 {
-    /**
-     * @inheritDoc
-     */
-    public function clause(string $clause)
-    {
-        if (!in_array($clause, $this->validClauseNames, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'The `$clause` argument must be one of `%s`, the given value `%s` is invalid.',
-                    implode('`, `', $this->validClauseNames),
-                    $clause
-                )
-            );
-        }
-
-        return $this->{$clause};
-    }
-
     /**
      * Infers the abstract type for the given value.
      *
