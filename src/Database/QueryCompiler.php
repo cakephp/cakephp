@@ -270,6 +270,13 @@ class QueryCompiler
     {
         $joins = '';
         foreach ($parts as $join) {
+            if (!isset($join['table'])) {
+                throw new DatabaseException(sprintf(
+                    'Could not compile join clause for alias `%s`. No table was specified. ' .
+                    'Use the `table` key to define a table.',
+                    $join['alias']
+                ));
+            }
             if ($join['table'] instanceof ExpressionInterface) {
                 $join['table'] = '(' . $join['table']->sql($binder) . ')';
             }

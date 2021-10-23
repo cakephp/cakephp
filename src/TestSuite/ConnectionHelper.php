@@ -59,12 +59,12 @@ class ConnectionHelper
     /**
      * Enables query logging for all database connections.
      *
-     * @param array<int, string> $connections Connection names or empty for all.
+     * @param array<int, string>|null $connections Connection names or null for all.
      * @return void
      */
-    public function enableQueryLogging(array $connections = []): void
+    public function enableQueryLogging(?array $connections = null): void
     {
-        $connections = $connections ? $connections : ConnectionManager::configured();
+        $connections = $connections ?? ConnectionManager::configured();
         foreach ($connections as $connection) {
             $connection = ConnectionManager::get($connection);
             if ($connection instanceof Connection) {
@@ -87,7 +87,7 @@ class ConnectionHelper
         $collection = $connection->getSchemaCollection();
 
         $allTables = $collection->listTables();
-        $tables = $tables ? array_intersect($tables, $allTables) : $allTables;
+        $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         $schemas = array_map(function ($table) use ($collection) {
             return $collection->describe($table);
         }, $tables);
@@ -121,7 +121,7 @@ class ConnectionHelper
         $collection = $connection->getSchemaCollection();
 
         $allTables = $collection->listTables();
-        $tables = $tables ? array_intersect($tables, $allTables) : $allTables;
+        $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         $schemas = array_map(function ($table) use ($collection) {
             return $collection->describe($table);
         }, $tables);
