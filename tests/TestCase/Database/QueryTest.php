@@ -4520,6 +4520,7 @@ class QueryTest extends TestCase
         $this->assertCount(3, $list);
         $result->closeCursor();
     }
+
     public function testCloneUpdateExpression(): void
     {
         $query = new Query($this->connection);
@@ -4839,7 +4840,6 @@ class QueryTest extends TestCase
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
     }
-
 
     /**
      * Test that cloning goes deep.

@@ -578,7 +578,6 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
         $this->_parts['modifier'] = array_merge($this->_parts['modifier'], $modifiers);
 
-
         return $this;
     }
 
@@ -2334,24 +2333,29 @@ class Query implements ExpressionInterface, IteratorAggregate
                     switch ($name) {
                         case 'join':
                             if ($piece['table'] instanceof ExpressionInterface) {
+                                /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->_parts[$name][$i]['table'] = clone $piece['table'];
                             }
                             if ($piece['conditions'] instanceof ExpressionInterface) {
+                                /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->_parts[$name][$i]['conditions'] = clone $piece['conditions'];
                             }
                             break;
 
                         case 'window':
                             if ($piece['name'] instanceof ExpressionInterface) {
+                                /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->_parts[$name][$i]['name'] = clone $piece['name'];
                             }
                             if ($piece['window'] instanceof ExpressionInterface) {
+                                /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->_parts[$name][$i]['window'] = clone $piece['window'];
                             }
                             break;
 
                         case 'union':
                             if ($piece['query'] instanceof ExpressionInterface) {
+                                /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->_parts[$name][$i]['query'] = clone $piece['query'];
                             }
                             break;
