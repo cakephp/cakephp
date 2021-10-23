@@ -2330,41 +2330,16 @@ class Query implements ExpressionInterface, IteratorAggregate
             }
             if (is_array($part)) {
                 foreach ($part as $i => $piece) {
-                    switch ($name) {
-                        case 'join':
-                            if ($piece['table'] instanceof ExpressionInterface) {
+                    if (is_array($piece)) {
+                        foreach ($piece as $j => $value) {
+                            if ($value instanceof ExpressionInterface) {
                                 /** @psalm-suppress PossiblyUndefinedMethod */
-                                $this->_parts[$name][$i]['table'] = clone $piece['table'];
+                                $this->_parts[$name][$i][$j] = clone $value;
                             }
-                            if ($piece['conditions'] instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
-                                $this->_parts[$name][$i]['conditions'] = clone $piece['conditions'];
-                            }
-                            break;
-
-                        case 'window':
-                            if ($piece['name'] instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
-                                $this->_parts[$name][$i]['name'] = clone $piece['name'];
-                            }
-                            if ($piece['window'] instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
-                                $this->_parts[$name][$i]['window'] = clone $piece['window'];
-                            }
-                            break;
-
-                        case 'union':
-                            if ($piece['query'] instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
-                                $this->_parts[$name][$i]['query'] = clone $piece['query'];
-                            }
-                            break;
-
-                        default:
-                            if ($piece instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
-                                $this->_parts[$name][$i] = clone $piece;
-                            }
+                        }
+                    } elseif ($piece instanceof ExpressionInterface) {
+                        /** @psalm-suppress PossiblyUndefinedMethod */
+                        $this->_parts[$name][$i] = clone $piece;
                     }
                 }
             }
