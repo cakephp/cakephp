@@ -123,7 +123,7 @@ class FunctionsBuilder
      */
     public function coalesce(array $args, array $types = []): FunctionExpression
     {
-        return new FunctionExpression('COALESCE', $args, $types, current($types) ?: 'string');
+        return new FunctionExpression('COALESCE', $args, $types, current($types) ?: 'float');
     }
 
     /**

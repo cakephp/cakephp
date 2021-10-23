@@ -1678,16 +1678,19 @@ class QueryRegressionTest extends TestCase
             ->find()
             ->select(function (Query $q) use ($table) {
                 return [
-                    'value' => $q->func()->coalesce([
-                        $table
-                            ->getAssociation('Authors')
-                            ->find()
-                            ->select(['Authors.name'])
-                            ->where(function (QueryExpression $exp) {
-                                return $exp->equalFields('Authors.id', 'Articles.author_id');
-                            }),
-                        '1',
-                    ]),
+                    'value' => $q->func()->coalesce(
+                        [
+                            $table
+                                ->getAssociation('Authors')
+                                ->find()
+                                ->select(['Authors.name'])
+                                ->where(function (QueryExpression $exp) {
+                                    return $exp->equalFields('Authors.id', 'Articles.author_id');
+                                }),
+                            '1',
+                        ],
+                        ['string']
+                    ),
                 ];
             });
 
