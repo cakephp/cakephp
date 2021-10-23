@@ -24,7 +24,6 @@ use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WhenThenExpression;
-use Cake\Database\Expression\WhenThenExpressionInterface;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -302,7 +301,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen;
             });
 
@@ -451,12 +450,12 @@ class CaseStatementExpressionTest extends TestCase
 
         $expression = (new CaseStatementExpression())
             ->setTypeMap($typeMap)
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen
                     ->when(['Table.column_a' => true])
                     ->then(1);
             })
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen
                     ->when(['Table.column_b' => 'foo'])
                     ->then(2);
@@ -510,12 +509,12 @@ class CaseStatementExpressionTest extends TestCase
 
         $expression = (new CaseStatementExpression())
             ->setTypeMap($typeMap)
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen
                     ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
                     ->then(1);
             })
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen
                     ->when(['Table.column_b' => 'foo'])
                     ->then(2);
@@ -1011,7 +1010,7 @@ class CaseStatementExpressionTest extends TestCase
             ->then(1);
 
         $this->assertCount(1, $expression->clause('when'));
-        $this->assertInstanceOf(WhenThenExpressionInterface::class, $expression->clause('when')[0]);
+        $this->assertInstanceOf(WhenThenExpression::class, $expression->clause('when')[0]);
     }
 
     public function testWhenArrayValueGetWhenClause(): void
@@ -1046,7 +1045,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenGetThenClause(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen;
             });
 
@@ -1099,10 +1098,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenBeforeClosingThenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot add new `WHEN` value while an open `when()` buffer is present, ' .
-            'it must first be closed using `then()`.'
-        );
+        $this->expectExceptionMessage('Cannot call `when()` between `when()` and `then()`.');
 
         (new CaseStatementExpression())
             ->when(['Table.column_a' => true])
@@ -1112,10 +1108,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testElseBeforeClosingThenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot set `ELSE` value when an open `when()` buffer is present, ' .
-            'it must first be closed using `then()`.'
-        );
+        $this->expectExceptionMessage('Cannot call `else()` between `when()` and `then()`.');
 
         (new CaseStatementExpression())
             ->when(['Table.column' => true])
@@ -1125,10 +1118,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testThenBeforeOpeningWhenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'There is no `when()` buffer present, ' .
-            'you must first open one before calling `then()`.'
-        );
+        $this->expectExceptionMessage('Cannot call `then()` before `when()`.');
 
         (new CaseStatementExpression())
             ->then(1);
@@ -1141,7 +1131,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenCallables(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen
                     ->when([
                         'Table.column_a' => true,
@@ -1149,7 +1139,7 @@ class CaseStatementExpressionTest extends TestCase
                     ])
                     ->then(1);
             })
-            ->when(function (WhenThenExpressionInterface $whenThen) {
+            ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen
                     ->when([
                         'Table.column_c' => true,
@@ -1209,7 +1199,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             '`when()` callables must return an instance of ' .
-            '`\Cake\Database\Expression\WhenThenExpressionInterface`, `NULL` given.'
+            '`\Cake\Database\Expression\WhenThenExpression`, `NULL` given.'
         );
 
         $this->deprecated(function () {
@@ -1297,10 +1287,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testCompilingEmptyCaseExpressionFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot compile incomplete `\Cake\Database\Expression\CaseExpressionInterface` ' .
-            'expression, there are no `WHEN ... THEN ...` statements.'
-        );
+        $this->expectExceptionMessage('Case expression must have at least one when statement.');
 
         $this->deprecated(function () {
             (new CaseStatementExpression())->sql(new ValueBinder());
@@ -1310,10 +1297,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testCompilingNonClosedWhenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot compile incomplete `\Cake\Database\Expression\CaseExpressionInterface` ' .
-            'expression, there is an open `when()` buffer present that must be closed using `then()`.'
-        );
+        $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
         $this->deprecated(function () {
             (new CaseStatementExpression())
@@ -1325,14 +1309,11 @@ class CaseStatementExpressionTest extends TestCase
     public function testCompilingWhenThenExpressionWithMissingWhenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot compile incomplete `\Cake\Database\Expression\WhenThenExpressionInterface`, ' .
-            'the value for `WHEN` is missing.'
-        );
+        $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `when()`.');
 
         $this->deprecated(function () {
             (new CaseStatementExpression())
-                ->when(function (WhenThenExpressionInterface $whenThen) {
+                ->when(function (WhenThenExpression $whenThen) {
                     return $whenThen->then(1);
                 })
                 ->sql(new ValueBinder());
@@ -1342,14 +1323,11 @@ class CaseStatementExpressionTest extends TestCase
     public function testCompilingWhenThenExpressionWithMissingThenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot compile incomplete `\Cake\Database\Expression\WhenThenExpressionInterface`, ' .
-            'the value for `THEN` is missing.'
-        );
+        $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
         $this->deprecated(function () {
             (new CaseStatementExpression())
-                ->when(function (WhenThenExpressionInterface $whenThen) {
+                ->when(function (WhenThenExpression $whenThen) {
                     return $whenThen->when(1);
                 })
                 ->sql(new ValueBinder());
@@ -2168,11 +2146,11 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertCount(14, $expressions);
         $this->assertInstanceOf(IdentifierExpression::class, $expressions[0]);
         $this->assertSame($value, $expressions[0]);
-        $this->assertInstanceOf(WhenThenExpressionInterface::class, $expressions[1]);
+        $this->assertInstanceOf(WhenThenExpression::class, $expressions[1]);
         $this->assertEquals(new QueryExpression($conditionsA), $expressions[2]);
         $this->assertEquals(new ComparisonExpression('Table.column_a', true), $expressions[3]);
         $this->assertSame($resultA, $expressions[6]);
-        $this->assertInstanceOf(WhenThenExpressionInterface::class, $expressions[7]);
+        $this->assertInstanceOf(WhenThenExpression::class, $expressions[7]);
         $this->assertEquals(new QueryExpression($conditionsB), $expressions[8]);
         $this->assertEquals(new ComparisonExpression('Table.column_c', true), $expressions[9]);
         $this->assertSame($resultB, $expressions[12]);
@@ -2182,10 +2160,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testTraverseBeforeClosingThenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot traverse incomplete `\Cake\Database\Expression\CaseExpressionInterface` ' .
-            'expression, there is an open `when()` buffer present that must be closed using `then()`.'
-        );
+        $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
         $this->deprecated(function () {
             $expression = (new CaseStatementExpression())
@@ -2226,10 +2201,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testCloneBeforeClosingThenFails(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(
-            'Cannot clone incomplete `\Cake\Database\Expression\CaseExpressionInterface` ' .
-            'expression, there is an open `when()` buffer present that must be closed using `then()`.'
-        );
+        $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
         $this->deprecated(function () {
             $expression = (new CaseStatementExpression())
