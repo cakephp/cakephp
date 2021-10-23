@@ -25,6 +25,9 @@ use Closure;
 use InvalidArgumentException;
 use LogicException;
 
+/**
+ * Represents a SQL case statement with a fluid API
+ */
 class CaseStatementExpression implements ExpressionInterface, TypedResultInterface
 {
     use CaseExpressionTrait;
@@ -275,7 +278,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      *      ->bind(':userData', $userData, 'integer')
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|object|scalar $when The `WHEN` value. When using an
+     * @param \Cake\Database\ExpressionInterface|\Closure|object|array|scalar $when The `WHEN` value. When using an
      *  array of conditions, it must be compatible with `\Cake\Database\Query::where()`. Note that this argument is
      *  _not_ completely safe for use with user data, as a user supplied array would allow for raw SQL to slip in! If
      *  you plan to use user data, either pass a single type for the `$type` argument (which forces the `$when` value to
@@ -488,14 +491,12 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      *
      * The following clause names are available:
      *
-     * * `value` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The case value for a
-     *   `CASE case_value WHEN ...` expression.
-     * * `when (`array<\Cake\Database\Expression\WhenThenExpression>`)`: An array of self-contained
-     *   `WHEN ... THEN ...` expressions.
-     * * `else` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `ELSE` result value.
+     * * `value`: The case value for a `CASE case_value WHEN ...` expression.
+     * * `when`: An array of `WHEN ... THEN ...` expressions.
+     * * `else`: The `ELSE` result value.
      *
      * @param string $clause The name of the clause to obtain.
-     * @return array<\Cake\Database\Expression\WhenThenExpression>|\Cake\Database\ExpressionInterface|object|scalar|null
+     * @return \Cake\Database\ExpressionInterface|object|array<\Cake\Database\Expression\WhenThenExpression>|scalar|null
      * @throws \InvalidArgumentException In case the given clause name is invalid.
      */
     public function clause(string $clause)
