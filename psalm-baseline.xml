@@ -148,6 +148,11 @@
       <code>$value</code>
     </InvalidScalarArgument>
   </file>
+  <file src="src/Database/Expression/QueryExpression.php">
+    <DeprecatedClass occurrences="1">
+      <code>new CaseExpression($conditions, $values, $types)</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/Database/Schema/MysqlSchemaDialect.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$_driver</code>
@@ -245,9 +250,6 @@
     <DeprecatedTrait occurrences="1">
       <code>ModelAwareTrait</code>
     </DeprecatedTrait>
-    <UndefinedThisPropertyFetch occurrences="1">
-      <code>$this-&gt;defaultTable</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="src/ORM/Locator/LocatorAwareTrait.php">
     <DeprecatedClass occurrences="1">
