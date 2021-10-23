@@ -259,7 +259,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             case 'float':
                 return is_numeric($argument) ? (float)$argument : null;
             case 'int':
-                return filter_var($argument, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+                return ctype_digit($argument) ? (int)$argument : null;
             case 'bool':
                 return $argument === '0' ? false : ($argument === '1' ? true : null);
         }

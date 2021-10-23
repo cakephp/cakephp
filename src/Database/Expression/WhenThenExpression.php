@@ -25,6 +25,9 @@ use Closure;
 use InvalidArgumentException;
 use LogicException;
 
+/**
+ * Represents a SQL when/then clause with a fluid API
+ */
 class WhenThenExpression implements ExpressionInterface
 {
     use CaseExpressionTrait;
@@ -102,7 +105,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * Sets the `WHEN` value.
      *
-     * @param \Cake\Database\ExpressionInterface|array|object|scalar $when The `WHEN` value. When using an array of
+     * @param \Cake\Database\ExpressionInterface|object|array|scalar $when The `WHEN` value. When using an array of
      *  conditions, it must be compatible with `\Cake\Database\Query::where()`. Note that this argument is _not_
      *  completely safe for use with user data, as a user supplied array would allow for raw SQL to slip in! If you
      *  plan to use user data, either pass a single type for the `$type` argument (which forces the `$when` value to be
@@ -248,8 +251,8 @@ class WhenThenExpression implements ExpressionInterface
      *
      * The following clause names are available:
      *
-     * * `when` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `WHEN` value.
-     * * `then` (`\Cake\Database\ExpressionInterface|object|scalar|null`): The `THEN` result value.
+     * * `when`: The `WHEN` value.
+     * * `then`: The `THEN` result value.
      *
      * @param string $clause The name of the clause to obtain.
      * @return \Cake\Database\ExpressionInterface|object|scalar|null
