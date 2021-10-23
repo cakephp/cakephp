@@ -60,11 +60,15 @@ class CaseExpression implements ExpressionInterface
      */
     public function __construct($conditions = [], $values = [], $types = [])
     {
+        $conditions = is_array($conditions) ? $conditions : [$conditions];
+        $values = is_array($values) ? $values : [$values];
+        $types = is_array($types) ? $types : [$types];
+
         if (!empty($conditions)) {
             $this->add($conditions, $values, $types);
         }
 
-        if (is_array($conditions) && is_array($values) && count($values) > count($conditions)) {
+        if (count($values) > count($conditions)) {
             end($values);
             $key = key($values);
             $this->elseValue($values[$key], isset($types[$key]) ? $types[$key] : null);
@@ -83,15 +87,9 @@ class CaseExpression implements ExpressionInterface
      */
     public function add($conditions = [], $values = [], $types = [])
     {
-        if (!is_array($conditions)) {
-            $conditions = [$conditions];
-        }
-        if (!is_array($values)) {
-            $values = [$values];
-        }
-        if (!is_array($types)) {
-            $types = [$types];
-        }
+        $conditions = is_array($conditions) ? $conditions : [$conditions];
+        $values = is_array($values) ? $values : [$values];
+        $types = is_array($types) ? $types : [$types];
 
         $this->_addExpressions($conditions, $values, $types);
 
