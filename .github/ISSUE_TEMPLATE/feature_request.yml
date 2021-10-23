@@ -1,0 +1,17 @@
+name: Feature Request
+description: Create a feature request
+labels: ["enhancement"]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: "Please provide a description of the feature or enhancement."
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: CakePHP Version
+      description: "The CakePHP version if for a specific major/minor."
+      placeholder: "5.0"
+    validations:
+      required: false
