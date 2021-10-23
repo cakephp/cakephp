@@ -6,6 +6,10 @@ body:
     attributes:
       label: Description
       description: "Please provide a description and way to reproduce the problem."
+      placeholder: |
+        Please use the CakePHP Slack channel, Discord channel or IRC channel for questions.
+
+        https://cakephp.org/get-involved#getHelp
     validations:
       required: true
   - type: input
