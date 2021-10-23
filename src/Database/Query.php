@@ -573,7 +573,11 @@ class Query implements ExpressionInterface, IteratorAggregate
         if ($overwrite) {
             $this->_parts['modifier'] = [];
         }
-        $this->_parts['modifier'] = array_merge($this->_parts['modifier'], (array)$modifiers);
+        if (!is_array($modifiers)) {
+            $modifiers = [$modifiers];
+        }
+        $this->_parts['modifier'] = array_merge($this->_parts['modifier'], $modifiers);
+
 
         return $this;
     }

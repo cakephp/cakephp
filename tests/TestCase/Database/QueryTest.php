@@ -2230,6 +2230,17 @@ class QueryTest extends TestCase
             $result->sql(),
             !$this->autoQuote
         );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['city', 'state', 'country'])
+            ->from(['addresses'])
+            ->modifier($query->newExpr('EXPRESSION'));
+        $this->assertQuotedQuery(
+            'SELECT EXPRESSION <city>, <state>, <country> FROM <addresses>',
+            $result->sql(),
+            !$this->autoQuote
+        );
     }
 
     /**
