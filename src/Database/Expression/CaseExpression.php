@@ -23,6 +23,8 @@ use Closure;
 
 /**
  * This class represents a SQL Case statement
+ *
+ * @deprecated 4.3.0 Use CaseStatementExpression instead or Query::case()
  */
 class CaseExpression implements ExpressionInterface
 {
