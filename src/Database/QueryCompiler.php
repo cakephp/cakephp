@@ -272,7 +272,7 @@ class QueryCompiler
         foreach ($parts as $join) {
             if (!isset($join['table'])) {
                 throw new DatabaseException(sprintf(
-                    'Could not compile join clause for alias %s. No table was specified. ' .
+                    'Could not compile join clause for alias `%s`. No table was specified. ' .
                     'Use the `table` key to define a table.',
                     $join['alias']
                 ));
