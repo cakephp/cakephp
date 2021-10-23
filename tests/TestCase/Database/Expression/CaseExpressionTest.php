@@ -43,6 +43,10 @@ class CaseExpressionTest extends TestCase
         $expected = 'CASE WHEN test = :c0 THEN :param1 WHEN test2 = :c2 THEN :param3 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
+        $caseExpression = new CaseExpression($expr, ['foobar', 'else']);
+        $expected = 'CASE WHEN test = :c0 THEN :param1 ELSE :param2 END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+
         $caseExpression = new CaseExpression([$expr], ['foobar', 'else']);
         $expected = 'CASE WHEN test = :c0 THEN :param1 ELSE :param2 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
