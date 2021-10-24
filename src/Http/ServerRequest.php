@@ -1087,7 +1087,7 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return array|bool Either an array of all the types the client accepts or a boolean if they accept the
+     * @return array<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
      *   provided type.
      */
     public function accepts(?string $type = null)
@@ -1508,7 +1508,7 @@ class ServerRequest implements ServerRequestInterface
      * If the request would be GET, response header "Allow: POST, DELETE" will be set
      * and a 405 error will be returned.
      *
-     * @param array|string $methods Allowed HTTP request methods.
+     * @param array<string>|string $methods Allowed HTTP request methods.
      * @return true
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */

@@ -32,7 +32,7 @@ trait MailerAwareTrait
      * Returns a mailer instance.
      *
      * @param string $name Mailer's name.
-     * @param array|string|null $config Array of configs, or profile name string.
+     * @param array<string, mixed>|string|null $config Array of configs, or profile name string.
      * @return \Cake\Mailer\Mailer
      * @throws \Cake\Mailer\Exception\MissingMailerException if undefined mailer class.
      */

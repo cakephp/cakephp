@@ -135,7 +135,7 @@ abstract class BaseErrorHandler
      * @param string $description Error description
      * @param string|null $file File on which error occurred
      * @param int|null $line Line that triggered the error
-     * @param array|null $context Context
+     * @param array<string, mixed>|null $context Context
      * @return bool True if error was handled
      */
     public function handleError(

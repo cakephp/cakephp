@@ -124,7 +124,7 @@ class HtmlHelper extends Helper
      * - `block` - Set to true to append output to view block "meta" or provide
      *   custom block name.
      *
-     * @param array|string $type The title of the external resource, Or an array of attributes for a
+     * @param array<string, mixed>|string $type The title of the external resource, Or an array of attributes for a
      *   custom meta tag.
      * @param array|string|null $content The address of the external resource or string for content attribute
      * @param array<string, mixed> $options Other attributes for the generated tag. If the type attribute is html,
@@ -725,8 +725,8 @@ class HtmlHelper extends Helper
      * Returns a formatted string of table rows (TR's with TD's in them).
      *
      * @param array|string $data Array of table data
-     * @param array|bool|null $oddTrOptions HTML options for odd TR elements if true useCount is used
-     * @param array|bool|null $evenTrOptions HTML options for even TR elements
+     * @param array<string, mixed>|bool|null $oddTrOptions HTML options for odd TR elements if true useCount is used
+     * @param array<string, mixed>|bool|null $evenTrOptions HTML options for even TR elements
      * @param bool $useCount adds class "column-$i"
      * @param bool $continueOddEven If false, will use a non-static $count variable,
      *    so that the odd/even count is reset to zero just for that call.
@@ -767,7 +767,9 @@ class HtmlHelper extends Helper
             $count++;
             $cellsOut = $this->_renderCells($line, $useCount);
             $opts = $count % 2 ? $oddTrOptions : $evenTrOptions;
-            $out[] = $this->tableRow(implode(' ', $cellsOut), (array)$opts);
+            /** @var array<string> $options */
+            $options = (array)$opts;
+            $out[] = $this->tableRow(implode(' ', $cellsOut), $options);
         }
 
         return implode("\n", $out);

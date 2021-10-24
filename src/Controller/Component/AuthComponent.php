@@ -807,7 +807,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Loads the configured authentication objects.
      *
-     * @return array|null The loaded authorization objects, or null on empty authenticate value.
+     * @return array<string, object>|null The loaded authorization objects, or null on empty authenticate value.
      * @throws \Cake\Core\Exception\CakeException
      */
     public function constructAuthenticate(): ?array

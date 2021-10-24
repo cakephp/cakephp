@@ -64,7 +64,7 @@ trait InstanceConfigTrait
      * $this->setConfig(['one' => 'value', 'another' => 'value']);
      * ```
      *
-     * @param array|string $key The key to set, or a complete array of configs.
+     * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
@@ -168,7 +168,7 @@ trait InstanceConfigTrait
      * $this->configShallow(['one' => 'value', 'another' => 'value']);
      * ```
      *
-     * @param array|string $key The key to set, or a complete array of configs.
+     * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @return $this
      */
@@ -217,7 +217,7 @@ trait InstanceConfigTrait
     /**
      * Writes a config key.
      *
-     * @param array|string $key Key to write to.
+     * @param array<string, mixed>|string $key Key to write to.
      * @param mixed $value Value to write.
      * @param string|bool $merge True to merge recursively, 'shallow' for simple merge,
      *   false to overwrite, defaults to false.
