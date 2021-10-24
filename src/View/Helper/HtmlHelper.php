@@ -767,7 +767,7 @@ class HtmlHelper extends Helper
             $count++;
             $cellsOut = $this->_renderCells($line, $useCount);
             $opts = $count % 2 ? $oddTrOptions : $evenTrOptions;
-            /** @var array<string> $options */
+            /** @var array<string, mixed> $options */
             $options = (array)$opts;
             $out[] = $this->tableRow(implode(' ', $cellsOut), $options);
         }
