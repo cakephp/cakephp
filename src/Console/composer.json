@@ -23,7 +23,7 @@
         "source": "https://github.com/cakephp/console"
     },
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.4.0",
         "cakephp/core": "^4.0",
         "cakephp/event": "^4.0",
         "cakephp/filesystem": "^4.0",
