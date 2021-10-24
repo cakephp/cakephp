@@ -451,11 +451,6 @@ parameters:
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
-			message: "#^PHPDoc tag @template TCode for class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\StatusCodeBase with bound type array\\<int, int\\> is not supported\\.$#"
-			count: 1
-			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
-
-		-
 			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:addConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php
