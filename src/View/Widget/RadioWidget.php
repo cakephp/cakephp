@@ -34,7 +34,7 @@ class RadioWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaults = [
         'name' => '',
@@ -91,7 +91,7 @@ class RadioWidget extends BasicWidget
      *   on all generated radios.
      * - `idPrefix` Prefix for generated ID attributes.
      *
-     * @param array $data The data to build radio buttons with.
+     * @param array<string, mixed> $data The data to build radio buttons with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
@@ -124,7 +124,7 @@ class RadioWidget extends BasicWidget
     /**
      * Disabled attribute detection.
      *
-     * @param array $radio Radio info.
+     * @param array<string, mixed> $radio Radio info.
      * @param array|true|null $disabled The disabled values.
      * @return bool
      */
@@ -145,8 +145,8 @@ class RadioWidget extends BasicWidget
      * Renders a single radio input and label.
      *
      * @param string|int $val The value of the radio input.
-     * @param string|array $text The label text, or complex radio type.
-     * @param array $data Additional options for input generation.
+     * @param array|string $text The label text, or complex radio type.
+     * @param array<string, mixed> $data Additional options for input generation.
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
      */
@@ -160,9 +160,7 @@ class RadioWidget extends BasicWidget
         }
         $radio['name'] = $data['name'];
 
-        if (!isset($radio['templateVars'])) {
-            $radio['templateVars'] = [];
-        }
+        $radio['templateVars'] = $radio['templateVars'] ?? [];
         if (!empty($data['templateVars'])) {
             $radio['templateVars'] = array_merge($data['templateVars'], $radio['templateVars']);
         }
@@ -236,11 +234,11 @@ class RadioWidget extends BasicWidget
      * In the future this might be refactored into a separate widget as other
      * input types (multi-checkboxes) will also need labels generated.
      *
-     * @param array $radio The input properties.
-     * @param array|string|false $label The properties for a label.
+     * @param array<string, mixed> $radio The input properties.
+     * @param array<string, mixed>|string|false $label The properties for a label.
      * @param string $input The input widget.
      * @param \Cake\View\Form\ContextInterface $context The form context.
-     * @param bool $escape Whether or not to HTML escape the label.
+     * @param bool $escape Whether to HTML escape the label.
      * @return string|false Generated label.
      */
     protected function _renderLabel(array $radio, $label, $input, $context, $escape)

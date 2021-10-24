@@ -34,14 +34,14 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Contains a list of locations where table classes should be looked for.
      *
-     * @var array
+     * @var array<string>
      */
     protected $locations = [];
 
     /**
      * Configuration for aliases.
      *
-     * @var array
+     * @var array<string, array|null>
      */
     protected $_config = [];
 
@@ -56,7 +56,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
-     * @var \Cake\ORM\Table[]
+     * @var array<\Cake\ORM\Table>
      */
     protected $_fallbacked = [];
 
@@ -171,7 +171,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * This is important because table associations are resolved at runtime
      * and cyclic references need to be handled correctly.
      *
-     * The options that can be passed are the same as in Cake\ORM\Table::__construct(), but the
+     * The options that can be passed are the same as in {@link \Cake\ORM\Table::__construct()}, but the
      * `className` key is also recognized.
      *
      * ### Options
@@ -194,7 +194,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * the same alias, the registry will only store the first instance.
      *
      * @param string $alias The alias name you want to get. Should be in CamelCase format.
-     * @param array $options The options you want to build the table with.
+     * @param array<string, mixed> $options The options you want to build the table with.
      *   If a table has already been loaded the options will be ignored.
      * @return \Cake\ORM\Table
      * @throws \RuntimeException When you try to configure an alias that already exists.
@@ -274,7 +274,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Gets the table class name.
      *
      * @param string $alias The alias name you want to get. Should be in CamelCase format.
-     * @param array $options Table options array.
+     * @param array<string, mixed> $options Table options array.
      * @return string|null
      */
     protected function _getClassName(string $alias, array $options = []): ?string
@@ -300,7 +300,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Wrapper for creating table instances
      *
-     * @param array $options The alias to check for.
+     * @param array<string, mixed> $options The alias to check for.
      * @return \Cake\ORM\Table
      */
     protected function _create(array $options): Table
@@ -339,7 +339,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * debugging common mistakes when setting up associations or created new table
      * classes.
      *
-     * @return \Cake\ORM\Table[]
+     * @return array<\Cake\ORM\Table>
      */
     public function genericInstances(): array
     {

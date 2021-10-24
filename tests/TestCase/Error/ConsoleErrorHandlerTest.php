@@ -21,6 +21,7 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Log\Log;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * ConsoleErrorHandler Test case.
@@ -39,8 +40,6 @@ class ConsoleErrorHandlerTest extends TestCase
 
     /**
      * setup, create mocks
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -56,8 +55,6 @@ class ConsoleErrorHandlerTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -67,10 +64,8 @@ class ConsoleErrorHandlerTest extends TestCase
 
     /**
      * test that the console error handler can deal with Exceptions.
-     *
-     * @return void
      */
-    public function testHandleError()
+    public function testHandleError(): void
     {
         $content = "<error>Notice Error:</error> This is a notice error\nIn [/some/file, line 275]\n";
         $this->Error->expects($this->never())
@@ -82,10 +77,8 @@ class ConsoleErrorHandlerTest extends TestCase
 
     /**
      * test that the console error handler can deal with fatal errors.
-     *
-     * @return void
      */
-    public function testHandleFatalError()
+    public function testHandleFatalError(): void
     {
         ob_start();
         $content = "<error>Fatal Error:</error> This is a fatal error\nIn [/some/file, line 275]\n";
@@ -98,10 +91,8 @@ class ConsoleErrorHandlerTest extends TestCase
 
     /**
      * test that the console error handler can deal with CakeExceptions.
-     *
-     * @return void
      */
-    public function testCakeErrors()
+    public function testCakeErrors(): void
     {
         $exception = new MissingActionException('Missing action');
         $message = sprintf("<error>Exception:</error> Missing action\nIn [%s, line %s]\n", $exception->getFile(), $exception->getLine());
@@ -118,12 +109,10 @@ class ConsoleErrorHandlerTest extends TestCase
 
     /**
      * test a non Cake Exception exception.
-     *
-     * @return void
      */
-    public function testNonCakeExceptions()
+    public function testNonCakeExceptions(): void
     {
-        $exception = new \InvalidArgumentException('Too many parameters.');
+        $exception = new InvalidArgumentException('Too many parameters.');
 
         $this->Error->expects($this->once())
             ->method('_stop')
@@ -135,10 +124,8 @@ class ConsoleErrorHandlerTest extends TestCase
 
     /**
      * Test error code is used as exit code for ConsoleException.
-     *
-     * @return void
      */
-    public function testConsoleExceptions()
+    public function testConsoleExceptions(): void
     {
         $exception = new ConsoleException('Test ConsoleException', 2);
 

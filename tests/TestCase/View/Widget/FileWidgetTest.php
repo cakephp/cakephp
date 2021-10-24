@@ -28,9 +28,17 @@ use Cake\View\Widget\FileWidget;
 class FileWidgetTest extends TestCase
 {
     /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -44,10 +52,8 @@ class FileWidgetTest extends TestCase
 
     /**
      * Test render in a simple case.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $input = new FileWidget($this->templates);
         $result = $input->render(['name' => 'image'], $this->context);
@@ -59,10 +65,8 @@ class FileWidgetTest extends TestCase
 
     /**
      * Test render with a value
-     *
-     * @return void
      */
-    public function testRenderAttributes()
+    public function testRenderAttributes(): void
     {
         $input = new FileWidget($this->templates);
         $data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
@@ -75,10 +79,8 @@ class FileWidgetTest extends TestCase
 
     /**
      * Ensure templateVars option is hooked up.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'file' => '<input custom="{{custom}}" type="file" name="{{name}}"{{attrs}}>',
@@ -102,10 +104,8 @@ class FileWidgetTest extends TestCase
 
     /**
      * Test secureFields
-     *
-     * @return void
      */
-    public function testSecureFields()
+    public function testSecureFields(): void
     {
         $input = new FileWidget($this->templates);
         $data = ['name' => 'image', 'required' => true, 'val' => 'nope'];

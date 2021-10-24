@@ -33,7 +33,7 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaults = [
         'name' => '',
@@ -113,7 +113,7 @@ class MultiCheckboxWidget extends BasicWidget
      * This form **requires** that both the `value` and `text` keys be defined.
      * If either is not set options will not be generated correctly.
      *
-     * @param array $data The data to generate a checkbox set with.
+     * @param array<string, mixed> $data The data to generate a checkbox set with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
@@ -130,9 +130,9 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Render the checkbox inputs.
      *
-     * @param array $data The data array defining the checkboxes.
+     * @param array<string, mixed> $data The data array defining the checkboxes.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return string[] An array of rendered inputs.
+     * @return array<string> An array of rendered inputs.
      */
     protected function _renderInputs(array $data, ContextInterface $context): array
     {
@@ -188,7 +188,7 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Render a single checkbox & wrapper.
      *
-     * @param array $checkbox An array containing checkbox key/value option pairs
+     * @param array<string, mixed> $checkbox An array containing checkbox key/value option pairs
      * @param \Cake\View\Form\ContextInterface $context Context object.
      * @return string
      */
@@ -235,7 +235,7 @@ class MultiCheckboxWidget extends BasicWidget
      * Helper method for deciding what options are selected.
      *
      * @param string $key The key to test.
-     * @param string[]|string|int|false|null $selected The selected values.
+     * @param array<string>|string|int|false|null $selected The selected values.
      * @return bool
      */
     protected function _isSelected(string $key, $selected): bool

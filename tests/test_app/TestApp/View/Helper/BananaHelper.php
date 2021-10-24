@@ -20,7 +20,7 @@ use Cake\View\Helper;
 
 class BananaHelper extends Helper
 {
-    public function peel()
+    public function peel(): string
     {
         return '<b>peeled</b>';
     }

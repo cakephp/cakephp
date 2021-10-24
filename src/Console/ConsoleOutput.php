@@ -93,7 +93,7 @@ class ConsoleOutput
     /**
      * text colors used in colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_foregroundColors = [
         'black' => 30,
@@ -109,7 +109,7 @@ class ConsoleOutput
     /**
      * background colors used in colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_backgroundColors = [
         'black' => 40,
@@ -125,7 +125,7 @@ class ConsoleOutput
     /**
      * Formatting options for colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_options = [
         'bold' => 1,
@@ -138,7 +138,7 @@ class ConsoleOutput
      * Styles that are available as tags in console output.
      * You can modify these styles with ConsoleOutput::styles()
      *
-     * @var array
+     * @var array<string, array>
      */
     protected static $_styles = [
         'emergency' => ['text' => 'red'],
@@ -158,7 +158,7 @@ class ConsoleOutput
      * Construct the output object.
      *
      * Checks for a pretty console environment. Ansicon and ConEmu allows
-     *  pretty consoles on windows, and is supported.
+     *  pretty consoles on Windows, and is supported.
      *
      * @param string $stream The identifier of the stream to write output to.
      */
@@ -190,7 +190,7 @@ class ConsoleOutput
      * Outputs a single or multiple messages to stdout or stderr. If no parameters
      * are passed, outputs just a newline.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to output.
      */
@@ -230,7 +230,7 @@ class ConsoleOutput
     /**
      * Replace tags with color codes.
      *
-     * @param array $matches An array of matches to replace.
+     * @param array<string, string> $matches An array of matches to replace.
      * @return string
      */
     protected function _replaceTags(array $matches): string
@@ -312,7 +312,7 @@ class ConsoleOutput
     /**
      * Gets all the style definitions.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function styles(): array
     {

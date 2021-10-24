@@ -32,14 +32,14 @@ trait EntityTrait
     /**
      * Holds all fields and their values for this entity.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_fields = [];
 
     /**
      * Holds all fields that have been changed and their original values for this entity.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_original = [];
 
@@ -47,7 +47,7 @@ trait EntityTrait
      * List of field names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_hidden = [];
 
@@ -56,7 +56,7 @@ trait EntityTrait
      * representations of this Entity. If a field is present in both _hidden and _virtual
      * the field will **not** be in the array/JSON versions of the entity.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_virtual = [];
 
@@ -64,19 +64,19 @@ trait EntityTrait
      * Holds a list of the fields that were modified or added after this object
      * was originally created.
      *
-     * @var bool[]
+     * @var array<bool>
      */
     protected $_dirty = [];
 
     /**
      * Holds a cached list of getters/setters per class
      *
-     * @var array
+     * @var array<string, array<string, array<string, string>>>
      */
     protected static $_accessors = [];
 
     /**
-     * Indicates whether or not this entity is yet to be persisted.
+     * Indicates whether this entity is yet to be persisted.
      * Entities default to assuming they are new. You can use Table::persisted()
      * to set the new flag on an entity based on records in the database.
      *
@@ -87,14 +87,14 @@ trait EntityTrait
     /**
      * List of errors per field as stored in this object.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_errors = [];
 
     /**
      * List of invalid fields and their data for errors upon validation/patching.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_invalid = [];
 
@@ -107,7 +107,7 @@ trait EntityTrait
      * not defined in the map will take its value. For example, `'*' => true`
      * means that any field not defined in the map will be accessible by default
      *
-     * @var bool[]
+     * @var array<bool>
      */
     protected $_accessible = ['*' => true];
 
@@ -210,11 +210,11 @@ trait EntityTrait
      * $entity->set('name', 'Andrew');
      * ```
      *
-     * @param string|array $field the name of field to set or a list of
+     * @param array|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
-     * @param array $options options to be used for setting the field. Allowed option
+     * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
      * @return $this
      * @throws \InvalidArgumentException
@@ -303,7 +303,7 @@ trait EntityTrait
      */
     public function getOriginal(string $field)
     {
-        if (!strlen($field)) {
+        if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
         if (array_key_exists($field, $this->_original)) {
@@ -355,7 +355,7 @@ trait EntityTrait
      * When checking multiple fields. All fields must not be null
      * in order for true to be returned.
      *
-     * @param string|string[] $field The field or fields to check.
+     * @param array<string>|string $field The field or fields to check.
      * @return bool
      */
     public function has($field): bool
@@ -435,7 +435,7 @@ trait EntityTrait
      * $entity->unset(['name', 'last_name']);
      * ```
      *
-     * @param string|string[] $field The field to unset.
+     * @param array<string>|string $field The field to unset.
      * @return $this
      */
     public function unset($field)
@@ -452,7 +452,7 @@ trait EntityTrait
      * Removes a field or list of fields from this entity
      *
      * @deprecated 4.0.0 Use {@link unset()} instead. Will be removed in 5.0.
-     * @param string|string[] $field The field to unset.
+     * @param array<string>|string $field The field to unset.
      * @return $this
      */
     public function unsetProperty($field)
@@ -465,7 +465,7 @@ trait EntityTrait
     /**
      * Sets hidden fields.
      *
-     * @param string[] $fields An array of fields to hide from array exports.
+     * @param array<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -486,7 +486,7 @@ trait EntityTrait
     /**
      * Gets the hidden fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getHidden(): array
     {
@@ -496,7 +496,7 @@ trait EntityTrait
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param string[] $fields An array of fields to treat as virtual.
+     * @param array<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -517,7 +517,7 @@ trait EntityTrait
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getVirtual(): array
     {
@@ -530,7 +530,7 @@ trait EntityTrait
      * The list of visible fields is all standard fields
      * plus virtual fields minus hidden fields.
      *
-     * @return string[] A list of fields that are 'visible' in all
+     * @return array<string> A list of fields that are 'visible' in all
      *     representations.
      */
     public function getVisible(): array
@@ -601,6 +601,7 @@ trait EntityTrait
      * @param string $offset The offset to get.
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         return $this->get($offset);
@@ -677,7 +678,7 @@ trait EntityTrait
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param string[] $fields list of fields to be returned
+     * @param array<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
@@ -700,7 +701,7 @@ trait EntityTrait
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array
@@ -720,7 +721,7 @@ trait EntityTrait
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array
@@ -776,7 +777,7 @@ trait EntityTrait
     /**
      * Gets the dirty fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getDirty(): array
     {
@@ -804,7 +805,7 @@ trait EntityTrait
      * Using `true` means that the entity has not been persisted in the database,
      * `false` that it already is.
      *
-     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @param bool $new Indicate whether this entity has been persisted.
      * @return $this
      */
     public function setNew(bool $new)
@@ -821,9 +822,9 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether or not this entity has already been persisted.
+     * Returns whether this entity has already been persisted.
      *
-     * @return bool Whether or not the entity has been persisted.
+     * @return bool Whether the entity has been persisted.
      */
     public function isNew(): bool
     {
@@ -908,7 +909,7 @@ trait EntityTrait
      * ```
      *
      * @param array $errors The array of errors to set.
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $fields
      * @return $this
      */
     public function setErrors(array $errors, bool $overwrite = false)
@@ -950,8 +951,8 @@ trait EntityTrait
      * ```
      *
      * @param string $field The field to get errors for, or the array of errors to set.
-     * @param string|array $errors The errors to be set for $field
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
+     * @param array|string $errors The errors to be set for $field
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $field
      * @return $this
      */
     public function setError(string $field, $errors, bool $overwrite = false)
@@ -1017,7 +1018,7 @@ trait EntityTrait
     /**
      * Reads if there are errors for one or many objects.
      *
-     * @param array|\Cake\Datasource\EntityInterface $object The object to read errors from.
+     * @param \Cake\Datasource\EntityInterface|array $object The object to read errors from.
      * @return bool
      */
     protected function _readHasErrors($object): bool
@@ -1040,7 +1041,7 @@ trait EntityTrait
     /**
      * Read the error(s) from one or many objects.
      *
-     * @param iterable|\Cake\Datasource\EntityInterface $object The object to read errors from.
+     * @param \Cake\Datasource\EntityInterface|iterable $object The object to read errors from.
      * @param string|null $path The field name for errors.
      * @return array
      */
@@ -1057,6 +1058,8 @@ trait EntityTrait
                 if ($val instanceof EntityInterface) {
                     return $val->getErrors();
                 }
+
+                return null;
             }, (array)$object);
 
             return array_filter($array);
@@ -1094,7 +1097,7 @@ trait EntityTrait
      * purposes or to be able to log it away.
      *
      * @param array $fields The values to set.
-     * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
+     * @param bool $overwrite Whether to overwrite pre-existing values for $field.
      * @return $this
      */
     public function setInvalid(array $fields, bool $overwrite = false)
@@ -1125,7 +1128,7 @@ trait EntityTrait
     }
 
     /**
-     * Stores whether or not a field value can be changed or set in this entity.
+     * Stores whether a field value can be changed or set in this entity.
      * The special field `*` can also be marked as accessible or protected, meaning
      * that any other field specified before will take its value. For example
      * `$entity->setAccess('*', true)` means that any field not specified already
@@ -1143,7 +1146,7 @@ trait EntityTrait
      * $entity->setAccess('*', false); // Mark all fields as protected
      * ```
      *
-     * @param string|array $field Single or list of fields to change its accessibility
+     * @param array|string $field Single or list of fields to change its accessibility
      * @param bool $set True marks the field as accessible, false will
      * mark it as protected.
      * @return $this
@@ -1170,7 +1173,7 @@ trait EntityTrait
      * Returns the raw accessible configuration for this entity.
      * The `*` wildcard refers to all fields.
      *
-     * @return bool[]
+     * @return array<bool>
      */
     public function getAccessible(): array
     {
@@ -1233,7 +1236,7 @@ trait EntityTrait
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

@@ -27,10 +27,8 @@ class CaseExpressionTest extends TestCase
 {
     /**
      * Test that the sql output works correctly
-     *
-     * @return void
      */
-    public function testSqlOutput()
+    public function testSqlOutput(): void
     {
         $expr = new QueryExpression();
         $expr->eq('test', 'true');
@@ -45,6 +43,10 @@ class CaseExpressionTest extends TestCase
         $expected = 'CASE WHEN test = :c0 THEN :param1 WHEN test2 = :c2 THEN :param3 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
+        $caseExpression = new CaseExpression($expr, ['foobar', 'else']);
+        $expected = 'CASE WHEN test = :c0 THEN :param1 ELSE :param2 END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+
         $caseExpression = new CaseExpression([$expr], ['foobar', 'else']);
         $expected = 'CASE WHEN test = :c0 THEN :param1 ELSE :param2 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
@@ -56,10 +58,8 @@ class CaseExpressionTest extends TestCase
 
     /**
      * Test sql generation with 0 case.
-     *
-     * @return void
      */
-    public function testSqlOutputZero()
+    public function testSqlOutputZero(): void
     {
         $expression = new QueryExpression();
         $expression->add(['id' => 'test']);
@@ -76,13 +76,11 @@ class CaseExpressionTest extends TestCase
 
     /**
      * Tests that the expression is correctly traversed
-     *
-     * @return void
      */
-    public function testTraverse()
+    public function testTraverse(): void
     {
         $count = 0;
-        $visitor = function () use (&$count) {
+        $visitor = function () use (&$count): void {
             $count++;
         };
 
@@ -97,10 +95,8 @@ class CaseExpressionTest extends TestCase
 
     /**
      * Test cloning
-     *
-     * @return void
      */
-    public function testClone()
+    public function testClone(): void
     {
         $expr = new QueryExpression();
         $expr->eq('test', 'true');

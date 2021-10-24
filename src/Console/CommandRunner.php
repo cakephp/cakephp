@@ -64,7 +64,7 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * Alias mappings.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $aliases = [];
 
@@ -103,7 +103,7 @@ class CommandRunner implements EventDispatcherInterface
      * $runner->setAliases(['--version' => 'version']);
      * ```
      *
-     * @param string[] $aliases The map of aliases to replace.
+     * @param array<string> $aliases The map of aliases to replace.
      * @return $this
      */
     public function setAliases(array $aliases)
@@ -239,7 +239,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
      * @param string $name The command name to find
-     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
+     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell
      */
     protected function getCommand(ConsoleIo $io, CommandCollection $commands, string $name)
     {
@@ -304,9 +304,7 @@ class CommandRunner implements EventDispatcherInterface
             $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
             $name = 'help';
         }
-        if (isset($this->aliases[$name])) {
-            $name = $this->aliases[$name];
-        }
+        $name = $this->aliases[$name] ?? $name;
         if (!$commands->has($name)) {
             $name = Inflector::underscore($name);
         }
@@ -362,7 +360,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param string $className Shell class name.
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
-     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
+     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell
      */
     protected function createCommand(string $className, ConsoleIo $io)
     {

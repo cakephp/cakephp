@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\QueryTests;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverInterface;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
@@ -34,11 +35,6 @@ class CommonTableExpressionQueryTest extends TestCase
     protected $fixtures = [
         'core.Articles',
     ];
-
-    /**
-     * @inheritDoc
-     */
-    public $autoFixtures = false;
 
     /**
      * @var \Cake\Database\Connection
@@ -57,7 +53,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
 
         $this->skipIf(
-            !$this->connection->getDriver()->supportsCTEs(),
+            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_CTE),
             'The current driver does not support common table expressions.'
         );
     }
@@ -70,10 +66,8 @@ class CommonTableExpressionQueryTest extends TestCase
 
     /**
      * Tests with() sql generation.
-     *
-     * @return void
      */
-    public function testWithCte()
+    public function testWithCte(): void
     {
         $query = $this->connection->newQuery()
             ->with(new CommonTableExpression('cte', function () {
@@ -101,10 +95,8 @@ class CommonTableExpressionQueryTest extends TestCase
 
     /**
      * Tests calling with() with overwrite clears other CTEs.
-     *
-     * @return void
      */
-    public function testWithCteOverwrite()
+    public function testWithCteOverwrite(): void
     {
         $query = $this->connection->newQuery()
             ->with(new CommonTableExpression('cte', function () {
@@ -129,10 +121,8 @@ class CommonTableExpressionQueryTest extends TestCase
 
     /**
      * Tests recursive CTE.
-     *
-     * @return void
      */
-    public function testWithRecursiveCte()
+    public function testWithRecursiveCte(): void
     {
         $query = $this->connection->newQuery()
             ->with(function (CommonTableExpression $cte, Query $query) {
@@ -197,17 +187,13 @@ class CommonTableExpressionQueryTest extends TestCase
 
     /**
      * Test inserting from CTE.
-     *
-     * @return void
      */
-    public function testWithInsertQuery()
+    public function testWithInsertQuery(): void
     {
         $this->skipIf(
             ($this->connection->getDriver() instanceof Mysql),
             '`WITH ... INSERT INTO` syntax is not supported in MySQL.'
         );
-
-        $this->loadFixtures('Articles');
 
         // test initial state
         $result = $this->connection->newQuery()
@@ -265,17 +251,13 @@ class CommonTableExpressionQueryTest extends TestCase
 
     /**
      * Tests inserting from CTE as values list.
-     *
-     * @return void
      */
-    public function testWithInInsertWithValuesQuery()
+    public function testWithInInsertWithValuesQuery(): void
     {
         $this->skipIf(
             ($this->connection->getDriver() instanceof Sqlserver),
             '`INSERT INTO ... WITH` syntax is not supported in SQL Server.'
         );
-
-        $this->loadFixtures('Articles');
 
         $query = $this->connection->newQuery()
             ->insert(['title', 'body'])
@@ -322,17 +304,13 @@ class CommonTableExpressionQueryTest extends TestCase
 
     /**
      * Tests updating from CTE.
-     *
-     * @return void
      */
-    public function testWithInUpdateQuery()
+    public function testWithInUpdateQuery(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
             'MariaDB does not support CTEs in UPDATE query.'
         );
-
-        $this->loadFixtures('Articles');
 
         // test initial state
         $result = $this->connection->newQuery()
@@ -388,17 +366,13 @@ class CommonTableExpressionQueryTest extends TestCase
 
     /**
      * Tests deleting from CTE.
-     *
-     * @return void
      */
-    public function testWithInDeleteQuery()
+    public function testWithInDeleteQuery(): void
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
             'MariaDB does not support CTEs in DELETE query.'
         );
-
-        $this->loadFixtures('Articles');
 
         // test initial state
         $result = $this->connection

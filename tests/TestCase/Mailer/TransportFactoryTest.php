@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer;
 
+use BadMethodCallException;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * TransportFactory Test class
@@ -30,9 +32,6 @@ class TransportFactoryTest extends TestCase
      */
     protected $transports;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -49,8 +48,6 @@ class TransportFactoryTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -62,12 +59,10 @@ class TransportFactoryTest extends TestCase
 
     /**
      * Test that using misconfigured transports fails.
-     *
-     * @return void
      */
-    public function testGetMissingClassName()
+    public function testGetMissingClassName(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Transport config "debug" is invalid, the required `className` option is missing');
 
         TransportFactory::drop('debug');
@@ -78,10 +73,8 @@ class TransportFactoryTest extends TestCase
 
     /**
      * Test configuring a transport.
-     *
-     * @return void
      */
-    public function testSetConfig()
+    public function testSetConfig(): void
     {
         $settings = [
             'className' => 'Debug',
@@ -96,10 +89,8 @@ class TransportFactoryTest extends TestCase
 
     /**
      * Test configuring multiple transports.
-     *
-     * @return void
      */
-    public function testSetConfigMultiple()
+    public function testSetConfigMultiple(): void
     {
         $settings = [
             'debug' => [
@@ -121,12 +112,10 @@ class TransportFactoryTest extends TestCase
 
     /**
      * Test that exceptions are raised when duplicate transports are configured.
-     *
-     * @return void
      */
-    public function testSetConfigErrorOnDuplicate()
+    public function testSetConfigErrorOnDuplicate(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $settings = [
             'className' => 'Debug',
             'log' => true,
@@ -138,10 +127,8 @@ class TransportFactoryTest extends TestCase
 
     /**
      * Test configTransport with an instance.
-     *
-     * @return void
      */
-    public function testSetConfigInstance()
+    public function testSetConfigInstance(): void
     {
         TransportFactory::drop('debug');
         $instance = new DebugTransport();
@@ -151,10 +138,8 @@ class TransportFactoryTest extends TestCase
 
     /**
      * Test enumerating all transport configurations
-     *
-     * @return void
      */
-    public function testConfigured()
+    public function testConfigured(): void
     {
         $result = TransportFactory::configured();
         $this->assertIsArray($result, 'Should have config keys');
@@ -165,10 +150,8 @@ class TransportFactoryTest extends TestCase
 
     /**
      * Test dropping a transport configuration
-     *
-     * @return void
      */
-    public function testDrop()
+    public function testDrop(): void
     {
         $result = TransportFactory::getConfig('debug');
         $this->assertIsArray($result, 'Should have config data');

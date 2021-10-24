@@ -52,7 +52,7 @@ class SessionStorage implements StorageInterface
      * - `key` - Session key used to store user record.
      * - `redirect` - Session key used to store redirect URL.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'key' => 'Auth.User',
@@ -64,7 +64,7 @@ class SessionStorage implements StorageInterface
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @param \Cake\Http\Response $response Response instance.
-     * @param array $config Configuration list.
+     * @param array<string, mixed> $config Configuration list.
      */
     public function __construct(ServerRequest $request, Response $response, array $config = [])
     {
@@ -96,7 +96,7 @@ class SessionStorage implements StorageInterface
      *
      * The session id is also renewed to help mitigate issues with session replays.
      *
-     * @param array|\ArrayAccess $user User record.
+     * @param \ArrayAccess|array $user User record.
      * @return void
      */
     public function write($user): void
@@ -138,5 +138,7 @@ class SessionStorage implements StorageInterface
         }
 
         $this->_session->write($this->_config['redirect'], $url);
+
+        return null;
     }
 }

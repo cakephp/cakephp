@@ -27,7 +27,7 @@ class ScalarNode implements NodeInterface
     private $type;
 
     /**
-     * @var string|int|float|bool|null
+     * @var string|float|int|bool|null
      */
     private $value;
 
@@ -35,7 +35,7 @@ class ScalarNode implements NodeInterface
      * Constructor
      *
      * @param string $type The type of scalar value.
-     * @param string|int|float|bool|null $value The wrapped value.
+     * @param string|float|int|bool|null $value The wrapped value.
      */
     public function __construct(string $type, $value)
     {
@@ -56,7 +56,7 @@ class ScalarNode implements NodeInterface
     /**
      * Get the value
      *
-     * @return string|int|float|bool|null
+     * @return string|float|int|bool|null
      */
     public function getValue()
     {

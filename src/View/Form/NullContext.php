@@ -36,7 +36,7 @@ class NullContext implements ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return string[]
+     * @return array<string>
      * @deprecated 4.0.0 Renamed to {@link getPrimaryKey()}.
      */
     public function primaryKey(): array

@@ -3,8 +3,14 @@ declare(strict_types=1);
 
 namespace TestApp\Collection;
 
-class CountableIterator extends \IteratorIterator implements \Countable
+use Countable;
+use IteratorIterator;
+
+class CountableIterator extends IteratorIterator implements Countable
 {
+    /**
+     * @param mixed $items
+     */
     public function __construct($items)
     {
         $f = function () use ($items) {
@@ -15,7 +21,7 @@ class CountableIterator extends \IteratorIterator implements \Countable
         parent::__construct($f());
     }
 
-    public function count()
+    public function count(): int
     {
         return 6;
     }

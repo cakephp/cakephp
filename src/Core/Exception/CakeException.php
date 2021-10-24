@@ -40,7 +40,7 @@ class CakeException extends RuntimeException
     protected $_messageTemplate = '';
 
     /**
-     * Array of headers to be passed to Cake\Http\Response::header()
+     * Array of headers to be passed to {@link \Cake\Http\Response::header()}
      *
      * @var array|null
      */
@@ -59,7 +59,7 @@ class CakeException extends RuntimeException
      * Allows you to create exceptions that are treated as framework errors and disabled
      * when debug mode is off.
      *
-     * @param string|array $message Either the string of the error message, or an array of attributes
+     * @param array|string $message Either the string of the error message, or an array of attributes
      *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
      * @param int|null $code The error code
      * @param \Throwable|null $previous the previous exception.
@@ -86,9 +86,9 @@ class CakeException extends RuntimeException
     /**
      * Get/set the response header to be used
      *
-     * See also Cake\Http\Response::withHeader()
+     * See also {@link \Cake\Http\Response::withHeader()}
      *
-     * @param string|array|null $header A single header string or an associative
+     * @param array|string|null $header A single header string or an associative
      *   array of "header name" => "header value"
      * @param string|null $value The header value.
      * @return array|null

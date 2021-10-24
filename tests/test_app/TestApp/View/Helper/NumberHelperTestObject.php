@@ -11,11 +11,14 @@ use TestApp\Utility\NumberMock;
  */
 class NumberHelperTestObject extends NumberHelper
 {
-    public function attach(NumberMock $cakeNumber)
+    public function attach(NumberMock $cakeNumber): void
     {
         $this->_engine = $cakeNumber;
     }
 
+    /**
+     * @return mixed
+     */
     public function engine()
     {
         return $this->_engine;

@@ -21,7 +21,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -32,7 +32,7 @@ class BasicAuthenticateTest extends TestCase
     /**
      * Fixtures
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = ['core.AuthUsers', 'core.Users'];
 
@@ -48,8 +48,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -68,8 +66,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test applying settings in the constructor
-     *
-     * @return void
      */
     public function testConstructor(): void
     {
@@ -83,8 +79,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoData(): void
     {
@@ -95,8 +89,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoUsername(): void
     {
@@ -110,8 +102,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateNoPassword(): void
     {
@@ -125,8 +115,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test the authenticate method
-     *
-     * @return void
      */
     public function testAuthenticateInjection(): void
     {
@@ -144,8 +132,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * Test that username of 0 works.
-     *
-     * @return void
      */
     public function testAuthenticateUsernameZero(): void
     {
@@ -167,16 +153,14 @@ class BasicAuthenticateTest extends TestCase
         $expected = [
             'id' => 1,
             'username' => '0',
-            'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31'),
+            'created' => new FrozenTime('2007-03-17 01:16:23'),
+            'updated' => new FrozenTime('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $this->auth->authenticate($request, new Response()));
     }
 
     /**
      * test that challenge headers are sent when no credentials are found.
-     *
-     * @return void
      */
     public function testAuthenticateChallenge(): void
     {
@@ -196,8 +180,6 @@ class BasicAuthenticateTest extends TestCase
 
     /**
      * test authenticate success
-     *
-     * @return void
      */
     public function testAuthenticateSuccess(): void
     {
@@ -213,8 +195,8 @@ class BasicAuthenticateTest extends TestCase
         $expected = [
             'id' => 1,
             'username' => 'mariano',
-            'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31'),
+            'created' => new FrozenTime('2007-03-17 01:16:23'),
+            'updated' => new FrozenTime('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
     }

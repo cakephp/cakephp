@@ -27,7 +27,7 @@ class InflectorTest extends TestCase
     /**
      * A list of chars to test transliteration.
      *
-     * @var array
+     * @var array<string, array>
      */
     public static $maps = [
         'de' => [ /* German */
@@ -77,8 +77,6 @@ class InflectorTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -90,10 +88,13 @@ class InflectorTest extends TestCase
      * testInflectingSingulars method
      *
      * @dataProvider singularizeProvider
-     * @return void
      */
-    public function testInflectingSingulars($singular, $plural)
+    public function testInflectingSingulars(string $singular, string $plural): void
     {
+        $this->assertSame($singular, Inflector::singularize($plural));
+
+        $singular = Inflector::camelize($singular);
+        $plural = Inflector::camelize($plural);
         $this->assertSame($singular, Inflector::singularize($plural));
     }
 
@@ -102,7 +103,7 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public function singularizeProvider()
+    public function singularizeProvider(): array
     {
         return [
             ['categoria', 'categorias'],
@@ -192,15 +193,16 @@ class InflectorTest extends TestCase
             ['chef', 'chefs'],
             ['', ''],
             ['cache', 'caches'],
+            ['lens', 'lenses'],
+            ['species', 'species'],
+            ['animal_species', 'animal_species'],
         ];
     }
 
     /**
      * Test that overlapping irregulars don't collide.
-     *
-     * @return void
      */
-    public function testSingularizeMultiWordIrregular()
+    public function testSingularizeMultiWordIrregular(): void
     {
         Inflector::rules('irregular', [
             'pregunta_frecuente' => 'preguntas_frecuentes',
@@ -221,10 +223,13 @@ class InflectorTest extends TestCase
      * testInflectingPlurals method
      *
      * @dataProvider pluralizeProvider
-     * @return void
      */
-    public function testInflectingPlurals($plural, $singular)
+    public function testInflectingPlurals(string $plural, string $singular): void
     {
+        $this->assertSame($plural, Inflector::pluralize($singular));
+
+        $plural = Inflector::camelize($plural);
+        $singular = Inflector::camelize($singular);
         $this->assertSame($plural, Inflector::pluralize($singular));
     }
 
@@ -233,7 +238,7 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public function pluralizeProvider()
+    public function pluralizeProvider(): array
     {
         return [
             ['axmen', 'axman'],
@@ -313,10 +318,8 @@ class InflectorTest extends TestCase
 
     /**
      * Test that overlapping irregulars don't collide.
-     *
-     * @return void
      */
-    public function testPluralizeMultiWordIrregular()
+    public function testPluralizeMultiWordIrregular(): void
     {
         Inflector::rules('irregular', [
             'pregunta_frecuente' => 'preguntas_frecuentes',
@@ -335,10 +338,8 @@ class InflectorTest extends TestCase
 
     /**
      * testInflectingMultiWordIrregulars
-     *
-     * @return void
      */
-    public function testInflectingMultiWordIrregulars()
+    public function testInflectingMultiWordIrregulars(): void
     {
         // unset the default rules in order to avoid them possibly matching
         // the words in case the irregular regex won't match, the tests
@@ -361,10 +362,8 @@ class InflectorTest extends TestCase
 
     /**
      * testUnderscore method
-     *
-     * @return void
      */
-    public function testUnderscore()
+    public function testUnderscore(): void
     {
         $this->assertSame('test_thing', Inflector::underscore('TestThing'));
         $this->assertSame('test_thing', Inflector::underscore('testThing'));
@@ -386,10 +385,8 @@ class InflectorTest extends TestCase
 
     /**
      * testDasherized method
-     *
-     * @return void
      */
-    public function testDasherized()
+    public function testDasherized(): void
     {
         $this->assertSame('test-thing', Inflector::dasherize('TestThing'));
         $this->assertSame('test-thing', Inflector::dasherize('testThing'));
@@ -404,10 +401,8 @@ class InflectorTest extends TestCase
 
     /**
      * Demonstrate the expected output for bad inputs
-     *
-     * @return void
      */
-    public function testCamelize()
+    public function testCamelize(): void
     {
         $this->assertSame('TestThing', Inflector::camelize('test_thing'));
         $this->assertSame('Test-thing', Inflector::camelize('test-thing'));
@@ -426,10 +421,8 @@ class InflectorTest extends TestCase
 
     /**
      * testVariableNaming method
-     *
-     * @return void
      */
-    public function testVariableNaming()
+    public function testVariableNaming(): void
     {
         $this->assertSame('testField', Inflector::variable('test_field'));
         $this->assertSame('testFieLd', Inflector::variable('test_fieLd'));
@@ -439,10 +432,8 @@ class InflectorTest extends TestCase
 
     /**
      * testClassNaming method
-     *
-     * @return void
      */
-    public function testClassNaming()
+    public function testClassNaming(): void
     {
         $this->assertSame('ArtistsGenre', Inflector::classify('artists_genres'));
         $this->assertSame('FileSystem', Inflector::classify('file_systems'));
@@ -452,10 +443,8 @@ class InflectorTest extends TestCase
 
     /**
      * testTableNaming method
-     *
-     * @return void
      */
-    public function testTableNaming()
+    public function testTableNaming(): void
     {
         $this->assertSame('artists_genres', Inflector::tableize('ArtistsGenre'));
         $this->assertSame('file_systems', Inflector::tableize('FileSystem'));
@@ -465,10 +454,8 @@ class InflectorTest extends TestCase
 
     /**
      * testHumanization method
-     *
-     * @return void
      */
-    public function testHumanization()
+    public function testHumanization(): void
     {
         $this->assertSame('Posts', Inflector::humanize('posts'));
         $this->assertSame('Posts Tags', Inflector::humanize('posts_tags'));
@@ -479,10 +466,8 @@ class InflectorTest extends TestCase
 
     /**
      * testCustomPluralRule method
-     *
-     * @return void
      */
-    public function testCustomPluralRule()
+    public function testCustomPluralRule(): void
     {
         Inflector::rules('plural', ['/^(custom)$/i' => '\1izables']);
         Inflector::rules('uninflected', ['uninflectable']);
@@ -508,10 +493,8 @@ class InflectorTest extends TestCase
 
     /**
      * testCustomSingularRule method
-     *
-     * @return void
      */
-    public function testCustomSingularRule()
+    public function testCustomSingularRule(): void
     {
         Inflector::rules('uninflected', ['singulars']);
         Inflector::rules('singular', ['/(eple)r$/i' => '\1', '/(jente)r$/i' => '\1']);
@@ -536,10 +519,8 @@ class InflectorTest extends TestCase
 
     /**
      * test that setting new rules clears the inflector caches.
-     *
-     * @return void
      */
-    public function testRulesClearsCaches()
+    public function testRulesClearsCaches(): void
     {
         $this->assertSame('Banana', Inflector::singularize('Bananas'));
         $this->assertSame('bananas', Inflector::tableize('Banana'));
@@ -556,10 +537,8 @@ class InflectorTest extends TestCase
 
     /**
      * Test resetting inflection rules.
-     *
-     * @return void
      */
-    public function testCustomRuleWithReset()
+    public function testCustomRuleWithReset(): void
     {
         $uninflected = ['atlas', 'lapis', 'onibus', 'pires', 'virus', '.*x'];
         $pluralIrregular = ['as' => 'ases'];

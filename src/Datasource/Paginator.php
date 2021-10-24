@@ -40,7 +40,7 @@ class Paginator implements PaginatorInterface
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'page' => 1,
@@ -199,10 +199,10 @@ class Paginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository instance.
      * @param \Cake\Datasource\QueryInterface|null $query Query Instance.
-     * @param array $data Pagination data.
+     * @param array<string, mixed> $data Pagination data.
      * @return \Cake\Datasource\QueryInterface
      */
-    protected function getQuery(RepositoryInterface $object, ?QueryInterface $query = null, array $data): QueryInterface
+    protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface
     {
         if ($query === null) {
             $query = $object->find($data['finder'], $data['options']);
@@ -229,8 +229,8 @@ class Paginator implements PaginatorInterface
      * Extract pagination data needed
      *
      * @param \Cake\Datasource\RepositoryInterface $object The repository object.
-     * @param array $params Request params
-     * @param array $settings The settings/configuration used for pagination.
+     * @param array<string, mixed> $params Request params
+     * @param array<string, mixed> $settings The settings/configuration used for pagination.
      * @return array Array with keys 'defaults', 'options' and 'finder'
      */
     protected function extractData(RepositoryInterface $object, array $params, array $settings): array
@@ -251,9 +251,9 @@ class Paginator implements PaginatorInterface
     /**
      * Build pagination params.
      *
-     * @param array $data Paginator data containing keys 'options',
+     * @param array<string, mixed> $data Paginator data containing keys 'options',
      *   'count', 'defaults', 'finder', 'numResults'.
-     * @return array Paging params.
+     * @return array<string, mixed> Paging params.
      */
     protected function buildParams(array $data): array
     {
@@ -284,9 +284,9 @@ class Paginator implements PaginatorInterface
     /**
      * Add "page" and "pageCount" params.
      *
-     * @param array $params Paging params.
+     * @param array<string, mixed> $params Paging params.
      * @param array $data Paginator data.
-     * @return array Updated params.
+     * @return array<string, mixed> Updated params.
      */
     protected function addPageCountParams(array $params, array $data): array
     {
@@ -309,9 +309,9 @@ class Paginator implements PaginatorInterface
     /**
      * Add "start" and "end" params.
      *
-     * @param array $params Paging params.
+     * @param array<string, mixed> $params Paging params.
      * @param array $data Paginator data.
-     * @return array Updated params.
+     * @return array<string, mixed> Updated params.
      */
     protected function addStartEndParams(array $params, array $data): array
     {
@@ -331,9 +331,9 @@ class Paginator implements PaginatorInterface
     /**
      * Add "prevPage" and "nextPage" params.
      *
-     * @param array $params Paginator params.
+     * @param array<string, mixed> $params Paginator params.
      * @param array $data Paging data.
-     * @return array Updated params.
+     * @return array<string, mixed> Updated params.
      */
     protected function addPrevNextParams(array $params, array $data): array
     {
@@ -350,9 +350,9 @@ class Paginator implements PaginatorInterface
     /**
      * Add sorting / ordering params.
      *
-     * @param array $params Paginator params.
+     * @param array<string, mixed> $params Paginator params.
      * @param array $data Paging data.
-     * @return array Updated params.
+     * @return array<string, mixed> Updated params.
      */
     protected function addSortingParams(array $params, array $data): array
     {
@@ -379,7 +379,7 @@ class Paginator implements PaginatorInterface
     /**
      * Extracts the finder name and options out of the provided pagination options.
      *
-     * @param array $options the pagination options.
+     * @param array<string, mixed> $options the pagination options.
      * @return array An array containing in the first position the finder name
      *   and in the second the options to be passed to it.
      */
@@ -409,7 +409,7 @@ class Paginator implements PaginatorInterface
     /**
      * Shim method for reading the deprecated whitelist or allowedParameters options
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getAllowedParameters(): array
     {
@@ -430,8 +430,8 @@ class Paginator implements PaginatorInterface
     /**
      * Shim method for reading the deprecated sortWhitelist or sortableFields options.
      *
-     * @param array $config The configuration data to coalesce and emit warnings on.
-     * @return string[]|null
+     * @param array<string, mixed> $config The configuration data to coalesce and emit warnings on.
+     * @return array<string>|null
      */
     protected function getSortableFields(array $config): ?array
     {
@@ -459,9 +459,9 @@ class Paginator implements PaginatorInterface
      * combined together. You can change config value `allowedParameters` to modify
      * which options/values can be set using request parameters.
      *
-     * @param array $params Request params.
+     * @param array<string, mixed> $params Request params.
      * @param array $settings The settings to merge with the request data.
-     * @return array Array of merged options.
+     * @return array<string, mixed> Array of merged options.
      */
     public function mergeOptions(array $params, array $settings): array
     {
@@ -481,8 +481,8 @@ class Paginator implements PaginatorInterface
      * repository, the general settings will be used.
      *
      * @param string $alias Model name to get settings for.
-     * @param array $settings The settings which is used for combining.
-     * @return array An array of pagination settings for a model,
+     * @param array<string, mixed> $settings The settings which is used for combining.
+     * @return array<string, mixed> An array of pagination settings for a model,
      *   or the general settings.
      */
     public function getDefaults(string $alias, array $settings): array
@@ -529,8 +529,8 @@ class Paginator implements PaginatorInterface
      * requested sorting field/direction.
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
-     * @param array $options The pagination options being used for this request.
-     * @return array An array of options with sort + direction removed and
+     * @param array<string, mixed> $options The pagination options being used for this request.
+     * @return array<string, mixed> An array of options with sort + direction removed and
      *   replaced with order if possible.
      */
     public function validateSort(RepositoryInterface $object, array $options): array
@@ -593,9 +593,9 @@ class Paginator implements PaginatorInterface
     /**
      * Remove alias if needed.
      *
-     * @param array $fields Current fields
+     * @param array<string, mixed> $fields Current fields
      * @param string $model Current model alias
-     * @return array $fields Unaliased fields where applicable
+     * @return array<string, mixed> $fields Unaliased fields where applicable
      */
     protected function _removeAliases(array $fields, string $model): array
     {
@@ -624,7 +624,7 @@ class Paginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $order Order array.
-     * @param bool $allowed Whether or not the field was allowed.
+     * @param bool $allowed Whether the field was allowed.
      * @return array Final order array.
      */
     protected function _prefix(RepositoryInterface $object, array $order, bool $allowed = false): array
@@ -663,8 +663,8 @@ class Paginator implements PaginatorInterface
     /**
      * Check the limit parameter and ensure it's within the maxLimit bounds.
      *
-     * @param array $options An array of options with a limit key to be checked.
-     * @return array An array of options for pagination.
+     * @param array<string, mixed> $options An array of options with a limit key to be checked.
+     * @return array<string, mixed> An array of options for pagination.
      */
     public function checkLimit(array $options): array
     {

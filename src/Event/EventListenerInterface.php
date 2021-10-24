@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Event;
 
 /**
- * Objects implementing this interface should declare the `implementedEvents` function
+ * Objects implementing this interface should declare the `implementedEvents()` method
  * to notify the event manager what methods should be called when an event is triggered.
  */
 interface EventListenerInterface
@@ -39,7 +39,7 @@ interface EventListenerInterface
      *  }
      * ```
      *
-     * @return array Associative array or event key names pointing to the function
+     * @return array<string, mixed> Associative array or event key names pointing to the function
      * that should be called in the object when the respective event is fired
      */
     public function implementedEvents(): array;

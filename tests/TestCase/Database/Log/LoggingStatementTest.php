@@ -22,6 +22,7 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use DateTime;
 use LogicException;
 
 /**
@@ -46,10 +47,8 @@ class LoggingStatementTest extends TestCase
 
     /**
      * Tests that queries are logged when executed without params
-     *
-     * @return void
      */
-    public function testExecuteNoParams()
+    public function testExecuteNoParams(): void
     {
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(3));
@@ -64,15 +63,13 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug connection=test duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug: connection=test duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
     }
 
     /**
      * Tests that queries are logged when executed with params
-     *
-     * @return void
      */
-    public function testExecuteWithParams()
+    public function testExecuteWithParams(): void
     {
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
@@ -87,21 +84,19 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug: connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
     }
 
     /**
      * Tests that queries are logged when executed with bound params
-     *
-     * @return void
      */
-    public function testExecuteWithBinding()
+    public function testExecuteWithBinding(): void
     {
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
         $inner->method('execute')->will($this->returnValue(true));
 
-        $date = new \DateTime('2013-01-01');
+        $date = new DateTime('2013-01-01');
         $inner->expects($this->atLeast(2))
               ->method('bindValue')
               ->withConsecutive(['a', 1], ['b', $date]);
@@ -115,22 +110,20 @@ class LoggingStatementTest extends TestCase
         $st->execute();
         $st->fetchAll();
 
-        $st->bindValue('b', new \DateTime('2014-01-01'), 'date');
+        $st->bindValue('b', new DateTime('2014-01-01'), 'date');
         $st->execute();
         $st->fetchAll();
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertMatchesRegularExpression("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
-        $this->assertMatchesRegularExpression("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
     }
 
     /**
      * Tests that queries are logged despite database errors
-     *
-     * @return void
      */
-    public function testExecuteWithError()
+    public function testExecuteWithError(): void
     {
         $exception = new LogicException('This is bad');
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
@@ -151,15 +144,13 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**
      * Tests setting and getting the logger
-     *
-     * @return void
      */
-    public function testSetAndGetLogger()
+    public function testSetAndGetLogger(): void
     {
         $logger = new QueryLogger(['connection' => 'test']);
         $st = new LoggingStatement(

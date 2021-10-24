@@ -53,10 +53,8 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
     /**
      * Test decoding request cookies
-     *
-     * @return void
      */
-    public function testDecodeRequestCookies()
+    public function testDecodeRequestCookies(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams([
@@ -80,9 +78,8 @@ class EncryptedCookieMiddlewareTest extends TestCase
      *
      * @dataProvider malformedCookies
      * @param string $cookie
-     * @return void
      */
-    public function testDecodeMalformedCookies($cookie)
+    public function testDecodeMalformedCookies($cookie): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams(['secret' => $cookie]);
@@ -105,7 +102,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public function malformedCookies()
+    public function malformedCookies(): array
     {
         $encrypted = $this->_encrypt('secret data', 'aes');
 
@@ -119,10 +116,8 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
     /**
      * Test encoding cookies in the set-cookie header.
-     *
-     * @return void
      */
-    public function testEncodeResponseSetCookieHeader()
+    public function testEncodeResponseSetCookieHeader(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $handler = new TestRequestHandler(function ($req) {
@@ -144,10 +139,8 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
     /**
      * Test encoding cookies in the cookie collection.
-     *
-     * @return void
      */
-    public function testEncodeResponseCookieData()
+    public function testEncodeResponseCookieData(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $handler = new TestRequestHandler(function ($req) {

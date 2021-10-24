@@ -13,8 +13,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
+use BadMethodCallException;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Datasource\FakeConnection;
 
 /**
@@ -24,8 +28,6 @@ class ConnectionManagerTest extends TestCase
 {
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -40,7 +42,7 @@ class ConnectionManagerTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider()
+    public static function configProvider(): array
     {
         return [
             'Array of data using classname key.' => [[
@@ -56,9 +58,9 @@ class ConnectionManagerTest extends TestCase
      * Test the various valid config() calls.
      *
      * @dataProvider configProvider
-     * @return void
+     * @param \Cake\Datasource\ConnectionInterface|array $settings
      */
-    public function testConfigVariants($settings)
+    public function testConfigVariants($settings): void
     {
         $this->assertNotContains('test_variant', ConnectionManager::configured(), 'test_variant config should not exist.');
         ConnectionManager::setConfig('test_variant', $settings);
@@ -71,9 +73,9 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test invalid classes cause exceptions
      */
-    public function testConfigInvalidOptions()
+    public function testConfigInvalidOptions(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\MissingDatasourceException::class);
+        $this->expectException(MissingDatasourceException::class);
         ConnectionManager::setConfig('test_variant', [
             'className' => 'Herp\Derp',
         ]);
@@ -82,12 +84,10 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test for errors on duplicate config.
-     *
-     * @return void
      */
-    public function testConfigDuplicateConfig()
+    public function testConfigDuplicateConfig(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot reconfigure existing key "test_variant"');
         $settings = [
             'className' => FakeConnection::class,
@@ -99,22 +99,18 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test get() failing on missing config.
-     *
-     * @return void
      */
-    public function testGetFailOnMissingConfig()
+    public function testGetFailOnMissingConfig(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The datasource configuration "test_variant" was not found.');
         ConnectionManager::get('test_variant');
     }
 
     /**
      * Test loading configured connections.
-     *
-     * @return void
      */
-    public function testGet()
+    public function testGet(): void
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(empty($config), 'No test config, skipping');
@@ -127,12 +123,10 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test loading connections without aliases
-     *
-     * @return void
      */
-    public function testGetNoAlias()
+    public function testGetNoAlias(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The datasource configuration "other_name" was not found.');
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(empty($config), 'No test config, skipping');
@@ -143,10 +137,8 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test that configured() finds configured sources.
-     *
-     * @return void
      */
-    public function testConfigured()
+    public function testConfigured(): void
     {
         ConnectionManager::setConfig('test_variant', [
             'className' => FakeConnection::class,
@@ -158,10 +150,8 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * testGetPluginDataSource method
-     *
-     * @return void
      */
-    public function testGetPluginDataSource()
+    public function testGetPluginDataSource(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $name = 'test_variant';
@@ -176,10 +166,8 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Tests that a connection configuration can be deleted in runtime
-     *
-     * @return void
      */
-    public function testDrop()
+    public function testDrop(): void
     {
         ConnectionManager::setConfig('test_variant', [
             'className' => FakeConnection::class,
@@ -197,10 +185,8 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test aliasing connections.
-     *
-     * @return void
      */
-    public function testAlias()
+    public function testAlias(): void
     {
         ConnectionManager::setConfig('test_variant', [
             'className' => FakeConnection::class,
@@ -212,23 +198,11 @@ class ConnectionManagerTest extends TestCase
     }
 
     /**
-     * Test alias() raises an error when aliasing an undefined connection.
-     *
-     * @return void
-     */
-    public function testAliasError()
-    {
-        $this->expectException(\Cake\Datasource\Exception\MissingDatasourceConfigException::class);
-        $this->assertNotContains('test_kaboom', ConnectionManager::configured());
-        ConnectionManager::alias('test_kaboom', 'other_name');
-    }
-
-    /**
      * provider for DSN strings.
      *
      * @return array
      */
-    public function dsnProvider()
+    public function dsnProvider(): array
     {
         return [
             'no user' => [
@@ -398,9 +372,8 @@ class ConnectionManagerTest extends TestCase
      * Test parseDsn method.
      *
      * @dataProvider dsnProvider
-     * @return void
      */
-    public function testParseDsn($dsn, $expected)
+    public function testParseDsn(string $dsn, array $expected): void
     {
         $result = ConnectionManager::parseDsn($dsn);
         $this->assertEquals($expected, $result);
@@ -408,12 +381,10 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test parseDsn invalid.
-     *
-     * @return void
      */
-    public function testParseDsnInvalid()
+    public function testParseDsnInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The DSN string \'bagof:nope\' could not be parsed.');
         $result = ConnectionManager::parseDsn('bagof:nope');
     }
@@ -421,10 +392,8 @@ class ConnectionManagerTest extends TestCase
     /**
      * Tests that directly setting an instance in a config, will not return a different
      * instance later on
-     *
-     * @return void
      */
-    public function testConfigWithObject()
+    public function testConfigWithObject(): void
     {
         $connection = new FakeConnection();
         ConnectionManager::setConfig('test_variant', $connection);
@@ -433,10 +402,8 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Tests configuring an instance with a callable
-     *
-     * @return void
      */
-    public function testConfigWithCallable()
+    public function testConfigWithCallable(): void
     {
         $connection = new FakeConnection();
         $callable = function ($alias) use ($connection) {
@@ -451,10 +418,8 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Tests that setting a config will also correctly set the name for the connection
-     *
-     * @return void
      */
-    public function testSetConfigName()
+    public function testSetConfigName(): void
     {
         //Set with explicit name
         ConnectionManager::setConfig('test_variant', [

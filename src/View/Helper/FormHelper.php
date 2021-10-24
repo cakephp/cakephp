@@ -60,7 +60,7 @@ class FormHelper extends Helper
     /**
      * Default config for the helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'idPrefix' => null,
@@ -95,7 +95,7 @@ class FormHelper extends Helper
             // Wrapper container for checkboxes.
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Error message wrapper elements.
-            'error' => '<div class="error-message">{{content}}</div>',
+            'error' => '<div class="error-message" id="{{id}}">{{content}}</div>',
             // Container for error items.
             'errorList' => '<ul>{{content}}</ul>',
             // Error item wrapper.
@@ -158,7 +158,7 @@ class FormHelper extends Helper
     /**
      * Default widgets
      *
-     * @var array
+     * @var array<string, array<string>>
      */
     protected $_defaultWidgets = [
         'button' => ['Button'],
@@ -226,7 +226,7 @@ class FormHelper extends Helper
      * `data` - Corresponds to request data (POST/PUT).
      * `query` - Corresponds to request's query string.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $supportedValueSources = ['context', 'data', 'query'];
 
@@ -234,14 +234,14 @@ class FormHelper extends Helper
      * The default sources.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @var string[]
+     * @var array<string>
      */
     protected $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_groupedInputTypes = ['radio', 'multicheckbox'];
 
@@ -256,7 +256,7 @@ class FormHelper extends Helper
      * Construct the widgets and binds the default context providers
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper.
+     * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
     {
@@ -358,7 +358,7 @@ class FormHelper extends Helper
      * @param mixed $context The context for which the form is being defined.
      *   Can be a ContextInterface instance, ORM entity, ORM resultset, or an
      *   array of meta data. You can use `null` to make a context-less form.
-     * @param array $options An array of html attributes and options.
+     * @param array<string, mixed> $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
      */
@@ -481,8 +481,8 @@ class FormHelper extends Helper
      * Create the URL for a form based on the options.
      *
      * @param \Cake\View\Form\ContextInterface $context The context object to use.
-     * @param array $options An array of options from create()
-     * @return string|array The action attribute for the form.
+     * @param array<string, mixed> $options An array of options from create()
+     * @return array|string The action attribute for the form.
      */
     protected function _formUrl(ContextInterface $context, array $options)
     {
@@ -514,7 +514,7 @@ class FormHelper extends Helper
     /**
      * Correctly store the last created form action URL.
      *
-     * @param string|array|null $url The URL of the last form.
+     * @param array|string|null $url The URL of the last form.
      * @return void
      */
     protected function _lastAction($url = null): void
@@ -555,7 +555,7 @@ class FormHelper extends Helper
      *
      * Resets some parts of the state, shared among multiple FormHelper::create() calls, to defaults.
      *
-     * @param array $secureAttributes Secure attributes which will be passed as HTML attributes
+     * @param array<string, mixed> $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
      * @return string A closing FORM tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#closing-the-form
@@ -589,7 +589,7 @@ class FormHelper extends Helper
      *
      * @param array $fields If set specifies the list of fields to be added to
      *    FormProtector for generating the hash.
-     * @param array $secureAttributes will be passed as HTML attributes into the hidden
+     * @param array<string, mixed> $secureAttributes will be passed as HTML attributes into the hidden
      *    input elements generated for the Security Component.
      * @return string A hidden input field with a security hash, or empty string when
      *   secured forms are not in use.
@@ -656,7 +656,7 @@ class FormHelper extends Helper
     /**
      * Create FormProtector instance.
      *
-     * @param array $formTokenData Token data.
+     * @param array<string, mixed> $formTokenData Token data.
      * @return \Cake\Form\FormProtector
      */
     protected function createFormProtector(array $formTokenData): FormProtector
@@ -707,12 +707,12 @@ class FormHelper extends Helper
      *
      * ### Options:
      *
-     * - `escape` boolean - Whether or not to html escape the contents of the error.
+     * - `escape` boolean - Whether to html escape the contents of the error.
      *
      * @param string $field A field name, like "modelname.fieldname"
-     * @param string|array|null $text Error message as string or array of messages. If an array,
+     * @param array|string|null $text Error message as string or array of messages. If an array,
      *   it should be a hash of key names => messages.
-     * @param array $options See above.
+     * @param array<string, mixed> $options See above.
      * @return string Formatted errors or ''.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#displaying-and-checking-errors
      */
@@ -766,7 +766,10 @@ class FormHelper extends Helper
             }
         }
 
-        return $this->formatTemplate('error', ['content' => $error]);
+        return $this->formatTemplate('error', [
+            'content' => $error,
+            'id' => $this->_domId($field) . '-error',
+        ]);
     }
 
     /**
@@ -823,7 +826,7 @@ class FormHelper extends Helper
      * @param string|null $text Text that will appear in the label field. If
      *   $text is left undefined the text will be inflected from the
      *   fieldName.
-     * @param array $options An array of HTML attributes.
+     * @param array<string, mixed> $options An array of HTML attributes.
      * @return string The formatted LABEL element
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-labels
      */
@@ -886,7 +889,7 @@ class FormHelper extends Helper
      *
      * @param array $fields An array of customizations for the fields that will be
      *   generated. This array allows you to set custom types, labels, or other options.
-     * @param array $options Options array. Valid keys are:
+     * @param array<string, mixed> $options Options array. Valid keys are:
      *
      * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
      *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
@@ -923,7 +926,7 @@ class FormHelper extends Helper
      *
      * @param array $fields An array of the fields to generate. This array allows
      *   you to set custom types, labels, or other options.
-     * @param array $options Options array. Valid keys are:
+     * @param array<string, mixed> $options Options array. Valid keys are:
      *
      * - `fieldset` Set to false to disable the fieldset. You can also pass an
      *    array of params to be applied as HTML attributes to the fieldset tag.
@@ -953,7 +956,7 @@ class FormHelper extends Helper
      * Wrap a set of inputs in a fieldset
      *
      * @param string $fields the form inputs to wrap in a fieldset
-     * @param array $options Options array. Valid keys are:
+     * @param array<string, mixed> $options Options array. Valid keys are:
      *
      * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
      *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
@@ -964,16 +967,10 @@ class FormHelper extends Helper
      */
     public function fieldset(string $fields = '', array $options = []): string
     {
-        $fieldset = $legend = true;
+        $legend = $options['legend'] ?? true;
+        $fieldset = $options['fieldset'] ?? true;
         $context = $this->_getContext();
         $out = $fields;
-
-        if (isset($options['legend'])) {
-            $legend = $options['legend'];
-        }
-        if (isset($options['fieldset'])) {
-            $fieldset = $options['fieldset'];
-        }
 
         if ($legend === true) {
             $isCreate = $context->isCreate();
@@ -1029,7 +1026,7 @@ class FormHelper extends Helper
      *   widget is checked
      *
      * @param string $fieldName This should be "modelname.fieldname"
-     * @param array $options Each type of input takes different options.
+     * @param array<string, mixed> $options Each type of input takes different options.
      * @return string Completed form widget.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-form-inputs
      * @psalm-suppress InvalidReturnType
@@ -1059,6 +1056,31 @@ class FormHelper extends Helper
             $templater->{$templateMethod}($options['templates']);
         }
         unset($options['templates']);
+
+        // Hidden inputs don't need aria.
+        // Multiple checkboxes can't have aria generated for them at this layer.
+        if ($options['type'] !== 'hidden' && ($options['type'] !== 'select' && !isset($options['multiple']))) {
+            $isFieldError = $this->isFieldError($fieldName);
+            $options += [
+                'aria-required' => $options['required'] == true ? 'true' : null,
+                'aria-invalid' => $isFieldError ? 'true' : null,
+            ];
+            // Don't include aria-describedby unless we have a good chance of
+            // having error message show up.
+            if (
+                strpos($templater->get('error'), '{{id}}') !== false &&
+                strpos($templater->get('inputContainerError'), '{{error}}') !== false
+            ) {
+                $options += [
+                   'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
+                ];
+            }
+            if (isset($options['placeholder']) && $options['label'] === false) {
+                $options += [
+                    'aria-label' => $options['placeholder'],
+                ];
+            }
+        }
 
         $error = null;
         $errorSuffix = '';
@@ -1126,7 +1148,7 @@ class FormHelper extends Helper
     /**
      * Generates an group template element
      *
-     * @param array $options The options for group template
+     * @param array<string, mixed> $options The options for group template
      * @return string The generated group template
      */
     protected function _groupTemplate(array $options): string
@@ -1147,7 +1169,7 @@ class FormHelper extends Helper
     /**
      * Generates an input container template
      *
-     * @param array $options The options for input container template
+     * @param array<string, mixed> $options The options for input container template
      * @return string The generated input container template
      */
     protected function _inputContainerTemplate(array $options): string
@@ -1170,8 +1192,8 @@ class FormHelper extends Helper
      * Generates an input element
      *
      * @param string $fieldName the field name
-     * @param array $options The options for the input element
-     * @return string|array The generated input element string
+     * @param array<string, mixed> $options The options for the input element
+     * @return array|string The generated input element string
      *  or array if checkbox() is called with option 'hiddenField' set to '_split'.
      */
     protected function _getInput(string $fieldName, array $options)
@@ -1201,8 +1223,8 @@ class FormHelper extends Helper
      * Generates input options array
      *
      * @param string $fieldName The name of the field to parse options for.
-     * @param array $options Options list.
-     * @return array Options
+     * @param array<string, mixed> $options Options list.
+     * @return array<string, mixed> Options
      */
     protected function _parseOptions(string $fieldName, array $options): array
     {
@@ -1223,7 +1245,7 @@ class FormHelper extends Helper
      * variables that can be found in the view template
      *
      * @param string $fieldName the name of the field to guess a type for
-     * @param array $options the options passed to the input method
+     * @param array<string, mixed> $options the options passed to the input method
      * @return string
      */
     protected function _inputType(string $fieldName, array $options): string
@@ -1271,7 +1293,7 @@ class FormHelper extends Helper
      * and sets the value to the 'options' key in the options array.
      *
      * @param string $fieldName The name of the field to find options for.
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return array
      */
     protected function _optionsOptions(string $fieldName, array $options): array
@@ -1308,10 +1330,10 @@ class FormHelper extends Helper
      * Magically set option type and corresponding options
      *
      * @param string $fieldName The name of the field to generate options for.
-     * @param array $options Options list.
-     * @param bool $allowOverride Whether or not it is allowed for this method to
+     * @param array<string, mixed> $options Options list.
+     * @param bool $allowOverride Whether it is allowed for this method to
      * overwrite the 'type' key in options.
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _magicOptions(string $fieldName, array $options, bool $allowOverride): array
     {
@@ -1341,8 +1363,8 @@ class FormHelper extends Helper
      * Set required attribute and custom validity JS.
      *
      * @param string $fieldName The name of the field to generate options for.
-     * @param array $options Options list.
-     * @return array Modified options list.
+     * @param array<string, mixed> $options Options list.
+     * @return array<string, mixed> Modified options list.
      */
     protected function setRequiredAndCustomValidity(string $fieldName, array $options)
     {
@@ -1373,7 +1395,7 @@ class FormHelper extends Helper
      * Generate label for input
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return string|false Generated label element or false.
      */
     protected function _getLabel(string $fieldName, array $options)
@@ -1382,10 +1404,7 @@ class FormHelper extends Helper
             return false;
         }
 
-        $label = null;
-        if (isset($options['label'])) {
-            $label = $options['label'];
-        }
+        $label = $options['label'] ?? null;
 
         if ($label === false && $options['type'] === 'checkbox') {
             return $options['input'];
@@ -1401,7 +1420,7 @@ class FormHelper extends Helper
      * Extracts a single option from an options array.
      *
      * @param string $name The name of the option to pull out.
-     * @param array $options The array of options you want to extract.
+     * @param array<string, mixed> $options The array of options you want to extract.
      * @param mixed $default The default option value
      * @return mixed the contents of the option or default
      */
@@ -1421,8 +1440,8 @@ class FormHelper extends Helper
      * used instead of the generated values if present.
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param string|array|null $label Label text or array with label attributes.
-     * @param array $options Options for the label element.
+     * @param array|string|null $label Label text or array with label attributes.
+     * @param array<string, mixed> $options Options for the label element.
      * @return string Generated label element
      */
     protected function _inputLabel(string $fieldName, $label = null, array $options = []): string
@@ -1469,8 +1488,8 @@ class FormHelper extends Helper
      *    the default value.
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
-     * @param array $options Array of HTML attributes.
-     * @return string[]|string An HTML text input element.
+     * @param array<string, mixed> $options Array of HTML attributes.
+     * @return array<string>|string An HTML text input element.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-checkboxes
      */
     public function checkbox(string $fieldName, array $options = [])
@@ -1527,7 +1546,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param iterable $options Radio button options array.
-     * @param array $attributes Array of attributes.
+     * @param array<string, mixed> $attributes Array of attributes.
      * @return string Completed radio widget set.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-radio-buttons
      */
@@ -1579,16 +1598,11 @@ class FormHelper extends Helper
      */
     public function __call(string $method, array $params)
     {
-        $options = [];
         if (empty($params)) {
             throw new CakeException(sprintf('Missing field name for FormHelper::%s', $method));
         }
-        if (isset($params[1])) {
-            $options = $params[1];
-        }
-        if (!isset($options['type'])) {
-            $options['type'] = $method;
-        }
+        $options = $params[1] ?? [];
+        $options['type'] = $options['type'] ?? $method;
         $options = $this->_initInputField($params[0], $options);
 
         return $this->widget($options['type'], $options);
@@ -1599,10 +1613,10 @@ class FormHelper extends Helper
      *
      * ### Options:
      *
-     * - `escape` - Whether or not the contents of the textarea should be escaped. Defaults to true.
+     * - `escape` - Whether the contents of the textarea should be escaped. Defaults to true.
      *
      * @param string $fieldName Name of a field, in the form "modelname.fieldname"
-     * @param array $options Array of HTML attributes, and special options above.
+     * @param array<string, mixed> $options Array of HTML attributes, and special options above.
      * @return string A generated HTML text input element
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-textareas
      */
@@ -1618,7 +1632,7 @@ class FormHelper extends Helper
      * Creates a hidden input field.
      *
      * @param string $fieldName Name of a field, in the form of "modelname.fieldname"
-     * @param array $options Array of HTML attributes.
+     * @param array<string, mixed> $options Array of HTML attributes.
      * @return string A generated hidden input
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-hidden-inputs
      */
@@ -1651,7 +1665,7 @@ class FormHelper extends Helper
      * Creates file input widget.
      *
      * @param string $fieldName Name of a field, in the form "modelname.fieldname"
-     * @param array $options Array of HTML attributes.
+     * @param array<string, mixed> $options Array of HTML attributes.
      * @return string A generated file input.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-file-inputs
      */
@@ -1676,7 +1690,7 @@ class FormHelper extends Helper
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
-     * @param array $options Array of options and HTML attributes.
+     * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string A HTML button tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-button-elements
      */
@@ -1721,8 +1735,8 @@ class FormHelper extends Helper
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
-     * @param string|array $url URL as string or array
-     * @param array $options Array of options and HTML attributes.
+     * @param array|string $url URL as string or array
+     * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string A HTML button tag.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
@@ -1773,9 +1787,9 @@ class FormHelper extends Helper
      * - The option `onclick` will be replaced.
      *
      * @param string $title The content to be wrapped by <a> tags.
-     * @param string|array|null $url Cake-relative URL or array of URL parameters, or
+     * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
-     * @param array $options Array of HTML attributes.
+     * @param array<string, mixed> $options Array of HTML attributes.
      * @return string An `<a />` element.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
@@ -1886,7 +1900,7 @@ class FormHelper extends Helper
      *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
      *  exists, AND the first character is /, image is relative to webroot,
      *  OR if the first character is not /, image is relative to webroot/img.
-     * @param array $options Array of options. See above.
+     * @param array<string, mixed> $options Array of options. See above.
      * @return string A HTML submit button
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-buttons-and-submit-elements
      */
@@ -2006,7 +2020,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name attribute of the SELECT
      * @param iterable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
      *   SELECT element
-     * @param array $attributes The HTML attributes of the select element.
+     * @param array<string, mixed> $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-select-pickers
@@ -2085,7 +2099,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name attribute of the SELECT
      * @param iterable $options Array of the OPTION elements
      *   (as 'value'=>'Text' pairs) to be used in the checkboxes element.
-     * @param array $attributes The HTML attributes of the select element.
+     * @param array<string, mixed> $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
      */
@@ -2130,7 +2144,7 @@ class FormHelper extends Helper
      * - `min` The min year to appear in the select element.
      *
      * @param string $fieldName The field name.
-     * @param array $options Options & attributes for the select elements.
+     * @param array<string, mixed> $options Options & attributes for the select elements.
      * @return string Completed year select input
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-year-inputs
      */
@@ -2153,7 +2167,7 @@ class FormHelper extends Helper
      * See dateTime() options.
      *
      * @param string $fieldName The field name.
-     * @param array $options Array of options or HTML attributes.
+     * @param array<string, mixed> $options Array of options or HTML attributes.
      * @return string
      */
     public function month(string $fieldName, array $options = []): string
@@ -2177,7 +2191,7 @@ class FormHelper extends Helper
      *   If set to `true` current datetime will be used.
      *
      * @param string $fieldName The field name.
-     * @param array $options Array of options or HTML attributes.
+     * @param array<string, mixed> $options Array of options or HTML attributes.
      * @return string
      */
     public function dateTime(string $fieldName, array $options = []): string
@@ -2200,7 +2214,7 @@ class FormHelper extends Helper
      * See dateTime() options.
      *
      * @param string $fieldName The field name.
-     * @param array $options Array of options or HTML attributes.
+     * @param array<string, mixed> $options Array of options or HTML attributes.
      * @return string
      */
     public function time(string $fieldName, array $options = []): string
@@ -2222,7 +2236,7 @@ class FormHelper extends Helper
      * See dateTime() options.
      *
      * @param string $fieldName The field name.
-     * @param array $options Array of options or HTML attributes.
+     * @param array<string, mixed> $options Array of options or HTML attributes.
      * @return string
      */
     public function date(string $fieldName, array $options = []): string
@@ -2243,7 +2257,7 @@ class FormHelper extends Helper
      *
      * ### Options
      *
-     * - `secure` - boolean whether or not the field should be added to the security fields.
+     * - `secure` - boolean whether the field should be added to the security fields.
      *   Disabling the field using the `disabled` option, will also omit the field from being
      *   part of the hashed key.
      * - `default` - mixed - The value to use if there is no value in the form's context.
@@ -2258,8 +2272,8 @@ class FormHelper extends Helper
      * can be passed to a form widget to generate the actual input.
      *
      * @param string $field Name of the field to initialize options for.
-     * @param array $options Array of options to append options into.
-     * @return array Array of options for the input.
+     * @param array<string, mixed>|array<string> $options Array of options to append options into.
+     * @return array<string, mixed> Array of options for the input.
      */
     protected function _initInputField(string $field, array $options = []): array
     {
@@ -2276,6 +2290,7 @@ class FormHelper extends Helper
 
         $disabledIndex = array_search('disabled', $options, true);
         if (is_int($disabledIndex)) {
+            deprecationWarning('Using non-associative options is deprecated, use `\'disabled\' => true` instead.');
             unset($options[$disabledIndex]);
             $options['disabled'] = true;
         }
@@ -2314,9 +2329,6 @@ class FormHelper extends Helper
         if ($isDisabled) {
             $options['secure'] = self::SECURE_SKIP;
         }
-        if ($options['secure'] === self::SECURE_SKIP) {
-            return $options;
-        }
 
         return $options;
     }
@@ -2324,8 +2336,8 @@ class FormHelper extends Helper
     /**
      * Determine if a field is disabled.
      *
-     * @param array $options The option set.
-     * @return bool Whether or not the field is disabled.
+     * @param array<string, mixed> $options The option set.
+     * @return bool Whether the field is disabled.
      */
     protected function _isDisabled(array $options): bool
     {
@@ -2421,7 +2433,7 @@ class FormHelper extends Helper
      * Allows you to add or replace widget instances with custom code.
      *
      * @param string $name The name of the widget. e.g. 'text'.
-     * @param array|\Cake\View\Widget\WidgetInterface $spec Either a string class
+     * @param \Cake\View\Widget\WidgetInterface|array $spec Either a string class
      *   name or an object implementing the WidgetInterface.
      * @return void
      */
@@ -2480,7 +2492,7 @@ class FormHelper extends Helper
     /**
      * Event listeners.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -2492,7 +2504,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return string[] List of value sources.
+     * @return array<string> List of value sources.
      */
     public function getValueSources(): array
     {
@@ -2502,7 +2514,7 @@ class FormHelper extends Helper
     /**
      * Validate value sources.
      *
-     * @param string[] $sources A list of strings identifying a source.
+     * @param array<string> $sources A list of strings identifying a source.
      * @return void
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */
@@ -2526,7 +2538,7 @@ class FormHelper extends Helper
      * Order sets priority.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @param string|string[] $sources A string or a list of strings identifying a source.
+     * @param array<string>|string $sources A string or a list of strings identifying a source.
      * @return $this
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */
@@ -2544,7 +2556,7 @@ class FormHelper extends Helper
      * Gets a single field value from the sources available.
      *
      * @param string $fieldname The fieldname to fetch the value for.
-     * @param array $options The options containing default values.
+     * @param array<string, mixed> $options The options containing default values.
      * @return mixed Field value derived from sources or defaults.
      */
     public function getSourceValue(string $fieldname, array $options = [])

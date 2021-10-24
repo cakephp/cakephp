@@ -26,10 +26,8 @@ class ResponseTest extends TestCase
 {
     /**
      * Test parsing headers and reading with PSR7 methods.
-     *
-     * @return void
      */
-    public function testHeaderParsingPsr7()
+    public function testHeaderParsingPsr7(): void
     {
         $headers = [
             'HTTP/1.0 200 OK',
@@ -54,10 +52,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test parsing headers and capturing content
-     *
-     * @return void
      */
-    public function testHeaderParsing()
+    public function testHeaderParsing(): void
     {
         $headers = [
             'HTTP/1.0 200 OK',
@@ -93,10 +89,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test getStringBody()
-     *
-     * @return void
      */
-    public function getStringBody()
+    public function getStringBody(): void
     {
         $response = new Response([], 'string');
 
@@ -105,10 +99,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test accessor for JSON
-     *
-     * @return void
      */
-    public function testBodyJson()
+    public function testBodyJson(): void
     {
         $data = [
             'property' => 'value',
@@ -140,10 +132,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test accessor for JSON when set with PSR7 methods.
-     *
-     * @return void
      */
-    public function testBodyJsonPsr7()
+    public function testBodyJsonPsr7(): void
     {
         $data = [
             'property' => 'value',
@@ -156,10 +146,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test accessor for XML
-     *
-     * @return void
      */
-    public function testBodyXml()
+    public function testBodyXml(): void
     {
         $data = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -177,10 +165,8 @@ XML;
 
     /**
      * Test isOk()
-     *
-     * @return void
      */
-    public function testIsOk()
+    public function testIsOk(): void
     {
         $headers = [
             'HTTP/1.1 200 OK',
@@ -237,7 +223,7 @@ XML;
      *
      * @return array
      */
-    public static function isSuccessProvider()
+    public static function isSuccessProvider(): array
     {
         return [
             [
@@ -296,19 +282,16 @@ XML;
      * Test isSuccess()
      *
      * @dataProvider isSuccessProvider
-     * @return void
      */
-    public function testIsSuccess($expected, Response $response)
+    public function testIsSuccess(bool $expected, Response $response): void
     {
         $this->assertEquals($expected, $response->isSuccess());
     }
 
     /**
      * Test isRedirect()
-     *
-     * @return void
      */
-    public function testIsRedirect()
+    public function testIsRedirect(): void
     {
         $headers = [
             'HTTP/1.1 200 OK',
@@ -335,10 +318,8 @@ XML;
 
     /**
      * Test accessing cookies through the PSR7-like methods
-     *
-     * @return void
      */
-    public function testGetCookies()
+    public function testGetCookies(): void
     {
         $headers = [
             'HTTP/1.0 200 Ok',
@@ -371,10 +352,8 @@ XML;
 
     /**
      * Test accessing cookie collection
-     *
-     * @return void
      */
-    public function testGetCookieCollection()
+    public function testGetCookieCollection(): void
     {
         $headers = [
             'HTTP/1.0 200 Ok',
@@ -394,10 +373,8 @@ XML;
 
     /**
      * Test statusCode()
-     *
-     * @return void
      */
-    public function testGetStatusCode()
+    public function testGetStatusCode(): void
     {
         $headers = [
             'HTTP/1.0 404 Not Found',
@@ -409,10 +386,8 @@ XML;
 
     /**
      * Test reading the encoding out.
-     *
-     * @return void
      */
-    public function testGetEncoding()
+    public function testGetEncoding(): void
     {
         $headers = [
             'HTTP/1.0 200 Ok',
@@ -444,10 +419,8 @@ XML;
 
     /**
      * Test that gzip responses are automatically decompressed.
-     *
-     * @return void
      */
-    public function testAutoDecodeGzipBody()
+    public function testAutoDecodeGzipBody(): void
     {
         $headers = [
             'HTTP/1.0 200 OK',

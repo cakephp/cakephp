@@ -26,7 +26,7 @@ class BindingKeyTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.AuthUsers',
@@ -39,7 +39,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderJoinable()
+    public function strategiesProviderJoinable(): array
     {
         return [['join'], ['select']];
     }
@@ -49,7 +49,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderExternal()
+    public function strategiesProviderExternal(): array
     {
         return [['subquery'], ['select']];
     }
@@ -58,9 +58,8 @@ class BindingKeyTest extends TestCase
      * Tests that bindingKey can be used in belongsTo associations
      *
      * @dataProvider strategiesProviderJoinable
-     * @return void
      */
-    public function testBelongsto($strategy)
+    public function testBelongsto(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
         $users->belongsTo('AuthUsers', [
@@ -76,13 +75,13 @@ class BindingKeyTest extends TestCase
         $expected = array_combine($expected, $expected);
         $this->assertEquals(
             $expected,
-            $result->combine('username', 'auth_user.username')->toArray()
+            $result->all()->combine('username', 'auth_user.username')->toArray()
         );
 
         $expected = [1 => 1, 2 => 5, 3 => 2, 4 => 4];
         $this->assertEquals(
             $expected,
-            $result->combine('id', 'auth_user.id')->toArray()
+            $result->all()->combine('id', 'auth_user.id')->toArray()
         );
     }
 
@@ -90,9 +89,8 @@ class BindingKeyTest extends TestCase
      * Tests that bindingKey can be used in hasOne associations
      *
      * @dataProvider strategiesProviderJoinable
-     * @return void
      */
-    public function testHasOne($strategy)
+    public function testHasOne(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
         $users->hasOne('SiteAuthors', [
@@ -114,9 +112,8 @@ class BindingKeyTest extends TestCase
      * Tests that bindingKey can be used in hasOne associations
      *
      * @dataProvider strategiesProviderExternal
-     * @return void
      */
-    public function testHasMany($strategy)
+    public function testHasMany(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
         $authors = $users->hasMany('SiteAuthors', [
@@ -131,7 +128,7 @@ class BindingKeyTest extends TestCase
             ->where(['username' => 'garrett']);
 
         $expected = [3, 4];
-        $result = $result->extract('site_authors.{*}.id')->toList();
+        $result = $result->all()->extract('site_authors.{*}.id')->toArray();
         $this->assertEquals($expected, $result);
     }
 }

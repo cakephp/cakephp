@@ -32,9 +32,6 @@ use TestApp\Command\FormatSpecifierCommand;
 
 class Application extends BaseApplication
 {
-    /**
-     * @return void
-     */
     public function bootstrap(): void
     {
         parent::bootstrap();
@@ -45,12 +42,10 @@ class Application extends BaseApplication
                 $this->addPlugin($value);
             }
         }
+
+        // Check plugins added here
     }
 
-    /**
-     * @param \Cake\Console\CommandCollection $commands
-     * @return \Cake\Console\CommandCollection
-     */
     public function console(CommandCollection $commands): CommandCollection
     {
         return $commands
@@ -59,17 +54,10 @@ class Application extends BaseApplication
             ->addMany($commands->autoDiscover());
     }
 
-    /**
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueue
-     * @return \Cake\Http\MiddlewareQueue
-     */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(function ($req, $res, $next) {
-            /** @var \Cake\Http\ServerRequest $res */
-            $res = $next($req, $res);
-
-            return $res->withHeader('X-Middleware', 'true');
+        $middlewareQueue->add(function ($request, $handler) {
+            return $handler->handle($request)->withHeader('X-Middleware', 'true');
         });
         $middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error', [])));
         $middlewareQueue->add(new RoutingMiddleware($this));
@@ -79,18 +67,15 @@ class Application extends BaseApplication
 
     /**
      * Routes hook, used for testing with RoutingMiddleware.
-     *
-     * @param \Cake\Routing\RouteBuilder $routes
-     * @return void
      */
     public function routes(RouteBuilder $routes): void
     {
-        $routes->scope('/app', function (RouteBuilder $routes) {
+        $routes->scope('/app', function (RouteBuilder $routes): void {
             $routes->connect('/articles', ['controller' => 'Articles']);
-            $routes->connect('/articles/:action/*', ['controller' => 'Articles']);
+            $routes->connect('/articles/{action}/*', ['controller' => 'Articles']);
 
             try {
-                $routes->connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
+                $routes->connect('/tests/{action}/*', ['controller' => 'Tests'], ['_name' => 'testName']);
             } catch (DuplicateNamedRouteException $e) {
                 // do nothing. This happens when one test does multiple requests.
             }
@@ -98,14 +83,13 @@ class Application extends BaseApplication
             $routes->fallbacks();
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
-        $routes->connect('/bake/:controller/:action', ['plugin' => 'Bake']);
+        $routes->connect('/bake/{controller}/{action}', ['plugin' => 'Bake']);
     }
 
     /**
      * Container register hook
      *
      * @param \Cake\Core\ContainerInterface $container The container to update
-     * @return void
      */
     public function services(ContainerInterface $container): void
     {

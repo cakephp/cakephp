@@ -27,7 +27,7 @@ class AuthorsTable extends Table
         $this->hasMany('articles');
     }
 
-    public function findByAuthor(Query $query, array $options = [])
+    public function findByAuthor(Query $query, array $options = []): Query
     {
         if (isset($options['author_id'])) {
             $query->where(['Articles.id' => $options['author_id']]);
@@ -41,9 +41,8 @@ class AuthorsTable extends Table
      *
      * @param \Cake\ORM\Query $query The query
      * @param array $options The options
-     * @return \Cake\ORM\Query
      */
-    public function findFormatted(Query $query, array $options = [])
+    public function findFormatted(Query $query, array $options = []): Query
     {
         return $query->formatResults(function ($results) {
             return $results->map(function ($author) {

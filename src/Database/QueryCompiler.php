@@ -32,7 +32,7 @@ class QueryCompiler
      * this query. There are some clauses that can be built as just as the
      * direct concatenation of the internal parts, those are listed here.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $_templates = [
         'delete' => 'DELETE',
@@ -48,7 +48,7 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var array
+     * @var array<string>
      */
     protected $_selectParts = [
         'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
@@ -58,26 +58,27 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var array
+     * @var array<string>
+     * @deprecated Not used.
      */
     protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var array
+     * @var array<string>
      */
     protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var array
+     * @var array<string>
      */
     protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
     /**
-     * Indicate whether or not this query dialect supports ordered unions.
+     * Indicate whether this query dialect supports ordered unions.
      *
      * Overridden in subclasses.
      *
@@ -269,6 +270,13 @@ class QueryCompiler
     {
         $joins = '';
         foreach ($parts as $join) {
+            if (!isset($join['table'])) {
+                throw new DatabaseException(sprintf(
+                    'Could not compile join clause for alias `%s`. No table was specified. ' .
+                    'Use the `table` key to define a table.',
+                    $join['alias']
+                ));
+            }
             if ($join['table'] instanceof ExpressionInterface) {
                 $join['table'] = '(' . $join['table']->sql($binder) . ')';
             }
@@ -279,10 +287,10 @@ class QueryCompiler
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($binder);
             }
-            if (strlen($condition)) {
-                $joins .= " ON {$condition}";
-            } else {
+            if ($condition === '') {
                 $joins .= ' ON 1 = 1';
+            } else {
+                $joins .= " ON {$condition}";
             }
         }
 

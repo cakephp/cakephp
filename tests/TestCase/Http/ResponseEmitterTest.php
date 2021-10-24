@@ -36,8 +36,6 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -66,8 +64,6 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -77,10 +73,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test emitting simple responses.
-     *
-     * @return void
      */
-    public function testEmitResponseSimple()
+    public function testEmitResponseSimple(): void
     {
         $response = (new Response())
             ->withStatus(201)
@@ -103,10 +97,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test emitting a no-content response
-     *
-     * @return void
      */
-    public function testEmitNoContentResponse()
+    public function testEmitNoContentResponse(): void
     {
         $response = (new Response())
             ->withHeader('X-testing', 'value')
@@ -127,10 +119,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test emitting responses with array cookes
-     *
-     * @return void
      */
-    public function testEmitResponseArrayCookies()
+    public function testEmitResponseArrayCookies(): void
     {
         $response = (new Response())
             ->withCookie(new Cookie('simple', 'val', null, '/', '', true))
@@ -173,10 +163,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test emitting responses with cookies
-     *
-     * @return void
      */
-    public function testEmitResponseCookies()
+    public function testEmitResponseCookies(): void
     {
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', "simple=val;\tSecure")
@@ -252,12 +240,10 @@ class ResponseEmitterTest extends TestCase
      * Test emitting responses using callback streams.
      *
      * We use callback streams for closure based responses.
-     *
-     * @return void
      */
-    public function testEmitResponseCallbackStream()
+    public function testEmitResponseCallbackStream(): void
     {
-        $stream = new CallbackStream(function () {
+        $stream = new CallbackStream(function (): void {
             echo 'It worked';
         });
         $response = (new Response())
@@ -279,10 +265,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test valid body ranges.
-     *
-     * @return void
      */
-    public function testEmitResponseBodyRange()
+    public function testEmitResponseBodyRange(): void
     {
         $response = (new Response())
             ->withHeader('Content-Type', 'text/plain')
@@ -304,10 +288,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test valid body ranges.
-     *
-     * @return void
      */
-    public function testEmitResponseBodyRangeComplete()
+    public function testEmitResponseBodyRangeComplete(): void
     {
         $response = (new Response())
             ->withHeader('Content-Type', 'text/plain')
@@ -323,10 +305,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test out of bounds body ranges.
-     *
-     * @return void
      */
-    public function testEmitResponseBodyRangeOverflow()
+    public function testEmitResponseBodyRangeOverflow(): void
     {
         $response = (new Response())
             ->withHeader('Content-Type', 'text/plain')
@@ -342,10 +322,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test malformed content-range header
-     *
-     * @return void
      */
-    public function testEmitResponseBodyRangeMalformed()
+    public function testEmitResponseBodyRangeMalformed(): void
     {
         $response = (new Response())
             ->withHeader('Content-Type', 'text/plain')
@@ -361,10 +339,8 @@ class ResponseEmitterTest extends TestCase
 
     /**
      * Test callback streams returning content and ranges
-     *
-     * @return void
      */
-    public function testEmitResponseBodyRangeCallbackStream()
+    public function testEmitResponseBodyRangeCallbackStream(): void
     {
         $stream = new CallbackStream(function () {
             return 'It worked';

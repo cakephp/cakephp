@@ -106,7 +106,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Store the fields which should be ignored
      *
-     * @var array
+     * @var array<string, array<string, bool>>
      */
     protected $_ignoreDirty = [];
 
@@ -208,7 +208,7 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Event\EventInterface $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param \Cake\ORM\Association $assoc The association object
-     * @param array $settings The settings for for counter cache for this association
+     * @param array $settings The settings for counter cache for this association
      * @return void
      * @throws \RuntimeException If invalid callable is passed.
      */
@@ -289,7 +289,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Fetches and returns the count for a single field in an association
      *
-     * @param array $config The counter cache configuration for a single field
+     * @param array<string, mixed> $config The counter cache configuration for a single field
      * @param array $conditions Additional conditions given to the query
      * @return int The number of relations matching the given config and conditions
      */
@@ -301,10 +301,7 @@ class CounterCacheBehavior extends Behavior
             unset($config['finder']);
         }
 
-        if (!isset($config['conditions'])) {
-            $config['conditions'] = [];
-        }
-        $config['conditions'] = array_merge($conditions, $config['conditions']);
+        $config['conditions'] = array_merge($conditions, $config['conditions'] ?? []);
         $query = $this->_table->find($finder, $config);
 
         return $query->count();

@@ -53,10 +53,10 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface extract($field) Extracts a single column from each row
  * @method mixed max($field) Returns the maximum value for a single column in all the results.
  * @method mixed min($field) Returns the minimum value for a single column in all the results.
- * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
- * @method \Cake\Collection\CollectionInterface indexBy(string|callable $callback) Returns the results indexed by the value of a column.
- * @method \Cake\Collection\CollectionInterface countBy(string|callable $field) Returns the number of unique values for a column
- * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
+ * @method \Cake\Collection\CollectionInterface groupBy(callable|string $field) In-memory group all results by the value of a column.
+ * @method \Cake\Collection\CollectionInterface indexBy(callable|string $callback) Returns the results indexed by the value of a column.
+ * @method \Cake\Collection\CollectionInterface countBy(callable|string $field) Returns the number of unique values for a column
+ * @method float sumOf(callable|string $field) Returns the sum of all values for a single column
  * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
  * @method \Cake\Collection\CollectionInterface sample(int $size = 10) In-memory shuffle the results and return a subset of them.
  * @method \Cake\Collection\CollectionInterface take(int $size = 1, int $from = 0) In-memory limit and offset for the query results.
@@ -116,7 +116,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected $_hasFields;
 
     /**
-     * Tracks whether or not the original query should include
+     * Tracks whether the original query should include
      * fields from the top level table.
      *
      * @var bool|null
@@ -220,7 +220,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * all the fields in the schema of the table or the association will be added to
      * the select clause.
      *
-     * @param array|\Cake\Database\ExpressionInterface|callable|string|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|callable|array|string $fields Fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
@@ -250,7 +250,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * pass overwrite boolean true which will reset the select clause removing all previous additions.
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
-     * @param string[] $excludedFields The un-aliased column names you do not want selected from $table
+     * @param array<string> $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return $this
      * @throws \InvalidArgumentException If Association|Table is not passed in first argument
@@ -492,8 +492,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param \Cake\ORM\Table $table The table instance to pluck associations from.
      * @param \Cake\Database\TypeMap $typeMap The typemap to check for columns in.
-     *   This typemap is indirectly mutated via Cake\ORM\Query::addDefaultTypes()
-     * @param array $associations The nested tree of associations to walk.
+     *   This typemap is indirectly mutated via {@link \Cake\ORM\Query::addDefaultTypes()}
+     * @param array<string, array> $associations The nested tree of associations to walk.
      * @return void
      */
     protected function _addAssociationsToTypeMap(Table $table, TypeMap $typeMap, array $associations): void
@@ -823,7 +823,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * $options = $query->getOptions();
      * ```
      *
-     * @param array $options The options to be applied
+     * @param array<string, mixed> $options The options to be applied
      * @return $this
      * @see getOptions()
      */
@@ -1065,7 +1065,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
-     * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
+     * @param \Cake\Cache\CacheEngine|string $config Either the name of the cache config to use, or
      *   a cache config instance.
      * @return $this
      * @throws \RuntimeException When you attempt to cache a non-select query.
@@ -1215,15 +1215,16 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $types = [];
 
         foreach ($select as $alias => $value) {
+            if ($value instanceof TypedResultInterface) {
+                $types[$alias] = $value->getReturnType();
+                continue;
+            }
             if (isset($typeMap[$alias])) {
                 $types[$alias] = $typeMap[$alias];
                 continue;
             }
             if (is_string($value) && isset($typeMap[$value])) {
                 $types[$alias] = $typeMap[$value];
-            }
-            if ($value instanceof TypedResultInterface) {
-                $types[$alias] = $value->getReturnType();
             }
         }
         $this->getSelectTypeMap()->addDefaults($types);
@@ -1233,7 +1234,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * {@inheritDoc}
      *
      * @param string $finder The finder method to use.
-     * @param array $options The options for the finder.
+     * @param array<string, mixed> $options The options for the finder.
      * @return static Returns a modified query.
      * @psalm-suppress MoreSpecificReturnType
      */
@@ -1264,7 +1265,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This changes the query type to be 'update'.
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param string|\Cake\Database\ExpressionInterface|null $table Unused parameter.
+     * @param \Cake\Database\ExpressionInterface|string|null $table Unused parameter.
      * @return $this
      */
     public function update($table = null)
@@ -1305,7 +1306,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with the where() method to create delete queries.
      *
      * @param array $columns The columns to insert into.
-     * @param array $types A map between columns & their datatypes.
+     * @param array<string, string> $types A map between columns & their datatypes.
      * @return $this
      */
     public function insert(array $columns, array $types = [])
@@ -1382,7 +1383,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Sets whether or not the ORM should automatically append fields.
+     * Sets whether the ORM should automatically append fields.
      *
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with this method.
@@ -1410,7 +1411,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Gets whether or not the ORM should automatically append fields.
+     * Gets whether the ORM should automatically append fields.
      *
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().

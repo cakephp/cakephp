@@ -16,9 +16,13 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\ORM\Locator;
 
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Table\PaginatorPostsTable;
+use TestApp\Stub\LocatorAwareStub;
 
 /**
  * LocatorAwareTrait test case
@@ -32,8 +36,6 @@ class LocatorAwareTraitTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -44,10 +46,8 @@ class LocatorAwareTraitTest extends TestCase
 
     /**
      * Tests testGetTableLocator method
-     *
-     * @return void
      */
-    public function testGetTableLocator()
+    public function testGetTableLocator(): void
     {
         $tableLocator = $this->subject->getTableLocator();
         $this->assertSame($this->getTableLocator(), $tableLocator);
@@ -55,14 +55,36 @@ class LocatorAwareTraitTest extends TestCase
 
     /**
      * Tests testSetTableLocator method
-     *
-     * @return void
      */
-    public function testSetTableLocator()
+    public function testSetTableLocator(): void
     {
         $newLocator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         $this->subject->setTableLocator($newLocator);
         $subjectLocator = $this->subject->getTableLocator();
         $this->assertSame($newLocator, $subjectLocator);
+    }
+
+    public function testFetchTable(): void
+    {
+        $stub = new LocatorAwareStub('Articles');
+
+        $result = $stub->fetchTable();
+        $this->assertInstanceOf(Table::class, $result);
+
+        $result = $stub->fetchTable('Comments');
+        $this->assertInstanceOf(Table::class, $result);
+
+        $result = $stub->fetchTable(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
+    }
+
+    public function testfetchTableException()
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('You must provide an `$alias` or set the `$defaultTable` property.');
+
+        $stub = new LocatorAwareStub();
+        $stub->fetchTable();
     }
 }

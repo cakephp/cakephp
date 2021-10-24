@@ -29,6 +29,8 @@ jobs:
           - php-version: '7.2'
             db-type: 'mysql'
             prefer-lowest: 'prefer-lowest'
+          - php-version: '8.1'
+            db-type: 'sqlite'
 
     services:
       redis:
@@ -42,19 +44,19 @@ jobs:
 
     steps:
     - name: Setup MySQL latest
-      if: matrix.db-type == 'mysql' && matrix.php-version != '7.2'
+      if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin
 
     - name: Setup MySQL 5.6
-      if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
+      if: matrix.db-type == 'mysql' && matrix.php-version != '7.2'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.6 --character-set-server=utf8
 
     - name: Setup PostgreSQL latest
-      if: matrix.db-type == 'pgsql' && matrix.php-version != '7.2'
+      if: matrix.db-type == 'pgsql' && matrix.php-version == '7.2'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgres
 
     - name: Setup PostgreSQL 9.4
-      if: matrix.db-type == 'pgsql' && matrix.php-version == '7.2'
+      if: matrix.db-type == 'pgsql' && matrix.php-version != '7.2'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgres:9.4
 
     - uses: getong/mariadb-action@v1.1
@@ -104,21 +106,28 @@ jobs:
       if: matrix.php-version == '7.2' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
+    - name: Wait for MySQL
+      if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
+      run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
+
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '8.0' ]]; then
-          export CODECOVERAGE=1 && vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
+          export CODECOVERAGE=1
+          vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
         else
           vendor/bin/phpunit
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
 
     - name: Submit code coverage
@@ -189,6 +198,13 @@ jobs:
       run: |
           vendor/bin/phpunit --verbose
 
+    - name: Run PHPUnit (autoquote enabled)
+      env:
+        DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
+      run: |
+          set CAKE_TEST_AUTOQUOTE=1
+          vendor/bin/phpunit --verbose --testsuite=database
+
   cs-stan:
     name: Coding Standard & Static Analysis
     runs-on: ubuntu-18.04
@@ -231,3 +247,7 @@ jobs:
     - name: Run phpstan
       if: success() || failure()
       run: vendor/bin/phpstan.phar analyse --error-format=github
+
+    - name: Run phpstan for tests
+      if: success() || failure()
+      run: vendor/bin/phpstan.phar analyse -c tests/phpstan.neon --error-format=github

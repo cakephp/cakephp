@@ -19,11 +19,12 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
+use RuntimeException;
 use TestApp\Model\Entity\OpenArticleEntity;
 use TestApp\Model\Entity\OpenTag;
 use TestApp\Model\Entity\ProtectedArticle;
@@ -36,10 +37,10 @@ class MarshallerTest extends TestCase
 {
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.Comments',
         'core.SpecialTags',
-        'core.Tags',
         'core.Users',
     ];
 
@@ -70,8 +71,6 @@ class MarshallerTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -100,8 +99,6 @@ class MarshallerTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -111,10 +108,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() in a simple use.
-     *
-     * @return void
      */
-    public function testOneSimple()
+    public function testOneSimple(): void
     {
         $data = [
             'title' => 'My title',
@@ -134,10 +129,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that marshalling an entity with numeric key in data array
-     *
-     * @return void
      */
-    public function testOneWithNumericField()
+    public function testOneWithNumericField(): void
     {
         $data = [
             'sample',
@@ -154,17 +147,15 @@ class MarshallerTest extends TestCase
     /**
      * Test that marshalling an entity with '' for pk values results
      * in no pk value being set.
-     *
-     * @return void
      */
-    public function testOneEmptyStringPrimaryKey()
+    public function testOneEmptyStringPrimaryKey(): void
     {
         $data = [
             'id' => '',
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
@@ -175,10 +166,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test marshalling datetime/date field.
-     *
-     * @return void
      */
-    public function testOneWithDatetimeField()
+    public function testOneWithDatetimeField(): void
     {
         $data = [
             'comment' => 'My Comment text',
@@ -191,7 +180,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->comments);
         $result = $marshall->one($data, []);
 
-        $this->assertEquals(new Time('2014-02-14 00:00:00'), $result->created);
+        $this->assertEquals(new FrozenTime('2014-02-14 00:00:00'), $result->created);
 
         $data['created'] = [
             'year' => '2014',
@@ -202,7 +191,7 @@ class MarshallerTest extends TestCase
             'meridian' => 'pm',
         ];
         $result = $marshall->one($data, []);
-        $this->assertEquals(new Time('2014-02-14 21:25:00'), $result->created);
+        $this->assertEquals(new FrozenTime('2014-02-14 21:25:00'), $result->created);
 
         $data['created'] = [
             'year' => '2014',
@@ -212,11 +201,11 @@ class MarshallerTest extends TestCase
             'minute' => 25,
         ];
         $result = $marshall->one($data, []);
-        $this->assertEquals(new Time('2014-02-14 09:25:00'), $result->created);
+        $this->assertEquals(new FrozenTime('2014-02-14 09:25:00'), $result->created);
 
         $data['created'] = '2014-02-14 09:25:00';
         $result = $marshall->one($data, []);
-        $this->assertEquals(new Time('2014-02-14 09:25:00'), $result->created);
+        $this->assertEquals(new FrozenTime('2014-02-14 09:25:00'), $result->created);
 
         $data['created'] = 1392387900;
         $result = $marshall->one($data, []);
@@ -225,10 +214,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Ensure that marshalling casts reasonably.
-     *
-     * @return void
      */
-    public function testOneOnlyCastMatchingData()
+    public function testOneOnlyCastMatchingData(): void
     {
         $data = [
             'title' => 'My title',
@@ -247,10 +234,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() follows mass-assignment rules.
-     *
-     * @return void
      */
-    public function testOneAccessibleProperties()
+    public function testOneAccessibleProperties(): void
     {
         $data = [
             'title' => 'My title',
@@ -269,10 +254,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() supports accessibleFields option
-     *
-     * @return void
      */
-    public function testOneAccessibleFieldsOption()
+    public function testOneAccessibleFieldsOption(): void
     {
         $data = [
             'title' => 'My title',
@@ -298,12 +281,10 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() with an invalid association
-     *
-     * @return void
      */
-    public function testOneInvalidAssociation()
+    public function testOneInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
         $data = [
             'title' => 'My title',
@@ -322,10 +303,8 @@ class MarshallerTest extends TestCase
     /**
      * Test that one() correctly handles an association beforeMarshal
      * making the association empty.
-     *
-     * @return void
      */
-    public function testOneAssociationBeforeMarshalMutation()
+    public function testOneAssociationBeforeMarshalMutation(): void
     {
         $users = $this->getTableLocator()->get('Users');
         $articles = $this->getTableLocator()->get('Articles');
@@ -333,7 +312,7 @@ class MarshallerTest extends TestCase
         $users->hasOne('Articles', [
             'foreignKey' => 'author_id',
         ]);
-        $articles->getEventManager()->on('Model.beforeMarshal', function ($event, $data, $options) {
+        $articles->getEventManager()->on('Model.beforeMarshal', function ($event, $data, $options): void {
             // Blank the association, so it doesn't become dirty.
             unset($data['not_a_real_field']);
         });
@@ -363,10 +342,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() supports accessibleFields option for associations
-     *
-     * @return void
      */
-    public function testOneAccessibleFieldsOptionForAssociations()
+    public function testOneAccessibleFieldsOptionForAssociations(): void
     {
         $data = [
             'title' => 'My title',
@@ -394,10 +371,8 @@ class MarshallerTest extends TestCase
 
     /**
      * test one() with a wrapping model name.
-     *
-     * @return void
      */
-    public function testOneWithAdditionalName()
+    public function testOneWithAdditionalName(): void
     {
         $data = [
             'title' => 'Original Title',
@@ -424,10 +399,8 @@ class MarshallerTest extends TestCase
 
     /**
      * test one() with association data.
-     *
-     * @return void
      */
-    public function testOneAssociationsSingle()
+    public function testOneAssociationsSingle(): void
     {
         $data = [
             'title' => 'My title',
@@ -461,10 +434,8 @@ class MarshallerTest extends TestCase
 
     /**
      * test one() with association data.
-     *
-     * @return void
      */
-    public function testOneAssociationsMany()
+    public function testOneAssociationsMany(): void
     {
         $data = [
             'title' => 'My title',
@@ -498,10 +469,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test building the _joinData entity for belongstomany associations.
-     *
-     * @return void
      */
-    public function testOneBelongsToManyJoinData()
+    public function testOneBelongsToManyJoinData(): void
     {
         $data = [
             'title' => 'My title',
@@ -538,10 +507,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that the onlyIds option restricts to only accepting ids for belongs to many associations.
-     *
-     * @return void
      */
-    public function testOneBelongsToManyOnlyIdsRejectArray()
+    public function testOneBelongsToManyOnlyIdsRejectArray(): void
     {
         $data = [
             'title' => 'My title',
@@ -561,10 +528,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that the onlyIds option restricts to only accepting ids for belongs to many associations.
-     *
-     * @return void
      */
-    public function testOneBelongsToManyOnlyIdsWithIds()
+    public function testOneBelongsToManyOnlyIdsWithIds(): void
     {
         $data = [
             'title' => 'My title',
@@ -584,10 +549,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test marshalling nested associations on the _joinData structure.
-     *
-     * @return void
      */
-    public function testOneBelongsToManyJoinDataAssociated()
+    public function testOneBelongsToManyJoinDataAssociated(): void
     {
         $data = [
             'title' => 'My title',
@@ -632,10 +595,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() with with id and _joinData.
-     *
-     * @return void
      */
-    public function testOneBelongsToManyJoinDataAssociatedWithIds()
+    public function testOneBelongsToManyJoinDataAssociatedWithIds(): void
     {
         $data = [
             'title' => 'My title',
@@ -695,10 +656,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test belongsToMany association with mixed data and _joinData
-     *
-     * @return void
      */
-    public function testOneBelongsToManyWithMixedJoinData()
+    public function testOneBelongsToManyWithMixedJoinData(): void
     {
         $data = [
             'title' => 'My title',
@@ -729,7 +688,7 @@ class MarshallerTest extends TestCase
         $this->assertSame(1, $result->tags[1]->_joinData->active);
     }
 
-    public function testOneBelongsToManyWithNestedAssociations()
+    public function testOneBelongsToManyWithNestedAssociations(): void
     {
         $this->tags->belongsToMany('Articles');
         $data = [
@@ -777,10 +736,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test belongsToMany association with mixed data and _joinData
-     *
-     * @return void
      */
-    public function testBelongsToManyAddingNewExisting()
+    public function testBelongsToManyAddingNewExisting(): void
     {
         $this->tags->setEntityClass(OpenTag::class);
         $data = [
@@ -829,10 +786,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test belongsToMany association with mixed data and _joinData
-     *
-     * @return void
      */
-    public function testBelongsToManyWithMixedJoinDataOutOfOrder()
+    public function testBelongsToManyWithMixedJoinDataOutOfOrder(): void
     {
         $data = [
             'title' => 'My title',
@@ -873,10 +828,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test belongsToMany association with scalars
-     *
-     * @return void
      */
-    public function testBelongsToManyInvalidData()
+    public function testBelongsToManyInvalidData(): void
     {
         $data = [
             'title' => 'My title',
@@ -901,10 +854,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test belongsToMany association with mixed data array
-     *
-     * @return void
      */
-    public function testBelongsToManyWithMixedData()
+    public function testBelongsToManyWithMixedData(): void
     {
         $data = [
             'title' => 'My title',
@@ -946,10 +897,8 @@ class MarshallerTest extends TestCase
      * Test belongsToMany association with the ForceNewTarget to force saving
      * new records on the target tables with BTM relationships when the primaryKey(s)
      * of the target table is specified.
-     *
-     * @return void
      */
-    public function testBelongsToManyWithForceNew()
+    public function testBelongsToManyWithForceNew(): void
     {
         $data = [
             'title' => 'Fourth Article',
@@ -979,10 +928,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test HasMany association with _ids attribute
-     *
-     * @return void
      */
-    public function testOneHasManyWithIds()
+    public function testOneHasManyWithIds(): void
     {
         $data = [
             'title' => 'article',
@@ -1001,10 +948,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that the onlyIds option restricts to only accepting ids for hasmany associations.
-     *
-     * @return void
      */
-    public function testOneHasManyOnlyIdsRejectArray()
+    public function testOneHasManyOnlyIdsRejectArray(): void
     {
         $data = [
             'title' => 'article',
@@ -1024,10 +969,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that the onlyIds option restricts to only accepting ids for hasmany associations.
-     *
-     * @return void
      */
-    public function testOneHasManyOnlyIdsWithIds()
+    public function testOneHasManyOnlyIdsWithIds(): void
     {
         $data = [
             'title' => 'article',
@@ -1047,10 +990,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test HasMany association with invalid data
-     *
-     * @return void
      */
-    public function testOneHasManyInvalidData()
+    public function testOneHasManyInvalidData(): void
     {
         $data = [
             'title' => 'new title',
@@ -1071,10 +1012,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() with deeper associations.
-     *
-     * @return void
      */
-    public function testOneDeepAssociations()
+    public function testOneDeepAssociations(): void
     {
         $data = [
             'comment' => 'First post',
@@ -1103,10 +1042,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test many() with a simple set of data.
-     *
-     * @return void
      */
-    public function testManySimple()
+    public function testManySimple(): void
     {
         $data = [
             ['comment' => 'First post', 'user_id' => 2],
@@ -1124,10 +1061,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test many() with some invalid data
-     *
-     * @return void
      */
-    public function testManyInvalidData()
+    public function testManyInvalidData(): void
     {
         $data = [
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
@@ -1142,10 +1077,8 @@ class MarshallerTest extends TestCase
 
     /**
      * test many() with nested associations.
-     *
-     * @return void
      */
-    public function testManyAssociations()
+    public function testManyAssociations(): void
     {
         $data = [
             [
@@ -1182,12 +1115,10 @@ class MarshallerTest extends TestCase
     /**
      * Test if exception is raised when called with [associated => NonExistentAssociation]
      * Previously such association were simply ignored
-     *
-     * @return void
      */
-    public function testManyInvalidAssociation()
+    public function testManyInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $data = [
             [
                 'comment' => 'First post',
@@ -1210,10 +1141,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test generating a list of entities from a list of ids.
-     *
-     * @return void
      */
-    public function testOneGenerateBelongsToManyEntitiesFromIds()
+    public function testOneGenerateBelongsToManyEntitiesFromIds(): void
     {
         $data = [
             'title' => 'Haz tags',
@@ -1264,10 +1193,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge() in a simple use.
-     *
-     * @return void
      */
-    public function testMergeSimple()
+    public function testMergeSimple(): void
     {
         $data = [
             'title' => 'My title',
@@ -1292,10 +1219,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge() with accessibleFields options
-     *
-     * @return void
      */
-    public function testMergeAccessibleFields()
+    public function testMergeAccessibleFields(): void
     {
         $data = [
             'title' => 'My title',
@@ -1323,7 +1248,7 @@ class MarshallerTest extends TestCase
      *
      * @return array
      */
-    public function emptyProvider()
+    public function emptyProvider(): array
     {
         return [
             [0],
@@ -1335,9 +1260,9 @@ class MarshallerTest extends TestCase
      * Test merging empty values into an entity.
      *
      * @dataProvider emptyProvider
-     * @return void
+     * @param mixed $value
      */
-    public function testMergeFalseyValues($value)
+    public function testMergeFalseyValues($value): void
     {
         $marshall = new Marshaller($this->articles);
         $entity = new Entity();
@@ -1351,10 +1276,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge() doesn't dirty values that were null and are null again.
-     *
-     * @return void
      */
-    public function testMergeUnchangedNullValue()
+    public function testMergeUnchangedNullValue(): void
     {
         $data = [
             'title' => 'My title',
@@ -1376,10 +1299,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge() doesn't dirty objects which are equal.
-     *
-     * @return void
      */
-    public function testMergeWithSameObjectValue()
+    public function testMergeWithSameObjectValue(): void
     {
         $created = new FrozenTime('2020-10-29');
         $entity = new Entity([
@@ -1402,10 +1323,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that merge respects the entity accessible methods
-     *
-     * @return void
      */
-    public function testMergeWhitelist()
+    public function testMergeWhitelist(): void
     {
         $data = [
             'title' => 'My title',
@@ -1434,12 +1353,10 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge() with an invalid association
-     *
-     * @return void
      */
-    public function testMergeInvalidAssociation()
+    public function testMergeInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
         $data = [
             'title' => 'My title',
@@ -1463,9 +1380,8 @@ class MarshallerTest extends TestCase
      * Test merge when fields contains an association.
      *
      * @param $fields
-     * @return void
      */
-    public function testMergeWithSingleAssociationAndFields()
+    public function testMergeWithSingleAssociationAndFields(): void
     {
         $user = new Entity([
            'username' => 'user',
@@ -1497,10 +1413,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that fields with the same value are not marked as dirty
-     *
-     * @return void
      */
-    public function testMergeDirty()
+    public function testMergeDirty(): void
     {
         $marshall = new Marshaller($this->articles);
         $entity = new Entity([
@@ -1529,10 +1443,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests merging data into an associated entity
-     *
-     * @return void
      */
-    public function testMergeWithSingleAssociation()
+    public function testMergeWithSingleAssociation(): void
     {
         $user = new Entity([
             'username' => 'mark',
@@ -1566,10 +1478,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that new associated entities can be created when merging data into
      * a parent entity
-     *
-     * @return void
      */
-    public function testMergeCreateAssociation()
+    public function testMergeCreateAssociation(): void
     {
         $entity = new Entity([
             'title' => 'My Title',
@@ -1598,10 +1508,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge when an association has been replaced with null
-     *
-     * @return void
      */
-    public function testMergeAssociationNullOut()
+    public function testMergeAssociationNullOut(): void
     {
         $user = new Entity([
             'id' => 1,
@@ -1633,10 +1541,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests merging one to many associations
-     *
-     * @return void
      */
-    public function testMergeMultipleAssociations()
+    public function testMergeMultipleAssociations(): void
     {
         $user = new Entity(['username' => 'mark', 'password' => 'secret']);
         $comment1 = new Entity(['id' => 1, 'comment' => 'A comment']);
@@ -1713,10 +1619,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that merging data to a hasMany association with _ids works.
-     *
-     * @return void
      */
-    public function testMergeHasManyEntitiesFromIds()
+    public function testMergeHasManyEntitiesFromIds(): void
     {
         $entity = $this->articles->get(1, ['contain' => ['Comments']]);
         $this->assertNotEmpty($entity->comments);
@@ -1737,10 +1641,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that merging data to a hasMany association using onlyIds restricts operations.
-     *
-     * @return void
      */
-    public function testMergeHasManyEntitiesFromIdsOnlyIds()
+    public function testMergeHasManyEntitiesFromIdsOnlyIds(): void
     {
         $entity = $this->articles->get(1, ['contain' => ['Comments']]);
         $this->assertNotEmpty($entity->comments);
@@ -1765,10 +1667,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that merging data to an entity containing belongsToMany and _ids
      * will just overwrite the data
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyEntitiesFromIds()
+    public function testMergeBelongsToManyEntitiesFromIds(): void
     {
         $entity = new Entity([
             'title' => 'Haz tags',
@@ -1799,10 +1699,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that merging data to an entity containing belongsToMany and _ids
      * will not generate conflicting queries when associations are automatically selected
-     *
-     * @return void
      */
-    public function testMergeFromIdsWithAutoAssociation()
+    public function testMergeFromIdsWithAutoAssociation(): void
     {
         $entity = new Entity([
             'title' => 'Haz tags',
@@ -1821,7 +1719,7 @@ class MarshallerTest extends TestCase
         $entity->clean();
 
         // Adding a forced join to have another table with the same column names
-        $this->articles->Tags->getEventManager()->on('Model.beforeFind', function ($e, $query) {
+        $this->articles->Tags->getEventManager()->on('Model.beforeFind', function ($e, $query): void {
             $left = new IdentifierExpression('Tags.id');
             $right = new IdentifierExpression('a.id');
             $query->leftJoin(['a' => 'tags'], $query->newExpr()->eq($left, $right));
@@ -1837,10 +1735,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that merging data to an entity containing belongsToMany and _ids
      * with additional association conditions works.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyFromIdsWithConditions()
+    public function testMergeBelongsToManyFromIdsWithConditions(): void
     {
         $this->articles->belongsToMany('Tags', [
             'conditions' => ['ArticleTags.article_id' => 1],
@@ -1872,10 +1768,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that merging data to an entity containing belongsToMany as an array
      * with additional association conditions works.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyFromArrayWithConditions()
+    public function testMergeBelongsToManyFromArrayWithConditions(): void
     {
         $this->articles->belongsToMany('Tags', [
             'conditions' => ['ArticleTags.article_id' => 1],
@@ -1914,10 +1808,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that merging data to an entity containing belongsToMany and _ids
      * will ignore empty values.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyEntitiesFromIdsEmptyValue()
+    public function testMergeBelongsToManyEntitiesFromIdsEmptyValue(): void
     {
         $entity = new Entity([
             'title' => 'Haz tags',
@@ -1955,10 +1847,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that the ids option restricts to only accepting ids for belongs to many associations.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyOnlyIdsRejectArray()
+    public function testMergeBelongsToManyOnlyIdsRejectArray(): void
     {
         $entity = new Entity([
             'title' => 'Haz tags',
@@ -1987,10 +1877,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that the ids option restricts to only accepting ids for belongs to many associations.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyOnlyIdsWithIds()
+    public function testMergeBelongsToManyOnlyIdsWithIds(): void
     {
         $entity = new Entity([
             'title' => 'Haz tags',
@@ -2019,10 +1907,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that invalid _joinData (scalar data) is not marshalled.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyJoinDataScalar()
+    public function testMergeBelongsToManyJoinDataScalar(): void
     {
         $this->getTableLocator()->clear();
         $articles = $this->getTableLocator()->get('Articles');
@@ -2048,10 +1934,8 @@ class MarshallerTest extends TestCase
     /**
      * Test merging the _joinData entity for belongstomany associations when * is not
      * accessible.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyJoinDataNotAccessible()
+    public function testMergeBelongsToManyJoinDataNotAccessible(): void
     {
         $this->getTableLocator()->clear();
         $articles = $this->getTableLocator()->get('Articles');
@@ -2084,10 +1968,8 @@ class MarshallerTest extends TestCase
     /**
      * Test that _joinData is marshalled consistently with both
      * new and existing records
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyHandleJoinDataConsistently()
+    public function testMergeBelongsToManyHandleJoinDataConsistently(): void
     {
         $this->getTableLocator()->clear();
         $articles = $this->getTableLocator()->get('Articles');
@@ -2127,10 +2009,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merging belongsToMany data doesn't create 'new' entities.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyJoinDataAssociatedWithIds()
+    public function testMergeBelongsToManyJoinDataAssociatedWithIds(): void
     {
         $data = [
             'title' => 'My title',
@@ -2184,10 +2064,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merging the _joinData entity for belongstomany associations.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyJoinData()
+    public function testMergeBelongsToManyJoinData(): void
     {
         $data = [
             'title' => 'My title',
@@ -2246,10 +2124,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merging associations inside _joinData
-     *
-     * @return void
      */
-    public function testMergeJoinDataAssociations()
+    public function testMergeJoinDataAssociations(): void
     {
         $data = [
             'title' => 'My title',
@@ -2321,10 +2197,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that merging belongsToMany association doesn't erase _joinData
      * on existing objects.
-     *
-     * @return void
      */
-    public function testMergeBelongsToManyIdsRetainJoinData()
+    public function testMergeBelongsToManyIdsRetainJoinData(): void
     {
         $this->articles->belongsToMany('Tags');
         $entity = $this->articles->get(1, ['contain' => ['Tags']]);
@@ -2351,10 +2225,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test mergeMany() with a simple set of data.
-     *
-     * @return void
      */
-    public function testMergeManySimple()
+    public function testMergeManySimple(): void
     {
         $entities = [
             new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
@@ -2381,10 +2253,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test mergeMany() with some invalid data
-     *
-     * @return void
      */
-    public function testMergeManyInvalidData()
+    public function testMergeManyInvalidData(): void
     {
         $entities = [
             new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
@@ -2408,10 +2278,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that only records found in the data array are returned, those that cannot
      * be matched are discarded
-     *
-     * @return void
      */
-    public function testMergeManyWithAppend()
+    public function testMergeManyWithAppend(): void
     {
         $entities = [
             new OpenArticleEntity(['comment' => 'First post', 'user_id' => 2]),
@@ -2440,10 +2308,8 @@ class MarshallerTest extends TestCase
      *
      * The articles_tags table has a composite primary key, and should be
      * handled correctly.
-     *
-     * @return void
      */
-    public function testMergeManyCompositeKey()
+    public function testMergeManyCompositeKey(): void
     {
         $articlesTags = $this->getTableLocator()->get('ArticlesTags');
 
@@ -2468,10 +2334,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test mergeMany() with forced contain to ensure aliases are used in queries.
-     *
-     * @return void
      */
-    public function testMergeManyExistingQueryAliases()
+    public function testMergeManyExistingQueryAliases(): void
     {
         $entities = [
             new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2], ['markClean' => true]),
@@ -2492,10 +2356,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test mergeMany() when the exist check returns nothing.
-     *
-     * @return void
      */
-    public function testMergeManyExistQueryFails()
+    public function testMergeManyExistQueryFails(): void
     {
         $entities = [
             new Entity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
@@ -2524,10 +2386,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests merge with data types that need to be marshalled
-     *
-     * @return void
      */
-    public function testMergeComplexType()
+    public function testMergeComplexType(): void
     {
         $entity = new Entity(
             ['comment' => 'My Comment text'],
@@ -2548,10 +2408,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that it is possible to pass a fields option to the marshaller
-     *
-     * @return void
      */
-    public function testOneWithFields()
+    public function testOneWithFields(): void
     {
         $data = [
             'title' => 'My title',
@@ -2568,10 +2426,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test one() with translations
-     *
-     * @return void
      */
-    public function testOneWithTranslations()
+    public function testOneWithTranslations(): void
     {
         $this->articles->addBehavior('Translate', [
             'fields' => ['title', 'body'],
@@ -2611,10 +2467,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that it is possible to pass a fields option to the merge method
-     *
-     * @return void
      */
-    public function testMergeWithFields()
+    public function testMergeWithFields(): void
     {
         $data = [
             'title' => 'My title',
@@ -2645,10 +2499,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that many() also receives a fields option
-     *
-     * @return void
      */
-    public function testManyFields()
+    public function testManyFields(): void
     {
         $data = [
             ['comment' => 'First post', 'user_id' => 2, 'foo' => 'bar'],
@@ -2665,10 +2517,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that many() also receives a fields option
-     *
-     * @return void
      */
-    public function testMergeManyFields()
+    public function testMergeManyFields(): void
     {
         $entities = [
             new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
@@ -2696,10 +2546,8 @@ class MarshallerTest extends TestCase
 
     /**
      * test marshalling association data while passing a fields
-     *
-     * @return void
      */
-    public function testAssociationsFields()
+    public function testAssociationsFields(): void
     {
         $data = [
             'title' => 'My title',
@@ -2730,10 +2578,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests merging associated data with a fields
-     *
-     * @return void
      */
-    public function testMergeAssociationWithfields()
+    public function testMergeAssociationWithfields(): void
     {
         $user = new Entity([
             'username' => 'mark',
@@ -2771,10 +2617,8 @@ class MarshallerTest extends TestCase
     /**
      * Test marshalling nested associations on the _joinData structure
      * while having a fields
-     *
-     * @return void
      */
-    public function testJoinDataWhiteList()
+    public function testJoinDataWhiteList(): void
     {
         $data = [
             'title' => 'My title',
@@ -2830,10 +2674,8 @@ class MarshallerTest extends TestCase
     /**
      * Test merging the _joinData entity for belongstomany associations
      * while passing a whitelist
-     *
-     * @return void
      */
-    public function testMergeJoinDataWithFields()
+    public function testMergeJoinDataWithFields(): void
     {
         $data = [
             'title' => 'My title',
@@ -2893,10 +2735,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests marshalling with validation errors
-     *
-     * @return void
      */
-    public function testValidationFail()
+    public function testValidationFail(): void
     {
         $data = [
             'title' => 'Thing',
@@ -2911,12 +2751,10 @@ class MarshallerTest extends TestCase
 
     /**
      * Test that invalid validate options raise exceptions
-     *
-     * @return void
      */
-    public function testValidateInvalidType()
+    public function testValidateInvalidType(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $data = ['title' => 'foo'];
         $marshaller = new Marshaller($this->articles);
         $marshaller->one($data, [
@@ -2926,10 +2764,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that associations are validated and custom validators can be used
-     *
-     * @return void
      */
-    public function testValidateWithAssociationsAndCustomValidator()
+    public function testValidateWithAssociationsAndCustomValidator(): void
     {
         $data = [
             'title' => 'foo',
@@ -2972,10 +2808,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Tests that validation can be bypassed
-     *
-     * @return void
      */
-    public function testSkipValidation()
+    public function testSkipValidation(): void
     {
         $data = [
             'title' => 'foo',
@@ -3005,36 +2839,39 @@ class MarshallerTest extends TestCase
     /**
      * Tests that it is possible to pass a validator directly in the options
      *
-     * @return void
+     * @deprecated
      */
-    public function testPassingCustomValidator()
+    public function testPassingCustomValidator(): void
     {
-        $data = [
-            'title' => 'Thing',
-            'body' => 'hey',
-        ];
+        $this->deprecated(function () {
+            $data = [
+                'title' => 'Thing',
+                'body' => 'hey',
+            ];
 
-        $validator = clone $this->articles->getValidator();
-        $validator->requirePresence('thing');
-        $marshall = new Marshaller($this->articles);
-        $entity = $marshall->one($data, ['validate' => $validator]);
-        $this->assertNotEmpty($entity->getError('thing'));
+            $validator = clone $this->articles->getValidator();
+            $validator->requirePresence('thing');
+            $marshall = new Marshaller($this->articles);
+            $entity = $marshall->one($data, ['validate' => $validator]);
+            $this->assertNotEmpty($entity->getError('thing'));
+        });
     }
 
     /**
      * Tests that invalid property is being filled when data cannot be patched into an entity.
-     *
-     * @return void
      */
-    public function testValidationWithInvalidFilled()
+    public function testValidationWithInvalidFilled(): void
     {
         $data = [
             'title' => 'foo',
             'number' => 'bar',
         ];
-        $validator = (new Validator())->add('number', 'numeric', ['rule' => 'numeric']);
+        $this->articles->setValidator(
+            'custom',
+            (new Validator())->add('number', 'numeric', ['rule' => 'numeric'])
+        );
         $marshall = new Marshaller($this->articles);
-        $entity = $marshall->one($data, ['validate' => $validator]);
+        $entity = $marshall->one($data, ['validate' => 'custom']);
         $this->assertNotEmpty($entity->getError('number'));
         $this->assertNull($entity->number);
         $this->assertSame(['number' => 'bar'], $entity->getInvalid());
@@ -3042,10 +2879,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge with validation error
-     *
-     * @return void
      */
-    public function testMergeWithValidation()
+    public function testMergeWithValidation(): void
     {
         $data = [
             'title' => 'My title',
@@ -3087,10 +2922,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge with validation and create or update validation rules
-     *
-     * @return void
      */
-    public function testMergeWithCreate()
+    public function testMergeWithCreate(): void
     {
         $data = [
             'title' => 'My title',
@@ -3125,10 +2958,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge() with translate behavior integration
-     *
-     * @return void
      */
-    public function testMergeWithTranslations()
+    public function testMergeWithTranslations(): void
     {
         $this->articles->addBehavior('Translate', [
             'fields' => ['title', 'body'],
@@ -3168,10 +2999,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test Model.beforeMarshal event.
-     *
-     * @return void
      */
-    public function testBeforeMarshalEvent()
+    public function testBeforeMarshalEvent(): void
     {
         $data = [
             'title' => 'My title',
@@ -3186,7 +3015,7 @@ class MarshallerTest extends TestCase
 
         $this->articles->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data, $options) {
+            function ($e, $data, $options): void {
                 $this->assertArrayHasKey('validate', $options);
                 $data['title'] = 'Modified title';
                 $data['user']['username'] = 'robert';
@@ -3205,10 +3034,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test Model.beforeMarshal event on associated tables.
-     *
-     * @return void
      */
-    public function testBeforeMarshalEventOnAssociations()
+    public function testBeforeMarshalEventOnAssociations(): void
     {
         $data = [
             'title' => 'My title',
@@ -3233,7 +3060,7 @@ class MarshallerTest extends TestCase
         // Assert event options are correct
         $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data, $options) {
+            function ($e, $data, $options): void {
                 $this->assertArrayHasKey('validate', $options);
                 $this->assertTrue($options['validate']);
 
@@ -3247,28 +3074,28 @@ class MarshallerTest extends TestCase
 
         $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data, $options) {
+            function ($e, $data, $options): void {
                 $data['secret'] = 'h45h3d';
             }
         );
 
         $this->articles->Comments->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data) {
+            function ($e, $data): void {
                 $data['comment'] .= ' (modified)';
             }
         );
 
         $this->articles->Tags->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data) {
+            function ($e, $data): void {
                 $data['tag'] .= ' (modified)';
             }
         );
 
         $this->articles->Tags->junction()->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data) {
+            function ($e, $data): void {
                 $data['modified_by'] = 1;
             }
         );
@@ -3288,10 +3115,8 @@ class MarshallerTest extends TestCase
 
     /**
      * Test Model.afterMarshal event.
-     *
-     * @return void
      */
-    public function testAfterMarshalEvent()
+    public function testAfterMarshalEvent(): void
     {
         $data = [
             'title' => 'original title',
@@ -3306,7 +3131,7 @@ class MarshallerTest extends TestCase
 
         $this->articles->getEventManager()->on(
             'Model.afterMarshal',
-            function ($e, $entity, $data, $options) {
+            function ($e, $entity, $data, $options): void {
                 $this->assertInstanceOf('Cake\ORM\Entity', $entity);
                 $this->assertArrayHasKey('validate', $options);
                 $this->assertFalse($options['isMerge']);
@@ -3332,10 +3157,8 @@ class MarshallerTest extends TestCase
     /**
      * Test Model.afterMarshal event on patchEntity.
      * when $options['fields'] is set and is empty
-     *
-     * @return void
      */
-    public function testAfterMarshalEventOnPatchEntity()
+    public function testAfterMarshalEventOnPatchEntity(): void
     {
         $data = [
             'title' => 'original title',
@@ -3350,7 +3173,7 @@ class MarshallerTest extends TestCase
 
         $this->articles->getEventManager()->on(
             'Model.afterMarshal',
-            function ($e, $entity, $data, $options) {
+            function ($e, $entity, $data, $options): void {
                 $this->assertInstanceOf('Cake\ORM\Entity', $entity);
                 $this->assertArrayHasKey('validate', $options);
                 $this->assertTrue($options['isMerge']);
@@ -3388,10 +3211,8 @@ class MarshallerTest extends TestCase
     /**
      * Tests that patching an association resulting in no changes, will
      * not mark the parent entity as dirty
-     *
-     * @return void
      */
-    public function testAssociationNoChanges()
+    public function testAssociationNoChanges(): void
     {
         $options = ['markClean' => true, 'isNew' => false];
         $entity = new Entity([
@@ -3422,10 +3243,8 @@ class MarshallerTest extends TestCase
     /**
      * Test that primary key meta data is being read from the table
      * and not the schema reflection when handling belongsToMany associations.
-     *
-     * @return void
      */
-    public function testEnsurePrimaryKeyBeingReadFromTableForHandlingEmptyStringPrimaryKey()
+    public function testEnsurePrimaryKeyBeingReadFromTableForHandlingEmptyStringPrimaryKey(): void
     {
         $data = [
             'id' => '',
@@ -3445,10 +3264,8 @@ class MarshallerTest extends TestCase
     /**
      * Test that primary key meta data is being read from the table
      * and not the schema reflection when handling belongsToMany associations.
-     *
-     * @return void
      */
-    public function testEnsurePrimaryKeyBeingReadFromTableWhenLoadingBelongsToManyRecordsByPrimaryKey()
+    public function testEnsurePrimaryKeyBeingReadFromTableWhenLoadingBelongsToManyRecordsByPrimaryKey(): void
     {
         $data = [
             'tags' => [
@@ -3474,13 +3291,13 @@ class MarshallerTest extends TestCase
                     'id' => 1,
                     'name' => 'tag1',
                     'description' => 'A big description',
-                    'created' => new Time('2016-01-01 00:00'),
+                    'created' => new FrozenTime('2016-01-01 00:00'),
                 ],
                 [
                     'id' => 2,
                     'name' => 'tag2',
                     'description' => 'Another big description',
-                    'created' => new Time('2016-01-01 00:00'),
+                    'created' => new FrozenTime('2016-01-01 00:00'),
                 ],
             ],
         ];
@@ -3490,9 +3307,9 @@ class MarshallerTest extends TestCase
     /**
      * Tests that ID values are being bound with the correct type when loading associated records.
      */
-    public function testInvalidTypesWhenLoadingAssociatedByIds()
+    public function testInvalidTypesWhenLoadingAssociatedByIds(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
 
         $data = [
@@ -3510,9 +3327,9 @@ class MarshallerTest extends TestCase
     /**
      * Tests that composite ID values are being bound with the correct type when loading associated records.
      */
-    public function testInvalidTypesWhenLoadingAssociatedByCompositeIds()
+    public function testInvalidTypesWhenLoadingAssociatedByCompositeIds(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
 
         $data = [

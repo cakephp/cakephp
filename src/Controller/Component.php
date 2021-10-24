@@ -37,13 +37,13 @@ use Cake\Log\LogTrait;
  * cycle. The available callbacks are:
  *
  * - `beforeFilter(EventInterface $event)`
- *   Called before the controller's beforeFilter method by default.
+ *   Called before Controller::beforeFilter() method by default.
  * - `startup(EventInterface $event)`
- *   Called after the controller's beforeFilter method, and before the
+ *   Called after Controller::beforeFilter() method, and before the
  *   controller action is called.
  * - `beforeRender(EventInterface $event)`
- *   Called before the Controller beforeRender, and before the view class is loaded.
- * - `shutdown(EventInterface $event)`
+ *   Called before Controller::beforeRender(), and before the view class is loaded.
+ * - `afterFilter(EventInterface $event)`
  *   Called after the action is complete and the view has been rendered but
  *   before Controller::afterFilter().
  * - `beforeRedirect(EventInterface $event $url, Response $response)`
@@ -82,14 +82,14 @@ class Component implements EventListenerInterface
      *
      * These are merged with user-provided config when the component is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
     /**
      * A component lookup table used to lazy load component objects.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_componentMap = [];
 
@@ -98,7 +98,7 @@ class Component implements EventListenerInterface
      *
      * @param \Cake\Controller\ComponentRegistry $registry A component registry
      *  this component can use to lazy load its components.
-     * @param array $config Array of configuration settings.
+     * @param array<string, mixed> $config Array of configuration settings.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -128,7 +128,7 @@ class Component implements EventListenerInterface
      * Implement this method to avoid having to overwrite
      * the constructor and call parent.
      *
-     * @param array $config The configuration settings provided to this component.
+     * @param array<string, mixed> $config The configuration settings provided to this component.
      * @return void
      */
     public function initialize(array $config): void
@@ -147,11 +147,8 @@ class Component implements EventListenerInterface
             $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
             $this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
         }
-        if (!isset($this->{$name})) {
-            return null;
-        }
 
-        return $this->{$name};
+        return $this->{$name} ?? null;
     }
 
     /**
@@ -164,7 +161,7 @@ class Component implements EventListenerInterface
      * Override this method if you need to add non-conventional event listeners.
      * Or if you want components to listen to non-standard events.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -173,13 +170,21 @@ class Component implements EventListenerInterface
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
             'Controller.beforeRedirect' => 'beforeRedirect',
-            'Controller.shutdown' => 'shutdown',
+            'Controller.shutdown' => 'afterFilter',
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {
             if (method_exists($this, $method)) {
                 $events[$event] = $method;
             }
+        }
+
+        if (!isset($events['Controller.shutdown']) && method_exists($this, 'shutdown')) {
+            deprecationWarning(
+                '`Controller.shutdown` event callback is now `afterFilter()` instead of `shutdown()`.',
+                0
+            );
+            $events[$event] = 'shutdown';
         }
 
         return $events;
@@ -189,7 +194,7 @@ class Component implements EventListenerInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

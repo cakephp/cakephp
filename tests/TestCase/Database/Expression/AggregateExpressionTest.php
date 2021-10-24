@@ -33,10 +33,8 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
     /**
      * Tests annotating an aggregate with an empty window expression
-     *
-     * @return void
      */
-    public function testEmptyWindow()
+    public function testEmptyWindow(): void
     {
         $f = (new AggregateExpression('MyFunction'))->over();
         $this->assertSame('MyFunction() OVER ()', $f->sql(new ValueBinder()));
@@ -50,14 +48,12 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
     /**
      * Tests filter() clauses.
-     *
-     * @return void
      */
-    public function testFilter()
+    public function testFilter(): void
     {
         $f = (new AggregateExpression('MyFunction'))->filter(['this' => new IdentifierExpression('that')]);
         $this->assertEqualsSql(
-            'MyFunction() FILTER (WHERE this = (that))',
+            'MyFunction() FILTER (WHERE this = that)',
             $f->sql(new ValueBinder())
         );
 
@@ -65,23 +61,21 @@ class AggregateExpressionTest extends FunctionExpressionTest
             return $q->add(['this2' => new IdentifierExpression('that2')]);
         });
         $this->assertEqualsSql(
-            'MyFunction() FILTER (WHERE (this = (that) AND this2 = (that2)))',
+            'MyFunction() FILTER (WHERE (this = that AND this2 = that2))',
             $f->sql(new ValueBinder())
         );
 
         $f->over();
         $this->assertEqualsSql(
-            'MyFunction() FILTER (WHERE (this = (that) AND this2 = (that2))) OVER ()',
+            'MyFunction() FILTER (WHERE (this = that AND this2 = that2)) OVER ()',
             $f->sql(new ValueBinder())
         );
     }
 
     /**
      * Tests WindowInterface calls are passed to the WindowExpression
-     *
-     * @return void
      */
-    public function testWindowInterface()
+    public function testWindowInterface(): void
     {
         $f = (new AggregateExpression('MyFunction'))->partition('test');
         $this->assertEqualsSql(
@@ -170,17 +164,15 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
     /**
      * Tests traversing aggregate expressions.
-     *
-     * @return void
      */
-    public function testTraverse()
+    public function testTraverse(): void
     {
         $w = (new AggregateExpression('MyFunction'))
             ->filter(['this' => true])
             ->over();
 
         $expressions = [];
-        $w->traverse(function ($expression) use (&$expressions) {
+        $w->traverse(function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 
@@ -190,10 +182,8 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
     /**
      * Tests cloning aggregate expressions
-     *
-     * @return void
      */
-    public function testCloning()
+    public function testCloning(): void
     {
         $a1 = (new AggregateExpression('MyFunction'))->partition('test');
         $a2 = (clone $a1)->partition('new');

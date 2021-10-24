@@ -38,8 +38,6 @@ class PluginUnloadCommandTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -54,8 +52,6 @@ class PluginUnloadCommandTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -67,10 +63,8 @@ class PluginUnloadCommandTest extends TestCase
 
     /**
      * testUnload
-     *
-     * @return void
      */
-    public function testUnload()
+    public function testUnload(): void
     {
         $plugin1 = "\$this->addPlugin('TestPlugin', ['bootstrap' => false, 'routes' => false]);";
         $plugin2 = "\$this->addPlugin('TestPluginTwo', ['bootstrap' => false, 'routes' => false]);";
@@ -87,10 +81,8 @@ class PluginUnloadCommandTest extends TestCase
 
     /**
      * test removing the first plugin leaves the second behind.
-     *
-     * @return void
      */
-    public function testUnloadFirstPlugin()
+    public function testUnloadFirstPlugin(): void
     {
         $plugin1 = "\$this->addPlugin('TestPlugin');";
         $plugin2 = "\$this->addPlugin('Vendor/TestPluginTwo');";
@@ -110,7 +102,7 @@ class PluginUnloadCommandTest extends TestCase
      *
      * @return array
      */
-    public function variantProvider()
+    public function variantProvider(): array
     {
         return [
             //  $this->addPlugin('TestPlugin', [
@@ -165,9 +157,8 @@ class PluginUnloadCommandTest extends TestCase
      * This method will tests multiple notations of plugin loading in the application class
      *
      * @dataProvider variantProvider
-     * @return void
      */
-    public function testRegularExpressionsApplication($content)
+    public function testRegularExpressionsApplication(string $content): void
     {
         $this->addPluginToApp($content);
 
@@ -187,9 +178,8 @@ class PluginUnloadCommandTest extends TestCase
      * This is useful for the tests
      *
      * @param string $insert The addPlugin line to add.
-     * @return void
      */
-    protected function addPluginToApp($insert)
+    protected function addPluginToApp($insert): void
     {
         $contents = file_get_contents($this->app);
         $contents = preg_replace('/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m', "\$1\n        " . $insert, $contents);

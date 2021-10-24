@@ -93,7 +93,7 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Constructor
      *
-     * @param array $config The options for error handling.
+     * @param array<string, mixed> $config The options for error handling.
      */
     public function __construct(array $config = [])
     {
@@ -110,7 +110,7 @@ class ErrorHandler extends BaseErrorHandler
      * Template method of BaseErrorHandler.
      *
      * @param array $error An array of error data.
-     * @param bool $debug Whether or not the app is in debug mode.
+     * @param bool $debug Whether the app is in debug mode.
      * @return void
      */
     protected function _displayError(array $error, bool $debug): void
@@ -199,7 +199,7 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Method that can be easily stubbed in testing.
      *
-     * @param string|\Cake\Http\Response $response Either the message or response object.
+     * @param \Cake\Http\Response|string $response Either the message or response object.
      * @return void
      */
     protected function _sendResponse($response): void

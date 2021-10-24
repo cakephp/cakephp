@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
+use LogicException;
+use OutOfBoundsException;
 use TestApp\Middleware\DumbMiddleware;
 use TestApp\Middleware\SampleMiddleware;
 
@@ -27,9 +29,12 @@ use TestApp\Middleware\SampleMiddleware;
 class MiddlewareQueueTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $previousNamespace;
+
+    /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -40,8 +45,6 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -49,9 +52,9 @@ class MiddlewareQueueTest extends TestCase
         static::setAppNamespace($this->previousNamespace);
     }
 
-    public function testConstructorAddingMiddleware()
+    public function testConstructorAddingMiddleware(): void
     {
-        $cb = function () {
+        $cb = function (): void {
         };
         $queue = new MiddlewareQueue([$cb]);
         $this->assertCount(1, $queue);
@@ -60,13 +63,11 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test get()
-     *
-     * @return void
      */
-    public function testGet()
+    public function testGet(): void
     {
         $queue = new MiddlewareQueue();
-        $cb = function () {
+        $cb = function (): void {
         };
         $queue->add($cb);
         $this->assertSame($cb, $queue->current()->getCallable());
@@ -74,12 +75,10 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test that current() throws exception for invalid current position.
-     *
-     * @return void
      */
-    public function testGetException()
+    public function testGetException(): void
     {
-        $this->expectException(\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('Invalid current position (0)');
 
         $queue = new MiddlewareQueue();
@@ -88,27 +87,23 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test the return value of add()
-     *
-     * @return void
      */
-    public function testAddReturn()
+    public function testAddReturn(): void
     {
         $queue = new MiddlewareQueue();
-        $cb = function () {
+        $cb = function (): void {
         };
         $this->assertSame($queue, $queue->add($cb));
     }
 
     /**
      * Test the add orders correctly
-     *
-     * @return void
      */
-    public function testAddOrdering()
+    public function testAddOrdering(): void
     {
-        $one = function () {
+        $one = function (): void {
         };
-        $two = function () {
+        $two = function (): void {
         };
 
         $queue = new MiddlewareQueue();
@@ -127,12 +122,10 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test the prepend can be chained
-     *
-     * @return void
      */
-    public function testPrependReturn()
+    public function testPrependReturn(): void
     {
-        $cb = function () {
+        $cb = function (): void {
         };
         $queue = new MiddlewareQueue();
         $this->assertSame($queue, $queue->prepend($cb));
@@ -140,14 +133,12 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test the prepend orders correctly.
-     *
-     * @return void
      */
-    public function testPrependOrdering()
+    public function testPrependOrdering(): void
     {
-        $one = function () {
+        $one = function (): void {
         };
-        $two = function () {
+        $two = function (): void {
         };
 
         $queue = new MiddlewareQueue();
@@ -166,50 +157,44 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test updating queue using class name
-     *
-     * @return void
      */
-    public function testAddingPrependingUsingString()
+    public function testAddingPrependingUsingString(): void
     {
         $queue = new MiddlewareQueue();
         $queue->add('Sample');
         $queue->prepend('TestApp\Middleware\SampleMiddleware');
 
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current()->getCallable());
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current()->getCallable());
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
     }
 
     /**
      * Test updating queue using array
-     *
-     * @return void
      */
-    public function testAddingPrependingUsingArray()
+    public function testAddingPrependingUsingArray(): void
     {
-        $one = function () {
+        $one = function (): void {
         };
 
         $queue = new MiddlewareQueue();
         $queue->add([$one]);
         $queue->prepend(['TestApp\Middleware\SampleMiddleware']);
 
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current()->getCallable());
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
     }
 
     /**
      * Test insertAt ordering
-     *
-     * @return void
      */
-    public function testInsertAt()
+    public function testInsertAt(): void
     {
-        $one = function () {
+        $one = function (): void {
         };
-        $two = function () {
+        $two = function (): void {
         };
-        $three = function () {
+        $three = function (): void {
         };
         $four = new SampleMiddleware();
 
@@ -219,7 +204,7 @@ class MiddlewareQueueTest extends TestCase
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
         $queue->next();
-        $this->assertSame($four, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($two, $queue->current()->getCallable());
 
@@ -234,14 +219,12 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test insertAt out of the existing range
-     *
-     * @return void
      */
-    public function testInsertAtOutOfBounds()
+    public function testInsertAtOutOfBounds(): void
     {
-        $one = function () {
+        $one = function (): void {
         };
-        $two = function () {
+        $two = function (): void {
         };
 
         $queue = new MiddlewareQueue();
@@ -255,14 +238,12 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test insertAt with a negative index
-     *
-     * @return void
      */
-    public function testInsertAtNegative()
+    public function testInsertAtNegative(): void
     {
-        $one = function () {
+        $one = function (): void {
         };
-        $two = function () {
+        $two = function (): void {
         };
         $three = new SampleMiddleware();
 
@@ -272,22 +253,20 @@ class MiddlewareQueueTest extends TestCase
         $this->assertCount(3, $queue);
         $this->assertSame($two, $queue->current()->getCallable());
         $queue->next();
-        $this->assertSame($three, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
     }
 
     /**
      * Test insertBefore
-     *
-     * @return void
      */
-    public function testInsertBefore()
+    public function testInsertBefore(): void
     {
-        $one = function () {
+        $one = function (): void {
         };
         $two = new SampleMiddleware();
-        $three = function () {
+        $three = function (): void {
         };
         $four = new DumbMiddleware();
 
@@ -299,9 +278,9 @@ class MiddlewareQueueTest extends TestCase
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
-        $this->assertSame($four, $queue->current()->getCallable());
+        $this->assertInstanceOf(DumbMiddleware::class, $queue->current());
         $queue->next();
-        $this->assertSame($two, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
 
         $two = SampleMiddleware::class;
         $queue = new MiddlewareQueue();
@@ -315,22 +294,20 @@ class MiddlewareQueueTest extends TestCase
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
-        $this->assertInstanceOf(SampleMiddleware::class, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
     }
 
     /**
      * Test insertBefore an invalid classname
-     *
-     * @return void
      */
-    public function testInsertBeforeInvalid()
+    public function testInsertBeforeInvalid(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No middleware matching \'InvalidClassName\' could be found.');
-        $one = function () {
+        $one = function (): void {
         };
         $two = new SampleMiddleware();
-        $three = function () {
+        $three = function (): void {
         };
         $queue = new MiddlewareQueue();
         $queue->add($one)->add($two)->insertBefore('InvalidClassName', $three);
@@ -338,15 +315,13 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test insertAfter
-     *
-     * @return void
      */
-    public function testInsertAfter()
+    public function testInsertAfter(): void
     {
         $one = new SampleMiddleware();
-        $two = function () {
+        $two = function (): void {
         };
-        $three = function () {
+        $three = function (): void {
         };
         $four = new DumbMiddleware();
         $queue = new MiddlewareQueue();
@@ -357,9 +332,9 @@ class MiddlewareQueueTest extends TestCase
             ->insertAfter(SampleMiddleware::class, $four);
 
         $this->assertCount(4, $queue);
-        $this->assertSame($one, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
-        $this->assertSame($four, $queue->current()->getCallable());
+        $this->assertInstanceOf(DumbMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
@@ -373,7 +348,7 @@ class MiddlewareQueueTest extends TestCase
             ->insertAfter('Sample', $three);
 
         $this->assertCount(3, $queue);
-        $this->assertInstanceOf(SampleMiddleware::class, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
         $queue->next();
@@ -382,24 +357,37 @@ class MiddlewareQueueTest extends TestCase
 
     /**
      * Test insertAfter an invalid classname
-     *
-     * @return void
      */
-    public function testInsertAfterInvalid()
+    public function testInsertAfterInvalid(): void
     {
         $one = new SampleMiddleware();
-        $two = function () {
+        $two = function (): void {
         };
-        $three = function () {
+        $three = function (): void {
         };
         $queue = new MiddlewareQueue();
         $queue->add($one)->add($two)->insertAfter('InvalidClass', $three);
 
         $this->assertCount(3, $queue);
-        $this->assertSame($one, $queue->current()->getCallable());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($two, $queue->current()->getCallable());
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
+    }
+
+    /**
+     * @deprecated
+     */
+    public function testAddingDeprecatedDoublePassMiddleware(): void
+    {
+        $queue = new MiddlewareQueue();
+        $cb = function ($request, $response, $next) {
+            return $next($request, $response);
+        };
+        $queue->add($cb);
+        $this->deprecated(function () use ($queue, $cb): void {
+            $this->assertSame($cb, $queue->current()->getCallable());
+        });
     }
 }

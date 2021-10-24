@@ -118,7 +118,7 @@ class HelpFormatter
         }
 
         $options = $parser->options();
-        if (!empty($options)) {
+        if ($options) {
             $max = $this->_getMaxLength($options) + 8;
             $out[] = '<info>Options:</info>';
             $out[] = '';
@@ -192,7 +192,7 @@ class HelpFormatter
     /**
      * Iterate over a collection and find the longest named thing.
      *
-     * @param array $collection The collection to find a max length of.
+     * @param array<\Cake\Console\ConsoleInputOption|\Cake\Console\ConsoleInputArgument|\Cake\Console\ConsoleInputSubcommand> $collection The collection to find a max length of.
      * @return int
      */
     protected function _getMaxLength(array $collection): int
@@ -209,7 +209,7 @@ class HelpFormatter
      * Get the help as an XML string.
      *
      * @param bool $string Return the SimpleXml object or a string. Defaults to true.
-     * @return string|\SimpleXMLElement See $string
+     * @return \SimpleXMLElement|string See $string
      */
     public function xml(bool $string = true)
     {

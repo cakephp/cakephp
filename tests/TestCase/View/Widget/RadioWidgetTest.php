@@ -29,9 +29,17 @@ use Cake\View\Widget\RadioWidget;
 class RadioWidgetTest extends TestCase
 {
     /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -48,10 +56,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering basic radio buttons without nested inputs
-     *
-     * @return void
      */
-    public function testRenderSimpleNotNested()
+    public function testRenderSimpleNotNested(): void
     {
         $this->templates->add([
             'nestingLabel' => '<label{{attrs}}>{{text}}</label>',
@@ -112,10 +118,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering basic radio buttons.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -157,10 +161,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering the activeClass template var
-     *
-     * @return void
      */
-    public function testRenderSimpleActiveTemplateVar()
+    public function testRenderSimpleActiveTemplateVar(): void
     {
         $this->templates->add([
             'nestingLabel' => '<label class="{{activeClass}}"{{attrs}}>{{text}}</label>',
@@ -200,10 +202,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering inputs with the complex option form.
-     *
-     * @return void
      */
-    public function testRenderComplex()
+    public function testRenderComplex(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -241,10 +241,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering inputs with label options
-     *
-     * @return void
      */
-    public function testRenderComplexLabelAttributes()
+    public function testRenderComplexLabelAttributes(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -281,10 +279,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test that id suffixes are generated to not collide
-     *
-     * @return void
      */
-    public function testRenderIdSuffixGeneration()
+    public function testRenderIdSuffixGeneration(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -318,10 +314,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering checks the right option with booleanish values.
-     *
-     * @return void
      */
-    public function testRenderBooleanishValues()
+    public function testRenderBooleanishValues(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -394,10 +388,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test that render() works with the required attribute.
-     *
-     * @return void
      */
-    public function testRenderRequiredAndFormAttribute()
+    public function testRenderRequiredAndFormAttribute(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -425,10 +417,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering the empty option.
-     *
-     * @return void
      */
-    public function testRenderEmptyOption()
+    public function testRenderEmptyOption(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -487,10 +477,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering the input inside the label.
-     *
-     * @return void
      */
-    public function testRenderInputInsideLabel()
+    public function testRenderInputInsideLabel(): void
     {
         $this->templates->add([
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
@@ -519,10 +507,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * test render() and selected inputs.
-     *
-     * @return void
      */
-    public function testRenderSelected()
+    public function testRenderSelected(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -571,10 +557,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering with disable inputs
-     *
-     * @return void
      */
-    public function testRenderDisabled()
+    public function testRenderDisabled(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -644,10 +628,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Test rendering with label options.
-     *
-     * @return void
      */
-    public function testRenderLabelOptions()
+    public function testRenderLabelOptions(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -715,10 +697,8 @@ class RadioWidgetTest extends TestCase
     /**
      * Ensure that the input + label are composed with
      * a template.
-     *
-     * @return void
      */
-    public function testRenderContainerTemplate()
+    public function testRenderContainerTemplate(): void
     {
         $this->templates->add([
             'radioWrapper' => '<div class="radio">{{input}}{{label}}</div>',
@@ -746,10 +726,8 @@ class RadioWidgetTest extends TestCase
 
     /**
      * Ensure that template vars work.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'radioWrapper' => '<div class="radio" data-var="{{wrapperVar}}">{{label}}</div>',
@@ -779,10 +757,8 @@ class RadioWidgetTest extends TestCase
      * testRenderCustomAttributes method
      *
      * Test render with custom attributes.
-     *
-     * @return void
      */
-    public function testRenderCustomAttributes()
+    public function testRenderCustomAttributes(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $radio = new RadioWidget($this->templates, $label);
@@ -829,10 +805,8 @@ class RadioWidgetTest extends TestCase
      *
      * Test that the id passed is actually used
      * Issue: https://github.com/cakephp/cakephp/issues/13342
-     *
-     * @return void
      */
-    public function testRenderExplicitId()
+    public function testRenderExplicitId(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $input = new RadioWidget($this->templates, $label);
@@ -893,10 +867,8 @@ class RadioWidgetTest extends TestCase
      *
      * Test that the custom selected class is passed to label
      * Issue: https://github.com/cakephp/cakephp/issues/11249
-     *
-     * @return void
      */
-    public function testRenderSelectedClass()
+    public function testRenderSelectedClass(): void
     {
         $this->templates->add(['selectedClass' => 'active']);
 

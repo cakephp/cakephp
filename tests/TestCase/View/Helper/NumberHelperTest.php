@@ -40,29 +40,30 @@ class NumberHelperTest extends TestCase
     protected $View;
 
     /**
+     * @var string
+     */
+    protected $appNamespace;
+
+    /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
 
-        $this->_appNamespace = Configure::read('App.namespace');
+        $this->appNamespace = Configure::read('App.namespace');
         static::setAppNamespace();
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
-        static::setAppNamespace($this->_appNamespace);
+        static::setAppNamespace($this->appNamespace);
         unset($this->View);
     }
 
@@ -71,7 +72,7 @@ class NumberHelperTest extends TestCase
      *
      * @return array
      */
-    public function methodProvider()
+    public function methodProvider(): array
     {
         return [
             ['precision'],
@@ -88,9 +89,8 @@ class NumberHelperTest extends TestCase
      * test CakeNumber class methods are called correctly
      *
      * @dataProvider methodProvider
-     * @return void
      */
-    public function testNumberHelperProxyMethodCalls($method)
+    public function testNumberHelperProxyMethodCalls(string $method): void
     {
         $number = $this->getMockBuilder(NumberMock::class)
             ->addMethods([$method])
@@ -109,9 +109,8 @@ class NumberHelperTest extends TestCase
      * corresponding method of Number class.
      *
      * @dataProvider methodProvider
-     * @return void
      */
-    public function testParameterCountMatch($method)
+    public function testParameterCountMatch(string $method): void
     {
         $numberMethod = new ReflectionMethod(Number::class, $method);
         $helperMethod = new ReflectionMethod(NumberHelper::class, $method);
@@ -121,10 +120,8 @@ class NumberHelperTest extends TestCase
 
     /**
      * test engine override
-     *
-     * @return void
      */
-    public function testEngineOverride()
+    public function testEngineOverride(): void
     {
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
         $this->assertInstanceOf(TestAppEngine::class, $Number->engine());

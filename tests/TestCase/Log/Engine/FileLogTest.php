@@ -28,10 +28,8 @@ class FileLogTest extends TestCase
 {
     /**
      * testLogFileWriting method
-     *
-     * @return void
      */
-    public function testLogFileWriting()
+    public function testLogFileWriting(): void
     {
         $this->_deleteLogs(LOGS);
 
@@ -40,27 +38,25 @@ class FileLogTest extends TestCase
         $this->assertFileExists(LOGS . 'error.log');
 
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning/', $result);
 
         $log->log('debug', 'Test warning');
         $this->assertFileExists(LOGS . 'debug.log');
 
         $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test warning/', $result);
 
         $log->log('random', 'Test warning');
         $this->assertFileExists(LOGS . 'random.log');
 
         $result = file_get_contents(LOGS . 'random.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Random: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ random: Test warning/', $result);
     }
 
     /**
      * test using the path setting to log logs in other places.
-     *
-     * @return void
      */
-    public function testPathSetting()
+    public function testPathSetting(): void
     {
         $path = TMP . 'tests' . DS;
         $this->_deleteLogs($path);
@@ -72,10 +68,8 @@ class FileLogTest extends TestCase
 
     /**
      * test log rotation
-     *
-     * @return void
      */
-    public function testRotation()
+    public function testRotation(): void
     {
         $path = TMP . 'tests' . DS;
         $this->_deleteLogs($path);
@@ -90,7 +84,7 @@ class FileLogTest extends TestCase
         $this->assertFileExists($path . 'error.log');
 
         $result = file_get_contents($path . 'error.log');
-        $this->assertMatchesRegularExpression('/Warning: Test warning one/', $result);
+        $this->assertMatchesRegularExpression('/warning: Test warning one/', $result);
         $this->assertCount(0, glob($path . 'error.log.*'));
 
         clearstatcache();
@@ -101,14 +95,14 @@ class FileLogTest extends TestCase
 
         $result = file_get_contents($files[0]);
         $this->assertMatchesRegularExpression('/this text is under 35 bytes/', $result);
-        $this->assertMatchesRegularExpression('/Warning: Test warning one/', $result);
+        $this->assertMatchesRegularExpression('/warning: Test warning one/', $result);
 
         sleep(1);
         clearstatcache();
         $log->log('warning', 'Test warning third');
 
         $result = file_get_contents($path . 'error.log');
-        $this->assertMatchesRegularExpression('/Warning: Test warning third/', $result);
+        $this->assertMatchesRegularExpression('/warning: Test warning third/', $result);
 
         $files = glob($path . 'error.log.*');
         $this->assertCount(2, $files);
@@ -117,7 +111,7 @@ class FileLogTest extends TestCase
         $this->assertMatchesRegularExpression('/this text is under 35 bytes/', $result);
 
         $result = file_get_contents($files[1]);
-        $this->assertMatchesRegularExpression('/Warning: Test warning second/', $result);
+        $this->assertMatchesRegularExpression('/warning: Test warning second/', $result);
 
         file_put_contents($path . 'error.log.0000000000', "The oldest log file with over 35 bytes.\n");
 
@@ -130,13 +124,13 @@ class FileLogTest extends TestCase
         $this->assertCount(2, $files);
 
         $result = file_get_contents($path . 'error.log');
-        $this->assertMatchesRegularExpression('/Warning: Test warning fourth/', $result);
+        $this->assertMatchesRegularExpression('/warning: Test warning fourth/', $result);
 
         $result = file_get_contents(array_pop($files));
-        $this->assertMatchesRegularExpression('/Warning: Test warning third/', $result);
+        $this->assertMatchesRegularExpression('/warning: Test warning third/', $result);
 
         $result = file_get_contents(array_pop($files));
-        $this->assertMatchesRegularExpression('/Warning: Test warning second/', $result);
+        $this->assertMatchesRegularExpression('/warning: Test warning second/', $result);
 
         file_put_contents($path . 'debug.log', "this text is just greater than 35 bytes\n");
         $log = new FileLog([
@@ -149,12 +143,12 @@ class FileLogTest extends TestCase
         $this->assertFileExists($path . 'debug.log');
 
         $result = file_get_contents($path . 'debug.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test debug/', $result);
+        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test debug/', $result);
         $this->assertFalse(strstr($result, 'greater than 5 bytes'));
         $this->assertCount(0, glob($path . 'debug.log.*'));
     }
 
-    public function testMaskSetting()
+    public function testMaskSetting(): void
     {
         if (DS === '\\') {
             $this->markTestSkipped('File permission testing does not work on Windows.');
@@ -189,9 +183,8 @@ class FileLogTest extends TestCase
      * helper function to clears all log files in specified directory
      *
      * @param string $dir
-     * @return void
      */
-    protected function _deleteLogs($dir)
+    protected function _deleteLogs($dir): void
     {
         $files = array_merge(glob($dir . '*.log'), glob($dir . '*.log.*'));
         foreach ($files as $file) {
@@ -201,20 +194,32 @@ class FileLogTest extends TestCase
 
     /**
      * test dateFormat option
-     *
-     * @return void
      */
-    public function testDateFormat()
+    public function testDateFormat(): void
     {
         $this->_deleteLogs(LOGS);
 
-        // original 'Y-m-d H:i:s' format test was testLogFileWriting() method
-
         // 'c': ISO 8601 date (added in PHP 5)
-        $log = new FileLog(['path' => LOGS, 'dateFormat' => 'c']);
+        $log = new FileLog(['path' => LOGS, 'formatter.dateFormat' => 'c']);
         $log->log('warning', 'Test warning');
 
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Warning: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} warning: Test warning/', $result);
+    }
+
+    /**
+     * Test deprecated dateFormat option
+     */
+    public function testDeprecatedDateFormat(): void
+    {
+        $this->deprecated(function (): void {
+            $this->_deleteLogs(LOGS);
+
+            $log = new FileLog(['path' => LOGS, 'dateFormat' => 'c']);
+            $log->log('warning', 'Test warning');
+
+            $result = file_get_contents(LOGS . 'error.log');
+            $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} warning: Test warning/', $result);
+        });
     }
 }

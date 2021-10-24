@@ -54,7 +54,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     protected $_operator = '=';
 
     /**
-     * Whether or not the value in this expression is a traversable
+     * Whether the value in this expression is a traversable
      *
      * @var bool
      */
@@ -64,14 +64,14 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * A cached list of ExpressionInterface objects that were
      * found in the value for this expression.
      *
-     * @var \Cake\Database\ExpressionInterface[]
+     * @var array<\Cake\Database\ExpressionInterface>
      */
     protected $_valueExpressions = [];
 
     /**
      * Constructor
      *
-     * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
+     * @param \Cake\Database\ExpressionInterface|string $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
      * @param string|null $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value
@@ -139,14 +139,17 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        /** @var string|\Cake\Database\ExpressionInterface $field */
+        /** @var \Cake\Database\ExpressionInterface|string $field */
         $field = $this->_field;
 
         if ($field instanceof ExpressionInterface) {
             $field = $field->sql($binder);
         }
 
-        if ($this->_value instanceof ExpressionInterface) {
+        if ($this->_value instanceof IdentifierExpression) {
+            $template = '%s %s %s';
+            $value = $this->_value->sql($binder);
+        } elseif ($this->_value instanceof ExpressionInterface) {
             $template = '%s %s (%s)';
             $value = $this->_value->sql($binder);
         } else {
@@ -206,7 +209,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     {
         $template = '%s ';
 
-        if ($this->_field instanceof ExpressionInterface) {
+        if ($this->_field instanceof ExpressionInterface && !$this->_field instanceof IdentifierExpression) {
             $template = '(%s) ';
         }
 
@@ -282,7 +285,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * and all ExpressionInterface objects that could be found in the second
      * position.
      *
-     * @param iterable|\Cake\Database\ExpressionInterface $values The rows to insert
+     * @param \Cake\Database\ExpressionInterface|iterable $values The rows to insert
      * @return array
      */
     protected function _collectExpressions($values): array

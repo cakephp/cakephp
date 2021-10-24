@@ -30,14 +30,17 @@ use Cake\TestSuite\TestCase;
 class ControllerAuthorizeTest extends TestCase
 {
     /**
+     * @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $controller;
+
+    /**
      * @var \Cake\Auth\ControllerAuthorize
      */
     protected $auth;
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,14 +49,11 @@ class ControllerAuthorizeTest extends TestCase
             ->addMethods(['isAuthorized'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->components = new ComponentRegistry($this->controller);
+        $components = new ComponentRegistry($this->controller);
 
-        $this->auth = new ControllerAuthorize($this->components);
+        $this->auth = new ControllerAuthorize($components);
     }
 
-    /**
-     * @return void
-     */
     public function testControllerErrorOnMissingMethod(): void
     {
         $this->expectException(\Cake\Core\Exception\CakeException::class);
@@ -63,8 +63,6 @@ class ControllerAuthorizeTest extends TestCase
 
     /**
      * test failure
-     *
-     * @return void
      */
     public function testAuthorizeFailure(): void
     {
@@ -75,8 +73,6 @@ class ControllerAuthorizeTest extends TestCase
 
     /**
      * test isAuthorized working.
-     *
-     * @return void
      */
     public function testAuthorizeSuccess(): void
     {
@@ -85,7 +81,6 @@ class ControllerAuthorizeTest extends TestCase
 
         $this->controller->expects($this->once())
             ->method('isAuthorized')
-            ->with($user)
             ->will($this->returnValue(true));
 
         $this->assertTrue($this->auth->authorize($user, $request));

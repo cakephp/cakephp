@@ -20,7 +20,9 @@ use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
+use RuntimeException;
 
 /**
  * Test for the Decimal type.
@@ -43,44 +45,30 @@ class DecimalTypeTest extends TestCase
     protected $numberClass;
 
     /**
-     * @var string
-     */
-    protected $localeString;
-
-    /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->type = new DecimalType();
         $this->driver = $this->getMockBuilder(Driver::class)->getMock();
-        $this->localeString = I18n::getLocale();
         $this->numberClass = DecimalType::$numberClass;
-
-        I18n::setLocale($this->localeString);
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
-        I18n::setLocale($this->localeString);
+        I18n::setLocale(I18n::getDefaultLocale());
         DecimalType::$numberClass = $this->numberClass;
     }
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -93,10 +81,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test converting string decimals to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -118,10 +104,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $result = $this->type->toDatabase('', $this->driver);
         $this->assertNull($result);
@@ -150,32 +134,26 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Arrays are invalid.
-     *
-     * @return void
      */
-    public function testToDatabaseInvalid()
+    public function testToDatabaseInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
     /**
      * Non numeric strings are invalid.
-     *
-     * @return void
      */
-    public function testToDatabaseInvalid2()
+    public function testToDatabaseInvalid2(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase('some data', $this->driver);
     }
 
     /**
      * Test marshalling
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $result = $this->type->marshal('some data');
         $this->assertNull($result);
@@ -208,10 +186,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Tests marshalling numbers using the locale aware parser
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsing()
+    public function testMarshalWithLocaleParsing(): void
     {
         $this->type->useLocaleParser();
 
@@ -235,10 +211,8 @@ class DecimalTypeTest extends TestCase
 
     /**
      * test marshal() number in the danish locale which uses . for thousands separator.
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsingDanish()
+    public function testMarshalWithLocaleParsingDanish(): void
     {
         $this->type->useLocaleParser();
 
@@ -252,22 +226,18 @@ class DecimalTypeTest extends TestCase
 
     /**
      * Test that exceptions are raised on invalid parsers.
-     *
-     * @return void
      */
-    public function testUseLocaleParsingInvalid()
+    public function testUseLocaleParsingInvalid(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         DecimalType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }

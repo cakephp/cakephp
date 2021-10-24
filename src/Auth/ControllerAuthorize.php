@@ -24,7 +24,7 @@ use Cake\Http\ServerRequest;
 /**
  * An authorization adapter for AuthComponent. Provides the ability to authorize
  * using a controller callback. Your controller's isAuthorized() method should
- * return a boolean to indicate whether or not the user is authorized.
+ * return a boolean to indicate whether the user is authorized.
  *
  * ```
  *  public function isAuthorized($user)
@@ -78,7 +78,7 @@ class ControllerAuthorize extends BaseAuthorize
     /**
      * Checks user authorization using a controller callback.
      *
-     * @param array|\ArrayAccess $user Active user data
+     * @param \ArrayAccess|array $user Active user data
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @throws \Cake\Core\Exception\CakeException If controller does not have method `isAuthorized()`.
      * @return bool

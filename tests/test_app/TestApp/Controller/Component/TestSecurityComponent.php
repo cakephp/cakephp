@@ -11,7 +11,6 @@ class TestSecurityComponent extends SecurityComponent
     /**
      * validatePost method
      *
-     * @param Controller $controller
      * @return void
      */
     public function validatePost(Controller $controller): void

@@ -29,9 +29,27 @@ use RuntimeException;
 class RunnerTest extends TestCase
 {
     /**
+     * @var \Cake\Http\MiddlewareQueue
+     */
+    protected $queue;
+
+    /**
+     * @var \Closure
+     */
+    protected $ok;
+
+    /**
+     * @var \Closure
+     */
+    protected $pass;
+
+    /**
+     * @var \Closure
+     */
+    protected $fail;
+
+    /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -39,23 +57,21 @@ class RunnerTest extends TestCase
 
         $this->queue = new MiddlewareQueue();
 
-        $this->ok = function ($req, $res, $next) {
-            return $next($req, $res);
+        $this->ok = function ($request, $handler) {
+            return $handler->handle($request);
         };
-        $this->pass = function ($req, $res, $next) {
-            return $next($req, $res);
+        $this->pass = function ($request, $handler) {
+            return $handler->handle($request);
         };
-        $this->fail = function ($req, $res, $next) {
+        $this->fail = function ($request, $handler): void {
             throw new RuntimeException('A bad thing');
         };
     }
 
     /**
      * Test running a single middleware object.
-     *
-     * @return void
      */
-    public function testRunSingle()
+    public function testRunSingle(): void
     {
         $this->queue->add($this->ok);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
@@ -67,26 +83,24 @@ class RunnerTest extends TestCase
 
     /**
      * Test that middleware is run in sequence
-     *
-     * @return void
      */
-    public function testRunSequencing()
+    public function testRunSequencing(): void
     {
         $log = [];
-        $one = function ($req, $handler) use (&$log) {
+        $one = function ($request, $handler) use (&$log) {
             $log[] = 'one';
 
-            return $handler->handle($req);
+            return $handler->handle($request);
         };
-        $two = function ($req, $res, $next) use (&$log) {
+        $two = function ($request, $handler) use (&$log) {
             $log[] = 'two';
 
-            return $next($req, $res);
+            return $handler->handle($request);
         };
-        $three = function ($req, $res, $next) use (&$log) {
+        $three = function ($request, $handler) use (&$log) {
             $log[] = 'three';
 
-            return $next($req, $res);
+            return $handler->handle($request);
         };
         $this->queue->add($one)->add($two)->add($three);
         $runner = new Runner();
@@ -102,9 +116,9 @@ class RunnerTest extends TestCase
     /**
      * Test that exceptions bubble up.
      */
-    public function testRunExceptionInMiddleware()
+    public function testRunExceptionInMiddleware(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A bad thing');
         $this->queue->add($this->ok)->add($this->fail);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();

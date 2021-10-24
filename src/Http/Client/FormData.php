@@ -35,14 +35,14 @@ class FormData implements Countable
     protected $_boundary;
 
     /**
-     * Whether or not this formdata object has attached files.
+     * Whether this formdata object has attached files.
      *
      * @var bool
      */
     protected $_hasFile = false;
 
     /**
-     * Whether or not this formdata object has a complex part.
+     * Whether this formdata object has a complex part.
      *
      * @var bool
      */
@@ -51,7 +51,7 @@ class FormData implements Countable
     /**
      * The parts in the form data.
      *
-     * @var \Cake\Http\Client\FormDataPart[]
+     * @var array<\Cake\Http\Client\FormDataPart>
      */
     protected $_parts = [];
 
@@ -91,7 +91,7 @@ class FormData implements Countable
      * If the $value is an array, multiple parts will be added.
      * Files will be read from their current position and saved in memory.
      *
-     * @param string|\Cake\Http\Client\FormDataPart $name The name of the part to add,
+     * @param \Cake\Http\Client\FormDataPart|string $name The name of the part to add,
      *   or the part data object.
      * @param mixed $value The value for the part.
      * @return $this
@@ -196,10 +196,10 @@ class FormData implements Countable
     }
 
     /**
-     * Check whether or not the current payload
+     * Check whether the current payload
      * has any files.
      *
-     * @return bool Whether or not there is a file in this payload.
+     * @return bool Whether there is a file in this payload.
      */
     public function hasFile(): bool
     {
@@ -207,13 +207,13 @@ class FormData implements Countable
     }
 
     /**
-     * Check whether or not the current payload
+     * Check whether the current payload
      * is multipart.
      *
      * A payload will become multipart when you add files
      * or use add() with a Part instance.
      *
-     * @return bool Whether or not the payload is multipart.
+     * @return bool Whether the payload is multipart.
      */
     public function isMultipart(): bool
     {

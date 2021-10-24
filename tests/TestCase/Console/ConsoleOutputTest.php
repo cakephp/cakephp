@@ -33,8 +33,6 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -47,8 +45,6 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -56,7 +52,7 @@ class ConsoleOutputTest extends TestCase
         unset($this->output);
     }
 
-    public function testNoColorEnvironmentVariable()
+    public function testNoColorEnvironmentVariable(): void
     {
         $_SERVER['NO_COLOR'] = '1';
         $output = new ConsoleOutput();
@@ -67,10 +63,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test writing with no new line
-     *
-     * @return void
      */
-    public function testWriteNoNewLine()
+    public function testWriteNoNewLine(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with('Some output');
@@ -80,10 +74,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test writing with no new line
-     *
-     * @return void
      */
-    public function testWriteNewLine()
+    public function testWriteNewLine(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with('Some output' . PHP_EOL);
@@ -93,10 +85,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test write() with multiple new lines
-     *
-     * @return void
      */
-    public function testWriteMultipleNewLines()
+    public function testWriteMultipleNewLines(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with('Some output' . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL);
@@ -106,10 +96,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test writing an array of messages.
-     *
-     * @return void
      */
-    public function testWriteArray()
+    public function testWriteArray(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with('Line' . PHP_EOL . 'Line' . PHP_EOL . 'Line' . PHP_EOL);
@@ -119,10 +107,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test getting a style.
-     *
-     * @return void
      */
-    public function testStylesGet()
+    public function testStylesGet(): void
     {
         $result = $this->output->getStyle('error');
         $expected = ['text' => 'red'];
@@ -137,10 +123,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test adding a style.
-     *
-     * @return void
      */
-    public function testStylesAdding()
+    public function testStylesAdding(): void
     {
         $this->output->setStyle('test', ['text' => 'red', 'background' => 'black']);
         $result = $this->output->getStyle('test');
@@ -153,10 +137,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test formatting text with styles.
-     *
-     * @return void
      */
-    public function testFormattingSimple()
+    public function testFormattingSimple(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with("\033[31mError:\033[0m Something bad");
@@ -166,10 +148,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test that formatting doesn't eat tags it doesn't know about.
-     *
-     * @return void
      */
-    public function testFormattingNotEatingTags()
+    public function testFormattingNotEatingTags(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with('<red> Something bad');
@@ -179,10 +159,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test formatting with custom styles.
-     *
-     * @return void
      */
-    public function testFormattingCustom()
+    public function testFormattingCustom(): void
     {
         $this->output->setStyle('annoying', [
             'text' => 'magenta',
@@ -199,10 +177,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test formatting text with missing styles.
-     *
-     * @return void
      */
-    public function testFormattingMissingStyleName()
+    public function testFormattingMissingStyleName(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with('<not_there>Error:</not_there> Something bad');
@@ -212,10 +188,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test formatting text with multiple styles.
-     *
-     * @return void
      */
-    public function testFormattingMultipleStylesName()
+    public function testFormattingMultipleStylesName(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with("\033[31mBad\033[0m \033[33mWarning\033[0m Regular");
@@ -225,10 +199,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test that multiple tags of the same name work in one string.
-     *
-     * @return void
      */
-    public function testFormattingMultipleSameTags()
+    public function testFormattingMultipleSameTags(): void
     {
         $this->output->expects($this->once())->method('_write')
             ->with("\033[31mBad\033[0m \033[31mWarning\033[0m Regular");
@@ -238,10 +210,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test raw output not getting tags replaced.
-     *
-     * @return void
      */
-    public function testSetOutputAsRaw()
+    public function testSetOutputAsRaw(): void
     {
         $this->output->setOutputAs(ConsoleOutput::RAW);
         $this->output->expects($this->once())->method('_write')
@@ -252,10 +222,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test set/get plain output.
-     *
-     * @return void
      */
-    public function testSetOutputAsPlain()
+    public function testSetOutputAsPlain(): void
     {
         $this->output->setOutputAs(ConsoleOutput::PLAIN);
         $this->assertSame(ConsoleOutput::PLAIN, $this->output->getOutputAs());
@@ -267,10 +235,8 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test plain output only strips tags used for formatting.
-     *
-     * @return void
      */
-    public function testSetOutputAsPlainSelectiveTagRemoval()
+    public function testSetOutputAsPlainSelectiveTagRemoval(): void
     {
         $this->output->setOutputAs(ConsoleOutput::PLAIN);
         $this->output->expects($this->once())

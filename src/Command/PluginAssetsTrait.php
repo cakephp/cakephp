@@ -47,7 +47,7 @@ trait PluginAssetsTrait
      *
      * @param string|null $name Name of plugin for which to symlink assets.
      *   If null all plugins will be processed.
-     * @return array List of plugins with meta data.
+     * @return array<string, mixed> List of plugins with meta data.
      */
     protected function _list(?string $name = null): array
     {
@@ -95,7 +95,7 @@ trait PluginAssetsTrait
     /**
      * Process plugins
      *
-     * @param array $plugins List of plugins to process
+     * @param array<string, mixed> $plugins List of plugins to process
      * @param bool $copy Force copy mode. Default false.
      * @param bool $overwrite Overwrite existing files.
      * @return void
@@ -153,7 +153,7 @@ trait PluginAssetsTrait
     /**
      * Remove folder/symlink.
      *
-     * @param array $config Plugin config.
+     * @param array<string, mixed> $config Plugin config.
      * @return bool
      */
     protected function _remove(array $config): bool

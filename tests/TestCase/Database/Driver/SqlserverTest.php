@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
@@ -37,8 +38,6 @@ class SqlserverTest extends TestCase
 
     /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -51,7 +50,7 @@ class SqlserverTest extends TestCase
      *
      * @return array
      */
-    public function dnsStringDataProvider()
+    public function dnsStringDataProvider(): array
     {
         return [
             [
@@ -98,9 +97,8 @@ class SqlserverTest extends TestCase
      * @dataProvider dnsStringDataProvider
      * @param array $constructorArgs
      * @param string $dnsString
-     * @return void
      */
-    public function testDnsString($constructorArgs, $dnsString)
+    public function testDnsString($constructorArgs, $dnsString): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -123,10 +121,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test connecting to Sqlserver with custom configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigCustom()
+    public function testConnectionConfigCustom(): void
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $config = [
@@ -190,44 +186,22 @@ class SqlserverTest extends TestCase
 
     /**
      * Test connecting to Sqlserver with persistent set to false
-     *
-     * @return void
      */
-    public function testConnectionPersistentFalse()
+    public function testConnectionPersistentFalse(): void
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
-        $config = [
+
+        $driver = new Sqlserver([
             'persistent' => false,
-            'host' => 'foo',
+            'host' => 'shouldnotexist',
             'username' => 'Administrator',
             'password' => 'blablabla',
             'database' => 'bar',
-            'encoding' => 'a-language',
-        ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect'])
-            ->setConstructorArgs([$config])
-            ->getMock();
-        $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
+            'loginTimeout' => 1,
+        ]);
 
-        $expected = $config;
-        $expected['flags'] = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::SQLSRV_ATTR_ENCODING => 'a-language',
-        ];
-        $expected['attributes'] = [];
-        $expected['settings'] = [];
-        $expected['init'] = [];
-        $expected['app'] = null;
-        $expected['connectionPooling'] = null;
-        $expected['failoverPartner'] = null;
-        $expected['loginTimeout'] = null;
-        $expected['multiSubnetFailover'] = null;
-        $expected['port'] = null;
-
-        $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-
+        // This should not throw an InvalidArgumentException because
+        // persistent is false (the default).
         $this->expectException(MissingConnectionException::class);
         $driver->connect();
     }
@@ -235,34 +209,29 @@ class SqlserverTest extends TestCase
     /**
      * Test if attempting to connect with the driver throws an exception when
      * using an invalid config setting.
-     *
-     * @return void
      */
-    public function testConnectionPersistentTrueException()
+    public function testConnectionPersistentTrueException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
-        $config = [
+
+        $driver = new Sqlserver([
             'persistent' => true,
-            'host' => 'foo',
+            'host' => 'shouldnotexist',
             'username' => 'Administrator',
             'password' => 'blablabla',
             'database' => 'bar',
-        ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'getConnection'])
-            ->setConstructorArgs([$config])
-            ->getMock();
+            'loginTimeout' => 1,
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
         $driver->connect();
     }
 
     /**
      * Test select with limit only and SQLServer2012+
-     *
-     * @return void
      */
-    public function testSelectLimitVersion12()
+    public function testSelectLimitVersion12(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection', 'version'])
@@ -308,10 +277,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test select with limit on lte SQLServer2008
-     *
-     * @return void
      */
-    public function testSelectLimitOldServer()
+    public function testSelectLimitOldServer(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection', 'version'])
@@ -437,10 +404,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test that insert queries have results available to them.
-     *
-     * @return void
      */
-    public function testInsertUsesOutput()
+    public function testInsertUsesOutput(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -463,10 +428,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test that having queries replace the aggregated alias field.
-     *
-     * @return void
      */
-    public function testHavingReplacesAlias()
+    public function testHavingReplacesAlias(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['connect', 'getConnection', 'version'])
@@ -500,10 +463,8 @@ class SqlserverTest extends TestCase
 
     /**
      * Test that having queries replaces nothing is no alias is used.
-     *
-     * @return void
      */
-    public function testHavingWhenNoAliasIsUsed()
+    public function testHavingWhenNoAliasIsUsed(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['connect', 'getConnection', 'version'])
@@ -535,7 +496,7 @@ class SqlserverTest extends TestCase
         $this->assertSame($expected, $query->sql());
     }
 
-    public function testExceedingMaxParameters()
+    public function testExceedingMaxParameters(): void
     {
         $connection = ConnectionManager::get('test');
         $this->skipIf(!$connection->getDriver() instanceof Sqlserver);
@@ -549,5 +510,22 @@ class SqlserverTest extends TestCase
             'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server'
         );
         $connection->getDriver()->prepare($query);
+    }
+
+    /**
+     * Tests driver-specific feature support check.
+     */
+    public function testSupports(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Sqlserver);
+
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_CTE));
+        $this->assertFalse($driver->supports(DriverInterface::FEATURE_JSON));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_QUOTE));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_WINDOW));
+
+        $this->assertFalse($driver->supports('this-is-fake'));
     }
 }

@@ -41,17 +41,31 @@
       <code>$set</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Command/Command.php">
+    <DeprecatedMethod occurrences="1">
+      <code>loadModel</code>
+    </DeprecatedMethod>
+    <DeprecatedProperty occurrences="2">
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+    <DeprecatedTrait occurrences="1">
+      <code>ModelAwareTrait</code>
+    </DeprecatedTrait>
+  </file>
   <file src="src/Command/CompletionCommand.php">
     <DeprecatedClass occurrences="1">
       <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandCollection.php">
-    <DeprecatedClass occurrences="4">
+    <DeprecatedClass occurrences="6">
       <code>Shell::class</code>
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|class-string</code>
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|string</code>
       <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
-      <code>class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
-      <code>string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
+      <code>array&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string&gt;</code>
+      <code>array&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string&gt;</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandFactoryInterface.php">
@@ -61,10 +75,21 @@
   </file>
   <file src="src/Console/CommandRunner.php">
     <DeprecatedClass occurrences="3">
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
+      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
       <code>\Cake\Console\Shell</code>
-      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
-      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
+  </file>
+  <file src="src/Console/Shell.php">
+    <DeprecatedMethod occurrences="1">
+      <code>loadModel</code>
+    </DeprecatedMethod>
+    <DeprecatedProperty occurrences="1">
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+    <DeprecatedTrait occurrences="1">
+      <code>ModelAwareTrait</code>
+    </DeprecatedTrait>
   </file>
   <file src="src/Console/ShellDispatcher.php">
     <DeprecatedClass occurrences="5">
@@ -85,6 +110,22 @@
     </DeprecatedClass>
   </file>
   <file src="src/Controller/Controller.php">
+    <DeprecatedMethod occurrences="2">
+      <code>loadModel</code>
+      <code>loadModel</code>
+    </DeprecatedMethod>
+    <DeprecatedProperty occurrences="7">
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+    <DeprecatedTrait occurrences="1">
+      <code>ModelAwareTrait</code>
+    </DeprecatedTrait>
     <PropertyTypeCoercion occurrences="1">
       <code>$result</code>
     </PropertyTypeCoercion>
@@ -96,11 +137,21 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Database/Connection.php">
+    <DeprecatedMethod occurrences="1">
+      <code>supportsDynamicConstraints</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/Database/Driver.php">
     <InvalidScalarArgument occurrences="2">
       <code>$value</code>
       <code>$value</code>
     </InvalidScalarArgument>
+  </file>
+  <file src="src/Database/Expression/QueryExpression.php">
+    <DeprecatedClass occurrences="1">
+      <code>new CaseExpression($conditions, $values, $types)</code>
+    </DeprecatedClass>
   </file>
   <file src="src/Database/Schema/MysqlSchemaDialect.php">
     <NonInvariantDocblockPropertyType occurrences="1">
@@ -112,50 +163,50 @@
       <code>$_statement</code>
     </NonInvariantDocblockPropertyType>
   </file>
+  <file src="src/Database/Type/DateTimeType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Time::class</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Database/Type/DateType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Date::class</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/Datasource/ModelAwareTrait.php">
     <DeprecatedClass occurrences="1">
       <code>$this</code>
     </DeprecatedClass>
+    <DeprecatedProperty occurrences="3">
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
   </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Http/Client/Request.php">
-    <PropertyTypeCoercion occurrences="1">
-      <code>$this-&gt;headerNames</code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Http/Client/Response.php">
-    <PropertyTypeCoercion occurrences="3">
-      <code>$this-&gt;headerNames</code>
-      <code>$this-&gt;headers</code>
-      <code>$this-&gt;headers</code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Http/Response.php">
-    <PropertyTypeCoercion occurrences="2">
-      <code>$this-&gt;headerNames</code>
-      <code>$this-&gt;headers</code>
-    </PropertyTypeCoercion>
+  <file src="src/Http/MiddlewareQueue.php">
+    <DeprecatedClass occurrences="2">
+      <code>new DoublePassDecoratorMiddleware($middleware)</code>
+      <code>new DoublePassDecoratorMiddleware($middleware)</code>
+    </DeprecatedClass>
   </file>
   <file src="src/Http/ServerRequest.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$this-&gt;data</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Http/Session/CacheSession.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="src/Http/Session/DatabaseSession.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="src/I18n/DateFormatTrait.php">
+    <DeprecatedClass occurrences="5">
+      <code>$time-&gt;timezone($timezone)</code>
+      <code>Time::UNIX_TIMESTAMP_FORMAT</code>
+      <code>static|null</code>
+      <code>static|null</code>
+      <code>static|null</code>
+    </DeprecatedClass>
     <MissingParamType occurrences="1">
       <code>$format</code>
     </MissingParamType>
@@ -171,6 +222,34 @@
       <code>translate</code>
       <code>translate</code>
     </InternalMethod>
+  </file>
+  <file src="src/Log/Engine/ArrayLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Log/Engine/ConsoleLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Log/Engine/FileLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Log/Engine/SyslogLog.php">
+    <DeprecatedMethod occurrences="1">
+      <code>_format</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Mailer/Mailer.php">
+    <DeprecatedProperty occurrences="1">
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+    <DeprecatedTrait occurrences="1">
+      <code>ModelAwareTrait</code>
+    </DeprecatedTrait>
   </file>
   <file src="src/ORM/Locator/LocatorAwareTrait.php">
     <DeprecatedClass occurrences="1">
@@ -192,6 +271,12 @@
       <code>$request</code>
       <code>$request</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Routing/Router.php">
+    <DeprecatedMethod occurrences="3">
+      <code>static::scope($path, $params, $callback)</code>
+      <code>static::scope($path, $params, $callback)</code>
+    </DeprecatedMethod>
   </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
@@ -263,6 +348,12 @@
       <code>FixtureInjector</code>
     </DeprecatedInterface>
   </file>
+  <file src="src/TestSuite/Fixture/FixtureManager.php">
+    <DeprecatedProperty occurrences="2">
+      <code>$test-&gt;autoFixtures</code>
+      <code>$test-&gt;dropTables</code>
+    </DeprecatedProperty>
+  </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$this-&gt;_response</code>
@@ -278,6 +369,17 @@
       <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
   </file>
+  <file src="src/TestSuite/TestCase.php">
+    <DeprecatedProperty occurrences="7">
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;autoFixtures</code>
+      <code>$this-&gt;dropTables</code>
+      <code>$this-&gt;dropTables</code>
+    </DeprecatedProperty>
+  </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">
       <code>BaseTestSuite</code>
@@ -286,6 +388,11 @@
       <code>addTestFile</code>
       <code>addTestFile</code>
     </InternalMethod>
+  </file>
+  <file src="src/View/Cell.php">
+    <DeprecatedTrait occurrences="1">
+      <code>ModelAwareTrait</code>
+    </DeprecatedTrait>
   </file>
   <file src="src/View/Helper/NumberHelper.php">
     <DeprecatedMethod occurrences="1">

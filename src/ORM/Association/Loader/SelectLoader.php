@@ -56,7 +56,7 @@ class SelectLoader
     /**
      * The foreignKey to the target association
      *
-     * @var string|array
+     * @var array|string
      */
     protected $foreignKey;
 
@@ -99,7 +99,7 @@ class SelectLoader
      * Copies the options array to properties in this class. The keys in the array correspond
      * to properties in this class.
      *
-     * @param array $options Properties to be copied to this class
+     * @param array<string, mixed> $options Properties to be copied to this class
      */
     public function __construct(array $options)
     {
@@ -118,7 +118,7 @@ class SelectLoader
      * Returns a callable that can be used for injecting association results into a given
      * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
      *
-     * @param array $options Same options as `Association::eagerLoader()`
+     * @param array<string, mixed> $options Same options as `Association::eagerLoader()`
      * @return \Closure
      */
     public function buildEagerLoader(array $options): Closure
@@ -151,7 +151,7 @@ class SelectLoader
      * in the target table that are associated to those specified in $options from
      * the source table
      *
-     * @param array $options options accepted by eagerLoader()
+     * @param array<string, mixed> $options options accepted by eagerLoader()
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
@@ -161,10 +161,7 @@ class SelectLoader
         $filter = $options['keys'];
         $useSubquery = $options['strategy'] === Association::STRATEGY_SUBQUERY;
         $finder = $this->finder;
-
-        if (!isset($options['fields'])) {
-            $options['fields'] = [];
-        }
+        $options['fields'] = $options['fields'] ?? [];
 
         /** @var \Cake\ORM\Query $query */
         $query = $finder();
@@ -178,6 +175,11 @@ class SelectLoader
             ->where($options['conditions'])
             ->eagerLoaded(true)
             ->enableHydration($options['query']->isHydrationEnabled());
+        if ($options['query']->isResultsCastingEnabled()) {
+            $fetchQuery->enableResultsCasting();
+        } else {
+            $fetchQuery->disableResultsCasting();
+        }
 
         if ($useSubquery) {
             $filter = $this->_buildSubquery($options['query']);
@@ -215,7 +217,7 @@ class SelectLoader
      * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
      * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
      *
-     * @param string|array $finderData The finder name or an array having the name as key
+     * @param array|string $finderData The finder name or an array having the name as key
      * and options as value.
      * @return array
      */
@@ -236,7 +238,7 @@ class SelectLoader
      * If the required fields are missing, throws an exception.
      *
      * @param \Cake\ORM\Query $fetchQuery The association fetching query
-     * @param array $key The foreign key fields to check
+     * @param array<string> $key The foreign key fields to check
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -279,7 +281,7 @@ class SelectLoader
      * filtering needs to be done using a subquery.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string|string[] $key the fields that should be used for filtering
+     * @param array<string>|string $key the fields that should be used for filtering
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
@@ -315,7 +317,7 @@ class SelectLoader
      * target table query given a filter key and some filtering values.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string|array $key The fields that should be used for filtering
+     * @param array|string $key The fields that should be used for filtering
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query
      */
@@ -335,7 +337,7 @@ class SelectLoader
      * from $keys with the tuple values in $filter using the provided operator.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string[] $keys the fields that should be used for filtering
+     * @param array<string> $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
@@ -357,8 +359,8 @@ class SelectLoader
      * Generates a string used as a table field that contains the values upon
      * which the filter should be applied
      *
-     * @param array $options The options for getting the link field.
-     * @return string|string[]
+     * @param array<string, mixed> $options The options for getting the link field.
+     * @return array<string>|string
      * @throws \RuntimeException
      */
     protected function _linkField(array $options)
@@ -425,7 +427,7 @@ class SelectLoader
      * that need to be present to ensure the correct association data is loaded.
      *
      * @param \Cake\ORM\Query $query The query to get fields from.
-     * @return array The list of fields for the subquery.
+     * @return array<string, array> The list of fields for the subquery.
      */
     protected function _subqueryFields(Query $query): array
     {
@@ -456,8 +458,8 @@ class SelectLoader
      * the foreignKey value corresponding to this association.
      *
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
-     * @param array $options The options passed to the eager loader
-     * @return array
+     * @param array<string, mixed> $options The options passed to the eager loader
+     * @return array<string, mixed>
      */
     protected function _buildResultMap(Query $fetchQuery, array $options): array
     {
@@ -488,9 +490,9 @@ class SelectLoader
      * for injecting the eager loaded rows
      *
      * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
-     * @param array $resultMap an array with the foreignKey as keys and
+     * @param array<string, mixed> $resultMap an array with the foreignKey as keys and
      * the corresponding target table results as value.
-     * @param array $options The options passed to the eagerLoader method
+     * @param array<string, mixed> $options The options passed to the eagerLoader method
      * @return \Closure
      */
     protected function _resultInjector(Query $fetchQuery, array $resultMap, array $options): Closure
@@ -526,8 +528,8 @@ class SelectLoader
      * for injecting the eager loaded rows when the matching needs to
      * be done with multiple foreign keys
      *
-     * @param array $resultMap A keyed arrays containing the target table
-     * @param string[] $sourceKeys An array with aliased keys to match
+     * @param array<string, mixed> $resultMap A keyed arrays containing the target table
+     * @param array<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */

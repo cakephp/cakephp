@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Utility;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -28,10 +29,8 @@ class SecurityTest extends TestCase
 {
     /**
      * testHash method
-     *
-     * @return void
      */
-    public function testHash()
+    public function testHash(): void
     {
         $_hashType = Security::$hashType;
 
@@ -72,10 +71,8 @@ class SecurityTest extends TestCase
 
     /**
      * testInvalidHashTypeException
-     *
-     * @return void
      */
-    public function testInvalidHashTypeException()
+    public function testInvalidHashTypeException(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: \w+/');
@@ -85,10 +82,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test encrypt/decrypt.
-     *
-     * @return void
      */
-    public function testEncryptDecrypt()
+    public function testEncryptDecrypt(): void
     {
         $txt = 'The quick brown fox';
         $key = 'This key is longer than 32 bytes long.';
@@ -100,10 +95,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test that changing the key causes decryption to fail.
-     *
-     * @return void
      */
-    public function testDecryptKeyFailure()
+    public function testDecryptKeyFailure(): void
     {
         $txt = 'The quick brown fox';
         $key = 'This key is longer than 32 bytes long.';
@@ -115,10 +108,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test that decrypt fails when there is an hmac error.
-     *
-     * @return void
      */
-    public function testDecryptHmacFailure()
+    public function testDecryptHmacFailure(): void
     {
         $txt = 'The quick brown fox';
         $key = 'This key is quite long and works well.';
@@ -132,10 +123,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test that changing the hmac salt will cause failures.
-     *
-     * @return void
      */
-    public function testDecryptHmacSaltFailure()
+    public function testDecryptHmacSaltFailure(): void
     {
         $txt = 'The quick brown fox';
         $key = 'This key is quite long and works well.';
@@ -148,12 +137,10 @@ class SecurityTest extends TestCase
 
     /**
      * Test that short keys cause errors
-     *
-     * @return void
      */
-    public function testEncryptInvalidKey()
+    public function testEncryptInvalidKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
@@ -162,10 +149,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test encrypting falsey data
-     *
-     * @return void
      */
-    public function testEncryptDecryptFalseyData()
+    public function testEncryptDecryptFalseyData(): void
     {
         $key = 'This is a key that is long enough to be ok.';
 
@@ -178,12 +163,10 @@ class SecurityTest extends TestCase
 
     /**
      * Test that short keys cause errors
-     *
-     * @return void
      */
-    public function testDecryptInvalidKey()
+    public function testDecryptInvalidKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
@@ -192,12 +175,10 @@ class SecurityTest extends TestCase
 
     /**
      * Test that empty data cause errors
-     *
-     * @return void
      */
-    public function testDecryptInvalidData()
+    public function testDecryptInvalidData(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The data to decrypt cannot be empty.');
         $txt = '';
         $key = 'This is a key that is long enough to be ok.';
@@ -206,10 +187,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test engine
-     *
-     * @return void
      */
-    public function testEngineEquivalence()
+    public function testEngineEquivalence(): void
     {
         $restore = Security::engine();
         $newEngine = new OpenSsl();
@@ -222,10 +201,8 @@ class SecurityTest extends TestCase
 
     /**
      * Tests that the salt can be set and retrieved
-     *
-     * @return void
      */
-    public function testSalt()
+    public function testSalt(): void
     {
         Security::setSalt('foobarbaz');
         $this->assertSame('foobarbaz', Security::getSalt());
@@ -233,10 +210,8 @@ class SecurityTest extends TestCase
 
     /**
      * Tests that the salt can be set and retrieved
-     *
-     * @return void
      */
-    public function testGetSetSalt()
+    public function testGetSetSalt(): void
     {
         Security::setSalt('foobarbaz');
         $this->assertSame('foobarbaz', Security::getSalt());
@@ -244,10 +219,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test the randomBytes method.
-     *
-     * @return void
      */
-    public function testRandomBytes()
+    public function testRandomBytes(): void
     {
         $value = Security::randomBytes(16);
         $this->assertSame(16, strlen($value));
@@ -260,10 +233,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test the randomString method.
-     *
-     * @return void
      */
-    public function testRandomString()
+    public function testRandomString(): void
     {
         $value = Security::randomString(7);
         $this->assertSame(7, strlen($value));
@@ -276,10 +247,8 @@ class SecurityTest extends TestCase
 
     /**
      * Test the insecureRandomBytes method
-     *
-     * @return void
      */
-    public function testInsecureRandomBytes()
+    public function testInsecureRandomBytes(): void
     {
         $value = Security::insecureRandomBytes(16);
         $this->assertSame(16, strlen($value));
@@ -292,10 +261,8 @@ class SecurityTest extends TestCase
 
     /**
      * test constantEquals
-     *
-     * @return void
      */
-    public function testConstantEquals()
+    public function testConstantEquals(): void
     {
         $this->assertFalse(Security::constantEquals('abcde', null));
         $this->assertFalse(Security::constantEquals('abcde', false));

@@ -15,13 +15,16 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
+use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use stdClass;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
+use UnexpectedValueException;
 
 /**
  * ModelAwareTrait test case
@@ -30,10 +33,8 @@ class ModelAwareTraitTest extends TestCase
 {
     /**
      * Test set modelClass
-     *
-     * @return void
      */
-    public function testSetModelClass()
+    public function testSetModelClass(): void
     {
         $stub = new Stub();
         $this->assertNull($stub->getModelClass());
@@ -44,10 +45,8 @@ class ModelAwareTraitTest extends TestCase
 
     /**
      * test loadModel()
-     *
-     * @return void
      */
-    public function testLoadModel()
+    public function testLoadModel(): void
     {
         $stub = new Stub();
         $stub->setProps('Articles');
@@ -70,12 +69,10 @@ class ModelAwareTraitTest extends TestCase
     /**
      * Test that calling loadModel() without $modelClass argument when default
      * $modelClass property is empty generates exception.
-     *
-     * @return void
      */
-    public function testLoadModelException()
+    public function testLoadModelException(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Default modelClass is empty');
 
         $stub = new Stub();
@@ -90,10 +87,8 @@ class ModelAwareTraitTest extends TestCase
      *
      * Load model should not be called with Foo.Model Bar.Model Model
      * But if it is, the first call wins.
-     *
-     * @return void
      */
-    public function testLoadModelPlugin()
+    public function testLoadModelPlugin(): void
     {
         $stub = new Stub();
         $stub->setProps('Articles');
@@ -110,10 +105,8 @@ class ModelAwareTraitTest extends TestCase
 
     /**
      * test alternate model factories.
-     *
-     * @return void
      */
-    public function testModelFactory()
+    public function testModelFactory(): void
     {
         $stub = new Stub();
         $stub->setProps('Articles');
@@ -143,7 +136,7 @@ class ModelAwareTraitTest extends TestCase
         $this->assertSame('Foo', $stub->Foo->alias);
     }
 
-    public function testModelFactoryException()
+    public function testModelFactoryException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -157,16 +150,14 @@ class ModelAwareTraitTest extends TestCase
 
     /**
      * test getModelType() and setModelType()
-     *
-     * @return void
      */
-    public function testGetSetModelType()
+    public function testGetSetModelType(): void
     {
         $stub = new Stub();
         $stub->setProps('Articles');
 
         FactoryLocator::add('Test', function ($name) {
-            $mock = new \stdClass();
+            $mock = new stdClass();
             $mock->name = $name;
 
             return $mock;
@@ -177,12 +168,10 @@ class ModelAwareTraitTest extends TestCase
 
     /**
      * test MissingModelException being thrown
-     *
-     * @return void
      */
-    public function testMissingModelException()
+    public function testMissingModelException(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\MissingModelException::class);
+        $this->expectException(MissingModelException::class);
         $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 

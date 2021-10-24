@@ -18,14 +18,17 @@ namespace Cake\Test\TestCase\Controller;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TestApp\Controller\Component\AppleComponent;
 use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\OrangeComponent;
 use TestApp\Controller\Component\SomethingWithFlashComponent;
+use TestApp\Controller\Component\TestShutdownComponent;
 use TestApp\Controller\ComponentTestController;
 
 /**
@@ -35,8 +38,6 @@ class ComponentTest extends TestCase
 {
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,8 +47,6 @@ class ComponentTest extends TestCase
 
     /**
      * test accessing inner components.
-     *
-     * @return void
      */
     public function testInnerComponentConstruction(): void
     {
@@ -59,8 +58,6 @@ class ComponentTest extends TestCase
 
     /**
      * test component loading
-     *
-     * @return void
      */
     public function testNestedComponentLoading(): void
     {
@@ -75,8 +72,6 @@ class ComponentTest extends TestCase
 
     /**
      * test that component components are not enabled in the collection.
-     *
-     * @return void
      */
     public function testInnerComponentsAreNotEnabled(): void
     {
@@ -96,8 +91,6 @@ class ComponentTest extends TestCase
 
     /**
      * test a component being used more than once.
-     *
-     * @return void
      */
     public function testMultipleComponentInitialize(): void
     {
@@ -113,12 +106,10 @@ class ComponentTest extends TestCase
 
     /**
      * Test a duplicate component being loaded more than once with same and differing configurations.
-     *
-     * @return void
      */
     public function testDuplicateComponentInitialize(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The "Banana" alias has already been loaded. The `property` key');
         $Collection = new ComponentRegistry();
         $Collection->load('Banana', ['property' => ['closure' => function (): void {
@@ -133,8 +124,6 @@ class ComponentTest extends TestCase
 
     /**
      * Test mutually referencing components.
-     *
-     * @return void
      */
     public function testSomethingReferencingFlashComponent(): void
     {
@@ -148,8 +137,6 @@ class ComponentTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
     public function testDebugInfo(): void
     {
@@ -171,8 +158,6 @@ class ComponentTest extends TestCase
 
     /**
      * Tests null return for unknown magic properties.
-     *
-     * @return void
      */
     public function testMagicReturnsNull(): void
     {
@@ -182,8 +167,6 @@ class ComponentTest extends TestCase
 
     /**
      * Tests config via constructor
-     *
-     * @return void
      */
     public function testConfigViaConstructor(): void
     {
@@ -194,8 +177,6 @@ class ComponentTest extends TestCase
 
     /**
      * Lazy load a component without events.
-     *
-     * @return void
      */
     public function testLazyLoading(): void
     {
@@ -211,12 +192,10 @@ class ComponentTest extends TestCase
 
     /**
      * Lazy load a component that does not exist.
-     *
-     * @return void
      */
     public function testLazyLoadingDoesNotExists(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectException(MissingComponentException::class);
         $this->expectExceptionMessage('Component class YouHaveNoBananasComponent could not be found.');
         $Component = new ConfiguredComponent(new ComponentRegistry(), [], ['YouHaveNoBananas']);
         $bananas = $Component->YouHaveNoBananas;
@@ -224,8 +203,6 @@ class ComponentTest extends TestCase
 
     /**
      * Lazy loaded components can have config options
-     *
-     * @return void
      */
     public function testConfiguringInnerComponent(): void
     {
@@ -237,8 +214,6 @@ class ComponentTest extends TestCase
 
     /**
      * Test enabling events for lazy loaded components
-     *
-     * @return void
      */
     public function testEventsInnerComponent(): void
     {
@@ -258,8 +233,6 @@ class ComponentTest extends TestCase
 
     /**
      * Disabled events do not register for event listeners.
-     *
-     * @return void
      */
     public function testNoEventsInnerComponent(): void
     {
@@ -276,11 +249,40 @@ class ComponentTest extends TestCase
     }
 
     /**
-     * Test that calling getController() without setting a controller throws exception
-     *
-     * @return void
+     * Tests deprecated shutdown callback
      */
-    public function testGetControllerException()
+    public function testDeprecatedEventShutdown(): void
+    {
+        $Collection = new ComponentRegistry();
+
+        $this->deprecated(function () use ($Collection): void {
+            $Component = new TestShutdownComponent($Collection);
+            $result = $Component->__debugInfo();
+
+            $expected = [
+                'components' => [],
+                'implementedEvents' => [
+                    'Controller.shutdown' => 'shutdown',
+                ],
+                '_config' => [],
+            ];
+            $this->assertEquals($expected, $result);
+        });
+    }
+
+    public function testDeprecatedEventShutdownPath(): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('Component.php');
+
+        $component = new TestShutdownComponent(new ComponentRegistry());
+        $result = $component->__debugInfo();
+    }
+
+    /**
+     * Test that calling getController() without setting a controller throws exception
+     */
+    public function testGetControllerException(): void
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Controller not set for ComponentRegistry');

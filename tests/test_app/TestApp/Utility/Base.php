@@ -15,8 +15,12 @@ class Base
 
     public $assocProperty = ['Red'];
 
-    public function mergeVars($properties, $options = [])
+    /**
+     * @param string[] $properties An array of properties and the merge strategy for them.
+     * @param array $options The options to use when merging properties.
+     */
+    public function mergeVars($properties, $options = []): void
     {
-        return $this->_mergeVars($properties, $options);
+        $this->_mergeVars($properties, $options);
     }
 }

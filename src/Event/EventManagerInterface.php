@@ -43,11 +43,11 @@ interface EventManagerInterface
      * $eventManager->on('Model.beforeSave', ['priority' => 90], $callable);
      * ```
      *
-     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     * @param \Cake\Event\EventListenerInterface|string $eventKey The event unique identifier name
      * with which the callback will be associated. If $eventKey is an instance of
-     * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents` methods.
+     * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents()` methods.
      *
-     * @param array|callable $options Either an array of options or the callable you wish to
+     * @param callable|array $options Either an array of options or the callable you wish to
      * bind to $eventKey. If an array of options, the `priority` key can be used to define the order.
      * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
      * added to the same priority queue will be treated in the order of insertion.
@@ -86,7 +86,7 @@ interface EventManagerInterface
      * $manager->off($callback);
      * ```
      *
-     * @param string|\Cake\Event\EventListenerInterface|callable $eventKey The event unique identifier name
+     * @param \Cake\Event\EventListenerInterface|callable|string $eventKey The event unique identifier name
      *   with which the callback has been associated, or the $listener you want to remove.
      * @param \Cake\Event\EventListenerInterface|callable|null $callable The callback you want to detach.
      * @return $this
@@ -96,7 +96,7 @@ interface EventManagerInterface
     /**
      * Dispatches a new event to all configured listeners
      *
-     * @param string|\Cake\Event\EventInterface $event The event key name or instance of EventInterface.
+     * @param \Cake\Event\EventInterface|string $event The event key name or instance of EventInterface.
      * @return \Cake\Event\EventInterface
      * @triggers $event
      */

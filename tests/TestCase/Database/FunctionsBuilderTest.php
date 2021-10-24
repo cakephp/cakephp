@@ -35,8 +35,6 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Setups a mock for FunctionsBuilder
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,10 +44,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a generic function call
-     *
-     * @return void
      */
-    public function testArbitrary()
+    public function testArbitrary(): void
     {
         $function = $this->functions->MyFunc(['b' => 'literal']);
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -62,10 +58,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a generic aggregate call
-     *
-     * @return void
      */
-    public function testArbitraryAggregate()
+    public function testArbitraryAggregate(): void
     {
         $function = $this->functions->aggregate('MyFunc', ['b' => 'literal']);
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -78,10 +72,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a SUM() function
-     *
-     * @return void
      */
-    public function testSum()
+    public function testSum(): void
     {
         $function = $this->functions->sum('total');
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -96,10 +88,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a AVG() function
-     *
-     * @return void
      */
-    public function testAvg()
+    public function testAvg(): void
     {
         $function = $this->functions->avg('salary');
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -109,10 +99,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a MAX() function
-     *
-     * @return void
      */
-    public function testMax()
+    public function testMax(): void
     {
         $function = $this->functions->max('total');
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -127,10 +115,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a MIN() function
-     *
-     * @return void
      */
-    public function testMin()
+    public function testMin(): void
     {
         $function = $this->functions->min('created', ['date']);
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -140,10 +126,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a COUNT() function
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
         $function = $this->functions->count('*');
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -153,10 +137,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a CONCAT() function
-     *
-     * @return void
      */
-    public function testConcat()
+    public function testConcat(): void
     {
         $function = $this->functions->concat(['title' => 'literal', ' is a string']);
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -166,10 +148,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a COALESCE() function
-     *
-     * @return void
      */
-    public function testCoalesce()
+    public function testCoalesce(): void
     {
         $function = $this->functions->coalesce(['NULL' => 'literal', '1', 'a'], ['a' => 'date']);
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -179,10 +159,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a CAST() function
-     *
-     * @return void
      */
-    public function testCast()
+    public function testCast(): void
     {
         $function = $this->functions->cast('field', 'varchar');
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -197,10 +175,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests missing type in new CAST() wrapper throws exception.
-     *
-     * @return void
      */
-    public function testInvalidCast()
+    public function testInvalidCast(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->functions->cast('field');
@@ -208,10 +184,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a NOW(), CURRENT_TIME() and CURRENT_DATE() function
-     *
-     * @return void
      */
-    public function testNow()
+    public function testNow(): void
     {
         $function = $this->functions->now();
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -231,10 +205,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a EXTRACT() function
-     *
-     * @return void
      */
-    public function testExtract()
+    public function testExtract(): void
     {
         $function = $this->functions->extract('day', 'created');
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -249,10 +221,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a DATE_ADD() function
-     *
-     * @return void
      */
-    public function testDateAdd()
+    public function testDateAdd(): void
     {
         $function = $this->functions->dateAdd('created', -3, 'day');
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -266,10 +236,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a DAYOFWEEK() function
-     *
-     * @return void
      */
-    public function testDayOfWeek()
+    public function testDayOfWeek(): void
     {
         $function = $this->functions->dayOfWeek('created');
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -284,10 +252,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a RAND() function
-     *
-     * @return void
      */
-    public function testRand()
+    public function testRand(): void
     {
         $function = $this->functions->rand();
         $this->assertInstanceOf(FunctionExpression::class, $function);
@@ -298,7 +264,7 @@ class FunctionsBuilderTest extends TestCase
     /**
      * Tests generating a ROW_NUMBER() window function
      */
-    public function testRowNumber()
+    public function testRowNumber(): void
     {
         $function = $this->functions->rowNumber();
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -308,10 +274,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a LAG() window function
-     *
-     * @return void
      */
-    public function testLag()
+    public function testLag(): void
     {
         $function = $this->functions->lag('field', 1);
         $this->assertInstanceOf(AggregateExpression::class, $function);
@@ -326,10 +290,8 @@ class FunctionsBuilderTest extends TestCase
 
     /**
      * Tests generating a LAG() window function
-     *
-     * @return void
      */
-    public function testLead()
+    public function testLead(): void
     {
         $function = $this->functions->lead('field', 1);
         $this->assertInstanceOf(AggregateExpression::class, $function);

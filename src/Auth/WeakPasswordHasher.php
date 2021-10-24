@@ -30,7 +30,7 @@ class WeakPasswordHasher extends AbstractPasswordHasher
     /**
      * Default config for this object.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'hashType' => null,

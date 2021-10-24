@@ -29,8 +29,6 @@ class QueryLoggerTest extends TestCase
 {
     /**
      * Tear down
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -42,10 +40,8 @@ class QueryLoggerTest extends TestCase
     /**
      * Tests that the logged query object is passed to the built-in logger using
      * the correct scope
-     *
-     * @return void
      */
-    public function testLogFunction()
+    public function testLogFunction(): void
     {
         $logger = new QueryLogger(['connection' => '']);
         $query = new LoggedQuery();
@@ -68,10 +64,8 @@ class QueryLoggerTest extends TestCase
 
     /**
      * Tests that the connection name is logged with the query.
-     *
-     * @return void
      */
-    public function testLogConnection()
+    public function testLogConnection(): void
     {
         $logger = new QueryLogger(['connection' => 'test']);
         $query = new LoggedQuery();

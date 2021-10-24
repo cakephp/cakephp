@@ -30,7 +30,7 @@ class SelectBoxWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaults = [
         'name' => '',
@@ -112,7 +112,7 @@ class SelectBoxWidget extends BasicWidget
      * You are free to mix each of the forms in the same option set, and
      * nest complex types as required.
      *
-     * @param array $data Data to render with.
+     * @param array<string, mixed> $data Data to render with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string A generated select box.
      * @throws \RuntimeException when the name attribute is empty.
@@ -146,8 +146,8 @@ class SelectBoxWidget extends BasicWidget
     /**
      * Render the contents of the select element.
      *
-     * @param array $data The context for rendering a select.
-     * @return array
+     * @param array<string, mixed> $data The context for rendering a select.
+     * @return array<string>
      */
     protected function _renderContent(array $data): array
     {
@@ -177,7 +177,7 @@ class SelectBoxWidget extends BasicWidget
     /**
      * Generate the empty value based on the input.
      *
-     * @param string|bool|array $value The provided empty value.
+     * @param array|string|bool $value The provided empty value.
      * @return array The generated option key/value.
      */
     protected function _emptyValue($value): array
@@ -199,7 +199,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of an optgroup element.
      *
      * @param string $label The optgroup label text
-     * @param array|\ArrayAccess $optgroup The opt group data.
+     * @param \ArrayAccess|array $optgroup The opt group data.
      * @param array|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.
@@ -237,11 +237,11 @@ class SelectBoxWidget extends BasicWidget
      * Will recursively call itself when option groups are in use.
      *
      * @param iterable $options The options to render.
-     * @param array|null $disabled The options to disable.
+     * @param array<string>|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
-     * @return string[] Option elements.
+     * @return array<string> Option elements.
      */
     protected function _renderOptions(iterable $options, ?array $disabled, $selected, $templateVars, $escape): array
     {
@@ -277,9 +277,7 @@ class SelectBoxWidget extends BasicWidget
                 $optAttrs = $val;
                 $key = $optAttrs['value'];
             }
-            if (!isset($optAttrs['templateVars'])) {
-                $optAttrs['templateVars'] = [];
-            }
+            $optAttrs['templateVars'] = $optAttrs['templateVars'] ?? [];
             if ($this->_isSelected((string)$key, $selected)) {
                 $optAttrs['selected'] = true;
             }
@@ -306,7 +304,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are selected.
      *
      * @param string $key The key to test.
-     * @param string[]|string|int|false|null $selected The selected values.
+     * @param array<string>|string|int|false|null $selected The selected values.
      * @return bool
      */
     protected function _isSelected(string $key, $selected): bool
@@ -328,7 +326,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are disabled.
      *
      * @param string $key The key to test.
-     * @param string[]|null $disabled The disabled values.
+     * @param array<string>|null $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled(string $key, ?array $disabled): bool

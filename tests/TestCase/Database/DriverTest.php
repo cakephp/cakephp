@@ -18,13 +18,16 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PDO;
+use PDOStatement;
 
 /**
  * Tests Driver class
@@ -49,15 +52,13 @@ class DriverTest extends TestCase
     /**
      * Test if building the object throws an exception if we're not passing
      * required config data.
-     *
-     * @return void
      */
-    public function testConstructorException()
+    public function testConstructorException(): void
     {
         $arg = ['login' => 'Bear'];
         try {
             $this->getMockForAbstractClass(Driver::class, [$arg]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
                 $e->getMessage()
@@ -67,10 +68,8 @@ class DriverTest extends TestCase
 
     /**
      * Test the constructor.
-     *
-     * @return void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $arg = ['quoteIdentifiers' => true];
         $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
@@ -84,38 +83,30 @@ class DriverTest extends TestCase
     }
 
     /**
-     * Test supportsSavePoints().
-     *
-     * @return void
+     * Tests default implementation of feature support check.
      */
-    public function testSupportsSavePoints()
+    public function testSupports(): void
     {
-        $result = $this->driver->supportsSavePoints();
-        $this->assertTrue($result);
+        $this->assertTrue($this->driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+        $this->assertTrue($this->driver->supports(DriverInterface::FEATURE_QUOTE));
+
+        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_CTE));
+        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_JSON));
+        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_WINDOW));
+
+        $this->assertFalse($this->driver->supports('this-is-fake'));
     }
 
     /**
-     * Test supportsQuoting().
-     *
-     * @return void
+     * Tests deprecated supports checks.
      */
-    public function testSupportsQuoting()
+    public function testDeprecatedSupports(): void
     {
-        $connection = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttribute'])
-            ->getMock();
-
-        $connection
-            ->expects($this->once())
-            ->method('getAttribute')
-            ->with(PDO::ATTR_DRIVER_NAME)
-            ->willReturn('mysql');
-
-        $this->driver->setConnection($connection);
-
-        $result = $this->driver->supportsQuoting();
-        $this->assertTrue($result);
+        $this->deprecated(function () {
+            $this->assertSame($this->driver->supportsCTEs(), $this->driver->supports(DriverInterface::FEATURE_CTE));
+            $this->assertSame($this->driver->supportsSavePoints(), $this->driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+            $this->assertSame($this->driver->supportsQuoting(), $this->driver->supports(DriverInterface::FEATURE_QUOTE));
+        });
     }
 
     /**
@@ -123,9 +114,9 @@ class DriverTest extends TestCase
      * Uses a provider for all the different values we can pass to the method.
      *
      * @dataProvider schemaValueProvider
-     * @return void
+     * @param mixed $input
      */
-    public function testSchemaValue($input, $expected)
+    public function testSchemaValue($input, string $expected): void
     {
         $result = $this->driver->schemaValue($input);
         $this->assertSame($expected, $result);
@@ -134,10 +125,8 @@ class DriverTest extends TestCase
     /**
      * Test schemaValue().
      * Asserting that quote() is being called because none of the conditions were met before.
-     *
-     * @return void
      */
-    public function testSchemaValueConnectionQuoting()
+    public function testSchemaValueConnectionQuoting(): void
     {
         $value = 'string';
 
@@ -158,10 +147,8 @@ class DriverTest extends TestCase
 
     /**
      * Test lastInsertId().
-     *
-     * @return void
      */
-    public function testLastInsertId()
+    public function testLastInsertId(): void
     {
         $connection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
@@ -179,10 +166,8 @@ class DriverTest extends TestCase
 
     /**
      * Test isConnected().
-     *
-     * @return void
      */
-    public function testIsConnected()
+    public function testIsConnected(): void
     {
         $this->assertFalse($this->driver->isConnected());
 
@@ -194,7 +179,7 @@ class DriverTest extends TestCase
         $connection
             ->expects($this->once())
             ->method('query')
-            ->willReturn(true);
+            ->willReturn(new PDOStatement());
 
         $this->driver->setConnection($connection);
         $this->assertTrue($this->driver->isConnected());
@@ -202,10 +187,8 @@ class DriverTest extends TestCase
 
     /**
      * test autoQuoting().
-     *
-     * @return void
      */
-    public function testAutoQuoting()
+    public function testAutoQuoting(): void
     {
         $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
@@ -218,10 +201,8 @@ class DriverTest extends TestCase
 
     /**
      * Test compileQuery().
-     *
-     * @return void
      */
-    public function testCompileQuery()
+    public function testCompileQuery(): void
     {
         $compiler = $this->getMockBuilder(QueryCompiler::class)
             ->onlyMethods(['compile'])
@@ -262,20 +243,16 @@ class DriverTest extends TestCase
 
     /**
      * Test newCompiler().
-     *
-     * @return void
      */
-    public function testNewCompiler()
+    public function testNewCompiler(): void
     {
         $this->assertInstanceOf(QueryCompiler::class, $this->driver->newCompiler());
     }
 
     /**
      * Test newTableSchema().
-     *
-     * @return void
      */
-    public function testNewTableSchema()
+    public function testNewTableSchema(): void
     {
         $tableName = 'articles';
         $actual = $this->driver->newTableSchema($tableName);
@@ -285,10 +262,8 @@ class DriverTest extends TestCase
 
     /**
      * Test __destruct().
-     *
-     * @return void
      */
-    public function testDestructor()
+    public function testDestructor(): void
     {
         $this->driver->setConnection(true);
         $this->driver->__destruct();
@@ -302,7 +277,7 @@ class DriverTest extends TestCase
      *
      * @return array
      */
-    public function schemaValueProvider()
+    public function schemaValueProvider(): array
     {
         return [
             [null, 'NULL'],

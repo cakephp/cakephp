@@ -16,8 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
+use RuntimeException;
+use stdClass;
 
 class StringTemplateTest extends TestCase
 {
@@ -28,8 +31,6 @@ class StringTemplateTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -39,10 +40,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test adding templates through the constructor.
-     *
-     * @return void
      */
-    public function testConstructorAdd()
+    public function testConstructorAdd(): void
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
@@ -53,10 +52,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * test adding templates.
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
@@ -73,10 +70,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test remove.
-     *
-     * @return void
      */
-    public function testRemove()
+    public function testRemove(): void
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
@@ -88,10 +83,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test formatting strings.
-     *
-     * @return void
      */
-    public function testFormat()
+    public function testFormat(): void
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
@@ -121,10 +114,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test formatting strings with URL encoding
-     *
-     * @return void
      */
-    public function testFormatUrlEncoding()
+    public function testFormatUrlEncoding(): void
     {
         $templates = [
             'test' => '<img src="/img/foo%20bar.jpg">{{text}}',
@@ -137,10 +128,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Formatting array data should not trigger errors.
-     *
-     * @return void
      */
-    public function testFormatArrayData()
+    public function testFormatArrayData(): void
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
@@ -162,12 +151,10 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test formatting a missing template.
-     *
-     * @return void
      */
-    public function testFormatMissingTemplate()
+    public function testFormatMissingTemplate(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot find template named \'missing\'');
         $templates = [
             'text' => '{{text}}',
@@ -178,10 +165,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test loading templates files in the app.
-     *
-     * @return void
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $this->template->remove('attribute');
         $this->template->remove('compactAttribute');
@@ -192,10 +177,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test loading templates files from a plugin
-     *
-     * @return void
      */
-    public function testLoadPlugin()
+    public function testLoadPlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $this->template->load('TestPlugin.test_templates');
@@ -206,19 +189,17 @@ class StringTemplateTest extends TestCase
     /**
      * Test that loading nonexistent templates causes errors.
      */
-    public function testLoadErrorNoFile()
+    public function testLoadErrorNoFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Could not load configuration file');
         $this->template->load('no_such_file');
     }
 
     /**
      * Test formatting compact attributes.
-     *
-     * @return void
      */
-    public function testFormatAttributesCompact()
+    public function testFormatAttributesCompact(): void
     {
         $attrs = ['disabled' => true, 'selected' => 1, 'checked' => '1', 'multiple' => 'multiple'];
         $result = $this->template->formatAttributes($attrs);
@@ -237,10 +218,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test formatting normal attributes.
-     *
-     * @return void
      */
-    public function testFormatAttributes()
+    public function testFormatAttributes(): void
     {
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'spellcheck' => 'true'];
         $result = $this->template->formatAttributes($attrs);
@@ -282,10 +261,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test formatting array attributes.
-     *
-     * @return void
      */
-    public function testFormatAttributesArray()
+    public function testFormatAttributesArray(): void
     {
         $attrs = ['name' => ['bruce', 'wayne']];
         $result = $this->template->formatAttributes($attrs);
@@ -297,10 +274,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * test push/pop templates.
-     *
-     * @return void
      */
-    public function testPushPopTemplates()
+    public function testPushPopTemplates(): void
     {
         $this->template->add(['name' => '{{name}} is my name']);
         $this->template->push();
@@ -319,10 +294,8 @@ class StringTemplateTest extends TestCase
      * Test addClass method newClass parameter
      *
      * Tests null, string, array and false for `input`
-     *
-     * @return void
      */
-    public function testAddClassMethodNewClass()
+    public function testAddClassMethodNewClass(): void
     {
         $result = $this->template->addClass([], 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
@@ -344,10 +317,8 @@ class StringTemplateTest extends TestCase
      * Test addClass method input (currentClass) parameter
      *
      * Tests null, string, array, false and object
-     *
-     * @return void
      */
-    public function testAddClassMethodCurrentClass()
+    public function testAddClassMethodCurrentClass(): void
     {
         $result = $this->template->addClass(['class' => ['current']], 'new_class');
         $this->assertEquals($result, ['class' => ['current', 'new_class']]);
@@ -361,16 +332,14 @@ class StringTemplateTest extends TestCase
         $result = $this->template->addClass(false, 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass(new \stdClass(), 'new_class');
+        $result = $this->template->addClass(new stdClass(), 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
     }
 
     /**
      * Test addClass method string parameter, it should fallback to string
-     *
-     * @return void
      */
-    public function testAddClassMethodFallbackToString()
+    public function testAddClassMethodFallbackToString(): void
     {
         $result = $this->template->addClass('current', 'new_class');
         $this->assertEquals($result, ['class' => ['current', 'new_class']]);
@@ -378,10 +347,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test addClass method to make sure the returned array is unique
-     *
-     * @return void
      */
-    public function testAddClassMethodUnique()
+    public function testAddClassMethodUnique(): void
     {
         $result = $this->template->addClass(['class' => ['new_class']], 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
@@ -391,10 +358,8 @@ class StringTemplateTest extends TestCase
      * Test addClass method useIndex param
      *
      * Tests for useIndex being the default, 'my_class' and false
-     *
-     * @return void
      */
-    public function testAddClassMethodUseIndex()
+    public function testAddClassMethodUseIndex(): void
     {
         $result = $this->template->addClass(
             [

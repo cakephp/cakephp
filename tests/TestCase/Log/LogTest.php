@@ -15,9 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Log;
 
+use BadMethodCallException;
 use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * LogTest class
@@ -38,10 +41,8 @@ class LogTest extends TestCase
 
     /**
      * test importing loggers from app/libs and plugins.
-     *
-     * @return void
      */
-    public function testImportingLoggers()
+    public function testImportingLoggers(): void
     {
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
@@ -69,22 +70,18 @@ class LogTest extends TestCase
 
     /**
      * test all the errors from failed logger imports
-     *
-     * @return void
      */
-    public function testImportingLoggerFailure()
+    public function testImportingLoggerFailure(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Log::setConfig('fail', []);
         Log::engine('fail');
     }
 
     /**
      * test config() with valid key name
-     *
-     * @return void
      */
-    public function testValidKeyName()
+    public function testValidKeyName(): void
     {
         Log::setConfig('valid', ['engine' => 'File']);
         $stream = Log::engine('valid');
@@ -93,10 +90,8 @@ class LogTest extends TestCase
 
     /**
      * test config() with valid numeric key name
-     *
-     * @return void
      */
-    public function testValidKeyNameNumeric()
+    public function testValidKeyNameNumeric(): void
     {
         Log::setConfig('404', ['engine' => 'File']);
         $stream = Log::engine('404');
@@ -108,24 +103,20 @@ class LogTest extends TestCase
 
     /**
      * test that loggers have to implement the correct interface.
-     *
-     * @return void
      */
-    public function testNotImplementingInterface()
+    public function testNotImplementingInterface(): void
     {
         Log::setConfig('fail', ['engine' => '\stdClass']);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         Log::engine('fail');
     }
 
     /**
      * explicit tests for drop()
-     *
-     * @return void
      */
-    public function testDrop()
+    public function testDrop(): void
     {
         Log::setConfig('file', [
             'engine' => 'File',
@@ -143,12 +134,10 @@ class LogTest extends TestCase
 
     /**
      * test invalid level
-     *
-     * @return void
      */
-    public function testInvalidLevel()
+    public function testInvalidLevel(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Log::setConfig('myengine', ['engine' => 'File']);
         Log::write('invalid', 'This will not be logged');
     }
@@ -158,7 +147,7 @@ class LogTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider()
+    public static function configProvider(): array
     {
         return [
             'Array of data using engine key.' => [[
@@ -177,9 +166,9 @@ class LogTest extends TestCase
      * Test the various config call signatures.
      *
      * @dataProvider configProvider
-     * @return void
+     * @param mixed $settings
      */
-    public function testConfigVariants($settings)
+    public function testConfigVariants($settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -191,9 +180,9 @@ class LogTest extends TestCase
      * Test the various setConfig call signatures.
      *
      * @dataProvider configProvider
-     * @return void
+     * @param mixed $settings
      */
-    public function testSetConfigVariants($settings)
+    public function testSetConfigVariants($settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -204,10 +193,8 @@ class LogTest extends TestCase
     /**
      * Test that config() throws an exception when adding an
      * adapter with the wrong type.
-     *
-     * @return void
      */
-    public function testConfigInjectErrorOnWrongType()
+    public function testConfigInjectErrorOnWrongType(): void
     {
         $this->expectException(\RuntimeException::class);
         Log::setConfig('test', new \stdClass());
@@ -217,10 +204,8 @@ class LogTest extends TestCase
     /**
      * Test that setConfig() throws an exception when adding an
      * adapter with the wrong type.
-     *
-     * @return void
      */
-    public function testSetConfigInjectErrorOnWrongType()
+    public function testSetConfigInjectErrorOnWrongType(): void
     {
         $this->expectException(\RuntimeException::class);
         Log::setConfig('test', new \stdClass());
@@ -229,10 +214,8 @@ class LogTest extends TestCase
 
     /**
      * Test that config() can read data back
-     *
-     * @return void
      */
-    public function testConfigRead()
+    public function testConfigRead(): void
     {
         $config = [
             'engine' => 'File',
@@ -248,22 +231,18 @@ class LogTest extends TestCase
 
     /**
      * Ensure you cannot reconfigure a log adapter.
-     *
-     * @return void
      */
-    public function testConfigErrorOnReconfigure()
+    public function testConfigErrorOnReconfigure(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         Log::setConfig('tests', ['engine' => 'File', 'path' => TMP]);
         Log::setConfig('tests', ['engine' => 'Apc']);
     }
 
     /**
      * testLogFileWriting method
-     *
-     * @return void
      */
-    public function testLogFileWriting()
+    public function testLogFileWriting(): void
     {
         $this->_resetLogConfig();
         if (file_exists(LOGS . 'error.log')) {
@@ -277,17 +256,15 @@ class LogTest extends TestCase
         Log::write(LOG_WARNING, 'Test warning 1');
         Log::write(LOG_WARNING, 'Test warning 2');
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1/', $result);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 2$/', $result);
+        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 1/', $result);
+        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 2$/', $result);
         unlink(LOGS . 'error.log');
     }
 
     /**
      * test selective logging by level/type
-     *
-     * @return void
      */
-    public function testSelectiveLoggingByLevel()
+    public function testSelectiveLoggingByLevel(): void
     {
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -318,9 +295,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -332,10 +309,8 @@ class LogTest extends TestCase
 
     /**
      * test selective logging by level using the `types` attribute
-     *
-     * @return void
      */
-    public function testSelectiveLoggingByLevelUsingTypes()
+    public function testSelectiveLoggingByLevelUsingTypes(): void
     {
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -366,9 +341,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -378,7 +353,7 @@ class LogTest extends TestCase
         }
     }
 
-    protected function _resetLogConfig()
+    protected function _resetLogConfig(): void
     {
         Log::setConfig('debug', [
             'engine' => 'File',
@@ -394,7 +369,7 @@ class LogTest extends TestCase
         ]);
     }
 
-    protected function _deleteLogs()
+    protected function _deleteLogs(): void
     {
         if (file_exists(LOGS . 'shops.log')) {
             unlink(LOGS . 'shops.log');
@@ -418,10 +393,8 @@ class LogTest extends TestCase
 
     /**
      * test scoped logging
-     *
-     * @return void
      */
-    public function testScopedLogging()
+    public function testScopedLogging(): void
     {
         $this->_deleteLogs();
         $this->_resetLogConfig();
@@ -459,10 +432,8 @@ class LogTest extends TestCase
 
     /**
      * Test scoped logging without the default loggers catching everything
-     *
-     * @return void
      */
-    public function testScopedLoggingStrict()
+    public function testScopedLoggingStrict(): void
     {
         $this->_deleteLogs();
 
@@ -499,7 +470,7 @@ class LogTest extends TestCase
     /**
      * test scoped logging with convenience methods
      */
-    public function testConvenienceScopedLogging()
+    public function testConvenienceScopedLogging(): void
     {
         if (file_exists(LOGS . 'shops.log')) {
             unlink(LOGS . 'shops.log');
@@ -546,10 +517,8 @@ class LogTest extends TestCase
 
     /**
      * Test that scopes are exclusive and don't bleed.
-     *
-     * @return void
      */
-    public function testScopedLoggingExclusive()
+    public function testScopedLoggingExclusive(): void
     {
         $this->_deleteLogs();
 
@@ -582,7 +551,7 @@ class LogTest extends TestCase
     /**
      * testPassingScopeToEngine method
      */
-    public function testPassingScopeToEngine()
+    public function testPassingScopeToEngine(): void
     {
         static::setAppNamespace();
 
@@ -611,7 +580,7 @@ class LogTest extends TestCase
     /**
      * test convenience methods
      */
-    public function testConvenienceMethods()
+    public function testConvenienceMethods(): void
     {
         $this->_deleteLogs();
 
@@ -631,66 +600,64 @@ class LogTest extends TestCase
         $testMessage = 'emergency message';
         Log::emergency($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/(Emergency|Critical): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(emergency|critical): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'alert message';
         Log::alert($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/(Alert|Critical): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(alert|critical): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'critical message';
         Log::critical($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertStringContainsString('Critical: ' . $testMessage, $contents);
+        $this->assertStringContainsString('critical: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'error message';
         Log::error($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertStringContainsString('Error: ' . $testMessage, $contents);
+        $this->assertStringContainsString('error: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'warning message';
         Log::warning($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertStringContainsString('Warning: ' . $testMessage, $contents);
+        $this->assertStringContainsString('warning: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'notice message';
         Log::notice($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertMatchesRegularExpression('/(Notice|Debug): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(notice|debug): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
         $this->_deleteLogs();
 
         $testMessage = 'info message';
         Log::info($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertMatchesRegularExpression('/(Info|Debug): ' . $testMessage . '/', $contents);
+        $this->assertMatchesRegularExpression('/(info|debug): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
         $this->_deleteLogs();
 
         $testMessage = 'debug message';
         Log::debug($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('debug: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
         $this->_deleteLogs();
     }
 
     /**
      * Test that write() returns false on an unhandled message.
-     *
-     * @return void
      */
-    public function testWriteUnhandled()
+    public function testWriteUnhandled(): void
     {
         Log::drop('error');
         Log::drop('debug');
@@ -701,10 +668,8 @@ class LogTest extends TestCase
 
     /**
      * Tests using a callable for creating a Log engine
-     *
-     * @return void
      */
-    public function testCreateLoggerWithCallable()
+    public function testCreateLoggerWithCallable(): void
     {
         $instance = new FileLog();
         Log::setConfig('default', function ($alias) use ($instance) {

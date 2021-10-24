@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingViewException;
 
 /**
  * ViewVarsTrait test case
@@ -30,8 +31,6 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,10 +41,8 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * Test set() with one param.
-     *
-     * @return void
      */
-    public function testSetOneParam()
+    public function testSetOneParam(): void
     {
         $data = ['test' => 'val', 'foo' => 'bar'];
         $this->subject->set($data);
@@ -58,10 +55,8 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * test set() with 2 params
-     *
-     * @return void
      */
-    public function testSetTwoParam()
+    public function testSetTwoParam(): void
     {
         $this->subject->set('testing', 'value');
         $this->assertEquals(['testing' => 'value'], $this->subject->viewBuilder()->getVars());
@@ -69,10 +64,8 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * test chainable set()
-     *
-     * @return void
      */
-    public function testSetChained()
+    public function testSetChained(): void
     {
         $result = $this->subject->set('testing', 'value')
             ->set('foo', 'bar');
@@ -82,10 +75,8 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * test set() with 2 params in combine mode
-     *
-     * @return void
      */
-    public function testSetTwoParamCombined()
+    public function testSetTwoParamCombined(): void
     {
         $keys = ['one', 'key'];
         $vals = ['two', 'val'];
@@ -97,10 +88,8 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * test that createView() updates viewVars of View instance on each call.
-     *
-     * @return void
      */
-    public function testUptoDateViewVars()
+    public function testUptoDateViewVars(): void
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
@@ -113,10 +102,8 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * test that parameters beats viewBuilder() and viewClass
-     *
-     * @return void
      */
-    public function testCreateViewParameter()
+    public function testCreateViewParameter(): void
     {
         $this->subject->viewBuilder()->setClassName('View');
         $view = $this->subject->createView('Xml');
@@ -125,12 +112,10 @@ class ViewVarsTraitTest extends TestCase
 
     /**
      * test createView() throws exception if view class cannot be found
-     *
-     * @return void
      */
-    public function testCreateViewException()
+    public function testCreateViewException(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingViewException::class);
+        $this->expectException(MissingViewException::class);
         $this->expectExceptionMessage('View class "Foo" is missing.');
         $this->subject->createView('Foo');
     }

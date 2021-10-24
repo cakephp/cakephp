@@ -44,7 +44,7 @@ class InsertIterator extends Collection
      * An array containing each of the properties to be traversed to reach the
      * point where the values should be inserted.
      *
-     * @var array
+     * @var array<string>
      */
     protected $_path;
 
@@ -101,6 +101,7 @@ class InsertIterator extends Collection
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $row = parent::current();

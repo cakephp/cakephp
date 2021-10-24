@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Iterator\InsertIterator;
 use Cake\TestSuite\TestCase;
 
@@ -26,10 +27,8 @@ class InsertIteratorTest extends TestCase
 {
     /**
      * Test insert simple path
-     *
-     * @return void
      */
-    public function testInsertSimplePath()
+    public function testInsertSimplePath(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],
@@ -47,16 +46,14 @@ class InsertIteratorTest extends TestCase
 
     /**
      * Test insert deep path
-     *
-     * @return void
      */
-    public function testInsertDeepPath()
+    public function testInsertDeepPath(): void
     {
         $items = [
             'a' => ['name' => 'Derp', 'a' => ['deep' => ['thing' => 1]]],
             'b' => ['name' => 'Derpina', 'a' => ['deep' => ['thing' => 2]]],
         ];
-        $values = new \ArrayIterator([20, 21]);
+        $values = new ArrayIterator([20, 21]);
         $iterator = new InsertIterator($items, 'a.deep.path', $values);
         $result = $iterator->toArray();
         $expected = [
@@ -68,10 +65,8 @@ class InsertIteratorTest extends TestCase
 
     /**
      * Test that missing properties in the path will skip inserting
-     *
-     * @return void
      */
-    public function testInsertDeepPathMissingStep()
+    public function testInsertDeepPathMissingStep(): void
     {
         $items = [
             'a' => ['name' => 'Derp', 'a' => ['deep' => ['thing' => 1]]],
@@ -90,10 +85,8 @@ class InsertIteratorTest extends TestCase
     /**
      * Tests that the iterator will insert values as long as there still exist
      * some in the values array
-     *
-     * @return void
      */
-    public function testInsertTargetCountBigger()
+    public function testInsertTargetCountBigger(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],
@@ -112,10 +105,8 @@ class InsertIteratorTest extends TestCase
     /**
      * Tests that the iterator will insert values as long as there still exist
      * some in the values array
-     *
-     * @return void
      */
-    public function testInsertSourceBigger()
+    public function testInsertSourceBigger(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],
@@ -133,10 +124,8 @@ class InsertIteratorTest extends TestCase
 
     /**
      * Tests the iterator can be rewound
-     *
-     * @return void
      */
-    public function testRewind()
+    public function testRewind(): void
     {
         $items = [
             'a' => ['name' => 'Derp'],

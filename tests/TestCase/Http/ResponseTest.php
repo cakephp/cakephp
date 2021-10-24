@@ -27,6 +27,10 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
+use DateTimeImmutable;
+use DateTimeZone;
+use InvalidArgumentException;
 use Laminas\Diactoros\Stream;
 
 /**
@@ -43,8 +47,6 @@ class ResponseTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -54,8 +56,6 @@ class ResponseTest extends TestCase
 
     /**
      * teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -66,10 +66,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the request object constructor
-     *
-     * @return void
      */
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $response = new Response();
         $this->assertSame('', (string)$response->getBody());
@@ -94,10 +92,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the getCharset/withCharset methods
-     *
-     * @return void
      */
-    public function testWithCharset()
+    public function testWithCharset(): void
     {
         $response = new Response();
         $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
@@ -111,10 +107,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the getType method
-     *
-     * @return void
      */
-    public function testGetType()
+    public function testGetType(): void
     {
         $response = new Response();
         $this->assertSame('text/html', $response->getType());
@@ -133,10 +127,7 @@ class ResponseTest extends TestCase
         );
     }
 
-    /**
-     * @return void
-     */
-    public function testSetTypeMap()
+    public function testSetTypeMap(): void
     {
         $response = new Response();
         $response->setTypeMap('ical', 'text/calendar');
@@ -145,10 +136,7 @@ class ResponseTest extends TestCase
         $this->assertSame('text/calendar', $response);
     }
 
-    /**
-     * @return void
-     */
-    public function testSetTypeMapAsArray()
+    public function testSetTypeMapAsArray(): void
     {
         $response = new Response();
         $response->setTypeMap('ical', ['text/calendar']);
@@ -159,10 +147,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the withType method
-     *
-     * @return void
      */
-    public function testWithTypeAlias()
+    public function testWithTypeAlias(): void
     {
         $response = new Response();
         $this->assertSame(
@@ -188,10 +174,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withType() and full mime-types
-     *
-     * @return void
      */
-    public function withTypeFull()
+    public function withTypeFull(): void
     {
         $response = new Response();
         $this->assertSame(
@@ -213,12 +197,10 @@ class ResponseTest extends TestCase
 
     /**
      * Test that an invalid type raises an exception
-     *
-     * @return void
      */
-    public function testWithTypeInvalidType()
+    public function testWithTypeInvalidType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('"beans" is an invalid content type');
         $response = new Response();
         $response->withType('beans');
@@ -229,7 +211,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function charsetTypeProvider()
+    public static function charsetTypeProvider(): array
     {
         return [
             ['mp3', 'audio/mpeg'],
@@ -241,10 +223,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test that setting certain status codes clears the status code.
-     *
-     * @return void
      */
-    public function testWithStatusClearsContentType()
+    public function testWithStatusClearsContentType(): void
     {
         $response = new Response();
         $new = $response->withType('pdf')
@@ -272,10 +252,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test that setting status codes doesn't overwrite content-type
-     *
-     * @return void
      */
-    public function testWithStatusDoesNotChangeContentType()
+    public function testWithStatusDoesNotChangeContentType(): void
     {
         $response = new Response();
         $new = $response->withHeader('Content-Type', 'application/json')
@@ -293,10 +271,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the withDisabledCache method
-     *
-     * @return void
      */
-    public function testWithDisabledCache()
+    public function testWithDisabledCache(): void
     {
         $response = new Response();
         $expected = [
@@ -313,10 +289,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the withCache method
-     *
-     * @return void
      */
-    public function testWithCache()
+    public function testWithCache(): void
     {
         $response = new Response();
         $since = $time = time();
@@ -333,10 +307,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the compress method
-     *
-     * @return void
      */
-    public function testCompress()
+    public function testCompress(): void
     {
         $response = new Response();
         if (ini_get('zlib.output_compression') === '1' || !extension_loaded('zlib')) {
@@ -358,10 +330,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the withDownload method
-     *
-     * @return void
      */
-    public function testWithDownload()
+    public function testWithDownload(): void
     {
         $response = new Response();
         $new = $response->withDownload('myfile.mp3');
@@ -373,10 +343,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the mapType method
-     *
-     * @return void
      */
-    public function testMapType()
+    public function testMapType(): void
     {
         $response = new Response();
         $this->assertSame('wav', $response->mapType('audio/x-wav'));
@@ -391,10 +359,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the outputCompressed method
-     *
-     * @return void
      */
-    public function testOutputCompressed()
+    public function testOutputCompressed(): void
     {
         $response = new Response();
 
@@ -427,10 +393,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests settings the content length
-     *
-     * @return void
      */
-    public function testWithLength()
+    public function testWithLength(): void
     {
         $response = new Response();
         $this->assertFalse($response->hasHeader('Content-Length'));
@@ -443,10 +407,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests settings the link
-     *
-     * @return void
      */
-    public function testWithAddedLink()
+    public function testWithAddedLink(): void
     {
         $response = new Response();
         $this->assertFalse($response->hasHeader('Link'));
@@ -465,63 +427,57 @@ class ResponseTest extends TestCase
 
     /**
      * Tests the withExpires method
-     *
-     * @return void
      */
-    public function testWithExpires()
+    public function testWithExpires(): void
     {
         $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
 
         $new = $response->withExpires($now);
         $this->assertFalse($response->hasHeader('Expires'));
 
-        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $now->setTimeZone(new DateTimeZone('UTC'));
         $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
 
         $now = time();
         $new = $response->withExpires($now);
         $this->assertSame(gmdate(DATE_RFC7231), $new->getHeaderLine('Expires'));
 
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withExpires('+1 day');
         $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
     }
 
     /**
      * Tests the withModified method
-     *
-     * @return void
      */
-    public function testWithModified()
+    public function testWithModified(): void
     {
         $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
         $new = $response->withModified($now);
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
-        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $now->setTimeZone(new DateTimeZone('UTC'));
         $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
 
         $now = time();
         $new = $response->withModified($now);
         $this->assertSame(gmdate(DATE_RFC7231, $now), $new->getHeaderLine('Last-Modified'));
 
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
         $new = $response->withModified($now);
         $this->assertSame(gmdate(DATE_RFC7231, $now->getTimestamp()), $new->getHeaderLine('Last-Modified'));
 
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withModified('+1 day');
         $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
     }
 
     /**
      * Tests withSharable()
-     *
-     * @return void
      */
-    public function testWithSharable()
+    public function testWithSharable(): void
     {
         $response = new Response();
         $new = $response->withSharable(true);
@@ -540,10 +496,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests withMaxAge()
-     *
-     * @return void
      */
-    public function testWithMaxAge()
+    public function testWithMaxAge(): void
     {
         $response = new Response();
         $this->assertFalse($response->hasHeader('Cache-Control'));
@@ -558,10 +512,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests setting of s-maxage Cache-Control directive
-     *
-     * @return void
      */
-    public function testWithSharedMaxAge()
+    public function testWithSharedMaxAge(): void
     {
         $response = new Response();
         $new = $response->withSharedMaxAge(3600);
@@ -575,10 +527,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests setting of must-revalidate Cache-Control directive
-     *
-     * @return void
      */
-    public function testWithMustRevalidate()
+    public function testWithMustRevalidate(): void
     {
         $response = new Response();
         $this->assertFalse($response->hasHeader('Cache-Control'));
@@ -593,10 +543,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests withVary()
-     *
-     * @return void
      */
-    public function testWithVary()
+    public function testWithVary(): void
     {
         $response = new Response();
         $new = $response->withVary('Accept-encoding');
@@ -611,10 +559,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests withEtag()
-     *
-     * @return void
      */
-    public function testWithEtag()
+    public function testWithEtag(): void
     {
         $response = new Response();
         $new = $response->withEtag('something');
@@ -628,10 +574,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests that the response is able to be marked as not modified
-     *
-     * @return void
      */
-    public function testNotModified()
+    public function testNotModified(): void
     {
         $response = new Response();
         $response = $response->withStringBody('something')
@@ -649,10 +593,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests withNotModified()
-     *
-     * @return void
      */
-    public function testWithNotModified()
+    public function testWithNotModified(): void
     {
         $response = new Response(['body' => 'something']);
         $response = $response->withLength(100)
@@ -678,10 +620,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test checkNotModified method
-     *
-     * @return void
      */
-    public function testCheckNotModifiedByEtagStar()
+    public function testCheckNotModifiedByEtagStar(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('If-None-Match', '*');
@@ -695,10 +635,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test checkNotModified method
-     *
-     * @return void
      */
-    public function testCheckNotModifiedByEtagExact()
+    public function testCheckNotModifiedByEtagExact(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('If-None-Match', 'W/"something", "other"');
@@ -712,10 +650,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test checkNotModified method
-     *
-     * @return void
      */
-    public function testCheckNotModifiedByEtagAndTime()
+    public function testCheckNotModifiedByEtagAndTime(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
@@ -731,10 +667,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test checkNotModified method
-     *
-     * @return void
      */
-    public function testCheckNotModifiedByEtagAndTimeMismatch()
+    public function testCheckNotModifiedByEtagAndTimeMismatch(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
@@ -750,10 +684,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test checkNotModified method
-     *
-     * @return void
      */
-    public function testCheckNotModifiedByEtagMismatch()
+    public function testCheckNotModifiedByEtagMismatch(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
@@ -769,10 +701,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test checkNotModified method
-     *
-     * @return void
      */
-    public function testCheckNotModifiedByTime()
+    public function testCheckNotModifiedByTime(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
@@ -786,10 +716,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test checkNotModified method
-     *
-     * @return void
      */
-    public function testCheckNotModifiedNoHints()
+    public function testCheckNotModifiedNoHints(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('If-None-Match', 'W/"something", "other"')
@@ -801,10 +729,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test setting cookies with no value
-     *
-     * @return void
      */
-    public function testWithCookieEmpty()
+    public function testWithCookieEmpty(): void
     {
         $response = new Response();
         $new = $response->withCookie(new Cookie('testing'));
@@ -825,10 +751,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test setting cookies with scalar values
-     *
-     * @return void
      */
-    public function testWithCookieScalar()
+    public function testWithCookieScalar(): void
     {
         $response = new Response();
         $new = $response->withCookie(new Cookie('testing', 'abc123'));
@@ -848,12 +772,11 @@ class ResponseTest extends TestCase
     /**
      * Test withCookie() and duplicate data
      *
-     * @return void
      * @throws \Exception
      */
-    public function testWithDuplicateCookie()
+    public function testWithDuplicateCookie(): void
     {
-        $expiry = new \DateTimeImmutable('+24 hours');
+        $expiry = new DateTimeImmutable('+24 hours');
 
         $response = new Response();
         $cookie = new Cookie(
@@ -886,10 +809,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withCookie() and a cookie instance
-     *
-     * @return void
      */
-    public function testWithCookieObject()
+    public function testWithCookieObject(): void
     {
         $response = new Response();
         $cookie = new Cookie('yay', 'a value');
@@ -900,7 +821,7 @@ class ResponseTest extends TestCase
         $this->assertSame($cookie, $new->getCookieCollection()->get('yay'));
     }
 
-    public function testWithExpiredCookieScalar()
+    public function testWithExpiredCookieScalar(): void
     {
         $response = new Response();
         $response = $response->withCookie(new Cookie('testing', 'abc123'));
@@ -915,7 +836,7 @@ class ResponseTest extends TestCase
     /**
      * @throws \Exception If DateImmutable emits an error.
      */
-    public function testWithExpiredCookieOptions()
+    public function testWithExpiredCookieOptions(): void
     {
         $options = [
             'name' => 'testing',
@@ -925,7 +846,7 @@ class ResponseTest extends TestCase
                 'path' => '/custompath/',
                 'secure' => true,
                 'httponly' => true,
-                'expires' => new \DateTimeImmutable('+14 days'),
+                'expires' => new DateTimeImmutable('+14 days'),
             ],
         ];
 
@@ -948,10 +869,7 @@ class ResponseTest extends TestCase
         $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expires']);
     }
 
-    /**
-     * @return void
-     */
-    public function testWithExpiredCookieObject()
+    public function testWithExpiredCookieObject(): void
     {
         $response = new Response();
         $cookie = new Cookie('yay', 'a value');
@@ -966,10 +884,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test getCookies() and array data.
-     *
-     * @return void
      */
-    public function testGetCookies()
+    public function testGetCookies(): void
     {
         $response = new Response();
         $new = $response->withCookie(new Cookie('testing', 'a'))
@@ -999,10 +915,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test getCookies() and array data.
-     *
-     * @return void
      */
-    public function testGetCookiesArrayValue()
+    public function testGetCookiesArrayValue(): void
     {
         $response = new Response();
         $cookie = (new Cookie('urmc'))
@@ -1026,10 +940,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test getCookieCollection() as array data
-     *
-     * @return void
      */
-    public function testGetCookieCollection()
+    public function testGetCookieCollection(): void
     {
         $response = new Response();
         $new = $response->withCookie(new Cookie('testing', 'a'))
@@ -1048,10 +960,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withCookieCollection()
-     *
-     * @return void
      */
-    public function testWithCookieCollection()
+    public function testWithCookieCollection(): void
     {
         $response = new Response();
         $collection = new CookieCollection([new Cookie('foo', 'bar')]);
@@ -1064,10 +974,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test that cors() returns a builder.
-     *
-     * @return void
      */
-    public function testCors()
+    public function testCors(): void
     {
         $request = new ServerRequest([
             'environment' => ['HTTP_ORIGIN' => 'http://example.com'],
@@ -1080,12 +988,10 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile() not found
-     *
-     * @return void
      */
-    public function testWithFileNotFound()
+    public function testWithFileNotFound(): void
     {
-        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('The requested file /some/missing/folder/file.jpg was not found');
 
         $response = new Response();
@@ -1094,14 +1000,12 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile() not found
-     *
-     * @return void
      */
-    public function testWithFileNotFoundNoDebug()
+    public function testWithFileNotFoundNoDebug(): void
     {
         Configure::write('debug', 0);
 
-        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('The requested file was not found');
         $response = new Response();
         $response->withFile('/some/missing/folder/file.jpg');
@@ -1112,7 +1016,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public function invalidFileProvider()
+    public function invalidFileProvider(): array
     {
         return [
             ['my/../cat.gif', 'The requested file contains `..` and will not be read.'],
@@ -1126,9 +1030,8 @@ class ResponseTest extends TestCase
      * test withFile and invalid paths
      *
      * @dataProvider invalidFileProvider
-     * @return void
      */
-    public function testWithFileInvalidPath($path, $expectedMessage)
+    public function testWithFileInvalidPath(string $path, string $expectedMessage): void
     {
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -1139,10 +1042,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile() + download & name
-     *
-     * @return void
      */
-    public function testWithFileDownloadAndName()
+    public function testWithFileDownloadAndName(): void
     {
         $response = new Response();
         $new = $response->withFile(
@@ -1178,10 +1079,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile() + a generic agent
-     *
-     * @return void
      */
-    public function testWithFileUnknownFileTypeGeneric()
+    public function testWithFileUnknownFileTypeGeneric(): void
     {
         $response = new Response();
         $new = $response->withFile(CONFIG . 'no_section.ini');
@@ -1198,10 +1097,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile() + opera
-     *
-     * @return void
      */
-    public function testWithFileUnknownFileTypeOpera()
+    public function testWithFileUnknownFileTypeOpera(): void
     {
         $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
         $response = new Response();
@@ -1216,10 +1113,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile() + old IE
-     *
-     * @return void
      */
-    public function testWithFileUnknownFileTypeOldIe()
+    public function testWithFileUnknownFileTypeOldIe(): void
     {
         $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
         $response = new Response();
@@ -1230,10 +1125,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile() + no download
-     *
-     * @return void
      */
-    public function testWithFileNoDownload()
+    public function testWithFileNoDownload(): void
     {
         $response = new Response();
         $new = $response->withFile(CONFIG . 'no_section.ini', [
@@ -1249,10 +1142,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test that uppercase extensions result in correct content-types
-     *
-     * @return void
      */
-    public function testWithFileUpperExtension()
+    public function testWithFileUpperExtension(): void
     {
         $response = new Response();
         $new = $response->withFile(TEST_APP . 'vendor/img/test_2.JPG');
@@ -1264,7 +1155,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function rangeProvider()
+    public static function rangeProvider(): array
     {
         return [
             // suffix-byte-range
@@ -1295,9 +1186,8 @@ class ResponseTest extends TestCase
      * Test withFile() & the various range offset types.
      *
      * @dataProvider rangeProvider
-     * @return void
      */
-    public function testWithFileRangeOffsets($range, $length, $offsetResponse)
+    public function testWithFileRangeOffsets(string $range, int $length, string $offsetResponse): void
     {
         $_SERVER['HTTP_RANGE'] = $range;
         $response = new Response();
@@ -1317,10 +1207,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withFile() fetching ranges from a file.
-     *
-     * @return void
      */
-    public function testWithFileRange()
+    public function testWithFileRange(): void
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
         $response = new Response();
@@ -1345,7 +1233,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public function invalidFileRangeProvider()
+    public function invalidFileRangeProvider(): array
     {
         return [
             // malformed range
@@ -1364,9 +1252,8 @@ class ResponseTest extends TestCase
      * Test withFile() and invalid ranges
      *
      * @dataProvider invalidFileRangeProvider
-     * @return void
      */
-    public function testWithFileInvalidRange($range)
+    public function testWithFileInvalidRange(string $range): void
     {
         $_SERVER['HTTP_RANGE'] = $range;
         $response = new Response();
@@ -1388,10 +1275,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withFile() and a reversed range
-     *
-     * @return void
      */
-    public function testWithFileReversedRange()
+    public function testWithFileReversedRange(): void
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
         $response = new Response();
@@ -1412,10 +1297,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test the withLocation method.
-     *
-     * @return void
      */
-    public function testWithLocation()
+    public function testWithLocation(): void
     {
         $response = new Response();
         $this->assertSame('', $response->getHeaderLine('Location'), 'No header should be set.');
@@ -1429,10 +1312,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test get protocol version.
-     *
-     * @return void
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): void
     {
         $response = new Response();
         $version = $response->getProtocolVersion();
@@ -1441,10 +1322,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test with protocol.
-     *
-     * @return void
      */
-    public function testWithProtocol()
+    public function testWithProtocol(): void
     {
         $response = new Response();
         $version = $response->getProtocolVersion();
@@ -1459,10 +1338,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test with status code.
-     *
-     * @return void
      */
-    public function testWithStatusCode()
+    public function testWithStatusCode(): void
     {
         $response = new Response();
         $statusCode = $response->getStatusCode();
@@ -1483,12 +1360,10 @@ class ResponseTest extends TestCase
 
     /**
      * Test invalid status codes
-     *
-     * @return void
      */
-    public function testWithStatusInvalid()
+    public function testWithStatusInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
         $response = new Response();
         $response->withStatus(1001);
@@ -1496,10 +1371,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test get reason phrase.
-     *
-     * @return void
      */
-    public function testGetReasonPhrase()
+    public function testGetReasonPhrase(): void
     {
         $response = new Response();
         $this->assertSame('OK', $response->getReasonPhrase());
@@ -1511,10 +1384,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test with body.
-     *
-     * @return void
      */
-    public function testWithBody()
+    public function testWithBody(): void
     {
         $response = new Response();
         $body = $response->getBody();
@@ -1539,10 +1410,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test with string body.
-     *
-     * @return void
      */
-    public function testWithStringBody()
+    public function testWithStringBody(): void
     {
         $response = new Response();
         $newResponse = $response->withStringBody('Foo');
@@ -1571,10 +1440,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test get Body.
-     *
-     * @return void
      */
-    public function testGetBody()
+    public function testGetBody(): void
     {
         $response = new Response();
         $stream = $response->getBody();
@@ -1583,10 +1450,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test with header.
-     *
-     * @return void
      */
-    public function testWithHeader()
+    public function testWithHeader(): void
     {
         $response = new Response();
         $response2 = $response->withHeader('Accept', 'application/json');
@@ -1602,10 +1467,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test get headers.
-     *
-     * @return void
      */
-    public function testGetHeaders()
+    public function testGetHeaders(): void
     {
         $response = new Response();
         $headers = $response->getHeaders();
@@ -1625,10 +1488,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test without header.
-     *
-     * @return void
      */
-    public function testWithoutHeader()
+    public function testWithoutHeader(): void
     {
         $response = new Response();
         $response = $response->withAddedHeader('Location', 'localhost');
@@ -1647,10 +1508,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test get header.
-     *
-     * @return void
      */
-    public function testGetHeader()
+    public function testGetHeader(): void
     {
         $response = new Response();
         $response = $response->withAddedHeader('Location', 'localhost');
@@ -1667,10 +1526,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test get header line.
-     *
-     * @return void
      */
-    public function testGetHeaderLine()
+    public function testGetHeaderLine(): void
     {
         $response = new Response();
         $headers = $response->getHeaderLine('Accept');
@@ -1688,10 +1545,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test has header.
-     *
-     * @return void
      */
-    public function testHasHeader()
+    public function testHasHeader(): void
     {
         $response = new Response();
         $response = $response->withAddedHeader('Location', 'localhost');
@@ -1706,10 +1561,8 @@ class ResponseTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $response = new Response();
         $response = $response->withStringBody('Foo');

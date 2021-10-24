@@ -25,9 +25,12 @@ use Cake\TestSuite\TestCase;
 class AuthSecurityExceptionTest extends TestCase
 {
     /**
+     * @var \Cake\Controller\Exception\AuthSecurityException
+     */
+    protected $authSecurityException;
+
+    /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -37,8 +40,6 @@ class AuthSecurityExceptionTest extends TestCase
 
     /**
      * Test the getType() function.
-     *
-     * @return void
      */
     public function testGetType(): void
     {

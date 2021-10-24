@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Client\Auth;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Auth\Oauth;
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
@@ -60,12 +61,9 @@ UBABkD2ETB+EotdHTly5FQt0jwbHfF2najBmezxtEjIygCnDb02Rtuei4HTansBu
 shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 -----END RSA PRIVATE KEY-----';
 
-    /**
-     * @return void
-     */
-    public function testExceptionUnknownSigningMethod()
+    public function testExceptionUnknownSigningMethod(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $auth = new Oauth();
         $creds = [
             'consumerSecret' => 'it is secret',
@@ -80,10 +78,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
     /**
      * Test plain-text signing.
-     *
-     * @return void
      */
-    public function testPlainTextSigning()
+    public function testPlainTextSigning(): void
     {
         $auth = new Oauth();
         $creds = [
@@ -109,10 +105,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
     /**
      * Test that baseString() normalizes the URL.
-     *
-     * @return void
      */
-    public function testBaseStringNormalizeUrl()
+    public function testBaseStringNormalizeUrl(): void
     {
         $request = new Request('HTTP://exAmple.com:80/parts/foo');
 
@@ -125,10 +119,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
     /**
      * Test that the query string is stripped from the normalized host.
-     *
-     * @return void
      */
-    public function testBaseStringWithQueryString()
+    public function testBaseStringWithQueryString(): void
     {
         $request = new Request('http://example.com/search?q=pogo&cat=2');
 
@@ -167,10 +159,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      * is not part of the Oauth spec.
      *
      * See Normalize Request Parameters (section 9.1.1)
-     *
-     * @return void
      */
-    public function testBaseStringWithPostDataNestedArrays()
+    public function testBaseStringWithPostDataNestedArrays(): void
     {
         $request = new Request(
             'http://example.com/search?q=pogo',
@@ -225,10 +215,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * See Normalize Request Parameters (section 9.1.1)
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testBaseStringWithPostData()
+    public function testBaseStringWithPostData(): void
     {
         $request = new Request(
             'http://example.com/search?q=pogo',
@@ -281,10 +269,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      * is not part of the Oauth spec.
      *
      * See Normalize Request Parameters (section 9.1.1)
-     *
-     * @return void
      */
-    public function testBaseStringWithXmlPostData()
+    public function testBaseStringWithXmlPostData(): void
     {
         $request = new Request(
             'http://example.com/search?q=pogo',
@@ -328,10 +314,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * Hash result + parameters taken from
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testHmacSigning()
+    public function testHmacSigning(): void
     {
         $request = new Request(
             'http://photos.example.net/photos',
@@ -361,10 +345,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
     /**
      * Test HMAC-SHA1 signing with a base64 consumer key
-     *
-     * @return void
      */
-    public function testHmacBase64Signing()
+    public function testHmacBase64Signing(): void
     {
         $request = new Request(
             'http://photos.example.net/photos',
@@ -395,10 +377,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * Hash result + parameters taken from
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testRsaSigningString()
+    public function testRsaSigningString(): void
     {
         $request = new Request(
             'http://photos.example.net/photos',
@@ -431,10 +411,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * Hash result + parameters taken from
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testRsaSigningFile()
+    public function testRsaSigningFile(): void
     {
         $request = new Request(
             'http://photos.example.net/photos',
@@ -467,10 +445,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * Hash result + parameters taken from
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testRsaSigningWithPassphraseString()
+    public function testRsaSigningWithPassphraseString(): void
     {
         $request = new Request(
             'http://photos.example.net/photos',
@@ -505,10 +481,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * Hash result + parameters taken from
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testRsaSigningStringWithPassphraseString()
+    public function testRsaSigningStringWithPassphraseString(): void
     {
         $request = new Request(
             'http://photos.example.net/photos',
@@ -543,10 +517,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * Hash result + parameters taken from
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testRsaSigningWithPassphraseFile()
+    public function testRsaSigningWithPassphraseFile(): void
     {
         $this->skipIf(PHP_EOL !== "\n", 'Just the line ending "\n" is supported. You can run the test again e.g. on a linux system.');
 
@@ -585,10 +557,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      *
      * Hash result + parameters taken from
      * http://wiki.oauth.net/w/page/12238556/TestCases
-     *
-     * @return void
      */
-    public function testRsaSigningStringWithPassphraseFile()
+    public function testRsaSigningStringWithPassphraseFile(): void
     {
         $this->skipIf(PHP_EOL !== "\n", 'Just the line ending "\n" is supported. You can run the test again e.g. on a linux system.');
 

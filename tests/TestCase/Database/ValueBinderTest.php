@@ -27,7 +27,7 @@ class ValueBinderTest extends TestCase
     /**
      * test the bind method
      */
-    public function testBind()
+    public function testBind(): void
     {
         $valueBinder = new ValueBinder();
         $valueBinder->bind(':c0', 'value0');
@@ -61,7 +61,7 @@ class ValueBinderTest extends TestCase
     /**
      * test the placeholder method
      */
-    public function testPlaceholder()
+    public function testPlaceholder(): void
     {
         $valueBinder = new ValueBinder();
         $result = $valueBinder->placeholder('?');
@@ -80,7 +80,7 @@ class ValueBinderTest extends TestCase
         $this->assertSame(':c2', $result);
     }
 
-    public function testGenerateManyNamed()
+    public function testGenerateManyNamed(): void
     {
         $valueBinder = new ValueBinder();
         $values = [
@@ -99,7 +99,7 @@ class ValueBinderTest extends TestCase
     /**
      * test the reset method
      */
-    public function testReset()
+    public function testReset(): void
     {
         $valueBinder = new ValueBinder();
         $valueBinder->bind(':c0', 'value0');
@@ -116,7 +116,7 @@ class ValueBinderTest extends TestCase
     /**
      * test the resetCount method
      */
-    public function testResetCount()
+    public function testResetCount(): void
     {
         $valueBinder = new ValueBinder();
 
@@ -141,7 +141,7 @@ class ValueBinderTest extends TestCase
     /**
      * tests the attachTo method
      */
-    public function testAttachTo()
+    public function testAttachTo(): void
     {
         $valueBinder = new ValueBinder();
         $statementMock = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')

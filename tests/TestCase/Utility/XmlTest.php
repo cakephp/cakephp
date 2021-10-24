@@ -22,6 +22,11 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
+use DateTime;
+use DOMDocument;
+use Exception;
+use RuntimeException;
+use SimpleXMLElement;
 use TypeError;
 
 /**
@@ -30,45 +35,30 @@ use TypeError;
 class XmlTest extends TestCase
 {
     /**
-     * autoFixtures property
-     *
-     * @var bool
+     * @var string
      */
-    public $autoFixtures = false;
-
-    /**
-     * fixtures property
-     *
-     * @var array
-     */
-    protected $fixtures = [
-        'core.Articles', 'core.Users',
-    ];
+    protected $appEncoding;
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->_appEncoding = Configure::read('App.encoding');
+        $this->appEncoding = Configure::read('App.encoding');
         Configure::write('App.encoding', 'UTF-8');
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
-        Configure::write('App.encoding', $this->_appEncoding);
+        Configure::write('App.encoding', $this->appEncoding);
     }
 
-    public function testExceptionChainingForInvalidInput()
+    public function testExceptionChainingForInvalidInput(): void
     {
         try {
             $value = 'invalid-xml-input<<';
@@ -77,20 +67,18 @@ class XmlTest extends TestCase
         } catch (XmlException $exception) {
             $cause = $exception->getPrevious();
             $this->assertNotNull($cause);
-            $this->assertInstanceOf(\Exception::class, $cause);
+            $this->assertInstanceOf(Exception::class, $cause);
         }
     }
 
     /**
      * testBuild method
-     *
-     * @return void
      */
-    public function testBuild()
+    public function testBuild(): void
     {
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml);
-        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
+        $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tag', (string)$obj->getName());
         $this->assertSame('value', (string)$obj);
 
@@ -98,7 +86,7 @@ class XmlTest extends TestCase
         $this->assertEquals($obj, Xml::build($xml));
 
         $obj = Xml::build($xml, ['return' => 'domdocument']);
-        $this->assertInstanceOf(\DOMDocument::class, $obj);
+        $this->assertInstanceOf(DOMDocument::class, $obj);
         $this->assertSame('tag', $obj->firstChild->nodeName);
         $this->assertSame('value', $obj->firstChild->nodeValue);
 
@@ -135,10 +123,8 @@ class XmlTest extends TestCase
 
     /**
      * test build() method with huge option
-     *
-     * @return void
      */
-    public function testBuildHuge()
+    public function testBuildHuge(): void
     {
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml, ['parseHuge' => true]);
@@ -148,22 +134,18 @@ class XmlTest extends TestCase
 
     /**
      * Test that the readFile option disables local file parsing.
-     *
-     * @return void
      */
-    public function testBuildFromFileWhenDisabled()
+    public function testBuildFromFileWhenDisabled(): void
     {
-        $this->expectException(\Cake\Utility\Exception\XmlException::class);
+        $this->expectException(XmlException::class);
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml, ['readFile' => false]);
     }
 
     /**
      * Test build() with a Collection instance.
-     *
-     * @return void
      */
-    public function testBuildCollection()
+    public function testBuildCollection(): void
     {
         $xml = new Collection(['tag' => 'value']);
         $obj = Xml::build($xml);
@@ -182,10 +164,8 @@ class XmlTest extends TestCase
 
     /**
      * Test build() with ORM\Entity instances wrapped in a Collection.
-     *
-     * @return void
      */
-    public function testBuildOrmEntity()
+    public function testBuildOrmEntity(): void
     {
         $user = new Entity(['username' => 'mark', 'email' => 'mark@example.com']);
         $xml = new Collection([
@@ -204,7 +184,7 @@ class XmlTest extends TestCase
      *
      * @return array
      */
-    public static function invalidDataProvider()
+    public static function invalidDataProvider(): array
     {
         return [
             [null],
@@ -218,47 +198,41 @@ class XmlTest extends TestCase
      * testBuildInvalidData
      *
      * @dataProvider invalidDataProvider
-     * @return void
+     * @param mixed $value
      */
-    public function testBuildInvalidData($value)
+    public function testBuildInvalidData($value): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Xml::build($value);
     }
 
     /**
      * Test that building SimpleXmlElement with invalid XML causes the right exception.
-     *
-     * @return void
      */
-    public function testBuildInvalidDataSimpleXml()
+    public function testBuildInvalidDataSimpleXml(): void
     {
-        $this->expectException(\Cake\Utility\Exception\XmlException::class);
+        $this->expectException(XmlException::class);
         $input = '<derp';
         Xml::build($input, ['return' => 'simplexml']);
     }
 
     /**
      * test build with a single empty tag
-     *
-     * @return void
      */
-    public function testBuildEmptyTag()
+    public function testBuildEmptyTag(): void
     {
         try {
             Xml::build('<tag>');
             $this->fail('No exception');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertTrue(true, 'An exception was raised');
         }
     }
 
     /**
      * testLoadHtml method
-     *
-     * @return void
      */
-    public function testLoadHtml()
+    public function testLoadHtml(): void
     {
         $htmlFile = CORE_TESTS . 'Fixture/sample.html';
         $html = file_get_contents($htmlFile);
@@ -292,10 +266,8 @@ close to 5 million globally.
 
     /**
      * test loadHtml with a empty HTML string
-     *
-     * @return void
      */
-    public function testLoadHtmlEmptyHtml()
+    public function testLoadHtmlEmptyHtml(): void
     {
         $this->expectException(TypeError::class);
         Xml::loadHtml(null);
@@ -303,10 +275,8 @@ close to 5 million globally.
 
     /**
      * testFromArray method
-     *
-     * @return void
      */
-    public function testFromArray()
+    public function testFromArray(): void
     {
         $xml = ['tag' => 'value'];
         $obj = Xml::fromArray($xml);
@@ -338,7 +308,7 @@ close to 5 million globally.
             ],
         ];
         $obj = Xml::fromArray($xml, ['format' => 'attributes']);
-        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
+        $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
         $this->assertSame(2, count($obj));
         $xmlText = <<<XML
@@ -351,7 +321,7 @@ XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
         $obj = Xml::fromArray($xml);
-        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
+        $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
         $this->assertSame(2, count($obj));
         $xmlText = <<<XML
@@ -462,10 +432,8 @@ XML;
 
     /**
      * Test fromArray() with zero values.
-     *
-     * @return void
      */
-    public function testFromArrayZeroValue()
+    public function testFromArrayZeroValue(): void
     {
         $xml = [
             'tag' => [
@@ -493,10 +461,8 @@ XML;
 
     /**
      * Test non-sequential keys in list types.
-     *
-     * @return void
      */
-    public function testFromArrayNonSequentialKeys()
+    public function testFromArrayNonSequentialKeys(): void
     {
         $xmlArray = [
             'Event' => [
@@ -531,10 +497,8 @@ XML;
 
     /**
      * testFromArrayPretty method
-     *
-     * @return void
      */
-    public function testFromArrayPretty()
+    public function testFromArrayPretty(): void
     {
         $xml = [
             'tags' => [
@@ -616,7 +580,7 @@ XML;
      *
      * @return array
      */
-    public static function invalidArrayDataProvider()
+    public static function invalidArrayDataProvider(): array
     {
         return [
             [''],
@@ -651,7 +615,7 @@ XML;
                     ],
                 ],
             ]],
-            [new \DateTime()],
+            [new DateTime()],
         ];
     }
 
@@ -659,20 +623,18 @@ XML;
      * testFromArrayFail method
      *
      * @dataProvider invalidArrayDataProvider
-     * @return void
+     * @param mixed $value
      */
-    public function testFromArrayFail($value)
+    public function testFromArrayFail($value): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         Xml::fromArray($value);
     }
 
     /**
      * Test that there are not unterminated errors when building XML
-     *
-     * @return void
      */
-    public function testFromArrayUnterminatedError()
+    public function testFromArrayUnterminatedError(): void
     {
         $data = [
             'product_ID' => 'GENERT-DL',
@@ -705,10 +667,8 @@ XML;
 
     /**
      * testToArray method
-     *
-     * @return void
      */
-    public function testToArray()
+    public function testToArray(): void
     {
         $xml = '<tag>name</tag>';
         $obj = Xml::build($xml);
@@ -868,10 +828,8 @@ XML;
 
     /**
      * testRss
-     *
-     * @return void
      */
-    public function testRss()
+    public function testRss(): void
     {
         $rss = file_get_contents(CORE_TESTS . 'Fixture/rss.xml');
         $rssAsArray = Xml::toArray(Xml::build($rss));
@@ -944,10 +902,8 @@ XML;
 
     /**
      * testXmlRpc
-     *
-     * @return void
      */
-    public function testXmlRpc()
+    public function testXmlRpc(): void
     {
         $xml = Xml::build('<methodCall><methodName>test</methodName><params /></methodCall>');
         $expected = [
@@ -1030,10 +986,8 @@ XML;
 
     /**
      * testSoap
-     *
-     * @return void
      */
-    public function testSoap()
+    public function testSoap(): void
     {
         $xmlRequest = Xml::build(CORE_TESTS . 'Fixture/soap_request.xml', ['readFile' => true]);
         $expected = [
@@ -1089,10 +1043,8 @@ XML;
 
     /**
      * testNamespace
-     *
-     * @return void
      */
-    public function testNamespace()
+    public function testNamespace(): void
     {
         $xml = <<<XML
 <root xmlns:ns="http://cakephp.org">
@@ -1207,10 +1159,8 @@ XML;
 
     /**
      * test that CDATA blocks don't get screwed up by SimpleXml
-     *
-     * @return void
      */
-    public function testCdata()
+    public function testCdata(): void
     {
         $xml = '<' . '?xml version="1.0" encoding="UTF-8"?>' .
             '<people><name><![CDATA[ Mark ]]></name></people>';
@@ -1224,7 +1174,7 @@ XML;
      *
      * @return array
      */
-    public static function invalidToArrayDataProvider()
+    public static function invalidToArrayDataProvider(): array
     {
         return [
             [new \DateTime()],
@@ -1236,9 +1186,9 @@ XML;
      * testToArrayFail method
      *
      * @dataProvider invalidToArrayDataProvider
-     * @return void
+     * @param mixed $value
      */
-    public function testToArrayFail($value)
+    public function testToArrayFail($value): void
     {
         $this->expectException(\Cake\Utility\Exception\XmlException::class);
         Xml::toArray($value);
@@ -1246,10 +1196,8 @@ XML;
 
     /**
      * Test ampersand in text elements.
-     *
-     * @return void
      */
-    public function testAmpInText()
+    public function testAmpInText(): void
     {
         $data = [
             'outer' => [
@@ -1263,10 +1211,8 @@ XML;
 
     /**
      * Test that entity loading is disabled by default.
-     *
-     * @return void
      */
-    public function testNoEntityLoading()
+    public function testNoEntityLoading(): void
     {
         $file = str_replace(' ', '%20', CAKE . 'VERSION.txt');
         $xml = <<<XML
@@ -1284,9 +1230,8 @@ XML;
      * Test building Xml with valid class-name in value.
      *
      * @see https://github.com/cakephp/cakephp/pull/9754
-     * @return void
      */
-    public function testClassnameInValueRegressionTest()
+    public function testClassnameInValueRegressionTest(): void
     {
         $classname = self::class; // Will always be a valid class name
         $data = [
@@ -1305,7 +1250,7 @@ XML;
      * @ignore
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [];
     }

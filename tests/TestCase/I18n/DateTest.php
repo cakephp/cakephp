@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Cake\Core\Configure;
 use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
+use IntlDateFormatter;
 
 /**
  * DateTest class
@@ -27,33 +29,25 @@ use DateTimeZone;
 class DateTest extends TestCase
 {
     /**
-     * Backup the locale property
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->locale = Date::getDefaultLocale();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/Date.php',
+        ]);
     }
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
-        Date::setDefaultLocale($this->locale);
-        FrozenDate::setDefaultLocale($this->locale);
+        Date::setDefaultLocale(null);
+        FrozenDate::setDefaultLocale(null);
         date_default_timezone_set('UTC');
     }
 
@@ -62,7 +56,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function classNameProvider()
+    public static function classNameProvider(): array
     {
         return ['mutable' => ['Cake\I18n\Date'], 'immutable' => ['Cake\I18n\FrozenDate']];
     }
@@ -71,9 +65,8 @@ class DateTest extends TestCase
      * Ensure that instances can be built from other objects.
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testConstructFromAnotherInstance($class)
+    public function testConstructFromAnotherInstance(string $class): void
     {
         $time = '2015-01-22';
         $frozen = new FrozenDate($time);
@@ -89,16 +82,15 @@ class DateTest extends TestCase
      * test formatting dates taking in account preferred i18n locale file
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testI18nFormat($class)
+    public function testI18nFormat(string $class): void
     {
         $time = new $class('Thu Jan 14 13:59:28 2010');
         $result = $time->i18nFormat();
         $expected = '1/14/10';
         $this->assertSame($expected, $result);
 
-        $format = [\IntlDateFormatter::NONE, \IntlDateFormatter::SHORT];
+        $format = [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
         $result = $time->i18nFormat($format);
         $expected = '12:00 AM';
         $this->assertSame($expected, $result);
@@ -108,16 +100,16 @@ class DateTest extends TestCase
         $this->assertSame($expected, $result);
 
         $class::setDefaultLocale('fr-FR');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
         $expected = 'jeudi 14 janvier 2010 00:00:00';
         $this->assertStringStartsWith($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'es-ES');
         $this->assertStringContainsString('14 de enero de 2010', $result, 'Default locale should not be used');
 
         $time = new $class('2014-01-01T00:00:00Z');
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-US');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'en-US');
         $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM';
         $this->assertStringStartsWith($expected, $result);
     }
@@ -126,9 +118,8 @@ class DateTest extends TestCase
      * test __toString
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testToString($class)
+    public function testToString(string $class): void
     {
         $date = new $class('2015-11-06 11:32:45');
         $this->assertSame('11/6/15', (string)$date);
@@ -138,9 +129,8 @@ class DateTest extends TestCase
      * test nice()
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testNice($class)
+    public function testNice(string $class): void
     {
         $date = new $class('2015-11-06 11:32:45');
 
@@ -153,9 +143,8 @@ class DateTest extends TestCase
      * test jsonSerialize()
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testJsonSerialize($class)
+    public function testJsonSerialize(string $class): void
     {
         if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
             $this->markTestSkipped('ICU 5x is needed');
@@ -169,9 +158,8 @@ class DateTest extends TestCase
      * Tests change JSON encoding format
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testSetJsonEncodeFormat($class)
+    public function testSetJsonEncodeFormat(string $class): void
     {
         $date = new $class('2015-11-06 11:32:45');
 
@@ -188,9 +176,8 @@ class DateTest extends TestCase
      * test parseDate()
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testParseDate($class)
+    public function testParseDate(string $class): void
     {
         $date = $class::parseDate('11/6/15');
         $this->assertSame('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
@@ -204,9 +191,8 @@ class DateTest extends TestCase
      * test parseDateTime()
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testParseDateTime($class)
+    public function testParseDateTime(string $class): void
     {
         $date = $class::parseDate('11/6/15 12:33:12');
         $this->assertSame('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
@@ -220,9 +206,8 @@ class DateTest extends TestCase
      * Tests disabling leniency when parsing locale format.
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testLenientParseDate($class)
+    public function testLenientParseDate(string $class): void
     {
         $class::setDefaultLocale('pt_BR');
 
@@ -240,7 +225,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoProvider()
+    public static function timeAgoProvider(): array
     {
         return [
             ['-1 day', '1 day ago'],
@@ -261,9 +246,8 @@ class DateTest extends TestCase
      * testTimeAgoInWords method
      *
      * @dataProvider timeAgoProvider
-     * @return void
      */
-    public function testTimeAgoInWords($input, $expected)
+    public function testTimeAgoInWords(string $input, string $expected): void
     {
         $date = new Date($input);
         $result = $date->timeAgoInWords();
@@ -274,9 +258,8 @@ class DateTest extends TestCase
      * testTimeAgoInWords with Frozen Date
      *
      * @dataProvider timeAgoProvider
-     * @return void
      */
-    public function testTimeAgoInWordsFrozenDate($input, $expected)
+    public function testTimeAgoInWordsFrozenDate(string $input, string $expected): void
     {
         $date = new FrozenDate($input);
         $result = $date->timeAgoInWords();
@@ -287,9 +270,8 @@ class DateTest extends TestCase
      * test the timezone option for timeAgoInWords
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testTimeAgoInWordsTimezone($class)
+    public function testTimeAgoInWordsTimezone(string $class): void
     {
         $date = new $class('1990-07-31 20:33:00 UTC');
         $result = $date->timeAgoInWords(
@@ -307,7 +289,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public function timeAgoEndProvider()
+    public function timeAgoEndProvider(): array
     {
         return [
             [
@@ -352,9 +334,8 @@ class DateTest extends TestCase
      * test the end option for timeAgoInWords
      *
      * @dataProvider timeAgoEndProvider
-     * @return void
      */
-    public function testTimeAgoInWordsEnd($input, $expected, $end)
+    public function testTimeAgoInWordsEnd(string $input, string $expected, string $end): void
     {
         $time = new Date($input);
         $result = $time->timeAgoInWords(['end' => $end]);
@@ -365,9 +346,8 @@ class DateTest extends TestCase
      * test the end option for timeAgoInWords
      *
      * @dataProvider timeAgoEndProvider
-     * @return void
      */
-    public function testTimeAgoInWordsEndFrozenDate($input, $expected, $end)
+    public function testTimeAgoInWordsEndFrozenDate(string $input, string $expected, string $end): void
     {
         $time = new FrozenDate($input);
         $result = $time->timeAgoInWords(['end' => $end]);
@@ -378,9 +358,8 @@ class DateTest extends TestCase
      * test the custom string options for timeAgoInWords
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testTimeAgoInWordsCustomStrings($class)
+    public function testTimeAgoInWordsCustomStrings(string $class): void
     {
         $date = new $class('-8 years -4 months -2 weeks -3 days');
         $result = $date->timeAgoInWords([
@@ -405,9 +384,8 @@ class DateTest extends TestCase
      * Test the accuracy option for timeAgoInWords()
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testDateAgoInWordsAccuracy($class)
+    public function testDateAgoInWordsAccuracy(string $class): void
     {
         $date = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $date->timeAgoInWords([
@@ -461,9 +439,8 @@ class DateTest extends TestCase
      * Test the format option of timeAgoInWords()
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testDateAgoInWordsWithFormat($class)
+    public function testDateAgoInWordsWithFormat(string $class): void
     {
         $date = new $class('2007-9-25');
         $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
@@ -486,9 +463,8 @@ class DateTest extends TestCase
      * test timeAgoInWords() with negative values.
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testDateAgoInWordsNegativeValues($class)
+    public function testDateAgoInWordsNegativeValues(string $class): void
     {
         $date = new $class('-2 months -2 days');
         $result = $date->timeAgoInWords(['end' => '3 month']);
@@ -538,9 +514,8 @@ class DateTest extends TestCase
      * will not alter the date
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testParseDateDifferentTimezone($class)
+    public function testParseDateDifferentTimezone(string $class): void
     {
         date_default_timezone_set('Europe/Paris');
         $result = $class::parseDate('25-02-2016', 'd-M-y');
@@ -552,9 +527,8 @@ class DateTest extends TestCase
      * than UTC respects the timezone when grabbing the date.
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testParseDateTimeDifferentTimezone($class)
+    public function testParseDateTimeDifferentTimezone(string $class): void
     {
         date_default_timezone_set('America/Toronto');
         $result = $class::parseDateTime('25-02-2016 23:00:00', 'd-M-y H:m:s');
@@ -565,9 +539,8 @@ class DateTest extends TestCase
      * Tests the default locale setter.
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testGetSetDefaultLocale($class)
+    public function testGetSetDefaultLocale(string $class): void
     {
         $class::setDefaultLocale('fr-FR');
         $this->assertSame('fr-FR', $class::getDefaultLocale());
@@ -577,9 +550,8 @@ class DateTest extends TestCase
      * Tests the default locale setter.
      *
      * @dataProvider classNameProvider
-     * @return void
      */
-    public function testDefaultLocaleEffectsFormatting($class)
+    public function testDefaultLocaleEffectsFormatting(string $class): void
     {
         $result = $class::parseDate('12/03/2015');
         $this->assertSame('Dec 3, 2015', $result->nice());

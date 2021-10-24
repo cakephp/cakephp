@@ -21,8 +21,12 @@ use Cake\Core\Configure;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
+use DateTime;
+use DateTimeImmutable;
+use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
+use RuntimeException;
 use stdClass;
 
 require_once __DIR__ . '/stubs.php';
@@ -35,44 +39,31 @@ class ValidationTest extends TestCase
     /**
      * @var string
      */
-    protected $locale;
-
-    /**
-     * @var string
-     */
     protected $_appEncoding;
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->_appEncoding = Configure::read('App.encoding');
-        $this->locale = Locale::getDefault();
-        Locale::setDefault('en_US');
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
         Configure::write('App.encoding', $this->_appEncoding);
-        Locale::setDefault($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**
      * testNotEmpty method
-     *
-     * @return void
      */
-    public function testNotBlank()
+    public function testNotBlank(): void
     {
         $this->assertTrue(Validation::notBlank('abcdefg'));
         $this->assertTrue(Validation::notBlank('fasdf '));
@@ -91,10 +82,8 @@ class ValidationTest extends TestCase
 
     /**
      * testNotEmptyISO88591Encoding method
-     *
-     * @return void
      */
-    public function testNotBlankIso88591AppEncoding()
+    public function testNotBlankIso88591AppEncoding(): void
     {
         Configure::write('App.encoding', 'ISO-8859-1');
         $this->assertTrue(Validation::notBlank('abcdefg'));
@@ -109,10 +98,8 @@ class ValidationTest extends TestCase
 
     /**
      * testAlphaNumeric method
-     *
-     * @return void
      */
-    public function testAlphaNumeric()
+    public function testAlphaNumeric(): void
     {
         $this->assertTrue(Validation::alphaNumeric('frferrf'));
         $this->assertTrue(Validation::alphaNumeric('12234'));
@@ -136,20 +123,16 @@ class ValidationTest extends TestCase
 
     /**
      * testAlphaNumericPassedAsArray method
-     *
-     * @return void
      */
-    public function testAlphaNumericPassedAsArray()
+    public function testAlphaNumericPassedAsArray(): void
     {
         $this->assertFalse(Validation::alphaNumeric(['foo']));
     }
 
     /**
      * testNotAlphaNumeric method
-     *
-     * @return void
      */
-    public function testNotAlphaNumeric()
+    public function testNotAlphaNumeric(): void
     {
         $this->assertFalse(Validation::notAlphaNumeric('frferrf'));
         $this->assertFalse(Validation::notAlphaNumeric('12234'));
@@ -173,10 +156,8 @@ class ValidationTest extends TestCase
 
     /**
      * testAsciiAlphaNumeric method
-     *
-     * @return void
      */
-    public function testAsciiAlphaNumeric()
+    public function testAsciiAlphaNumeric(): void
     {
         $this->assertTrue(Validation::asciiAlphaNumeric('frferrf'));
         $this->assertTrue(Validation::asciiAlphaNumeric('12234'));
@@ -200,20 +181,16 @@ class ValidationTest extends TestCase
 
     /**
      * testAlphaNumericPassedAsArray method
-     *
-     * @return void
      */
-    public function testAsciiAlphaNumericPassedAsArray()
+    public function testAsciiAlphaNumericPassedAsArray(): void
     {
         $this->assertFalse(Validation::asciiAlphaNumeric(['foo']));
     }
 
     /**
      * testNotAlphaNumeric method
-     *
-     * @return void
      */
-    public function testNotAsciiAlphaNumeric()
+    public function testNotAsciiAlphaNumeric(): void
     {
         $this->assertFalse(Validation::notAsciiAlphaNumeric('frferrf'));
         $this->assertFalse(Validation::notAsciiAlphaNumeric('12234'));
@@ -236,10 +213,8 @@ class ValidationTest extends TestCase
 
     /**
      * testLengthBetween method
-     *
-     * @return void
      */
-    public function testLengthBetween()
+    public function testLengthBetween(): void
     {
         $this->assertTrue(Validation::lengthBetween('abcdefg', 1, 7));
         $this->assertTrue(Validation::lengthBetween('', 0, 7));
@@ -252,10 +227,8 @@ class ValidationTest extends TestCase
 
     /**
      * testCreditCard method
-     *
-     * @return void
      */
-    public function testCreditCard()
+    public function testCreditCard(): void
     {
         // American Express
         $this->assertTrue(Validation::creditCard('370482756063980', ['amex']));
@@ -706,10 +679,8 @@ class ValidationTest extends TestCase
 
     /**
      * testLuhn method
-     *
-     * @return void
      */
-    public function testLuhn()
+    public function testLuhn(): void
     {
         // American Express
         $this->assertTrue(Validation::luhn('370482756063980'));
@@ -760,10 +731,8 @@ class ValidationTest extends TestCase
 
     /**
      * testCustomRegexForCreditCard method
-     *
-     * @return void
      */
-    public function testCustomRegexForCreditCard()
+    public function testCustomRegexForCreditCard(): void
     {
         $this->assertTrue(Validation::creditCard('370482756063980', null, false, '/123321\\d{11}/'));
         $this->assertFalse(Validation::creditCard('1233210593374358', null, false, '/123321\\d{11}/'));
@@ -771,10 +740,8 @@ class ValidationTest extends TestCase
 
     /**
      * testCustomRegexForCreditCardWithLuhnCheck method
-     *
-     * @return void
      */
-    public function testCustomRegexForCreditCardWithLuhnCheck()
+    public function testCustomRegexForCreditCardWithLuhnCheck(): void
     {
         $this->assertTrue(Validation::creditCard('12332110426226941', null, true, '/123321\\d{11}/'));
         $this->assertFalse(Validation::creditCard('12332105933743585', null, true, '/123321\\d{11}/'));
@@ -784,10 +751,8 @@ class ValidationTest extends TestCase
 
     /**
      * testFastCreditCard method
-     *
-     * @return void
      */
-    public function testFastCreditCard()
+    public function testFastCreditCard(): void
     {
         // too short
         $this->assertFalse(Validation::creditCard('123456789012'));
@@ -813,10 +778,8 @@ class ValidationTest extends TestCase
 
     /**
      * testAllCreditCard method
-     *
-     * @return void
      */
-    public function testAllCreditCard()
+    public function testAllCreditCard(): void
     {
         // American Express
         $this->assertTrue(Validation::creditCard('370482756063980', 'all'));
@@ -864,10 +827,8 @@ class ValidationTest extends TestCase
 
     /**
      * testAllCreditCardDeep method
-     *
-     * @return void
      */
-    public function testAllCreditCardDeep()
+    public function testAllCreditCardDeep(): void
     {
         // American Express
         $this->assertTrue(Validation::creditCard('370482756063980', 'all', true));
@@ -915,10 +876,8 @@ class ValidationTest extends TestCase
 
     /**
      * testComparison method
-     *
-     * @return void
      */
-    public function testComparison()
+    public function testComparison(): void
     {
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER, 6));
         $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS, 7));
@@ -944,10 +903,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test comparison casting values before comparisons.
-     *
-     * @return void
      */
-    public function testComparisonTypeChecks()
+    public function testComparisonTypeChecks(): void
     {
         $this->assertFalse(Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hexish encoding fails');
         $this->assertFalse(Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'binary string data fails');
@@ -961,10 +918,8 @@ class ValidationTest extends TestCase
 
     /**
      * testCustom method
-     *
-     * @return void
      */
-    public function testCustom()
+    public function testCustom(): void
     {
         $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
         $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
@@ -977,10 +932,8 @@ class ValidationTest extends TestCase
 
     /**
      * testCustomAsArray method
-     *
-     * @return void
      */
-    public function testCustomAsArray()
+    public function testCustomAsArray(): void
     {
         $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
         $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
@@ -989,18 +942,16 @@ class ValidationTest extends TestCase
 
     /**
      * testDateTimeObject
-     *
-     * @return void
      */
-    public function testDateTimeObject()
+    public function testDateTimeObject(): void
     {
-        $dateTime = new \DateTime();
+        $dateTime = new DateTime();
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
         $this->assertTrue(Validation::localizedTime($dateTime));
 
-        $dateTime = new \DateTimeImmutable();
+        $dateTime = new DateTimeImmutable();
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
@@ -1014,10 +965,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDdmmyyyy method
-     *
-     * @return void
      */
-    public function testDateDdmmyyyy()
+    public function testDateDdmmyyyy(): void
     {
         $this->assertTrue(Validation::date('27-12-0001', ['dmy']));
         $this->assertTrue(Validation::date('27-12-2006', ['dmy']));
@@ -1041,10 +990,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDdmmyyyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateDdmmyyyyLeapYear()
+    public function testDateDdmmyyyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('29-02-0004', ['dmy']));
         $this->assertTrue(Validation::date('29-02-2004', ['dmy']));
@@ -1059,10 +1006,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDdmmyy method
-     *
-     * @return void
      */
-    public function testDateDdmmyy()
+    public function testDateDdmmyy(): void
     {
         $this->assertTrue(Validation::date('27-12-06', ['dmy']));
         $this->assertTrue(Validation::date('27.12.06', ['dmy']));
@@ -1081,10 +1026,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDdmmyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateDdmmyyLeapYear()
+    public function testDateDdmmyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('29-02-04', ['dmy']));
         $this->assertTrue(Validation::date('29.02.04', ['dmy']));
@@ -1098,10 +1041,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDmyy method
-     *
-     * @return void
      */
-    public function testDateDmyy()
+    public function testDateDmyy(): void
     {
         $this->assertTrue(Validation::date('7-2-06', ['dmy']));
         $this->assertTrue(Validation::date('7.2.06', ['dmy']));
@@ -1119,10 +1060,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDmyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateDmyyLeapYear()
+    public function testDateDmyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('29-2-04', ['dmy']));
         $this->assertTrue(Validation::date('29.2.04', ['dmy']));
@@ -1136,10 +1075,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDmyyyy method
-     *
-     * @return void
      */
-    public function testDateDmyyyy()
+    public function testDateDmyyyy(): void
     {
         $this->assertTrue(Validation::date('1-1-0001', ['dmy']));
         $this->assertTrue(Validation::date('7-2-2006', ['dmy']));
@@ -1159,10 +1096,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDmyyyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateDmyyyyLeapYear()
+    public function testDateDmyyyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('29-2-0004', ['dmy']));
         $this->assertTrue(Validation::date('29-2-2004', ['dmy']));
@@ -1177,10 +1112,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMmddyyyy method
-     *
-     * @return void
      */
-    public function testDateMmddyyyy()
+    public function testDateMmddyyyy(): void
     {
         $this->assertTrue(Validation::date('01-01-0001', ['mdy']));
         $this->assertTrue(Validation::date('12-27-2006', ['mdy']));
@@ -1201,10 +1134,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMmddyyyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateMmddyyyyLeapYear()
+    public function testDateMmddyyyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('02-29-0004', ['mdy']));
         $this->assertTrue(Validation::date('02-29-2004', ['mdy']));
@@ -1219,10 +1150,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMmddyy method
-     *
-     * @return void
      */
-    public function testDateMmddyy()
+    public function testDateMmddyy(): void
     {
         $this->assertTrue(Validation::date('12-27-06', ['mdy']));
         $this->assertTrue(Validation::date('12.27.06', ['mdy']));
@@ -1241,10 +1170,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMmddyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateMmddyyLeapYear()
+    public function testDateMmddyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('02-29-04', ['mdy']));
         $this->assertTrue(Validation::date('02.29.04', ['mdy']));
@@ -1258,10 +1185,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMdyy method
-     *
-     * @return void
      */
-    public function testDateMdyy()
+    public function testDateMdyy(): void
     {
         $this->assertTrue(Validation::date('2-7-06', ['mdy']));
         $this->assertTrue(Validation::date('2.7.06', ['mdy']));
@@ -1279,10 +1204,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMdyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateMdyyLeapYear()
+    public function testDateMdyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('2-29-04', ['mdy']));
         $this->assertTrue(Validation::date('2.29.04', ['mdy']));
@@ -1296,10 +1219,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMdyyyy method
-     *
-     * @return void
      */
-    public function testDateMdyyyy()
+    public function testDateMdyyyy(): void
     {
         $this->assertTrue(Validation::date('1-1-0001', ['mdy']));
         $this->assertTrue(Validation::date('2-7-2006', ['mdy']));
@@ -1319,10 +1240,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMdyyyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateMdyyyyLeapYear()
+    public function testDateMdyyyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('2-29-0004', ['mdy']));
         $this->assertTrue(Validation::date('2-29-2004', ['mdy']));
@@ -1337,10 +1256,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateYyyymmdd method
-     *
-     * @return void
      */
-    public function testDateYyyymmdd()
+    public function testDateYyyymmdd(): void
     {
         $this->assertTrue(Validation::date('0001-01-01', ['ymd']));
         $this->assertTrue(Validation::date('0401-01-01', ['ymd']));
@@ -1358,10 +1275,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateYyyymmddLeapYear method
-     *
-     * @return void
      */
-    public function testDateYyyymmddLeapYear()
+    public function testDateYyyymmddLeapYear(): void
     {
         $this->assertTrue(Validation::date('0004-02-29', ['ymd']));
         $this->assertTrue(Validation::date('2004-02-29', ['ymd']));
@@ -1377,10 +1292,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateYymmdd method
-     *
-     * @return void
      */
-    public function testDateYymmdd()
+    public function testDateYymmdd(): void
     {
         $this->assertTrue(Validation::date('06-12-27', ['ymd']));
         $this->assertTrue(Validation::date('06.12.27', ['ymd']));
@@ -1399,10 +1312,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateYymmddLeapYear method
-     *
-     * @return void
      */
-    public function testDateYymmddLeapYear()
+    public function testDateYymmddLeapYear(): void
     {
         $this->assertTrue(Validation::date('0004-04-29', ['ymd']));
         $this->assertTrue(Validation::date('2004-02-29', ['ymd']));
@@ -1417,10 +1328,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDdMMMMyyyy method
-     *
-     * @return void
      */
-    public function testDateDdMMMMyyyy()
+    public function testDateDdMMMMyyyy(): void
     {
         $this->assertTrue(Validation::date('01 January 0001', ['dMy']));
         $this->assertTrue(Validation::date('27 December 2006', ['dMy']));
@@ -1431,10 +1340,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateDdMMMMyyyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateDdMMMMyyyyLeapYear()
+    public function testDateDdMMMMyyyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('29 February 0004', ['dMy']));
         $this->assertTrue(Validation::date('29 February 2004', ['dMy']));
@@ -1443,10 +1350,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMmmmDdyyyy method
-     *
-     * @return void
      */
-    public function testDateMmmmDdyyyy()
+    public function testDateMmmmDdyyyy(): void
     {
         $this->assertTrue(Validation::date('January 01, 0001', ['Mdy']));
         $this->assertTrue(Validation::date('December 27, 2006', ['Mdy']));
@@ -1460,10 +1365,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMmmmDdyyyyLeapYear method
-     *
-     * @return void
      */
-    public function testDateMmmmDdyyyyLeapYear()
+    public function testDateMmmmDdyyyyLeapYear(): void
     {
         $this->assertTrue(Validation::date('February 29, 0004', ['Mdy']));
         $this->assertTrue(Validation::date('February 29, 2004', ['Mdy']));
@@ -1475,10 +1378,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMy method
-     *
-     * @return void
      */
-    public function testDateMy()
+    public function testDateMy(): void
     {
         $this->assertTrue(Validation::date('January 0001', ['My']));
         $this->assertTrue(Validation::date('December 2006', ['My']));
@@ -1489,10 +1390,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateMyNumeric method
-     *
-     * @return void
      */
-    public function testDateMyNumeric()
+    public function testDateMyNumeric(): void
     {
         $this->assertTrue(Validation::date('01/0001', ['my']));
         $this->assertTrue(Validation::date('01/2006', ['my']));
@@ -1509,10 +1408,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateYmNumeric method
-     *
-     * @return void
      */
-    public function testDateYmNumeric()
+    public function testDateYmNumeric(): void
     {
         $this->assertTrue(Validation::date('0001/01', ['ym']));
         $this->assertTrue(Validation::date('2006/12', ['ym']));
@@ -1534,10 +1431,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateY method
-     *
-     * @return void
      */
-    public function testDateY()
+    public function testDateY(): void
     {
         $this->assertTrue(Validation::date('0001', ['y']));
         $this->assertTrue(Validation::date('1900', ['y']));
@@ -1555,10 +1450,8 @@ class ValidationTest extends TestCase
 
     /**
      * test date validation when passing an array
-     *
-     * @return void
      */
-    public function testDateArray()
+    public function testDateArray(): void
     {
         $date = ['year' => 2014, 'month' => 2, 'day' => 14];
         $this->assertTrue(Validation::date($date));
@@ -1571,10 +1464,8 @@ class ValidationTest extends TestCase
 
     /**
      * test datetime validation when passing an array
-     *
-     * @return void
      */
-    public function testDateTimeArray()
+    public function testDateTimeArray(): void
     {
         $date = [
             'year' => 2014,
@@ -1620,10 +1511,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test validating dates with multiple formats
-     *
-     * @return void
      */
-    public function testDateMultiple()
+    public function testDateMultiple(): void
     {
         $this->assertTrue(Validation::date('2011-12-31', ['ymd', 'dmy']));
         $this->assertTrue(Validation::date('31-12-2011', ['ymd', 'dmy']));
@@ -1631,10 +1520,8 @@ class ValidationTest extends TestCase
 
     /**
      * testTime method
-     *
-     * @return void
      */
-    public function testTime()
+    public function testTime(): void
     {
         $this->assertTrue(Validation::time('00:00'));
         $this->assertTrue(Validation::time('23:59'));
@@ -1661,10 +1548,8 @@ class ValidationTest extends TestCase
 
     /**
      * test time validation when passing an array
-     *
-     * @return void
      */
-    public function testTimeArray()
+    public function testTimeArray(): void
     {
         $date = ['hour' => 13, 'minute' => 14, 'second' => 15];
         $this->assertTrue(Validation::time($date));
@@ -1692,10 +1577,8 @@ class ValidationTest extends TestCase
 
     /**
      * Tests that it is possible to pass a median (AM, PM) to the dateTime validation
-     *
-     * @return void
      */
-    public function testDateTimeWithMeriadian()
+    public function testDateTimeWithMeriadian(): void
     {
         $this->assertTrue(Validation::dateTime('10/04/2007 1:50 AM', ['dmy']));
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38 PM', ['dmy']));
@@ -1710,10 +1593,8 @@ class ValidationTest extends TestCase
 
     /**
      * Tests that it is possible to pass a date with a T separator
-     *
-     * @return void
      */
-    public function testDateTimeISO()
+    public function testDateTimeISO(): void
     {
         $this->assertTrue(Validation::dateTime('2007/10/04T01:50'));
         $this->assertTrue(Validation::dateTime('2017/12/04T15:38'));
@@ -1726,10 +1607,9 @@ class ValidationTest extends TestCase
     /**
      * Tests that it is possible to pass an ISO8601 value
      *
-     * @return void
      * @see Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
-    public function testDateTimeISO8601()
+    public function testDateTimeISO8601(): void
     {
         // Valid ISO8601
         $this->assertTrue(Validation::iso8601('2007'));
@@ -1759,13 +1639,9 @@ class ValidationTest extends TestCase
 
     /**
      * Test localizedTime
-     *
-     * @return void
      */
-    public function testLocalizedTime()
+    public function testLocalizedTime(): void
     {
-        $locale = I18n::getLocale();
-
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
         $this->assertFalse(Validation::localizedTime(1, 'date'));
@@ -1794,16 +1670,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
 
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
-
-        I18n::setLocale($locale);
     }
 
     /**
      * testBoolean method
-     *
-     * @return void
      */
-    public function testBoolean()
+    public function testBoolean(): void
     {
         $this->assertTrue(Validation::boolean('0'));
         $this->assertTrue(Validation::boolean('1'));
@@ -1820,10 +1692,8 @@ class ValidationTest extends TestCase
 
     /**
      * testBooleanWithOptions method
-     *
-     * @return void
      */
-    public function testBooleanWithOptions()
+    public function testBooleanWithOptions(): void
     {
         $this->assertTrue(Validation::boolean('0', ['0', '1']));
         $this->assertTrue(Validation::boolean('1', ['0', '1']));
@@ -1839,10 +1709,8 @@ class ValidationTest extends TestCase
 
     /**
      * testTruthy method
-     *
-     * @return void
      */
-    public function testTruthy()
+    public function testTruthy(): void
     {
         $this->assertTrue(Validation::truthy(1));
         $this->assertTrue(Validation::truthy(true));
@@ -1870,10 +1738,8 @@ class ValidationTest extends TestCase
 
     /**
      * testTruthy method
-     *
-     * @return void
      */
-    public function testFalsey()
+    public function testFalsey(): void
     {
         $this->assertTrue(Validation::falsey(0));
         $this->assertTrue(Validation::falsey(false));
@@ -1901,10 +1767,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDateCustomRegx method
-     *
-     * @return void
      */
-    public function testDateCustomRegx()
+    public function testDateCustomRegx(): void
     {
         $this->assertTrue(Validation::date('2006-12-27', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
         $this->assertFalse(Validation::date('12-27-2006', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
@@ -1912,10 +1776,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test numbers with any number of decimal places, including none.
-     *
-     * @return void
      */
-    public function testDecimalWithPlacesNull()
+    public function testDecimalWithPlacesNull(): void
     {
         $this->assertTrue(Validation::decimal('+1234.54321', null));
         $this->assertTrue(Validation::decimal('-1234.54321', null));
@@ -1946,10 +1808,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test numbers with any number of decimal places greater than 0, or a float|double.
-     *
-     * @return void
      */
-    public function testDecimalWithPlacesTrue()
+    public function testDecimalWithPlacesTrue(): void
     {
         $this->assertTrue(Validation::decimal('+1234.54321', true));
         $this->assertTrue(Validation::decimal('-1234.54321', true));
@@ -1980,10 +1840,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test numbers with exactly that many number of decimal places.
-     *
-     * @return void
      */
-    public function testDecimalWithPlacesNumeric()
+    public function testDecimalWithPlacesNumeric(): void
     {
         $this->assertTrue(Validation::decimal('.27', '2'));
         $this->assertTrue(Validation::decimal(0.27, 2));
@@ -2018,10 +1876,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test decimal() with invalid places parameter.
-     *
-     * @return void
      */
-    public function testDecimalWithInvalidPlaces()
+    public function testDecimalWithInvalidPlaces(): void
     {
         $this->assertFalse(Validation::decimal('.27', 'string'));
         $this->assertFalse(Validation::decimal(1234.5678, (array)true));
@@ -2030,10 +1886,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDecimalCustomRegex method
-     *
-     * @return void
      */
-    public function testDecimalCustomRegex()
+    public function testDecimalCustomRegex(): void
     {
         $this->assertTrue(Validation::decimal('1.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
         $this->assertFalse(Validation::decimal('.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
@@ -2041,10 +1895,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test localized floats with decimal.
-     *
-     * @return void
      */
-    public function testDecimalLocaleSet()
+    public function testDecimalLocaleSet(): void
     {
         $this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
         $this->skipIf(Locale::setDefault('da_DK') === false, "The Danish locale isn't available.");
@@ -2061,10 +1913,8 @@ class ValidationTest extends TestCase
 
     /**
      * testEmail method
-     *
-     * @return void
      */
-    public function testEmail()
+    public function testEmail(): void
     {
         $this->assertTrue(Validation::email('abc.efg@domain.com'));
         $this->assertTrue(Validation::email('efg@domain.com'));
@@ -2146,10 +1996,8 @@ class ValidationTest extends TestCase
 
     /**
      * testEmailDeep method
-     *
-     * @return void
      */
-    public function testEmailDeep()
+    public function testEmailDeep(): void
     {
         $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for nonexistent domains, skipping deep email checks.');
 
@@ -2159,10 +2007,8 @@ class ValidationTest extends TestCase
 
     /**
      * testEmailCustomRegex method
-     *
-     * @return void
      */
-    public function testEmailCustomRegex()
+    public function testEmailCustomRegex(): void
     {
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
         $this->assertFalse(Validation::email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
@@ -2170,10 +2016,8 @@ class ValidationTest extends TestCase
 
     /**
      * testEqualTo method
-     *
-     * @return void
      */
-    public function testEqualTo()
+    public function testEqualTo(): void
     {
         $this->assertTrue(Validation::equalTo('1', '1'));
         $this->assertFalse(Validation::equalTo(1, '1'));
@@ -2185,10 +2029,8 @@ class ValidationTest extends TestCase
 
     /**
      * testIpV4 method
-     *
-     * @return void
      */
-    public function testIpV4()
+    public function testIpV4(): void
     {
         $this->assertTrue(Validation::ip('0.0.0.0', 'ipv4'));
         $this->assertTrue(Validation::ip('192.168.1.156'));
@@ -2201,10 +2043,8 @@ class ValidationTest extends TestCase
 
     /**
      * testIp v6
-     *
-     * @return void
      */
-    public function testIpv6()
+    public function testIpv6(): void
     {
         $this->assertTrue(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'IPv6'));
         $this->assertTrue(Validation::ip('2001:db8:85a3:0:0:8a2e:370:7334', 'IPv6'));
@@ -2242,10 +2082,8 @@ class ValidationTest extends TestCase
 
     /**
      * testMaxLength method
-     *
-     * @return void
      */
-    public function testMaxLength()
+    public function testMaxLength(): void
     {
         $this->assertTrue(Validation::maxLength('ab', 3));
         $this->assertTrue(Validation::maxLength('abc', 3));
@@ -2258,10 +2096,8 @@ class ValidationTest extends TestCase
 
     /**
      * maxLengthBytes method
-     *
-     * @return void
      */
-    public function testMaxLengthBytes()
+    public function testMaxLengthBytes(): void
     {
         $this->assertTrue(Validation::maxLengthBytes('ab', 3));
         $this->assertTrue(Validation::maxLengthBytes('abc', 3));
@@ -2275,10 +2111,8 @@ class ValidationTest extends TestCase
 
     /**
      * testMinLength method
-     *
-     * @return void
      */
-    public function testMinLength()
+    public function testMinLength(): void
     {
         $this->assertFalse(Validation::minLength('ab', 3));
         $this->assertFalse(Validation::minLength('ÆΔΩЖÇ', 10));
@@ -2292,10 +2126,8 @@ class ValidationTest extends TestCase
 
     /**
      * minLengthBytes method
-     *
-     * @return void
      */
-    public function testMinLengthBytes()
+    public function testMinLengthBytes(): void
     {
         $this->assertFalse(Validation::minLengthBytes('ab', 3));
         $this->assertFalse(Validation::minLengthBytes('ÆΔΩЖÇ', 11));
@@ -2310,10 +2142,8 @@ class ValidationTest extends TestCase
 
     /**
      * testUrl method
-     *
-     * @return void
      */
-    public function testUrl()
+    public function testUrl(): void
     {
         $this->assertTrue(Validation::url('http://www.cakephp.org'));
         $this->assertTrue(Validation::url('http://cakephp.org'));
@@ -2386,7 +2216,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::url('[1::2::3]'));
     }
 
-    public function testUuid()
+    public function testUuid(): void
     {
         $this->assertTrue(Validation::uuid('00000000-0000-0000-0000-000000000000'));
         $this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
@@ -2401,10 +2231,8 @@ class ValidationTest extends TestCase
 
     /**
      * testInList method
-     *
-     * @return void
      */
-    public function testInList()
+    public function testInList(): void
     {
         $this->assertTrue(Validation::inList('one', ['one', 'two']));
         $this->assertTrue(Validation::inList('two', ['one', 'two']));
@@ -2431,10 +2259,8 @@ class ValidationTest extends TestCase
 
     /**
      * testRange method
-     *
-     * @return void
      */
-    public function testRange()
+    public function testRange(): void
     {
         $this->assertFalse(Validation::range(20, 100, 1));
         $this->assertTrue(Validation::range(20, 1, 100));
@@ -2451,10 +2277,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test range type checks
-     *
-     * @return void
      */
-    public function testRangeTypeChecks()
+    public function testRangeTypeChecks(): void
     {
         $this->assertFalse(Validation::range('\x028', 1, 5), 'hexish encoding fails');
         $this->assertFalse(Validation::range('0b010', 1, 5), 'binary string data fails');
@@ -2468,10 +2292,8 @@ class ValidationTest extends TestCase
 
     /**
      * testExtension method
-     *
-     * @return void
      */
-    public function testExtension()
+    public function testExtension(): void
     {
         $this->assertTrue(Validation::extension('extension.jpeg'));
         $this->assertTrue(Validation::extension('extension.JPEG'));
@@ -2521,7 +2343,7 @@ class ValidationTest extends TestCase
     /**
      * Test extension with a PSR7 object
      */
-    public function testExtensionPsr7()
+    public function testExtensionPsr7(): void
     {
         $file = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
 
@@ -2534,10 +2356,8 @@ class ValidationTest extends TestCase
 
     /**
      * testMoney method
-     *
-     * @return void
      */
-    public function testMoney()
+    public function testMoney(): void
     {
         $this->assertTrue(Validation::money('100'));
         $this->assertTrue(Validation::money('100.11'));
@@ -2575,10 +2395,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test Multiple Select Validation
-     *
-     * @return void
      */
-    public function testMultiple()
+    public function testMultiple(): void
     {
         $this->assertTrue(Validation::multiple([0, 1, 2, 3]));
         $this->assertTrue(Validation::multiple([50, 32, 22, 0]));
@@ -2630,10 +2448,8 @@ class ValidationTest extends TestCase
 
     /**
      * testNumeric method
-     *
-     * @return void
      */
-    public function testNumeric()
+    public function testNumeric(): void
     {
         $this->assertFalse(Validation::numeric('teststring'));
         $this->assertFalse(Validation::numeric('1.1test'));
@@ -2647,10 +2463,8 @@ class ValidationTest extends TestCase
 
     /**
      * testNaturalNumber method
-     *
-     * @return void
      */
-    public function testNaturalNumber()
+    public function testNaturalNumber(): void
     {
         $this->assertFalse(Validation::naturalNumber('teststring'));
         $this->assertFalse(Validation::naturalNumber('5.4'));
@@ -2669,10 +2483,8 @@ class ValidationTest extends TestCase
 
     /**
      * testDatetime method
-     *
-     * @return void
      */
-    public function testDatetime()
+    public function testDatetime(): void
     {
         $this->assertTrue(Validation::datetime('27-12-2006 01:00', 'dmy'));
         $this->assertTrue(Validation::datetime('27-12-2006 01:00', ['dmy']));
@@ -2699,10 +2511,8 @@ class ValidationTest extends TestCase
 
     /**
      * testMimeType method
-     *
-     * @return void
      */
-    public function testMimeType()
+    public function testMimeType(): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
 
@@ -2718,10 +2528,8 @@ class ValidationTest extends TestCase
 
     /**
      * testMimeTypeCaseInsensitive method
-     *
-     * @return void
      */
-    public function testMimeTypeCaseInsensitive()
+    public function testMimeTypeCaseInsensitive(): void
     {
         $algol68 = CORE_TESTS . 'Fixture/sample.a68';
 
@@ -2734,10 +2542,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test mimetype with a PSR7 object
-     *
-     * @return void
      */
-    public function testMimeTypePsr7()
+    public function testMimeTypePsr7(): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/lies');
@@ -2751,22 +2557,18 @@ class ValidationTest extends TestCase
 
     /**
      * testMimeTypeFalse method
-     *
-     * @return void
      */
-    public function testMimeTypeFalse()
+    public function testMimeTypeFalse(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $image = CORE_TESTS . 'invalid-file.png';
         Validation::mimeType($image, ['image/gif']);
     }
 
     /**
      * testUploadError method
-     *
-     * @return void
      */
-    public function testUploadError()
+    public function testUploadError(): void
     {
         $this->assertTrue(Validation::uploadError(0));
         $this->assertTrue(Validation::uploadError(['error' => 0]));
@@ -2785,10 +2587,8 @@ class ValidationTest extends TestCase
 
     /**
      * testUploadError method with an UploadedFile
-     *
-     * @return void
      */
-    public function testUploadErrorPsr7()
+    public function testUploadErrorPsr7(): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
@@ -2801,10 +2601,8 @@ class ValidationTest extends TestCase
 
     /**
      * testFileSize method
-     *
-     * @return void
      */
-    public function testFileSize()
+    public function testFileSize(): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, 1024));
@@ -2820,10 +2618,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test fileSize() with a PSR7 object.
-     *
-     * @return void
      */
-    public function testFileSizePsr7()
+    public function testFileSizePsr7(): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
@@ -2836,10 +2632,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test uploaded file validation.
-     *
-     * @return void
      */
-    public function testUploadedFileErrorCode()
+    public function testUploadedFileErrorCode(): void
     {
         $this->assertFalse(Validation::uploadedFile('derp'));
         $invalid = [
@@ -2864,9 +2658,8 @@ class ValidationTest extends TestCase
      * Test uploaded file validation.
      *
      * @dataProvider uploadedFileProvider
-     * @return void
      */
-    public function testUploadedFileArray($expected, $options)
+    public function testUploadedFileArray(bool $expected, array $options): void
     {
         $file = [
             'name' => 'cake.power.gif',
@@ -2880,10 +2673,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test uploaded file validation.
-     *
-     * @return void
      */
-    public function testUploadedFileNoFile()
+    public function testUploadedFileNoFile(): void
     {
         $file = [
             'name' => '',
@@ -2907,10 +2698,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test uploaded file validation.
-     *
-     * @return void
      */
-    public function testUploadedFileWithDifferentFileParametersOrder()
+    public function testUploadedFileWithDifferentFileParametersOrder(): void
     {
         $file = [
             'name' => 'cake.power.gif',
@@ -2928,7 +2717,7 @@ class ValidationTest extends TestCase
      *
      * @return array
      */
-    public function uploadedFileProvider()
+    public function uploadedFileProvider(): array
     {
         return [
             'minSize fail' => [false, ['minSize' => 500]],
@@ -2946,9 +2735,8 @@ class ValidationTest extends TestCase
      * Test uploadedFile with a PSR7 object.
      *
      * @dataProvider uploadedFileProvider
-     * @return void
      */
-    public function testUploadedFilePsr7($expected, $options)
+    public function testUploadedFilePsr7(bool $expected, array $options): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
@@ -2957,10 +2745,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test the compareFields method with equal result.
-     *
-     * @return void
      */
-    public function testCompareFieldsEqualTo()
+    public function testCompareFieldsEqualTo(): void
     {
         $context = [
             'data' => [
@@ -2991,10 +2777,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test the compareFields method with not equal result.
-     *
-     * @return void
      */
-    public function testCompareFieldsNotEqual()
+    public function testCompareFieldsNotEqual(): void
     {
         $context = [
             'data' => [
@@ -3016,12 +2800,10 @@ class ValidationTest extends TestCase
 
     /**
      * testContainsNonAlphaNumeric method
-     *
-     * @return void
      */
-    public function testContainNonAlphaNumeric()
+    public function testContainNonAlphaNumeric(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
             $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
             $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
@@ -3075,10 +2857,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test the geoCoordinate method.
-     *
-     * @return void
      */
-    public function testGeoCoordinate()
+    public function testGeoCoordinate(): void
     {
         $this->assertTrue(Validation::geoCoordinate('51.165691, 10.451526'));
         $this->assertTrue(Validation::geoCoordinate('-25.274398, 133.775136'));
@@ -3091,10 +2871,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test the geoCoordinate method.
-     *
-     * @return void
      */
-    public function testLatitude()
+    public function testLatitude(): void
     {
         $this->assertTrue(Validation::latitude('0'));
         $this->assertTrue(Validation::latitude('0.000000'));
@@ -3104,10 +2882,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test the geoCoordinate method.
-     *
-     * @return void
      */
-    public function testLongitude()
+    public function testLongitude(): void
     {
         $this->assertTrue(Validation::longitude('0'));
         $this->assertTrue(Validation::longitude('0.000000'));
@@ -3118,10 +2894,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test isArray
-     *
-     * @return void
      */
-    public function testIsArray()
+    public function testIsArray(): void
     {
         $this->assertTrue(Validation::isArray([]));
         $this->assertTrue(Validation::isArray([1, 2, 3]));
@@ -3133,10 +2907,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test isScalar
-     *
-     * @return void
      */
-    public function testIsScalar()
+    public function testIsScalar(): void
     {
         $this->assertTrue(Validation::isScalar(1));
         $this->assertTrue(Validation::isScalar(0.0));
@@ -3150,10 +2922,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test isInteger
-     *
-     * @return void
      */
-    public function testIsInteger()
+    public function testIsInteger(): void
     {
         $this->assertTrue(Validation::isInteger(-10));
         $this->assertTrue(Validation::isInteger(0));
@@ -3169,7 +2939,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::isInteger('2.5'));
         $this->assertFalse(Validation::isInteger(2.5));
         $this->assertFalse(Validation::isInteger([]));
-        $this->assertFalse(Validation::isInteger(new \stdClass()));
+        $this->assertFalse(Validation::isInteger(new stdClass()));
         $this->assertFalse(Validation::isInteger('2 bears'));
         $this->assertFalse(Validation::isInteger(true));
         $this->assertFalse(Validation::isInteger(false));
@@ -3177,10 +2947,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test ascii
-     *
-     * @return void
      */
-    public function testAscii()
+    public function testAscii(): void
     {
         $this->assertTrue(Validation::ascii('1 big blue bus.'));
         $this->assertTrue(Validation::ascii(',.<>[]{;/?\)()'));
@@ -3188,7 +2956,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::ascii([]));
         $this->assertFalse(Validation::ascii(1001));
         $this->assertFalse(Validation::ascii(3.14));
-        $this->assertFalse(Validation::ascii(new \stdClass()));
+        $this->assertFalse(Validation::ascii(new stdClass()));
 
         // Latin-1 supplement
         $this->assertFalse(Validation::ascii('some' . "\xc2\x82" . 'value'));
@@ -3203,15 +2971,13 @@ class ValidationTest extends TestCase
 
     /**
      * Test utf8 basic
-     *
-     * @return void
      */
-    public function testUtf8Basic()
+    public function testUtf8Basic(): void
     {
         $this->assertFalse(Validation::utf8([]));
         $this->assertFalse(Validation::utf8(1001));
         $this->assertFalse(Validation::utf8(3.14));
-        $this->assertFalse(Validation::utf8(new \stdClass()));
+        $this->assertFalse(Validation::utf8(new stdClass()));
         $this->assertTrue(Validation::utf8('1 big blue bus.'));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()'));
 
@@ -3231,15 +2997,13 @@ class ValidationTest extends TestCase
 
     /**
      * Test utf8 extended
-     *
-     * @return void
      */
-    public function testUtf8Extended()
+    public function testUtf8Extended(): void
     {
         $this->assertFalse(Validation::utf8([], ['extended' => true]));
         $this->assertFalse(Validation::utf8(1001, ['extended' => true]));
         $this->assertFalse(Validation::utf8(3.14, ['extended' => true]));
-        $this->assertFalse(Validation::utf8(new \stdClass(), ['extended' => true]));
+        $this->assertFalse(Validation::utf8(new stdClass(), ['extended' => true]));
         $this->assertTrue(Validation::utf8('1 big blue bus.', ['extended' => true]));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()', ['extended' => true]));
 
@@ -3259,10 +3023,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test numElements
-     *
-     * @return void
      */
-    public function testNumElements()
+    public function testNumElements(): void
     {
         $array = ['cake', 'php'];
         $this->assertTrue(Validation::numElements($array, Validation::COMPARE_EQUAL, 2));
@@ -3282,21 +3044,17 @@ class ValidationTest extends TestCase
 
     /**
      * Test ImageSize InvalidArgumentException
-     *
-     * @return void
      */
-    public function testImageSizeInvalidArgumentException()
+    public function testImageSizeInvalidArgumentException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertTrue(Validation::imageSize([], []));
     }
 
     /**
      * Test imageSize
-     *
-     * @return void
      */
-    public function testImageSize()
+    public function testImageSize(): void
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
@@ -3341,10 +3099,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test imageSize with a PSR7 object
-     *
-     * @return void
      */
-    public function testImageSizePsr7()
+    public function testImageSizePsr7(): void
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = new UploadedFile($image, 5308, UPLOAD_ERR_OK, 'test.jpg', 'image/jpeg');
@@ -3359,10 +3115,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test imageHeight
-     *
-     * @return void
      */
-    public function testImageHeight()
+    public function testImageHeight(): void
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
@@ -3380,10 +3134,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test imageWidth
-     *
-     * @return void
      */
-    public function testImageWidth()
+    public function testImageWidth(): void
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
@@ -3402,7 +3154,7 @@ class ValidationTest extends TestCase
     /**
      * Test hexColor
      */
-    public function testHexColor()
+    public function testHexColor(): void
     {
         $this->assertTrue(Validation::hexColor('#F01234'));
         $this->assertTrue(Validation::hexColor('#F56789'));
@@ -3416,7 +3168,7 @@ class ValidationTest extends TestCase
     /**
      * Test IBAN
      */
-    public function testIban()
+    public function testIban(): void
     {
         $this->assertTrue(Validation::iban('AD1200012030200359100100'));
         $this->assertTrue(Validation::iban('BA391290079401028494'));

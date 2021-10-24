@@ -21,8 +21,11 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Http\Response;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Psr\Log\LogLevel;
 use TestApp\Log\Engine\TestBaseLog;
+use TestApp\Log\Formatter\InvalidFormatter;
+use TestApp\Log\Formatter\ValidFormatter;
 
 class BaseLogTest extends TestCase
 {
@@ -44,7 +47,7 @@ class BaseLogTest extends TestCase
         $this->logger = new TestBaseLog();
     }
 
-    private function assertUnescapedUnicode(array $needles, $haystack)
+    private function assertUnescapedUnicode(array $needles, string $haystack): void
     {
         foreach ($needles as $needle) {
             $this->assertStringContainsString(
@@ -58,14 +61,14 @@ class BaseLogTest extends TestCase
     /**
      * Tests the logging output of a single string containing unicode characters.
      */
-    public function testLogUnicodeString()
+    public function testLogUnicodeString(): void
     {
         $this->logger->log(LogLevel::INFO, implode($this->testData));
 
         $this->assertUnescapedUnicode($this->testData, $this->logger->getMessage());
     }
 
-    public function testPlaceHoldersInMessage()
+    public function testPlaceHoldersInMessage(): void
     {
         $context = [
             'no-placholder' => 'no-placholder',
@@ -75,7 +78,7 @@ class BaseLogTest extends TestCase
             'array' => ['arr'],
             'array-obj' => new ArrayObject(['x' => 'y']),
             'debug-info' => ConnectionManager::get('test'),
-            'obj' => function () {
+            'obj' => function (): void {
             },
             'to-string' => new Response(['body' => 'response body']),
             'to-array' => new TypeMap(['my-type']),
@@ -143,5 +146,26 @@ class BaseLogTest extends TestCase
             ['val']
         );
         $this->assertSame('val', $this->logger->getMessage());
+    }
+
+    /**
+     * Test setting custom formatter option.
+     */
+    public function testCustomFormatter(): void
+    {
+        $log = new TestBaseLog(['formatter' => ValidFormatter::class]);
+        $this->assertNotNull($log);
+
+        $log = new TestBaseLog(['formatter' => new ValidFormatter()]);
+        $this->assertNotNull($log);
+    }
+
+    /**
+     * Test creating log engine with invalid formatter.
+     */
+    public function testInvalidFormatter(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new TestBaseLog(['formatter' => InvalidFormatter::class]);
     }
 }

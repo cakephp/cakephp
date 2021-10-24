@@ -58,7 +58,7 @@ class Debugger
     /**
      * Default configuration
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'outputMask' => [],
@@ -77,7 +77,7 @@ class Debugger
      * Templates used when generating trace or error strings. Can be global or indexed by the format
      * value used in $_outputFormat.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected $_templates = [
         'log' => [
@@ -113,7 +113,7 @@ class Debugger
     /**
      * A map of editors to their link templates.
      *
-     * @var array
+     * @var array<string, string|callable>
      */
     protected $editors = [
         'atom' => 'atom://core/open/file?filename={file}&line={line}',
@@ -214,7 +214,7 @@ class Debugger
     /**
      * Read or write configuration options for the Debugger instance.
      *
-     * @param string|array|null $key The key to get/set, or a complete array of configs.
+     * @param array|string|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return mixed Config value being read, or the object itself on write operations.
@@ -236,7 +236,7 @@ class Debugger
     /**
      * Reads the current output masking.
      *
-     * @return array
+     * @return array<string, string>
      */
     public static function outputMask(): array
     {
@@ -250,7 +250,7 @@ class Debugger
      *
      * Debugger::setOutputMask(['password' => '[*************]');
      *
-     * @param array $value An array where keys are replaced by their values in output.
+     * @param array<string, string> $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return void
      */
@@ -267,7 +267,7 @@ class Debugger
      * The file and line.
      *
      * @param string $name The name of the editor.
-     * @param string|\Closure $template The string template or closure
+     * @param \Closure|string $template The string template or closure
      * @return void
      */
     public static function addEditor(string $name, $template): void
@@ -335,10 +335,10 @@ class Debugger
 
     /**
      * Creates an entry in the log file. The log entry will contain a stack trace from where it was called.
-     * as well as export the variable using exportVar. By default the log is written to the debug log.
+     * as well as export the variable using exportVar. By default, the log is written to the debug log.
      *
      * @param mixed $var Variable or content to log.
-     * @param int|string $level Type of log to use. Defaults to 'debug'.
+     * @param string|int $level Type of log to use. Defaults to 'debug'.
      * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      */
@@ -348,7 +348,10 @@ class Debugger
         $source = static::trace(['start' => 1]);
         $source .= "\n";
 
-        Log::write($level, "\n" . $source . static::exportVar($var, $maxDepth));
+        Log::write(
+            $level,
+            "\n" . $source . static::exportVarAsPlainText($var, $maxDepth)
+        );
     }
 
     /**
@@ -363,8 +366,8 @@ class Debugger
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
-     * @param array $options Format for outputting stack trace.
-     * @return string|array Formatted stack trace.
+     * @param array<string, mixed> $options Format for outputting stack trace.
+     * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */
     public static function trace(array $options = [])
@@ -384,9 +387,9 @@ class Debugger
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
-     * @param array|\Throwable $backtrace Trace as array or an exception object.
-     * @param array $options Format for outputting stack trace.
-     * @return string|array Formatted stack trace.
+     * @param \Throwable|array $backtrace Trace as array or an exception object.
+     * @param array<string, mixed> $options Format for outputting stack trace.
+     * @return array|string Formatted stack trace.
      * @link https://book.cakephp.org/4/en/development/debugging.html#generating-stack-traces
      */
     public static function formatTrace($backtrace, array $options = [])
@@ -496,14 +499,14 @@ class Debugger
      * ```
      *
      * The above would return an array of 8 items. The 4th item would be the provided line,
-     * and would be wrapped in `<span class="code-highlight"></span>`. All of the lines
+     * and would be wrapped in `<span class="code-highlight"></span>`. All the lines
      * are processed with highlight_string() as well, so they have basic PHP syntax highlighting
      * applied.
      *
      * @param string $file Absolute path to a PHP file.
      * @param int $line Line number to highlight.
      * @param int $context Number of lines of context to extract above and below $line.
-     * @return array Set of lines highlighted
+     * @return array<string> Set of lines highlighted
      * @see https://secure.php.net/highlight_string
      * @link https://book.cakephp.org/4/en/development/debugging.html#getting-an-excerpt-from-a-file
      */
@@ -625,6 +628,20 @@ class Debugger
         $node = static::export($var, $context);
 
         return static::getInstance()->getExportFormatter()->dump($node);
+    }
+
+    /**
+     * Converts a variable to a plain text string.
+     *
+     * @param mixed $var Variable to convert.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
+     * @return string Variable as a string
+     */
+    public static function exportVarAsPlainText($var, int $maxDepth = 3): string
+    {
+        return (new TextFormatter())->dump(
+            static::export($var, new DebugContext($maxDepth))
+        );
     }
 
     /**

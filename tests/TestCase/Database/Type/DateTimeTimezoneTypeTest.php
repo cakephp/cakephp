@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Core\Configure;
 use Cake\Database\Type\DateTimeTimezoneType;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
@@ -39,22 +40,22 @@ class DateTimeTimezoneTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->type = new DateTimeTimezoneType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/Time.php',
+        ]);
     }
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHPEmpty()
+    public function testToPHPEmpty(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertNull($this->type->toPHP('0000-00-00 00:00:00', $this->driver));
@@ -64,10 +65,8 @@ class DateTimeTimezoneTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHPString()
+    public function testToPHPString(): void
     {
         $result = $this->type->toPHP('2001-01-04 12:13:14.123456+02:00', $this->driver);
         $this->assertInstanceOf(FrozenTime::class, $result);
@@ -100,10 +99,8 @@ class DateTimeTimezoneTypeTest extends TestCase
 
     /**
      * Test toPHP keeping database time zone
-     *
-     * @return void
      */
-    public function testToPHPStringKeepDatabaseTimezone()
+    public function testToPHPStringKeepDatabaseTimezone(): void
     {
         $this->type->setKeepDatabaseTimezone(true);
         $result = $this->type->toPHP('2001-01-04 12:13:14.123456+02:00', $this->driver);
@@ -121,10 +118,8 @@ class DateTimeTimezoneTypeTest extends TestCase
 
     /**
      * Test converting string datetimes to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -169,10 +164,8 @@ class DateTimeTimezoneTypeTest extends TestCase
 
     /**
      * Test converting to database format with microseconds
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $value = '2001-01-04 12:13:14.123456';
         $result = $this->type->toDatabase($value, $this->driver);
@@ -216,10 +209,8 @@ class DateTimeTimezoneTypeTest extends TestCase
 
     /**
      * Test converting to database format without microseconds
-     *
-     * @return void
      */
-    public function testToDatabaseNoMicroseconds()
+    public function testToDatabaseNoMicroseconds(): void
     {
         $date = new Time('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
@@ -261,9 +252,13 @@ class DateTimeTimezoneTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProvider()
+    public function marshalProvider(): array
     {
-        return [
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/Time.php',
+        ]);
+
+        $data = [
             // invalid types.
             [null, null],
             [false, null],
@@ -326,15 +321,20 @@ class DateTimeTimezoneTypeTest extends TestCase
                 new FrozenTime('2014-02-14 11:30:00.123456', 'UTC'),
             ],
         ];
+
+        Configure::delete('Error.ignoredDeprecationPaths');
+
+        return $data;
     }
 
     /**
      * test marshalling data.
      *
      * @dataProvider marshalProvider
-     * @return void
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testMarshal($value, $expected)
+    public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -349,7 +349,7 @@ class DateTimeTimezoneTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProviderWithoutMicroseconds()
+    public function marshalProviderWithoutMicroseconds(): array
     {
         return [
             // invalid types.
@@ -441,9 +441,10 @@ class DateTimeTimezoneTypeTest extends TestCase
      * test marshalling data.
      *
      * @dataProvider marshalProviderWithoutMicroseconds
-     * @return void
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testMarshalWithoutMicroseconds($value, $expected)
+    public function testMarshalWithoutMicroseconds($value, $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

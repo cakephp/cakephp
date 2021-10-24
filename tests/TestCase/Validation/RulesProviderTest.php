@@ -29,10 +29,8 @@ class RulesProviderTest extends TestCase
      * Tests that RulesProvider proxies the method correctly and removes the
      * extra arguments that are passed according to the signature of validation
      * methods.
-     *
-     * @return void
      */
-    public function testProxyToValidation()
+    public function testProxyToValidation(): void
     {
         $provider = new RulesProvider();
         $this->assertTrue($provider->extension('foo.jpg', compact('provider')));
@@ -42,10 +40,8 @@ class RulesProviderTest extends TestCase
     /**
      * Tests that it is possible to use a custom object as the provider to
      * be decorated
-     *
-     * @return void
      */
-    public function testCustomObject()
+    public function testCustomObject(): void
     {
         $object = new CustomProvider();
 

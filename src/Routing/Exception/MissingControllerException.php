@@ -6,5 +6,6 @@ class_alias(
     'Cake\Routing\Exception\MissingControllerException'
 );
 deprecationWarning(
-    'Use Cake\Http\Exception\MissingControllerException instead of Cake\Routing\Exception\MissingControllerException.'
+    'Use Cake\Http\Exception\MissingControllerException instead of Cake\Routing\Exception\MissingControllerException.',
+    0
 );

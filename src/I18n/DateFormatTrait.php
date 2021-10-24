@@ -51,7 +51,7 @@ trait DateFormatTrait
     /**
      * In-memory cache of date formatters
      *
-     * @var \IntlDateFormatter[]
+     * @var array<\IntlDateFormatter>
      */
     protected static $_formatters = [];
 
@@ -113,7 +113,7 @@ trait DateFormatTrait
      *
      * The format to be used is stored in the static property `Time::niceFormat`.
      *
-     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
@@ -170,8 +170,8 @@ trait DateFormatTrait
      * You can control the default locale used through `Time::setDefaultLocale()`.
      * If empty, the default will be taken from the `intl.default_locale` ini config.
      *
-     * @param string|int|int[]|null $format Format string.
-     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * @param array<int>|string|int|null $format Format string.
+     * @param \DateTimeZone|string|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
@@ -202,7 +202,7 @@ trait DateFormatTrait
      * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
      *
      * @param \DateTime|\DateTimeImmutable $date Date.
-     * @param string|int|int[] $format Format.
+     * @param array<int>|string|int $format Format.
      * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
@@ -293,7 +293,7 @@ trait DateFormatTrait
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @param string|int|int[] $format Format.
+     * @param array<int>|string|int $format Format.
      * @return void
      */
     public static function setToStringFormat($format): void
@@ -332,7 +332,7 @@ trait DateFormatTrait
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|int|int[]|null $format Any format accepted by IntlDateFormatter.
+     * @param array<int>|string|int|null $format Any format accepted by IntlDateFormatter.
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      * @return static|null
      */
@@ -395,7 +395,7 @@ trait DateFormatTrait
      * ```
      *
      * @param string $date The date string to parse.
-     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
+     * @param array|string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
     public static function parseDate(string $date, $format = null)
@@ -443,6 +443,7 @@ trait DateFormatTrait
      *
      * @return string|int
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if (static::$_jsonEncodeFormat instanceof Closure) {
@@ -481,7 +482,7 @@ trait DateFormatTrait
     /**
      * Returns the data that should be displayed when debugging this object
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

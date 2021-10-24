@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Core\Configure;
 use Cake\Database\Type\TimeType;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
@@ -38,40 +39,34 @@ class TimeTypeTest extends TestCase
     protected $driver;
 
     /**
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->type = new TimeType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->locale = I18n::getLocale();
+
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/Database/Type/DateTimeType.php',
+            'src/I18n/Time.php',
+            'tests/TestCase/Database/Type/TimeTypeTest.php',
+        ]);
     }
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -90,10 +85,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Test converting string times to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -111,10 +104,8 @@ class TimeTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $value = '16:30:15';
         $result = $this->type->toDatabase($value, $this->driver);
@@ -134,11 +125,15 @@ class TimeTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProvider()
+    public function marshalProvider(): array
     {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/Time.php',
+        ]);
+
         $date = new Time('@1392387900');
 
-        return [
+        $data = [
             // invalid types.
             [null, null],
             [false, null],
@@ -203,15 +198,20 @@ class TimeTypeTest extends TestCase
                 new Time('2014-02-14 00:00:00'),
             ],
         ];
+
+        Configure::delete('Error.ignoredDeprecationPaths');
+
+        return $data;
     }
 
     /**
      * test marshalling data.
      *
      * @dataProvider marshalProvider
-     * @return void
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testMarshal($value, $expected)
+    public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -224,47 +224,35 @@ class TimeTypeTest extends TestCase
 
     /**
      * Tests marshalling times using the locale aware parser
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsing()
+    public function testMarshalWithLocaleParsing(): void
     {
-        $this->type->useLocaleParser();
-
         $expected = new Time('23:23:00');
-        $result = $this->type->marshal('11:23pm');
+        $result = $this->type->useLocaleParser()->marshal('11:23pm');
         $this->assertSame($expected->format('H:i'), $result->format('H:i'));
         $this->assertNull($this->type->marshal('derp:23'));
-
-        $this->type->useLocaleParser(false);
     }
 
     /**
      * Tests marshalling times in denmark.
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsingDanishLocale()
+    public function testMarshalWithLocaleParsingDanishLocale(): void
     {
+        $original = setlocale(LC_COLLATE, '0');
         $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
+        setlocale(LC_COLLATE, $original);
         $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
-
-        $this->type->useLocaleParser();
 
         I18n::setLocale('da_DK');
         $expected = new Time('03:20:00');
-        $result = $this->type->marshal('03.20');
+        $result = $this->type->useLocaleParser()->marshal('03.20');
         $this->assertSame($expected->format('H:i'), $result->format('H:i'));
-
-        $this->type->useLocaleParser(false);
     }
 
     /**
      * Test that toImmutable changes all the methods to create frozen time instances.
-     *
-     * @return void
      */
-    public function testToImmutableAndToMutable()
+    public function testToImmutableAndToMutable(): void
     {
         $this->type->useImmutable();
         $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('11:23:12'));

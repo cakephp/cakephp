@@ -7,8 +7,8 @@ use Cake\Log\Engine\BaseLog;
 
 /**
  * Class BaseLogImpl
- * Implementation of abstract class {@see Cake\Log\Engine\BaseLog},
- * required by test case {@see Cake\Test\TestCase\Log\Engine\BaseLogTest}.
+ * Implementation of abstract class {@see \Cake\Log\Engine\BaseLog},
+ * required by test case {@see \Cake\Test\TestCase\Log\Engine\BaseLogTest}.
  */
 class TestBaseLog extends BaseLog
 {
@@ -23,9 +23,8 @@ class TestBaseLog extends BaseLog
      * @param mixed $level
      * @param string $message
      * @param array $context
-     * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $this->message = $this->_format($message, $context);
     }

@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use TestApp\Mailer\TestMessage;
 
@@ -42,10 +43,8 @@ class MessageTest extends TestCase
 
     /**
      * testWrap method
-     *
-     * @return void
      */
-    public function testWrap()
+    public function testWrap(): void
     {
         $renderer = new TestMessage();
 
@@ -122,10 +121,8 @@ class MessageTest extends TestCase
 
     /**
      * testWrapLongLine()
-     *
-     * @return void
      */
-    public function testWrapLongLine()
+    public function testWrapLongLine(): void
     {
         $transort = new DebugTransport();
 
@@ -176,10 +173,8 @@ class MessageTest extends TestCase
 
     /**
      * testWrapWithTagsAcrossLines()
-     *
-     * @return void
      */
-    public function testWrapWithTagsAcrossLines()
+    public function testWrapWithTagsAcrossLines(): void
     {
         $str = <<<HTML
 <table>
@@ -205,10 +200,8 @@ HTML;
 
     /**
      * CakeEmailTest::testWrapIncludeLessThanSign()
-     *
-     * @return void
      */
-    public function testWrapIncludeLessThanSign()
+    public function testWrapIncludeLessThanSign(): void
     {
         $str = 'foo<bar';
         $length = strlen($str);
@@ -228,10 +221,8 @@ HTML;
 
     /**
      * CakeEmailTest::testWrapForJapaneseEncoding()
-     *
-     * @return void
      */
-    public function testWrapForJapaneseEncoding()
+    public function testWrapForJapaneseEncoding(): void
     {
         $this->skipIf(!function_exists('mb_convert_encoding'));
 
@@ -251,10 +242,8 @@ HTML;
 
     /**
      * testHeaders method
-     *
-     * @return void
      */
-    public function testHeaders()
+    public function testHeaders(): void
     {
         $this->message->setMessageId(false);
         $this->message->setHeaders(['X-Something' => 'nice']);
@@ -333,10 +322,8 @@ HTML;
 
     /**
      * testHeadersString method
-     *
-     * @return void
      */
-    public function testHeadersString()
+    public function testHeadersString(): void
     {
         $this->message->setMessageId(false);
         $this->message->setHeaders(['X-Something' => 'nice']);
@@ -352,10 +339,8 @@ HTML;
 
     /**
      * testFrom method
-     *
-     * @return void
      */
-    public function testFrom()
+    public function testFrom(): void
     {
         $this->assertSame([], $this->message->getFrom());
 
@@ -374,16 +359,14 @@ HTML;
         $this->assertSame($expected, $this->message->getFrom());
         $this->assertSame($this->message, $result);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $result = $this->message->setFrom(['cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address']);
     }
 
     /**
      * Test that from addresses using colons work.
-     *
-     * @return void
      */
-    public function testFromWithColonsAndQuotes()
+    public function testFromWithColonsAndQuotes(): void
     {
         $address = [
             'info@example.com' => '70:20:00 " Forum',
@@ -397,10 +380,8 @@ HTML;
 
     /**
      * testSender method
-     *
-     * @return void
      */
-    public function testSender()
+    public function testSender(): void
     {
         $this->message->reset();
         $this->assertSame([], $this->message->getSender());
@@ -421,10 +402,8 @@ HTML;
 
     /**
      * testTo method
-     *
-     * @return void
      */
-    public function testTo()
+    public function testTo(): void
     {
         $this->assertSame([], $this->message->getTo());
 
@@ -476,10 +455,8 @@ HTML;
 
     /**
      * test to address with _ in domain name
-     *
-     * @return void
      */
-    public function testToUnderscoreDomain()
+    public function testToUnderscoreDomain(): void
     {
         $result = $this->message->setTo('cake@cake_php.org');
         $expected = ['cake@cake_php.org' => 'cake@cake_php.org'];
@@ -492,7 +469,7 @@ HTML;
      *
      * @return array
      */
-    public static function invalidEmails()
+    public static function invalidEmails(): array
     {
         return [
             [''],
@@ -506,11 +483,11 @@ HTML;
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
-     * @return void
+     * @param array|string $value
      */
-    public function testInvalidEmail($value)
+    public function testInvalidEmail($value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setTo($value);
     }
 
@@ -518,20 +495,18 @@ HTML;
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
-     * @return void
+     * @param array|string $value
      */
-    public function testInvalidEmailAdd($value)
+    public function testInvalidEmailAdd($value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->addTo($value);
     }
 
     /**
      * test emailPattern method
-     *
-     * @return void
      */
-    public function testEmailPattern()
+    public function testEmailPattern(): void
     {
         $regex = '/.+@.+\..+/i';
         $this->assertSame($regex, $this->message->setEmailPattern($regex)->getEmailPattern());
@@ -539,10 +514,8 @@ HTML;
 
     /**
      * Tests that it is possible to set email regex configuration to a CakeEmail object
-     *
-     * @return void
      */
-    public function testConfigEmailPattern()
+    public function testConfigEmailPattern(): void
     {
         $regex = '/.+@.+\..+/i';
         $email = new Message(['emailPattern' => $regex]);
@@ -551,10 +524,8 @@ HTML;
 
     /**
      * Tests that it is possible set custom email validation
-     *
-     * @return void
      */
-    public function testCustomEmailValidation()
+    public function testCustomEmailValidation(): void
     {
         $regex = '/^[\.a-z0-9!#$%&\'*+\/=?^_`{|}~-]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]{2,6}$/i';
 
@@ -595,12 +566,10 @@ HTML;
 
     /**
      * Tests that it is possible to unset the email pattern and make use of filter_var() instead.
-     *
-     * @return void
      */
-    public function testUnsetEmailPattern()
+    public function testUnsetEmailPattern(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid email set for "to". You passed "fail.@example.com".');
         $email = new Message();
         $this->assertSame(Message::EMAIL_PATTERN, $email->getEmailPattern());
@@ -614,12 +583,10 @@ HTML;
 
     /**
      * Tests that passing an empty string throws an InvalidArgumentException.
-     *
-     * @return void
      */
-    public function testEmptyTo()
+    public function testEmptyTo(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The email set for "to" is empty.');
         $email = new Message();
         $email->setTo('');
@@ -627,10 +594,8 @@ HTML;
 
     /**
      * testFormatAddress method
-     *
-     * @return void
      */
-    public function testFormatAddress()
+    public function testFormatAddress(): void
     {
         $result = $this->message->fmtAddress(['cake@cakephp.org' => 'cake@cakephp.org']);
         $expected = ['cake@cakephp.org'];
@@ -673,10 +638,8 @@ HTML;
 
     /**
      * testFormatAddressJapanese
-     *
-     * @return void
      */
-    public function testFormatAddressJapanese()
+    public function testFormatAddressJapanese(): void
     {
         $this->message->setHeaderCharset('ISO-2022-JP');
         $result = $this->message->fmtAddress(['cake@cakephp.org' => '日本語Test']);
@@ -695,10 +658,8 @@ HTML;
 
     /**
      * testAddresses method
-     *
-     * @return void
      */
-    public function testAddresses()
+    public function testAddresses(): void
     {
         $this->message->reset();
         $this->message->setFrom('cake@cakephp.org', 'CakePHP');
@@ -738,10 +699,8 @@ HTML;
 
     /**
      * test reset addresses method
-     *
-     * @return void
      */
-    public function testResetAddresses()
+    public function testResetAddresses(): void
     {
         $this->message->reset();
         $this->message
@@ -781,10 +740,8 @@ HTML;
 
     /**
      * testMessageId method
-     *
-     * @return void
      */
-    public function testMessageId()
+    public function testMessageId(): void
     {
         $this->message->setMessageId(true);
         $result = $this->message->getHeaders();
@@ -803,7 +760,7 @@ HTML;
         $this->assertSame('<my-email@localhost>', $result);
     }
 
-    public function testAutoMessageIdIsIdempotent()
+    public function testAutoMessageIdIsIdempotent(): void
     {
         $headers = $this->message->getHeaders();
         $this->assertArrayHasKey('Message-ID', $headers);
@@ -812,10 +769,7 @@ HTML;
         $this->assertSame($headers['Message-ID'], $regeneratedHeaders['Message-ID']);
     }
 
-    /**
-     * @return void
-     */
-    public function testPriority()
+    public function testPriority(): void
     {
         $this->message->setPriority(4);
 
@@ -827,21 +781,17 @@ HTML;
 
     /**
      * testMessageIdInvalid method
-     *
-     * @return void
      */
-    public function testMessageIdInvalid()
+    public function testMessageIdInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setMessageId('my-email@localhost');
     }
 
     /**
      * testDomain method
-     *
-     * @return void
      */
-    public function testDomain()
+    public function testDomain(): void
     {
         $result = $this->message->getDomain();
         $expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
@@ -855,10 +805,8 @@ HTML;
 
     /**
      * testMessageIdWithDomain method
-     *
-     * @return void
      */
-    public function testMessageIdWithDomain()
+    public function testMessageIdWithDomain(): void
     {
         $this->message->setDomain('example.org');
         $result = $this->message->getHeaders();
@@ -876,10 +824,8 @@ HTML;
 
     /**
      * testSubject method
-     *
-     * @return void
      */
-    public function testSubject()
+    public function testSubject(): void
     {
         $this->message->setSubject('You have a new message.');
         $this->assertSame('You have a new message.', $this->message->getSubject());
@@ -898,10 +844,8 @@ HTML;
 
     /**
      * testSubjectJapanese
-     *
-     * @return void
      */
-    public function testSubjectJapanese()
+    public function testSubjectJapanese(): void
     {
         mb_internal_encoding('UTF-8');
 
@@ -919,10 +863,8 @@ HTML;
 
     /**
      * testAttachments method
-     *
-     * @return void
      */
-    public function testSetAttachments()
+    public function testSetAttachments(): void
     {
         $uploadedFile = new UploadedFile(
             __FILE__,
@@ -967,16 +909,14 @@ HTML;
             'license' => ['file' => CORE_PATH . 'LICENSE', 'mimetype' => 'text/plain'],
         ];
         $this->assertSame($expected, $this->message->getAttachments());
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setAttachments([['nofile' => CAKE . 'basics.php', 'mimetype' => 'text/plain']]);
     }
 
     /**
      * Test send() with no template and data string attachment and no mimetype
-     *
-     * @return void
      */
-    public function testSetAttachmentDataNoMimetype()
+    public function testSetAttachmentDataNoMimetype(): void
     {
         $this->message->setAttachments(['cake.icon.gif' => [
             'data' => 'test',
@@ -991,9 +931,9 @@ HTML;
         $this->assertSame($expected, $this->message->getAttachments());
     }
 
-    public function testSetAttachmentInvalidFile()
+    public function testSetAttachmentInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'File must be a filepath or UploadedFileInterface instance. Found `boolean` instead.'
         );
@@ -1005,10 +945,8 @@ HTML;
 
     /**
      * testReset method
-     *
-     * @return void
      */
-    public function testReset()
+    public function testReset(): void
     {
         $this->message->setTo('cake@cakephp.org');
         $this->message->setEmailPattern('/.+@.+\..+/i');
@@ -1021,10 +959,8 @@ HTML;
 
     /**
      * testReset with charset
-     *
-     * @return void
      */
-    public function testResetWithCharset()
+    public function testResetWithCharset(): void
     {
         $this->message->setCharset('ISO-2022-JP');
         $this->message->reset();
@@ -1035,10 +971,8 @@ HTML;
 
     /**
      * testEmailFormat method
-     *
-     * @return void
      */
-    public function testEmailFormat()
+    public function testEmailFormat(): void
     {
         $result = $this->message->getEmailFormat();
         $this->assertSame('text', $result);
@@ -1049,16 +983,14 @@ HTML;
         $result = $this->message->getEmailFormat();
         $this->assertSame('html', $result);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setEmailFormat('invalid');
     }
 
     /**
      * Tests that it is possible to add charset configuration to a CakeEmail object
-     *
-     * @return void
      */
-    public function testConfigCharset()
+    public function testConfigCharset(): void
     {
         $email = new Message();
         $this->assertEquals(Configure::read('App.encoding'), $email->getCharset());
@@ -1077,7 +1009,7 @@ HTML;
         $this->assertSame('iso-2022-jp-ms', $email->getHeaderCharset());
     }
 
-    public function testGetBody()
+    public function testGetBody(): void
     {
         $message = new Message();
 
@@ -1099,10 +1031,8 @@ HTML;
 
     /**
      * Tests that the body is encoded using the configured charset (Japanese standard encoding)
-     *
-     * @return void
      */
-    public function testBodyEncodingIso2022Jp()
+    public function testBodyEncodingIso2022Jp(): void
     {
         $message = new Message([
             'charset' => 'iso-2022-jp',
@@ -1127,10 +1057,8 @@ HTML;
 
     /**
      * Tests that the body is encoded using the configured charset (Japanese irregular encoding, but sometime use this)
-     *
-     * @return void
      */
-    public function testBodyEncodingIso2022JpMs()
+    public function testBodyEncodingIso2022JpMs(): void
     {
         $message = new Message([
             'charset' => 'iso-2022-jp-ms',
@@ -1154,10 +1082,8 @@ HTML;
 
     /**
      * Tests that the body is encoded using the configured charset
-     *
-     * @return void
      */
-    public function testEncodingMixed()
+    public function testEncodingMixed(): void
     {
         $message = new Message([
             'headerCharset' => 'iso-2022-jp-ms',
@@ -1175,10 +1101,8 @@ HTML;
 
     /**
      * Test CakeMessage::_encode function
-     *
-     * @return void
      */
-    public function testEncode()
+    public function testEncode(): void
     {
         $this->message->setHeaderCharset('ISO-2022-JP');
         $result = $this->message->encode('日本語');
@@ -1195,10 +1119,8 @@ HTML;
 
     /**
      * Test CakeMessage::_decode function
-     *
-     * @return void
      */
-    public function testDecode()
+    public function testDecode(): void
     {
         $this->message->setHeaderCharset('ISO-2022-JP');
         $result = $this->message->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
@@ -1215,10 +1137,8 @@ HTML;
 
     /**
      * Tests charset setter/getter
-     *
-     * @return void
      */
-    public function testCharset()
+    public function testCharset(): void
     {
         $this->message->setCharset('UTF-8');
         $this->assertSame($this->message->getCharset(), 'UTF-8');
@@ -1232,10 +1152,8 @@ HTML;
 
     /**
      * Tests headerCharset setter/getter
-     *
-     * @return void
      */
-    public function testHeaderCharset()
+    public function testHeaderCharset(): void
     {
         $this->message->setHeaderCharset('UTF-8');
         $this->assertSame($this->message->getHeaderCharset(), 'UTF-8');
@@ -1249,10 +1167,8 @@ HTML;
 
     /**
      * Test transferEncoding
-     *
-     * @return void
      */
-    public function testTransferEncoding()
+    public function testTransferEncoding(): void
     {
         // Test new transfer encoding
         $expected = 'quoted-printable';
@@ -1267,7 +1183,7 @@ HTML;
         $this->assertSame($expected, $this->message->getContentTransferEncoding());
 
         //Test wrong encoding
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setTransferEncoding('invalid');
     }
 
@@ -1275,10 +1191,8 @@ HTML;
      * Tests for compatible check.
      *          charset property and       charset() method.
      *    headerCharset property and headerCharset() method.
-     *
-     * @return void
      */
-    public function testCharsetsCompatible()
+    public function testCharsetsCompatible(): void
     {
         $checkHeaders = [
             'from' => true,
@@ -1330,9 +1244,8 @@ HTML;
     /**
      * @param mixed $charset
      * @param mixed $headerCharset
-     * @return \Cake\Mailer\Message
      */
-    protected function _getEmailByOldStyleCharset($charset, $headerCharset)
+    protected function _getEmailByOldStyleCharset($charset, $headerCharset): Message
     {
         $message = new Message(['transport' => 'debug']);
 
@@ -1355,9 +1268,8 @@ HTML;
     /**
      * @param mixed $charset
      * @param mixed $headerCharset
-     * @return \Cake\Mailer\Message
      */
-    protected function _getEmailByNewStyleCharset($charset, $headerCharset)
+    protected function _getEmailByNewStyleCharset($charset, $headerCharset): Message
     {
         $message = new Message();
 
@@ -1379,9 +1291,8 @@ HTML;
 
     /**
      * @param string $message
-     * @return void
      */
-    protected function assertLineLengths($message)
+    protected function assertLineLengths($message): void
     {
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
@@ -1392,7 +1303,7 @@ HTML;
         }
     }
 
-    public function testSerialization()
+    public function testSerialization(): void
     {
         $message = new Message();
 

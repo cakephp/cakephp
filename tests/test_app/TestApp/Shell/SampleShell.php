@@ -31,30 +31,26 @@ class SampleShell extends Shell
 
     /**
      * main method
-     *
-     * @return void
      */
-    public function main()
+    public function main(): void
     {
         $this->out('This is the main method called from SampleShell');
     }
 
     /**
      * derp method
-     *
-     * @return void
      */
-    public function derp()
+    public function derp(): void
     {
         $this->out('This is the example method called from TestPlugin.SampleShell');
     }
 
-    public function withAbort()
+    public function withAbort(): void
     {
         $this->abort('Bad things');
     }
 
-    public function returnValue()
+    public function returnValue(): int
     {
         return 99;
     }

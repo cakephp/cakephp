@@ -20,6 +20,7 @@ use Cake\Database\Type\FloatType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;
+use RuntimeException;
 
 /**
  * Test for the Float type.
@@ -42,44 +43,30 @@ class FloatTypeTest extends TestCase
     protected $numberClass;
 
     /**
-     * @var string
-     */
-    protected $localeString;
-
-    /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->type = new FloatType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->localeString = I18n::getLocale();
         $this->numberClass = FloatType::$numberClass;
-
-        I18n::setLocale($this->localeString);
     }
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
-        I18n::setLocale($this->localeString);
+        I18n::setLocale(I18n::getDefaultLocale());
         FloatType::$numberClass = $this->numberClass;
     }
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -92,10 +79,8 @@ class FloatTypeTest extends TestCase
 
     /**
      * Test converting string float to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -117,10 +102,8 @@ class FloatTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $result = $this->type->toDatabase('', $this->driver);
         $this->assertNull($result);
@@ -143,10 +126,8 @@ class FloatTypeTest extends TestCase
 
     /**
      * Test marshalling
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $result = $this->type->marshal('some data');
         $this->assertNull($result);
@@ -170,10 +151,8 @@ class FloatTypeTest extends TestCase
 
     /**
      * Tests marshalling numbers using the locale aware parser
-     *
-     * @return void
      */
-    public function testMarshalWithLocaleParsing()
+    public function testMarshalWithLocaleParsing(): void
     {
         $this->type->useLocaleParser();
 
@@ -197,22 +176,18 @@ class FloatTypeTest extends TestCase
 
     /**
      * Test that exceptions are raised on invalid parsers.
-     *
-     * @return void
      */
-    public function testUseLocaleParsingInvalid()
+    public function testUseLocaleParsingInvalid(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         FloatType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }

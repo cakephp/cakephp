@@ -53,7 +53,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     protected $_driver;
 
     /**
-     * Whether or not this statement has already been executed
+     * Whether this statement has already been executed
      *
      * @var bool
      */
@@ -76,7 +76,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Magic getter to return $queryString as read-only.
      *
      * @param string $property internal property to get
-     * @return mixed
+     * @return string|null
      */
     public function __get(string $property)
     {
@@ -84,6 +84,8 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
             /** @psalm-suppress NoInterfaceProperties */
             return $this->_statement->queryString;
         }
+
+        return null;
     }
 
     /**
@@ -144,7 +146,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     /**
      * Returns the error code for the last error that occurred when executing this statement.
      *
-     * @return int|string
+     * @return string|int
      */
     public function errorCode()
     {
@@ -282,6 +284,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return \Cake\Database\StatementInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         if (!$this->_hasExecuted) {
@@ -318,10 +321,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
         $anonymousParams = is_int(key($params)) ? true : false;
         $offset = 1;
         foreach ($params as $index => $value) {
-            $type = null;
-            if (isset($types[$index])) {
-                $type = $types[$index];
-            }
+            $type = $types[$index] ?? null;
             if ($anonymousParams) {
                 /** @psalm-suppress InvalidOperand */
                 $index += $offset;

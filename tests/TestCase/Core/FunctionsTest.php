@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * Test cases for functions in Core\functions.php
@@ -28,7 +29,7 @@ class FunctionsTest extends TestCase
     /**
      * Test cases for env()
      */
-    public function testEnv()
+    public function testEnv(): void
     {
         $_ENV['DOES_NOT_EXIST'] = null;
         $this->assertNull(env('DOES_NOT_EXIST'));
@@ -53,16 +54,17 @@ class FunctionsTest extends TestCase
     /**
      * Test cases for h()
      *
-     * @return void
      * @dataProvider hInputProvider
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testH($value, $expected)
+    public function testH($value, $expected): void
     {
         $result = h($value);
         $this->assertSame($expected, $result);
     }
 
-    public function hInputProvider()
+    public function hInputProvider(): array
     {
         return [
             ['i am clean', 'i am clean'],
@@ -70,7 +72,7 @@ class FunctionsTest extends TestCase
             [null, null],
             [1, 1],
             [1.1, 1.1],
-            [new \stdClass(), '(object)stdClass'],
+            [new stdClass(), '(object)stdClass'],
             [new Response(), ''],
             [['clean', '"clean-me'], ['clean', '&quot;clean-me']],
         ];
@@ -79,91 +81,104 @@ class FunctionsTest extends TestCase
     /**
      * Test error messages coming out when deprecated level is on, manually setting the stack frame
      */
-    public function testDeprecationWarningEnabled()
+    public function testDeprecationWarningEnabled(): void
     {
         $this->expectDeprecation();
         $this->expectDeprecationMessageMatches('/This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
 
-        $this->withErrorReporting(E_ALL, function () {
+        $this->withErrorReporting(E_ALL, function (): void {
             deprecationWarning('This is going away', 2);
+        });
+    }
+
+    /**
+     * Test deprecation warnings trigger only once
+     */
+    public function testDeprecationWarningTriggerOnlyOnce(): void
+    {
+        $message = 'Test deprecation warnings trigger only once';
+        try {
+            $this->withErrorReporting(E_ALL, function () use ($message): void {
+                deprecationWarning($message);
+            });
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertStringContainsString($message, $e->getMessage());
+            $this->assertStringContainsString('TestCase.php', $e->getMessage());
+        }
+
+        $this->withErrorReporting(E_ALL, function () use ($message): void {
+            deprecationWarning($message);
         });
     }
 
     /**
      * Test error messages coming out when deprecated level is on, not setting the stack frame manually
      */
-    public function testDeprecationWarningEnabledDefaultFrame()
+    public function testDeprecationWarningEnabledDefaultFrame(): void
     {
         $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectDeprecationMessageMatches('/This is going away too - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
-        $this->withErrorReporting(E_ALL, function () {
-            deprecationWarning('This is going away');
+        $this->withErrorReporting(E_ALL, function (): void {
+            deprecationWarning('This is going away too');
         });
     }
 
     /**
      * Test no error when deprecation matches ignore paths.
-     *
-     * @return void
      */
-    public function testDeprecationWarningPathDisabled()
+    public function testDeprecationWarningPathDisabled(): void
     {
         $this->expectNotToPerformAssertions();
 
         Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
-        $this->withErrorReporting(E_ALL, function () {
-            deprecationWarning('This is going away');
+        $this->withErrorReporting(E_ALL, function (): void {
+            deprecationWarning('This will be gone soon');
         });
     }
 
     /**
      * Test no error when deprecated level is off.
-     *
-     * @return void
      */
-    public function testDeprecationWarningLevelDisabled()
+    public function testDeprecationWarningLevelDisabled(): void
     {
         $this->expectNotToPerformAssertions();
 
-        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () {
-            deprecationWarning('This is going away');
+        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function (): void {
+            deprecationWarning('This is leaving');
         });
     }
 
     /**
      * Test error messages coming out when warning level is on.
      */
-    public function testTriggerWarningEnabled()
+    public function testTriggerWarningEnabled(): void
     {
         $this->expectWarning();
-        $this->expectWarningMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
-        $this->withErrorReporting(E_ALL, function () {
-            triggerWarning('This is going away');
+        $this->withErrorReporting(E_ALL, function (): void {
+            triggerWarning('This will be gone one day');
             $this->assertTrue(true);
         });
     }
 
     /**
      * Test no error when warning level is off.
-     *
-     * @return void
      */
-    public function testTriggerWarningLevelDisabled()
+    public function testTriggerWarningLevelDisabled(): void
     {
-        $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function () {
-            triggerWarning('This is going away');
+        $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {
+            triggerWarning('This was a mistake.');
             $this->assertTrue(true);
         });
     }
 
     /**
      * testing getTypeName()
-     *
-     * @return void
      */
-    public function testgetTypeName()
+    public function testgetTypeName(): void
     {
         $this->assertSame('stdClass', getTypeName(new \stdClass()));
         $this->assertSame('array', getTypeName([]));

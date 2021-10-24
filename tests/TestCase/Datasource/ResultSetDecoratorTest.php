@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
+use ArrayIterator;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\TestSuite\TestCase;
 
@@ -26,48 +27,40 @@ class ResultSetDecoratorTest extends TestCase
 {
     /**
      * Tests the decorator can wrap a simple iterator
-     *
-     * @return void
      */
-    public function testDecorateSimpleIterator()
+    public function testDecorateSimpleIterator(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $this->assertEquals([1, 2, 3], iterator_to_array($decorator));
     }
 
     /**
      * Tests it toArray() method
-     *
-     * @return void
      */
-    public function testToArray()
+    public function testToArray(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $this->assertEquals([1, 2, 3], $decorator->toArray());
     }
 
     /**
      * Tests JSON encoding method
-     *
-     * @return void
      */
-    public function testToJson()
+    public function testToJson(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $this->assertEquals(json_encode([1, 2, 3]), json_encode($decorator));
     }
 
     /**
      * Tests serializing and unserializing the decorator
-     *
-     * @return void
      */
-    public function testSerialization()
+    public function testSerialization(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $serialized = serialize($decorator);
         $this->assertEquals([1, 2, 3], unserialize($serialized)->toArray());
@@ -75,12 +68,10 @@ class ResultSetDecoratorTest extends TestCase
 
     /**
      * Test the first() method which is part of the ResultSet duck type.
-     *
-     * @return void
      */
-    public function testFirst()
+    public function testFirst(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
 
         $this->assertSame(1, $decorator->first());
@@ -89,12 +80,10 @@ class ResultSetDecoratorTest extends TestCase
 
     /**
      * Test the count() method which is part of the ResultSet duck type.
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
 
         $this->assertSame(3, $decorator->count());

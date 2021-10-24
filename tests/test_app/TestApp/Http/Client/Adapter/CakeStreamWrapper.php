@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace TestApp\Http\Client\Adapter;
 
-class CakeStreamWrapper implements \ArrayAccess
+use ArrayAccess;
+use Exception;
+
+class CakeStreamWrapper implements ArrayAccess
 {
     private $_stream;
 
@@ -15,10 +18,10 @@ class CakeStreamWrapper implements \ArrayAccess
         ],
     ];
 
-    public function stream_open($path, $mode, $options, &$openedPath)
+    public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
         if ($path === 'http://throw_exception/') {
-            throw new \Exception();
+            throw new Exception();
         }
 
         $query = parse_url($path, PHP_URL_QUERY);
@@ -33,12 +36,12 @@ class CakeStreamWrapper implements \ArrayAccess
         return true;
     }
 
-    public function stream_close()
+    public function stream_close(): bool
     {
         return fclose($this->_stream);
     }
 
-    public function stream_read($count)
+    public function stream_read(int $count): string
     {
         if (isset($this->_query['sleep'])) {
             sleep(1);
@@ -47,32 +50,45 @@ class CakeStreamWrapper implements \ArrayAccess
         return fread($this->_stream, $count);
     }
 
-    public function stream_eof()
+    public function stream_eof(): bool
     {
         return feof($this->_stream);
     }
 
-    public function stream_set_option($option, $arg1, $arg2)
+    public function stream_set_option(int $option, int $arg1, int $arg2): bool
     {
         return false;
     }
 
-    public function offsetExists($offset)
+    /**
+     * @inheritDoc
+     */
+    public function offsetExists($offset): bool
     {
         return isset($this->_data[$offset]);
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->_data[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    /**
+     * @inheritDoc
+     */
+    public function offsetSet($offset, $value): void
     {
         $this->_data[$offset] = $value;
     }
 
-    public function offsetUnset($offset)
+    /**
+     * @inheritDoc
+     */
+    public function offsetUnset($offset): void
     {
         unset($this->_data[$offset]);
     }

@@ -26,7 +26,7 @@ interface WidgetInterface
     /**
      * Converts the $data into one or many HTML elements.
      *
-     * @param array $data The data to render.
+     * @param array<string, mixed> $data The data to render.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string Generated HTML for the widget element.
      */
@@ -35,8 +35,8 @@ interface WidgetInterface
     /**
      * Returns a list of fields that need to be secured for this widget.
      *
-     * @param array $data The data to render.
-     * @return string[] Array of fields to secure.
+     * @param array<string, mixed> $data The data to render.
+     * @return array<string> Array of fields to secure.
      */
     public function secureFields(array $data): array;
 }

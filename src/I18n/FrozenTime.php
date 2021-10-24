@@ -25,7 +25,7 @@ use IntlDateFormatter;
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
  *
- * This object provides an immutable variant of Cake\I18n\Time
+ * This object provides an immutable variant of {@link \Cake\I18n\Time}
  */
 class FrozenTime extends Chronos implements I18nDateTimeInterface
 {
@@ -43,7 +43,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\FrozenTime::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
@@ -59,7 +59,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]|\Closure
+     * @var \Closure|array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
@@ -75,7 +75,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\FrozenTime::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
@@ -84,7 +84,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * The format to use when formatting a time using `Cake\I18n\FrozenTime::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\FrozenTime::$wordEnd`
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\FrozenTime::timeAgoInWords()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
@@ -93,7 +93,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * The format to use when formatting a time using `Time::timeAgoInWords()`
      * and the difference is less than `Time::$wordEnd`
      *
-     * @var string[]
+     * @var array<string>
      * @see \Cake\I18n\FrozenTime::timeAgoInWords()
      */
     public static $wordAccuracy = [
@@ -124,7 +124,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
     /**
      * Create a new immutable time instance.
      *
-     * @param string|int|\DateTimeInterface|null $time Fixed or relative time
+     * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
     public function __construct($time = null, $tz = null)
@@ -175,7 +175,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      *
      * NOTE: If the difference is one week or more, the lowest level of accuracy is day
      *
-     * @param array $options Array of options.
+     * @param array<string, mixed> $options Array of options.
      * @return string Relative time string.
      */
     public function timeAgoInWords(array $options = []): string
@@ -187,11 +187,11 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
     /**
      * Get list of timezone identifiers
      *
-     * @param int|string|null $filter A regex to filter identifier
+     * @param string|int|null $filter A regex to filter identifier
      *   Or one of DateTimeZone class constants
      * @param string|null $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
-     * @param bool|array $options If true (default value) groups the identifiers list by primary region.
+     * @param array|bool $options If true (default value) groups the identifiers list by primary region.
      *   Otherwise, an array containing `group`, `abbr`, `before`, and `after`
      *   keys. Setting `group` and `abbr` to true will group results and append
      *   timezone abbreviation in the display value. Set `before` and `after`

@@ -54,7 +54,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_config = [
         'key' => 'csrfToken',
@@ -62,7 +62,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     ];
 
     /**
-     * Callback for deciding whether or not to skip the token check for particular request.
+     * Callback for deciding whether to skip the token check for particular request.
      *
      * CSRF protection token check will be skipped if the callback returns `true`.
      *
@@ -78,7 +78,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param array $config Config options. See $_config for valid keys.
+     * @param array<string, mixed> $config Config options. See $_config for valid keys.
      */
     public function __construct(array $config = [])
     {

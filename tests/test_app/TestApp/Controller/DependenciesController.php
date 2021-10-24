@@ -27,36 +27,75 @@ class DependenciesController extends Controller
         $this->inject = $inject;
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function requiredString(string $str)
     {
         return $this->response->withStringBody(json_encode(compact('str')));
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function optionalString(string $str = 'default val')
     {
         return $this->response->withStringBody(json_encode(compact('str')));
     }
 
+    public function requiredTyped(float $one, int $two, bool $three)
+    {
+        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+    }
+
+    public function optionalTyped(float $one = 1.0, int $two = 2, bool $three = true)
+    {
+        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+    }
+
+    public function unsupportedTyped(array $one)
+    {
+        return $this->response->withStringBody(json_encode(compact('one')));
+    }
+
+    /**
+     * @param mixed $any
+     * @return \Cake\Http\Response
+     */
     public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }
 
+    /**
+     * @param mixed $any
+     * @return \Cake\Http\Response
+     */
     public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function variadic()
     {
         return $this->response->withStringBody(json_encode(['args' => func_get_args()]));
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function spread(string ...$args)
     {
         return $this->response->withStringBody(json_encode(['args' => $args]));
     }
 
+    /**
+     * @param mixed $one
+     * @return \Cake\Http\Response
+     */
     public function requiredParam($one)
     {
         return $this->response->withStringBody(json_encode(compact('one')));

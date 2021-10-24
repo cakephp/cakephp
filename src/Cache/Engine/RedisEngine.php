@@ -51,7 +51,7 @@ class RedisEngine extends CacheEngine
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'database' => 0,
@@ -72,7 +72,7 @@ class RedisEngine extends CacheEngine
      *
      * Called automatically by the cache frontend
      *
-     * @param array $config array of setting for the engine
+     * @param array<string, mixed> $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
     public function init(array $config = []): bool
@@ -283,7 +283,7 @@ class RedisEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function groups(): array
     {

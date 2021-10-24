@@ -128,7 +128,7 @@ trait SqlDialectTrait
      * and values a method in this class.
      *
      * @psalm-return array<class-string, string>
-     * @return string[]
+     * @return array<string>
      */
     protected function _expressionTranslators(): array
     {

@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use DateTime;
@@ -29,7 +28,7 @@ class TableComplexIdTest extends TestCase
     /**
      * Fixtures
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.DateKeys',
@@ -37,20 +36,15 @@ class TableComplexIdTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->connection = ConnectionManager::get('test');
         static::setAppNamespace();
     }
 
     /**
      * teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -60,10 +54,8 @@ class TableComplexIdTest extends TestCase
 
     /**
      * Test saving new records sets uuids
-     *
-     * @return void
      */
-    public function testSaveNew()
+    public function testSaveNew(): void
     {
         $now = new DateTime('now');
         $entity = new Entity([
@@ -80,10 +72,8 @@ class TableComplexIdTest extends TestCase
 
     /**
      * Test saving existing records works
-     *
-     * @return void
      */
-    public function testSaveUpdate()
+    public function testSaveUpdate(): void
     {
         $id = new DateTime('now');
         $entity = new Entity([
@@ -102,10 +92,8 @@ class TableComplexIdTest extends TestCase
 
     /**
      * Test delete with string pk.
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $table = $this->getTableLocator()->get('DateKeys');
         $entity = new Entity([

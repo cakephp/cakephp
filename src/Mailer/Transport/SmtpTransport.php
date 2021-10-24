@@ -21,6 +21,7 @@ use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
+use RuntimeException;
 
 /**
  * Send mail using SMTP protocol
@@ -30,7 +31,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'host' => 'localhost',
@@ -114,7 +115,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function connected(): bool
     {
-        return $this->_socket !== null && $this->_socket->connected;
+        return $this->_socket !== null && $this->_socket->isConnected();
     }
 
     /**
@@ -196,7 +197,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Parses and stores the response lines in `'code' => 'message'` format.
      *
-     * @param string[] $responseLines Response lines to parse.
+     * @param array<string> $responseLines Response lines to parse.
      * @return void
      */
     protected function _bufferResponseLines(array $responseLines): void
@@ -231,6 +232,9 @@ class SmtpTransport extends AbstractTransport
 
         $host = 'localhost';
         if (isset($config['client'])) {
+            if (empty($config['client'])) {
+                throw new SocketException('Cannot use an empty client name.');
+            }
             $host = $config['client'];
         } else {
             /** @var string $httpHost */
@@ -536,7 +540,7 @@ class SmtpTransport extends AbstractTransport
     protected function _socket(): Socket
     {
         if ($this->_socket === null) {
-            throw new \RuntimeException('Socket is null, but must be set.');
+            throw new RuntimeException('Socket is null, but must be set.');
         }
 
         return $this->_socket;

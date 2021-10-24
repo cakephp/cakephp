@@ -35,8 +35,6 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -52,8 +50,6 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -66,10 +62,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * testExecute method
-     *
-     * @return void
      */
-    public function testExecute()
+    public function testExecute(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -84,38 +78,39 @@ class I18nExtractCommandTest extends TestCase
 
         $this->assertFileDoesNotExist($this->path . DS . 'cake.pot');
 
-        // extract.ctp
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
-        $pattern .= '\#: [\/\\\\]extract\.php:\d+\n';
-        $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
+        // The additional "./tests/test_app" is just due to the wonky folder structure of the test app.
+        // In a regular app the path would start with "./templates".
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
+        $pattern .= '\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
+        $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
         $pattern = '/msgid "You have %d new message."\nmsgstr ""/';
         $this->assertDoesNotMatchRegularExpression($pattern, $result, 'No duplicate msgid');
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
-        $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
+        $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\nmsgid "';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\nmsgid "';
         $pattern .= 'Hot features!';
         $pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
         $pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
         $pattern .= '\\\n - Active, Friendly Community: Join us #cakephp on IRC. We\'d love to help you get started';
-        $pattern .= '"\nmsgstr ""/';
+        $pattern .= '"\nmsgstr ""@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
         $this->assertStringContainsString('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
         $this->assertStringContainsString("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
         $pattern .= 'msgctxt "mail"\n';
-        $pattern .= 'msgid "letter"/';
+        $pattern .= 'msgid "letter"@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
         $pattern .= 'msgctxt "alphabet"\n';
-        $pattern .= 'msgid "letter"/';
+        $pattern .= 'msgid "letter"@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
         // extract.php - reading the domain.pot
@@ -134,10 +129,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * testExecute with no paths
-     *
-     * @return void
      */
-    public function testExecuteNoPathOption()
+    public function testExecuteNoPathOption(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -155,10 +148,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * testExecute with merging on method
-     *
-     * @return void
      */
-    public function testExecuteMerge()
+    public function testExecuteMerge(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -175,10 +166,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * test exclusions
-     *
-     * @return void
      */
-    public function testExtractWithExclude()
+    public function testExtractWithExclude(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -200,10 +189,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * testExtractWithoutLocations method
-     *
-     * @return void
      */
-    public function testExtractWithoutLocations()
+    public function testExtractWithoutLocations(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -224,10 +211,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * test extract can read more than one path.
-     *
-     * @return void
      */
-    public function testExtractMultiplePaths()
+    public function testExtractMultiplePaths(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -246,10 +231,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * Tests that it is possible to exclude plugin paths by enabling the param option for the ExtractTask
-     *
-     * @return void
      */
-    public function testExtractExcludePlugins()
+    public function testExtractExcludePlugins(): void
     {
         static::setAppNamespace();
         $this->exec(
@@ -267,10 +250,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * Test that is possible to extract messages from a single plugin
-     *
-     * @return void
      */
-    public function testExtractPlugin()
+    public function testExtractPlugin(): void
     {
         Configure::write('Plugins.autoload', ['TestPlugin']);
 
@@ -290,10 +271,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * Test that is possible to extract messages from a vendored plugin.
-     *
-     * @return void
      */
-    public function testExtractVendoredPlugin()
+    public function testExtractVendoredPlugin(): void
     {
         $this->loadPlugins(['Company/TestPluginThree']);
 
@@ -313,10 +292,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * Test that the extract shell overwrites existing files with the overwrite parameter
-     *
-     * @return void
      */
-    public function testExtractOverwrite()
+    public function testExtractOverwrite(): void
     {
         file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -337,10 +314,8 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      *  Test that the extract shell scans the core libs
-     *
-     * @return void
      */
-    public function testExtractCore()
+    public function testExtractCore(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -365,7 +340,7 @@ class I18nExtractCommandTest extends TestCase
      * When marker-error is unset, it's already test
      * with other functions like testExecute that not detects error because err never called
      */
-    public function testMarkerErrorSets()
+    public function testMarkerErrorSets(): void
     {
         $this->exec(
             'i18n extract ' .
@@ -382,14 +357,11 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * test relative-paths option
-     *
-     * @return void
      */
-    public function testExtractWithRelativePaths()
+    public function testExtractWithRelativePaths(): void
     {
         $this->exec(
             'i18n extract ' .
-            '--relative-paths ' .
             '--extract-core=no ' .
             '--paths=' . TEST_APP . 'templates ' .
             '--output=' . $this->path . DS

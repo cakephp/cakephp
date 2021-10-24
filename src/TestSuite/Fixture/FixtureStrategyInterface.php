@@ -11,18 +11,28 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.6.0
+ * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestApp\Form;
+namespace Cake\TestSuite\Fixture;
 
-use Cake\Form\Form;
-
-class ValidateForm extends Form
+/**
+ * Base interface for strategies used to manage fixtures for TestCase.
+ */
+interface FixtureStrategyInterface
 {
-    protected function _buildValidator(\Cake\Validation\Validator $validator)
-    {
-        return $validator
-            ->requirePresence('title');
-    }
+    /**
+     * Called before each test run in each TestCase.
+     *
+     * @param array<string> $fixtureNames Name of fixtures used by test.
+     * @return void
+     */
+    public function setupTest(array $fixtureNames): void;
+
+    /**
+     * Called after each test run in each TestCase.
+     *
+     * @return void
+     */
+    public function teardownTest(): void;
 }

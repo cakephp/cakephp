@@ -46,7 +46,7 @@ class ValidCount
      * Performs the count check
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields.
-     * @param array $options Options passed to the check.
+     * @param array<string, mixed> $options Options passed to the check.
      * @return bool True if successful, else false.
      */
     public function __invoke(EntityInterface $entity, array $options): bool

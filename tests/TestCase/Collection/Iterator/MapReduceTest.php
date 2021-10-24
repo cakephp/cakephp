@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\TestSuite\TestCase;
+use LogicException;
 
 /**
  * Tests MapReduce class
@@ -27,23 +28,21 @@ class MapReduceTest extends TestCase
     /**
      * Tests the creation of an inversed index of words to documents using
      * MapReduce
-     *
-     * @return void
      */
-    public function testInvertedIndexCreation()
+    public function testInvertedIndexCreation(): void
     {
         $data = [
             'document_1' => 'Dogs are the most amazing animal in history',
             'document_2' => 'History is not only amazing but boring',
             'document_3' => 'One thing that is not boring is dogs',
         ];
-        $mapper = function ($row, $document, $mr) {
+        $mapper = function ($row, $document, $mr): void {
             $words = array_map('strtolower', explode(' ', $row));
             foreach ($words as $word) {
                 $mr->emitIntermediate($document, $word);
             }
         };
-        $reducer = function ($documents, $word, $mr) {
+        $reducer = function ($documents, $word, $mr): void {
             $mr->emit(array_unique($documents), $word);
         };
         $results = new MapReduce(new ArrayIterator($data), $mapper, $reducer);
@@ -70,13 +69,11 @@ class MapReduceTest extends TestCase
 
     /**
      * Tests that it is possible to use the emit function directly in the mapper
-     *
-     * @return void
      */
-    public function testEmitFinalInMapper()
+    public function testEmitFinalInMapper(): void
     {
         $data = ['a' => ['one', 'two'], 'b' => ['three', 'four']];
-        $mapper = function ($row, $key, $mr) {
+        $mapper = function ($row, $key, $mr): void {
             foreach ($row as $number) {
                 $mr->emit($number);
             }
@@ -88,14 +85,12 @@ class MapReduceTest extends TestCase
 
     /**
      * Tests that a reducer is required when there are intermediate results
-     *
-     * @return void
      */
-    public function testReducerRequired()
+    public function testReducerRequired(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $data = ['a' => ['one', 'two'], 'b' => ['three', 'four']];
-        $mapper = function ($row, $key, $mr) {
+        $mapper = function ($row, $key, $mr): void {
             foreach ($row as $number) {
                 $mr->emitIntermediate('a', $number);
             }

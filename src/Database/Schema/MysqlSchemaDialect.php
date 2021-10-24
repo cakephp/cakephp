@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\DriverInterface;
 use Cake\Database\Exception\DatabaseException;
 
 /**
@@ -81,7 +82,7 @@ class MysqlSchemaDialect extends SchemaDialect
      * The returned type will be a type that Cake\Database\TypeFactory can handle.
      *
      * @param string $column The column type + length
-     * @return array Array of column information.
+     * @return array<string, mixed> Array of column information.
      * @throws \Cake\Database\Exception\DatabaseException When column type cannot be parsed.
      */
     protected function _convertColumn(string $column): array
@@ -92,7 +93,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[1]);
-        $length = $precision = null;
+        $length = $precision = $scale = null;
         if (isset($matches[2]) && strlen($matches[2])) {
             $length = $matches[2];
             if (strpos($matches[2], ',') !== false) {
@@ -100,6 +101,14 @@ class MysqlSchemaDialect extends SchemaDialect
             }
             $length = (int)$length;
             $precision = (int)$precision;
+        }
+
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
+        if ($type !== null) {
+            return $type;
         }
 
         if (in_array($col, ['date', 'time'])) {
@@ -323,8 +332,14 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $out = $this->_driver->quoteIdentifier($name);
-        $nativeJson = $this->_driver->supportsNativeJson();
+        $nativeJson = $this->_driver->supports(DriverInterface::FEATURE_JSON);
 
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' TINYINT',

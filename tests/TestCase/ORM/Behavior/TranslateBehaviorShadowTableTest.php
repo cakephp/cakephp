@@ -52,8 +52,6 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * setUpBeforeClass
-     *
-     * @return void
      */
     public static function setUpBeforeClass(): void
     {
@@ -64,8 +62,6 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * tearDownAfterClass
-     *
-     * @return void
      */
     public static function tearDownAfterClass(): void
     {
@@ -79,10 +75,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * The hasOneAlias is used for the has-one translation, the translationTable is used
      * with findTranslations
-     *
-     * @return void
      */
-    public function testDefaultAliases()
+    public function testDefaultAliases(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->getTable();
@@ -107,10 +101,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Check things are setup correctly by default for plugin models
-     *
-     * @return void
      */
-    public function testDefaultPluginAliases()
+    public function testDefaultPluginAliases(): void
     {
         $table = $this->getTableLocator()->get('SomeRandomPlugin.Articles');
 
@@ -151,7 +143,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * which is used to determine the the translation table/association name only in the
      * shadow translate behavior
      */
-    public function testAutoReferenceName()
+    public function testAutoReferenceName(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->getTable();
@@ -179,10 +171,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * The parent test is EAV specific. Test that the config reflects the referenceName -
      * which is used to determine the the translation table/association name only in the
      * shadow translate behavior
-     *
-     * @return void
      */
-    public function testChangingReferenceName()
+    public function testChangingReferenceName(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->getTable();
@@ -211,10 +201,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * Allow usage without specifying fields explicitly
      *
      * Fields are only detected when necessary, one of those times is a fine with fields.
-     *
-     * @return void
      */
-    public function testAutoFieldDetection()
+    public function testAutoFieldDetection(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -233,10 +221,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * testTranslationTableConfig
-     *
-     * @return void
      */
-    public function testTranslationTableConfig()
+    public function testTranslationTableConfig(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -255,10 +241,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * By inspecting the sql generated, verify that if there is a need for the translation
      * table to be included in the query it is present, and when there is no clear need -
      * that it is not.
-     *
-     * @return void
      */
-    public function testNoUnnecessaryJoins()
+    public function testNoUnnecessaryJoins(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -289,10 +273,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Join when translations are necessary
-     *
-     * @return void
      */
-    public function testNecessaryJoinsSelect()
+    public function testNecessaryJoinsSelect(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -322,10 +304,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Join when translations are necessary
-     *
-     * @return void
      */
-    public function testNecessaryJoinsWhere()
+    public function testNecessaryJoinsWhere(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -340,11 +320,41 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     }
 
     /**
-     * testTraversingWhereClauseWithNonStringField
-     *
-     * @return void
+     * Join when translations are necessary
      */
-    public function testTraversingWhereClauseWithNonStringField()
+    public function testNecessaryJoinsConfig(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+
+        $table->addBehavior('Translate', [
+            'onlyTranslated' => true,
+        ]);
+        $table->setLocale('eng');
+
+        $query = $table->find()->select(['id'])->disableAutoFields();
+        $this->assertStringContainsString(
+            'articles_translations',
+            $query->sql(),
+            'Enabling `onlyTranslated` should join the translations table'
+        );
+
+        $table
+            ->removeBehavior('Translate')
+            ->addBehavior('Translate');
+        $table->setLocale('eng');
+
+        $query = $table->find('all', ['filterByCurrentLocale' => true])->select(['id'])->disableAutoFields();
+        $this->assertStringContainsString(
+            'articles_translations',
+            $query->sql(),
+            'Enabling `filterByCurrentLocale` should join the translations table'
+        );
+    }
+
+    /**
+     * testTraversingWhereClauseWithNonStringField
+     */
+    public function testTraversingWhereClauseWithNonStringField(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -363,10 +373,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Join when translations are necessary
-     *
-     * @return void
      */
-    public function testNecessaryJoinsOrder()
+    public function testNecessaryJoinsOrder(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -393,10 +401,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * Different locales are used on each table object just to make any resulting
      * confusion easier to identify as neither the original or translated values
      * overlap between the two records.
-     *
-     * @return void
      */
-    public function testSelfJoin()
+    public function testSelfJoin(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -436,10 +442,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Verify it is not necessary for a translated field to exist in the master table
-     *
-     * @return void
      */
-    public function testVirtualTranslationField()
+    public function testVirtualTranslationField(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', [
@@ -448,7 +452,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         ]);
 
         $table->setLocale('eng');
-        $results = $table->find()->combine('title', 'subtitle', 'id')->toArray();
+        $results = $table->find()->all()->combine('title', 'subtitle', 'id')->toArray();
         $expected = [
             1 => ['Title #1' => 'SubTitle #1'],
             2 => ['Title #2' => 'SubTitle #2'],
@@ -459,10 +463,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests that after deleting a translated entity, all translations are also removed
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -477,10 +479,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * testNoAmbiguousFields
-     *
-     * @return void
      */
-    public function testNoAmbiguousFields()
+    public function testNoAmbiguousFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -501,10 +501,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * testNoAmbiguousConditions
-     *
-     * @return void
      */
-    public function testNoAmbiguousConditions()
+    public function testNoAmbiguousConditions(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -525,10 +523,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * testNoAmbiguousOrder
-     *
-     * @return void
      */
-    public function testNoAmbiguousOrder()
+    public function testNoAmbiguousOrder(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -552,10 +548,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * If results are unhydrated, it should still work
-     *
-     * @return void
      */
-    public function testUnhydratedResults()
+    public function testUnhydratedResults(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -569,10 +563,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * A find containing another association should act the same whether translated or not
-     *
-     * @return void
      */
-    public function testFindWithAssociations()
+    public function testFindWithAssociations(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -604,10 +596,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Test that when finding BTM associations, the contained BTM data is also translated.
-     *
-     * @return void
      */
-    public function testFindWithBTMAssociations()
+    public function testFindWithBTMAssociations(): void
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Tags = $this->getTableLocator()->get('Tags');
@@ -671,20 +661,16 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * that's incompatible with the shadow-translate behavior, since the schema
      * dictates what fields to expect to be translated and doesn't permit any EAV
      * style translations
-     *
-     * @return void
      */
-    public function testFindTranslations()
+    public function testFindTranslations(): void
     {
         $this->assertTrue(true, 'Skipped');
     }
 
     /**
      * By default empty translations should be honored
-     *
-     * @return void
      */
-    public function testEmptyTranslationsDefaultBehavior()
+    public function testEmptyTranslationsDefaultBehavior(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
@@ -698,10 +684,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests that allowEmptyTranslations takes effect
-     *
-     * @return void
      */
-    public function testEmptyTranslations()
+    public function testEmptyTranslations(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', [
@@ -717,10 +701,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests using FunctionExpression
-     *
-     * @return void
      */
-    public function testUsingFunctionExpression()
+    public function testUsingFunctionExpression(): void
     {
         $this->skipIf(
             ConnectionManager::get('test')->getDriver() instanceof Postgres,
@@ -761,10 +743,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * With a standard baked model the accessible property is defined, that'll mean that
      * Setting fields such as id and locale will fail by default due to mass-assignment
      * protection. An exception is thrown if that happens
-     *
-     * @return void
      */
-    public function testSaveWithAccessibleFalse()
+    public function testSaveWithAccessibleFalse(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->setEntityClass(TranslateBakedArticle::class);
@@ -778,10 +758,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests translationField method for translated fields.
-     *
-     * @return void
      */
-    public function testTranslationFieldForTranslatedFields()
+    public function testTranslationFieldForTranslatedFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', [
@@ -831,10 +809,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * Had to override this method because the core method has a wacky check
      * for "description" field which doesn't even exist in ArticleFixture.
-     *
-     * @return void
      */
-    public function testSaveExistingRecordWithTranslatesField()
+    public function testSaveExistingRecordWithTranslatesField(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
@@ -872,15 +848,13 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Test save new entity with _translations field
-     *
-     * @return void
      */
-    public function testSaveNewRecordWithTranslatesField()
+    public function testSaveNewRecordWithTranslatesField(): void
     {
         $table = $this->getTableLocator()->get('Articles');
+        $table->getValidator()->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass(TranslateArticle::class);
 
@@ -923,10 +897,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests adding new translation to a record
-     *
-     * @return void
      */
-    public function testAllowEmptyFalse()
+    public function testAllowEmptyFalse(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title'], 'allowEmptyTranslations' => false]);
@@ -953,10 +925,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests adding new translation to a record with a missing translation
-     *
-     * @return void
      */
-    public function testAllowEmptyFalseWithNull()
+    public function testAllowEmptyFalseWithNull(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'description'], 'allowEmptyTranslations' => false]);
@@ -983,10 +953,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests adding new translation to a record
-     *
-     * @return void
      */
-    public function testMixedAllowEmptyFalse()
+    public function testMixedAllowEmptyFalse(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body'], 'allowEmptyTranslations' => false]);
@@ -1016,10 +984,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Tests adding new translation to a record
-     *
-     * @return void
      */
-    public function testMultipleAllowEmptyFalse()
+    public function testMultipleAllowEmptyFalse(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body'], 'allowEmptyTranslations' => false]);
@@ -1061,10 +1027,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
     /**
      * Test buildMarshalMap() builds new entities.
-     *
-     * @return void
      */
-    public function testBuildMarshalMapBuildEntities()
+    public function testBuildMarshalMapBuildEntities(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         // Unlike test case of core Translate behavior "fields" is not set to
@@ -1097,9 +1061,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      * Used in the config tests to verify that a simple find still works
      *
      * @param string $tableAlias
-     * @return void
      */
-    protected function _testFind($tableAlias = 'Articles')
+    protected function _testFind($tableAlias = 'Articles'): void
     {
         $table = $this->getTableLocator()->get($tableAlias);
         $table->setLocale('eng');

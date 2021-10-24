@@ -101,8 +101,7 @@ class AuthTestController extends Controller
     /**
      * redirect method
      *
-     * @param string|array $url
-     * @param int $status
+     * @param array|string $url
      * @return \Cake\Http\Response|null
      */
     public function redirect($url, int $status = 302): ?Response
@@ -115,9 +114,10 @@ class AuthTestController extends Controller
     /**
      * isAuthorized method
      *
+     * @param \ArrayAccess|array $user User
      * @return void
      */
-    public function isAuthorized()
+    public function isAuthorized($user)
     {
     }
 }

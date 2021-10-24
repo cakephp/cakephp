@@ -36,7 +36,7 @@ class TransportFactory
     /**
      * An array mapping url schemes to fully qualified Transport class names
      *
-     * @var string[]
+     * @var array<string, string>
      * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [

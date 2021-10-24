@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Cache\Cache;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -32,7 +33,7 @@ class CollectionTest extends TestCase
     protected $connection;
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Users',
@@ -40,8 +41,6 @@ class CollectionTest extends TestCase
 
     /**
      * Setup function
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -53,13 +52,11 @@ class CollectionTest extends TestCase
 
     /**
      * Teardown function
-     *
-     * @return void
      */
     public function tearDown(): void
     {
-        parent::tearDown();
         $this->connection->cacheMetadata(false);
+        parent::tearDown();
         unset($this->connection);
     }
 
@@ -68,22 +65,18 @@ class CollectionTest extends TestCase
      *
      * Tests for positive describe() calls are in each platformSchema
      * test case.
-     *
-     * @return void
      */
-    public function testDescribeIncorrectTable()
+    public function testDescribeIncorrectTable(): void
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $schema = new Collection($this->connection);
         $this->assertNull($schema->describe('derp'));
     }
 
     /**
      * Tests that schema metadata is cached
-     *
-     * @return void
      */
-    public function testDescribeCache()
+    public function testDescribeCache(): void
     {
         $this->connection->cacheMetadata('_cake_model_');
         $schema = $this->connection->getSchemaCollection();

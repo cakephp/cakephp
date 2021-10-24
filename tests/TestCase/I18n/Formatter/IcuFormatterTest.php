@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\I18n\Formatter;
 
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\TestSuite\TestCase;
+use Exception;
 
 /**
  * IcuFormatter tests
@@ -26,10 +27,8 @@ class IcuFormatterTest extends TestCase
 {
     /**
      * Tests that empty values can be used as formatting strings
-     *
-     * @return void
      */
-    public function testFormatEmptyValues()
+    public function testFormatEmptyValues(): void
     {
         $formatter = new IcuFormatter();
         $this->assertSame('', $formatter->format('en_US', '', []));
@@ -37,10 +36,8 @@ class IcuFormatterTest extends TestCase
 
     /**
      * Tests that variables are interpolated correctly
-     *
-     * @return void
      */
-    public function testFormatSimple()
+    public function testFormatSimple(): void
     {
         $formatter = new IcuFormatter();
         $this->assertSame('Hello José', $formatter->format('en_US', 'Hello {0}', ['José']));
@@ -54,10 +51,8 @@ class IcuFormatterTest extends TestCase
 
     /**
      * Tests that plurals can instead be selected using ICU's native selector
-     *
-     * @return void
      */
-    public function testNativePluralSelection()
+    public function testNativePluralSelection(): void
     {
         $formatter = new IcuFormatter();
         $locale = 'en_US';
@@ -85,12 +80,10 @@ class IcuFormatterTest extends TestCase
 
     /**
      * Tests that passing a message in the wrong format will throw an exception
-     *
-     * @return void
      */
-    public function testBadMessageFormat()
+    public function testBadMessageFormat(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
 
         $formatter = new IcuFormatter();
         $formatter->format('en_US', '{crazy format', ['some', 'vars']);

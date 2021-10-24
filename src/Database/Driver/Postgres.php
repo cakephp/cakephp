@@ -42,7 +42,7 @@ class Postgres extends Driver
     /**
      * Base configuration settings for Postgres driver
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_baseConfig = [
         'persistent' => true,
@@ -78,11 +78,6 @@ class Postgres extends Driver
      * @var string
      */
     protected $_endQuote = '"';
-
-    /**
-     * @inheritDoc
-     */
-    protected $supportsCTEs = true;
 
     /**
      * Establishes a connection to the database server
@@ -188,6 +183,25 @@ class Postgres extends Driver
     public function enableForeignKeySQL(): string
     {
         return 'SET CONSTRAINTS ALL IMMEDIATE';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_CTE:
+            case static::FEATURE_JSON:
+            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
+            case static::FEATURE_WINDOW:
+                return true;
+
+            case static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION:
+                return false;
+        }
+
+        return parent::supports($feature);
     }
 
     /**

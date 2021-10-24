@@ -26,8 +26,6 @@ class TestEmailTransportTest extends TestCase
 {
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -57,8 +55,6 @@ class TestEmailTransportTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -72,10 +68,8 @@ class TestEmailTransportTest extends TestCase
 
     /**
      * tests replaceAllTransports
-     *
-     * @return void
      */
-    public function testReplaceAllTransports()
+    public function testReplaceAllTransports(): void
     {
         TestEmailTransport::replaceAllTransports();
 
@@ -88,10 +82,8 @@ class TestEmailTransportTest extends TestCase
 
     /**
      * tests sending an email through the transport, getting it, and clearing all emails
-     *
-     * @return void
      */
-    public function testSendGetAndClear()
+    public function testSendGetAndClear(): void
     {
         TestEmailTransport::replaceAllTransports();
 

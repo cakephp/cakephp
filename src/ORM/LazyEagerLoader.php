@@ -36,11 +36,11 @@ class LazyEagerLoader
      *
      * The properties for the associations to be loaded will be overwritten on each entity.
      *
-     * @param \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[] $entities a single entity or list of entities
+     * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
      * @see \Cake\ORM\Query::contain()
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
-     * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]
+     * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>
      */
     public function loadInto($entities, array $contain, Table $source)
     {
@@ -116,8 +116,8 @@ class LazyEagerLoader
      * in the top level entities.
      *
      * @param \Cake\ORM\Table $source The table having the top level associations
-     * @param string[] $associations The name of the top level associations
-     * @return string[]
+     * @param array<string> $associations The name of the top level associations
+     * @return array<string>
      */
     protected function _getPropertyMap(Table $source, array $associations): array
     {
@@ -135,9 +135,9 @@ class LazyEagerLoader
      * Injects the results of the eager loader query into the original list of
      * entities.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Traversable $objects The original list of entities
-     * @param \Cake\Collection\CollectionInterface|\Cake\ORM\Query $results The loaded results
-     * @param string[] $associations The top level associations that were loaded
+     * @param \Traversable|array<\Cake\Datasource\EntityInterface> $objects The original list of entities
+     * @param \Cake\ORM\Query $results The loaded results
+     * @param array<string> $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array
      */
@@ -147,6 +147,7 @@ class LazyEagerLoader
         $properties = $this->_getPropertyMap($source, $associations);
         $primaryKey = (array)$source->getPrimaryKey();
         $results = $results
+            ->all()
             ->indexBy(function ($e) use ($primaryKey) {
                 /** @var \Cake\Datasource\EntityInterface $e */
                 return implode(';', $e->extract($primaryKey));

@@ -41,7 +41,7 @@ class NoChildrenIterator extends Collection implements RecursiveIterator
      *
      * @return \RecursiveIterator
      */
-    public function getChildren()
+    public function getChildren(): RecursiveIterator
     {
         return new static([]);
     }

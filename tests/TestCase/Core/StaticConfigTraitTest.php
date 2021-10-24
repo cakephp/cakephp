@@ -34,8 +34,6 @@ class StaticConfigTraitTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -45,8 +43,6 @@ class StaticConfigTraitTest extends TestCase
 
     /**
      * teardown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -56,10 +52,8 @@ class StaticConfigTraitTest extends TestCase
 
     /**
      * Tests simple usage of parseDsn
-     *
-     * @return void
      */
-    public function testSimpleParseDsn()
+    public function testSimpleParseDsn(): void
     {
         $className = get_class($this->subject);
         $this->assertSame([], $className::parseDsn(''));
@@ -67,20 +61,15 @@ class StaticConfigTraitTest extends TestCase
 
     /**
      * Tests that failing to pass a string to parseDsn will throw an exception
-     *
-     * @return void
      */
-    public function testParseBadType()
+    public function testParseBadType(): void
     {
         $this->expectException(TypeError::class);
         $className = get_class($this->subject);
         $className::parseDsn(['url' => 'http://:80']);
     }
 
-    /**
-     * @return void
-     */
-    public function testGetConfigOrFail()
+    public function testGetConfigOrFail(): void
     {
         $className = get_class($this->subject);
         $className::setConfig('foo', 'bar');
@@ -89,10 +78,7 @@ class StaticConfigTraitTest extends TestCase
         $this->assertSame('bar', $result);
     }
 
-    /**
-     * @return void
-     */
-    public function testGetConfigOrFailException()
+    public function testGetConfigOrFailException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected configuration `foo` not found.');
@@ -104,10 +90,8 @@ class StaticConfigTraitTest extends TestCase
 
     /**
      * Tests parsing querystring values
-     *
-     * @return void
      */
-    public function testParseDsnQuerystring()
+    public function testParseDsnQuerystring(): void
     {
         $dsn = 'file:///?url=test';
         $expected = [
@@ -196,10 +180,8 @@ class StaticConfigTraitTest extends TestCase
 
     /**
      * Tests loading a single plugin
-     *
-     * @return void
      */
-    public function testParseDsnPathSetting()
+    public function testParseDsnPathSetting(): void
     {
         $dsn = 'file:///?path=/tmp/persistent/';
         $expected = [

@@ -46,7 +46,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Map of loaded objects.
      *
-     * @var object[]
+     * @var array<object>
      * @psalm-var array<array-key, TObject>
      */
     protected $_loaded = [];
@@ -58,7 +58,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * If a subclass provides event support, you can use `$config['enabled'] = false`
      * to exclude constructed objects from being registered for events.
      *
-     * Using Cake\Controller\Controller::$components as an example. You can alias
+     * Using {@link \Cake\Controller\Component::$components} as an example. You can alias
      * an object by setting the 'className' key, i.e.,
      *
      * ```
@@ -72,7 +72,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * All calls to the `Email` component would use `AliasedEmail` instead.
      *
      * @param string $name The name/class of the object to load.
-     * @param array $config Additional settings to use when loading the object.
+     * @param array<string, mixed> $config Additional settings to use when loading the object.
      * @return mixed
      * @psalm-return TObject
      * @throws \Exception If the class cannot be found.
@@ -125,7 +125,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * logic dependent on the configuration.
      *
      * @param string $name The name of the alias in the registry.
-     * @param array $config The config data for the new instance.
+     * @param array<string, mixed> $config The config data for the new instance.
      * @return void
      * @throws \RuntimeException When a duplicate is found.
      */
@@ -189,11 +189,11 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * This method should construct and do any other initialization logic
      * required.
      *
-     * @param string|object $class The class to build.
+     * @param object|string $class The class to build.
      * @param string $alias The alias of the object.
-     * @param array $config The Configuration settings for construction
+     * @param array<string, mixed> $config The Configuration settings for construction
      * @return object
-     * @psalm-param string|TObject $class
+     * @psalm-param TObject|string $class
      * @psalm-return TObject
      */
     abstract protected function _create($class, string $alias, array $config);
@@ -201,7 +201,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Get the list of loaded objects.
      *
-     * @return string[] List of object names.
+     * @return array<string> List of object names.
      */
     public function loaded(): array
     {
@@ -209,7 +209,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     }
 
     /**
-     * Check whether or not a given object is loaded.
+     * Check whether a given object is loaded.
      *
      * @param string $name The object name to check for.
      * @return bool True is object is loaded else false.
@@ -288,7 +288,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * easier
      *
      * @param array $objects Array of child objects to normalize.
-     * @return array[] Array of normalized objects.
+     * @return array<string, array> Array of normalized objects.
      */
     public function normalizeArray(array $objects): array
     {
@@ -405,7 +405,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Debug friendly object properties.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

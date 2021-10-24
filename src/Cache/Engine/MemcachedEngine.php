@@ -60,7 +60,7 @@ class MemcachedEngine extends CacheEngine
      * - `options` - Additional options for the memcached client. Should be an array of option => value.
      *    Use the \Memcached::OPT_* constants as keys.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'compress' => false,
@@ -82,12 +82,12 @@ class MemcachedEngine extends CacheEngine
      *
      * Memcached must be compiled with JSON and igbinary support to use these engines
      *
-     * @var array
+     * @var array<string, int>
      */
     protected $_serializers = [];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $_compiledGroupNames = [];
 
@@ -96,7 +96,7 @@ class MemcachedEngine extends CacheEngine
      *
      * Called automatically by the cache frontend
      *
-     * @param array $config array of setting for the engine
+     * @param array<string, mixed> $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      * @throws \InvalidArgumentException When you try use authentication without
      *   Memcached compiled with SASL support
@@ -470,7 +470,7 @@ class MemcachedEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function groups(): array
     {

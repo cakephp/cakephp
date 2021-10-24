@@ -23,6 +23,7 @@ use Cake\Error\Debugger;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 require_once CAKE . 'basics.php';
 
@@ -33,10 +34,8 @@ class BasicsTest extends TestCase
 {
     /**
      * test the array_diff_key compatibility function.
-     *
-     * @return void
      */
-    public function testArrayDiffKey()
+    public function testArrayDiffKey(): void
     {
         $one = ['one' => 1, 'two' => 2, 'three' => 3];
         $two = ['one' => 'one', 'two' => 'two'];
@@ -69,10 +68,8 @@ class BasicsTest extends TestCase
 
     /**
      * testHttpBase method
-     *
-     * @return void
      */
-    public function testEnv()
+    public function testEnv(): void
     {
         $this->skipIf(!function_exists('ini_get') || ini_get('safe_mode') === '1', 'Safe mode is on.');
 
@@ -141,10 +138,8 @@ class BasicsTest extends TestCase
 
     /**
      * Test h()
-     *
-     * @return void
      */
-    public function testH()
+    public function testH(): void
     {
         $string = '<foo>';
         $result = h($string);
@@ -205,7 +200,7 @@ class BasicsTest extends TestCase
         $this->assertFalse($result['foo']);
         $this->assertTrue($result['bar']);
 
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $result = h($obj);
         $this->assertSame('(object)stdClass', $result);
 
@@ -216,10 +211,8 @@ class BasicsTest extends TestCase
 
     /**
      * test debug()
-     *
-     * @return void
      */
-    public function testDebug()
+    public function testDebug(): void
     {
         ob_start();
         $this->assertSame('this-is-a-test', debug('this-is-a-test', false));
@@ -260,10 +253,8 @@ EXPECTED;
 
     /**
      * test pr()
-     *
-     * @return void
      */
-    public function testPr()
+    public function testPr(): void
     {
         ob_start();
         $this->assertTrue(pr(true));
@@ -310,10 +301,8 @@ EXPECTED;
 
     /**
      * test pj()
-     *
-     * @return void
      */
-    public function testPj()
+    public function testPj(): void
     {
         ob_start();
         $this->assertTrue(pj(true));
@@ -361,10 +350,8 @@ EXPECTED;
 
     /**
      * Test splitting plugin names.
-     *
-     * @return void
      */
-    public function testPluginSplit()
+    public function testPluginSplit(): void
     {
         $result = pluginSplit('Something.else');
         $this->assertSame(['Something', 'else'], $result);
@@ -390,10 +377,8 @@ EXPECTED;
 
     /**
      * test namespaceSplit
-     *
-     * @return void
      */
-    public function testNamespaceSplit()
+    public function testNamespaceSplit(): void
     {
         $result = namespaceSplit('Something');
         $this->assertSame(['', 'Something'], $result);
@@ -410,10 +395,8 @@ EXPECTED;
 
     /**
      * Tests that the stackTrace() method is a shortcut for Debugger::trace()
-     *
-     * @return void
      */
-    public function testStackTrace()
+    public function testStackTrace(): void
     {
         ob_start();
         // phpcs:ignore
@@ -431,10 +414,8 @@ EXPECTED;
 
     /**
      * Tests that the collection() method is a shortcut for new Collection
-     *
-     * @return void
      */
-    public function testCollection()
+    public function testCollection(): void
     {
         $items = [1, 2, 3];
         $collection = collection($items);
@@ -448,10 +429,8 @@ EXPECTED;
      *
      * The return value is passed to testEventManagerReset2 as
      * an arguments.
-     *
-     * @return \Cake\Event\EventManager
      */
-    public function testEventManagerReset1()
+    public function testEventManagerReset1(): EventManager
     {
         $eventManager = EventManager::instance();
         $this->assertInstanceOf(EventManager::class, $eventManager);
@@ -463,9 +442,8 @@ EXPECTED;
      * Test if the EventManager is reset between tests.
      *
      * @depends testEventManagerReset1
-     * @return void
      */
-    public function testEventManagerReset2($prevEventManager)
+    public function testEventManagerReset2(EventManager $prevEventManager): void
     {
         $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());

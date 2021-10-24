@@ -30,7 +30,7 @@ class TestAuthenticate extends BaseAuthenticate
     public $authenticationProvider;
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -41,19 +41,16 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @param \Cake\Http\ServerRequest $request
-     * @param \Cake\Http\Response $response
-     * @return array
+     * @return array<string, mixed>
      */
-    public function authenticate(ServerRequest $request, Response $response)
+    public function authenticate(ServerRequest $request, Response $response): array
     {
         return ['id' => 1, 'username' => 'admad'];
     }
 
     /**
-     * @param \Cake\Event\EventInterface $event
      * @param array $user
-     * @return array
+     * @return array|void
      */
     public function afterIdentify(EventInterface $event, array $user)
     {
@@ -66,10 +63,9 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @param \Cake\Event\EventInterface $event
      * @param array $user
      */
-    public function logout(EventInterface $event, array $user)
+    public function logout(EventInterface $event, array $user): void
     {
         $this->callStack[] = __FUNCTION__;
     }

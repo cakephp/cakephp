@@ -71,7 +71,7 @@ class Cache
      * An array mapping URL schemes to fully qualified caching engine
      * class names.
      *
-     * @var string[]
+     * @var array<string, string>
      * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [
@@ -85,7 +85,7 @@ class Cache
     ];
 
     /**
-     * Flag for tracking whether or not caching is enabled.
+     * Flag for tracking whether caching is enabled.
      *
      * @var bool
      */
@@ -94,7 +94,7 @@ class Cache
     /**
      * Group to Config mapping
      *
-     * @var array
+     * @var array<string, array>
      */
     protected static $_groups = [];
 
@@ -466,7 +466,7 @@ class Cache
     /**
      * Delete all keys from the cache from all configurations.
      *
-     * @return bool[] Status code. For each configuration, it reports the status of the operation
+     * @return array<string, bool> Status code. For each configuration, it reports the status of the operation
      */
     public static function clearAll(): array
     {
@@ -503,8 +503,8 @@ class Cache
      * $configs will equal to `['posts' => ['daily', 'weekly']]`
      * Calling this method will load all the configured engines.
      *
-     * @param string|null $group group name or null to retrieve all group mappings
-     * @return array map of group and all configuration that has the same group
+     * @param string|null $group Group name or null to retrieve all group mappings
+     * @return array<string, array> Map of group and all configuration that has the same group
      * @throws \Cake\Cache\InvalidArgumentException
      */
     public static function groupConfigs(?string $group = null): array
@@ -548,7 +548,7 @@ class Cache
     }
 
     /**
-     * Check whether or not caching is enabled.
+     * Check whether caching is enabled.
      *
      * @return bool
      */

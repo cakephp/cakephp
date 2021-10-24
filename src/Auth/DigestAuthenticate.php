@@ -82,7 +82,7 @@ class DigestAuthenticate extends BasicAuthenticate
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry
      *   used on this request.
-     * @param array $config Array of config to use.
+     * @param array<string, mixed> $config Array of config to use.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -101,7 +101,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array|false Either false or an array of user information
+     * @return array<string, mixed>|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {
@@ -140,7 +140,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Gets the digest headers from the request/environment.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array|null Array of digest information.
+     * @return array<string, mixed>|null Array of digest information.
      */
     protected function _getDigest(ServerRequest $request): ?array
     {
@@ -188,7 +188,7 @@ class DigestAuthenticate extends BasicAuthenticate
     /**
      * Generate the response hash for a given digest array.
      *
-     * @param array $digest Digest information containing data from DigestAuthenticate::parseAuthData().
+     * @param array<string, mixed> $digest Digest information containing data from DigestAuthenticate::parseAuthData().
      * @param string $password The digest hash password generated with DigestAuthenticate::password()
      * @param string $method Request method
      * @return string Response hash
@@ -219,7 +219,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return string[] Headers for logging in.
+     * @return array<string, string> Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request): array
     {

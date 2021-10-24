@@ -36,7 +36,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * The field names to use for the CTE.
      *
-     * @var \Cake\Database\Expression\IdentifierExpression[]
+     * @var array<\Cake\Database\Expression\IdentifierExpression>
      */
     protected $fields = [];
 
@@ -65,7 +65,7 @@ class CommonTableExpression implements ExpressionInterface
      * Constructor.
      *
      * @param string $name The CTE name.
-     * @param \Closure|\Cake\Database\ExpressionInterface $query CTE query
+     * @param \Cake\Database\ExpressionInterface|\Closure $query CTE query
      */
     public function __construct(string $name = '', $query = null)
     {
@@ -94,7 +94,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Sets the query for this CTE.
      *
-     * @param \Closure|\Cake\Database\ExpressionInterface $query CTE query
+     * @param \Cake\Database\ExpressionInterface|\Closure $query CTE query
      * @return $this
      */
     public function query($query)
@@ -115,7 +115,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Adds one or more fields (arguments) to the CTE.
      *
-     * @param string|string[]|\Cake\Database\Expression\IdentifierExpression|\Cake\Database\Expression\IdentifierExpression[] $fields Field names
+     * @param \Cake\Database\Expression\IdentifierExpression|array<\Cake\Database\Expression\IdentifierExpression>|array<string>|string $fields Field names
      * @return $this
      */
     public function field($fields)

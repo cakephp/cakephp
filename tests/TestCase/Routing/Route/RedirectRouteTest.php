@@ -28,25 +28,27 @@ use Cake\TestSuite\TestCase;
 class RedirectRouteTest extends TestCase
 {
     /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
+    /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         Router::reload();
 
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->connect('/{controller}', ['action' => 'index']);
+        $this->builder->connect('/{controller}/{action}/*');
     }
 
     /**
      * test match
-     *
-     * @return void
      */
-    public function testMatch()
+    public function testMatch(): void
     {
         $route = new RedirectRoute('/home', ['controller' => 'Posts']);
         $this->assertNull($route->match(['controller' => 'Posts', 'action' => 'index']));
@@ -54,10 +56,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test parse failure
-     *
-     * @return void
      */
-    public function testParseMiss()
+    public function testParseMiss(): void
     {
         $route = new RedirectRoute('/home', ['controller' => 'Posts']);
         $this->assertNull($route->parse('/nope'));
@@ -66,10 +66,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test the parsing of routes.
-     *
-     * @return void
      */
-    public function testParseSimple()
+    public function testParseSimple(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Posts');
@@ -80,10 +78,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test the parsing of routes.
-     *
-     * @return void
      */
-    public function testParseRedirectOption()
+    public function testParseRedirectOption(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Posts');
@@ -94,10 +90,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test the parsing of routes.
-     *
-     * @return void
      */
-    public function testParseArray()
+    public function testParseArray(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Posts');
@@ -108,10 +102,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test redirecting to an external url
-     *
-     * @return void
      */
-    public function testParseAbsolute()
+    public function testParseAbsolute(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://google.com');
@@ -122,10 +114,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test redirecting with a status code
-     *
-     * @return void
      */
-    public function testParseStatusCode()
+    public function testParseStatusCode(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Posts/view');
@@ -136,10 +126,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test redirecting with the persist option
-     *
-     * @return void
      */
-    public function testParsePersist()
+    public function testParsePersist(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Posts/view/2');
@@ -150,10 +138,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test redirecting with persist and a base directory
-     *
-     * @return void
      */
-    public function testParsePersistBaseDirectory()
+    public function testParsePersistBaseDirectory(): void
     {
         $request = new ServerRequest([
             'base' => '/basedir',
@@ -170,10 +156,8 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test redirecting with persist and string target URLs
-     *
-     * @return void
      */
-    public function testParsePersistStringUrl()
+    public function testParsePersistStringUrl(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/test');
@@ -184,67 +168,58 @@ class RedirectRouteTest extends TestCase
 
     /**
      * test redirecting with persist and passed args
-     *
-     * @return void
      */
-    public function testParsePersistPassedArgs()
+    public function testParsePersistPassedArgs(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Tags/add/passme');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/my_controllers/:action/*', ['controller' => 'Tags', 'action' => 'add'], ['persist' => true]);
+        $route = new RedirectRoute('/my_controllers/{action}/*', ['controller' => 'Tags', 'action' => 'add'], ['persist' => true]);
         $route->parse('/my_controllers/do_something/passme');
     }
 
     /**
      * test redirecting without persist and passed args
-     *
-     * @return void
      */
-    public function testParseNoPersistPassedArgs()
+    public function testParseNoPersistPassedArgs(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Tags/add');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/my_controllers/:action/*', ['controller' => 'Tags', 'action' => 'add']);
+        $route = new RedirectRoute('/my_controllers/{action}/*', ['controller' => 'Tags', 'action' => 'add']);
         $route->parse('/my_controllers/do_something/passme');
     }
 
     /**
      * test redirecting with patterns
-     *
-     * @return void
      */
-    public function testParsePersistPatterns()
+    public function testParsePersistPatterns(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Tags/add');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/:lang/my_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
+        $route = new RedirectRoute('/{lang}/my_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
         $route->parse('/nl/my_controllers/');
     }
 
     /**
      * test redirecting with patterns and a routed target
-     *
-     * @return void
      */
-    public function testParsePersistMatchesAnotherRoute()
+    public function testParsePersistMatchesAnotherRoute(): void
     {
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/nl/preferred_controllers');
         $this->expectExceptionCode(301);
-        Router::connect('/:lang/preferred_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
-        $route = new RedirectRoute('/:lang/my_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
+
+        $this->builder->connect('/{lang}/preferred_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
+        $route = new RedirectRoute('/{lang}/my_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
         $route->parse('/nl/my_controllers/');
     }
 
     /**
      * Test setting HTTP status
-     *
-     * @return void
      */
-    public function testSetStatus()
+    public function testSetStatus(): void
     {
         $route = new RedirectRoute('/home', ['controller' => 'Posts']);
         $result = $route->setStatus(302);

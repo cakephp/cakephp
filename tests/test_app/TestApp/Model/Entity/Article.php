@@ -12,10 +12,8 @@ class Article extends Entity
 {
     /**
      * Testing stub method.
-     *
-     * @return bool
      */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return true;
     }

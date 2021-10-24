@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestSuite;
 /**
  * Test listener used to inject a fixture manager in all tests that
  * are composed inside a Test Suite
+ *
+ * @deprecated 4.3.0
  */
 class FixtureInjector implements TestListener
 {
@@ -56,6 +58,7 @@ class FixtureInjector implements TestListener
         }
         $this->_fixtureManager = $manager;
         $this->_fixtureManager->shutDown();
+        TestCase::$fixtureManager = $manager;
     }
 
     /**
@@ -68,6 +71,13 @@ class FixtureInjector implements TestListener
     public function startTestSuite(TestSuite $suite): void
     {
         if (empty($this->_first)) {
+            deprecationWarning(
+                'You are using the listener based PHPUnit integration. ' .
+                'This fixture system is deprecated, and we recommend you ' .
+                'upgrade to the extension based PHPUnit integration. ' .
+                'See https://book.cakephp.org/4.x/en/appendixes/fixture-upgrade.html',
+                0
+            );
             $this->_first = $suite;
         }
     }
@@ -94,8 +104,6 @@ class FixtureInjector implements TestListener
      */
     public function startTest(Test $test): void
     {
-        /** @psalm-suppress NoInterfaceProperties */
-        $test->fixtureManager = $this->_fixtureManager;
         if ($test instanceof TestCase) {
             $this->_fixtureManager->fixturize($test);
             $this->_fixtureManager->load($test);

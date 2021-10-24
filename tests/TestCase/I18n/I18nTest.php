@@ -22,7 +22,6 @@ use Cake\I18n\Package;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
-use Locale;
 
 /**
  * I18nTest class
@@ -30,58 +29,43 @@ use Locale;
 class I18nTest extends TestCase
 {
     /**
-     * Used to restore the internal locale after tests
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * Set Up
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->locale = Locale::getDefault() ?: I18n::DEFAULT_LOCALE;
     }
 
     /**
      * Tear down method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
         I18n::clear();
         I18n::setDefaultFormatter('default');
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
         $this->clearPlugins();
         Cache::clear('_cake_core_');
     }
 
     /**
      * Tests that the default locale is set correctly
-     *
-     * @return void
      */
-    public function testDefaultLocale()
+    public function testDefaultLocale(): void
     {
+        $default = I18n::getDefaultLocale();
         $newLocale = 'de_DE';
         I18n::setLocale($newLocale);
         $this->assertSame($newLocale, I18n::getLocale());
-        $this->assertSame($this->locale, I18n::getDefaultLocale());
+        $this->assertSame($default, I18n::getDefaultLocale());
     }
 
     /**
      * Tests that a default translator is created and messages are parsed
      * correctly
-     *
-     * @return void
      */
-    public function testGetDefaultTranslator()
+    public function testGetDefaultTranslator(): void
     {
         $translator = I18n::getTranslator();
         $this->assertInstanceOf(Translator::class, $translator);
@@ -91,10 +75,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests that the translator can automatically load messages from a .mo file
-     *
-     * @return void
      */
-    public function testGetTranslatorLoadMoFile()
+    public function testGetTranslatorLoadMoFile(): void
     {
         $translator = I18n::getTranslator('default', 'es_ES');
         $this->assertSame('Plural Rule 6 (translated)', $translator->translate('Plural Rule 1'));
@@ -103,10 +85,8 @@ class I18nTest extends TestCase
     /**
      * Tests that plural rules are correctly used for the English language
      * using the sprintf formatter
-     *
-     * @return void
      */
-    public function testPluralSelectionSprintfFormatter()
+    public function testPluralSelectionSprintfFormatter(): void
     {
         I18n::setDefaultFormatter('sprintf');
         $translator = I18n::getTranslator(); // en_US
@@ -120,10 +100,8 @@ class I18nTest extends TestCase
     /**
      * Tests that plural rules are correctly used for the English language
      * using the basic formatter
-     *
-     * @return void
      */
-    public function testPluralSelectionBasicFormatter()
+    public function testPluralSelectionBasicFormatter(): void
     {
         $translator = I18n::getTranslator('special');
         $result = $translator->translate('There are {0} things', ['_count' => 2, 'plenty']);
@@ -135,10 +113,8 @@ class I18nTest extends TestCase
 
     /**
      * Test plural rules are used for non-english languages
-     *
-     * @return void
      */
-    public function testPluralSelectionRussian()
+    public function testPluralSelectionRussian(): void
     {
         $translator = I18n::getTranslator('default', 'ru');
         $result = $translator->translate('{0} months', ['_count' => 1, 1]);
@@ -153,10 +129,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests that custom translation packages can be created on the fly and used later on
-     *
-     * @return void
      */
-    public function testCreateCustomTranslationPackage()
+    public function testCreateCustomTranslationPackage(): void
     {
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
@@ -174,10 +148,8 @@ class I18nTest extends TestCase
     /**
      * Tests that messages can also be loaded from plugins by using the
      * domain = plugin_name convention
-     *
-     * @return void
      */
-    public function testPluginMesagesLoad()
+    public function testPluginMesagesLoad(): void
     {
         $this->loadPlugins([
             'TestPlugin',
@@ -200,10 +172,8 @@ class I18nTest extends TestCase
     /**
      * Tests that messages messages from a plugin can be automatically
      * overridden by messages in app
-     *
-     * @return void
      */
-    public function testPluginOverride()
+    public function testPluginOverride(): void
     {
         $this->loadPlugins(['TestTheme']);
         $translator = I18n::getTranslator('test_theme');
@@ -215,10 +185,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the locale method
-     *
-     * @return void
      */
-    public function testGetDefaultLocale()
+    public function testGetDefaultLocale(): void
     {
         $this->assertSame('en_US', I18n::getLocale());
         $this->assertSame('en_US', ini_get('intl.default_locale'));
@@ -230,10 +198,8 @@ class I18nTest extends TestCase
     /**
      * Tests that changing the default locale also changes the way translators
      * are fetched
-     *
-     * @return void
      */
-    public function testGetTranslatorByDefaultLocale()
+    public function testGetTranslatorByDefaultLocale(): void
     {
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
@@ -251,10 +217,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __() function
-     *
-     * @return void
      */
-    public function testBasicTranslateFunction()
+    public function testBasicTranslateFunction(): void
     {
         I18n::setDefaultFormatter('sprintf');
         $this->assertSame('%d is 1 (po translated)', __('%d = 1'));
@@ -266,10 +230,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __() functions with explicit null params
-     *
-     * @return void
      */
-    public function testBasicTranslateFunctionsWithNullParam()
+    public function testBasicTranslateFunctionsWithNullParam(): void
     {
         $this->assertSame('text {0}', __('text {0}'));
         $this->assertSame('text ', __('text {0}', null));
@@ -298,10 +260,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __() function on a plural key works
-     *
-     * @return void
      */
-    public function testBasicTranslateFunctionPluralData()
+    public function testBasicTranslateFunctionPluralData(): void
     {
         I18n::setDefaultFormatter('sprintf');
         $this->assertSame('%d is 1 (po translated)', __('%d = 0 or > 1'));
@@ -309,10 +269,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __n() function
-     *
-     * @return void
      */
-    public function testBasicTranslatePluralFunction()
+    public function testBasicTranslatePluralFunction(): void
     {
         I18n::setDefaultFormatter('sprintf');
         $result = __n('singular msg', '%d = 0 or > 1', 1, 1);
@@ -330,10 +288,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __n() function on singular keys
-     *
-     * @return void
      */
-    public function testBasicTranslatePluralFunctionSingularMessage()
+    public function testBasicTranslatePluralFunctionSingularMessage(): void
     {
         I18n::setDefaultFormatter('sprintf');
         $result = __n('No translation needed', 'not used', 1);
@@ -342,10 +298,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __d() function
-     *
-     * @return void
      */
-    public function testBasicDomainFunction()
+    public function testBasicDomainFunction(): void
     {
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
@@ -373,10 +327,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __dn() function
-     *
-     * @return void
      */
-    public function testBasicDomainPluralFunction()
+    public function testBasicDomainPluralFunction(): void
     {
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
@@ -402,10 +354,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __x() function
-     *
-     * @return void
      */
-    public function testBasicContextFunction()
+    public function testBasicContextFunction(): void
     {
         I18n::setTranslator('default', function () {
             $package = new Package('default');
@@ -460,10 +410,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __x() function with no msgstr
-     *
-     * @return void
      */
-    public function testBasicContextFunctionNoString()
+    public function testBasicContextFunctionNoString(): void
     {
         I18n::setTranslator('default', function () {
             $package = new Package('default');
@@ -484,10 +432,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __x() function with an invalid context
-     *
-     * @return void
      */
-    public function testBasicContextFunctionInvalidContext()
+    public function testBasicContextFunctionInvalidContext(): void
     {
         I18n::setTranslator('default', function () {
             $package = new Package('default');
@@ -508,10 +454,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __xn() function
-     *
-     * @return void
      */
-    public function testPluralContextFunction()
+    public function testPluralContextFunction(): void
     {
         I18n::setTranslator('default', function () {
             $package = new Package('default');
@@ -562,10 +506,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __dx() function
-     *
-     * @return void
      */
-    public function testDomainContextFunction()
+    public function testDomainContextFunction(): void
     {
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
@@ -617,10 +559,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __dxn() function
-     *
-     * @return void
      */
-    public function testDomainPluralContextFunction()
+    public function testDomainPluralContextFunction(): void
     {
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
@@ -677,10 +617,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests that translators are cached for performance
-     *
-     * @return void
      */
-    public function testTranslatorCache()
+    public function testTranslatorCache(): void
     {
         $english = I18n::getTranslator();
         $spanish = I18n::getTranslator('default', 'es_ES');
@@ -699,10 +637,8 @@ class I18nTest extends TestCase
     /**
      * Tests that it is possible to register a generic translators factory for a domain
      * instead of having to create them manually
-     *
-     * @return void
      */
-    public function testLoaderFactory()
+    public function testLoaderFactory(): void
     {
         I18n::config('custom', function (string $name, string $locale) {
             $this->assertSame('custom', $name);
@@ -745,10 +681,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests that it is possible to register a fallback translators factory
-     *
-     * @return void
      */
-    public function testFallbackLoaderFactory()
+    public function testFallbackLoaderFactory(): void
     {
         I18n::config(TranslatorRegistry::FALLBACK_LOADER, function (string $name, string $locale) {
             $package = new Package('default');
@@ -775,10 +709,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests that missing translations will get fallbacked to the default translator
-     *
-     * @return void
      */
-    public function testFallbackTranslator()
+    public function testFallbackTranslator(): void
     {
         I18n::setTranslator('default', function () {
             $package = new Package('default');
@@ -805,10 +737,8 @@ class I18nTest extends TestCase
 
     /**
      * Test that the translation fallback can be disabled
-     *
-     * @return void
      */
-    public function testFallbackTranslatorDisabled()
+    public function testFallbackTranslatorDisabled(): void
     {
         I18n::useFallback(false);
 
@@ -834,10 +764,8 @@ class I18nTest extends TestCase
     /**
      * Tests that it is possible to register a generic translators factory for a domain
      * instead of having to create them manually
-     *
-     * @return void
      */
-    public function testFallbackTranslatorWithFactory()
+    public function testFallbackTranslatorWithFactory(): void
     {
         I18n::setTranslator('default', function () {
             $package = new Package('default');
@@ -864,10 +792,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests the __() function on empty translations
-     *
-     * @return void
      */
-    public function testEmptyTranslationString()
+    public function testEmptyTranslationString(): void
     {
         I18n::setDefaultFormatter('sprintf');
         $result = __('No translation needed');
@@ -876,10 +802,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests that a plurals from a domain get translated correctly
-     *
-     * @return void
      */
-    public function testPluralTranslationsFromDomain()
+    public function testPluralTranslationsFromDomain(): void
     {
         I18n::setLocale('de');
         $this->assertSame('Standorte', __dn('wa', 'Location', 'Locations', 0));

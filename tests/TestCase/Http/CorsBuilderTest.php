@@ -11,10 +11,8 @@ class CorsBuilderTest extends TestCase
 {
     /**
      * test allowOrigin() setting allow-origin
-     *
-     * @return void
      */
-    public function testAllowOriginNoOrigin()
+    public function testAllowOriginNoOrigin(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, '');
@@ -24,10 +22,8 @@ class CorsBuilderTest extends TestCase
 
     /**
      * test allowOrigin() setting allow-origin
-     *
-     * @return void
      */
-    public function testAllowOrigin()
+    public function testAllowOrigin(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://www.example.com');
@@ -48,10 +44,8 @@ class CorsBuilderTest extends TestCase
 
     /**
      * test allowOrigin() with SSL
-     *
-     * @return void
      */
-    public function testAllowOriginSsl()
+    public function testAllowOriginSsl(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'https://www.example.com', true);
@@ -69,7 +63,7 @@ class CorsBuilderTest extends TestCase
         $this->assertNoHeader($builder->build(), 'Access-Control-Allow-Origin');
     }
 
-    public function testAllowMethods()
+    public function testAllowMethods(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://example.com');
@@ -78,7 +72,7 @@ class CorsBuilderTest extends TestCase
         $this->assertHeader('GET, POST', $builder->build(), 'Access-Control-Allow-Methods');
     }
 
-    public function testAllowCredentials()
+    public function testAllowCredentials(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://example.com');
@@ -87,7 +81,7 @@ class CorsBuilderTest extends TestCase
         $this->assertHeader('true', $builder->build(), 'Access-Control-Allow-Credentials');
     }
 
-    public function testAllowHeaders()
+    public function testAllowHeaders(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://example.com');
@@ -96,7 +90,7 @@ class CorsBuilderTest extends TestCase
         $this->assertHeader('Content-Type, Accept', $builder->build(), 'Access-Control-Allow-Headers');
     }
 
-    public function testExposeHeaders()
+    public function testExposeHeaders(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://example.com');
@@ -105,7 +99,7 @@ class CorsBuilderTest extends TestCase
         $this->assertHeader('Content-Type, Accept', $builder->build(), 'Access-Control-Expose-Headers');
     }
 
-    public function testMaxAge()
+    public function testMaxAge(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://example.com');
@@ -116,10 +110,8 @@ class CorsBuilderTest extends TestCase
 
     /**
      * When no origin is allowed, none of the other headers should be applied.
-     *
-     * @return void
      */
-    public function testNoAllowedOriginNoHeadersSet()
+    public function testNoAllowedOriginNoHeadersSet(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://example.com');
@@ -139,10 +131,8 @@ class CorsBuilderTest extends TestCase
 
     /**
      * When an invalid origin is used, none of the other headers should be applied.
-     *
-     * @return void
      */
-    public function testInvalidAllowedOriginNoHeadersSet()
+    public function testInvalidAllowedOriginNoHeadersSet(): void
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://example.com');
@@ -166,9 +156,9 @@ class CorsBuilderTest extends TestCase
      *
      * @param string $expected The expected value
      * @param \Cake\Http\Response $response The Response object.
-     * @params string $header The header key to check
+     * @param string $header The header key to check
      */
-    protected function assertHeader($expected, Response $response, $header)
+    protected function assertHeader($expected, Response $response, $header): void
     {
         $this->assertTrue($response->hasHeader($header), 'Header key not found.');
         $this->assertSame($expected, $response->getHeaderLine($header), 'Header value not found.');
@@ -178,9 +168,9 @@ class CorsBuilderTest extends TestCase
      * Helper for checking header values.
      *
      * @param \Cake\Http\Response $response The Response object.
-     * @params string $header The header key to check
+     * @param string $header The header key to check
      */
-    protected function assertNoHeader(Response $response, $header)
+    protected function assertNoHeader(Response $response, $header): void
     {
         $this->assertFalse($response->hasHeader($header), 'Header key was found.');
     }

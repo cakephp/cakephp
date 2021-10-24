@@ -38,7 +38,7 @@ class StringTemplate
     /**
      * List of attributes that can be made compact.
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $_compactAttributes = [
         'allowfullscreen' => true,
@@ -87,7 +87,7 @@ class StringTemplate
     /**
      * The default templates this instance holds.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
@@ -101,14 +101,14 @@ class StringTemplate
     /**
      * Contains the list of compiled templates
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_compiled = [];
 
     /**
      * Constructor.
      *
-     * @param array $config A set of templates to add.
+     * @param array<string, mixed> $config A set of templates to add.
      */
     public function __construct(array $config = [])
     {
@@ -153,7 +153,7 @@ class StringTemplate
      * ]);
      * ```
      *
-     * @param string[] $templates An associative list of named templates.
+     * @param array<string> $templates An associative list of named templates.
      * @return $this
      */
     public function add(array $templates)
@@ -167,7 +167,7 @@ class StringTemplate
     /**
      * Compile templates into a more efficient printf() compatible format.
      *
-     * @param string[] $templates The template names to compile. If empty all templates will be compiled.
+     * @param array<string> $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
     protected function _compileTemplates(array $templates = []): void
@@ -227,7 +227,7 @@ class StringTemplate
      * Format a template string with $data
      *
      * @param string $name The template name.
-     * @param array $data The data to insert.
+     * @param array<string, mixed> $data The data to insert.
      * @return string Formatted string
      * @throws \RuntimeException If template not found.
      */
@@ -276,8 +276,8 @@ class StringTemplate
      * these templates uses the `name` and `value` variables. You can modify these
      * templates to change how attributes are formatted.
      *
-     * @param array|null $options Array of options.
-     * @param array|null $exclude Array of options to be excluded, the options here will not be part of the return.
+     * @param array<string, mixed>|null $options Array of options.
+     * @param array<string>|null $exclude Array of options to be excluded, the options here will not be part of the return.
      * @return string Composed attributes.
      */
     public function formatAttributes(?array $options, ?array $exclude = null): string
@@ -309,7 +309,7 @@ class StringTemplate
      * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
      *
      * @param string $key The name of the attribute to create
-     * @param string|string[] $value The value of the attribute to create.
+     * @param array<string>|string $value The value of the attribute to create.
      * @param bool $escape Define if the value must be escaped
      * @return string The composed attribute.
      */
@@ -340,9 +340,9 @@ class StringTemplate
      * Adds a class and returns a unique list either in array or space separated
      *
      * @param array|string $input The array or string to add the class to
-     * @param array|string $newClass the new class or classes to add
+     * @param array<string>|string $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return string|string[]
+     * @return array<string>|string
      */
     public function addClass($input, $newClass, string $useIndex = 'class')
     {

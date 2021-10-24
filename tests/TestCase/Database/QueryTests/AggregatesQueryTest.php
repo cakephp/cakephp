@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\QueryTests;
 
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -27,8 +29,6 @@ class AggregatesQueryTest extends TestCase
     protected $fixtures = [
         'core.Comments',
     ];
-
-    public $autoFixtures = false;
 
     /**
      * @var \Cake\Database\Connection
@@ -53,17 +53,14 @@ class AggregatesQueryTest extends TestCase
 
     /**
      * Tests filtering aggregate function rows.
-     *
-     * @return void
      */
-    public function testFilters()
+    public function testFilters(): void
     {
-        $skip = !($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres);
-        if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite) {
+        $skip = !($this->connection->getDriver() instanceof Postgres);
+        if ($this->connection->getDriver() instanceof Sqlite) {
             $skip = version_compare($this->connection->getDriver()->version(), '3.30.0', '<');
         }
         $this->skipif($skip);
-        $this->loadFixtures('Comments');
 
         $query = new Query($this->connection);
         $result = $query

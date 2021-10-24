@@ -26,10 +26,8 @@ class SyslogLogTest extends TestCase
 {
     /**
      * Tests that the connection to the logger is open with the right arguments
-     *
-     * @return void
      */
-    public function testOpenLog()
+    public function testOpenLog(): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
@@ -56,9 +54,8 @@ class SyslogLogTest extends TestCase
      * Tests that single lines are written to syslog
      *
      * @dataProvider typesProvider
-     * @return void
      */
-    public function testWriteOneLine($type, $expected)
+    public function testWriteOneLine(string $type, int $expected): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
@@ -70,10 +67,8 @@ class SyslogLogTest extends TestCase
 
     /**
      * Tests that multiple lines are split and logged separately
-     *
-     * @return void
      */
-    public function testWriteMultiLine()
+    public function testWriteMultiLine(): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
@@ -89,11 +84,42 @@ class SyslogLogTest extends TestCase
     }
 
     /**
+     * Test deprecated format option
+     */
+    public function testDeprecatedFormat(): void
+    {
+        $this->deprecated(function (): void {
+            $log = $this->getMockBuilder(SyslogLog::class)
+                ->setConstructorArgs(['config' => ['format' => 'custom %s: %s']])
+                ->onlyMethods(['_open', '_write'])
+                ->getMock();
+            $log->expects($this->exactly(2))
+                ->method('_write')
+                ->withConsecutive(
+                    [LOG_DEBUG, 'custom debug: Foo'],
+                    [LOG_DEBUG, 'custom debug: Bar']
+                );
+            $log->log('debug', "Foo\nBar");
+        });
+    }
+
+    /**
+     * Test deprecated format option
+     */
+    public function testDeprecatedFormatMessage(): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('`format` option is now deprecated in favor of custom formatters');
+        $this->expectDeprecationMessage('SyslogLog.php');
+        new SyslogLog(['format' => 'custom %s: %s']);
+    }
+
+    /**
      * Data provider for the write function test
      *
      * @return array
      */
-    public function typesProvider()
+    public function typesProvider(): array
     {
         return [
             ['emergency', LOG_EMERG],

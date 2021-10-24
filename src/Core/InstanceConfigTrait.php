@@ -30,7 +30,7 @@ trait InstanceConfigTrait
     /**
      * Runtime config
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_config = [];
 
@@ -64,7 +64,7 @@ trait InstanceConfigTrait
      * $this->setConfig(['one' => 'value', 'another' => 'value']);
      * ```
      *
-     * @param string|array $key The key to set, or a complete array of configs.
+     * @param array|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
@@ -168,7 +168,7 @@ trait InstanceConfigTrait
      * $this->configShallow(['one' => 'value', 'another' => 'value']);
      * ```
      *
-     * @param string|array $key The key to set, or a complete array of configs.
+     * @param array|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @return $this
      */
@@ -217,9 +217,9 @@ trait InstanceConfigTrait
     /**
      * Writes a config key.
      *
-     * @param string|array $key Key to write to.
+     * @param array|string $key Key to write to.
      * @param mixed $value Value to write.
-     * @param bool|string $merge True to merge recursively, 'shallow' for simple merge,
+     * @param string|bool $merge True to merge recursively, 'shallow' for simple merge,
      *   false to overwrite, defaults to false.
      * @return void
      * @throws \Cake\Core\Exception\CakeException if attempting to clobber existing config
@@ -265,9 +265,7 @@ trait InstanceConfigTrait
                 throw new CakeException(sprintf('Cannot set %s value', $key));
             }
 
-            if (!isset($update[$k])) {
-                $update[$k] = [];
-            }
+            $update[$k] = $update[$k] ?? [];
 
             $update = &$update[$k];
         }

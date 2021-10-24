@@ -20,7 +20,7 @@ use Cake\Database\ValueBinder;
 use Closure;
 
 /**
- * This represents a SQL aggregate function expression in a SQL statement.
+ * This represents an SQL aggregate function expression in an SQL statement.
  * Calls can be constructed by passing the name of the function and a list of params.
  * For security reasons, all params passed are quoted by default unless
  * explicitly told otherwise.
@@ -41,8 +41,8 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      * Adds conditions to the FILTER clause. The conditions are the same format as
      * `Query::where()`.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The conditions to filter on.
-     * @param array $types associative array of type names used to bind values to query
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions to filter on.
+     * @param array<string, string> $types Associative array of type names used to bind values to query
      * @return $this
      * @see \Cake\Database\Query::where()
      */

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -31,14 +32,17 @@ use PDOException;
 class FixtureManagerTest extends TestCase
 {
     /**
+     * @var string[]
+     */
+    protected $cleanup = [];
+
+    /**
      * @var \Cake\TestSuite\Fixture\FixtureManager
      */
     protected $manager;
 
     /**
      * Setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -51,21 +55,27 @@ class FixtureManagerTest extends TestCase
         parent::tearDown();
         Log::reset();
         $this->clearPlugins();
+
+        foreach ($this->cleanup as $name) {
+            $table = $this->getTableLocator()->get($name);
+            $table->deleteAll('1=1');
+        }
     }
 
     /**
      * Test loading core fixtures.
-     *
-     * @return void
      */
-    public function testFixturizeCore()
+    public function testFixturizeCore(): void
     {
+        $this->cleanup = ['articles'];
+
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
             ->willReturn(['core.Articles']);
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
+
         $this->manager->unload($test);
         $this->assertCount(1, $fixtures);
         $this->assertArrayHasKey('core.Articles', $fixtures);
@@ -74,10 +84,8 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test logging depends on fixture manager debug.
-     *
-     * @return void
      */
-    public function testLogSchemaWithDebug()
+    public function testLogSchemaWithDebug(): void
     {
         $db = ConnectionManager::get('test');
         $restore = $db->isQueryLoggingEnabled();
@@ -108,10 +116,8 @@ class FixtureManagerTest extends TestCase
     /**
      * Test that if a table already exists in the test database, it will dropped
      * before being recreated
-     *
-     * @return void
      */
-    public function testResetDbIfTableExists()
+    public function testResetDbIfTableExists(): void
     {
         $db = ConnectionManager::get('test');
         $restore = $db->isQueryLoggingEnabled();
@@ -134,6 +140,7 @@ class FixtureManagerTest extends TestCase
             $db->execute($stmt);
         }
 
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -147,46 +154,42 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test loading fixtures with constraints.
-     *
-     * @return void
      */
-    public function testFixturizeCoreConstraint()
+    public function testFixturizeCoreConstraint(): void
     {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf($driver instanceof Sqlserver, 'This fails in SQLServer');
+
+        $this->cleanup = ['authors', 'authors_tags'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
-            ->willReturn(['core.Articles', 'core.ArticlesTags', 'core.Tags']);
+            ->willReturn(['core.Authors', 'core.AuthorsTags']);
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
-        $table = $this->getTableLocator()->get('ArticlesTags');
+        $table = $this->getTableLocator()->get('AuthorsTags');
         $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
-            'columns' => [
-                'tag_id',
-            ],
-            'references' => [
-                'tags',
-                'id',
-            ],
+            'columns' => ['author_id'],
+            'references' => ['authors', 'id'],
             'update' => 'cascade',
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
+        $this->assertSame($expectedConstraint, $schema->getConstraint('author_id_fk'));
         $this->manager->unload($test);
     }
 
     /**
      * Test loading plugin fixtures.
-     *
-     * @return void
      */
-    public function testFixturizePlugin()
+    public function testFixturizePlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -203,13 +206,12 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test loading plugin fixtures.
-     *
-     * @return void
      */
-    public function testFixturizePluginSubdirectory()
+    public function testFixturizePluginSubdirectory(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
+        $this->cleanup = ['comments'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -226,11 +228,11 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test loading plugin fixtures from a vendor namespaced plugin
-     *
-     * @return void
      */
-    public function testFixturizeVendorPlugin()
+    public function testFixturizeVendorPlugin(): void
     {
+        $this->cleanup = ['articles'];
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -247,11 +249,10 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test loading fixtures with fully-qualified namespaces.
-     *
-     * @return void
      */
-    public function testFixturizeClassName()
+    public function testFixturizeClassName(): void
     {
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -269,7 +270,7 @@ class FixtureManagerTest extends TestCase
     /**
      * Test that unknown types are handled gracefully.
      */
-    public function testFixturizeInvalidType()
+    public function testFixturizeInvalidType(): void
     {
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('Referenced fixture class "Test\Fixture\Derp.DerpFixture" not found. Fixture "Derp.Derp" was referenced');
@@ -286,10 +287,8 @@ class FixtureManagerTest extends TestCase
      * Ensure that FixtureManager uses connection aliases
      * protecting 'live' tables from being wiped by mistakes in
      * fixture connection names.
-     *
-     * @return void
      */
-    public function testLoadConnectionAliasUsage()
+    public function testLoadConnectionAliasUsage(): void
     {
         $connection = ConnectionManager::get('test');
         $statement = $this->getMockBuilder('Cake\Database\StatementInterface')
@@ -323,6 +322,7 @@ class FixtureManagerTest extends TestCase
         // Connect the alias making test_other an alias of other.
         ConnectionManager::alias('test_other', 'other');
 
+        $this->cleanup = ['articles'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -336,23 +336,27 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test loading fixtures using loadSingle()
-     *
-     * @return void
      */
-    public function testLoadSingle()
+    public function testLoadSingle(): void
     {
+        $this->cleanup = ['comments', 'users'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')
             ->onlyMethods(['getFixtures'])
             ->getMock();
         $test->autoFixtures = false;
         $test->expects($this->any())
             ->method('getFixtures')
-            ->willReturn(['core.Articles', 'core.Tags']);
-        $this->manager->fixturize($test);
-        $this->manager->loadSingle('Articles');
-        $this->manager->loadSingle('Tags');
+            ->willReturn(['core.Comments', 'core.Users']);
 
-        $table = $this->getTableLocator()->get('Articles');
+        $this->manager->fixturize($test);
+        $this->assertEquals([], $this->manager->getInserted());
+
+        $this->manager->loadSingle('Comments');
+        $this->manager->loadSingle('Users');
+
+        $this->assertEquals(['comments', 'users'], $this->manager->getInserted());
+
+        $table = $this->getTableLocator()->get('Users');
         $results = $table->find('all')->toArray();
         $schema = $table->getSchema();
         $expectedConstraint = [
@@ -363,18 +367,17 @@ class FixtureManagerTest extends TestCase
             'length' => [],
         ];
         $this->assertSame($expectedConstraint, $schema->getConstraint('primary'));
-        $this->assertCount(3, $results);
+        $this->assertCount(4, $results);
 
         $this->manager->unload($test);
     }
 
     /**
      * Test exception on load
-     *
-     * @return void
      */
-    public function testExceptionOnLoad()
+    public function testExceptionOnLoad(): void
     {
+        $this->cleanup = ['products'];
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -385,7 +388,7 @@ class FixtureManagerTest extends TestCase
             ->getMock();
         $manager->expects($this->any())
             ->method('_runOperation')
-            ->will($this->returnCallback(function () {
+            ->will($this->returnCallback(function (): void {
                 throw new PDOException('message');
             }));
 
@@ -406,16 +409,15 @@ class FixtureManagerTest extends TestCase
      * Test exception on load fixture
      *
      * @dataProvider loadErrorMessageProvider
-     * @return void
      */
-    public function testExceptionOnLoadFixture($method, $expectedMessage)
+    public function testExceptionOnLoadFixture(string $method, string $expectedMessage): void
     {
         $fixture = $this->getMockBuilder('Cake\Test\Fixture\ProductsFixture')
-            ->onlyMethods([$method])
+            ->onlyMethods(['drop', 'create', $method])
             ->getMock();
         $fixture->expects($this->once())
             ->method($method)
-            ->will($this->returnCallback(function () {
+            ->will($this->returnCallback(function (): void {
                 throw new PDOException('message');
             }));
 
@@ -438,7 +440,6 @@ class FixtureManagerTest extends TestCase
                 'test' => $fixtures,
             ]));
         $manager->fixturize($test);
-        $manager->loadSingle('Products');
 
         $e = null;
         try {
@@ -456,7 +457,7 @@ class FixtureManagerTest extends TestCase
      *
      * @return array
      */
-    public function loadErrorMessageProvider()
+    public function loadErrorMessageProvider(): array
     {
         return [
             [

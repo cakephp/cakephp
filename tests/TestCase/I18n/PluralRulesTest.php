@@ -30,7 +30,7 @@ class PluralRulesTest extends TestCase
      *
      * @return array
      */
-    public function localesProvider()
+    public function localesProvider(): array
     {
         return [
             ['jp', 0, 0],
@@ -39,13 +39,14 @@ class PluralRulesTest extends TestCase
             ['en_US', 0, 1],
             ['en', 1, 0],
             ['en_UK', 2, 1],
-            ['pt_BR', 0, 1],
+            ['es-ES', 2, 1],
+            ['pt-br', 0, 0],
             ['pt_BR', 1, 0],
             ['pt_BR', 2, 1],
             ['pt', 0, 1],
             ['pt', 1, 0],
             ['pt', 2, 1],
-            ['pt_PT', 0, 0],
+            ['pt_PT', 0, 1],
             ['pt_PT', 1, 0],
             ['pt_PT', 2, 1],
             ['fr_FR', 0, 0],
@@ -127,9 +128,8 @@ class PluralRulesTest extends TestCase
      * Tests that the correct plural form is selected for the locale, number combination
      *
      * @dataProvider localesProvider
-     * @return void
      */
-    public function testCalculate($locale, $number, $expected)
+    public function testCalculate(string $locale, int $number, int $expected): void
     {
         $this->assertEquals($expected, PluralRules::calculate($locale, $number));
     }

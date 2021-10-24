@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\DriverInterface;
+use Cake\Database\Type\ColumnSchemaAwareInterface;
+use Cake\Database\TypeFactory;
 use InvalidArgumentException;
 
 /**
@@ -97,7 +99,7 @@ abstract class SchemaDialect
      * Convert foreign key constraints references to a valid
      * stringified list
      *
-     * @param string|array $references The referenced columns of a foreign key constraint statement
+     * @param array|string $references The referenced columns of a foreign key constraint statement
      * @return string
      */
     protected function _convertConstraintColumns($references): string
@@ -110,6 +112,56 @@ abstract class SchemaDialect
             [$this->_driver, 'quoteIdentifier'],
             $references
         ));
+    }
+
+    /**
+     * Tries to use a matching database type to generate the SQL
+     * fragment for a single column in a table.
+     *
+     * @param string $columnType The column type.
+     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table schema instance the column is in.
+     * @param string $column The name of the column.
+     * @return string|null An SQL fragment, or `null` in case no corresponding type was found or the type didn't provide
+     *  custom column SQL.
+     */
+    protected function _getTypeSpecificColumnSql(
+        string $columnType,
+        TableSchemaInterface $schema,
+        string $column
+    ): ?string {
+        if (!TypeFactory::getMap($columnType)) {
+            return null;
+        }
+
+        $type = TypeFactory::build($columnType);
+        if (!($type instanceof ColumnSchemaAwareInterface)) {
+            return null;
+        }
+
+        return $type->getColumnSql($schema, $column, $this->_driver);
+    }
+
+    /**
+     * Tries to use a matching database type to convert a SQL column
+     * definition to an abstract type definition.
+     *
+     * @param string $columnType The column type.
+     * @param array $definition The column definition.
+     * @return array|null Array of column information, or `null` in case no corresponding type was found or the type
+     *  didn't provide custom column information.
+     */
+    protected function _applyTypeSpecificColumnConversion(string $columnType, array $definition): ?array
+    {
+        if (!TypeFactory::getMap($columnType)) {
+            return null;
+        }
+
+        $type = TypeFactory::build($columnType);
+        if (!($type instanceof ColumnSchemaAwareInterface)) {
+            return null;
+        }
+
+        return $type->convertColumnDefinition($definition, $this->_driver);
     }
 
     /**
@@ -131,7 +183,7 @@ abstract class SchemaDialect
     /**
      * Generate the SQL to list the tables.
      *
-     * @param array $config The connection configuration to use for
+     * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
@@ -141,7 +193,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeColumnSql(string $tableName, array $config): array;
@@ -150,7 +202,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe the indexes in a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeIndexSql(string $tableName, array $config): array;
@@ -159,7 +211,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe the foreign keys in a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeForeignKeySql(string $tableName, array $config): array;
@@ -168,7 +220,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe table options
      *
      * @param string $tableName Table name.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array SQL statements to get options for a table.
      */
     public function describeOptionsSql(string $tableName, array $config): array
@@ -220,10 +272,10 @@ abstract class SchemaDialect
      * Generate the SQL to create a table.
      *
      * @param \Cake\Database\Schema\TableSchema $schema Table instance.
-     * @param string[] $columns The columns to go inside the table.
-     * @param string[] $constraints The constraints for the table.
-     * @param string[] $indexes The indexes for the table.
-     * @return string[] SQL statements to create a table.
+     * @param array<string> $columns The columns to go inside the table.
+     * @param array<string> $constraints The constraints for the table.
+     * @param array<string> $indexes The indexes for the table.
+     * @return array<string> SQL statements to create a table.
      */
     abstract public function createTableSql(
         TableSchema $schema,

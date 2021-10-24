@@ -18,6 +18,7 @@ namespace Cake\Error;
 
 use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory;
+use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -75,7 +76,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected $controller;
 
     /**
-     * Template to render for Cake\Core\Exception\CakeException
+     * Template to render for {@link \Cake\Core\Exception\CakeException}
      *
      * @var string
      */
@@ -102,11 +103,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * This can be customized for users that don't want specific exceptions to throw 404 errors
      * or want their application exceptions to be automatically converted.
      *
-     * @var array
+     * @var array<string, int>
      * @psalm-var array<class-string<\Throwable>, int>
      */
     protected $exceptionHttpCodes = [
         // Controller exceptions
+        InvalidParameterException::class => 404,
         MissingActionException::class => 404,
         // Datasource exceptions
         PageOutOfBoundsException::class => 404,
@@ -121,7 +123,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Creates the controller to perform rendering on the error response.
      *
      * @param \Throwable $exception Exception.
-     * @param \Cake\Http\ServerRequest $request The request if this is set it will be used
+     * @param \Cake\Http\ServerRequest|null $request The request if this is set it will be used
      *   instead of creating a new one.
      */
     public function __construct(Throwable $exception, ?ServerRequest $request = null)
@@ -457,7 +459,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

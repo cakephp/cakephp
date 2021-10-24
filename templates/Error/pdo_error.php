@@ -38,7 +38,7 @@ $this->start('subheading');
 <?php endif; ?>
 <?php if (!empty($error->params)) : ?>
         <strong>SQL Query Params: </strong>
-        <pre><?= h(Debugger::dump($error->params)); ?></pre>
+        <pre><?php Debugger::dump($error->params); ?></pre>
 <?php endif; ?>
 <?= $this->element('auto_table_warning'); ?>
 <?php $this->end() ?>

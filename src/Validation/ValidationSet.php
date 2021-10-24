@@ -31,28 +31,28 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Holds the ValidationRule objects
      *
-     * @var \Cake\Validation\ValidationRule[]
+     * @var array<\Cake\Validation\ValidationRule>
      */
     protected $_rules = [];
 
     /**
      * Denotes whether the fieldname key must be present in data array
      *
-     * @var bool|string|callable
+     * @var callable|string|bool
      */
     protected $_validatePresent = false;
 
     /**
      * Denotes if a field is allowed to be empty
      *
-     * @var bool|string|callable
+     * @var callable|string|bool
      */
     protected $_allowEmpty = false;
 
     /**
-     * Returns whether or not a field can be left out.
+     * Returns whether a field can be left out.
      *
-     * @return bool|string|callable
+     * @return callable|string|bool
      */
     public function isPresenceRequired()
     {
@@ -62,7 +62,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets whether a field is required to be present in data array.
      *
-     * @param bool|string|callable $validatePresent Valid values are true, false, 'create', 'update' or a callable.
+     * @param callable|string|bool $validatePresent Valid values are true, false, 'create', 'update' or a callable.
      * @return $this
      */
     public function requirePresence($validatePresent)
@@ -73,9 +73,9 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Returns whether or not a field can be left empty.
+     * Returns whether a field can be left empty.
      *
-     * @return bool|string|callable
+     * @return callable|string|bool
      */
     public function isEmptyAllowed()
     {
@@ -85,7 +85,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets whether a field value is allowed to be empty.
      *
-     * @param bool|string|callable $allowEmpty Valid values are true, false,
+     * @param callable|string|bool $allowEmpty Valid values are true, false,
      * 'create', 'update' or a callable.
      * @return $this
      */
@@ -114,7 +114,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns all rules for this validation set
      *
-     * @return \Cake\Validation\ValidationRule[]
+     * @return array<\Cake\Validation\ValidationRule>
      */
     public function rules(): array
     {
@@ -215,8 +215,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns an iterator for each of the rules to be applied
      *
-     * @return \Cake\Validation\ValidationRule[]
-     * @psalm-return \Traversable<string, \Cake\Validation\ValidationRule>
+     * @return \Traversable<string, \Cake\Validation\ValidationRule>
      */
     public function getIterator(): Traversable
     {

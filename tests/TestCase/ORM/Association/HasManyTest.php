@@ -40,21 +40,39 @@ class HasManyTest extends TestCase
     /**
      * Fixtures
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Comments',
         'core.Articles',
+        'core.Tags',
         'core.Authors',
         'core.Users',
         'core.ArticlesTags',
-        'core.Tags',
     ];
 
     /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $author;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $article;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $articlesTypeMap;
+
+    /**
+     * @var bool
+     */
+    protected $autoQuote;
+
+    /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -100,10 +118,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that foreignKey() returns the correct configured value
-     *
-     * @return void
      */
-    public function testSetForeignKey()
+    public function testSetForeignKey(): void
     {
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author,
@@ -115,10 +131,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that foreignKey generation ignores database names in target table.
-     *
-     * @return void
      */
-    public function testForeignKeyIgnoreDatabaseName()
+    public function testForeignKeyIgnoreDatabaseName(): void
     {
         $this->author->setTable('schema.authors');
         $assoc = new HasMany('Articles', [
@@ -129,10 +143,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that the association reports it can be joined
-     *
-     * @return void
      */
-    public function testCanBeJoined()
+    public function testCanBeJoined(): void
     {
         $assoc = new HasMany('Test');
         $this->assertFalse($assoc->canBeJoined());
@@ -140,10 +152,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests setSort() method
-     *
-     * @return void
      */
-    public function testSetSort()
+    public function testSetSort(): void
     {
         $assoc = new HasMany('Test');
         $this->assertNull($assoc->getSort());
@@ -153,10 +163,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests requiresKeys() method
-     *
-     * @return void
      */
-    public function testRequiresKeys()
+    public function testRequiresKeys(): void
     {
         $assoc = new HasMany('Test');
         $this->assertTrue($assoc->requiresKeys());
@@ -170,12 +178,10 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that HasMany can't use the join strategy
-     *
-     * @return void
      */
-    public function testStrategyFailure()
+    public function testStrategyFailure(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid strategy "join" was provided');
         $assoc = new HasMany('Test');
         $assoc->setStrategy(HasMany::STRATEGY_JOIN);
@@ -183,10 +189,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test the eager loader method with no extra options
-     *
-     * @return void
      */
-    public function testEagerLoader()
+    public function testEagerLoader(): void
     {
         $config = [
             'sourceTable' => $this->author,
@@ -224,10 +228,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test the eager loader method with default query clauses
-     *
-     * @return void
      */
-    public function testEagerLoaderWithDefaults()
+    public function testEagerLoaderWithDefaults(): void
     {
         $config = [
             'sourceTable' => $this->author,
@@ -258,10 +260,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test the eager loader method with overridden query clauses
-     *
-     * @return void
      */
-    public function testEagerLoaderWithOverrides()
+    public function testEagerLoaderWithOverrides(): void
     {
         $config = [
             'sourceTable' => $this->author,
@@ -316,12 +316,10 @@ class HasManyTest extends TestCase
     /**
      * Test that failing to add the foreignKey to the list of fields will throw an
      * exception
-     *
-     * @return void
      */
-    public function testEagerLoaderFieldsException()
+    public function testEagerLoaderFieldsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('You are required to select the "Articles.author_id"');
         $config = [
             'sourceTable' => $this->author,
@@ -344,10 +342,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that eager loader accepts a queryBuilder option
-     *
-     * @return void
      */
-    public function testEagerLoaderWithQueryBuilder()
+    public function testEagerLoaderWithQueryBuilder(): void
     {
         $config = [
             'sourceTable' => $this->author,
@@ -395,10 +391,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test the eager loader method with no extra options
-     *
-     * @return void
      */
-    public function testEagerLoaderMultipleKeys()
+    public function testEagerLoaderMultipleKeys(): void
     {
         $config = [
             'sourceTable' => $this->author,
@@ -458,10 +452,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that not selecting join keys fails with an error
-     *
-     * @return void
      */
-    public function testEagerloaderNoForeignKeys()
+    public function testEagerloaderNoForeignKeys(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles');
@@ -477,10 +469,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test cascading deletes.
-     *
-     * @return void
      */
-    public function testCascadeDelete()
+    public function testCascadeDelete(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
@@ -505,10 +495,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test cascading deletes with a finder
-     *
-     * @return void
      */
-    public function testCascadeDeleteFinder()
+    public function testCascadeDeleteFinder(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
@@ -536,10 +524,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test cascading delete with has many.
-     *
-     * @return void
      */
-    public function testCascadeDeleteCallbacks()
+    public function testCascadeDeleteCallbacks(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
@@ -563,10 +549,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test cascading delete with a rule preventing deletion
-     *
-     * @return void
      */
-    public function testCascadeDeleteCallbacksRuleFailure()
+    public function testCascadeDeleteCallbacksRuleFailure(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
@@ -577,7 +561,7 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $articles = $association->getTarget();
-        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function () {
                 return false;
             });
@@ -593,10 +577,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that saveAssociated() ignores non entity values.
-     *
-     * @return void
      */
-    public function testSaveAssociatedOnlyEntities()
+    public function testSaveAssociatedOnlyEntities(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
             ->addMethods(['saveAssociated'])
@@ -625,10 +607,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that property is being set using the constructor options.
-     *
-     * @return void
      */
-    public function testPropertyOption()
+    public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new HasMany('Thing', $config);
@@ -637,10 +617,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that plugin names are omitted from property()
-     *
-     * @return void
      */
-    public function testPropertyNoPlugin()
+    public function testPropertyNoPlugin(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
             ->disableOriginalConstructor()
@@ -655,10 +633,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that the ValueBinder is reset when using strategy = Association::STRATEGY_SUBQUERY
-     *
-     * @return void
      */
-    public function testValueBinderUpdateOnSubQueryStrategy()
+    public function testValueBinderUpdateOnSubQueryStrategy(): void
     {
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->hasMany('Articles', [
@@ -733,9 +709,8 @@ class HasManyTest extends TestCase
      *
      * @param array $expected The expected join clause.
      * @param \Cake\ORM\Query $query The query to check.
-     * @return void
      */
-    protected function assertJoin($expected, $query)
+    protected function assertJoin($expected, $query): void
     {
         if ($this->autoQuote) {
             $driver = $query->getConnection()->getDriver();
@@ -755,9 +730,8 @@ class HasManyTest extends TestCase
      *
      * @param \Cake\Database\QueryExpression $expected The expected where clause.
      * @param \Cake\ORM\Query $query The query to check.
-     * @return void
      */
-    protected function assertWhereClause($expected, $query)
+    protected function assertWhereClause($expected, $query): void
     {
         if ($this->autoQuote) {
             $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
@@ -771,9 +745,8 @@ class HasManyTest extends TestCase
      *
      * @param \Cake\Database\QueryExpression $expected The expected where clause.
      * @param \Cake\ORM\Query $query The query to check.
-     * @return void
      */
-    protected function assertOrderClause($expected, $query)
+    protected function assertOrderClause($expected, $query): void
     {
         if ($this->autoQuote) {
             $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
@@ -787,9 +760,8 @@ class HasManyTest extends TestCase
      *
      * @param array $expected Array of expected fields.
      * @param \Cake\ORM\Query $query The query to check.
-     * @return void
      */
-    protected function assertSelectClause($expected, $query)
+    protected function assertSelectClause($expected, $query): void
     {
         if ($this->autoQuote) {
             $connection = $query->getConnection();
@@ -803,10 +775,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that unlinking calls the right methods
-     *
-     * @return void
      */
-    public function testUnlinkSuccess()
+    public function testUnlinkSuccess(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
@@ -829,10 +799,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that unlink with an empty array does nothing
-     *
-     * @return void
      */
-    public function testUnlinkWithEmptyArray()
+    public function testUnlinkWithEmptyArray(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
@@ -854,10 +822,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that link only uses a single database transaction
-     *
-     * @return void
      */
-    public function testLinkUsesSingleTransaction()
+    public function testLinkUsesSingleTransaction(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
@@ -871,7 +837,7 @@ class HasManyTest extends TestCase
         $this->assertCount(0, $initial);
 
         // Ensure that after each model is saved, we are still within a transaction.
-        $listenerAfterSave = function ($e, $entity, $options) use ($articles) {
+        $listenerAfterSave = function ($e, $entity, $options) use ($articles): void {
             $this->assertTrue(
                 $articles->getConnection()->inTransaction(),
                 'Multiple transactions used to save associated models.'
@@ -889,12 +855,10 @@ class HasManyTest extends TestCase
 
     /**
      * Test that saveAssociated() fails on non-empty, non-iterable value
-     *
-     * @return void
      */
-    public function testSaveAssociatedNotEmptyNotIterable()
+    public function testSaveAssociatedNotEmptyNotIterable(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not save comments, it cannot be traversed');
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -912,7 +876,7 @@ class HasManyTest extends TestCase
      *
      * @return array
      */
-    public function emptySetDataProvider()
+    public function emptySetDataProvider(): array
     {
         return [
             [''],
@@ -928,9 +892,8 @@ class HasManyTest extends TestCase
      *
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
-     * @return void
      */
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -954,9 +917,8 @@ class HasManyTest extends TestCase
      *
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
-     * @return void
      */
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value)
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -985,9 +947,8 @@ class HasManyTest extends TestCase
      *
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
-     * @return void
      */
-    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
+    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1011,9 +972,8 @@ class HasManyTest extends TestCase
      *
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
-     * @return void
      */
-    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value)
+    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1039,10 +999,8 @@ class HasManyTest extends TestCase
     /**
      * Test that the associated entities are not saved when there's any rule
      * that fail on them and the errors are correctly set on the original entity.
-     *
-     * @return void
      */
-    public function testSaveAssociatedWithFailedRuleOnAssociated()
+    public function testSaveAssociatedWithFailedRuleOnAssociated(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments');
@@ -1080,12 +1038,10 @@ class HasManyTest extends TestCase
 
     /**
      * Tests that providing an invalid strategy throws an exception
-     *
-     * @return void
      */
-    public function testInvalidSaveStrategy()
+    public function testInvalidSaveStrategy(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $articles = $this->getTableLocator()->get('Articles');
 
         $association = $articles->hasMany('Comments');
@@ -1094,10 +1050,8 @@ class HasManyTest extends TestCase
 
     /**
      * Tests saveStrategy
-     *
-     * @return void
      */
-    public function testSetSaveStrategy()
+    public function testSetSaveStrategy(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
@@ -1108,10 +1062,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that save works with replace saveStrategy and are not deleted once they are not null
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategy()
+    public function testSaveReplaceSaveStrategy(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE]);
@@ -1141,10 +1093,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that save works with replace saveStrategy conditions
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategyClosureConditions()
+    public function testSaveReplaceSaveStrategyClosureConditions(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles')
@@ -1184,10 +1134,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that save works with replace saveStrategy, replacing the already persisted entities even if no new entities are passed
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategyNotAdding()
+    public function testSaveReplaceSaveStrategyNotAdding(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
@@ -1214,10 +1162,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that save works with append saveStrategy not deleting or setting null anything
-     *
-     * @return void
      */
-    public function testSaveAppendSaveStrategy()
+    public function testSaveAppendSaveStrategy(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles', ['saveStrategy' => 'append']);
@@ -1248,10 +1194,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that save has append as the default save strategy
-     *
-     * @return void
      */
-    public function testSaveDefaultSaveStrategy()
+    public function testSaveDefaultSaveStrategy(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_APPEND]);
@@ -1260,10 +1204,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that the associated entities are unlinked and deleted when they are dependent
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategyDependent()
+    public function testSaveReplaceSaveStrategyDependent(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE, 'dependent' => true]);
@@ -1294,10 +1236,8 @@ class HasManyTest extends TestCase
     /**
      * Test that the associated entities are unlinked and deleted when they are dependent
      * when associated entities array is indexed by string keys
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategyDependentWithStringKeys()
+    public function testSaveReplaceSaveStrategyDependentWithStringKeys(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE, 'dependent' => true]);
@@ -1331,10 +1271,8 @@ class HasManyTest extends TestCase
      * Test that the associated entities are unlinked and deleted when they are dependent
      *
      * In the future this should change and apply the finder.
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategyDependentWithConditions()
+    public function testSaveReplaceSaveStrategyDependentWithConditions(): void
     {
         $this->getTableLocator()->clear();
         $this->setAppNamespace('TestApp');
@@ -1383,10 +1321,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategyNotNullable()
+    public function testSaveReplaceSaveStrategyNotNullable(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments', ['saveStrategy' => HasMany::SAVE_REPLACE]);
@@ -1423,10 +1359,8 @@ class HasManyTest extends TestCase
 
     /**
      * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
-     *
-     * @return void
      */
-    public function testSaveReplaceSaveStrategyAdding()
+    public function testSaveReplaceSaveStrategyAdding(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments', ['saveStrategy' => HasMany::SAVE_REPLACE]);
@@ -1471,10 +1405,8 @@ class HasManyTest extends TestCase
     /**
      * Tests that dependent, non-cascading deletes are using the association
      * conditions for deleting associated records.
-     *
-     * @return void
      */
-    public function testHasManyNonCascadingUnlinkDeleteUsesAssociationConditions()
+    public function testHasManyNonCascadingUnlinkDeleteUsesAssociationConditions(): void
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Comments = $Articles->hasMany('Comments', [
@@ -1532,10 +1464,8 @@ class HasManyTest extends TestCase
     /**
      * Tests that non-dependent, non-cascading deletes are using the association
      * conditions for updating associated records.
-     *
-     * @return void
      */
-    public function testHasManyNonDependentNonCascadingUnlinkUpdateUsesAssociationConditions()
+    public function testHasManyNonDependentNonCascadingUnlinkUpdateUsesAssociationConditions(): void
     {
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->associations()->removeAll();

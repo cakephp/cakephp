@@ -27,7 +27,7 @@ class EventList implements ArrayAccess, Countable
     /**
      * Events list
      *
-     * @var \Cake\Event\EventInterface[]
+     * @var array<\Cake\Event\EventInterface>
      */
     protected $_events = [];
 
@@ -71,6 +71,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $offset The offset to retrieve.
      * @return mixed Can return all value types.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if ($this->offsetExists($offset)) {

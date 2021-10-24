@@ -37,11 +37,17 @@ class TestUsingViewWidget implements WidgetInterface
         return $this->_view;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(array $data, ContextInterface $context): string
     {
         return '<success></success>';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function secureFields(array $data): array
     {
         if (!isset($data['name']) || $data['name'] === '') {

@@ -16,21 +16,38 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Log;
 
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Log\LoggedQuery;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
+use Exception;
 
 /**
  * Tests LoggedQuery class
  */
 class LoggedQueryTest extends TestCase
 {
+    protected $driver;
+
+    protected $true = 'TRUE';
+
+    protected $false = 'FALSE';
+
+    public function setUp(): void
+    {
+        $this->driver = ConnectionManager::get('test')->getDriver();
+
+        if ($this->driver instanceof Sqlserver) {
+            $this->true = '1';
+            $this->false = '0';
+        }
+    }
+
     /**
      * Tests that LoggedQuery can be converted to string
-     *
-     * @return void
      */
-    public function testStringConversion()
+    public function testStringConversion(): void
     {
         $logged = new LoggedQuery();
         $logged->query = 'SELECT foo FROM bar';
@@ -39,40 +56,36 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that query placeholders are replaced when logged
-     *
-     * @return void
      */
-    public function testStringInterpolation()
+    public function testStringInterpolation(): void
     {
         $query = new LoggedQuery();
+        $query->driver = $this->driver;
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
         $query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
 
-        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = $this->true AND e = $this->false AND f = 0";
         $this->assertSame($expected, (string)$query);
     }
 
     /**
      * Tests that positional placeholders are replaced when logging a query
-     *
-     * @return void
      */
-    public function testStringInterpolationNotNamed()
+    public function testStringInterpolationNotNamed(): void
     {
         $query = new LoggedQuery();
+        $query->driver = $this->driver;
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
         $query->params = ['string', '3', null, true, false, 0];
 
-        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = $this->true AND e = $this->false AND f = 0";
         $this->assertSame($expected, (string)$query);
     }
 
     /**
      * Tests that repeated placeholders are correctly replaced
-     *
-     * @return void
      */
-    public function testStringInterpolationDuplicate()
+    public function testStringInterpolationDuplicate(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p1 AND c = :p2 AND d = :p2';
@@ -84,10 +97,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that named placeholders
-     *
-     * @return void
      */
-    public function testStringInterpolationNamed()
+    public function testStringInterpolationNamed(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p11 AND c = :p20 AND d = :p2';
@@ -99,10 +110,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that placeholders are replaced with correctly escaped strings
-     *
-     * @return void
      */
-    public function testStringInterpolationSpecialChars()
+    public function testStringInterpolationSpecialChars(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4';
@@ -114,10 +123,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that query placeholders are replaced when logged
-     *
-     * @return void
      */
-    public function testBinaryInterpolation()
+    public function testBinaryInterpolation(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';
@@ -130,10 +137,8 @@ class LoggedQueryTest extends TestCase
 
     /**
      * Tests that unknown possible binary data is not replaced to hex.
-     *
-     * @return void
      */
-    public function testBinaryInterpolationIgnored()
+    public function testBinaryInterpolationIgnored(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';
@@ -143,7 +148,7 @@ class LoggedQueryTest extends TestCase
         $this->assertSame($expected, (string)$query);
     }
 
-    public function testGetContext()
+    public function testGetContext(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';
@@ -157,16 +162,13 @@ class LoggedQueryTest extends TestCase
         $this->assertSame($expected, $query->getContext());
     }
 
-    /**
-     * @return void
-     */
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1';
         $query->params = ['p1' => '$2y$10$dUAIj'];
         $query->numRows = 4;
-        $query->error = new \Exception('You fail!');
+        $query->error = new Exception('You fail!');
 
         $expected = json_encode([
             'query' => $query->query,

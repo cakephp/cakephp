@@ -129,7 +129,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $template;
+    protected $template = '';
 
     /**
      * The name of the layout file to render the template inside of. The name specified
@@ -158,7 +158,7 @@ class View implements EventDispatcherInterface
     /**
      * An array of variables
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $viewVars = [];
 
@@ -213,7 +213,7 @@ class View implements EventDispatcherInterface
     /**
      * List of variables to collect from the associated controller.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
@@ -230,21 +230,21 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of paths.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var string[][]
+     * @var array<string[]>
      */
     protected $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_parents = [];
 
@@ -266,7 +266,7 @@ class View implements EventDispatcherInterface
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_stack = [];
 
@@ -319,7 +319,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
-     * @param array $viewOptions View options. See View::$_passedVars for list of
+     * @param array<string, mixed> $viewOptions View options. See {@link View::$_passedVars} for list of
      *   options which get set as class properties.
      */
     public function __construct(
@@ -620,7 +620,7 @@ class View implements EventDispatcherInterface
      *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
-     * @param array $options Array of options. Possible keys are:
+     * @param array<string, mixed> $options Array of options. Possible keys are:
      *
      * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
      *   If an array, the following keys can be used:
@@ -674,7 +674,7 @@ class View implements EventDispatcherInterface
      * is empty, the $block will be run and the output stored.
      *
      * @param callable $block The block of code that you want to cache the output of.
-     * @param array $options The options defining the cache key etc.
+     * @param array<string, mixed> $options The options defining the cache key etc.
      * @return string The rendered content.
      * @throws \RuntimeException When $options is lacking a 'key' option.
      */
@@ -823,7 +823,7 @@ class View implements EventDispatcherInterface
     /**
      * Returns a list of variables available in the current View context
      *
-     * @return string[] Array of the set view variable names.
+     * @return array<string> Array of the set view variable names.
      */
     public function getVars(): array
     {
@@ -839,17 +839,13 @@ class View implements EventDispatcherInterface
      */
     public function get(string $var, $default = null)
     {
-        if (!isset($this->viewVars[$var])) {
-            return $default;
-        }
-
-        return $this->viewVars[$var];
+        return $this->viewVars[$var] ?? $default;
     }
 
     /**
      * Saves a variable or an associative array of variables for use inside a template.
      *
-     * @param string|array $name A string or an array of data.
+     * @param array|string $name A string or an array of data.
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
@@ -859,6 +855,7 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
+                /** @var array|false $data */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new RuntimeException(
@@ -879,7 +876,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the names of all the existing blocks.
      *
-     * @return string[] An array containing the blocks.
+     * @return array<string> An array containing the blocks.
      * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks(): array
@@ -1081,16 +1078,18 @@ class View implements EventDispatcherInterface
      * Magic accessor for helpers.
      *
      * @param string $name Name of the attribute to get.
-     * @return mixed
+     * @return \Cake\View\Helper|null
      */
     public function __get(string $name)
     {
         $registry = $this->helpers();
-        if (isset($registry->{$name})) {
-            $this->{$name} = $registry->{$name};
-
-            return $registry->{$name};
+        if (!isset($registry->{$name})) {
+            return null;
         }
+
+        $this->{$name} = $registry->{$name};
+
+        return $registry->{$name};
     }
 
     /**
@@ -1173,6 +1172,7 @@ class View implements EventDispatcherInterface
         ob_start();
 
         try {
+            // Avoiding $templateFile here due to collision with extract() vars.
             include func_get_arg(0);
         } catch (Throwable $exception) {
             while (ob_get_level() > $bufferLevel) {
@@ -1203,7 +1203,7 @@ class View implements EventDispatcherInterface
      * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
      *
      * @param string $name Name of the helper to load.
-     * @param array $config Settings for the helper
+     * @param array<string, mixed> $config Settings for the helper
      * @return \Cake\View\Helper a constructed helper object.
      * @see \Cake\View\HelperRegistry::load()
      */
@@ -1312,7 +1312,7 @@ class View implements EventDispatcherInterface
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
         }
-        if (strlen($this->subDir)) {
+        if ($this->subDir !== '') {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
             if ($templatePath != $subDir && substr($templatePath, -strlen($subDir)) === $subDir) {
@@ -1516,7 +1516,7 @@ class View implements EventDispatcherInterface
      * and layouts.
      *
      * @param string $basePath Base path on which to get the prefixed one.
-     * @return string[] Array with all the templates paths.
+     * @return array<string> Array with all the templates paths.
      */
     protected function _getSubPaths(string $basePath): array
     {
@@ -1542,7 +1542,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return string[] paths
+     * @return array<string> paths
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {
@@ -1603,9 +1603,9 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Element name
      * @param array $data Data
-     * @param array $options Element options
+     * @param array<string, mixed> $options Element options
      * @return array Element Cache configuration.
-     * @psalm-param array{cache:(string|array{key:string, config:string}|null), callbacks:mixed, plugin:mixed} $options
+     * @psalm-param array{cache:(array{key:string, config:string}|string|null), callbacks:mixed, plugin:mixed} $options
      * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
@@ -1650,7 +1650,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $file Element file path
      * @param array $data Data to render
-     * @param array $options Element options
+     * @param array<string, mixed> $options Element options
      * @return string
      * @triggers View.beforeRender $this, [$file]
      * @triggers View.afterRender $this, [$file, $element]

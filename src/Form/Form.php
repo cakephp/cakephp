@@ -123,7 +123,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * - Form.buildValidator => buildValidator
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -194,7 +194,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * A hook method intended to be implemented by subclasses.
      *
      * You can use this method to define the schema using
-     * the methods on Cake\Form\Schema, or loads a pre-defined
+     * the methods on {@link \Cake\Form\Schema}, or loads a pre-defined
      * schema from a concrete class.
      *
      * @param \Cake\Form\Schema $schema The schema to customize.
@@ -209,12 +209,14 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * Used to check if $data passes this form's validation.
      *
      * @param array $data The data to check.
-     * @return bool Whether or not the data is valid.
+     * @param string|null $validator Validator name.
+     * @return bool Whether the data is valid.
+     * @throws \RuntimeException If validator is invalid.
      */
-    public function validate(array $data): bool
+    public function validate(array $data, ?string $validator = null): bool
     {
-        $validator = $this->getValidator();
-        $this->_errors = $validator->validate($data);
+        $this->_errors = $this->getValidator($validator ?: static::DEFAULT_VALIDATOR)
+            ->validate($data);
 
         return count($this->_errors) === 0;
     }
@@ -261,19 +263,29 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * the action of the form. This may be sending email, interacting
      * with a remote API, or anything else you may need.
      *
+     * ### Options:
+     *
+     * - validate: Set to `false` to disable validation. Can also be a string of the validator ruleset to be applied.
+     *   Defaults to `true`/`'default'`.
+     *
      * @param array $data Form data.
+     * @param array $options List of options.
      * @return bool False on validation failure, otherwise returns the
      *   result of the `_execute()` method.
      */
-    public function execute(array $data): bool
+    public function execute(array $data, array $options = []): bool
     {
         $this->_data = $data;
 
-        if (!$this->validate($data)) {
-            return false;
+        $options += ['validate' => true];
+
+        if ($options['validate'] === false) {
+            return $this->_execute($data);
         }
 
-        return $this->_execute($data);
+        $validator = $options['validate'] === true ? static::DEFAULT_VALIDATOR : $options['validate'];
+
+        return $this->validate($data, $validator) ? $this->_execute($data) : false;
     }
 
     /**
@@ -308,7 +320,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Saves a variable or an associative array of variables for use inside form data.
      *
-     * @param string|array $name The key to write, can be a dot notation value.
+     * @param array|string $name The key to write, can be a dot notation value.
      * Alternatively can be an array containing key(s) and value(s).
      * @param mixed $value Value to set for var
      * @return $this
@@ -344,7 +356,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Get the printable version of a Form instance.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

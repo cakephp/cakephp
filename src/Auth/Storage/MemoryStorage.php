@@ -31,7 +31,7 @@ class MemoryStorage implements StorageInterface
     /**
      * Redirect URL.
      *
-     * @var string|array|null
+     * @var array|string|null
      */
     protected $_redirectUrl;
 
@@ -75,5 +75,7 @@ class MemoryStorage implements StorageInterface
         }
 
         $this->_redirectUrl = $url;
+
+        return null;
     }
 }

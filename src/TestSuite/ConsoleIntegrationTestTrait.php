@@ -42,7 +42,7 @@ trait ConsoleIntegrationTestTrait
     use ContainerStubTrait;
 
     /**
-     * Whether or not to use the CommandRunner
+     * Whether to use the CommandRunner
      *
      * @var bool
      */
@@ -293,7 +293,7 @@ trait ConsoleIntegrationTestTrait
      * Creates an $argv array from a command string
      *
      * @param string $command Command string
-     * @return string[]
+     * @return array<string>
      */
     protected function commandStringToArgs(string $command): array
     {
@@ -307,7 +307,7 @@ trait ConsoleIntegrationTestTrait
 
             // end of argument
             if ($char === ' ' && !$inDQuote && !$inSQuote) {
-                if (strlen($arg)) {
+                if ($arg !== '') {
                     $argv[] = $arg;
                 }
                 $arg = '';

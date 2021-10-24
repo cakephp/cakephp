@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Cache\Engine\FileEngine;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\DriverInterface;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -30,10 +32,11 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use ReflectionProperty;
 use RuntimeException;
 
@@ -45,17 +48,17 @@ class QueryTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.ArticlesTranslations',
         'core.Authors',
         'core.Comments',
         'core.Datatypes',
         'core.Posts',
-        'core.Tags',
     ];
 
     /**
@@ -70,8 +73,6 @@ class QueryTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -123,7 +124,7 @@ class QueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderHasMany()
+    public function strategiesProviderHasMany(): array
     {
         return [['subquery'], ['select']];
     }
@@ -133,7 +134,7 @@ class QueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsTo()
+    public function strategiesProviderBelongsTo(): array
     {
         return [['join'], ['select']];
     }
@@ -143,17 +144,15 @@ class QueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsToMany()
+    public function strategiesProviderBelongsToMany(): array
     {
         return [['subquery'], ['select']];
     }
 
     /**
      * Test getRepository() method.
-     *
-     * @return void
      */
-    public function testGetRepository()
+    public function testGetRepository(): void
     {
         $query = new Query($this->connection, $this->table);
 
@@ -166,9 +165,8 @@ class QueryTest extends TestCase
      * and results are not hydrated
      *
      * @dataProvider strategiesProviderBelongsTo
-     * @return void
      */
-    public function testContainResultFetchingOneLevel($strategy)
+    public function testContainResultFetchingOneLevel(string $strategy): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $table->belongsTo('authors', ['strategy' => $strategy]);
@@ -224,9 +222,8 @@ class QueryTest extends TestCase
      * association objects in order to perform eager loading with select strategy
      *
      * @dataProvider strategiesProviderHasMany
-     * @return void
      */
-    public function testHasManyEagerLoadingNoHydration($strategy)
+    public function testHasManyEagerLoadingNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
@@ -303,9 +300,8 @@ class QueryTest extends TestCase
      * both hydrating and not hydrating the results.
      *
      * @dataProvider strategiesProviderHasMany
-     * @return void
      */
-    public function testHasManyEagerLoadingCount($strategy)
+    public function testHasManyEagerLoadingCount(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
@@ -334,9 +330,8 @@ class QueryTest extends TestCase
      * Tests that it is possible to set fields & order in a hasMany result set
      *
      * @dataProvider strategiesProviderHasMany
-     * @return void
      */
-    public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy)
+    public function testHasManyEagerLoadingFieldsAndOrderNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
@@ -386,9 +381,8 @@ class QueryTest extends TestCase
      * Tests that deep associations can be eagerly loaded
      *
      * @dataProvider strategiesProviderHasMany
-     * @return void
      */
-    public function testHasManyEagerLoadingDeep($strategy)
+    public function testHasManyEagerLoadingDeep(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
@@ -460,9 +454,8 @@ class QueryTest extends TestCase
      * model in the query
      *
      * @dataProvider strategiesProviderHasMany
-     * @return void
      */
-    public function testHasManyEagerLoadingFromSecondaryTable($strategy)
+    public function testHasManyEagerLoadingFromSecondaryTable(string $strategy): void
     {
         $author = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
@@ -566,9 +559,8 @@ class QueryTest extends TestCase
      * association objects in order to perform eager loading with select strategy
      *
      * @dataProvider strategiesProviderBelongsToMany
-     * @return void
      */
-    public function testBelongsToManyEagerLoadingNoHydration($strategy)
+    public function testBelongsToManyEagerLoadingNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $this->getTableLocator()->get('Tags');
@@ -595,14 +587,14 @@ class QueryTest extends TestCase
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 1],
                         'description' => 'A big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 2,
                         'name' => 'tag2',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 2],
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -618,14 +610,14 @@ class QueryTest extends TestCase
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 1],
                         'description' => 'A big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -665,7 +657,7 @@ class QueryTest extends TestCase
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                 ],
             ],
@@ -684,10 +676,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that tables results can be filtered by the result of a HasMany
-     *
-     * @return void
      */
-    public function testFilteringByHasManyNoHydration()
+    public function testFilteringByHasManyNoHydration(): void
     {
         $query = new Query($this->connection, $this->table);
         $table = $this->getTableLocator()->get('Articles');
@@ -714,8 +704,8 @@ class QueryTest extends TestCase
                         'user_id' => 4,
                         'comment' => 'Second Comment for First Article',
                         'published' => 'Y',
-                        'created' => new Time('2007-03-18 10:47:23'),
-                        'updated' => new Time('2007-03-18 10:49:31'),
+                        'created' => new FrozenTime('2007-03-18 10:47:23'),
+                        'updated' => new FrozenTime('2007-03-18 10:49:31'),
                     ],
                 ],
             ],
@@ -725,10 +715,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that tables results can be filtered by the result of a HasMany
-     *
-     * @return void
      */
-    public function testFilteringByHasManyHydration()
+    public function testFilteringByHasManyHydration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = new Query($this->connection, $table);
@@ -749,10 +737,8 @@ class QueryTest extends TestCase
      * Tests that BelongsToMany associations are correctly eager loaded.
      * Also that the query object passes the correct parent model keys to the
      * association objects in order to perform eager loading with select strategy
-     *
-     * @return void
      */
-    public function testFilteringByBelongsToManyNoHydration()
+    public function testFilteringByBelongsToManyNoHydration(): void
     {
         $query = new Query($this->connection, $this->table);
         $table = $this->getTableLocator()->get('Articles');
@@ -780,7 +766,7 @@ class QueryTest extends TestCase
                         'id' => 3,
                         'name' => 'tag3',
                         'description' => 'Yet another one',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3],
                 ],
@@ -807,7 +793,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2],
                 ],
@@ -818,10 +804,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to filter by deep associations
-     *
-     * @return void
      */
-    public function testMatchingDotNotation()
+    public function testMatchingDotNotation(): void
     {
         $query = new Query($this->connection, $this->table);
         $table = $this->getTableLocator()->get('authors');
@@ -845,7 +829,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
-                        'created' => new Time('2016-01-01 00:00'),
+                        'created' => new FrozenTime('2016-01-01 00:00'),
                     ],
                     'articles' => [
                         'id' => 1,
@@ -866,10 +850,8 @@ class QueryTest extends TestCase
 
     /**
      * Test setResult()
-     *
-     * @return void
      */
-    public function testSetResult()
+    public function testSetResult(): void
     {
         $query = new Query($this->connection, $this->table);
 
@@ -883,16 +865,14 @@ class QueryTest extends TestCase
 
     /**
      * Test clearResult()
-     *
-     * @return void
      */
-    public function testClearResult()
+    public function testClearResult(): void
     {
         $article = $this->getTableLocator()->get('articles');
         $query = new Query($this->connection, $article);
 
         $firstCount = $query->count();
-        $firstResults = $query->toList();
+        $firstResults = $query->toArray();
 
         $this->assertEquals(3, $firstCount);
         $this->assertCount(3, $firstResults);
@@ -903,7 +883,7 @@ class QueryTest extends TestCase
         $this->assertSame($return, $query);
 
         $secondCount = $query->count();
-        $secondResults = $query->toList();
+        $secondResults = $query->toArray();
 
         $this->assertEquals(2, $secondCount);
         $this->assertCount(2, $secondResults);
@@ -912,10 +892,8 @@ class QueryTest extends TestCase
     /**
      * Tests that applying array options to a query will convert them
      * to equivalent function calls with the correspondent array values
-     *
-     * @return void
      */
-    public function testApplyOptions()
+    public function testApplyOptions(): void
     {
         $this->table->belongsTo('articles');
         $typeMap = new TypeMap([
@@ -981,10 +959,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that page is applied after limit.
-     *
-     * @return void
      */
-    public function testApplyOptionsPageIsLast()
+    public function testApplyOptionsPageIsLast(): void
     {
         $query = new Query($this->connection, $this->table);
         $opts = [
@@ -998,10 +974,8 @@ class QueryTest extends TestCase
 
     /**
      * ApplyOptions should ignore null values.
-     *
-     * @return void
      */
-    public function testApplyOptionsIgnoreNull()
+    public function testApplyOptionsIgnoreNull(): void
     {
         $options = [
             'fields' => null,
@@ -1013,10 +987,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests getOptions() method
-     *
-     * @return void
      */
-    public function testGetOptions()
+    public function testGetOptions(): void
     {
         $options = ['doABarrelRoll' => true, 'fields' => ['id', 'name']];
         $query = new Query($this->connection, $this->table);
@@ -1031,14 +1003,12 @@ class QueryTest extends TestCase
 
     /**
      * Tests registering mappers with mapReduce()
-     *
-     * @return void
      */
-    public function testMapReduceOnlyMapper()
+    public function testMapReduceOnlyMapper(): void
     {
-        $mapper1 = function () {
+        $mapper1 = function (): void {
         };
-        $mapper2 = function () {
+        $mapper2 = function (): void {
         };
         $query = new Query($this->connection, $this->table);
         $this->assertSame($query, $query->mapReduce($mapper1));
@@ -1060,18 +1030,16 @@ class QueryTest extends TestCase
 
     /**
      * Tests registering mappers and reducers with mapReduce()
-     *
-     * @return void
      */
-    public function testMapReduceBothMethods()
+    public function testMapReduceBothMethods(): void
     {
-        $mapper1 = function () {
+        $mapper1 = function (): void {
         };
-        $mapper2 = function () {
+        $mapper2 = function (): void {
         };
-        $reducer1 = function () {
+        $reducer1 = function (): void {
         };
-        $reducer2 = function () {
+        $reducer2 = function (): void {
         };
         $query = new Query($this->connection, $this->table);
         $this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
@@ -1092,18 +1060,16 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to overwrite previous map reducers
-     *
-     * @return void
      */
-    public function testOverwriteMapReduce()
+    public function testOverwriteMapReduce(): void
     {
-        $mapper1 = function () {
+        $mapper1 = function (): void {
         };
-        $mapper2 = function () {
+        $mapper2 = function (): void {
         };
-        $reducer1 = function () {
+        $reducer1 = function (): void {
         };
-        $reducer2 = function () {
+        $reducer2 = function (): void {
         };
         $query = new Query($this->connection, $this->table);
         $this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
@@ -1121,22 +1087,20 @@ class QueryTest extends TestCase
 
     /**
      * Tests that multiple map reducers can be stacked
-     *
-     * @return void
      */
-    public function testResultsAreWrappedInMapReduce()
+    public function testResultsAreWrappedInMapReduce(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
         $query->select(['a' => 'id'])->limit(2)->order(['id' => 'ASC']);
-        $query->mapReduce(function ($v, $k, $mr) {
+        $query->mapReduce(function ($v, $k, $mr): void {
             $mr->emit($v['a']);
         });
         $query->mapReduce(
-            function ($v, $k, $mr) {
+            function ($v, $k, $mr): void {
                 $mr->emitIntermediate($v, $k);
             },
-            function ($v, $k, $mr) {
+            function ($v, $k, $mr): void {
                 $mr->emit($v[0] + 1);
             }
         );
@@ -1146,10 +1110,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests first() method when the query has not been executed before
-     *
-     * @return void
      */
-    public function testFirstDirtyQuery()
+    public function testFirstDirtyQuery(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
@@ -1162,10 +1124,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that first can be called again on an already executed query
-     *
-     * @return void
      */
-    public function testFirstCleanQuery()
+    public function testFirstCleanQuery(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
@@ -1178,10 +1138,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that first() will not execute the same query twice
-     *
-     * @return void
      */
-    public function testFirstSameResult()
+    public function testFirstSameResult(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
@@ -1195,15 +1153,13 @@ class QueryTest extends TestCase
 
     /**
      * Tests that first can be called against a query with a mapReduce
-     *
-     * @return void
      */
-    public function testFirstMapReduce()
+    public function testFirstMapReduce(): void
     {
-        $map = function ($row, $key, $mapReduce) {
+        $map = function ($row, $key, $mapReduce): void {
             $mapReduce->emitIntermediate($row['id'], 'id');
         };
-        $reduce = function ($values, $key, $mapReduce) {
+        $reduce = function ($values, $key, $mapReduce): void {
             $mapReduce->emit(array_sum($values));
         };
 
@@ -1219,10 +1175,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that first can be called on an unbuffered query
-     *
-     * @return void
      */
-    public function testFirstUnbuffered()
+    public function testFirstUnbuffered(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = new Query($this->connection, $table);
@@ -1237,10 +1191,8 @@ class QueryTest extends TestCase
     /**
      * Test to show that when results bufferring is enabled if ResultSet gets
      * decorated by ResultSetDecorator it gets wrapped in a BufferedIterator instance.
-     *
-     * @return void
      */
-    public function testBufferedDecoratedResultSet()
+    public function testBufferedDecoratedResultSet(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = new Query($this->connection, $table);
@@ -1258,10 +1210,8 @@ class QueryTest extends TestCase
 
     /**
      * Testing hydrating a result set into Entity objects
-     *
-     * @return void
      */
-    public function testHydrateSimple()
+    public function testHydrateSimple(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
@@ -1282,10 +1232,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that has many results are also hydrated correctly
-     *
-     * @return void
      */
-    public function testHydrateHasMany()
+    public function testHydrateHasMany(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
@@ -1324,10 +1272,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that belongsToMany associations are also correctly hydrated
-     *
-     * @return void
      */
-    public function testHydrateBelongsToMany()
+    public function testHydrateBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $this->getTableLocator()->get('Tags');
@@ -1353,7 +1299,7 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[0]->created);
@@ -1363,7 +1309,7 @@ class QueryTest extends TestCase
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
             'description' => 'Another big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[1]->created);
@@ -1371,10 +1317,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that belongsToMany associations are also correctly hydrated
-     *
-     * @return void
      */
-    public function testFormatResultsBelongsToMany()
+    public function testFormatResultsBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $this->getTableLocator()->get('Tags');
@@ -1385,7 +1329,7 @@ class QueryTest extends TestCase
 
         $articlesTags
             ->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query): void {
                 $query->formatResults(function ($results) {
                     foreach ($results as $result) {
                         $result->beforeFind = true;
@@ -1417,7 +1361,7 @@ class QueryTest extends TestCase
                 'beforeFind' => true,
             ],
             'description' => 'A big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[0]->created);
@@ -1431,7 +1375,7 @@ class QueryTest extends TestCase
                 'beforeFind' => true,
             ],
             'description' => 'Another big description',
-            'created' => new Time('2016-01-01 00:00'),
+            'created' => new FrozenTime('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
         $this->assertInstanceOf(FrozenTime::class, $first->tags[0]->created);
@@ -1441,9 +1385,8 @@ class QueryTest extends TestCase
      * Tests that belongsTo relations are correctly hydrated
      *
      * @dataProvider strategiesProviderBelongsTo
-     * @return void
      */
-    public function testHydrateBelongsTo($strategy)
+    public function testHydrateBelongsTo(string $strategy): void
     {
         $table = $this->getTableLocator()->get('articles');
         $this->getTableLocator()->get('authors');
@@ -1466,9 +1409,8 @@ class QueryTest extends TestCase
      * Tests that deeply nested associations are also hydrated correctly
      *
      * @dataProvider strategiesProviderBelongsTo
-     * @return void
      */
-    public function testHydrateDeep($strategy)
+    public function testHydrateDeep(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
@@ -1493,10 +1435,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to use a custom entity class
-     *
-     * @return void
      */
-    public function testHydrateCustomObject()
+    public function testHydrateCustomObject(): void
     {
         $class = $this->getMockClass('Cake\ORM\Entity', ['fakeMethod']);
         $table = $this->getTableLocator()->get('articles', [
@@ -1522,10 +1462,8 @@ class QueryTest extends TestCase
     /**
      * Tests that has many results are also hydrated correctly
      * when specified a custom entity class
-     *
-     * @return void
      */
-    public function testHydrateHasManyCustomEntity()
+    public function testHydrateHasManyCustomEntity(): void
     {
         $authorEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
         $articleEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
@@ -1563,10 +1501,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that belongsTo relations are correctly hydrated into a custom entity class
-     *
-     * @return void
      */
-    public function testHydrateBelongsToCustomEntity()
+    public function testHydrateBelongsToCustomEntity(): void
     {
         $authorEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
         $table = $this->getTableLocator()->get('articles');
@@ -1587,10 +1523,8 @@ class QueryTest extends TestCase
 
     /**
      * Test getting counts from queries.
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $result = $table->find('all')->count();
@@ -1609,10 +1543,8 @@ class QueryTest extends TestCase
 
     /**
      * Test getting counts from queries with contain.
-     *
-     * @return void
      */
-    public function testCountWithContain()
+    public function testCountWithContain(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -1629,10 +1561,8 @@ class QueryTest extends TestCase
 
     /**
      * Test getting counts from queries with contain.
-     *
-     * @return void
      */
-    public function testCountWithSubselect()
+    public function testCountWithSubselect(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -1661,10 +1591,8 @@ class QueryTest extends TestCase
 
     /**
      * Test getting counts with complex fields.
-     *
-     * @return void
      */
-    public function testCountWithExpressions()
+    public function testCountWithExpressions(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
@@ -1681,15 +1609,13 @@ class QueryTest extends TestCase
 
     /**
      * test count with a beforeFind.
-     *
-     * @return void
      */
-    public function testCountBeforeFind()
+    public function testCountBeforeFind(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
         $table->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query): void {
                 $query
                     ->limit(1)
                     ->order(['Articles.title' => 'DESC']);
@@ -1702,15 +1628,13 @@ class QueryTest extends TestCase
 
     /**
      * Tests that beforeFind is only ever called once, even if you trigger it again in the beforeFind
-     *
-     * @return void
      */
-    public function testBeforeFindCalledOnce()
+    public function testBeforeFindCalledOnce(): void
     {
         $callCount = 0;
         $table = $this->getTableLocator()->get('Articles');
         $table->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$callCount) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$callCount): void {
                 $valueBinder = new ValueBinder();
                 $query->sql($valueBinder);
                 $callCount++;
@@ -1724,10 +1648,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that count() returns correct results with group by.
-     *
-     * @return void
      */
-    public function testCountWithGroup()
+    public function testCountWithGroup(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $query = $table->find('all');
@@ -1740,10 +1662,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to provide a callback for calculating the count
      * of a query
-     *
-     * @return void
      */
-    public function testCountWithCustomCounter()
+    public function testCountWithCustomCounter(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $query = $table->find('all');
@@ -1763,10 +1683,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that RAND() returns correct results.
-     *
-     * @return void
      */
-    public function testSelectRandom()
+    public function testSelectRandom(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $query = $table
@@ -1774,6 +1692,7 @@ class QueryTest extends TestCase
 
         $query->select(['s' => $query->func()->rand()]);
         $result = $query
+            ->all()
             ->extract('s')
             ->first();
 
@@ -1783,10 +1702,8 @@ class QueryTest extends TestCase
 
     /**
      * Test update method.
-     *
-     * @return void
      */
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $table = $this->getTableLocator()->get('articles');
 
@@ -1801,10 +1718,8 @@ class QueryTest extends TestCase
 
     /**
      * Test update method.
-     *
-     * @return void
      */
-    public function testUpdateWithTableExpression()
+    public function testUpdateWithTableExpression(): void
     {
         $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
         $table = $this->getTableLocator()->get('articles');
@@ -1822,10 +1737,8 @@ class QueryTest extends TestCase
 
     /**
      * Test insert method.
-     *
-     * @return void
      */
-    public function testInsert()
+    public function testInsert(): void
     {
         $table = $this->getTableLocator()->get('articles');
 
@@ -1843,10 +1756,8 @@ class QueryTest extends TestCase
 
     /**
      * Test delete method.
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $table = $this->getTableLocator()->get('articles');
 
@@ -1865,7 +1776,7 @@ class QueryTest extends TestCase
      *
      * @return array
      */
-    public function collectionMethodsProvider()
+    public function collectionMethodsProvider(): array
     {
         $identity = function ($a) {
             return $a;
@@ -1891,15 +1802,14 @@ class QueryTest extends TestCase
             ['take', 1, $collection],
             ['append', new \ArrayIterator(), $collection],
             ['compile', true, $collection],
+            ['isEmpty', true, true],
         ];
     }
 
     /**
      * testClearContain
-     *
-     * @return void
      */
-    public function testClearContain()
+    public function testClearContain(): void
     {
         /** @var \Cake\ORM\Query $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
@@ -1927,9 +1837,10 @@ class QueryTest extends TestCase
      * Tests that query can proxy collection methods
      *
      * @dataProvider collectionMethodsProvider
-     * @return void
+     * @param mixed $arg
+     * @param mixed $return
      */
-    public function testCollectionProxy($method, $arg, $return)
+    public function testDeprecatedCollectionProxy(string $method, $arg, $return): void
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all'])
@@ -1948,16 +1859,35 @@ class QueryTest extends TestCase
             ->with($arg, 99)
             ->will($this->returnValue($return));
 
+        $this->deprecated(function () use ($return, $query, $method, $arg) {
+            $this->assertSame($return, $query->{$method}($arg, 99));
+        });
+    }
+
+    /**
+     * Tests deprecation path for proxy collection methods.
+     *
+     * @dataProvider collectionMethodsProvider
+     */
+    public function testDeprecatedPathCollectionProxy(string $method, $arg, $return): void
+    {
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage('QueryTest.php');
+
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->onlyMethods(['all'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
+        $query->select();
+
         $this->assertSame($return, $query->{$method}($arg, 99));
     }
 
     /**
      * Tests that calling an nonexistent method in query throws an
      * exception
-     *
-     * @return void
      */
-    public function testCollectionProxyBadMethod()
+    public function testCollectionProxyBadMethod(): void
     {
         $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('Unknown method "derpFilter"');
@@ -1966,12 +1896,10 @@ class QueryTest extends TestCase
 
     /**
      * cache() should fail on non select queries.
-     *
-     * @return void
      */
-    public function testCacheErrorOnNonSelect()
+    public function testCacheErrorOnNonSelect(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
         $query->insert(['test']);
@@ -1980,10 +1908,8 @@ class QueryTest extends TestCase
 
     /**
      * Integration test for query caching.
-     *
-     * @return void
      */
-    public function testCacheReadIntegration()
+    public function testCacheReadIntegration(): void
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['execute'])
@@ -2011,10 +1937,8 @@ class QueryTest extends TestCase
 
     /**
      * Integration test for query caching.
-     *
-     * @return void
      */
-    public function testCacheWriteIntegration()
+    public function testCacheWriteIntegration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = new Query($this->connection, $table);
@@ -2038,14 +1962,12 @@ class QueryTest extends TestCase
     /**
      * Integration test for query caching using a real cache engine and
      * a formatResults callback
-     *
-     * @return void
      */
-    public function testCacheIntegrationWithFormatResults()
+    public function testCacheIntegrationWithFormatResults(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = new Query($this->connection, $table);
-        $cacher = new \Cake\Cache\Engine\FileEngine();
+        $cacher = new FileEngine();
         $cacher->init();
 
         $query
@@ -2063,10 +1985,8 @@ class QueryTest extends TestCase
 
     /**
      * Test overwriting the contained associations.
-     *
-     * @return void
      */
-    public function testContainOverwrite()
+    public function testContainOverwrite(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
@@ -2085,10 +2005,8 @@ class QueryTest extends TestCase
 
     /**
      * Integration test to show filtering associations using contain and a closure
-     *
-     * @return void
      */
-    public function testContainWithClosure()
+    public function testContainWithClosure(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -2113,10 +2031,8 @@ class QueryTest extends TestCase
     /**
      * Integration test that uses the contain signature that is the same as the
      * matching signature
-     *
-     * @return void
      */
-    public function testContainSecondSignature()
+    public function testContainSecondSignature(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -2139,12 +2055,10 @@ class QueryTest extends TestCase
     /**
      * Integration test to ensure that filtering associations with the queryBuilder
      * option works.
-     *
-     * @return void
      */
-    public function testContainWithQueryBuilderHasManyError()
+    public function testContainWithQueryBuilderHasManyError(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
         $query = new Query($this->connection, $table);
@@ -2163,10 +2077,8 @@ class QueryTest extends TestCase
     /**
      * Integration test to ensure that filtering associations with the queryBuilder
      * option works.
-     *
-     * @return void
      */
-    public function testContainWithQueryBuilderJoinableAssociation()
+    public function testContainWithQueryBuilderJoinableAssociation(): void
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasOne('Articles');
@@ -2202,10 +2114,8 @@ class QueryTest extends TestCase
 
     /**
      * Test containing associations that have empty conditions.
-     *
-     * @return void
      */
-    public function testContainAssociationWithEmptyConditions()
+    public function testContainAssociationWithEmptyConditions(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors', [
@@ -2220,14 +2130,12 @@ class QueryTest extends TestCase
 
     /**
      * Tests the formatResults method
-     *
-     * @return void
      */
-    public function testFormatResults()
+    public function testFormatResults(): void
     {
-        $callback1 = function () {
+        $callback1 = function (): void {
         };
-        $callback2 = function () {
+        $callback2 = function (): void {
         };
         $table = $this->getTableLocator()->get('authors');
         $query = new Query($this->connection, $table);
@@ -2247,10 +2155,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that results formatters do receive the query object.
-     *
-     * @return void
      */
-    public function testResultFormatterReceivesTheQueryObject()
+    public function testResultFormatterReceivesTheQueryObject(): void
     {
         $resultFormatterQuery = null;
 
@@ -2270,10 +2176,8 @@ class QueryTest extends TestCase
      * Tests that when using `beforeFind` events, results formatters for
      * queries of joined associations do receive the source query, not the
      * association target query.
-     *
-     * @return void
      */
-    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationsWhenUsingBeforeFind()
+    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationsWhenUsingBeforeFind(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $authors = $articles->belongsTo('Authors');
@@ -2283,7 +2187,7 @@ class QueryTest extends TestCase
 
         $authors->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery) {
+            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2309,10 +2213,8 @@ class QueryTest extends TestCase
      * Tests that when using `contain()` callables, results formatters for
      * queries of joined associations do receive the source query, not the
      * association target query.
-     *
-     * @return void
      */
-    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationWhenUsingContainCallables()
+    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationWhenUsingContainCallables(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
@@ -2346,10 +2248,8 @@ class QueryTest extends TestCase
      * Tests that when using `beforeFind` events, results formatters for
      * queries of non-joined associations do receive the association target
      * query, not the source query.
-     *
-     * @return void
      */
-    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingBeforeFind()
+    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingBeforeFind(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $articles->belongsToMany('Tags');
@@ -2359,7 +2259,7 @@ class QueryTest extends TestCase
 
         $tags->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery) {
+            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2385,10 +2285,8 @@ class QueryTest extends TestCase
      * Tests that when using `contain()` callables, results formatters for
      * queries of non-joined associations do receive the association target
      * query, not the source query.
-     *
-     * @return void
      */
-    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingContainCallables()
+    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingContainCallables(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags');
@@ -2420,10 +2318,8 @@ class QueryTest extends TestCase
 
     /**
      * Test fetching results from a qurey with a custom formatter
-     *
-     * @return void
      */
-    public function testQueryWithFormatter()
+    public function testQueryWithFormatter(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new Query($this->connection, $table);
@@ -2437,10 +2333,8 @@ class QueryTest extends TestCase
 
     /**
      * Test fetching results from a qurey with a two custom formatters
-     *
-     * @return void
      */
-    public function testQueryWithStackedFormatters()
+    public function testQueryWithStackedFormatters(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new Query($this->connection, $table);
@@ -2466,10 +2360,8 @@ class QueryTest extends TestCase
     /**
      * Tests that getting results from a query having a contained association
      * will not attach joins twice if count() is called on it afterwards
-     *
-     * @return void
      */
-    public function testCountWithContainCallingAll()
+    public function testCountWithContainCallingAll(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
@@ -2487,10 +2379,8 @@ class QueryTest extends TestCase
      * Verify that only one count query is issued
      * A subsequent request for the count will take the previously
      * returned value
-     *
-     * @return void
      */
-    public function testCountCache()
+    public function testCountCache(): void
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->disableOriginalConstructor()
@@ -2511,10 +2401,8 @@ class QueryTest extends TestCase
     /**
      * If the query is dirty the cached value should be ignored
      * and a new count query issued
-     *
-     * @return void
      */
-    public function testCountCacheDirty()
+    public function testCountCacheDirty(): void
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->disableOriginalConstructor()
@@ -2540,10 +2428,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to apply formatters inside the query builder
      * for belongsTo associations
-     *
-     * @return void
      */
-    public function testFormatBelongsToRecords()
+    public function testFormatBelongsToRecords(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
@@ -2579,10 +2465,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests it is possible to apply formatters to deep relations.
-     *
-     * @return void
      */
-    public function testFormatDeepAssociationRecords()
+    public function testFormatDeepAssociationRecords(): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles');
@@ -2627,10 +2511,8 @@ class QueryTest extends TestCase
     /**
      * Tests that formatters cna be applied to deep associations that are fetched using
      * additional queries
-     *
-     * @return void
      */
-    public function testFormatDeepDistantAssociationRecords()
+    public function testFormatDeepDistantAssociationRecords(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -2650,7 +2532,7 @@ class QueryTest extends TestCase
             },
         ]);
 
-        $query->mapReduce(function ($row, $key, $mr) {
+        $query->mapReduce(function ($row, $key, $mr): void {
             foreach ((array)$row->articles as $article) {
                 foreach ((array)$article->articles_tags as $articleTag) {
                     $mr->emit($articleTag->tag->name);
@@ -2664,10 +2546,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that custom finders are applied to associations when using the proxies
-     *
-     * @return void
      */
-    public function testCustomFinderInBelongsTo()
+    public function testCustomFinderInBelongsTo(): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles', [
@@ -2675,20 +2555,18 @@ class QueryTest extends TestCase
             'finder' => 'published',
         ]);
         $result = $table->find()->contain('Articles');
-        $this->assertCount(4, $result->extract('article')->filter()->toArray());
+        $this->assertCount(4, $result->all()->extract('article')->filter()->toArray());
         $table->Articles->updateAll(['published' => 'N'], ['1 = 1']);
 
         $result = $table->find()->contain('Articles');
-        $this->assertCount(0, $result->extract('article')->filter()->toArray());
+        $this->assertCount(0, $result->all()->extract('article')->filter()->toArray());
     }
 
     /**
      * Test finding fields on the non-default table that
      * have the same name as the primary table.
-     *
-     * @return void
      */
-    public function testContainSelectedFields()
+    public function testContainSelectedFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -2697,7 +2575,7 @@ class QueryTest extends TestCase
             ->contain(['Authors'])
             ->order(['Authors.id' => 'asc'])
             ->select(['Authors.id']);
-        $results = $query->extract('author.id')->toList();
+        $results = $query->all()->extract('author.id')->toList();
         $expected = [1, 1, 3];
         $this->assertEquals($expected, $results);
     }
@@ -2705,10 +2583,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to attach more association when using a query
      * builder for other associations
-     *
-     * @return void
      */
-    public function testContainInAssociationQuery()
+    public function testContainInAssociationQuery(): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles');
@@ -2721,7 +2597,7 @@ class QueryTest extends TestCase
                     return $q->contain('Authors');
                 },
             ]);
-        $results = $query->extract('article.author.name')->toArray();
+        $results = $query->all()->extract('article.author.name')->toArray();
         $expected = ['mariano', 'mariano', 'larry', 'larry'];
         $this->assertEquals($expected, $results);
     }
@@ -2729,10 +2605,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to apply more `matching` conditions inside query
      * builders for associations
-     *
-     * @return void
      */
-    public function testContainInAssociationMatching()
+    public function testContainInAssociationMatching(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -2753,10 +2627,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -2769,7 +2641,7 @@ class QueryTest extends TestCase
             ->formatResults(function ($results) {
                 return $results;
             })
-            ->mapReduce(function ($item, $key, $mr) {
+            ->mapReduce(function ($item, $key, $mr): void {
                 $mr->emit($item);
             });
 
@@ -2808,8 +2680,8 @@ class QueryTest extends TestCase
             'contain' => [],
             'matching' => [
                 'articles' => [
-                    'queryBuilder' => null,
                     'matching' => true,
+                    'queryBuilder' => null,
                     'joinType' => 'INNER',
                 ],
             ],
@@ -2822,10 +2694,8 @@ class QueryTest extends TestCase
     /**
      * Tests that the eagerLoaded function works and is transmitted correctly to eagerly
      * loaded associations
-     *
-     * @return void
      */
-    public function testEagerLoaded()
+    public function testEagerLoaded(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -2838,12 +2708,12 @@ class QueryTest extends TestCase
         ]);
         $this->assertFalse($query->isEagerLoaded());
 
-        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
             $this->assertTrue($primary);
         });
 
         $this->getTableLocator()->get('articles')
-            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
                 $this->assertFalse($primary);
             });
         $query->all();
@@ -2852,10 +2722,8 @@ class QueryTest extends TestCase
     /**
      * Tests that the isEagerLoaded function works and is transmitted correctly to eagerly
      * loaded associations
-     *
-     * @return void
      */
-    public function testIsEagerLoaded()
+    public function testIsEagerLoaded(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -2868,12 +2736,12 @@ class QueryTest extends TestCase
         ]);
         $this->assertFalse($query->isEagerLoaded());
 
-        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
             $this->assertTrue($primary);
         });
 
         $this->getTableLocator()->get('articles')
-            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
                 $this->assertFalse($primary);
             });
         $query->all();
@@ -2881,10 +2749,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that columns from manual joins are also contained in the result set
-     *
-     * @return void
      */
-    public function testColumnsFromJoin()
+    public function testColumnsFromJoin(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $query = $table->find();
@@ -2912,9 +2778,8 @@ class QueryTest extends TestCase
      * chain for contain
      *
      * @dataProvider strategiesProviderBelongsTo
-     * @return void
      */
-    public function testRepeatedAssociationAliases($strategy)
+    public function testRepeatedAssociationAliases(string $strategy): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles', ['strategy' => $strategy]);
@@ -2936,10 +2801,8 @@ class QueryTest extends TestCase
     /**
      * Tests that a hasOne association using the select strategy will still have the
      * key present in the results when no match is found
-     *
-     * @return void
      */
-    public function testAssociationKeyPresent()
+    public function testAssociationKeyPresent(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasOne('ArticlesTags', ['strategy' => 'select']);
@@ -2953,10 +2816,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that queries can be serialized to JSON to get the results
-     *
-     * @return void
      */
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $this->assertEquals(
@@ -2967,10 +2828,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that addFields() works in the basic case.
-     *
-     * @return void
      */
-    public function testAutoFields()
+    public function testAutoFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $result = $table->find('all')
@@ -2986,10 +2845,8 @@ class QueryTest extends TestCase
 
     /**
      * Test autoFields with auto fields.
-     *
-     * @return void
      */
-    public function testAutoFieldsWithAssociations()
+    public function testAutoFieldsWithAssociations(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -3010,10 +2867,8 @@ class QueryTest extends TestCase
 
     /**
      * Test autoFields in contain query builder
-     *
-     * @return void
      */
-    public function testAutoFieldsWithContainQueryBuilder()
+    public function testAutoFieldsWithContainQueryBuilder(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -3040,10 +2895,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that autofields works with count()
-     *
-     * @return void
      */
-    public function testAutoFieldsCount()
+    public function testAutoFieldsCount(): void
     {
         $table = $this->getTableLocator()->get('Articles');
 
@@ -3057,10 +2910,8 @@ class QueryTest extends TestCase
 
     /**
      * test that cleanCopy makes a cleaned up clone.
-     *
-     * @return void
      */
-    public function testCleanCopy()
+    public function testCleanCopy(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
@@ -3093,10 +2944,8 @@ class QueryTest extends TestCase
 
     /**
      * test that cleanCopy retains bindings
-     *
-     * @return void
      */
-    public function testCleanCopyRetainsBindings()
+    public function testCleanCopyRetainsBindings(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
@@ -3113,15 +2962,13 @@ class QueryTest extends TestCase
 
     /**
      * test that cleanCopy makes a cleaned up clone with a beforeFind.
-     *
-     * @return void
      */
-    public function testCleanCopyBeforeFind()
+    public function testCleanCopyBeforeFind(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
         $table->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query): void {
                 $query
                     ->limit(5)
                     ->order(['Articles.title' => 'DESC']);
@@ -3142,10 +2989,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that finder options sent through via contain are sent to custom finder for belongsTo associations.
-     *
-     * @return void
      */
-    public function testContainFinderBelongsTo()
+    public function testContainFinderBelongsTo(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo(
@@ -3176,10 +3021,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that finder options sent through via contain are sent to custom finder for hasMany associations.
-     *
-     * @return void
      */
-    public function testContainFinderHasMany()
+    public function testContainFinderHasMany(): void
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
@@ -3249,10 +3092,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that using a closure for a custom finder for contain works.
-     *
-     * @return void
      */
-    public function testContainFinderHasManyClosure()
+    public function testContainFinderHasManyClosure(): void
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
@@ -3282,10 +3123,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to bind arguments to a query and it will return the right
      * results
-     *
-     * @return void
      */
-    public function testCustomBindings()
+    public function testCustomBindings(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find()->where(['id >' => 1]);
@@ -3300,10 +3139,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to pass a custom join type for an association when
      * using contain
-     *
-     * @return void
      */
-    public function testContainWithCustomJoinType()
+    public function testContainWithCustomJoinType(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -3325,10 +3162,8 @@ class QueryTest extends TestCase
      * containments array. In this case, no inner join will be made and for that
      * reason, the parent association will not be filtered as the strategy changed
      * from join to select.
-     *
-     * @return void
      */
-    public function testContainWithStrategyOverride()
+    public function testContainWithStrategyOverride(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors', [
@@ -3352,10 +3187,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to call matching and contain on the same
      * association.
-     *
-     * @return void
      */
-    public function testMatchingWithContain()
+    public function testMatchingWithContain(): void
     {
         $query = new Query($this->connection, $this->table);
         $table = $this->getTableLocator()->get('authors');
@@ -3378,10 +3211,8 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to call matching and contain on the same
      * association with only one level of depth.
-     *
-     * @return void
      */
-    public function testNotSoFarMatchingWithContainOnTheSameAssociation()
+    public function testNotSoFarMatchingWithContainOnTheSameAssociation(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tags');
@@ -3400,10 +3231,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that it is possible to find large numeric values.
-     *
-     * @return void
      */
-    public function testSelectLargeNumbers()
+    public function testSelectLargeNumbers(): void
     {
         // Sqlite only supports maximum 16 digits for decimals.
         $this->skipIf($this->connection->getDriver() instanceof Sqlite);
@@ -3453,10 +3282,8 @@ class QueryTest extends TestCase
     /**
      * Tests that select() can be called with Table and Association
      * instance
-     *
-     * @return void
      */
-    public function testSelectWithTableAndAssociationInstance()
+    public function testSelectWithTableAndAssociationInstance(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
@@ -3485,10 +3312,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that simple aliased field have results typecast.
-     *
-     * @return void
      */
-    public function testSelectTypeInferSimpleAliases()
+    public function testSelectTypeInferSimpleAliases(): void
     {
         $table = $this->getTableLocator()->get('comments');
         $result = $table
@@ -3500,24 +3325,10 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that isEmpty() can be called on a query
-     *
-     * @return void
-     */
-    public function testIsEmpty()
-    {
-        $table = $this->getTableLocator()->get('articles');
-        $this->assertFalse($table->find()->isEmpty());
-        $this->assertTrue($table->find()->where(['id' => -1])->isEmpty());
-    }
-
-    /**
      * Tests that leftJoinWith() creates a left join with a given association and
      * that no fields from such association are loaded.
-     *
-     * @return void
      */
-    public function testLeftJoinWith()
+    public function testLeftJoinWith(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -3535,7 +3346,7 @@ class QueryTest extends TestCase
             3 => 1,
             4 => 0,
         ];
-        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
+        $this->assertEquals($expected, $results->all()->combine('id', 'total_articles')->toArray());
         $fields = ['total_articles', 'id', 'name'];
         $this->assertEquals($fields, array_keys($results->first()->toArray()));
 
@@ -3544,7 +3355,7 @@ class QueryTest extends TestCase
             ->leftJoinWith('articles')
             ->where(['articles.id IS' => null]);
 
-        $this->assertEquals([2, 4], $results->extract('id')->toList());
+        $this->assertEquals([2, 4], $results->all()->extract('id')->toList());
         $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
 
         $results = $table
@@ -3553,17 +3364,15 @@ class QueryTest extends TestCase
             ->where(['articles.id IS NOT' => null])
             ->order(['authors.id']);
 
-        $this->assertEquals([1, 1, 3], $results->extract('id')->toList());
+        $this->assertEquals([1, 1, 3], $results->all()->extract('id')->toList());
         $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
     }
 
     /**
      * Tests that leftJoinWith() creates a left join with a given association and
      * that no fields from such association are loaded.
-     *
-     * @return void
      */
-    public function testLeftJoinWithNested()
+    public function testLeftJoinWithNested(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $articles = $table->hasMany('articles');
@@ -3586,15 +3395,13 @@ class QueryTest extends TestCase
             3 => 1,
             4 => 0,
         ];
-        $this->assertEquals($expected, $results->combine('id', 'tagged_articles')->toArray());
+        $this->assertEquals($expected, $results->all()->combine('id', 'tagged_articles')->toArray());
     }
 
     /**
      * Tests that leftJoinWith() can be used with select()
-     *
-     * @return void
      */
-    public function testLeftJoinWithSelect()
+    public function testLeftJoinWithSelect(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $articles = $table->hasMany('articles');
@@ -3623,10 +3430,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that leftJoinWith() can be used with autofields()
-     *
-     * @return void
      */
-    public function testLeftJoinWithAutoFields()
+    public function testLeftJoinWithAutoFields(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
@@ -3642,10 +3447,8 @@ class QueryTest extends TestCase
 
     /**
      * Test leftJoinWith and contain on optional association
-     *
-     * @return void
      */
-    public function testLeftJoinWithAndContainOnOptionalAssociation()
+    public function testLeftJoinWithAndContainOnOptionalAssociation(): void
     {
         $table = $this->getTableLocator()->get('Articles', ['table' => 'articles']);
         $table->belongsTo('Authors');
@@ -3723,7 +3526,7 @@ class QueryTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results->toList());
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `Tags` association is not defined on `Articles`.');
         $table
             ->find()
@@ -3735,10 +3538,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests innerJoinWith()
-     *
-     * @return void
      */
-    public function testInnerJoinWith()
+    public function testInnerJoinWith(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -3758,10 +3559,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests innerJoinWith() with nested associations
-     *
-     * @return void
      */
-    public function testInnerJoinWithNested()
+    public function testInnerJoinWithNested(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $articles = $table->hasMany('articles');
@@ -3782,10 +3581,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests innerJoinWith() with select
-     *
-     * @return void
      */
-    public function testInnerJoinWithSelect()
+    public function testInnerJoinWithSelect(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -3806,10 +3603,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests contain() in query returned by innerJoinWith throws exception.
-     *
-     * @return void
      */
-    public function testInnerJoinWithContain()
+    public function testInnerJoinWithContain(): void
     {
         $comments = $this->getTableLocator()->get('Comments');
         $articles = $comments->belongsTo('Articles');
@@ -3828,10 +3623,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests notMatching() with and without conditions
-     *
-     * @return void
      */
-    public function testNotMatching()
+    public function testNotMatching(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -3865,10 +3658,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests notMatching() with a belongsToMany association
-     *
-     * @return void
      */
-    public function testNotMatchingBelongsToMany()
+    public function testNotMatchingBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tags');
@@ -3902,10 +3693,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests notMatching() with a deeply nested belongsToMany association.
-     *
-     * @return void
      */
-    public function testNotMatchingDeep()
+    public function testNotMatchingDeep(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $articles = $table->hasMany('articles');
@@ -3919,7 +3708,7 @@ class QueryTest extends TestCase
             })
             ->distinct(['authors.id']);
 
-        $this->assertEquals([1, 2, 4], $results->extract('id')->toList());
+        $this->assertEquals([1, 2, 4], $results->all()->extract('id')->toList());
 
         $results = $table->find()
             ->enableHydration(false)
@@ -3929,16 +3718,14 @@ class QueryTest extends TestCase
             ->matching('articles')
             ->distinct(['authors.id']);
 
-        $this->assertEquals([1], $results->extract('id')->toList());
+        $this->assertEquals([1], $results->all()->extract('id')->toList());
     }
 
     /**
      * Tests that it is possible to nest a notMatching call inside another
      * eagerloader function.
-     *
-     * @return void
      */
-    public function testNotMatchingNested()
+    public function testNotMatchingNested(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $articles = $table->hasMany('articles');
@@ -3971,10 +3758,8 @@ class QueryTest extends TestCase
 
     /**
      * Test to see that the excluded fields are not in the select clause
-     *
-     * @return void
      */
-    public function testSelectAllExcept()
+    public function testSelectAllExcept(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $result = $table
@@ -3993,10 +3778,8 @@ class QueryTest extends TestCase
     /**
      * Test that the excluded fields are not included
      * in the final query result.
-     *
-     * @return void
      */
-    public function testSelectAllExceptWithContains()
+    public function testSelectAllExceptWithContains(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
@@ -4020,10 +3803,8 @@ class QueryTest extends TestCase
     /**
      * Test what happens if you call selectAllExcept() more
      * than once.
-     *
-     * @return void
      */
-    public function testSelectAllExceptWithMulitpleCalls()
+    public function testSelectAllExceptWithMulitpleCalls(): void
     {
         $table = $this->getTableLocator()->get('Articles');
 
@@ -4069,10 +3850,8 @@ class QueryTest extends TestCase
 
     /**
      * Test that given the wrong first parameter, Invalid argument exception is thrown
-     *
-     * @return void
      */
-    public function testSelectAllExceptThrowsInvalidArgument()
+    public function testSelectAllExceptThrowsInvalidArgument(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $this->expectException(\InvalidArgumentException::class);
@@ -4084,10 +3863,8 @@ class QueryTest extends TestCase
     /**
      * Tests that using Having on an aggregated field returns the correct result
      * model in the query
-     *
-     * @return void
      */
-    public function testHavingOnAnAggregatedField()
+    public function testHavingOnAnAggregatedField(): void
     {
         $post = $this->getTableLocator()->get('posts');
 
@@ -4115,13 +3892,11 @@ class QueryTest extends TestCase
 
     /**
      * Tests ORM query using with CTE.
-     *
-     * @return void
      */
     public function testWith(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supportsCTEs(),
+            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_CTE),
             'The current driver does not support common table expressions.'
         );
         $this->skipIf(
@@ -4129,7 +3904,7 @@ class QueryTest extends TestCase
                 $this->connection->getDriver() instanceof Mysql ||
                 $this->connection->getDriver() instanceof Sqlite
             ) &&
-            !$this->connection->getDriver()->supportsWindowFunctions(),
+            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_WINDOW),
             'The current driver does not support window functions.'
         );
 
@@ -4188,10 +3963,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests subquery() copies connection by default.
-     *
-     * @return void
      */
-    public function testSubqueryConnection()
+    public function testSubqueryConnection(): void
     {
         $subquery = Query::subquery($this->table);
         $this->assertEquals($this->table->getConnection(), $subquery->getConnection());
@@ -4199,10 +3972,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests subquery() disables aliasing.
-     *
-     * @return void
      */
-    public function testSubqueryAliasing()
+    public function testSubqueryAliasing(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $subquery = Query::subquery($articles);
@@ -4223,10 +3994,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests subquery() in where clause.
-     *
-     * @return void
      */
-    public function testSubqueryWhereClause()
+    public function testSubqueryWhereClause(): void
     {
         $subquery = Query::subquery($this->getTableLocator()->get('Authors'))
             ->select(['Authors.id'])
@@ -4243,10 +4012,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests subquery() in join clause.
-     *
-     * @return void
      */
-    public function testSubqueryJoinClause()
+    public function testSubqueryJoinClause(): void
     {
         $subquery = Query::subquery($this->getTableLocator()->get('Articles'))
             ->select(['author_id']);
@@ -4261,5 +4028,54 @@ class QueryTest extends TestCase
         $results = $query->all()->toList();
         $this->assertEquals(1, $results[0]->id);
         $this->assertEquals(2, $results[0]->total_articles);
+    }
+
+    /**
+     * Tests that queries that fetch associated data in separate queries do properly
+     * inherit the hydration and results casting mode of the parent query.
+     */
+    public function testSelectLoaderAssociationsInheritHydrationAndResultsCastingMode(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $tags = $articles->belongsToMany('Tags');
+        $tags->belongsToMany('Articles');
+
+        $comments = $articles->hasMany('Comments');
+        $comments
+            ->belongsTo('Articles')
+            ->setStrategy(BelongsTo::STRATEGY_SELECT);
+
+        $articles
+            ->find()
+            ->contain('Comments', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
+
+                return $query;
+            })
+            ->contain('Comments.Articles', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
+
+                return $query;
+            })
+            ->contain('Comments.Articles.Tags', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
+
+                return $query
+                    ->enableHydration()
+                    ->enableResultsCasting();
+            })
+            ->contain('Comments.Articles.Tags.Articles', function (Query $query) {
+                $this->assertTrue($query->isHydrationEnabled());
+                $this->assertTrue($query->isResultsCastingEnabled());
+
+                return $query;
+            })
+            ->disableHydration()
+            ->disableResultsCasting()
+            ->firstOrFail();
     }
 }

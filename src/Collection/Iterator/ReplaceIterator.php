@@ -65,6 +65,7 @@ class ReplaceIterator extends Collection
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $callback = $this->_callback;

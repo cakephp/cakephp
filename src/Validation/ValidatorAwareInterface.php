@@ -43,7 +43,7 @@ interface ValidatorAwareInterface
     public function setValidator(string $name, Validator $validator);
 
     /**
-     * Checks whether or not a validator has been set.
+     * Checks whether a validator has been set.
      *
      * @param string $name The name of a validator.
      * @return bool

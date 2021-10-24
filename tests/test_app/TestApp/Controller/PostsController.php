@@ -18,6 +18,7 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
+use OutOfBoundsException;
 
 /**
  * PostsController class
@@ -32,10 +33,19 @@ class PostsController extends AppController
         $this->loadComponent('Flash');
         $this->loadComponent('RequestHandler');
         $this->loadComponent('FormProtection');
+
+        $this->middleware(function ($request, $handler) {
+            return $handler->handle($request->withAttribute('for-all', true));
+        });
+        $this->middleware(function ($request, $handler) {
+            return $handler->handle($request->withAttribute('index-only', true));
+        }, ['only' => 'index']);
+        $this->middleware(function ($request, $handler) {
+            return $handler->handle($request->withAttribute('all-except-index', true));
+        }, ['except' => ['index']]);
     }
 
     /**
-     * @param \Cake\Event\EventInterface $event
      * @return \Cake\Http\Response|null|void
      */
     public function beforeFilter(EventInterface $event)
@@ -123,16 +133,25 @@ class PostsController extends AppController
         return $this->response->withStringBody('Request was accepted');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function file()
     {
         return $this->response->withFile(__FILE__);
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function header()
     {
         return $this->getResponse()->withHeader('X-Cake', 'custom header');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function hostData()
     {
         $data = [
@@ -143,11 +162,17 @@ class PostsController extends AppController
         return $this->getResponse()->withStringBody(json_encode($data));
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function empty_response()
     {
         return $this->getResponse()->withStringBody('');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function secretCookie()
     {
         return $this->response
@@ -155,6 +180,9 @@ class PostsController extends AppController
             ->withStringBody('ok');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function stacked_flash()
     {
         $this->Flash->error('Error 1');
@@ -165,9 +193,12 @@ class PostsController extends AppController
         return $this->getResponse()->withStringBody('');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function throw_exception()
     {
         $this->Flash->error('Error 1');
-        throw new \OutOfBoundsException('oh no!');
+        throw new OutOfBoundsException('oh no!');
     }
 }

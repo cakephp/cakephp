@@ -56,7 +56,7 @@ class Response implements ResponseInterface
     /**
      * Allowed HTTP status codes and their default description.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $_statusCodes = [
         100 => 'Continue',
@@ -129,7 +129,7 @@ class Response implements ResponseInterface
     /**
      * Holds type key to mime type mappings for known mime types.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_mimeTypes = [
         'html' => ['text/html', '*/*'],
@@ -167,6 +167,7 @@ class Response implements ResponseInterface
         'gz' => 'application/x-gzip',
         'bz2' => 'application/x-bzip',
         '7z' => 'application/x-7z-compressed',
+        'hal' => ['application/hal+xml', 'application/vnd.hal+xml'],
         'haljson' => ['application/hal+json', 'application/vnd.hal+json'],
         'halxml' => ['application/hal+xml', 'application/vnd.hal+xml'],
         'hdf' => 'application/x-hdf',
@@ -178,6 +179,8 @@ class Response implements ResponseInterface
         'jsonapi' => 'application/vnd.api+json',
         'latex' => 'application/x-latex',
         'jsonld' => 'application/ld+json',
+        'kml' => 'application/vnd.google-earth.kml+xml',
+        'kmz' => 'application/vnd.google-earth.kmz',
         'lha' => 'application/octet-stream',
         'lsp' => 'application/x-lisp',
         'lzh' => 'application/octet-stream',
@@ -383,7 +386,7 @@ class Response implements ResponseInterface
     /**
      * File range. Used for requesting ranges of files.
      *
-     * @var array
+     * @var array<int>
      */
     protected $_fileRange = [];
 
@@ -426,14 +429,14 @@ class Response implements ResponseInterface
     /**
      * Stream target or resource object.
      *
-     * @var string|resource
+     * @var resource|string
      */
     protected $_streamTarget = 'php://memory';
 
     /**
      * Constructor
      *
-     * @param array $options list of parameters to setup the response. Possible values are:
+     * @param array<string, mixed> $options list of parameters to setup the response. Possible values are:
      *
      *  - body: the response text that should be sent to the client
      *  - status: the HTTP status code to respond with
@@ -443,12 +446,8 @@ class Response implements ResponseInterface
      */
     public function __construct(array $options = [])
     {
-        if (isset($options['streamTarget'])) {
-            $this->_streamTarget = $options['streamTarget'];
-        }
-        if (isset($options['streamMode'])) {
-            $this->_streamMode = $options['streamMode'];
-        }
+        $this->_streamTarget = $options['streamTarget'] ?? $this->_streamTarget;
+        $this->_streamMode = $options['streamMode'] ?? $this->_streamMode;
         if (isset($options['stream'])) {
             if (!$options['stream'] instanceof StreamInterface) {
                 throw new InvalidArgumentException('Stream option must be an object that implements StreamInterface');
@@ -543,6 +542,7 @@ class Response implements ResponseInterface
     /**
      * Sets a header.
      *
+     * @phpstan-param non-empty-string $header
      * @param string $header Header key.
      * @param string $value Header value.
      * @return void
@@ -675,7 +675,7 @@ class Response implements ResponseInterface
      * This is needed for RequestHandlerComponent and recognition of types.
      *
      * @param string $type Content type.
-     * @param string|array $mimeType Definition of the mime type.
+     * @param array|string $mimeType Definition of the mime type.
      * @return void
      */
     public function setTypeMap(string $type, $mimeType): void
@@ -742,15 +742,11 @@ class Response implements ResponseInterface
      * e.g `getMimeType('pdf'); // returns 'application/pdf'`
      *
      * @param string $alias the content type alias to map
-     * @return string|array|false String mapped mime type or false if $alias is not mapped
+     * @return array|string|false String mapped mime type or false if $alias is not mapped
      */
     public function getMimeType(string $alias)
     {
-        if (isset($this->_mimeTypes[$alias])) {
-            return $this->_mimeTypes[$alias];
-        }
-
-        return false;
+        return $this->_mimeTypes[$alias] ?? false;
     }
 
     /**
@@ -758,8 +754,8 @@ class Response implements ResponseInterface
      *
      * e.g `mapType('application/pdf'); // returns 'pdf'`
      *
-     * @param string|array $ctype Either a string content type to map, or an array of types.
-     * @return string|array|null Aliases for the types provided.
+     * @param array|string $ctype Either a string content type to map, or an array of types.
+     * @return array|string|null Aliases for the types provided.
      */
     public function mapType($ctype)
     {
@@ -816,8 +812,8 @@ class Response implements ResponseInterface
     /**
      * Create a new instance with the headers to enable client caching.
      *
-     * @param int|string $since a valid time since the response text has not been modified
-     * @param int|string $time a valid time for cache expiry
+     * @param string|int $since a valid time since the response text has not been modified
+     * @param string|int $time a valid time for cache expiry
      * @return static
      */
     public function withCache($since, $time = '+1 day')
@@ -952,7 +948,7 @@ class Response implements ResponseInterface
      * $response->withExpires(new DateTime('+1 day'))
      * ```
      *
-     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTime instance.
+     * @param \DateTimeInterface|string|int|null $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withExpires($time)
@@ -975,7 +971,7 @@ class Response implements ResponseInterface
      * $response->withModified(new DateTime('+1 day'))
      * ```
      *
-     * @param int|string|\DateTimeInterface $time Valid time string or \DateTime instance.
+     * @param \DateTimeInterface|string|int $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withModified($time)
@@ -1049,7 +1045,7 @@ class Response implements ResponseInterface
      * separated string. If no parameters are passed, then an
      * array with the current Vary header value is returned
      *
-     * @param string|array $cacheVariances A single Vary string or an array
+     * @param array|string $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return static
      */
@@ -1090,7 +1086,7 @@ class Response implements ResponseInterface
      * Returns a DateTime object initialized at the $time param and using UTC
      * as timezone
      *
-     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTimeInterface instance.
+     * @param \DateTimeInterface|string|int|null $time Valid time string or \DateTimeInterface instance.
      * @return \DateTimeInterface
      */
     protected function _getUTCDate($time = null): DateTimeInterface
@@ -1147,7 +1143,7 @@ class Response implements ResponseInterface
     /**
      * Create a new response with the Content-Length header set.
      *
-     * @param int|string $bytes Number of bytes
+     * @param string|int $bytes Number of bytes
      * @return static
      */
     public function withLength($bytes)
@@ -1173,7 +1169,7 @@ class Response implements ResponseInterface
      * ```
      *
      * @param string $url The LinkHeader url.
-     * @param array $options The LinkHeader params.
+     * @param array<string, mixed> $options The LinkHeader params.
      * @return static
      * @since 3.6.0
      */
@@ -1318,7 +1314,7 @@ class Response implements ResponseInterface
     public function getCookies(): array
     {
         $out = [];
-        /** @var \Cake\Http\Cookie\Cookie[] $cookies */
+        /** @var array<\Cake\Http\Cookie\Cookie> $cookies */
         $cookies = $this->_cookies;
         foreach ($cookies as $cookie) {
             $out[$cookie->getName()] = $cookie->toArray();
@@ -1411,7 +1407,7 @@ class Response implements ResponseInterface
      *   be downloaded rather than displayed inline.
      *
      * @param string $path Absolute path to file.
-     * @param array $options Options See above.
+     * @param array<string, mixed> $options Options See above.
      * @return static
      * @throws \Cake\Http\Exception\NotFoundException
      */
@@ -1438,7 +1434,7 @@ class Response implements ResponseInterface
         if ($options['download']) {
             $agent = (string)env('HTTP_USER_AGENT');
 
-            if ($agent && preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+            if ($agent && preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
             } elseif ($agent && preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/force-download';
@@ -1468,7 +1464,7 @@ class Response implements ResponseInterface
     /**
      * Convenience method to set a string into the response body
      *
-     * @param string $string The string to be sent
+     * @param string|null $string The string to be sent
      * @return static
      */
     public function withStringBody(?string $string)
@@ -1556,6 +1552,10 @@ class Response implements ResponseInterface
         $this->_setHeader('Content-Length', (string)($end - $start + 1));
         $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
         $this->_setStatus(206);
+        /**
+         * @var int $start
+         * @var int $end
+         */
         $this->_fileRange = [$start, $end];
     }
 
@@ -1563,7 +1563,7 @@ class Response implements ResponseInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

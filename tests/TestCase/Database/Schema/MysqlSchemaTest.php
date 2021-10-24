@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverInterface;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -31,10 +33,8 @@ class MysqlSchemaTest extends TestCase
 {
     /**
      * Helper method for skipping tests that need a real connection.
-     *
-     * @return void
      */
-    protected function _needsConnection()
+    protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
@@ -45,7 +45,7 @@ class MysqlSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function convertColumnProvider()
+    public static function convertColumnProvider(): array
     {
         return [
             [
@@ -223,9 +223,8 @@ class MysqlSchemaTest extends TestCase
      * Test parsing MySQL column types from field description.
      *
      * @dataProvider convertColumnProvider
-     * @return void
      */
-    public function testConvertColumn($type, $expected)
+    public function testConvertColumn(string $type, array $expected): void
     {
         $field = [
             'Field' => 'field',
@@ -256,9 +255,8 @@ class MysqlSchemaTest extends TestCase
      * Helper method for testing methods.
      *
      * @param \Cake\Datasource\ConnectionInterface $connection
-     * @return void
      */
-    protected function _createTables($connection)
+    protected function _createTables($connection): void
     {
         $this->_needsConnection();
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
@@ -292,7 +290,7 @@ SQL;
 SQL;
         $connection->execute($table);
 
-        if ($connection->getDriver()->supportsNativeJson()) {
+        if ($connection->getDriver()->supports(DriverInterface::FEATURE_JSON)) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
                     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -305,10 +303,8 @@ SQL;
 
     /**
      * Integration test for SchemaCollection & MysqlSchemaDialect.
-     *
-     * @return void
      */
-    public function testListTables()
+    public function testListTables(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -323,10 +319,8 @@ SQL;
 
     /**
      * Test describing a table with MySQL
-     *
-     * @return void
      */
-    public function testDescribeTable()
+    public function testDescribeTable(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -426,10 +420,8 @@ SQL;
 
     /**
      * Test describing a table with indexes in MySQL
-     *
-     * @return void
      */
-    public function testDescribeTableIndexes()
+    public function testDescribeTableIndexes(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -481,10 +473,8 @@ SQL;
 
     /**
      * Test describing a table creates options
-     *
-     * @return void
      */
-    public function testDescribeTableOptions()
+    public function testDescribeTableOptions(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
@@ -495,7 +485,7 @@ SQL;
         $this->assertArrayHasKey('collation', $result->getOptions());
     }
 
-    public function testDescribeNonPrimaryAutoIncrement()
+    public function testDescribeNonPrimaryAutoIncrement(): void
     {
         $this->_needsConnection();
         $connection = ConnectionManager::get('test');
@@ -531,7 +521,7 @@ SQL;
      *
      * @return array
      */
-    public static function columnSqlProvider()
+    public static function columnSqlProvider(): array
     {
         return [
             // strings
@@ -826,9 +816,8 @@ SQL;
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider
-     * @return void
      */
-    public function testColumnSql($name, $data, $expected)
+    public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchemaDialect($driver);
@@ -842,7 +831,7 @@ SQL;
      *
      * @return array
      */
-    public static function constraintSqlProvider()
+    public static function constraintSqlProvider(): array
     {
         return [
             [
@@ -902,7 +891,7 @@ SQL;
      *
      * @dataProvider constraintSqlProvider
      */
-    public function testConstraintSql($name, $data, $expected)
+    public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchemaDialect($driver);
@@ -922,7 +911,7 @@ SQL;
      *
      * @return array
      */
-    public static function indexSqlProvider()
+    public static function indexSqlProvider(): array
     {
         return [
             [
@@ -943,7 +932,7 @@ SQL;
      *
      * @dataProvider indexSqlProvider
      */
-    public function testIndexSql($name, $data, $expected)
+    public function testIndexSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchemaDialect($driver);
@@ -960,10 +949,8 @@ SQL;
 
     /**
      * Test the addConstraintSql method.
-     *
-     * @return void
      */
-    public function testAddConstraintSql()
+    public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1011,10 +998,8 @@ SQL;
 
     /**
      * Test the dropConstraintSql method.
-     *
-     * @return void
      */
-    public function testDropConstraintSql()
+    public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1062,10 +1047,8 @@ SQL;
 
     /**
      * Test generating a column that is a primary key.
-     *
-     * @return void
      */
-    public function testColumnSqlPrimaryKey()
+    public function testColumnSqlPrimaryKey(): void
     {
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchemaDialect($driver);
@@ -1097,10 +1080,8 @@ SQL;
 
     /**
      * Integration test for converting a Schema\Table into MySQL table creates.
-     *
-     * @return void
      */
-    public function testCreateSql()
+    public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1166,10 +1147,8 @@ SQL;
 
     /**
      * Integration test for converting a Schema\Table with native JSON
-     *
-     * @return void
      */
-    public function testCreateSqlJson()
+    public function testCreateSqlJson(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1215,10 +1194,8 @@ SQL;
 
     /**
      * Tests creating temporary tables
-     *
-     * @return void
      */
-    public function testCreateTemporary()
+    public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1237,10 +1214,8 @@ SQL;
 
     /**
      * Test primary key generation & auto-increment.
-     *
-     * @return void
      */
-    public function testCreateSqlCompositeIntegerKey()
+    public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1303,10 +1278,8 @@ SQL;
 
     /**
      * test dropSql
-     *
-     * @return void
      */
-    public function testDropSql()
+    public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1323,10 +1296,8 @@ SQL;
 
     /**
      * Test truncateSql()
-     *
-     * @return void
      */
-    public function testTruncateSql()
+    public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
@@ -1343,10 +1314,8 @@ SQL;
 
     /**
      * Test that constructing a schema dialect connects the driver.
-     *
-     * @return void
      */
-    public function testConstructConnectsDriver()
+    public function testConstructConnectsDriver(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
@@ -1356,14 +1325,12 @@ SQL;
 
     /**
      * Tests JSON column parsing on MySQL 5.7+
-     *
-     * @return void
      */
-    public function testDescribeJson()
+    public function testDescribeJson(): void
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-        $this->skipIf(!$connection->getDriver()->supportsNativeJson(), 'Does not support native json');
+        $this->skipIf(!$connection->getDriver()->supports(DriverInterface::FEATURE_JSON), 'Does not support native json');
         $this->skipIf($connection->getDriver()->isMariadb(), 'MariaDb internally uses TEXT for JSON columns');
 
         $schema = new SchemaCollection($connection);
@@ -1386,10 +1353,8 @@ SQL;
 
     /**
      * Get a schema instance with a mocked driver/pdo instances
-     *
-     * @return \Cake\Database\Schema\MysqlSchemaDialect
      */
-    protected function _getMockedDriver()
+    protected function _getMockedDriver(): Driver
     {
         $driver = new Mysql();
         $mock = $this->getMockBuilder(PDO::class)

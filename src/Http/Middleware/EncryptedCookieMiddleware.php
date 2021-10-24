@@ -32,7 +32,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * times.
  *
  * Cookies in request data will be decrypted, while cookies in response headers will
- * be encrypted automatically. If the response is a Cake\Http\Response, the cookie
+ * be encrypted automatically. If the response is a {@link \Cake\Http\Response}, the cookie
  * data set with `withCookie()` and `cookie()`` will also be encrypted.
  *
  * The encryption types and padding are compatible with those used by CookieComponent
@@ -45,7 +45,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
     /**
      * The list of cookies to encrypt/decrypt
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $cookieNames;
 
@@ -66,7 +66,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param string[] $cookieNames The list of cookie names that should have their values encrypted.
+     * @param array<string> $cookieNames The list of cookie names that should have their values encrypted.
      * @param string $key The encryption key to use.
      * @param string $cipherType The cipher type to use. Defaults to 'aes'.
      */
@@ -139,7 +139,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      */
     protected function encodeCookies(Response $response): Response
     {
-        /** @var \Cake\Http\Cookie\CookieInterface[] $cookies */
+        /** @var array<\Cake\Http\Cookie\CookieInterface> $cookies */
         $cookies = $response->getCookieCollection();
         foreach ($cookies as $cookie) {
             if (in_array($cookie->getName(), $this->cookieNames, true)) {
@@ -159,7 +159,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      */
     protected function encodeSetCookieHeader(ResponseInterface $response): ResponseInterface
     {
-        /** @var \Cake\Http\Cookie\CookieInterface[] $cookies */
+        /** @var array<\Cake\Http\Cookie\CookieInterface> $cookies */
         $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
         $header = [];
         foreach ($cookies as $cookie) {

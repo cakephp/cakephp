@@ -50,7 +50,7 @@ class PaginatorComponent extends Component
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'page' => 1,
@@ -87,7 +87,7 @@ class PaginatorComponent extends Component
     /**
      * Events supported by this component.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -188,7 +188,7 @@ class PaginatorComponent extends Component
      * ```
      *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object Table or query to paginate.
-     * @param array $settings The settings/configuration used for pagination.
+     * @param array<string, mixed> $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
      * @throws \Cake\Http\Exception\NotFoundException
      */
@@ -226,8 +226,8 @@ class PaginatorComponent extends Component
      *
      * @param string $alias Model alias being paginated, if the general settings has a key with this value
      *   that key's settings will be used for pagination instead of the general ones.
-     * @param array $settings The settings to merge with the request data.
-     * @return array Array of merged options.
+     * @param array<string, mixed> $settings The settings to merge with the request data.
+     * @return array<string, mixed> Array of merged options.
      */
     public function mergeOptions(string $alias, array $settings): array
     {
@@ -279,7 +279,7 @@ class PaginatorComponent extends Component
     /**
      * Proxy setting config options to Paginator.
      *
-     * @param string|array $key The key to set, or a complete array of configs.
+     * @param array|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
@@ -306,7 +306,7 @@ class PaginatorComponent extends Component
     /**
      * Proxy setting config options to Paginator.
      *
-     * @param string|array $key The key to set, or a complete array of configs.
+     * @param array|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @return $this
      */

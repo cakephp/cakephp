@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Helper;
 
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use DateTimeInterface;
@@ -37,7 +37,7 @@ class TimeHelper extends Helper
     /**
      * Config options
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'outputTimezone' => null,
@@ -63,13 +63,13 @@ class TimeHelper extends Helper
     /**
      * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return \Cake\I18n\Time
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
+     * @return \Cake\I18n\FrozenTime
      */
-    public function fromString($dateString, $timezone = null): Time
+    public function fromString($dateString, $timezone = null): FrozenTime
     {
-        $time = new Time($dateString);
+        $time = new FrozenTime($dateString);
         if ($timezone !== null) {
             $time = $time->timezone($timezone);
         }
@@ -80,8 +80,8 @@ class TimeHelper extends Helper
     /**
      * Returns a nicely formatted date string for given Datetime string.
      *
-     * @param int|string|\DateTimeInterface|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @param string|null $locale Locale string.
      * @return string Formatted date string
      */
@@ -89,136 +89,136 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone);
 
-        return (new Time($dateString))->nice($timezone, $locale);
+        return (new FrozenTime($dateString))->nice($timezone, $locale);
     }
 
     /**
      * Returns true, if the given datetime string is today.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if the given datetime string is today.
      */
     public function isToday($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isToday();
+        return (new FrozenTime($dateString, $timezone))->isToday();
     }
 
     /**
      * Returns true, if the given datetime string is in the future.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if the given datetime string lies in the future.
      */
     public function isFuture($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isFuture();
+        return (new FrozenTime($dateString, $timezone))->isFuture();
     }
 
     /**
      * Returns true, if the given datetime string is in the past.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if the given datetime string lies in the past.
      */
     public function isPast($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isPast();
+        return (new FrozenTime($dateString, $timezone))->isPast();
     }
 
     /**
      * Returns true if given datetime string is within this week.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string is within current week
      */
     public function isThisWeek($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isThisWeek();
+        return (new FrozenTime($dateString, $timezone))->isThisWeek();
     }
 
     /**
      * Returns true if given datetime string is within this month
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string is within the current month
      */
     public function isThisMonth($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isThisMonth();
+        return (new FrozenTime($dateString, $timezone))->isThisMonth();
     }
 
     /**
      * Returns true if given datetime string is within the current year.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string is within current year
      */
     public function isThisYear($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isThisYear();
+        return (new FrozenTime($dateString, $timezone))->isThisYear();
     }
 
     /**
      * Returns true if given datetime string was yesterday.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string was yesterday
      */
     public function wasYesterday($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isYesterday();
+        return (new FrozenTime($dateString, $timezone))->isYesterday();
     }
 
     /**
      * Returns true if given datetime string is tomorrow.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string was yesterday
      */
     public function isTomorrow($dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isTomorrow();
+        return (new FrozenTime($dateString, $timezone))->isTomorrow();
     }
 
     /**
      * Returns the quarter
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
-     * @return string[]|int 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return array<string>|int 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
     public function toQuarter($dateString, $range = false)
     {
-        return (new Time($dateString))->toQuarter($range);
+        return (new FrozenTime($dateString))->toQuarter($range);
     }
 
     /**
      * Returns a UNIX timestamp from a textual datetime description.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string UNIX timestamp
      * @see \Cake\I18n\Time::toUnix()
      */
     public function toUnix($dateString, $timezone = null): string
     {
-        return (new Time($dateString, $timezone))->toUnixString();
+        return (new FrozenTime($dateString, $timezone))->toUnixString();
     }
 
     /**
      * Returns a date formatted for Atom RSS feeds.
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted date string
      * @see \Cake\I18n\Time::toAtom()
      */
@@ -226,21 +226,21 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new Time($dateString))->timezone($timezone)->toAtomString();
+        return (new FrozenTime($dateString))->timezone($timezone)->toAtomString();
     }
 
     /**
      * Formats date for RSS feeds
      *
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted date string
      */
     public function toRss($dateString, $timezone = null): string
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new Time($dateString))->timezone($timezone)->toRssString();
+        return (new FrozenTime($dateString))->timezone($timezone)->toRssString();
     }
 
     /**
@@ -254,9 +254,9 @@ class TimeHelper extends Helper
      *   - `class` - The class name to use, defaults to `time-ago-in-words`.
      *   - `title` - Defaults to the $dateTime input.
      *
-     * @param int|string|\DateTimeInterface $dateTime UNIX timestamp, strtotime() valid
+     * @param \DateTimeInterface|string|int $dateTime UNIX timestamp, strtotime() valid
      *   string or DateTime object.
-     * @param array $options Default format if timestamp is used in $dateString
+     * @param array<string, mixed> $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
@@ -288,7 +288,7 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-        $relativeDate = (new Time($dateTime))->timeAgoInWords($options);
+        $relativeDate = (new FrozenTime($dateTime))->timeAgoInWords($options);
 
         if ($element) {
             $relativeDate = sprintf(
@@ -308,14 +308,14 @@ class TimeHelper extends Helper
      *
      * @param string $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool
      * @see \Cake\I18n\Time::wasWithinLast()
      */
     public function wasWithinLast(string $timeInterval, $dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->wasWithinLast($timeInterval);
+        return (new FrozenTime($dateString, $timezone))->wasWithinLast($timeInterval);
     }
 
     /**
@@ -323,26 +323,26 @@ class TimeHelper extends Helper
      *
      * @param string $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
-     * @param int|string|\DateTimeInterface $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool
      * @see \Cake\I18n\Time::wasWithinLast()
      */
     public function isWithinNext(string $timeInterval, $dateString, $timezone = null): bool
     {
-        return (new Time($dateString, $timezone))->isWithinNext($timeInterval);
+        return (new FrozenTime($dateString, $timezone))->isWithinNext($timeInterval);
     }
 
     /**
      * Returns gmt as a UNIX timestamp.
      *
-     * @param int|string|\DateTimeInterface|null $string UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeInterface|string|int|null $string UNIX timestamp, strtotime() valid string or DateTime object
      * @return string UNIX timestamp
      * @see \Cake\I18n\Time::gmt()
      */
     public function gmt($string = null): string
     {
-        return (new Time($string))->toUnixString();
+        return (new FrozenTime($string))->toUnixString();
     }
 
     /**
@@ -351,12 +351,12 @@ class TimeHelper extends Helper
      *
      * This method is an alias for TimeHelper::i18nFormat().
      *
-     * @param int|string|\DateTimeInterface|null $date UNIX timestamp, strtotime() valid string
+     * @param \DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string
      *   or DateTime object (or a date format string).
-     * @param int|string|null $format date format string (or a UNIX timestamp,
-     *   strtotime() valid string or DateTime object).
+     * @param string|int|null $format date format string (or a UNIX timestamp,
+     *   `strtotime()` valid string or DateTime object).
      * @param string|false $invalid Default value to display on invalid dates
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string
      * @see \Cake\I18n\Time::i18nFormat()
      */
@@ -369,10 +369,10 @@ class TimeHelper extends Helper
      * Returns a formatted date string, given either a Datetime instance,
      * UNIX timestamp or a valid strtotime() date string.
      *
-     * @param int|string|\DateTimeInterface|null $date UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|int|null $format Intl compatible format string.
      * @param string|false $invalid Default value to display on invalid dates
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
+     * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string or value for `$invalid` on failure.
      * @throws \Exception When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
@@ -385,7 +385,7 @@ class TimeHelper extends Helper
         $timezone = $this->_getTimezone($timezone);
 
         try {
-            $time = new Time($date);
+            $time = new FrozenTime($date);
 
             return $time->i18nFormat($format, $timezone);
         } catch (Exception $e) {
@@ -400,7 +400,7 @@ class TimeHelper extends Helper
     /**
      * Event listeners.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

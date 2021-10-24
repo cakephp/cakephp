@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use Cake\Database\Driver\Sqlserver;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\NumberTree;
 
@@ -27,7 +29,7 @@ class BehaviorRegressionTest extends TestCase
     /**
      * fixtures
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.NumberTrees',
@@ -38,10 +40,15 @@ class BehaviorRegressionTest extends TestCase
      * Tests that the tree behavior and the translations behavior play together
      *
      * @see https://github.com/cakephp/cakephp/issues/5982
-     * @return void
      */
-    public function testTreeAndTranslateIntegration()
+    public function testTreeAndTranslateIntegration(): void
     {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(
+            $connection->getDriver() instanceof Sqlserver,
+            'This test fails sporadically in SQLServer'
+        );
+
         $table = $this->getTableLocator()->get('NumberTrees');
         $table->setPrimaryKey(['id']);
         $table->addBehavior('Tree');

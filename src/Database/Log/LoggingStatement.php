@@ -37,7 +37,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * Holds bound params
      *
-     * @var array
+     * @var array<array>
      */
     protected $_compiledParams = [];
 
@@ -68,6 +68,7 @@ class LoggingStatement extends StatementDecorator
         $this->startTime = microtime(true);
 
         $this->loggedQuery = new LoggedQuery();
+        $this->loggedQuery->driver = $this->_driver;
         $this->loggedQuery->params = $params ?: $this->_compiledParams;
 
         try {

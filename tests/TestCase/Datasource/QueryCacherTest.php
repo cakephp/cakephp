@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Datasource;
 use Cake\Cache\Cache;
 use Cake\Datasource\QueryCacher;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -33,8 +34,6 @@ class QueryCacherTest extends TestCase
 
     /**
      * Setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -46,8 +45,6 @@ class QueryCacherTest extends TestCase
 
     /**
      * Teardown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -57,10 +54,8 @@ class QueryCacherTest extends TestCase
 
     /**
      * Test fetching with a function to generate the key.
-     *
-     * @return void
      */
-    public function testFetchFunctionKey()
+    public function testFetchFunctionKey(): void
     {
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
@@ -77,12 +72,10 @@ class QueryCacherTest extends TestCase
 
     /**
      * Test fetching with a function to generate the key but the function is poop.
-     *
-     * @return void
      */
-    public function testFetchFunctionKeyNoString()
+    public function testFetchFunctionKeyNoString(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cache key functions must return a string. Got false.');
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
@@ -96,10 +89,8 @@ class QueryCacherTest extends TestCase
 
     /**
      * Test fetching with a cache instance.
-     *
-     * @return void
      */
-    public function testFetchCacheHitStringEngine()
+    public function testFetchCacheHitStringEngine(): void
     {
         $this->engine->set('my_key', 'A winner');
         $cacher = new QueryCacher('my_key', 'queryCache');
@@ -110,10 +101,8 @@ class QueryCacherTest extends TestCase
 
     /**
      * Test fetching with a cache hit.
-     *
-     * @return void
      */
-    public function testFetchCacheHit()
+    public function testFetchCacheHit(): void
     {
         $this->engine->set('my_key', 'A winner');
         $cacher = new QueryCacher('my_key', $this->engine);
@@ -124,10 +113,8 @@ class QueryCacherTest extends TestCase
 
     /**
      * Test fetching with a cache miss.
-     *
-     * @return void
      */
-    public function testFetchCacheMiss()
+    public function testFetchCacheMiss(): void
     {
         $this->engine->set('my_key', false);
         $cacher = new QueryCacher('my_key', $this->engine);

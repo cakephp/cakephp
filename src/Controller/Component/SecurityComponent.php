@@ -64,7 +64,7 @@ class SecurityComponent extends Component
      * - `validatePost` - Whether to validate POST data. Set to false to disable
      *   for data coming from 3rd party services, etc.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'blackHoleCallback' => null,
@@ -127,7 +127,7 @@ class SecurityComponent extends Component
     /**
      * Events supported by this component.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -139,7 +139,7 @@ class SecurityComponent extends Component
     /**
      * Sets the actions that require a request that is SSL-secured, or empty for all actions
      *
-     * @param string|string[]|null $actions Actions list
+     * @param array<string>|string|null $actions Actions list
      * @return void
      */
     public function requireSecure($actions = null): void
@@ -285,7 +285,7 @@ class SecurityComponent extends Component
      * Return hash parts for the Token generation
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
-     * @return string[]
+     * @return array<string>
      */
     protected function _hashParts(Controller $controller): array
     {
@@ -409,7 +409,7 @@ class SecurityComponent extends Component
      * Create a message for humans to understand why Security token is not matching
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
-     * @param array $hashParts Elements used to generate the Token hash
+     * @param array<string> $hashParts Elements used to generate the Token hash
      * @return string Message explaining why the tokens are not matching
      */
     protected function _debugPostTokenNotMatching(Controller $controller, array $hashParts): string
@@ -463,7 +463,7 @@ class SecurityComponent extends Component
      * @param string $stringKeyMessage Message string if tampered found in
      *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
-     * @return string[] Messages
+     * @return array<string> Messages
      */
     protected function _debugCheckFields(
         array $dataFields,
@@ -528,7 +528,7 @@ class SecurityComponent extends Component
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
      * @param string $stringKeyMessage Message string if tampered found in
      *   data fields indexed by string (protected)
-     * @return string[] Error messages
+     * @return array<string> Error messages
      */
     protected function _matchExistingFields(
         array $dataFields,

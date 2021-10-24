@@ -44,7 +44,7 @@ class ExistsIn
     /**
      * Options for the constructor
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_options = [];
 
@@ -54,10 +54,10 @@ class ExistsIn
      * Available option for $options is 'allowNullableNulls' flag.
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
-     * @param string|array $fields The field or fields to check existence as primary key.
+     * @param array|string $fields The field or fields to check existence as primary key.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
-     * @param array $options The options that modify the rules behavior.
+     * @param array<string, mixed> $options The options that modify the rules behavior.
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
      *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.
      */
@@ -74,7 +74,7 @@ class ExistsIn
      * Performs the existence check
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
-     * @param array $options Options passed to the check,
+     * @param array<string, mixed> $options Options passed to the check,
      * where the `repository` key is required.
      * @throws \RuntimeException When the rule refers to an undefined association.
      * @return bool
@@ -147,7 +147,7 @@ class ExistsIn
     }
 
     /**
-     * Checks whether or not the given entity fields are nullable and null.
+     * Checks whether the given entity fields are nullable and null.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.

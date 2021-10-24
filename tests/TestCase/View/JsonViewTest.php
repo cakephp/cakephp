@@ -43,7 +43,7 @@ class JsonViewTest extends TestCase
      *
      * @return array
      */
-    public static function renderWithoutViewProvider()
+    public static function renderWithoutViewProvider(): array
     {
         return [
             // Test render with a valid string in _serialize.
@@ -216,15 +216,14 @@ class JsonViewTest extends TestCase
      * @param int|false|null $jsonOptions
      * @param string $expected
      * @dataProvider renderWithoutViewProvider
-     * @return void
      */
-    public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected)
+    public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
-        $this->deprecated(function () use ($Controller, $data, $serialize, $jsonOptions, $expected) {
+        $this->deprecated(function () use ($Controller, $data, $serialize, $jsonOptions, $expected): void {
             $Controller->set($data);
             $Controller->set('_serialize', $serialize);
             $Controller->set('_jsonOptions', $jsonOptions);
@@ -249,10 +248,8 @@ class JsonViewTest extends TestCase
 
     /**
      * Test that rendering with _serialize does not load helpers.
-     *
-     * @return void
      */
-    public function testRenderSerializeNoHelpers()
+    public function testRenderSerializeNoHelpers(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -272,10 +269,8 @@ class JsonViewTest extends TestCase
 
     /**
      * testJsonpResponse method
-     *
-     * @return void
      */
-    public function testJsonpResponse()
+    public function testJsonpResponse(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -310,10 +305,8 @@ class JsonViewTest extends TestCase
 
     /**
      * Test render with a View file specified.
-     *
-     * @return void
      */
-    public function testRenderWithView()
+    public function testRenderWithView(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -340,7 +333,7 @@ class JsonViewTest extends TestCase
         $this->assertSame('application/json', $View->getResponse()->getType());
     }
 
-    public function testSerializationFailureException()
+    public function testSerializationFailureException(): void
     {
         $this->expectException(SerializationFailureException::class);
         $this->expectExceptionMessage('Serialization of View data failed.');

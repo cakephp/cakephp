@@ -28,30 +28,36 @@ use Cake\TestSuite\TestCase;
 class SessionStorageTest extends TestCase
 {
     /**
+     * @var \Cake\Http\Session|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $session;
+
+    /**
      * @var \Cake\Auth\Storage\SessionStorage
      */
     protected $storage;
 
     /**
+     * @var array<string, mixed>
+     */
+    protected $user;
+
+    /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
 
         $this->session = $this->getMockBuilder(Session::class)->getMock();
-        $this->request = new ServerRequest(['session' => $this->session]);
-        $this->response = new Response();
-        $this->storage = new SessionStorage($this->request, $this->response, ['key' => 'Auth.AuthUser']);
+        $request = new ServerRequest(['session' => $this->session]);
+        $response = new Response();
+        $this->storage = new SessionStorage($request, $response, ['key' => 'Auth.AuthUser']);
         $this->user = ['id' => 1];
     }
 
     /**
      * Test write
-     *
-     * @return void
      */
     public function testWrite(): void
     {
@@ -65,8 +71,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test read
-     *
-     * @return void
      */
     public function testRead(): void
     {
@@ -81,8 +85,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test read from local var
-     *
-     * @return void
      */
     public function testGetFromLocalVar(): void
     {
@@ -97,8 +99,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test delete
-     *
-     * @return void
      */
     public function testDelete(): void
     {
@@ -111,8 +111,6 @@ class SessionStorageTest extends TestCase
 
     /**
      * Test redirectUrl()
-     *
-     * @return void
      */
     public function redirectUrl(): void
     {

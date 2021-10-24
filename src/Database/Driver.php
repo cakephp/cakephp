@@ -40,7 +40,7 @@ abstract class Driver implements DriverInterface
     protected const MAX_ALIAS_LENGTH = null;
 
     /**
-     * @var int[] DB-specific error codes that allow connect retry
+     * @var array<int>  DB-specific error codes that allow connect retry
      */
     protected const RETRY_ERROR_CODES = [];
 
@@ -54,7 +54,7 @@ abstract class Driver implements DriverInterface
     /**
      * Configuration data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_config;
 
@@ -62,24 +62,17 @@ abstract class Driver implements DriverInterface
      * Base configuration that is merged into the user
      * supplied configuration data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_baseConfig = [];
 
     /**
-     * Indicates whether or not the driver is doing automatic identifier quoting
+     * Indicates whether the driver is doing automatic identifier quoting
      * for all queries
      *
      * @var bool
      */
     protected $_autoQuoting = false;
-
-    /**
-     * Whether or not the server supports common table expressions.
-     *
-     * @var bool|null
-     */
-    protected $supportsCTEs = null;
 
     /**
      * The server version
@@ -98,7 +91,7 @@ abstract class Driver implements DriverInterface
     /**
      * Constructor
      *
-     * @param array $config The configuration for the driver.
+     * @param array<string, mixed> $config The configuration for the driver.
      * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
@@ -119,7 +112,7 @@ abstract class Driver implements DriverInterface
      * Establishes a connection to the database server
      *
      * @param string $dsn A Driver-specific PDO-DSN
-     * @param array $config configuration to be used for creating connection
+     * @param array<string, mixed> $config configuration to be used for creating connection
      * @return bool true on success
      */
     protected function _connect(string $dsn, array $config): bool
@@ -269,21 +262,38 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns whether a transaction is active for connection.
+     *
+     * @return bool
+     */
+    public function inTransaction(): bool
+    {
+        $this->connect();
+
+        return $this->_connection->inTransaction();
+    }
+
+    /**
      * @inheritDoc
      */
     public function supportsSavePoints(): bool
     {
-        return true;
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
+
+        return $this->supports(static::FEATURE_SAVEPOINT);
     }
 
     /**
      * Returns true if the server supports common table expressions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
      */
     public function supportsCTEs(): bool
     {
-        return $this->supportsCTEs === true;
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
+
+        return $this->supports(static::FEATURE_CTE);
     }
 
     /**
@@ -300,12 +310,13 @@ abstract class Driver implements DriverInterface
      * Checks if the driver supports quoting, as PDO_ODBC does not support it.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
      */
     public function supportsQuoting(): bool
     {
-        $this->connect();
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
+        return $this->supports(static::FEATURE_QUOTE);
     }
 
     /**
@@ -378,7 +389,7 @@ abstract class Driver implements DriverInterface
             return $this->_connection->lastInsertId($table);
         }
 
-        return $this->_connection->lastInsertId($table, $column);
+        return $this->_connection->lastInsertId($table);
     }
 
     /**
@@ -428,6 +439,26 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns whether the driver supports the feature.
+     *
+     * Defaults to true for FEATURE_QUOTE and FEATURE_SAVEPOINT.
+     *
+     * @param string $feature Driver feature name
+     * @return bool
+     */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION:
+            case static::FEATURE_QUOTE:
+            case static::FEATURE_SAVEPOINT:
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @inheritDoc
      */
     public function compileQuery(Query $query, ValueBinder $binder): array
@@ -463,7 +494,7 @@ abstract class Driver implements DriverInterface
 
     /**
      * Returns the maximum alias length allowed.
-     * This can be different than the maximum identifier length for columns.
+     * This can be different from the maximum identifier length for columns.
      *
      * @return int|null Maximum alias length or null if no limit
      */
@@ -495,7 +526,7 @@ abstract class Driver implements DriverInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

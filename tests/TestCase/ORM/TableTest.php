@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
+use BadMethodCallException;
 use Cake\Collection\Collection;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
@@ -25,15 +27,19 @@ use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\MissingBehaviorException;
+use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -42,9 +48,12 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use Cake\Validation\Validator;
+use Exception;
 use InvalidArgumentException;
+use PDOException;
 use RuntimeException;
 use TestApp\Model\Entity\ProtectedEntity;
+use TestApp\Model\Entity\Tag;
 use TestApp\Model\Entity\VirtualUser;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\UsersTable;
@@ -95,9 +104,6 @@ class TableTest extends TestCase
      */
     protected $articlesTypeMap;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -182,8 +188,6 @@ class TableTest extends TestCase
 
     /**
      * teardown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -193,10 +197,8 @@ class TableTest extends TestCase
 
     /**
      * Tests query creation wrappers.
-     *
-     * @return void
      */
-    public function testTableQuery()
+    public function testTableQuery(): void
     {
         $table = new Table(['table' => 'users']);
 
@@ -216,10 +218,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the table method
-     *
-     * @return void
      */
-    public function testTableMethod()
+    public function testTableMethod(): void
     {
         $table = new Table(['table' => 'users']);
         $this->assertSame('users', $table->getTable());
@@ -246,10 +246,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the setAlias method
-     *
-     * @return void
      */
-    public function testSetAlias()
+    public function testSetAlias(): void
     {
         $table = new Table(['alias' => 'users']);
         $this->assertSame('users', $table->getAlias());
@@ -273,10 +271,8 @@ class TableTest extends TestCase
 
     /**
      * Test that aliasField() works.
-     *
-     * @return void
      */
-    public function testAliasField()
+    public function testAliasField(): void
     {
         $table = new Table(['alias' => 'Users']);
         $this->assertSame('Users.id', $table->aliasField('id'));
@@ -286,10 +282,8 @@ class TableTest extends TestCase
 
     /**
      * Tests setConnection method
-     *
-     * @return void
      */
-    public function testSetConnection()
+    public function testSetConnection(): void
     {
         $table = new Table(['table' => 'users']);
         $this->assertSame($this->connection, $table->getConnection());
@@ -299,10 +293,8 @@ class TableTest extends TestCase
 
     /**
      * Tests primaryKey method
-     *
-     * @return void
      */
-    public function testSetPrimaryKey()
+    public function testSetPrimaryKey(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -321,10 +313,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that name will be selected as a displayField
-     *
-     * @return void
      */
-    public function testDisplayFieldName()
+    public function testDisplayFieldName(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -338,10 +328,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that title will be selected as a displayField
-     *
-     * @return void
      */
-    public function testDisplayFieldTitle()
+    public function testDisplayFieldTitle(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -354,11 +342,24 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that no displayField will fallback to primary key
-     *
-     * @return void
+     * Tests that label will be selected as a displayField
      */
-    public function testDisplayFallback()
+    public function testDisplayFieldLabel(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'foo' => ['type' => 'string'],
+                'label' => ['type' => 'string'],
+            ],
+        ]);
+        $this->assertSame('label', $table->getDisplayField());
+    }
+
+    /**
+     * Tests that no displayField will fallback to primary key
+     */
+    public function testDisplayFallback(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -369,14 +370,15 @@ class TableTest extends TestCase
             ],
         ]);
         $this->assertSame('id', $table->getDisplayField());
+
+        $table = $this->getTableLocator()->get('ArticlesTags');
+        $this->assertSame(['article_id', 'tag_id'], $table->getDisplayField());
     }
 
     /**
      * Tests that displayField can be changed
-     *
-     * @return void
      */
-    public function testDisplaySet()
+    public function testDisplaySet(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -393,10 +395,8 @@ class TableTest extends TestCase
 
     /**
      * Tests schema method
-     *
-     * @return void
      */
-    public function testSetSchema()
+    public function testSetSchema(): void
     {
         $schema = $this->connection->getSchemaCollection()->describe('users');
         $table = new Table([
@@ -420,10 +420,8 @@ class TableTest extends TestCase
 
     /**
      * Tests schema method with long identifiers
-     *
-     * @return void
      */
-    public function testSetSchemaLongIdentifiers()
+    public function testSetSchemaLongIdentifiers(): void
     {
         $schema = new TableSchema('long_identifiers', [
             'this_is_invalid_because_it_is_very_very_very_long' => [
@@ -451,10 +449,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that _initializeSchema can be used to alter the database schema
-     *
-     * @return void
      */
-    public function testSchemaInitialize()
+    public function testSchemaInitialize(): void
     {
         $schema = $this->connection->getSchemaCollection()->describe('users');
         $table = $this->getMockBuilder(Table::class)
@@ -478,10 +474,8 @@ class TableTest extends TestCase
     /**
      * Tests that all fields for a table are added by default in a find when no
      * other fields are specified
-     *
-     * @return void
      */
-    public function testFindAllNoFieldsAndNoHydration()
+    public function testFindAllNoFieldsAndNoHydration(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -498,15 +492,15 @@ class TableTest extends TestCase
                 'id' => 1,
                 'username' => 'mariano',
                 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
-                'created' => new Time('2007-03-17 01:16:23'),
-                'updated' => new Time('2007-03-17 01:18:31'),
+                'created' => new FrozenTime('2007-03-17 01:16:23'),
+                'updated' => new FrozenTime('2007-03-17 01:18:31'),
             ],
             [
                 'id' => 2,
                 'username' => 'nate',
                 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
-                'created' => new Time('2008-03-17 01:18:23'),
-                'updated' => new Time('2008-03-17 01:20:31'),
+                'created' => new FrozenTime('2008-03-17 01:18:23'),
+                'updated' => new FrozenTime('2008-03-17 01:20:31'),
             ],
         ];
         $this->assertEquals($expected, $results);
@@ -514,10 +508,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to select only a few fields when finding over a table
-     *
-     * @return void
      */
-    public function testFindAllSomeFieldsNoHydration()
+    public function testFindAllSomeFieldsNoHydration(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -552,10 +544,8 @@ class TableTest extends TestCase
     /**
      * Tests that the query will automatically casts complex conditions to the correct
      * types when the columns belong to the default table
-     *
-     * @return void
      */
-    public function testFindAllConditionAutoTypes()
+    public function testFindAllConditionAutoTypes(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -563,7 +553,7 @@ class TableTest extends TestCase
         ]);
         $query = $table->find('all')
             ->select(['id', 'username'])
-            ->where(['created >=' => new Time('2010-01-22 00:00')])
+            ->where(['created >=' => new FrozenTime('2010-01-22 00:00')])
             ->enableHydration(false)
             ->order('id');
         $expected = [
@@ -576,8 +566,8 @@ class TableTest extends TestCase
             ->enableHydration(false)
             ->select(['id', 'username'])
             ->where(['OR' => [
-                'created >=' => new Time('2010-01-22 00:00'),
-                'users.created' => new Time('2008-03-17 01:18:23'),
+                'created >=' => new FrozenTime('2010-01-22 00:00'),
+                'users.created' => new FrozenTime('2008-03-17 01:18:23'),
             ]])
             ->order('id');
         $expected = [
@@ -590,10 +580,8 @@ class TableTest extends TestCase
 
     /**
      * Test that beforeFind events can mutate the query.
-     *
-     * @return void
      */
-    public function testFindBeforeFindEventMutateQuery()
+    public function testFindBeforeFindEventMutateQuery(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -601,7 +589,7 @@ class TableTest extends TestCase
         ]);
         $table->getEventManager()->on(
             'Model.beforeFind',
-            function (EventInterface $event, $query, $options) {
+            function (EventInterface $event, $query, $options): void {
                 $query->limit(1);
             }
         );
@@ -613,10 +601,8 @@ class TableTest extends TestCase
     /**
      * Test that beforeFind events are fired and can stop the find and
      * return custom results.
-     *
-     * @return void
      */
-    public function testFindBeforeFindEventOverrideReturn()
+    public function testFindBeforeFindEventOverrideReturn(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -625,7 +611,7 @@ class TableTest extends TestCase
         $expected = ['One', 'Two', 'Three'];
         $table->getEventManager()->on(
             'Model.beforeFind',
-            function (EventInterface $event, $query, $options) use ($expected) {
+            function (EventInterface $event, $query, $options) use ($expected): void {
                 $query->setResult($expected);
                 $event->stopPropagation();
             }
@@ -638,10 +624,8 @@ class TableTest extends TestCase
 
     /**
      * Test that the getAssociation() method supports the dot syntax.
-     *
-     * @return void
      */
-    public function testAssociationDotSyntax()
+    public function testAssociationDotSyntax(): void
     {
         $sections = $this->getTableLocator()->get('Sections');
         $members = $this->getTableLocator()->get('Members');
@@ -660,7 +644,7 @@ class TableTest extends TestCase
         );
     }
 
-    public function testGetAssociationWithIncorrectCasing()
+    public function testGetAssociationWithIncorrectCasing(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -675,10 +659,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that the getAssociation() method throws an exception on nonexistent ones.
-     *
-     * @return void
      */
-    public function testGetAssociationNonExistent()
+    public function testGetAssociationNonExistent(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `FooBar` association is not defined on `Sections`.');
@@ -688,10 +670,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that belongsTo() creates and configures correctly the association
-     *
-     * @return void
      */
-    public function testBelongsTo()
+    public function testBelongsTo(): void
     {
         $options = ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']];
         $table = new Table(['table' => 'dates']);
@@ -706,10 +686,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that hasOne() creates and configures correctly the association
-     *
-     * @return void
      */
-    public function testHasOne()
+    public function testHasOne(): void
     {
         $options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
         $table = new Table(['table' => 'users']);
@@ -724,10 +702,8 @@ class TableTest extends TestCase
 
     /**
      * Test has one with a plugin model
-     *
-     * @return void
      */
-    public function testHasOnePlugin()
+    public function testHasOnePlugin(): void
     {
         $options = ['className' => 'TestPlugin.Comments'];
         $table = new Table(['table' => 'users']);
@@ -754,10 +730,8 @@ class TableTest extends TestCase
 
     /**
      * testNoneUniqueAssociationsSameClass
-     *
-     * @return void
      */
-    public function testNoneUniqueAssociationsSameClass()
+    public function testNoneUniqueAssociationsSameClass(): void
     {
         $Users = new Table(['table' => 'users']);
         $options = ['className' => 'Comments'];
@@ -778,10 +752,8 @@ class TableTest extends TestCase
 
     /**
      * Test associations which refer to the same table multiple times
-     *
-     * @return void
      */
-    public function testSelfJoinAssociations()
+    public function testSelfJoinAssociations(): void
     {
         $Categories = $this->getTableLocator()->get('Categories');
         $options = ['className' => 'Categories'];
@@ -833,10 +805,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that hasMany() creates and configures correctly the association
-     *
-     * @return void
      */
-    public function testHasMany()
+    public function testHasMany(): void
     {
         $options = [
             'foreignKey' => 'author_id',
@@ -856,10 +826,8 @@ class TableTest extends TestCase
 
     /**
      * testHasManyWithClassName
-     *
-     * @return void
      */
-    public function testHasManyWithClassName()
+    public function testHasManyWithClassName(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments', [
@@ -915,10 +883,8 @@ class TableTest extends TestCase
 
     /**
      * Ensure associations use the plugin-prefixed model
-     *
-     * @return void
      */
-    public function testHasManyPluginOverlap()
+    public function testHasManyPluginOverlap(): void
     {
         $this->getTableLocator()->get('Comments');
         $this->loadPlugins(['TestPlugin']);
@@ -933,10 +899,8 @@ class TableTest extends TestCase
     /**
      * Ensure associations use the plugin-prefixed model
      * even if specified with config
-     *
-     * @return void
      */
-    public function testHasManyPluginOverlapConfig()
+    public function testHasManyPluginOverlapConfig(): void
     {
         $this->getTableLocator()->get('Comments');
         $this->loadPlugins(['TestPlugin']);
@@ -950,10 +914,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that BelongsToMany() creates and configures correctly the association
-     *
-     * @return void
      */
-    public function testBelongsToMany()
+    public function testBelongsToMany(): void
     {
         $options = [
             'foreignKey' => 'thing_id',
@@ -975,10 +937,8 @@ class TableTest extends TestCase
 
     /**
      * Test addAssociations()
-     *
-     * @return void
      */
-    public function testAddAssociations()
+    public function testAddAssociations(): void
     {
         $params = [
             'belongsTo' => [
@@ -1026,10 +986,8 @@ class TableTest extends TestCase
 
     /**
      * Test basic multi row updates.
-     *
-     * @return void
      */
-    public function testUpdateAll()
+    public function testUpdateAll(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -1052,7 +1010,7 @@ class TableTest extends TestCase
     /**
      * Test that exceptions from the Query bubble up.
      */
-    public function testUpdateAllFailure()
+    public function testUpdateAllFailure(): void
     {
         $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
@@ -1076,10 +1034,8 @@ class TableTest extends TestCase
 
     /**
      * Test deleting many records.
-     *
-     * @return void
      */
-    public function testDeleteAll()
+    public function testDeleteAll(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -1095,10 +1051,8 @@ class TableTest extends TestCase
 
     /**
      * Test deleting many records with conditions using the alias
-     *
-     * @return void
      */
-    public function testDeleteAllAliasedConditions()
+    public function testDeleteAllAliasedConditions(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -1116,7 +1070,7 @@ class TableTest extends TestCase
     /**
      * Test that exceptions from the Query bubble up.
      */
-    public function testDeleteAllFailure()
+    public function testDeleteAllFailure(): void
     {
         $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
@@ -1140,10 +1094,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that array options are passed to the query object using applyOptions
-     *
-     * @return void
      */
-    public function testFindApplyOptions()
+    public function testFindApplyOptions(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query', 'findAll'])
@@ -1174,10 +1126,8 @@ class TableTest extends TestCase
 
     /**
      * Tests find('list')
-     *
-     * @return void
      */
-    public function testFindListNoHydration()
+    public function testFindListNoHydration(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -1225,10 +1175,8 @@ class TableTest extends TestCase
 
     /**
      * Tests find('threaded')
-     *
-     * @return void
      */
-    public function testFindThreadedNoHydration()
+    public function testFindThreadedNoHydration(): void
     {
         $table = new Table([
             'table' => 'categories',
@@ -1298,10 +1246,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that finders can be stacked
-     *
-     * @return void
      */
-    public function testStackingFinders()
+    public function testStackingFinders(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['find', 'findList'])
@@ -1331,10 +1277,8 @@ class TableTest extends TestCase
 
     /**
      * Tests find('threaded') with hydrated results
-     *
-     * @return void
      */
-    public function testFindThreadedHydrated()
+    public function testFindThreadedHydrated(): void
     {
         $table = new Table([
             'table' => 'categories',
@@ -1357,10 +1301,8 @@ class TableTest extends TestCase
 
     /**
      * Tests find('list') with hydrated records
-     *
-     * @return void
      */
-    public function testFindListHydrated()
+    public function testFindListHydrated(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -1397,10 +1339,8 @@ class TableTest extends TestCase
 
     /**
      * Test that find('list') only selects required fields.
-     *
-     * @return void
      */
-    public function testFindListSelectedFields()
+    public function testFindListSelectedFields(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -1461,10 +1401,8 @@ class TableTest extends TestCase
 
     /**
      * test that find('list') does not auto add fields to select if using virtual properties
-     *
-     * @return void
      */
-    public function testFindListWithVirtualField()
+    public function testFindListWithVirtualField(): void
     {
         $table = new Table([
             'table' => 'users',
@@ -1492,10 +1430,8 @@ class TableTest extends TestCase
 
     /**
      * Test find('list') with value field from associated table
-     *
-     * @return void
      */
-    public function testFindListWithAssociatedTable()
+    public function testFindListWithAssociatedTable(): void
     {
         $articles = new Table([
             'table' => 'articles',
@@ -1518,10 +1454,8 @@ class TableTest extends TestCase
 
     /**
      * Test the default entityClass.
-     *
-     * @return void
      */
-    public function testEntityClassDefault()
+    public function testEntityClassDefault(): void
     {
         $table = new Table();
         $this->assertSame('Cake\ORM\Entity', $table->getEntityClass());
@@ -1530,10 +1464,8 @@ class TableTest extends TestCase
     /**
      * Tests that using a simple string for entityClass will try to
      * load the class from the App namespace
-     *
-     * @return void
      */
-    public function testTableClassInApp()
+    public function testTableClassInApp(): void
     {
         $class = $this->getMockClass('Cake\ORM\Entity');
 
@@ -1548,10 +1480,8 @@ class TableTest extends TestCase
 
     /**
      * Test that entity class inflection works for compound nouns
-     *
-     * @return void
      */
-    public function testEntityClassInflection()
+    public function testEntityClassInflection(): void
     {
         $class = $this->getMockClass('Cake\ORM\Entity');
 
@@ -1573,10 +1503,8 @@ class TableTest extends TestCase
     /**
      * Tests that using a simple string for entityClass will try to
      * load the class from the Plugin namespace when using plugin notation
-     *
-     * @return void
      */
-    public function testTableClassInPlugin()
+    public function testTableClassInPlugin(): void
     {
         $class = $this->getMockClass('Cake\ORM\Entity');
 
@@ -1595,12 +1523,10 @@ class TableTest extends TestCase
     /**
      * Tests that using a simple string for entityClass will throw an exception
      * when the class does not exist in the namespace
-     *
-     * @return void
      */
-    public function testTableClassNonExistent()
+    public function testTableClassNonExistent(): void
     {
-        $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
+        $this->expectException(MissingEntityException::class);
         $this->expectExceptionMessage('Entity class FooUser could not be found.');
         $table = new Table();
         $table->setEntityClass('FooUser');
@@ -1609,21 +1535,17 @@ class TableTest extends TestCase
     /**
      * Tests getting the entityClass based on conventions for the entity
      * namespace
-     *
-     * @return void
      */
-    public function testTableClassConventionForAPP()
+    public function testTableClassConventionForAPP(): void
     {
-        $table = new \TestApp\Model\Table\ArticlesTable();
+        $table = new ArticlesTable();
         $this->assertSame('TestApp\Model\Entity\Article', $table->getEntityClass());
     }
 
     /**
      * Tests setting a entity class object using the setter method
-     *
-     * @return void
      */
-    public function testSetEntityClass()
+    public function testSetEntityClass(): void
     {
         $table = new Table();
         $class = '\\' . $this->getMockClass('Cake\ORM\Entity');
@@ -1634,12 +1556,10 @@ class TableTest extends TestCase
     /**
      * Proves that associations, even though they are lazy loaded, will fetch
      * records using the correct table class and hydrate with the correct entity
-     *
-     * @return void
      */
-    public function testReciprocalBelongsToLoading()
+    public function testReciprocalBelongsToLoading(): void
     {
-        $table = new \TestApp\Model\Table\ArticlesTable([
+        $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
         $result = $table->find('all')->contain(['Authors'])->first();
@@ -1649,12 +1569,10 @@ class TableTest extends TestCase
     /**
      * Proves that associations, even though they are lazy loaded, will fetch
      * records using the correct table class and hydrate with the correct entity
-     *
-     * @return void
      */
-    public function testReciprocalHasManyLoading()
+    public function testReciprocalHasManyLoading(): void
     {
-        $table = new \TestApp\Model\Table\ArticlesTable([
+        $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
         $result = $table->find('all')->contain(['Authors' => ['articles']])->first();
@@ -1667,12 +1585,10 @@ class TableTest extends TestCase
     /**
      * Tests that the correct table and entity are loaded for the join association in
      * a belongsToMany setup
-     *
-     * @return void
      */
-    public function testReciprocalBelongsToMany()
+    public function testReciprocalBelongsToMany(): void
     {
-        $table = new \TestApp\Model\Table\ArticlesTable([
+        $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
         $result = $table->find('all')->contain(['Tags'])->first();
@@ -1685,12 +1601,10 @@ class TableTest extends TestCase
 
     /**
      * Tests that recently fetched entities are always clean
-     *
-     * @return void
      */
-    public function testFindCleanEntities()
+    public function testFindCleanEntities(): void
     {
-        $table = new \TestApp\Model\Table\ArticlesTable([
+        $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
         $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
@@ -1713,12 +1627,10 @@ class TableTest extends TestCase
 
     /**
      * Tests that recently fetched entities are marked as not new
-     *
-     * @return void
      */
-    public function testFindPersistedEntities()
+    public function testFindPersistedEntities(): void
     {
-        $table = new \TestApp\Model\Table\ArticlesTable([
+        $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
         $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
@@ -1734,10 +1646,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the exists function
-     *
-     * @return void
      */
-    public function testExists()
+    public function testExists(): void
     {
         $table = $this->getTableLocator()->get('users');
         $this->assertTrue($table->exists(['id' => 1]));
@@ -1747,10 +1657,8 @@ class TableTest extends TestCase
 
     /**
      * Test adding a behavior to a table.
-     *
-     * @return void
      */
-    public function testAddBehavior()
+    public function testAddBehavior(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\BehaviorRegistry')
             ->disableOriginalConstructor()
@@ -1769,10 +1677,8 @@ class TableTest extends TestCase
 
     /**
      * Test adding a behavior that is a duplicate.
-     *
-     * @return void
      */
-    public function testAddBehaviorDuplicate()
+    public function testAddBehaviorDuplicate(): void
     {
         $table = new Table(['table' => 'articles']);
         $this->assertSame($table, $table->addBehavior('Sluggable', ['test' => 'value']));
@@ -1780,17 +1686,15 @@ class TableTest extends TestCase
         try {
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->assertStringContainsString('The "Sluggable" alias has already been loaded', $e->getMessage());
         }
     }
 
     /**
      * Test removing a behavior from a table.
-     *
-     * @return void
      */
-    public function testRemoveBehavior()
+    public function testRemoveBehavior(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\BehaviorRegistry')
             ->disableOriginalConstructor()
@@ -1809,10 +1713,8 @@ class TableTest extends TestCase
 
     /**
      * Test adding multiple behaviors to a table.
-     *
-     * @return void
      */
-    public function testAddBehaviors()
+    public function testAddBehaviors(): void
     {
         $table = new Table(['table' => 'comments']);
         $behaviors = [
@@ -1838,10 +1740,8 @@ class TableTest extends TestCase
 
     /**
      * Test getting a behavior instance from a table.
-     *
-     * @return void
      */
-    public function testBehaviors()
+    public function testBehaviors(): void
     {
         $table = $this->getTableLocator()->get('article');
         $result = $table->behaviors();
@@ -1850,10 +1750,8 @@ class TableTest extends TestCase
 
     /**
      * Test that the getBehavior() method retrieves a behavior from the table registry.
-     *
-     * @return void
      */
-    public function testGetBehavior()
+    public function testGetBehavior(): void
     {
         $table = new Table(['table' => 'comments']);
         $table->addBehavior('Sluggable');
@@ -1863,10 +1761,8 @@ class TableTest extends TestCase
     /**
      * Test that the getBehavior() method will throw an exception when you try to
      * get a behavior that does not exist.
-     *
-     * @return void
      */
-    public function testGetBehaviorThrowsExceptionForMissingBehavior()
+    public function testGetBehaviorThrowsExceptionForMissingBehavior(): void
     {
         $table = new Table(['table' => 'comments']);
 
@@ -1880,19 +1776,17 @@ class TableTest extends TestCase
     /**
      * Ensure exceptions are raised on missing behaviors.
      */
-    public function testAddBehaviorMissing()
+    public function testAddBehaviorMissing(): void
     {
-        $this->expectException(\Cake\ORM\Exception\MissingBehaviorException::class);
+        $this->expectException(MissingBehaviorException::class);
         $table = $this->getTableLocator()->get('article');
         $this->assertNull($table->addBehavior('NopeNotThere'));
     }
 
     /**
      * Test mixin methods from behaviors.
-     *
-     * @return void
      */
-    public function testCallBehaviorMethod()
+    public function testCallBehaviorMethod(): void
     {
         $table = $this->getTableLocator()->get('article');
         $table->addBehavior('Sluggable');
@@ -1901,10 +1795,8 @@ class TableTest extends TestCase
 
     /**
      * Test you can alias a behavior method
-     *
-     * @return void
      */
-    public function testCallBehaviorAliasedMethod()
+    public function testCallBehaviorAliasedMethod(): void
     {
         $table = $this->getTableLocator()->get('article');
         $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
@@ -1913,10 +1805,8 @@ class TableTest extends TestCase
 
     /**
      * Test finder methods from behaviors.
-     *
-     * @return void
      */
-    public function testCallBehaviorFinder()
+    public function testCallBehaviorFinder(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->addBehavior('Sluggable');
@@ -1928,10 +1818,8 @@ class TableTest extends TestCase
 
     /**
      * testCallBehaviorAliasedFinder
-     *
-     * @return void
      */
-    public function testCallBehaviorAliasedFinder()
+    public function testCallBehaviorAliasedFinder(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->addBehavior('Sluggable', ['implementedFinders' => ['special' => 'findNoSlug']]);
@@ -1943,10 +1831,8 @@ class TableTest extends TestCase
 
     /**
      * Test implementedEvents
-     *
-     * @return void
      */
-    public function testImplementedEvents()
+    public function testImplementedEvents(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -1979,15 +1865,14 @@ class TableTest extends TestCase
      * Tests that it is possible to insert a new row using the save method
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewEntity()
+    public function testSaveNewEntity(): void
     {
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -2001,9 +1886,8 @@ class TableTest extends TestCase
      * Test that saving a new empty entity does nothing.
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewEmptyEntity()
+    public function testSaveNewEmptyEntity(): void
     {
         $entity = new Entity();
         $table = $this->getTableLocator()->get('users');
@@ -2014,9 +1898,8 @@ class TableTest extends TestCase
      * Test that saving a new empty entity does not call exists.
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewEntityNoExists()
+    public function testSaveNewEntityNoExists(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -2039,9 +1922,8 @@ class TableTest extends TestCase
      * Test that saving a new entity with a Primary Key set does call exists.
      *
      * @group save
-     * @return void
      */
-    public function testSavePrimaryKeyEntityExists()
+    public function testSavePrimaryKeyEntityExists(): void
     {
         $this->skipIfSqlServer();
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
@@ -2064,9 +1946,8 @@ class TableTest extends TestCase
      * Test that saving a new entity with a Primary Key set does not call exists when checkExisting is false.
      *
      * @group save
-     * @return void
      */
-    public function testSavePrimaryKeyEntityNoExists()
+    public function testSavePrimaryKeyEntityNoExists(): void
     {
         $this->skipIfSqlServer();
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
@@ -2090,16 +1971,15 @@ class TableTest extends TestCase
      * are not present in the table schema when saving
      *
      * @group save
-     * @return void
      */
-    public function testSaveEntityOnlySchemaFields()
+    public function testSaveEntityOnlySchemaFields(): void
     {
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
             'crazyness' => 'super crazy value',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -2114,17 +1994,16 @@ class TableTest extends TestCase
      * Tests that it is possible to modify data from the beforeSave callback
      *
      * @group save
-     * @return void
      */
-    public function testBeforeSaveModifyData()
+    public function testBeforeSaveModifyData(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
-        $listener = function ($event, EntityInterface $entity, $options) use ($data) {
+        $listener = function ($event, EntityInterface $entity, $options) use ($data): void {
             $this->assertSame($data, $entity);
             $entity->set('password', 'foo');
         };
@@ -2139,21 +2018,20 @@ class TableTest extends TestCase
      * Tests that it is possible to modify the options array in beforeSave
      *
      * @group save
-     * @return void
      */
-    public function testBeforeSaveModifyOptions()
+    public function testBeforeSaveModifyOptions(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
             'password' => 'foo',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
-        $listener1 = function ($event, $entity, $options) {
+        $listener1 = function ($event, $entity, $options): void {
             $options['crazy'] = true;
         };
-        $listener2 = function ($event, $entity, $options) {
+        $listener2 = function ($event, $entity, $options): void {
             $this->assertTrue($options['crazy']);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener1);
@@ -2170,15 +2048,14 @@ class TableTest extends TestCase
      * the save operation failed
      *
      * @group save
-     * @return void
      */
-    public function testBeforeSaveStopEvent()
+    public function testBeforeSaveStopEvent(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
@@ -2197,17 +2074,16 @@ class TableTest extends TestCase
      * value then save() returns false.
      *
      * @group save
-     * @return void
      */
-    public function testBeforeSaveStopEventWithNoResult()
+    public function testBeforeSaveStopEventWithNoResult(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
@@ -2216,9 +2092,8 @@ class TableTest extends TestCase
 
     /**
      * @group save
-     * @return void
      */
-    public function testBeforeSaveException()
+    public function testBeforeSaveException(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The beforeSave callback must return `false` or `EntityInterface` instance. Got `integer` instead.');
@@ -2226,8 +2101,8 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
@@ -2242,9 +2117,8 @@ class TableTest extends TestCase
      * Asserts that afterSave callback is called on successful save
      *
      * @group save
-     * @return void
      */
-    public function testAfterSave()
+    public function testAfterSave(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = $table->get(1);
@@ -2252,7 +2126,7 @@ class TableTest extends TestCase
         $data->username = 'newusername';
 
         $called = false;
-        $listener = function ($e, EntityInterface $entity, $options) use ($data, &$called) {
+        $listener = function ($e, EntityInterface $entity, $options) use ($data, &$called): void {
             $this->assertSame($data, $entity);
             $this->assertTrue($entity->isDirty());
             $called = true;
@@ -2260,7 +2134,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, EntityInterface $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, EntityInterface $entity, $options) use ($data, &$calledAfterCommit): void {
             $this->assertSame($data, $entity);
             $this->assertTrue($entity->isDirty());
             $this->assertNotSame($data->get('username'), $data->getOriginal('username'));
@@ -2275,27 +2149,25 @@ class TableTest extends TestCase
 
     /**
      * Asserts that afterSaveCommit is also triggered for non-atomic saves
-     *
-     * @return void
      */
-    public function testAfterSaveCommitForNonAtomic()
+    public function testAfterSaveCommitForNonAtomic(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use ($data, &$called) {
+        $listener = function ($e, $entity, $options) use ($data, &$called): void {
             $this->assertSame($data, $entity);
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit): void {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -2308,20 +2180,18 @@ class TableTest extends TestCase
 
     /**
      * Asserts the afterSaveCommit is not triggered if transaction is running.
-     *
-     * @return void
      */
-    public function testAfterSaveCommitWithTransactionRunning()
+    public function testAfterSaveCommitWithTransactionRunning(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called) {
+        $listener = function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listener);
@@ -2334,20 +2204,18 @@ class TableTest extends TestCase
 
     /**
      * Asserts the afterSaveCommit is not triggered if transaction is running.
-     *
-     * @return void
      */
-    public function testAfterSaveCommitWithNonAtomicAndTransactionRunning()
+    public function testAfterSaveCommitWithNonAtomicAndTransactionRunning(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called) {
+        $listener = function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listener);
@@ -2362,9 +2230,8 @@ class TableTest extends TestCase
      * Asserts that afterSave callback not is called on unsuccessful save
      *
      * @group save
-     * @return void
      */
-    public function testAfterSaveNotCalled()
+    public function testAfterSaveNotCalled(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -2378,8 +2245,8 @@ class TableTest extends TestCase
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
 
         $table->expects($this->once())->method('query')
@@ -2392,13 +2259,13 @@ class TableTest extends TestCase
             ->will($this->returnValue(0));
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called) {
+        $listener = function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit): void {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -2412,9 +2279,8 @@ class TableTest extends TestCase
      * Asserts that afterSaveCommit callback is triggered only for primary table
      *
      * @group save
-     * @return void
      */
-    public function testAfterSaveCommitTriggeredOnlyForPrimaryTable()
+    public function testAfterSaveCommitTriggeredOnlyForPrimaryTable(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
@@ -2428,13 +2294,13 @@ class TableTest extends TestCase
         $table->belongsTo('authors');
 
         $calledForArticle = false;
-        $listenerForArticle = function ($e, $entity, $options) use (&$calledForArticle) {
+        $listenerForArticle = function ($e, $entity, $options) use (&$calledForArticle): void {
             $calledForArticle = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerForArticle);
 
         $calledForAuthor = false;
-        $listenerForAuthor = function ($e, $entity, $options) use (&$calledForAuthor) {
+        $listenerForAuthor = function ($e, $entity, $options) use (&$calledForAuthor): void {
             $calledForAuthor = true;
         };
         $table->authors->getEventManager()->on('Model.afterSaveCommit', $listenerForAuthor);
@@ -2450,11 +2316,10 @@ class TableTest extends TestCase
      * Test that you cannot save rows without a primary key.
      *
      * @group save
-     * @return void
      */
-    public function testSaveNewErrorOnNoPrimaryKey()
+    public function testSaveNewErrorOnNoPrimaryKey(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot insert row in "users" table, it has no primary key');
         $entity = new Entity(['username' => 'superuser']);
         $table = $this->getTableLocator()->get('users', [
@@ -2470,9 +2335,8 @@ class TableTest extends TestCase
      * Tests that save is wrapped around a transaction
      *
      * @group save
-     * @return void
      */
-    public function testAtomicSave()
+    public function testAtomicSave(): void
     {
         $config = ConnectionManager::getConfig('test');
 
@@ -2495,8 +2359,8 @@ class TableTest extends TestCase
         $connection->expects($this->any())->method('inTransaction')->will($this->returnValue(true));
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $this->assertSame($data, $table->save($data));
     }
@@ -2505,11 +2369,10 @@ class TableTest extends TestCase
      * Tests that save will rollback the transaction in the case of an exception
      *
      * @group save
-     * @return void
      */
-    public function testAtomicSaveRollback()
+    public function testAtomicSaveRollback(): void
     {
-        $this->expectException(\PDOException::class);
+        $this->expectException(PDOException::class);
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
             ->setConstructorArgs([ConnectionManager::getConfig('test')])
@@ -2533,12 +2396,12 @@ class TableTest extends TestCase
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
         $query->expects($this->once())->method('execute')
-            ->will($this->throwException(new \PDOException()));
+            ->will($this->throwException(new PDOException()));
 
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table->save($data);
     }
@@ -2547,9 +2410,8 @@ class TableTest extends TestCase
      * Tests that save will rollback the transaction in the case of an exception
      *
      * @group save
-     * @return void
      */
-    public function testAtomicSaveRollbackOnFailure()
+    public function testAtomicSaveRollbackOnFailure(): void
     {
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
@@ -2584,8 +2446,8 @@ class TableTest extends TestCase
 
         $data = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table->save($data);
     }
@@ -2595,15 +2457,14 @@ class TableTest extends TestCase
      * to the database
      *
      * @group save
-     * @return void
      */
-    public function testSaveOnlyDirtyProperties()
+    public function testSaveOnlyDirtyProperties(): void
     {
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $entity->clean();
         $entity->setDirty('username', true);
@@ -2623,15 +2484,14 @@ class TableTest extends TestCase
      * Tests that a recently saved entity is marked as clean
      *
      * @group save
-     * @return void
      */
-    public function testASavedEntityIsClean()
+    public function testASavedEntityIsClean(): void
     {
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -2645,15 +2505,14 @@ class TableTest extends TestCase
      * Tests that a recently saved entity is marked as not new
      *
      * @group save
-     * @return void
      */
-    public function testASavedEntityIsNotNew()
+    public function testASavedEntityIsNotNew(): void
     {
         $entity = new Entity([
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
         $table = $this->getTableLocator()->get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -2665,9 +2524,8 @@ class TableTest extends TestCase
      * or update a row
      *
      * @group save
-     * @return void
      */
-    public function testSaveUpdateAuto()
+    public function testSaveUpdateAuto(): void
     {
         $entity = new Entity([
             'id' => 2,
@@ -2689,10 +2547,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that beforeFind gets the correct isNew() state for the entity
-     *
-     * @return void
      */
-    public function testBeforeSaveGetsCorrectPersistance()
+    public function testBeforeSaveGetsCorrectPersistance(): void
     {
         $entity = new Entity([
             'id' => 2,
@@ -2700,7 +2556,7 @@ class TableTest extends TestCase
         ]);
         $table = $this->getTableLocator()->get('users');
         $called = false;
-        $listener = function (EventInterface $event, $entity) use (&$called) {
+        $listener = function (EventInterface $event, $entity) use (&$called): void {
             $this->assertFalse($entity->isNew());
             $called = true;
         };
@@ -2714,9 +2570,8 @@ class TableTest extends TestCase
      * method from trying to infer the entity's actual status.
      *
      * @group save
-     * @return void
      */
-    public function testSaveUpdateWithHint()
+    public function testSaveUpdateWithHint(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -2737,9 +2592,8 @@ class TableTest extends TestCase
      * attributes to change
      *
      * @group save
-     * @return void
      */
-    public function testSaveUpdatePrimaryKeyNotModified()
+    public function testSaveUpdatePrimaryKeyNotModified(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -2780,9 +2634,8 @@ class TableTest extends TestCase
      * but still return success
      *
      * @group save
-     * @return void
      */
-    public function testUpdateNoChange()
+    public function testUpdateNoChange(): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -2802,9 +2655,8 @@ class TableTest extends TestCase
      *
      * @group save
      * @group integration
-     * @return void
      */
-    public function testUpdateDirtyNoActualChanges()
+    public function testUpdateDirtyNoActualChanges(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $entity = $table->get(1);
@@ -2818,11 +2670,10 @@ class TableTest extends TestCase
      * Tests that failing to pass a primary key to save will result in exception
      *
      * @group save
-     * @return void
      */
-    public function testUpdateNoPrimaryButOtherKeys()
+    public function testUpdateNoPrimaryButOtherKeys(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query'])
@@ -2837,10 +2688,8 @@ class TableTest extends TestCase
 
     /**
      * Test saveMany() with entities array
-     *
-     * @return void
      */
-    public function testSaveManyArray()
+    public function testSaveManyArray(): void
     {
         $entities = [
             new Entity(['name' => 'admad']),
@@ -2848,7 +2697,7 @@ class TableTest extends TestCase
         ];
 
         $timesCalled = 0;
-        $listener = function ($e, $entity, $options) use (&$timesCalled) {
+        $listener = function ($e, $entity, $options) use (&$timesCalled): void {
             $timesCalled++;
         };
         $table = $this->getTableLocator()
@@ -2869,10 +2718,8 @@ class TableTest extends TestCase
 
     /**
      * Test saveMany() with ResultSet instance
-     *
-     * @return void
      */
-    public function testSaveManyResultSet()
+    public function testSaveManyResultSet(): void
     {
         $table = $this->getTableLocator()->get('authors');
 
@@ -2892,10 +2739,8 @@ class TableTest extends TestCase
 
     /**
      * Test saveMany() with failed save
-     *
-     * @return void
      */
-    public function testSaveManyFailed()
+    public function testSaveManyFailed(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $expectedCount = $table->find()->count();
@@ -2915,10 +2760,8 @@ class TableTest extends TestCase
 
     /**
      * Test saveMany() with failed save due to an exception
-     *
-     * @return void
      */
-    public function testSaveManyFailedWithException()
+    public function testSaveManyFailedWithException(): void
     {
         $table = $this->getTableLocator()
             ->get('authors');
@@ -2927,13 +2770,13 @@ class TableTest extends TestCase
             new Entity(['name' => 'jose']),
         ];
 
-        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, EntityInterface $entity) {
+        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, EntityInterface $entity): void {
             if ($entity->name === 'jose') {
-                throw new \Exception('Oh noes');
+                throw new Exception('Oh noes');
             }
         });
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
 
         try {
             $table->saveMany($entities);
@@ -2946,10 +2789,8 @@ class TableTest extends TestCase
 
     /**
      * Test saveManyOrFail() with entities array
-     *
-     * @return void
      */
-    public function testSaveManyOrFailArray()
+    public function testSaveManyOrFailArray(): void
     {
         $entities = [
             new Entity(['name' => 'admad']),
@@ -2968,10 +2809,8 @@ class TableTest extends TestCase
 
     /**
      * Test saveManyOrFail() with ResultSet instance
-     *
-     * @return void
      */
-    public function testSaveManyOrFailResultSet()
+    public function testSaveManyOrFailResultSet(): void
     {
         $table = $this->getTableLocator()->get('authors');
 
@@ -2991,10 +2830,8 @@ class TableTest extends TestCase
 
     /**
      * Test saveManyOrFail() with failed save
-     *
-     * @return void
      */
-    public function testSaveManyOrFailFailed()
+    public function testSaveManyOrFailFailed(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $entities = [
@@ -3010,10 +2847,8 @@ class TableTest extends TestCase
 
     /**
      * Test simple delete.
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $table = $this->getTableLocator()->get('users');
         $conditions = [
@@ -3034,10 +2869,8 @@ class TableTest extends TestCase
 
     /**
      * Test delete with dependent records
-     *
-     * @return void
      */
-    public function testDeleteDependent()
+    public function testDeleteDependent(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles', [
@@ -3059,10 +2892,8 @@ class TableTest extends TestCase
 
     /**
      * Test delete with dependent records
-     *
-     * @return void
      */
-    public function testDeleteDependentHasMany()
+    public function testDeleteDependentHasMany(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles', [
@@ -3072,7 +2903,7 @@ class TableTest extends TestCase
         ]);
 
         $articles = $table->getAssociation('articles')->getTarget();
-        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function ($entity) {
                 if ($entity->author_id === 3) {
                     return false;
@@ -3112,10 +2943,8 @@ class TableTest extends TestCase
 
     /**
      * Test delete with dependent = false does not cascade.
-     *
-     * @return void
      */
-    public function testDeleteNoDependentNoCascade()
+    public function testDeleteNoDependentNoCascade(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('article', [
@@ -3134,10 +2963,8 @@ class TableTest extends TestCase
 
     /**
      * Test delete with BelongsToMany
-     *
-     * @return void
      */
-    public function testDeleteBelongsToMany()
+    public function testDeleteBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tag', [
@@ -3156,10 +2983,8 @@ class TableTest extends TestCase
     /**
      * Test delete with dependent records belonging to an aliased
      * belongsToMany association.
-     *
-     * @return void
      */
-    public function testDeleteDependentAliased()
+    public function testDeleteDependentAliased(): void
     {
         $Authors = $this->getTableLocator()->get('authors');
         $Authors->associations()->removeAll();
@@ -3181,10 +3006,8 @@ class TableTest extends TestCase
 
     /**
      * Test that cascading associations are deleted first.
-     *
-     * @return void
      */
-    public function testDeleteAssociationsCascadingCallbacksOrder()
+    public function testDeleteAssociationsCascadingCallbacksOrder(): void
     {
         $sections = $this->getTableLocator()->get('Sections');
         $members = $this->getTableLocator()->get('Members');
@@ -3215,14 +3038,12 @@ class TableTest extends TestCase
     /**
      * Test that primary record is not deleted if junction record deletion fails
      * when cascadeCallbacks is enabled.
-     *
-     * @return void
      */
-    public function testDeleteBelongsToManyDependentFailure()
+    public function testDeleteBelongsToManyDependentFailure(): void
     {
         $sections = $this->getTableLocator()->get('Sections');
         $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
-        $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+        $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function () {
                 return false;
             });
@@ -3245,13 +3066,11 @@ class TableTest extends TestCase
 
     /**
      * Test delete callbacks
-     *
-     * @return void
      */
-    public function testDeleteCallbacks()
+    public function testDeleteCallbacks(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
-        $options = new \ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
+        $options = new ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
 
@@ -3285,25 +3104,23 @@ class TableTest extends TestCase
 
     /**
      * Test afterDeleteCommit is also called for non-atomic delete
-     *
-     * @return void
      */
-    public function testDeleteCallbacksNonAtomic()
+    public function testDeleteCallbacksNonAtomic(): void
     {
         $table = $this->getTableLocator()->get('users');
 
         $data = $table->get(1);
-        $options = new \ArrayObject(['atomic' => false, 'checkRules' => false]);
+        $options = new ArrayObject(['atomic' => false, 'checkRules' => false]);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use ($data, &$called) {
+        $listener = function ($e, $entity, $options) use ($data, &$called): void {
             $this->assertSame($data, $entity);
             $called = true;
         };
         $table->getEventManager()->on('Model.afterDelete', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit): void {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
@@ -3315,10 +3132,8 @@ class TableTest extends TestCase
 
     /**
      * Test that afterDeleteCommit is only triggered for primary table
-     *
-     * @return void
      */
-    public function testAfterDeleteCommitTriggeredOnlyForPrimaryTable()
+    public function testAfterDeleteCommitTriggeredOnlyForPrimaryTable(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles', [
@@ -3327,13 +3142,13 @@ class TableTest extends TestCase
         ]);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called) {
+        $listener = function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $called2 = false;
-        $listener = function ($e, $entity, $options) use (&$called2) {
+        $listener = function ($e, $entity, $options) use (&$called2): void {
             $called2 = true;
         };
         $table->articles->getEventManager()->on('Model.afterDeleteCommit', $listener);
@@ -3347,13 +3162,11 @@ class TableTest extends TestCase
 
     /**
      * Test delete beforeDelete can abort the delete.
-     *
-     * @return void
      */
-    public function testDeleteBeforeDeleteAbort()
+    public function testDeleteBeforeDeleteAbort(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
-        $options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
+        $options = new ArrayObject(['atomic' => true, 'cascade' => true]);
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
@@ -3372,13 +3185,11 @@ class TableTest extends TestCase
 
     /**
      * Test delete beforeDelete return result
-     *
-     * @return void
      */
-    public function testDeleteBeforeDeleteReturnResult()
+    public function testDeleteBeforeDeleteReturnResult(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
-        $options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
+        $options = new ArrayObject(['atomic' => true, 'cascade' => true]);
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
@@ -3398,10 +3209,8 @@ class TableTest extends TestCase
 
     /**
      * Test deleting new entities does nothing.
-     *
-     * @return void
      */
-    public function testDeleteIsNew()
+    public function testDeleteIsNew(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
 
@@ -3420,10 +3229,8 @@ class TableTest extends TestCase
 
     /**
      * Test simple delete.
-     *
-     * @return void
      */
-    public function testDeleteMany()
+    public function testDeleteMany(): void
     {
         $table = $this->getTableLocator()->get('users');
         $entities = $table->find()->limit(2)->all()->toArray();
@@ -3438,10 +3245,8 @@ class TableTest extends TestCase
 
     /**
      * Test simple delete.
-     *
-     * @return void
      */
-    public function testDeleteManyOrFail()
+    public function testDeleteManyOrFail(): void
     {
         $table = $this->getTableLocator()->get('users');
         $entities = $table->find()->limit(2)->all()->toArray();
@@ -3456,10 +3261,8 @@ class TableTest extends TestCase
 
     /**
      * test hasField()
-     *
-     * @return void
      */
-    public function testHasField()
+    public function testHasField(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $this->assertFalse($table->hasField('nope'), 'Should not be there.');
@@ -3469,10 +3272,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that there exists a default validator
-     *
-     * @return void
      */
-    public function testValidatorDefault()
+    public function testValidatorDefault(): void
     {
         $table = new Table();
         $validator = $table->getValidator();
@@ -3484,10 +3285,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that there exists a validator defined in a behavior.
-     *
-     * @return void
      */
-    public function testValidatorBehavior()
+    public function testValidatorBehavior(): void
     {
         $table = new Table();
         $table->addBehavior('Validation');
@@ -3499,10 +3298,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to define custom validator methods
-     *
-     * @return void
      */
-    public function testValidationWithDefiner()
+    public function testValidationWithDefiner(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->addMethods(['validationForOtherStuff'])
@@ -3517,10 +3314,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that a RuntimeException is thrown if the custom validator does not return an Validator instance
-     *
-     * @return void
      */
-    public function testValidationWithBadDefiner()
+    public function testValidationWithBadDefiner(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->addMethods(['validationBad'])
@@ -3528,7 +3323,7 @@ class TableTest extends TestCase
         $table->expects($this->once())
             ->method('validationBad');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(sprintf(
             'The %s::validationBad() validation method must return an instance of Cake\Validation\Validator.',
             get_class($table)
@@ -3539,12 +3334,10 @@ class TableTest extends TestCase
 
     /**
      * Tests that a RuntimeException is thrown if the custom validator method does not exist.
-     *
-     * @return void
      */
-    public function testValidatorWithMissingMethod()
+    public function testValidatorWithMissingMethod(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The Cake\ORM\Table::validationMissing() validation method does not exists.');
         $table = new Table();
         $table->getValidator('missing');
@@ -3552,13 +3345,11 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to set a custom validator under a name
-     *
-     * @return void
      */
-    public function testValidatorSetter()
+    public function testValidatorSetter(): void
     {
         $table = new Table();
-        $validator = new \Cake\Validation\Validator();
+        $validator = new Validator();
         $table->setValidator('other', $validator);
         $this->assertSame($validator, $table->getValidator('other'));
         $this->assertSame($table, $validator->getProvider('table'));
@@ -3566,26 +3357,22 @@ class TableTest extends TestCase
 
     /**
      * Tests hasValidator method.
-     *
-     * @return void
      */
-    public function testHasValidator()
+    public function testHasValidator(): void
     {
         $table = new Table();
         $this->assertTrue($table->hasValidator('default'));
         $this->assertFalse($table->hasValidator('other'));
 
-        $validator = new \Cake\Validation\Validator();
+        $validator = new Validator();
         $table->setValidator('other', $validator);
         $this->assertTrue($table->hasValidator('other'));
     }
 
     /**
      * Tests that the source of an existing Entity is the same as a new one
-     *
-     * @return void
      */
-    public function testEntitySourceExistingAndNew()
+    public function testEntitySourceExistingAndNew(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $table = $this->getTableLocator()->get('TestPlugin.Authors');
@@ -3599,10 +3386,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that calling an entity with an empty array will run validation.
-     *
-     * @return void
      */
-    public function testNewEntityAndValidation()
+    public function testNewEntityAndValidation(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->getValidator()->requirePresence('title');
@@ -3614,10 +3399,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that creating an entity will not run any validation.
-     *
-     * @return void
      */
-    public function testCreateEntityAndValidation()
+    public function testCreateEntityAndValidation(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->getValidator()->requirePresence('title');
@@ -3628,10 +3411,8 @@ class TableTest extends TestCase
 
     /**
      * Test magic findByXX method.
-     *
-     * @return void
      */
-    public function testMagicFindDefaultToAll()
+    public function testMagicFindDefaultToAll(): void
     {
         $table = $this->getTableLocator()->get('Users');
 
@@ -3644,12 +3425,10 @@ class TableTest extends TestCase
 
     /**
      * Test magic findByXX errors on missing arguments.
-     *
-     * @return void
      */
-    public function testMagicFindError()
+    public function testMagicFindError(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Not enough arguments for magic finder. Got 0 required 1');
         $table = $this->getTableLocator()->get('Users');
 
@@ -3658,12 +3437,10 @@ class TableTest extends TestCase
 
     /**
      * Test magic findByXX errors on missing arguments.
-     *
-     * @return void
      */
-    public function testMagicFindErrorMissingField()
+    public function testMagicFindErrorMissingField(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Not enough arguments for magic finder. Got 1 required 2');
         $table = $this->getTableLocator()->get('Users');
 
@@ -3672,12 +3449,10 @@ class TableTest extends TestCase
 
     /**
      * Test magic findByXX errors when there is a mix of or & and.
-     *
-     * @return void
      */
-    public function testMagicFindErrorMixOfOperators()
+    public function testMagicFindErrorMixOfOperators(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot mix "and" & "or" in a magic finder. Use find() instead.');
         $table = $this->getTableLocator()->get('Users');
 
@@ -3686,10 +3461,8 @@ class TableTest extends TestCase
 
     /**
      * Test magic findByXX method.
-     *
-     * @return void
      */
-    public function testMagicFindFirstAnd()
+    public function testMagicFindFirstAnd(): void
     {
         $table = $this->getTableLocator()->get('Users');
 
@@ -3702,10 +3475,8 @@ class TableTest extends TestCase
 
     /**
      * Test magic findByXX method.
-     *
-     * @return void
      */
-    public function testMagicFindFirstOr()
+    public function testMagicFindFirstOr(): void
     {
         $table = $this->getTableLocator()->get('Users');
 
@@ -3726,10 +3497,8 @@ class TableTest extends TestCase
 
     /**
      * Test magic findAllByXX method.
-     *
-     * @return void
      */
-    public function testMagicFindAll()
+    public function testMagicFindAll(): void
     {
         $table = $this->getTableLocator()->get('Articles');
 
@@ -3743,10 +3512,8 @@ class TableTest extends TestCase
 
     /**
      * Test magic findAllByXX method.
-     *
-     * @return void
      */
-    public function testMagicFindAllAnd()
+    public function testMagicFindAllAnd(): void
     {
         $table = $this->getTableLocator()->get('Users');
 
@@ -3762,10 +3529,8 @@ class TableTest extends TestCase
 
     /**
      * Test magic findAllByXX method.
-     *
-     * @return void
      */
-    public function testMagicFindAllOr()
+    public function testMagicFindAllOr(): void
     {
         $table = $this->getTableLocator()->get('Users');
 
@@ -3783,10 +3548,8 @@ class TableTest extends TestCase
 
     /**
      * Test the behavior method.
-     *
-     * @return void
      */
-    public function testBehaviorIntrospection()
+    public function testBehaviorIntrospection(): void
     {
         $table = $this->getTableLocator()->get('users');
 
@@ -3799,9 +3562,8 @@ class TableTest extends TestCase
      * Tests saving belongsTo association
      *
      * @group save
-     * @return void
      */
-    public function testSaveBelongsTo()
+    public function testSaveBelongsTo(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
@@ -3824,9 +3586,8 @@ class TableTest extends TestCase
      * Tests saving hasOne association
      *
      * @group save
-     * @return void
      */
-    public function testSaveHasOne()
+    public function testSaveHasOne(): void
     {
         $entity = new Entity([
             'name' => 'Jose',
@@ -3851,9 +3612,8 @@ class TableTest extends TestCase
      * if they are entities.
      *
      * @group save
-     * @return void
      */
-    public function testSaveOnlySaveAssociatedEntities()
+    public function testSaveOnlySaveAssociatedEntities(): void
     {
         $entity = new Entity([
             'name' => 'Jose',
@@ -3875,10 +3635,8 @@ class TableTest extends TestCase
 
     /**
      * Tests saving multiple entities in a hasMany association
-     *
-     * @return void
      */
-    public function testSaveHasMany()
+    public function testSaveHasMany(): void
     {
         $entity = new Entity([
             'name' => 'Jose',
@@ -3908,10 +3666,8 @@ class TableTest extends TestCase
 
     /**
      * Tests overwriting hasMany associations in an integration scenario.
-     *
-     * @return void
      */
-    public function testSaveHasManyOverwrite()
+    public function testSaveHasManyOverwrite(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -3938,9 +3694,8 @@ class TableTest extends TestCase
      * Tests saving belongsToMany records
      *
      * @group save
-     * @return void
      */
-    public function testSaveBelongsToMany()
+    public function testSaveBelongsToMany(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
@@ -3972,9 +3727,8 @@ class TableTest extends TestCase
      * Tests saving belongsToMany records when record exists.
      *
      * @group save
-     * @return void
      */
-    public function testSaveBelongsToManyJoinDataOnExistingRecord()
+    public function testSaveBelongsToManyJoinDataOnExistingRecord(): void
     {
         $tags = $this->getTableLocator()->get('Tags');
         $table = $this->getTableLocator()->get('Articles');
@@ -3999,10 +3753,8 @@ class TableTest extends TestCase
 
     /**
      * Test that belongsToMany can be saved with _joinData data.
-     *
-     * @return void
      */
-    public function testSaveBelongsToManyJoinData()
+    public function testSaveBelongsToManyJoinData(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $article = $articles->get(1, ['contain' => ['Tags']]);
@@ -4020,10 +3772,8 @@ class TableTest extends TestCase
     /**
      * Test to check that association condition are used when fetching existing
      * records to decide which records to unlink.
-     *
-     * @return void
      */
-    public function testPolymorphicBelongsToManySave()
+    public function testPolymorphicBelongsToManySave(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags', [
@@ -4095,9 +3845,8 @@ class TableTest extends TestCase
      * Tests saving belongsToMany records can delete all links.
      *
      * @group save
-     * @return void
      */
-    public function testSaveBelongsToManyDeleteAllLinks()
+    public function testSaveBelongsToManyDeleteAllLinks(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -4120,9 +3869,8 @@ class TableTest extends TestCase
      * Tests saving belongsToMany records can delete some links.
      *
      * @group save
-     * @return void
      */
-    public function testSaveBelongsToManyDeleteSomeLinks()
+    public function testSaveBelongsToManyDeleteSomeLinks(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -4148,10 +3896,8 @@ class TableTest extends TestCase
 
     /**
      * Test that belongsToMany ignores non-entity data.
-     *
-     * @return void
      */
-    public function testSaveBelongsToManyIgnoreNonEntityData()
+    public function testSaveBelongsToManyIgnoreNonEntityData(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $article = $articles->get(1, ['contain' => ['Tags']]);
@@ -4166,9 +3912,8 @@ class TableTest extends TestCase
      * Test that a save call takes a SaveOptionBuilder object as well.
      *
      * @group save
-     * @return void
      */
-    public function testSaveWithOptionBuilder()
+    public function testSaveWithOptionBuilder(): void
     {
         $articles = new Table([
             'table' => 'articles',
@@ -4219,9 +3964,8 @@ class TableTest extends TestCase
      * Tests that saving a persisted and clean entity will is a no-op
      *
      * @group save
-     * @return void
      */
-    public function testSaveCleanEntity()
+    public function testSaveCleanEntity(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['_processSave'])
@@ -4238,16 +3982,15 @@ class TableTest extends TestCase
      * Integration test to show how to append a new tag to an article
      *
      * @group save
-     * @return void
      */
-    public function testBelongsToManyIntegration()
+    public function testBelongsToManyIntegration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $tags = $article->tags;
         $this->assertNotEmpty($tags);
-        $tags[] = new \TestApp\Model\Entity\Tag(['name' => 'Something New']);
+        $tags[] = new Tag(['name' => 'Something New']);
         $article->tags = $tags;
         $this->assertSame($article, $table->save($article));
         $tags = $article->tags;
@@ -4263,9 +4006,8 @@ class TableTest extends TestCase
      * while having control of the options passed to each level of the save
      *
      * @group save
-     * @return void
      */
-    public function testSaveDeepAssociationOptions()
+    public function testSaveDeepAssociationOptions(): void
     {
         $articles = $this->getMockBuilder(Table::class)
             ->onlyMethods(['_insert'])
@@ -4336,10 +4078,7 @@ class TableTest extends TestCase
         ]));
     }
 
-    /**
-     * @return void
-     */
-    public function testBelongsToFluentInterface()
+    public function testBelongsToFluentInterface(): void
     {
         /** @var \TestApp\Model\Table\ArticlesTable $articles */
         $articles = $this->getMockBuilder(Table::class)
@@ -4352,25 +4091,21 @@ class TableTest extends TestCase
             ->getMock();
 
         try {
-            $articles->belongsTo('authors')
+            $articles->belongsTo('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Authors')
                 ->setTarget($authors)
                 ->setBindingKey('id')
                 ->setConditions([])
                 ->setFinder('list')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (\BadMethodCallException $e) {
+        } catch (BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('articles', $articles->getTable());
     }
 
-    /**
-     * @return void
-     */
-    public function testHasOneFluentInterface()
+    public function testHasOneFluentInterface(): void
     {
         /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
@@ -4379,9 +4114,8 @@ class TableTest extends TestCase
             ->getMock();
 
         try {
-            $authors->hasOne('articles')
+            $authors->hasOne('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Articles')
                 ->setDependent(true)
                 ->setBindingKey('id')
                 ->setConditions([])
@@ -4390,16 +4124,13 @@ class TableTest extends TestCase
                 ->setStrategy('select')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (\BadMethodCallException $e) {
+        } catch (BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
     }
 
-    /**
-     * @return void
-     */
-    public function testHasManyFluentInterface()
+    public function testHasManyFluentInterface(): void
     {
         /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
@@ -4408,9 +4139,8 @@ class TableTest extends TestCase
             ->getMock();
 
         try {
-            $authors->hasMany('articles')
+            $authors->hasMany('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Articles')
                 ->setDependent(true)
                 ->setSort(['created' => 'DESC'])
                 ->setBindingKey('id')
@@ -4421,16 +4151,13 @@ class TableTest extends TestCase
                 ->setSaveStrategy('replace')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (\BadMethodCallException $e) {
+        } catch (BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
     }
 
-    /**
-     * @return void
-     */
-    public function testBelongsToManyFluentInterface()
+    public function testBelongsToManyFluentInterface(): void
     {
         /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
@@ -4438,9 +4165,8 @@ class TableTest extends TestCase
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
         try {
-            $authors->belongsToMany('articles')
+            $authors->belongsToMany('Articles')
                 ->setForeignKey('author_id')
-                ->setName('Articles')
                 ->setDependent(true)
                 ->setTargetForeignKey('article_id')
                 ->setBindingKey('id')
@@ -4452,7 +4178,7 @@ class TableTest extends TestCase
                 ->setSaveStrategy('append')
                 ->setThrough('author_articles')
                 ->setJoinType('inner');
-        } catch (\BadMethodCallException $e) {
+        } catch (BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
@@ -4460,10 +4186,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for linking entities with belongsToMany
-     *
-     * @return void
      */
-    public function testLinkBelongsToMany()
+    public function testLinkBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -4475,12 +4199,12 @@ class TableTest extends TestCase
             'id' => 1,
         ], $options);
 
-        $newTag = new \TestApp\Model\Entity\Tag([
+        $newTag = new Tag([
             'name' => 'Foo',
             'description' => 'Foo desc',
             'created' => null,
         ], $source);
-        $tags[] = new \TestApp\Model\Entity\Tag([
+        $tags[] = new Tag([
             'id' => 3,
         ], $options + $source);
         $tags[] = $newTag;
@@ -4500,10 +4224,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for linking entities with HasMany
-     *
-     * @return void
      */
-    public function testLinkHasMany()
+    public function testLinkHasMany(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -4539,10 +4261,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for linking entities with HasMany combined with ReplaceSaveStrategy. It must append, not unlinking anything
-     *
-     * @return void
      */
-    public function testLinkHasManyReplaceSaveStrategy()
+    public function testLinkHasManyReplaceSaveStrategy(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -4591,10 +4311,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for linking entities with HasMany. The input contains already linked entities and they should not appeat duplicated
-     *
-     * @return void
      */
-    public function testLinkHasManyExisting()
+    public function testLinkHasManyExisting(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -4646,10 +4364,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for unlinking entities with HasMany. The association property must be cleaned
-     *
-     * @return void
      */
-    public function testUnlinkHasManyCleanProperty()
+    public function testUnlinkHasManyCleanProperty(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -4694,10 +4410,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for unlinking entities with HasMany. The association property must stay unchanged
-     *
-     * @return void
      */
-    public function testUnlinkHasManyNotCleanProperty()
+    public function testUnlinkHasManyNotCleanProperty(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -4744,10 +4458,8 @@ class TableTest extends TestCase
      * Integration test for unlinking entities with HasMany.
      * Checking that no error happens when the hasMany property is originally
      * null
-     *
-     * @return void
      */
-    public function testUnlinkHasManyEmpty()
+    public function testUnlinkHasManyEmpty(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -4762,10 +4474,8 @@ class TableTest extends TestCase
     /**
      * Integration test for replacing entities which depend on their source entity with HasMany and failing transaction. False should be returned when
      * unlinking fails while replacing even when cascadeCallbacks is enabled
-     *
-     * @return void
      */
-    public function testReplaceHasManyOnErrorDependentCascadeCallbacks()
+    public function testReplaceHasManyOnErrorDependentCascadeCallbacks(): void
     {
         $articles = $this->getMockBuilder(Table::class)
             ->onlyMethods(['delete'])
@@ -4849,10 +4559,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successful
-     *
-     * @return void
      */
-    public function testReplaceHasManyEmptyList()
+    public function testReplaceHasManyEmptyList(): void
     {
         $authors = new Table([
             'connection' => $this->connection,
@@ -4892,10 +4600,8 @@ class TableTest extends TestCase
     /**
      * Integration test for replacing entities with HasMany and no already persisted entities. The transaction must be successful.
      * Replace operation should prevent considering 0 changed records an error when they are not found in the table
-     *
-     * @return void
      */
-    public function testReplaceHasManyNoPersistedEntities()
+    public function testReplaceHasManyNoPersistedEntities(): void
     {
         $authors = new Table([
             'connection' => $this->connection,
@@ -4933,10 +4639,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test for replacing entities with HasMany.
-     *
-     * @return void
      */
-    public function testReplaceHasMany()
+    public function testReplaceHasMany(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
@@ -4992,10 +4696,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test to show how to unlink a single record from a belongsToMany
-     *
-     * @return void
      */
-    public function testUnlinkBelongsToMany()
+    public function testUnlinkBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -5014,10 +4716,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test to show how to unlink multiple records from a belongsToMany
-     *
-     * @return void
      */
-    public function testUnlinkBelongsToManyMultiple()
+    public function testUnlinkBelongsToManyMultiple(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -5025,8 +4725,8 @@ class TableTest extends TestCase
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
+        $tags[] = new Tag(['id' => 1], $options);
+        $tags[] = new Tag(['id' => 2], $options);
 
         $table->getAssociation('Tags')->unlink($article, $tags);
         $left = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
@@ -5036,10 +4736,8 @@ class TableTest extends TestCase
     /**
      * Integration test to show how to unlink multiple records from a belongsToMany
      * providing some of the joint
-     *
-     * @return void
      */
-    public function testUnlinkBelongsToManyPassingJoint()
+    public function testUnlinkBelongsToManyPassingJoint(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -5047,8 +4745,8 @@ class TableTest extends TestCase
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
+        $tags[] = new Tag(['id' => 1], $options);
+        $tags[] = new Tag(['id' => 2], $options);
 
         $tags[1]->_joinData = new Entity([
             'article_id' => 1,
@@ -5062,10 +4760,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test to show how to replace records from a belongsToMany
-     *
-     * @return void
      */
-    public function testReplacelinksBelongsToMany()
+    public function testReplacelinksBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -5073,9 +4769,9 @@ class TableTest extends TestCase
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
+        $tags[] = new Tag(['id' => 2], $options);
+        $tags[] = new Tag(['id' => 3], $options);
+        $tags[] = new Tag(['name' => 'foo']);
 
         $table->getAssociation('Tags')->replaceLinks($article, $tags);
         $this->assertSame(2, $article->tags[0]->id);
@@ -5092,10 +4788,8 @@ class TableTest extends TestCase
 
     /**
      * Integration test to show how remove all links from a belongsToMany
-     *
-     * @return void
      */
-    public function testReplacelinksBelongsToManyWithEmpty()
+    public function testReplacelinksBelongsToManyWithEmpty(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -5114,10 +4808,8 @@ class TableTest extends TestCase
     /**
      * Integration test to show how to replace records from a belongsToMany
      * passing the joint property along in the target entity
-     *
-     * @return void
      */
-    public function testReplacelinksBelongsToManyWithJoint()
+    public function testReplacelinksBelongsToManyWithJoint(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
@@ -5125,14 +4817,14 @@ class TableTest extends TestCase
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag([
+        $tags[] = new Tag([
             'id' => 2,
             '_joinData' => new Entity([
                 'article_id' => 1,
                 'tag_id' => 2,
             ]),
         ], $options);
-        $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
+        $tags[] = new Tag(['id' => 3], $options);
 
         $table->getAssociation('Tags')->replaceLinks($article, $tags);
         $this->assertSame($tags, $article->tags);
@@ -5144,10 +4836,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToImplicitBelongsToManyDeletesUsingSaveReplace()
+    public function testOptionsBeingPassedToImplicitBelongsToManyDeletesUsingSaveReplace(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
@@ -5159,7 +4849,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5183,10 +4873,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyLink()
+    public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyLink(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $articles->belongsToMany('Tags');
@@ -5194,7 +4882,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5220,10 +4908,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyUnlink()
+    public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyUnlink(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $articles->belongsToMany('Tags');
@@ -5231,7 +4917,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5252,10 +4938,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingBelongsToManyReplaceLinks()
+    public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingBelongsToManyReplaceLinks(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $articles->belongsToMany('Tags');
@@ -5264,13 +4948,13 @@ class TableTest extends TestCase
         $actualDeleteOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
                 $actualDeleteOptions = $options->getArrayCopy();
             }
         );
@@ -5308,10 +4992,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToImplicitHasManyDeletesUsingSaveReplace()
+    public function testOptionsBeingPassedToImplicitHasManyDeletesUsingSaveReplace(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
 
@@ -5323,7 +5005,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5348,10 +5030,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyLink()
+    public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyLink(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $authors->hasMany('Articles');
@@ -5359,7 +5039,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5389,10 +5069,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyUnlink()
+    public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyUnlink(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $authors->hasMany('Articles');
@@ -5402,7 +5080,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5425,10 +5103,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that options are being passed through to the internal table method calls.
-     *
-     * @return void
      */
-    public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingHasManyReplace()
+    public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingHasManyReplace(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $authors->hasMany('Articles');
@@ -5439,13 +5115,13 @@ class TableTest extends TestCase
         $actualDeleteOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
                 $actualDeleteOptions = $options->getArrayCopy();
             }
         );
@@ -5489,10 +5165,8 @@ class TableTest extends TestCase
 
     /**
      * Tests backwards compatibility of the the `$options` argument, formerly `$cleanProperty`.
-     *
-     * @return void
      */
-    public function testBackwardsCompatibilityForBelongsToManyUnlinkCleanPropertyOption()
+    public function testBackwardsCompatibilityForBelongsToManyUnlinkCleanPropertyOption(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $articles->belongsToMany('Tags');
@@ -5500,7 +5174,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5519,10 +5193,8 @@ class TableTest extends TestCase
 
     /**
      * Tests backwards compatibility of the the `$options` argument, formerly `$cleanProperty`.
-     *
-     * @return void
      */
-    public function testBackwardsCompatibilityForHasManyUnlinkCleanPropertyOption()
+    public function testBackwardsCompatibilityForHasManyUnlinkCleanPropertyOption(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $authors->hasMany('Articles');
@@ -5532,7 +5204,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5553,10 +5225,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to call find with no arguments
-     *
-     * @return void
      */
-    public function testSimplifiedFind()
+    public function testSimplifiedFind(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['callFinder'])
@@ -5572,7 +5242,7 @@ class TableTest extends TestCase
         $table->find();
     }
 
-    public function providerForTestGet()
+    public function providerForTestGet(): array
     {
         return [
             [['fields' => ['id']]],
@@ -5586,9 +5256,8 @@ class TableTest extends TestCase
      *
      * @dataProvider providerForTestGet
      * @param array $options
-     * @return void
      */
-    public function testGet($options)
+    public function testGet($options): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['callFinder', 'query'])
@@ -5624,7 +5293,7 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
     }
 
-    public function providerForTestGetWithCustomFinder()
+    public function providerForTestGetWithCustomFinder(): array
     {
         return [
             [['fields' => ['id'], 'finder' => 'custom']],
@@ -5636,9 +5305,8 @@ class TableTest extends TestCase
      *
      * @dataProvider providerForTestGetWithCustomFinder
      * @param array $options
-     * @return void
      */
-    public function testGetWithCustomFinder($options)
+    public function testGetWithCustomFinder($options): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['callFinder', 'query'])
@@ -5674,7 +5342,7 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
     }
 
-    public function providerForTestGetWithCache()
+    public function providerForTestGetWithCache(): array
     {
         return [
             [
@@ -5695,9 +5363,8 @@ class TableTest extends TestCase
      * @param array $options
      * @param string $cacheKey
      * @param string $cacheConfig
-     * @return void
      */
-    public function testGetWithCache($options, $cacheKey, $cacheConfig)
+    public function testGetWithCache($options, $cacheKey, $cacheConfig): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['callFinder', 'query'])
@@ -5738,12 +5405,10 @@ class TableTest extends TestCase
 
     /**
      * Tests that get() will throw an exception if the record was not found
-     *
-     * @return void
      */
-    public function testGetNotFoundException()
+    public function testGetNotFoundException(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\RecordNotFoundException::class);
+        $this->expectException(RecordNotFoundException::class);
         $this->expectExceptionMessage('Record not found in table "articles"');
         $table = new Table([
             'name' => 'Articles',
@@ -5755,12 +5420,10 @@ class TableTest extends TestCase
 
     /**
      * Test that an exception is raised when there are not enough keys.
-     *
-     * @return void
      */
-    public function testGetExceptionOnNoData()
+    public function testGetExceptionOnNoData(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\InvalidPrimaryKeyException::class);
+        $this->expectException(InvalidPrimaryKeyException::class);
         $this->expectExceptionMessage('Record not found in table "articles" with primary key [NULL]');
         $table = new Table([
             'name' => 'Articles',
@@ -5772,12 +5435,10 @@ class TableTest extends TestCase
 
     /**
      * Test that an exception is raised when there are too many keys.
-     *
-     * @return void
      */
-    public function testGetExceptionOnTooMuchData()
+    public function testGetExceptionOnTooMuchData(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\InvalidPrimaryKeyException::class);
+        $this->expectException(InvalidPrimaryKeyException::class);
         $this->expectExceptionMessage('Record not found in table "articles" with primary key [1, \'two\']');
         $table = new Table([
             'name' => 'Articles',
@@ -5790,10 +5451,8 @@ class TableTest extends TestCase
     /**
      * Tests that patchEntity delegates the task to the marshaller and passed
      * all associations
-     *
-     * @return void
      */
-    public function testPatchEntityMarshallerUsage()
+    public function testPatchEntityMarshallerUsage(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['marshaller'])
@@ -5818,10 +5477,8 @@ class TableTest extends TestCase
     /**
      * Tests patchEntity in a simple scenario. The tests for Marshaller cover
      * patch scenarios in more depth.
-     *
-     * @return void
      */
-    public function testPatchEntity()
+    public function testPatchEntity(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $entity = new Entity(['title' => 'old title'], ['markNew' => false]);
@@ -5835,10 +5492,8 @@ class TableTest extends TestCase
     /**
      * Tests that patchEntities delegates the task to the marshaller and passed
      * all associations
-     *
-     * @return void
      */
-    public function testPatchEntitiesMarshallerUsage()
+    public function testPatchEntitiesMarshallerUsage(): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['marshaller'])
@@ -5863,10 +5518,8 @@ class TableTest extends TestCase
     /**
      * Tests patchEntities in a simple scenario. The tests for Marshaller cover
      * patch scenarios in more depth.
-     *
-     * @return void
      */
-    public function testPatchEntities()
+    public function testPatchEntities(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $entities = $table->find()->limit(2)->toArray();
@@ -5884,10 +5537,8 @@ class TableTest extends TestCase
 
     /**
      * Tests __debugInfo
-     *
-     * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $articles = $this->getTableLocator()->get('articles');
         $articles->addBehavior('Timestamp');
@@ -5921,15 +5572,13 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate creates a new entity, and then finds that entity.
-     *
-     * @return void
      */
-    public function testFindOrCreateNewEntity()
+    public function testFindOrCreateNewEntity(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
         $callbackExecuted = false;
-        $firstArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article) use (&$callbackExecuted) {
+        $firstArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article) use (&$callbackExecuted): void {
             $this->assertInstanceOf(EntityInterface::class, $article);
             $article->body = 'New body';
             $callbackExecuted = true;
@@ -5940,7 +5589,7 @@ class TableTest extends TestCase
         $this->assertSame('Not there', $firstArticle->title);
         $this->assertSame('New body', $firstArticle->body);
 
-        $secondArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
+        $secondArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article): void {
             $this->fail('Should not be called for existing entities.');
         });
         $this->assertFalse($secondArticle->isNew());
@@ -5951,14 +5600,12 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate finds fixture data.
-     *
-     * @return void
      */
-    public function testFindOrCreateExistingEntity()
+    public function testFindOrCreateExistingEntity(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
-        $article = $articles->findOrCreate(['title' => 'First Article'], function ($article) {
+        $article = $articles->findOrCreate(['title' => 'First Article'], function ($article): void {
             $this->fail('Should not be called for existing entities.');
         });
         $this->assertFalse($article->isNew());
@@ -5968,17 +5615,15 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate uses the search conditions as defaults for new entity.
-     *
-     * @return void
      */
-    public function testFindOrCreateDefaults()
+    public function testFindOrCreateDefaults(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
         $callbackExecuted = false;
         $article = $articles->findOrCreate(
             ['author_id' => 2, 'title' => 'First Article'],
-            function ($article) use (&$callbackExecuted) {
+            function ($article) use (&$callbackExecuted): void {
                 $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
                 $article->set(['published' => 'N', 'body' => 'New body']);
                 $callbackExecuted = true;
@@ -6001,10 +5646,8 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate adds new entity without using a callback.
-     *
-     * @return void
      */
-    public function testFindOrCreateNoCallable()
+    public function testFindOrCreateNoCallable(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
@@ -6016,20 +5659,18 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate executes search conditions as a callable.
-     *
-     * @return void
      */
-    public function testFindOrCreateSearchCallable()
+    public function testFindOrCreateSearchCallable(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
         $calledOne = false;
         $calledTwo = false;
-        $article = $articles->findOrCreate(function ($query) use (&$calledOne) {
+        $article = $articles->findOrCreate(function ($query) use (&$calledOne): void {
             $this->assertInstanceOf('Cake\ORM\Query', $query);
             $query->where(['title' => 'Something Else']);
             $calledOne = true;
-        }, function ($article) use (&$calledTwo) {
+        }, function ($article) use (&$calledTwo): void {
             $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
             $article->title = 'Set Defaults Here';
             $calledTwo = true;
@@ -6043,14 +5684,12 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate options disable defaults.
-     *
-     * @return void
      */
-    public function testFindOrCreateNoDefaults()
+    public function testFindOrCreateNoDefaults(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
-        $article = $articles->findOrCreate(['title' => 'A New Article', 'published' => 'Y'], function ($article) {
+        $article = $articles->findOrCreate(['title' => 'A New Article', 'published' => 'Y'], function ($article): void {
             $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
             $article->title = 'A Different Title';
         }, ['defaults' => false]);
@@ -6062,21 +5701,19 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate executes callable inside transaction.
-     *
-     * @return void
      */
-    public function testFindOrCreateTransactions()
+    public function testFindOrCreateTransactions(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->getEventManager()->on('Model.afterSaveCommit', function (EventInterface $event, EntityInterface $entity, ArrayObject $options) {
+        $articles->getEventManager()->on('Model.afterSaveCommit', function (EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
             $entity->afterSaveCommit = true;
         });
 
-        $article = $articles->findOrCreate(function ($query) {
+        $article = $articles->findOrCreate(function ($query): void {
             $this->assertInstanceOf('Cake\ORM\Query', $query);
             $query->where(['title' => 'Find Something New']);
             $this->assertTrue($this->connection->inTransaction());
-        }, function ($article) {
+        }, function ($article): void {
             $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
             $article->title = 'Success';
             $this->assertTrue($this->connection->inTransaction());
@@ -6089,18 +5726,16 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate executes callable without transaction.
-     *
-     * @return void
      */
-    public function testFindOrCreateNoTransaction()
+    public function testFindOrCreateNoTransaction(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
 
-        $article = $articles->findOrCreate(function (Query $query) {
+        $article = $articles->findOrCreate(function (Query $query): void {
             $this->assertInstanceOf(Query::class, $query);
             $query->where(['title' => 'Find Something New']);
             $this->assertFalse($this->connection->inTransaction());
-        }, function ($article) {
+        }, function ($article): void {
             $this->assertInstanceOf(EntityInterface::class, $article);
             $this->assertFalse($this->connection->inTransaction());
             $article->title = 'Success';
@@ -6113,10 +5748,8 @@ class TableTest extends TestCase
     /**
      * Test that findOrCreate throws a PersistenceFailedException when it cannot save
      * an entity created from $search
-     *
-     * @return void
      */
-    public function testFindOrCreateWithInvalidEntity()
+    public function testFindOrCreateWithInvalidEntity(): void
     {
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
@@ -6134,10 +5767,8 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate allows patching of all $search keys
-     *
-     * @return void
      */
-    public function testFindOrCreateAccessibleFields()
+    public function testFindOrCreateAccessibleFields(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->setEntityClass(ProtectedEntity::class);
@@ -6152,10 +5783,8 @@ class TableTest extends TestCase
 
     /**
      * Test that findOrCreate cannot accidentally bypass required validation.
-     *
-     * @return void
      */
-    public function testFindOrCreatePartialValidation()
+    public function testFindOrCreatePartialValidation(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->setEntityClass(ProtectedEntity::class);
@@ -6175,13 +5804,11 @@ class TableTest extends TestCase
 
     /**
      * Test that creating a table fires the initialize event.
-     *
-     * @return void
      */
-    public function testInitializeEvent()
+    public function testInitializeEvent(): void
     {
         $count = 0;
-        $cb = function (EventInterface $event) use (&$count) {
+        $cb = function (EventInterface $event) use (&$count): void {
             $count++;
         };
         EventManager::instance()->on('Model.initialize', $cb);
@@ -6193,10 +5820,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the hasFinder method
-     *
-     * @return void
      */
-    public function testHasFinder()
+    public function testHasFinder(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->addBehavior('Sluggable');
@@ -6208,13 +5833,11 @@ class TableTest extends TestCase
 
     /**
      * Tests that calling validator() trigger the buildValidator event
-     *
-     * @return void
      */
-    public function testBuildValidatorEvent()
+    public function testBuildValidatorEvent(): void
     {
         $count = 0;
-        $cb = function (EventInterface $event) use (&$count) {
+        $cb = function (EventInterface $event) use (&$count): void {
             $count++;
         };
         EventManager::instance()->on('Model.buildValidator', $cb);
@@ -6228,10 +5851,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the validateUnique method with different combinations
-     *
-     * @return void
      */
-    public function testValidateUnique()
+    public function testValidateUnique(): void
     {
         $table = $this->getTableLocator()->get('Users');
         $validator = new Validator();
@@ -6265,10 +5886,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the validateUnique method with scope
-     *
-     * @return void
      */
-    public function testValidateUniqueScope()
+    public function testValidateUniqueScope(): void
     {
         $table = $this->getTableLocator()->get('Users');
         $validator = new Validator();
@@ -6289,10 +5908,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the validateUnique method with options
-     *
-     * @return void
      */
-    public function testValidateUniqueMultipleNulls()
+    public function testValidateUniqueMultipleNulls(): void
     {
         $entity = new Entity([
             'id' => 9,
@@ -6325,10 +5942,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that the callbacks receive the expected types of arguments.
-     *
-     * @return void
      */
-    public function testCallbackArgumentTypes()
+    public function testCallbackArgumentTypes(): void
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
@@ -6338,7 +5953,7 @@ class TableTest extends TestCase
         $associationBeforeFindCount = 0;
         $table->getAssociation('authors')->getTarget()->getEventManager()->on(
             'Model.beforeFind',
-            function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
+            function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount): void {
                 $this->assertIsBool($primary);
                 $associationBeforeFindCount++;
             }
@@ -6347,7 +5962,7 @@ class TableTest extends TestCase
         $beforeFindCount = 0;
         $eventManager->on(
             'Model.beforeFind',
-            function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
+            function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount): void {
                 $this->assertIsBool($primary);
                 $beforeFindCount++;
             }
@@ -6359,7 +5974,7 @@ class TableTest extends TestCase
         $buildValidatorCount = 0;
         $eventManager->on(
             'Model.buildValidator',
-            $callback = function (EventInterface $event, Validator $validator, $name) use (&$buildValidatorCount) {
+            $callback = function (EventInterface $event, Validator $validator, $name) use (&$buildValidatorCount): void {
                 $this->assertIsString($name);
                 $buildValidatorCount++;
             }
@@ -6374,20 +5989,20 @@ class TableTest extends TestCase
         $afterSaveCount = 0;
         $eventManager->on(
             'Model.buildRules',
-            function (EventInterface $event, RulesChecker $rules) use (&$buildRulesCount) {
+            function (EventInterface $event, RulesChecker $rules) use (&$buildRulesCount): void {
                 $buildRulesCount++;
             }
         );
         $eventManager->on(
             'Model.beforeRules',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) use (&$beforeRulesCount): void {
                 $this->assertIsString($operation);
                 $beforeRulesCount++;
             }
         );
         $eventManager->on(
             'Model.afterRules',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount): void {
                 $this->assertIsBool($result);
                 $this->assertIsString($operation);
                 $afterRulesCount++;
@@ -6395,13 +6010,13 @@ class TableTest extends TestCase
         );
         $eventManager->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeSaveCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeSaveCount): void {
                 $beforeSaveCount++;
             }
         );
         $eventManager->on(
             'Model.afterSave',
-            $afterSaveCallback = function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount) {
+            $afterSaveCallback = function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount): void {
                 $afterSaveCount++;
             }
         );
@@ -6417,13 +6032,13 @@ class TableTest extends TestCase
         $afterDeleteCount = 0;
         $eventManager->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeDeleteCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeDeleteCount): void {
                 $beforeDeleteCount++;
             }
         );
         $eventManager->on(
             'Model.afterDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterDeleteCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterDeleteCount): void {
                 $afterDeleteCount++;
             }
         );
@@ -6434,10 +6049,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that calling newEmptyEntity() on a table sets the right source alias.
-     *
-     * @return void
      */
-    public function testSetEntitySource()
+    public function testSetEntitySource(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $this->assertSame('Articles', $table->newEmptyEntity()->getSource());
@@ -6452,9 +6065,8 @@ class TableTest extends TestCase
      * actually save it as a new entity
      *
      * @group save
-     * @return void
      */
-    public function testSaveWithClonedEntity()
+    public function testSaveWithClonedEntity(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $article = $table->get(1);
@@ -6472,10 +6084,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that the _ids notation can be used for HasMany
-     *
-     * @return void
      */
-    public function testSaveHasManyWithIds()
+    public function testSaveHasManyWithIds(): void
     {
         $data = [
             'username' => 'lux',
@@ -6497,10 +6107,8 @@ class TableTest extends TestCase
      * Tests that on second save, entities for the has many relation are not marked
      * as dirty unnecessarily. This helps avoid wasteful database statements and makes
      * for a cleaner transaction log
-     *
-     * @return void
      */
-    public function testSaveHasManyNoWasteSave()
+    public function testSaveHasManyNoWasteSave(): void
     {
         $data = [
             'username' => 'lux',
@@ -6517,7 +6125,7 @@ class TableTest extends TestCase
         $counter = 0;
         $userTable->Comments
             ->getEventManager()
-            ->on('Model.afterSave', function (EventInterface $event, $entity) use (&$counter) {
+            ->on('Model.afterSave', function (EventInterface $event, $entity) use (&$counter): void {
                 if ($entity->isDirty()) {
                     $counter++;
                 }
@@ -6534,10 +6142,8 @@ class TableTest extends TestCase
      * Tests that on second save, entities for the belongsToMany relation are not marked
      * as dirty unnecessarily. This helps avoid wasteful database statements and makes
      * for a cleaner transaction log
-     *
-     * @return void
      */
-    public function testSaveBelongsToManyNoWasteSave()
+    public function testSaveBelongsToManyNoWasteSave(): void
     {
         $data = [
             'title' => 'foo',
@@ -6554,7 +6160,7 @@ class TableTest extends TestCase
         $counter = 0;
         $table->Tags->junction()
             ->getEventManager()
-            ->on('Model.afterSave', function (EventInterface $event, $entity) use (&$counter) {
+            ->on('Model.afterSave', function (EventInterface $event, $entity) use (&$counter): void {
                 if ($entity->isDirty()) {
                     $counter++;
                 }
@@ -6572,14 +6178,13 @@ class TableTest extends TestCase
      * key casted to the right type
      *
      * @group save
-     * @return void
      */
-    public function testSaveCorrectPrimaryKeyType()
+    public function testSaveCorrectPrimaryKeyType(): void
     {
         $entity = new Entity([
             'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00'),
+            'created' => new FrozenTime('2013-10-10 00:00'),
+            'updated' => new FrozenTime('2013-10-10 00:00'),
         ], ['markNew' => true]);
 
         $table = $this->getTableLocator()->get('Users');
@@ -6589,10 +6194,8 @@ class TableTest extends TestCase
 
     /**
      * Tests entity clean()
-     *
-     * @return void
      */
-    public function testEntityClean()
+    public function testEntityClean(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $validator = $table->getValidator()->requirePresence('body');
@@ -6618,10 +6221,8 @@ class TableTest extends TestCase
 
     /**
      * Tests the loadInto() method
-     *
-     * @return void
      */
-    public function testLoadIntoEntity()
+    public function testLoadIntoEntity(): void
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('SiteArticles');
@@ -6638,10 +6239,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to pass conditions and fields to loadInto()
-     *
-     * @return void
      */
-    public function testLoadIntoWithConditions()
+    public function testLoadIntoWithConditions(): void
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('SiteArticles');
@@ -6663,10 +6262,8 @@ class TableTest extends TestCase
 
     /**
      * Tests loadInto() with a belongsTo association
-     *
-     * @return void
      */
-    public function testLoadBelongsTo()
+    public function testLoadBelongsTo(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -6682,17 +6279,15 @@ class TableTest extends TestCase
     /**
      * Tests that it is possible to post-load associations for many entities at
      * the same time
-     *
-     * @return void
      */
-    public function testLoadIntoMany()
+    public function testLoadIntoMany(): void
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('SiteArticles');
         $articles = $table->hasMany('Articles');
         $articles->belongsToMany('Tags');
 
-        $entities = $table->find()->compile();
+        $entities = $table->find()->all()->compile();
         $contain = ['SiteArticles', 'Articles.Tags'];
         $result = $table->loadInto($entities, $contain);
 
@@ -6700,18 +6295,16 @@ class TableTest extends TestCase
             $this->assertSame($v, $result[$k]);
         }
 
-        $expected = $table->find()->contain($contain)->toList();
+        $expected = $table->find()->contain($contain)->toArray();
         $this->assertEquals($expected, $result);
     }
 
     /**
      * Tests that saveOrFail triggers an exception on not successful save
-     *
-     * @return void
      */
-    public function testSaveOrFail()
+    public function testSaveOrFail(): void
     {
-        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure.');
 
         $entity = new Entity([
@@ -6724,12 +6317,10 @@ class TableTest extends TestCase
 
     /**
      * Tests that saveOrFail displays useful messages on output, especially in tests for CLI.
-     *
-     * @return void
      */
-    public function testSaveOrFailErrorDisplay()
+    public function testSaveOrFailErrorDisplay(): void
     {
-        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure. Found the following errors (field.0: "Some message", multiple.one: "One", multiple.two: "Two")');
 
         $entity = new Entity([
@@ -6744,12 +6335,10 @@ class TableTest extends TestCase
 
     /**
      * Tests that saveOrFail with nested errors
-     *
-     * @return void
      */
-    public function testSaveOrFailNestedError()
+    public function testSaveOrFailNestedError(): void
     {
-        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure. Found the following errors (articles.0.title.0: "Bad value")');
 
         $entity = new Entity([
@@ -6768,10 +6357,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that saveOrFail returns the right entity
-     *
-     * @return void
      */
-    public function testSaveOrFailGetEntity()
+    public function testSaveOrFailGetEntity(): void
     {
         $entity = new Entity([
             'foo' => 'bar',
@@ -6780,19 +6367,17 @@ class TableTest extends TestCase
 
         try {
             $table->saveOrFail($entity);
-        } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
+        } catch (PersistenceFailedException $e) {
             $this->assertSame($entity, $e->getEntity());
         }
     }
 
     /**
      * Tests that deleteOrFail triggers an exception on not successful delete
-     *
-     * @return void
      */
-    public function testDeleteOrFail()
+    public function testDeleteOrFail(): void
     {
-        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity delete failure.');
         $entity = new Entity([
             'id' => 999,
@@ -6804,10 +6389,8 @@ class TableTest extends TestCase
 
     /**
      * Tests that deleteOrFail returns the right entity
-     *
-     * @return void
      */
-    public function testDeleteOrFailGetEntity()
+    public function testDeleteOrFailGetEntity(): void
     {
         $entity = new Entity([
             'id' => 999,
@@ -6816,17 +6399,15 @@ class TableTest extends TestCase
 
         try {
             $table->deleteOrFail($entity);
-        } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
+        } catch (PersistenceFailedException $e) {
             $this->assertSame($entity, $e->getEntity());
         }
     }
 
     /**
      * Test getting the save options builder.
-     *
-     * @return void
      */
-    public function getSaveOptionsBuilder()
+    public function getSaveOptionsBuilder(): void
     {
         $table = $this->getTableLocator()->get('Authors');
         $result = $table->getSaveOptionsBuilder();
@@ -6835,13 +6416,11 @@ class TableTest extends TestCase
 
     /**
      * Helper method to skip tests when connection is SQLServer.
-     *
-     * @return void
      */
-    public function skipIfSqlServer()
+    public function skipIfSqlServer(): void
     {
         $this->skipIf(
-            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
+            $this->connection->getDriver() instanceof Sqlserver,
             'SQLServer does not support the requirements of this test.'
         );
     }

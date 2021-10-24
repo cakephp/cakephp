@@ -57,7 +57,7 @@ trait QueryTrait
      * List of formatter classes or callbacks that will post-process the
      * results when fetched
      *
-     * @var callable[]
+     * @var array<callable>
      */
     protected $_formatters = [];
 
@@ -173,7 +173,7 @@ trait QueryTrait
      *
      * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
-     * @param string|\Psr\SimpleCache\CacheInterface $config Either the name of the cache config to use, or
+     * @param \Psr\SimpleCache\CacheInterface|string $config Either the name of the cache config to use, or
      *   a cache engine instance.
      * @return $this
      */
@@ -203,7 +203,7 @@ trait QueryTrait
      * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
-     * @param bool $value Whether or not to eager load.
+     * @param bool $value Whether to eager load.
      * @return $this
      */
     public function eagerLoaded(bool $value)
@@ -252,7 +252,7 @@ trait QueryTrait
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return string[]
+     * @return array<string>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array
     {
@@ -441,7 +441,7 @@ trait QueryTrait
      * ```
      *
      * @param callable|null $formatter The formatting callable.
-     * @param int|true $mode Whether or not to overwrite, append or prepend the formatter.
+     * @param int|bool $mode Whether to overwrite, append or prepend the formatter.
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -472,7 +472,7 @@ trait QueryTrait
     /**
      * Returns the list of previously registered format routines.
      *
-     * @return callable[]
+     * @return array<callable>
      */
     public function getResultFormatters(): array
     {
@@ -553,6 +553,11 @@ trait QueryTrait
     {
         $resultSetClass = $this->_decoratorClass();
         if (in_array($method, get_class_methods($resultSetClass), true)) {
+            deprecationWarning(sprintf(
+                'Calling result set method `%s()` directly on query instance is deprecated. ' .
+                'You must call `all()` to retrieve the results first.',
+                $method
+            ), 2);
             $results = $this->all();
 
             return $results->$method(...$arguments);
@@ -566,7 +571,7 @@ trait QueryTrait
      * Populates or adds parts to current query clauses using an array.
      * This is handy for passing all query clauses at once.
      *
-     * @param array $options the options to be applied
+     * @param array<string, mixed> $options the options to be applied
      * @return $this
      */
     abstract public function applyOptions(array $options);

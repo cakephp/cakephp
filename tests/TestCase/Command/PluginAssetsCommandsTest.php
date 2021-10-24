@@ -24,6 +24,7 @@ use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use SplFileInfo;
 
 /**
  * PluginAssetsCommandsTest class
@@ -44,8 +45,6 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -65,8 +64,6 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -76,10 +73,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testSymlink method
-     *
-     * @return void
      */
-    public function testSymlink()
+    public function testSymlink(): void
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
@@ -95,10 +90,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->assertTrue(is_link($path));
     }
 
-    /**
-     * @return void
-     */
-    public function testSymlinkWhenVendorDirectoryExists()
+    public function testSymlinkWhenVendorDirectoryExists(): void
     {
         $this->loadPlugins(['Company/TestPluginThree']);
 
@@ -114,10 +106,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testSymlinkWhenTargetAlreadyExits
-     *
-     * @return void
      */
-    public function testSymlinkWhenTargetAlreadyExits()
+    public function testSymlinkWhenTargetAlreadyExits(): void
     {
         $this->loadPlugins(['TestTheme']);
 
@@ -144,10 +134,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * test that plugins without webroot are not processed
-     *
-     * @return void
      */
-    public function testForPluginWithoutWebroot()
+    public function testForPluginWithoutWebroot(): void
     {
         $this->loadPlugins(['TestPluginTwo']);
 
@@ -157,17 +145,15 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testSymlinkingSpecifiedPlugin
-     *
-     * @return void
      */
-    public function testSymlinkingSpecifiedPlugin()
+    public function testSymlinkingSpecifiedPlugin(): void
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets symlink TestPlugin');
 
         $path = $this->wwwRoot . 'test_plugin';
-        $link = new \SplFileInfo($path);
+        $link = new SplFileInfo($path);
         $this->assertFileExists($path . DS . 'root.js');
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
@@ -177,10 +163,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testCopy
-     *
-     * @return void
      */
-    public function testCopy()
+    public function testCopy(): void
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
@@ -197,10 +181,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testCopyOverwrite
-     *
-     * @return void
      */
-    public function testCopyOverwrite()
+    public function testCopyOverwrite(): void
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false]]);
 
@@ -209,7 +191,7 @@ class PluginAssetsCommandsTest extends TestCase
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot';
 
         $path = $this->wwwRoot . 'test_plugin';
-        $dir = new \SplFileInfo($path);
+        $dir = new SplFileInfo($path);
         $this->assertTrue($dir->isDir());
         $this->assertFileExists($path . DS . 'root.js');
 
@@ -226,10 +208,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testRemoveSymlink method
-     *
-     * @return void
      */
-    public function testRemoveSymlink()
+    public function testRemoveSymlink(): void
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
@@ -251,10 +231,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testRemoveFolder method
-     *
-     * @return void
      */
-    public function testRemoveFolder()
+    public function testRemoveFolder(): void
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
@@ -273,10 +251,8 @@ class PluginAssetsCommandsTest extends TestCase
 
     /**
      * testOverwrite
-     *
-     * @return void
      */
-    public function testOverwrite()
+    public function testOverwrite(): void
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 

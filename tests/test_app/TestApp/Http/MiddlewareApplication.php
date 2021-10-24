@@ -13,29 +13,24 @@ class MiddlewareApplication extends BaseApplication
 {
     /**
      * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware stack to set in your App Class
-     * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue
-            ->add(function ($req, $res, $next) {
-                $res = $next($req, $res);
-
-                return $res->withHeader('X-First', 'first');
+            ->add(function ($request, $handler) {
+                return $handler->handle($request)->withHeader('X-First', 'first');
             })
-            ->add(function ($req, $res, $next) {
-                $res = $next($req, $res);
-
-                return $res->withHeader('X-Second', 'second');
+            ->add(function ($request, $handler) {
+                return $handler->handle($request)->withHeader('X-Second', 'second');
             })
-            ->add(function ($req, $res, $next) {
-                $res = $next($req, $res);
+            ->add(function ($request, $handler) {
+                $response = $handler->handle($request);
 
-                if ($req->hasHeader('X-pass')) {
-                    $res = $res->withHeader('X-pass', $req->getHeaderLine('X-pass'));
+                if ($request->hasHeader('X-pass')) {
+                    $response = $response->withHeader('X-pass', $request->getHeaderLine('X-pass'));
                 }
 
-                return $res->withHeader('X-Second', 'second');
+                return $response->withHeader('X-Second', 'second');
             });
 
         return $middlewareQueue;
@@ -43,7 +38,6 @@ class MiddlewareApplication extends BaseApplication
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(ServerRequestInterface $req): ResponseInterface
     {

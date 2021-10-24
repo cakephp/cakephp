@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -29,8 +30,6 @@ class MysqlTest extends TestCase
 {
     /**
      * setup
-     *
-     * @return void
      */
     public function setup(): void
     {
@@ -41,10 +40,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test connecting to MySQL with default configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigDefault()
+    public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->onlyMethods(['_connect', 'getConnection'])
@@ -83,10 +80,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test connecting to MySQL with custom configuration
-     *
-     * @return void
      */
-    public function testConnectionConfigCustom()
+    public function testConnectionConfigCustom(): void
     {
         $config = [
             'persistent' => false,
@@ -133,10 +128,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test schema
-     *
-     * @return void
      */
-    public function testSchema()
+    public function testSchema(): void
     {
         $connection = ConnectionManager::get('test');
         $config = ConnectionManager::getConfig('test');
@@ -145,10 +138,8 @@ class MysqlTest extends TestCase
 
     /**
      * Test isConnected
-     *
-     * @return void
      */
-    public function testIsConnected()
+    public function testIsConnected(): void
     {
         $connection = ConnectionManager::get('test');
         $connection->disconnect();
@@ -158,7 +149,7 @@ class MysqlTest extends TestCase
         $this->assertTrue($connection->isConnected(), 'Should be connected.');
     }
 
-    public function testRollbackTransactionAutoConnect()
+    public function testRollbackTransactionAutoConnect(): void
     {
         $connection = ConnectionManager::get('test');
         $connection->disconnect();
@@ -168,7 +159,7 @@ class MysqlTest extends TestCase
         $this->assertTrue($driver->isConnected());
     }
 
-    public function testCommitTransactionAutoConnect()
+    public function testCommitTransactionAutoConnect(): void
     {
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
@@ -181,9 +172,8 @@ class MysqlTest extends TestCase
      * @dataProvider versionStringProvider
      * @param string $dbVersion
      * @param string $expectedVersion
-     * @return void
      */
-    public function testVersion($dbVersion, $expectedVersion)
+    public function testVersion($dbVersion, $expectedVersion): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
         $connection = $this->getMockBuilder(Connection::class)
@@ -206,7 +196,7 @@ class MysqlTest extends TestCase
         $this->assertSame($expectedVersion, $result);
     }
 
-    public function versionStringProvider()
+    public function versionStringProvider(): array
     {
         return [
             ['10.2.23-MariaDB', '10.2.23-MariaDB'],
@@ -214,5 +204,60 @@ class MysqlTest extends TestCase
             ['5.5.5-10.4.13-MariaDB-1:10.4.13+maria~focal', '10.4.13-MariaDB-1'],
             ['8.0.0', '8.0.0'],
         ];
+    }
+
+    /**
+     * Tests driver-specific feature support check.
+     */
+    public function testSupports(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Mysql);
+
+        $serverType = $driver->isMariadb() ? 'mariadb' : 'mysql';
+        $featureVersions = [
+            'mysql' => [
+                'json' => '5.7.0',
+                'cte' => '8.0.0',
+                'window' => '8.0.0',
+            ],
+            'mariadb' => [
+                'json' => '10.2.7',
+                'cte' => '10.2.1',
+                'window' => '10.2.0',
+            ],
+        ];
+
+        $this->assertSame(
+            version_compare($driver->version(), $featureVersions[$serverType]['cte'], '>='),
+            $driver->supports(DriverInterface::FEATURE_CTE)
+        );
+        $this->assertSame(
+            version_compare($driver->version(), $featureVersions[$serverType]['json'], '>='),
+            $driver->supports(DriverInterface::FEATURE_CTE)
+        );
+        $this->assertSame(
+            version_compare($driver->version(), $featureVersions[$serverType]['window'], '>='),
+            $driver->supports(DriverInterface::FEATURE_CTE)
+        );
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverInterface::FEATURE_QUOTE));
+
+        $this->assertFalse($driver->supports('this-is-fake'));
+    }
+
+    /**
+     * Tests driver-specific feature support check.
+     */
+    public function testDeprecatedSupports(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Mysql);
+
+        $this->deprecated(function () use ($driver) {
+            $this->assertSame($driver->supportsCTEs(), $driver->supports(DriverInterface::FEATURE_CTE));
+            $this->assertSame($driver->supportsNativeJson(), $driver->supports(DriverInterface::FEATURE_JSON));
+            $this->assertSame($driver->supportsWindowFunctions(), $driver->supports(DriverInterface::FEATURE_WINDOW));
+        });
     }
 }

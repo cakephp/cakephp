@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -37,8 +38,6 @@ class IntegerTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,10 +48,8 @@ class IntegerTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
@@ -71,10 +68,8 @@ class IntegerTypeTest extends TestCase
 
     /**
      * Test converting string float to PHP values.
-     *
-     * @return void
      */
-    public function testManyToPHP()
+    public function testManyToPHP(): void
     {
         $values = [
             'a' => null,
@@ -98,12 +93,10 @@ class IntegerTypeTest extends TestCase
 
     /**
      * Test to make sure the method throws an exception for invalid integer values.
-     *
-     * @return void
      */
-    public function testInvalidManyToPHP()
+    public function testInvalidManyToPHP(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $values = [
             'a' => null,
             'b' => '2.3',
@@ -128,10 +121,8 @@ class IntegerTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $this->assertNull($this->type->toDatabase(null, $this->driver));
 
@@ -147,7 +138,7 @@ class IntegerTypeTest extends TestCase
      *
      * @return void
      */
-    public function invalidIntegerProvider()
+    public function invalidIntegerProvider(): array
     {
         return [
             'array' => [['3', '4']],
@@ -161,20 +152,17 @@ class IntegerTypeTest extends TestCase
      *
      * @dataProvider invalidIntegerProvider
      * @param  mixed $value Invalid value to test against the database type.
-     * @return void
      */
-    public function testToDatabaseInvalid($value)
+    public function testToDatabaseInvalid($value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase($value, $this->driver);
     }
 
     /**
      * Test marshalling
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $result = $this->type->marshal('some data');
         $this->assertNull($result);
@@ -212,10 +200,8 @@ class IntegerTypeTest extends TestCase
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_INT, $this->type->toStatement('', $this->driver));
     }

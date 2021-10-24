@@ -42,7 +42,7 @@ class FormProtector
     /**
      * Unlocked fields.
      *
-     * @var array
+     * @var array<string>
      */
     protected $unlockedFields = [];
 
@@ -52,18 +52,6 @@ class FormProtector
      * @var string|null
      */
     protected $debugMessage;
-
-    /**
-     * Construct.
-     *
-     * @param array $data Data array, can contain key `unlockedFields` with list of unlocked fields.
-     */
-    public function __construct(array $data = [])
-    {
-        if (!empty($data['unlockedFields'])) {
-            $this->unlockedFields = $data['unlockedFields'];
-        }
-    }
 
     /**
      * Validate submitted form data.
@@ -105,9 +93,21 @@ class FormProtector
     }
 
     /**
+     * Construct.
+     *
+     * @param array<string, mixed> $data Data array, can contain key `unlockedFields` with list of unlocked fields.
+     */
+    public function __construct(array $data = [])
+    {
+        if (!empty($data['unlockedFields'])) {
+            $this->unlockedFields = $data['unlockedFields'];
+        }
+    }
+
+    /**
      * Determine which fields of a form should be used for hash.
      *
-     * @param string|array $field Reference to field to be secured. Can be dot
+     * @param array<string>|string $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
      * @param bool $lock Whether this field should be part of the validation
      *   or excluded as part of the unlockedFields. Default `true`.
@@ -159,7 +159,7 @@ class FormProtector
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
-     * @return string[] Array of field name params like ['Model.field'] or
+     * @return array<string> Array of field name params like ['Model.field'] or
      *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
     protected function getFieldNameArray(string $name): array
@@ -360,7 +360,7 @@ class FormProtector
      * Get the sorted unlocked string
      *
      * @param array $formData Data array
-     * @return string[]
+     * @return array<string>
      */
     protected function sortedUnlockedFields(array $formData): array
     {
@@ -380,7 +380,7 @@ class FormProtector
      *
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
-     * @return array The token data.
+     * @return array<string, string> The token data.
      * @psalm-return array{fields: string, unlocked: string, debug: string}
      */
     public function buildTokenData(string $url = '', string $sessionId = ''): array
@@ -495,7 +495,7 @@ class FormProtector
      * @param string $stringKeyMessage Message string if tampered found in
      *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
-     * @return string[] Messages
+     * @return array<string> Messages
      */
     protected function debugCheckFields(
         array $dataFields,
@@ -522,7 +522,7 @@ class FormProtector
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
      * @param string $stringKeyMessage Message string if tampered found in
      *   data fields indexed by string (protected)
-     * @return string[] Error messages
+     * @return array<string> Error messages
      */
     protected function matchExistingFields(
         array $dataFields,
@@ -578,7 +578,7 @@ class FormProtector
     /**
      * Return debug info
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

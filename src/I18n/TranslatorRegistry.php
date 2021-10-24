@@ -32,8 +32,7 @@ class TranslatorRegistry
     /**
      * A registry to retain translator objects.
      *
-     * @var array
-     * @psalm-var array<string, array<string, \Cake\I18n\Translator>>
+     * @var array<string, array<string, \Cake\I18n\Translator>>
      */
     protected $registry = [];
 
@@ -64,7 +63,7 @@ class TranslatorRegistry
      * packages where none can be found for the combination of translator
      * name and locale.
      *
-     * @var callable[]
+     * @var array<callable>
      */
     protected $_loaders = [];
 

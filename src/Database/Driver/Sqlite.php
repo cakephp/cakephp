@@ -43,7 +43,7 @@ class Sqlite extends Driver
      *
      * - `mask` The mask used for created database
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_baseConfig = [
         'persistent' => false,
@@ -64,7 +64,7 @@ class Sqlite extends Driver
     protected $_schemaDialect;
 
     /**
-     * Whether or not the connected server supports window functions.
+     * Whether the connected server supports window functions.
      *
      * @var bool|null
      */
@@ -87,7 +87,7 @@ class Sqlite extends Driver
     /**
      * Mapping of date parts.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $_dateParts = [
         'day' => 'd',
@@ -97,6 +97,16 @@ class Sqlite extends Driver
         'second' => 'S',
         'week' => 'W',
         'year' => 'Y',
+    ];
+
+    /**
+     * Mapping of feature to db server version for feature availability checks.
+     *
+     * @var array<string, string>
+     */
+    protected $featureVersions = [
+        'cte' => '3.8.3',
+        'window' => '3.28.0',
     ];
 
     /**
@@ -115,7 +125,7 @@ class Sqlite extends Driver
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        if (!is_string($config['database']) || !strlen($config['database'])) {
+        if (!is_string($config['database']) || $config['database'] === '') {
             $name = $config['name'] ?? 'unknown';
             throw new InvalidArgumentException(
                 "The `database` key for the `{$name}` SQLite connection needs to be a non-empty string."
@@ -155,7 +165,7 @@ class Sqlite extends Driver
     /**
      * Prepares a sql statement to be executed
      *
-     * @param string|\Cake\Database\Query $query The query to prepare.
+     * @param \Cake\Database\Query|string $query The query to prepare.
      * @return \Cake\Database\StatementInterface
      */
     public function prepare($query): StatementInterface
@@ -190,6 +200,27 @@ class Sqlite extends Driver
     public function enableForeignKeySQL(): string
     {
         return 'PRAGMA foreign_keys = ON';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports(string $feature): bool
+    {
+        switch ($feature) {
+            case static::FEATURE_CTE:
+            case static::FEATURE_WINDOW:
+                return version_compare(
+                    $this->version(),
+                    $this->featureVersions[$feature],
+                    '>='
+                );
+
+            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
+                return true;
+        }
+
+        return parent::supports($feature);
     }
 
     /**
@@ -308,27 +339,25 @@ class Sqlite extends Driver
      * Returns true if the server supports common table expressions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_CTE)` instead
      */
     public function supportsCTEs(): bool
     {
-        if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare($this->version(), '3.8.3', '>=');
-        }
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->supportsCTEs;
+        return $this->supports(static::FEATURE_CTE);
     }
 
     /**
      * Returns true if the connected server supports window functions.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_WINDOW)` instead
      */
     public function supportsWindowFunctions(): bool
     {
-        if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare($this->version(), '3.25.0', '>=');
-        }
+        deprecationWarning('Feature support checks are now implemented by `supports()` with FEATURE_* constants.');
 
-        return $this->_supportsWindowFunctions;
+        return $this->supports(static::FEATURE_WINDOW);
     }
 }

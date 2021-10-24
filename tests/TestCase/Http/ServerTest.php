@@ -27,7 +27,8 @@ use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Response as LaminasResponse;
+use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
 use TestApp\Http\MiddlewareApplication;
 
 require_once __DIR__ . '/server_mocks.php';
@@ -54,8 +55,6 @@ class ServerTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -68,8 +67,6 @@ class ServerTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -80,10 +77,8 @@ class ServerTest extends TestCase
 
     /**
      * test get/set on the app
-     *
-     * @return void
      */
-    public function testAppGetSet()
+    public function testAppGetSet(): void
     {
         /** @var \Cake\Http\BaseApplication|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->getMockBuilder(BaseApplication::class)
@@ -101,10 +96,8 @@ class ServerTest extends TestCase
 
     /**
      * test run building a response
-     *
-     * @return void
      */
-    public function testRunWithRequest()
+    public function testRunWithRequest(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
@@ -126,10 +119,8 @@ class ServerTest extends TestCase
 
     /**
      * test run calling plugin hooks
-     *
-     * @return void
      */
-    public function testRunCallingPluginHooks()
+    public function testRunCallingPluginHooks(): void
     {
         $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
@@ -165,10 +156,8 @@ class ServerTest extends TestCase
 
     /**
      * test run building a request from globals.
-     *
-     * @return void
      */
-    public function testRunWithGlobals()
+    public function testRunWithGlobals(): void
     {
         $_SERVER['HTTP_X_PASS'] = 'globalvalue';
 
@@ -185,10 +174,8 @@ class ServerTest extends TestCase
 
     /**
      * Test middleware being invoked.
-     *
-     * @return void
      */
-    public function testRunMultipleMiddlewareSuccess()
+    public function testRunMultipleMiddlewareSuccess(): void
     {
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
@@ -200,7 +187,7 @@ class ServerTest extends TestCase
     /**
      * Test that run closes session after invoking the application (if CakePHP ServerRequest is used).
      */
-    public function testRunClosesSessionIfServerRequestUsed()
+    public function testRunClosesSessionIfServerRequestUsed(): void
     {
         $sessionMock = $this->createMock(Session::class);
 
@@ -228,9 +215,9 @@ class ServerTest extends TestCase
     /**
      * Test that run does not close the session if CakePHP ServerRequest is not used.
      */
-    public function testRunDoesNotCloseSessionIfServerRequestNotUsed()
+    public function testRunDoesNotCloseSessionIfServerRequestNotUsed(): void
     {
-        $request = new \Laminas\Diactoros\ServerRequest();
+        $request = new LaminasServerRequest();
 
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
@@ -251,10 +238,8 @@ class ServerTest extends TestCase
 
     /**
      * Test that emit invokes the appropriate methods on the emitter.
-     *
-     * @return void
      */
-    public function testEmit()
+    public function testEmit(): void
     {
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
@@ -273,14 +258,12 @@ class ServerTest extends TestCase
 
     /**
      * Test that emit invokes the appropriate methods on the emitter.
-     *
-     * @return void
      */
-    public function testEmitCallbackStream()
+    public function testEmitCallbackStream(): void
     {
         $GLOBALS['mockedHeadersSent'] = false;
-        $response = new Response('php://memory', 200, ['x-testing' => 'source header']);
-        $response = $response->withBody(new CallbackStream(function () {
+        $response = new LaminasResponse('php://memory', 200, ['x-testing' => 'source header']);
+        $response = $response->withBody(new CallbackStream(function (): void {
             echo 'body content';
         }));
 
@@ -294,20 +277,18 @@ class ServerTest extends TestCase
 
     /**
      * Ensure that the Server.buildMiddleware event is fired.
-     *
-     * @return void
      */
-    public function testBuildMiddlewareEvent()
+    public function testBuildMiddlewareEvent(): void
     {
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $called = false;
 
-        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) use (&$called) {
-            $middlewareQueue->add(function ($req, $res, $next) use (&$called) {
+        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) use (&$called): void {
+            $middlewareQueue->add(function ($request, $handler) use (&$called) {
                 $called = true;
 
-                return $next($req, $res);
+                return $handler->handle($request);
             });
             $this->middlewareQueue = $middlewareQueue;
         });
@@ -319,10 +300,8 @@ class ServerTest extends TestCase
 
     /**
      * test event manager proxies to the application.
-     *
-     * @return void
      */
-    public function testEventManagerProxies()
+    public function testEventManagerProxies(): void
     {
         /** @var \Cake\Http\BaseApplication|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->getMockForAbstractClass(
@@ -336,10 +315,8 @@ class ServerTest extends TestCase
 
     /**
      * test event manager cannot be set on applications without events.
-     *
-     * @return void
      */
-    public function testGetEventManagerNonEventedApplication()
+    public function testGetEventManagerNonEventedApplication(): void
     {
         /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->createMock(HttpApplicationInterface::class);
@@ -350,10 +327,8 @@ class ServerTest extends TestCase
 
     /**
      * test event manager cannot be set on applications without events.
-     *
-     * @return void
      */
-    public function testSetEventManagerNonEventedApplication()
+    public function testSetEventManagerNonEventedApplication(): void
     {
         /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->createMock(HttpApplicationInterface::class);

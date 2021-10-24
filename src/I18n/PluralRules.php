@@ -17,10 +17,13 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Core\Exception\CakeException;
+use Locale;
 
 /**
  * Utility class used to determine the plural number to be used for a variable
- * base on the locale
+ * base on the locale.
+ *
+ * @internal
  */
 class PluralRules
 {
@@ -28,7 +31,7 @@ class PluralRules
      * A map of locale => plurals group used to determine
      * which plural rules apply to the language
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static $_rulesMap = [
         'af' => 1,
@@ -103,7 +106,7 @@ class PluralRules
         'pap' => 1,
         'pl' => 11,
         'ps' => 1,
-        'pt_pt' => 2,
+        'pt_BR' => 2,
         'pt' => 1,
         'ro' => 12,
         'ru' => 3,
@@ -140,7 +143,7 @@ class PluralRules
      */
     public static function calculate(string $locale, $n): int
     {
-        $locale = strtolower($locale);
+        $locale = Locale::canonicalize($locale);
 
         if (!isset(static::$_rulesMap[$locale])) {
             $locale = explode('_', $locale)[0];

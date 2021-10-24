@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Tests HasOne class
@@ -31,9 +33,19 @@ class HasOneTest extends TestCase
     /**
      * Fixtures to load
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $user;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $profile;
 
     /**
      * @var bool
@@ -42,8 +54,6 @@ class HasOneTest extends TestCase
 
     /**
      * Set up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -55,10 +65,8 @@ class HasOneTest extends TestCase
 
     /**
      * Tests that setForeignKey() returns the correct configured value
-     *
-     * @return void
      */
-    public function testSetForeignKey()
+    public function testSetForeignKey(): void
     {
         $assoc = new HasOne('Profiles', [
             'sourceTable' => $this->user,
@@ -70,10 +78,8 @@ class HasOneTest extends TestCase
 
     /**
      * Tests that the association reports it can be joined
-     *
-     * @return void
      */
-    public function testCanBeJoined()
+    public function testCanBeJoined(): void
     {
         $assoc = new HasOne('Test');
         $this->assertTrue($assoc->canBeJoined());
@@ -82,10 +88,8 @@ class HasOneTest extends TestCase
     /**
      * Tests that the correct join and fields are attached to a query depending on
      * the association config
-     *
-     * @return void
      */
-    public function testAttachTo()
+    public function testAttachTo(): void
     {
         $config = [
             'foreignKey' => 'user_id',
@@ -106,10 +110,8 @@ class HasOneTest extends TestCase
 
     /**
      * Tests that it is possible to avoid fields inclusion for the associated table
-     *
-     * @return void
      */
-    public function testAttachToNoFields()
+    public function testAttachToNoFields(): void
     {
         $config = [
             'sourceTable' => $this->user,
@@ -125,10 +127,8 @@ class HasOneTest extends TestCase
     /**
      * Tests that using hasOne with a table having a multi column primary
      * key will work if the foreign key is passed
-     *
-     * @return void
      */
-    public function testAttachToMultiPrimaryKey()
+    public function testAttachToMultiPrimaryKey(): void
     {
         $selectTypeMap = new TypeMap([
             'Profiles.id' => 'integer',
@@ -158,7 +158,7 @@ class HasOneTest extends TestCase
         $association = new HasOne('Profiles', $config);
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['join', 'select'])
+            ->onlyMethods(['join'])
             ->disableOriginalConstructor()
             ->getMock();
         $field1 = new IdentifierExpression('Profiles.user_id');
@@ -173,19 +173,16 @@ class HasOneTest extends TestCase
                 'table' => 'profiles',
             ],
         ]);
-        $query->expects($this->never())->method('select');
-        $association->attachTo($query, ['includeFields' => false]);
+        $association->attachTo($query);
     }
 
     /**
      * Tests that using hasOne with a table having a multi column primary
      * key will work if the foreign key is passed
-     *
-     * @return void
      */
-    public function testAttachToMultiPrimaryKeyMismatch()
+    public function testAttachToMultiPrimaryKeyMismatch(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['join', 'select'])
@@ -203,10 +200,8 @@ class HasOneTest extends TestCase
 
     /**
      * Test that saveAssociated() ignores non entity values.
-     *
-     * @return void
      */
-    public function testSaveAssociatedOnlyEntities()
+    public function testSaveAssociatedOnlyEntities(): void
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
             ->addMethods(['saveAssociated'])
@@ -233,10 +228,8 @@ class HasOneTest extends TestCase
 
     /**
      * Tests that property is being set using the constructor options.
-     *
-     * @return void
      */
-    public function testPropertyOption()
+    public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new HasOne('Thing', $config);
@@ -245,10 +238,8 @@ class HasOneTest extends TestCase
 
     /**
      * Test that plugin names are omitted from property()
-     *
-     * @return void
      */
-    public function testPropertyNoPlugin()
+    public function testPropertyNoPlugin(): void
     {
         $config = [
             'sourceTable' => $this->user,
@@ -261,10 +252,8 @@ class HasOneTest extends TestCase
     /**
      * Tests that attaching an association to a query will trigger beforeFind
      * for the target table
-     *
-     * @return void
      */
-    public function testAttachToBeforeFind()
+    public function testAttachToBeforeFind(): void
     {
         $config = [
             'foreignKey' => 'user_id',
@@ -274,7 +263,7 @@ class HasOneTest extends TestCase
         $query = $this->user->query();
 
         $this->listenerCalled = false;
-        $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary) {
+        $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary): void {
             $this->listenerCalled = true;
             $this->assertInstanceOf('Cake\Event\Event', $event);
             $this->assertInstanceOf('Cake\ORM\Query', $query);
@@ -289,10 +278,8 @@ class HasOneTest extends TestCase
     /**
      * Tests that attaching an association to a query will trigger beforeFind
      * for the target table
-     *
-     * @return void
      */
-    public function testAttachToBeforeFindExtraOptions()
+    public function testAttachToBeforeFindExtraOptions(): void
     {
         $config = [
             'foreignKey' => 'user_id',
@@ -300,10 +287,10 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
         ];
         $this->listenerCalled = false;
-        $opts = new \ArrayObject(['something' => 'more']);
+        $opts = new ArrayObject(['something' => 'more']);
         $this->profile->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, $query, $options, $primary) use ($opts) {
+            function ($event, $query, $options, $primary) use ($opts): void {
                 $this->listenerCalled = true;
                 $this->assertInstanceOf('Cake\Event\Event', $event);
                 $this->assertInstanceOf('Cake\ORM\Query', $query);
@@ -321,10 +308,8 @@ class HasOneTest extends TestCase
 
     /**
      * Test cascading deletes.
-     *
-     * @return void
      */
-    public function testCascadeDelete()
+    public function testCascadeDelete(): void
     {
         $config = [
             'dependent' => true,
@@ -335,7 +320,7 @@ class HasOneTest extends TestCase
         ];
         $association = new HasOne('Profiles', $config);
 
-        $this->profile->getEventManager()->on('Model.beforeDelete', function () {
+        $this->profile->getEventManager()->on('Model.beforeDelete', function (): void {
             $this->fail('Callbacks should not be triggered when callbacks do not cascade.');
         });
 
@@ -387,10 +372,8 @@ class HasOneTest extends TestCase
 
     /**
      * Test cascading delete with has one.
-     *
-     * @return void
      */
-    public function testCascadeDeleteCallbacks()
+    public function testCascadeDeleteCallbacks(): void
     {
         $config = [
             'dependent' => true,
@@ -418,10 +401,8 @@ class HasOneTest extends TestCase
 
     /**
      * Test cascading delete with a rule preventing deletion
-     *
-     * @return void
      */
-    public function testCascadeDeleteCallbacksRuleFailure()
+    public function testCascadeDeleteCallbacksRuleFailure(): void
     {
         $config = [
             'dependent' => true,
@@ -431,7 +412,7 @@ class HasOneTest extends TestCase
         ];
         $association = new HasOne('Profiles', $config);
         $profiles = $association->getTarget();
-        $profiles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+        $profiles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function () {
                 return false;
             });

@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer;
 
+use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
@@ -25,7 +26,10 @@ use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingTemplateException;
+use DateTime;
+use InvalidArgumentException;
 use RuntimeException;
+use stdClass;
 use TestApp\Mailer\TestMailer;
 
 class MailerTest extends TestCase
@@ -42,8 +46,6 @@ class MailerTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -65,8 +67,6 @@ class MailerTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -81,10 +81,8 @@ class MailerTest extends TestCase
 
     /**
      * testTransport method
-     *
-     * @return void
      */
-    public function testTransport()
+    public function testTransport(): void
     {
         $result = $this->mailer->setTransport('debug');
         $this->assertSame($this->mailer, $result);
@@ -100,9 +98,9 @@ class MailerTest extends TestCase
     /**
      * Test that using unknown transports fails.
      */
-    public function testTransportInvalid()
+    public function testTransportInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
         $this->mailer->setTransport('Invalid');
     }
@@ -110,28 +108,26 @@ class MailerTest extends TestCase
     /**
      * Test that using classes with no send method fails.
      */
-    public function testTransportInstanceInvalid()
+    public function testTransportInstanceInvalid(): void
     {
         $this->expectException(CakeException::class);
-        $this->mailer->setTransport(new \stdClass());
+        $this->mailer->setTransport(new stdClass());
     }
 
     /**
      * Test that using unknown transports fails.
      */
-    public function testTransportTypeInvalid()
+    public function testTransportTypeInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value passed for the "$name" argument must be either a string, or an object, integer given.');
         $this->mailer->setTransport(123);
     }
 
     /**
      * testMessage function
-     *
-     * @return void
      */
-    public function testMessage()
+    public function testMessage(): void
     {
         $message = $this->mailer->getMessage();
         $this->assertInstanceOf(Message::class, $message);
@@ -144,10 +140,8 @@ class MailerTest extends TestCase
 
     /**
      * Test reading/writing configuration profiles.
-     *
-     * @return void
      */
-    public function testConfig()
+    public function testConfig(): void
     {
         $settings = [
             'to' => 'mark@example.com',
@@ -162,12 +156,10 @@ class MailerTest extends TestCase
 
     /**
      * Test that exceptions are raised on duplicate config set.
-     *
-     * @return void
      */
-    public function testConfigErrorOnDuplicate()
+    public function testConfigErrorOnDuplicate(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $settings = [
             'to' => 'mark@example.com',
             'from' => 'noreply@example.com',
@@ -178,10 +170,8 @@ class MailerTest extends TestCase
 
     /**
      * testConstructWithConfigArray method
-     *
-     * @return void
      */
-    public function testConstructWithConfigArray()
+    public function testConstructWithConfigArray(): void
     {
         $configs = [
             'from' => ['some@example.com' => 'My website'],
@@ -211,10 +201,8 @@ class MailerTest extends TestCase
 
     /**
      * testConfigArrayWithLayoutWithoutTemplate method
-     *
-     * @return void
      */
-    public function testConfigArrayWithLayoutWithoutTemplate()
+    public function testConfigArrayWithLayoutWithoutTemplate(): void
     {
         $configs = [
             'from' => ['some@example.com' => 'My website'],
@@ -233,10 +221,8 @@ class MailerTest extends TestCase
 
     /**
      * testConstructWithConfigString method
-     *
-     * @return void
      */
-    public function testConstructWithConfigString()
+    public function testConstructWithConfigString(): void
     {
         $configs = [
             'from' => ['some@example.com' => 'My website'],
@@ -268,10 +254,8 @@ class MailerTest extends TestCase
 
     /**
      * test profile method
-     *
-     * @return void
      */
-    public function testSetProfile()
+    public function testSetProfile(): void
     {
         $config = ['to' => 'foo@bar.com'];
         $this->mailer->setProfile($config);
@@ -280,10 +264,8 @@ class MailerTest extends TestCase
 
     /**
      * test that default profile is used by constructor if available.
-     *
-     * @return void
      */
-    public function testDefaultProfile()
+    public function testDefaultProfile(): void
     {
         $config = ['to' => 'foo@bar.com', 'from' => 'from@bar.com'];
 
@@ -301,9 +283,9 @@ class MailerTest extends TestCase
     /**
      * Test that using an invalid profile fails.
      */
-    public function testProfileInvalid()
+    public function testProfileInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown email configuration "derp".');
         $mailer = new Mailer();
         $mailer->setProfile('derp');
@@ -311,10 +293,8 @@ class MailerTest extends TestCase
 
     /**
      * testConfigString method
-     *
-     * @return void
      */
-    public function testUseConfigString()
+    public function testUseConfigString(): void
     {
         $config = [
             'from' => ['some@example.com' => 'My website'],
@@ -351,7 +331,7 @@ class MailerTest extends TestCase
     /**
      * CakeEmailTest::testMockTransport()
      */
-    public function testMockTransport()
+    public function testMockTransport(): void
     {
         TransportFactory::drop('default');
 
@@ -368,10 +348,7 @@ class MailerTest extends TestCase
         TransportFactory::drop('default');
     }
 
-    /**
-     * @return void
-     */
-    public function testProxies()
+    public function testProxies(): void
     {
         $result = (new Mailer())->setHeaders(['X-Something' => 'nice']);
         $this->assertInstanceOf(Mailer::class, $result);
@@ -390,10 +367,8 @@ class MailerTest extends TestCase
 
     /**
      * Test that get/set methods can be proxied.
-     *
-     * @return void
      */
-    public function testGetSetProxies()
+    public function testGetSetProxies(): void
     {
         $mailer = new Mailer();
         $result = $mailer
@@ -405,7 +380,7 @@ class MailerTest extends TestCase
         $this->assertSame(['cc@example.com' => 'cc@example.com'], $result->getCc());
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         $result = (new Mailer())->setViewVars('key', 'value');
         $this->assertInstanceOf(Mailer::class, $result);
@@ -414,10 +389,8 @@ class MailerTest extends TestCase
 
     /**
      * testRenderWithLayoutAndAttachment method
-     *
-     * @return void
      */
-    public function testRenderWithLayoutAndAttachment()
+    public function testRenderWithLayoutAndAttachment(): void
     {
         $this->mailer->setEmailFormat('html');
         $this->mailer->viewBuilder()->setTemplate('html', 'default');
@@ -430,7 +403,7 @@ class MailerTest extends TestCase
         $this->assertMatchesRegularExpression('/^[0-9a-f]{32}$/', $result);
     }
 
-    public function testSend()
+    public function testSend(): void
     {
         $mailer = $this->getMockBuilder(Mailer::class)
             ->onlyMethods(['deliver'])
@@ -450,10 +423,8 @@ class MailerTest extends TestCase
 
     /**
      * Calling send() with no parameters should not overwrite the view variables.
-     *
-     * @return void
      */
-    public function testSendWithNoContentDoesNotOverwriteViewVar()
+    public function testSendWithNoContentDoesNotOverwriteViewVar(): void
     {
         $this->mailer->reset();
         $this->mailer->setTransport('debug');
@@ -473,10 +444,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendWithContent method
-     *
-     * @return void
      */
-    public function testSendWithContent()
+    public function testSendWithContent(): void
     {
         $this->mailer->reset();
         $this->mailer->setTransport('debug');
@@ -504,12 +473,10 @@ class MailerTest extends TestCase
 
     /**
      * test send without a transport method
-     *
-     * @return void
      */
-    public function testSendWithoutTransport()
+    public function testSendWithoutTransport(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage(
             'Transport was not defined. You must set on using setTransport() or set `transport` option in your mailer profile.'
         );
@@ -521,10 +488,8 @@ class MailerTest extends TestCase
 
     /**
      * Test send() with no template.
-     *
-     * @return void
      */
-    public function testSendNoTemplateWithAttachments()
+    public function testSendNoTemplateWithAttachments(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -554,10 +519,8 @@ class MailerTest extends TestCase
 
     /**
      * Test send() with no template and data string attachment
-     *
-     * @return void
      */
-    public function testSendNoTemplateWithDataStringAttachment()
+    public function testSendNoTemplateWithDataStringAttachment(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -591,10 +554,8 @@ class MailerTest extends TestCase
 
     /**
      * Test send() with no template as both
-     *
-     * @return void
      */
-    public function testSendNoTemplateWithAttachmentsAsBoth()
+    public function testSendNoTemplateWithAttachmentsAsBoth(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -637,10 +598,8 @@ class MailerTest extends TestCase
 
     /**
      * Test setting inline attachments and messages.
-     *
-     * @return void
      */
-    public function testSendWithInlineAttachments()
+    public function testSendWithInlineAttachments(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -694,10 +653,8 @@ class MailerTest extends TestCase
 
     /**
      * Test setting inline attachments and HTML only messages.
-     *
-     * @return void
      */
-    public function testSendWithInlineAttachmentsHtmlOnly()
+    public function testSendWithInlineAttachmentsHtmlOnly(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -738,10 +695,8 @@ class MailerTest extends TestCase
 
     /**
      * Test disabling content-disposition.
-     *
-     * @return void
      */
-    public function testSendWithNoContentDispositionAttachments()
+    public function testSendWithNoContentDispositionAttachments(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -777,10 +732,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRender method
-     *
-     * @return void
      */
-    public function testSendRender()
+    public function testSendRender(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -798,10 +751,8 @@ class MailerTest extends TestCase
 
     /**
      * test sending and rendering with no layout
-     *
-     * @return void
      */
-    public function testSendRenderNoLayout()
+    public function testSendRenderNoLayout(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -821,10 +772,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRender both method
-     *
-     * @return void
      */
-    public function testSendRenderBoth()
+    public function testSendRenderBoth(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -869,10 +818,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRender method for ISO-2022-JP
-     *
-     * @return void
      */
-    public function testSendRenderJapanese()
+    public function testSendRenderJapanese(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -893,10 +840,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRenderThemed method
-     *
-     * @return void
      */
-    public function testSendRenderThemed()
+    public function testSendRenderThemed(): void
     {
         $this->loadPlugins(['TestTheme']);
         $this->mailer->setTransport('debug');
@@ -919,10 +864,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRenderWithHTML method and assert line length is kept below the required limit
-     *
-     * @return void
      */
-    public function testSendRenderWithHTML()
+    public function testSendRenderWithHTML(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -940,10 +883,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRenderWithVars method
-     *
-     * @return void
      */
-    public function testSendRenderWithVars()
+    public function testSendRenderWithVars(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -960,10 +901,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRenderWithVars method for ISO-2022-JP
-     *
-     * @return void
      */
-    public function testSendRenderWithVarsJapanese()
+    public function testSendRenderWithVarsJapanese(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -982,10 +921,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRenderWithHelpers method
-     *
-     * @return void
      */
-    public function testSendRenderWithHelpers()
+    public function testSendRenderWithHelpers(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -1001,7 +938,7 @@ class MailerTest extends TestCase
         $this->mailer->setViewVars(['time' => $timestamp]);
 
         $result = $this->mailer->send();
-        $dateTime = new \DateTime();
+        $dateTime = new DateTime();
         $dateTime->setTimestamp($timestamp);
         $this->assertStringContainsString('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 
@@ -1011,10 +948,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRenderWithImage method
-     *
-     * @return void
      */
-    public function testSendRenderWithImage()
+    public function testSendRenderWithImage(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -1037,10 +972,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendRenderPlugin method
-     *
-     * @return void
      */
-    public function testSendRenderPlugin()
+    public function testSendRenderPlugin(): void
     {
         $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
 
@@ -1096,10 +1029,8 @@ class MailerTest extends TestCase
 
     /**
      * Test that a MissingTemplateException is thrown
-     *
-     * @return void
      */
-    public function testMissingTemplateException()
+    public function testMissingTemplateException(): void
     {
         $this->expectException(MissingTemplateException::class);
 
@@ -1113,10 +1044,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendMultipleMIME method
-     *
-     * @return void
      */
-    public function testSendMultipleMIME()
+    public function testSendMultipleMIME(): void
     {
         $this->mailer->setTransport('debug');
 
@@ -1149,10 +1078,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendAttachment method
-     *
-     * @return void
      */
-    public function testSendAttachment()
+    public function testSendAttachment(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -1193,7 +1120,7 @@ class MailerTest extends TestCase
         $this->assertStringContainsString($expected, $result['message']);
     }
 
-    public function testSendWithUnsetTemplateDefaultsToActionName()
+    public function testSendWithUnsetTemplateDefaultsToActionName(): void
     {
         $mailer = $this->getMockBuilder(Mailer::class)
             ->onlyMethods(['deliver', 'restore'])
@@ -1212,10 +1139,8 @@ class MailerTest extends TestCase
 
     /**
      * testGetBody method
-     *
-     * @return void
      */
-    public function testGetBody()
+    public function testGetBody(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -1251,10 +1176,8 @@ class MailerTest extends TestCase
 
     /**
      * testZeroOnlyLinesNotBeingEmptied()
-     *
-     * @return void
      */
-    public function testZeroOnlyLinesNotBeingEmptied()
+    public function testZeroOnlyLinesNotBeingEmptied(): void
     {
         $message = "Lorem\r\n0\r\n0\r\nipsum";
 
@@ -1271,10 +1194,8 @@ class MailerTest extends TestCase
 
     /**
      * testReset method
-     *
-     * @return void
      */
-    public function testReset()
+    public function testReset(): void
     {
         $this->mailer->setTo('cake@cakephp.org');
         $this->mailer->viewBuilder()->setTheme('TestTheme');
@@ -1289,10 +1210,8 @@ class MailerTest extends TestCase
 
     /**
      * Test that mailers call reset() when send fails
-     *
-     * @return void
      */
-    public function testSendFailsEmailIsReset()
+    public function testSendFailsEmailIsReset(): void
     {
         $mailer = $this->getMockBuilder(Mailer::class)
             ->onlyMethods(['restore', 'deliver'])
@@ -1316,10 +1235,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendWithLog method
-     *
-     * @return void
      */
-    public function testSendWithLog()
+    public function testSendWithLog(): void
     {
         Log::setConfig('email', [
             'className' => 'Array',
@@ -1344,10 +1261,8 @@ class MailerTest extends TestCase
 
     /**
      * testSendWithLogAndScope method
-     *
-     * @return void
      */
-    public function testSendWithLogAndScope()
+    public function testSendWithLogAndScope(): void
     {
         Log::setConfig('email', [
             'className' => 'Array',
@@ -1371,10 +1286,8 @@ class MailerTest extends TestCase
 
     /**
      * test that initial email instance config is restored after email is sent.
-     *
-     * @return void
      */
-    public function testDefaultProfileRestoration()
+    public function testDefaultProfileRestoration(): void
     {
         $mailer = $this->getMockBuilder(Mailer::class)
             ->onlyMethods(['deliver'])
@@ -1392,17 +1305,14 @@ class MailerTest extends TestCase
         $this->assertSame('cakephp', $mailer->viewBuilder()->getTemplate());
     }
 
-    /**
-     * @return void
-     */
-    public function testMissingActionThrowsException()
+    public function testMissingActionThrowsException(): void
     {
         $this->expectException(MissingActionException::class);
         $this->expectExceptionMessage('Mail Cake\Mailer\Mailer::test() could not be found, or is not accessible.');
         (new Mailer())->send('test');
     }
 
-    public function testDeliver()
+    public function testDeliver(): void
     {
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -1426,11 +1336,7 @@ class MailerTest extends TestCase
         $this->assertStringContainsString('To: ', $result['headers']);
     }
 
-    /**
-     * @param string $message
-     * @return void
-     */
-    protected function assertLineLengths($message)
+    protected function assertLineLengths(string $message): void
     {
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
@@ -1441,7 +1347,10 @@ class MailerTest extends TestCase
         }
     }
 
-    protected function _checkContentTransferEncoding($message, $charset)
+    /**
+     * @param array|string $message
+     */
+    protected function _checkContentTransferEncoding($message, string $charset): bool
     {
         $boundary = '--' . $this->mailer->getBoundary();
         $result['text'] = false;

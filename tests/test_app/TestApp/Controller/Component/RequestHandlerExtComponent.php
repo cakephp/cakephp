@@ -9,12 +9,12 @@ class RequestHandlerExtComponent extends RequestHandlerComponent
 {
     public $ext;
 
-    public function getExt()
+    public function getExt(): ?string
     {
         return $this->ext;
     }
 
-    public function setExt($ext)
+    public function setExt(?string $ext)
     {
         $this->ext = $ext;
     }

@@ -1,0 +1,17 @@
+parameters:
+	level: 1
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- bootstrap.php
+	paths:
+		- TestCase/
+
+	excludePaths:
+		- TestCase/Error/DebuggerTest.php
+		- TestCase/Error/ErrorHandlerTest.php
+		- TestCase/Filesystem/FolderTest.php
+		- TestCase/Routing/RouterTest.php
+
+	earlyTerminatingMethodCalls:
+		Cake\Console\Shell:
+			- abort

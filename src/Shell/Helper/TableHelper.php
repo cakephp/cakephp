@@ -27,7 +27,7 @@ class TableHelper extends Helper
     /**
      * Default config for this helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'headers' => true,
@@ -39,7 +39,7 @@ class TableHelper extends Helper
      * Calculate the column widths
      *
      * @param array $rows The rows on which the columns width will be calculated on.
-     * @return int[]
+     * @return array<int>
      */
     protected function _calculateWidths(array $rows): array
     {
@@ -64,7 +64,7 @@ class TableHelper extends Helper
      */
     protected function _cellWidth(string $text): int
     {
-        if (strlen($text) === 0) {
+        if ($text === '') {
             return 0;
         }
 
@@ -82,7 +82,7 @@ class TableHelper extends Helper
     /**
      * Output a row separator.
      *
-     * @param int[] $widths The widths of each column to output.
+     * @param array<int> $widths The widths of each column to output.
      * @return void
      */
     protected function _rowSeparator(array $widths): void
@@ -99,8 +99,8 @@ class TableHelper extends Helper
      * Output a row.
      *
      * @param array $row The row to output.
-     * @param int[] $widths The widths of each column to output.
-     * @param array $options Options to be passed.
+     * @param array<int> $widths The widths of each column to output.
+     * @param array<string, mixed> $options Options to be passed.
      * @return void
      */
     protected function _render(array $row, array $widths, array $options = []): void
@@ -116,7 +116,7 @@ class TableHelper extends Helper
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
-            if (strlen($column) > 0 && preg_match('#(.*)<text-right>.+</text-right>(.*)#', $column, $matches)) {
+            if ($column !== '' && preg_match('#(.*)<text-right>.+</text-right>(.*)#', $column, $matches)) {
                 if ($matches[1] !== '' || $matches[2] !== '') {
                     throw new UnexpectedValueException('You cannot include text before or after the text-right tag.');
                 }

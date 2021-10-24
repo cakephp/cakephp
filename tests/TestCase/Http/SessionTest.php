@@ -29,16 +29,7 @@ use TestApp\Http\Session\TestWebSession;
 class SessionTest extends TestCase
 {
     /**
-     * Fixtures used in the SessionTest
-     *
-     * @var array
-     */
-    protected $fixtures = ['core.CakeSessions', 'core.Sessions'];
-
-    /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -52,9 +43,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testSessionConfigIniSetting()
+    public function testSessionConfigIniSetting(): void
     {
         $_SESSION = null;
 
@@ -79,9 +69,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testCookiePath()
+    public function testCookiePath(): void
     {
         ini_set('session.cookie_path', '/foo');
 
@@ -94,10 +83,8 @@ class SessionTest extends TestCase
 
     /**
      * testCheck method
-     *
-     * @return void
      */
-    public function testCheck()
+    public function testCheck(): void
     {
         $session = new Session();
         $session->write('SessionTestCase', 'value');
@@ -112,10 +99,8 @@ class SessionTest extends TestCase
 
     /**
      * test read with simple values
-     *
-     * @return void
      */
-    public function testReadSimple()
+    public function testReadSimple(): void
     {
         $session = new Session();
         $session->write('testing', '1,2,3');
@@ -139,10 +124,8 @@ class SessionTest extends TestCase
 
     /**
      * testReadEmpty
-     *
-     * @return void
      */
-    public function testReadEmpty()
+    public function testReadEmpty(): void
     {
         $session = new Session();
         $this->assertNull($session->read(''));
@@ -150,10 +133,8 @@ class SessionTest extends TestCase
 
     /**
      * test read fallback
-     *
-     * @return void
      */
-    public function testReadFallback()
+    public function testReadFallback(): void
     {
         $_SESSION = null;
         $session = new Session();
@@ -162,10 +143,8 @@ class SessionTest extends TestCase
 
     /**
      * Tests read() with defaulting.
-     *
-     * @return void
      */
-    public function testReadDefault()
+    public function testReadDefault(): void
     {
         $session = new Session();
         $this->assertSame('bar', $session->read('foo', 'bar'));
@@ -173,10 +152,8 @@ class SessionTest extends TestCase
 
     /**
      * Tests readOrFail()
-     *
-     * @return void
      */
-    public function testReadOrFail()
+    public function testReadOrFail(): void
     {
         $session = new Session();
         $session->write('testing', '1,2,3');
@@ -190,10 +167,8 @@ class SessionTest extends TestCase
 
     /**
      * Tests readOrFail() with nonexistent value
-     *
-     * @return void
      */
-    public function testReadOrFailException()
+    public function testReadOrFailException(): void
     {
         $session = new Session();
 
@@ -204,10 +179,8 @@ class SessionTest extends TestCase
 
     /**
      * Test writing simple keys
-     *
-     * @return void
      */
-    public function testWriteSimple()
+    public function testWriteSimple(): void
     {
         $session = new Session();
         $session->write('', 'empty');
@@ -219,10 +192,8 @@ class SessionTest extends TestCase
 
     /**
      * test writing a hash of values
-     *
-     * @return void
      */
-    public function testWriteArray()
+    public function testWriteArray(): void
     {
         $session = new Session();
         $session->write([
@@ -238,10 +209,8 @@ class SessionTest extends TestCase
 
     /**
      * Test overwriting a string value as if it were an array.
-     *
-     * @return void
      */
-    public function testWriteOverwriteStringValue()
+    public function testWriteOverwriteStringValue(): void
     {
         $session = new Session();
         $session->write('Some.string', 'value');
@@ -253,10 +222,8 @@ class SessionTest extends TestCase
 
     /**
      * Test consuming session data.
-     *
-     * @return void
      */
-    public function testConsume()
+    public function testConsume(): void
     {
         $session = new Session();
         $session->write('Some.string', 'value');
@@ -282,9 +249,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testId()
+    public function testId(): void
     {
         $session = new Session();
         $session->start();
@@ -302,10 +268,8 @@ class SessionTest extends TestCase
 
     /**
      * testStarted method
-     *
-     * @return void
      */
-    public function testStarted()
+    public function testStarted(): void
     {
         $session = new Session();
         $this->assertFalse($session->started());
@@ -315,10 +279,8 @@ class SessionTest extends TestCase
 
     /**
      * test close method
-     *
-     * @return void
      */
-    public function testCloseNotStarted()
+    public function testCloseNotStarted(): void
     {
         $session = new Session();
         $this->assertTrue($session->start());
@@ -329,10 +291,8 @@ class SessionTest extends TestCase
 
     /**
      * testClear method
-     *
-     * @return void
      */
-    public function testClear()
+    public function testClear(): void
     {
         $session = new Session();
         $session->write('Delete.me', 'Clearing out');
@@ -344,10 +304,8 @@ class SessionTest extends TestCase
 
     /**
      * testDelete method
-     *
-     * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $session = new Session();
         $session->write('Delete.me', 'Clearing out');
@@ -366,10 +324,8 @@ class SessionTest extends TestCase
 
     /**
      * test delete
-     *
-     * @return void
      */
-    public function testDeleteEmptyString()
+    public function testDeleteEmptyString(): void
     {
         $session = new Session();
         $session->write('', 'empty string');
@@ -379,10 +335,8 @@ class SessionTest extends TestCase
 
     /**
      * testDestroy method
-     *
-     * @return void
      */
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $session = new Session();
         $session->start();
@@ -395,10 +349,8 @@ class SessionTest extends TestCase
 
     /**
      * testCheckingSavedEmpty method
-     *
-     * @return void
      */
-    public function testCheckingSavedEmpty()
+    public function testCheckingSavedEmpty(): void
     {
         $session = new Session();
         $session->write('SessionTestCase', 0);
@@ -416,10 +368,8 @@ class SessionTest extends TestCase
 
     /**
      * testCheckKeyWithSpaces method
-     *
-     * @return void
      */
-    public function testCheckKeyWithSpaces()
+    public function testCheckKeyWithSpaces(): void
     {
         $session = new Session();
         $session->write('Session Test', 'test');
@@ -432,10 +382,8 @@ class SessionTest extends TestCase
 
     /**
      * testCheckEmpty
-     *
-     * @return void
      */
-    public function testCheckEmpty()
+    public function testCheckEmpty(): void
     {
         $session = new Session();
         $this->assertFalse($session->check());
@@ -443,10 +391,8 @@ class SessionTest extends TestCase
 
     /**
      * test key exploitation
-     *
-     * @return void
      */
-    public function testKeyExploit()
+    public function testKeyExploit(): void
     {
         $session = new Session();
         $key = "a'] = 1; phpinfo(); \$_SESSION['a";
@@ -458,10 +404,8 @@ class SessionTest extends TestCase
 
     /**
      * testReadingSavedEmpty method
-     *
-     * @return void
      */
-    public function testReadingSavedEmpty()
+    public function testReadingSavedEmpty(): void
     {
         $session = new Session();
         $session->write('', 'empty string');
@@ -487,9 +431,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testUsingAppLibsHandler()
+    public function testUsingAppLibsHandler(): void
     {
         static::setAppNamespace();
         $config = [
@@ -512,9 +455,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testUsingPluginHandler()
+    public function testUsingPluginHandler(): void
     {
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
@@ -536,9 +478,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testEngineWithPreMadeInstance()
+    public function testEngineWithPreMadeInstance(): void
     {
         static::setAppNamespace();
         $engine = new TestAppLibSession();
@@ -552,10 +493,8 @@ class SessionTest extends TestCase
 
     /**
      * Tests instantiating a missing engine
-     *
-     * @return void
      */
-    public function testBadEngine()
+    public function testBadEngine(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
@@ -568,9 +507,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testCookieTimeoutFallback()
+    public function testCookieTimeoutFallback(): void
     {
         $config = [
             'defaults' => 'cake',
@@ -587,9 +525,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testSessionName()
+    public function testSessionName(): void
     {
         new Session(['cookie' => 'made_up_name']);
         $this->assertSame('made_up_name', session_name());
@@ -601,7 +538,7 @@ class SessionTest extends TestCase
      * @preserveGlobalState disabled
      * @runInSeparateProcess
      */
-    public function testCheckStartsSessionWithCookiesDisabled()
+    public function testCheckStartsSessionWithCookiesDisabled(): void
     {
         $_COOKIE = [];
         $_GET = [];
@@ -621,7 +558,7 @@ class SessionTest extends TestCase
     /**
      * Test that a call of check() starts the session when a cookie is already set
      */
-    public function testCheckStartsSessionWithCookie()
+    public function testCheckStartsSessionWithCookie(): void
     {
         $_COOKIE[session_name()] = '123abc';
         $_GET = [];
@@ -643,9 +580,8 @@ class SessionTest extends TestCase
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
-     * @return void
      */
-    public function testCheckStartsSessionWithSIDinURL()
+    public function testCheckStartsSessionWithSIDinURL(): void
     {
         $_COOKIE = [];
         $_GET[session_name()] = '123abc';
@@ -665,7 +601,7 @@ class SessionTest extends TestCase
     /**
      * Test that a call of check() does not start the session when the session ID is passed via URL and session.use_trans_sid is disabled
      */
-    public function testCheckDoesntStartSessionWithoutTransSID()
+    public function testCheckDoesntStartSessionWithoutTransSID(): void
     {
         $_COOKIE = [];
         $_GET[session_name()] = '123abc';

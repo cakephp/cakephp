@@ -38,14 +38,14 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Cookie objects
      *
-     * @var \Cake\Http\Cookie\CookieInterface[]
+     * @var array<\Cake\Http\Cookie\CookieInterface>
      */
     protected $cookies = [];
 
     /**
      * Constructor
      *
-     * @param \Cake\Http\Cookie\CookieInterface[] $cookies Array of cookie objects
+     * @param array<\Cake\Http\Cookie\CookieInterface> $cookies Array of cookie objects
      */
     public function __construct(array $cookies = [])
     {
@@ -58,8 +58,8 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Create a Cookie Collection from an array of Set-Cookie Headers
      *
-     * @param array $header The array of set-cookie header values.
-     * @param array $defaults The defaults attributes.
+     * @param array<string> $header The array of set-cookie header values.
+     * @param array<string, mixed> $defaults The defaults attributes.
      * @return static
      */
     public static function createFromHeader(array $header, array $defaults = [])
@@ -187,7 +187,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Checks if only valid cookie objects are in the array
      *
-     * @param \Cake\Http\Cookie\CookieInterface[] $cookies Array of cookie objects
+     * @param array<\Cake\Http\Cookie\CookieInterface> $cookies Array of cookie objects
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -210,8 +210,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Gets the iterator
      *
-     * @return \Cake\Http\Cookie\CookieInterface[]
-     * @psalm-return \Traversable<string, \Cake\Http\Cookie\CookieInterface>
+     * @return \Traversable<string, \Cake\Http\Cookie\CookieInterface>
      */
     public function getIterator(): Traversable
     {
@@ -265,7 +264,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $scheme The http scheme to match
      * @param string $host The host to match.
      * @param string $path The path to match
-     * @return array An array of cookie name/value pairs
+     * @return array<string, mixed> An array of cookie name/value pairs
      */
     protected function findMatchingCookies(string $scheme, string $host, string $path): array
     {

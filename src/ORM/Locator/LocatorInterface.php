@@ -16,13 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Locator;
 
+use Cake\Datasource\Locator\LocatorInterface as BaseLocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 
 /**
  * Registries for Table objects should implement this interface.
  */
-interface LocatorInterface extends \Cake\Datasource\Locator\LocatorInterface
+interface LocatorInterface extends BaseLocatorInterface
 {
     /**
      * Returns configuration for an alias or the full configuration array for
@@ -37,7 +38,7 @@ interface LocatorInterface extends \Cake\Datasource\Locator\LocatorInterface
      * Stores a list of options to be used when instantiating an object
      * with a matching alias.
      *
-     * @param string|array $alias Name of the alias or array to completely
+     * @param array|string $alias Name of the alias or array to completely
      *   overwrite current config.
      * @param array|null $options list of options for the alias
      * @return $this
@@ -50,7 +51,7 @@ interface LocatorInterface extends \Cake\Datasource\Locator\LocatorInterface
      * Get a table instance from the registry.
      *
      * @param string $alias The alias name you want to get.
-     * @param array $options The options you want to build the table with.
+     * @param array<string, mixed> $options The options you want to build the table with.
      * @return \Cake\ORM\Table
      */
     public function get(string $alias, array $options = []): Table;

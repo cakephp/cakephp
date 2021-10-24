@@ -26,9 +26,12 @@ use Cake\TestSuite\TestCase;
 class ShellDispatcherTest extends TestCase
 {
     /**
+     * @var \Cake\Console\ShellDispatcher|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $dispatcher;
+
+    /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,8 +45,6 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -54,10 +55,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Test error on missing shell
-     *
-     * @return void
      */
-    public function testFindShellMissing()
+    public function testFindShellMissing(): void
     {
         $this->expectException(\Cake\Console\Exception\MissingShellException::class);
         $this->dispatcher->findShell('nope');
@@ -65,10 +64,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Test error on missing plugin shell
-     *
-     * @return void
      */
-    public function testFindShellMissingPlugin()
+    public function testFindShellMissingPlugin(): void
     {
         $this->expectException(\Cake\Console\Exception\MissingShellException::class);
         $this->dispatcher->findShell('test_plugin.nope');
@@ -76,10 +73,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verify loading of (plugin-) shells
-     *
-     * @return void
      */
-    public function testFindShell()
+    public function testFindShell(): void
     {
         $result = $this->dispatcher->findShell('sample');
         $this->assertInstanceOf('TestApp\Shell\SampleShell', $result);
@@ -98,10 +93,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * testAddShortPluginAlias
-     *
-     * @return void
      */
-    public function testAddShortPluginAlias()
+    public function testAddShortPluginAlias(): void
     {
         $expected = [
             'Company' => 'Company/TestPluginThree.company',
@@ -121,10 +114,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Test getting shells with aliases.
-     *
-     * @return void
      */
-    public function testFindShellAliased()
+    public function testFindShellAliased(): void
     {
         ShellDispatcher::alias('short', 'test_plugin.example');
 
@@ -138,10 +129,8 @@ class ShellDispatcherTest extends TestCase
      * Test finding a shell that has a matching alias.
      *
      * Aliases should not overload concrete shells.
-     *
-     * @return void
      */
-    public function testFindShellAliasedAppShadow()
+    public function testFindShellAliasedAppShadow(): void
     {
         ShellDispatcher::alias('sample', 'test_plugin.example');
 
@@ -153,10 +142,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verify dispatch handling stop errors
-     *
-     * @return void
      */
-    public function testDispatchShellWithAbort()
+    public function testDispatchShellWithAbort(): void
     {
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMockBuilder('Cake\Console\Shell')
@@ -165,7 +152,7 @@ class ShellDispatcherTest extends TestCase
             ->getMock();
         $shell->expects($this->once())
             ->method('main')
-            ->will($this->returnCallback(function () use ($shell) {
+            ->will($this->returnCallback(function () use ($shell): void {
                 $shell->abort('Bad things', 99);
             }));
 
@@ -184,10 +171,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verify correct dispatch of Shell subclasses with a main method
-     *
-     * @return void
      */
-    public function testDispatchShellWithMain()
+    public function testDispatchShellWithMain(): void
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->onlyMethods(['findShell'])
@@ -219,10 +204,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verifies correct dispatch of Shell subclasses with integer exit codes.
-     *
-     * @return void
      */
-    public function testDispatchShellWithIntegerSuccessCode()
+    public function testDispatchShellWithIntegerSuccessCode(): void
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->onlyMethods(['findShell'])
@@ -248,10 +231,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verifies correct dispatch of Shell subclasses with custom integer exit codes.
-     *
-     * @return void
      */
-    public function testDispatchShellWithCustomIntegerCodes()
+    public function testDispatchShellWithCustomIntegerCodes(): void
     {
         $customErrorCode = 3;
 
@@ -279,10 +260,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verify correct dispatch of Shell subclasses without a main method
-     *
-     * @return void
      */
-    public function testDispatchShellWithoutMain()
+    public function testDispatchShellWithoutMain(): void
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->onlyMethods(['findShell'])
@@ -308,10 +287,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verify you can dispatch a plugin's main shell with the shell name alone
-     *
-     * @return void
      */
-    public function testDispatchShortPluginAlias()
+    public function testDispatchShortPluginAlias(): void
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->onlyMethods(['_shellExists', '_createShell'])
@@ -337,10 +314,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Ensure short plugin shell usage is case/camelized insensitive
-     *
-     * @return void
      */
-    public function testDispatchShortPluginAliasCamelized()
+    public function testDispatchShortPluginAliasCamelized(): void
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->onlyMethods(['_shellExists', '_createShell'])
@@ -366,10 +341,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verify that in case of conflict, app shells take precedence in alias list
-     *
-     * @return void
      */
-    public function testDispatchShortPluginAliasConflict()
+    public function testDispatchShortPluginAliasConflict(): void
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->onlyMethods(['_shellExists', '_createShell'])
@@ -395,10 +368,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Verify shifting of arguments
-     *
-     * @return void
      */
-    public function testShiftArgs()
+    public function testShiftArgs(): void
     {
         $this->dispatcher->args = ['a', 'b', 'c'];
         $this->assertSame('a', $this->dispatcher->shiftArgs());
@@ -423,10 +394,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Test how `bin/cake --help` works.
-     *
-     * @return void
      */
-    public function testHelpOption()
+    public function testHelpOption(): void
     {
         $this->expectWarning();
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
@@ -438,10 +407,8 @@ class ShellDispatcherTest extends TestCase
 
     /**
      * Test how `bin/cake --version` works.
-     *
-     * @return void
      */
-    public function testVersionOption()
+    public function testVersionOption(): void
     {
         $this->expectWarning();
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')

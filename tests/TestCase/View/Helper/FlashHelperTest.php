@@ -36,8 +36,6 @@ class FlashHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -104,8 +102,6 @@ class FlashHelperTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -116,10 +112,8 @@ class FlashHelperTest extends TestCase
 
     /**
      * testFlash method
-     *
-     * @return void
      */
-    public function testFlash()
+    public function testFlash(): void
     {
         $result = $this->Flash->render();
         $expected = '<div class="message">This is a calling</div>';
@@ -143,10 +137,8 @@ class FlashHelperTest extends TestCase
 
     /**
      * test setting the element from the attrs.
-     *
-     * @return void
      */
-    public function testFlashElementInAttrs()
+    public function testFlashElementInAttrs(): void
     {
         $result = $this->Flash->render('notification', [
             'element' => 'flash_helper',
@@ -165,10 +157,8 @@ class FlashHelperTest extends TestCase
 
     /**
      * test using elements in plugins.
-     *
-     * @return void
      */
-    public function testFlashWithPluginElement()
+    public function testFlashWithPluginElement(): void
     {
         $this->loadPlugins(['TestPlugin']);
 
@@ -179,10 +169,8 @@ class FlashHelperTest extends TestCase
 
     /**
      * test that when View theme is set, flash element from that theme (plugin) is used.
-     *
-     * @return void
      */
-    public function testFlashWithTheme()
+    public function testFlashWithTheme(): void
     {
         $this->loadPlugins(['TestTheme']);
 
@@ -195,10 +183,8 @@ class FlashHelperTest extends TestCase
     /**
      * Test that when rendering a stack, messages are displayed in their
      * respective element, in the order they were added in the stack
-     *
-     * @return void
      */
-    public function testFlashWithStack()
+    public function testFlashWithStack(): void
     {
         $result = $this->Flash->render('stack');
         $expected = [
@@ -217,10 +203,8 @@ class FlashHelperTest extends TestCase
     /**
      * test that when View prefix is set, flash element from that prefix
      * is used if available.
-     *
-     * @return void
      */
-    public function testFlashWithPrefix()
+    public function testFlashWithPrefix(): void
     {
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $result = $this->Flash->render('flash');

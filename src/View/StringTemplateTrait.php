@@ -36,7 +36,7 @@ trait StringTemplateTrait
     /**
      * Sets templates to use.
      *
-     * @param string[] $templates Templates to be added.
+     * @param array<string> $templates Templates to be added.
      * @return $this
      */
     public function setTemplates(array $templates)
@@ -50,7 +50,7 @@ trait StringTemplateTrait
      * Gets templates to use or a specific template.
      *
      * @param string|null $template String for reading a specific template, null for all.
-     * @return string|array
+     * @return array|string
      */
     public function getTemplates(?string $template = null)
     {
@@ -61,7 +61,7 @@ trait StringTemplateTrait
      * Formats a template string with $data
      *
      * @param string $name The template name.
-     * @param array $data The data to insert.
+     * @param array<string, mixed> $data The data to insert.
      * @return string
      */
     public function formatTemplate(string $name, array $data): string

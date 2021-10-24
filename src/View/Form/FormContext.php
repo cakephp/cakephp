@@ -19,7 +19,7 @@ namespace Cake\View\Form;
 use Cake\Utility\Hash;
 
 /**
- * Provides a context provider for Cake\Form\Form instances.
+ * Provides a context provider for {@link \Cake\Form\Form} instances.
  *
  * This context provider simply fulfils the interface requirements
  * that FormHelper has and allows access to the form data.
@@ -49,7 +49,7 @@ class FormContext implements ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return string[]
+     * @return array<string>
      * @deprecated 4.0.0 Renamed to {@link getPrimaryKey()}.
      */
     public function primaryKey(): array

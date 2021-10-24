@@ -33,12 +33,11 @@ class FilesystemTest extends TestCase
 
     protected $vfsPath;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
+
+        $this->skipIf(version_compare(PHP_VERSION, '8.1.0-dev', '>='));
 
         $this->vfs = vfsStream::setup('root');
         $this->vfsPath = vfsStream::url('root');
@@ -49,10 +48,9 @@ class FilesystemTest extends TestCase
     }
 
     /**
-     * @return void
      * @covers ::mkdir
      */
-    public function testMkdir()
+    public function testMkdir(): void
     {
         $path = $this->vfsPath . DS . 'tests' . DS . 'first' . DS . 'second' . DS . 'third';
         $this->fs->mkdir($path);
@@ -60,10 +58,9 @@ class FilesystemTest extends TestCase
     }
 
     /**
-     * @return void
      * @covers ::dumpFile
      */
-    public function testDumpFile()
+    public function testDumpFile(): void
     {
         $path = $this->vfsPath . DS . 'foo.txt';
 
@@ -76,10 +73,9 @@ class FilesystemTest extends TestCase
     }
 
     /**
-     * @return void
      * @covers ::copyDir
      */
-    public function testCopyDir()
+    public function testCopyDir(): void
     {
         $return = $this->fs->copyDir(WWW_ROOT, $this->vfsPath . DS . 'dest');
 
@@ -87,10 +83,9 @@ class FilesystemTest extends TestCase
     }
 
     /**
-     * @return void
      * @covers ::deleteDir
      */
-    public function testDeleteDir()
+    public function testDeleteDir(): void
     {
         $structure = [
             'Core' => [
@@ -112,10 +107,8 @@ class FilesystemTest extends TestCase
 
     /**
      * Tests deleteDir() on directory that contains symlinks
-     *
-     * @return void
      */
-    public function testDeleteDirWithLinks()
+    public function testDeleteDirWithLinks(): void
     {
         $path = TMP . 'fs_links_test';
         // phpcs:ignore

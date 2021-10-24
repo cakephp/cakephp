@@ -43,8 +43,6 @@ class TableHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -57,10 +55,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output
-     *
-     * @return void
      */
-    public function testOutputDefaultOutput()
+    public function testOutputDefaultOutput(): void
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -85,10 +81,8 @@ class TableHelperTest extends TestCase
      * When outputting entities or other structured data,
      * headers shouldn't need to have the same keys as it is
      * annoying to use.
-     *
-     * @return void
      */
-    public function testOutputInconsistentKeys()
+    public function testOutputInconsistentKeys(): void
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -109,10 +103,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test that output works when data contains just empty strings.
-     *
-     * @return void
      */
-    public function testOutputEmptyStrings()
+    public function testOutputEmptyStrings(): void
     {
         $data = [
             ['Header 1', 'Header', 'Empty'],
@@ -134,7 +126,7 @@ class TableHelperTest extends TestCase
     /**
      * Test that output works when data contains nulls.
      */
-    public function testNullValues()
+    public function testNullValues(): void
     {
         $data = [
             ['Header 1', 'Header', 'Empty'],
@@ -155,10 +147,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output with multi-byte characters
-     *
-     * @return void
      */
-    public function testOutputUtf8()
+    public function testOutputUtf8(): void
     {
         $data = [
             ['Header 1', 'Head', 'Long Header'],
@@ -179,10 +169,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output with multi-byte characters
-     *
-     * @return void
      */
-    public function testOutputFullwidth()
+    public function testOutputFullwidth(): void
     {
         $data = [
             ['Header 1', 'Head', 'Long Header'],
@@ -203,10 +191,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output without headers
-     *
-     * @return void
      */
-    public function testOutputWithoutHeaderStyle()
+    public function testOutputWithoutHeaderStyle(): void
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -228,10 +214,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output with different header style
-     *
-     * @return void
      */
-    public function testOutputWithDifferentHeaderStyle()
+    public function testOutputWithDifferentHeaderStyle(): void
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -253,10 +237,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output without table headers
-     *
-     * @return void
      */
-    public function testOutputWithoutHeaders()
+    public function testOutputWithoutHeaders(): void
     {
         $data = [
             ['short', 'Longish thing', 'short'],
@@ -275,10 +257,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output with formatted cells
-     *
-     * @return void
      */
-    public function testOutputWithFormattedCells()
+    public function testOutputWithFormattedCells(): void
     {
         $data = [
             ['short', 'Longish thing', '<info>short</info>'],
@@ -297,10 +277,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output with row separator
-     *
-     * @return void
      */
-    public function testOutputWithRowSeparator()
+    public function testOutputWithRowSeparator(): void
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -323,10 +301,8 @@ class TableHelperTest extends TestCase
 
     /**
      * Test output with row separator and no headers
-     *
-     * @return void
      */
-    public function testOutputWithRowSeparatorAndHeaders()
+    public function testOutputWithRowSeparatorAndHeaders(): void
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -350,7 +326,7 @@ class TableHelperTest extends TestCase
     /**
      * Test output when there is no data.
      */
-    public function testOutputWithNoData()
+    public function testOutputWithNoData(): void
     {
         $this->helper->output([]);
         $this->assertEquals([], $this->stub->messages());
@@ -359,7 +335,7 @@ class TableHelperTest extends TestCase
     /**
      * Test output with a header but no data.
      */
-    public function testOutputWithHeaderAndNoData()
+    public function testOutputWithHeaderAndNoData(): void
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -376,7 +352,7 @@ class TableHelperTest extends TestCase
     /**
      * Test no data when headers are disabled.
      */
-    public function testOutputHeaderDisabledNoData()
+    public function testOutputHeaderDisabledNoData(): void
     {
         $this->helper->setConfig(['header' => false]);
         $this->helper->output([]);
@@ -386,7 +362,7 @@ class TableHelperTest extends TestCase
     /**
      * Right-aligned text style test.
      */
-    public function testTextRightStyle()
+    public function testTextRightStyle(): void
     {
         $data = [
             ['Item', 'Price per piece (yen)'],
@@ -408,7 +384,7 @@ class TableHelperTest extends TestCase
     /**
      * Right-aligned text style test.(If there is text rightside the text-right tag)
      */
-    public function testTextRightsideTheTextRightTag()
+    public function testTextRightsideTheTextRightTag(): void
     {
         $this->expectException(\UnexpectedValueException::class);
         $data = [
@@ -421,7 +397,7 @@ class TableHelperTest extends TestCase
     /**
      * Right-aligned text style test.(If there is text leftside the text-right tag)
      */
-    public function testTextLeftsideTheTextRightTag()
+    public function testTextLeftsideTheTextRightTag(): void
     {
         $this->expectException(\UnexpectedValueException::class);
         $data = [
@@ -434,7 +410,7 @@ class TableHelperTest extends TestCase
     /**
      * Table row column of type integer should be cast to string
      */
-    public function testRowValueInteger()
+    public function testRowValueInteger(): void
     {
         $data = [
             ['Item', 'Quantity'],
@@ -455,7 +431,7 @@ class TableHelperTest extends TestCase
     /**
      * Table row column of type null should be cast to empty string
      */
-    public function testRowValueNull()
+    public function testRowValueNull(): void
     {
         $data = [
             ['Item', 'Quantity'],

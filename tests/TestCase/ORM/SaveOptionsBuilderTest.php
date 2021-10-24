@@ -20,6 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * SaveOptionsBuilder test case.
@@ -27,7 +28,7 @@ use Cake\TestSuite\TestCase;
 class SaveOptionsBuilderTest extends TestCase
 {
     /**
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Articles',
@@ -43,16 +44,14 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->connection = ConnectionManager::get('test');
+        $connection = ConnectionManager::get('test');
         $this->table = new Table([
             'table' => 'articles',
-            'connection' => $this->connection,
+            'connection' => $connection,
         ]);
 
         $this->table->belongsTo('Authors');
@@ -62,10 +61,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testAssociatedChecks
-     *
-     * @return void
      */
-    public function testAssociatedChecks()
+    public function testAssociatedChecks(): void
     {
         $expected = [
             'associated' => [
@@ -101,7 +98,7 @@ class SaveOptionsBuilderTest extends TestCase
                 'Comments.DoesNotExist'
             );
             $this->fail('No \RuntimeException throw for invalid association!');
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
         }
 
         $expected = [
@@ -149,10 +146,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testBuilder
-     *
-     * @return void
      */
-    public function testBuilder()
+    public function testBuilder(): void
     {
         $expected = [
             'associated' => [
@@ -191,10 +186,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testParseOptionsArray
-     *
-     * @return void
      */
-    public function testParseOptionsArray()
+    public function testParseOptionsArray(): void
     {
         $options = [
             'associated' => [
@@ -218,10 +211,8 @@ class SaveOptionsBuilderTest extends TestCase
 
     /**
      * testSettingCustomOptions
-     *
-     * @return void
      */
-    public function testSettingCustomOptions()
+    public function testSettingCustomOptions(): void
     {
         $expected = [
             'myOption' => true,

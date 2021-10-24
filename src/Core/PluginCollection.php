@@ -40,21 +40,21 @@ class PluginCollection implements Iterator, Countable
     /**
      * Plugin list
      *
-     * @var \Cake\Core\PluginInterface[]
+     * @var array<\Cake\Core\PluginInterface>
      */
     protected $plugins = [];
 
     /**
      * Names of plugins
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $names = [];
 
     /**
      * Iterator position stack.
      *
-     * @var int[]
+     * @var array<int>
      */
     protected $positions = [];
 
@@ -68,7 +68,7 @@ class PluginCollection implements Iterator, Countable
     /**
      * Constructor
      *
-     * @param \Cake\Core\PluginInterface[] $plugins The map of plugins to add to the collection.
+     * @param array<\Cake\Core\PluginInterface> $plugins The map of plugins to add to the collection.
      */
     public function __construct(array $plugins = [])
     {
@@ -226,7 +226,7 @@ class PluginCollection implements Iterator, Countable
      * Create a plugin instance from a name/classname and configuration.
      *
      * @param string $name The plugin name or classname
-     * @param array $config Configuration options for the plugin.
+     * @param array<string, mixed> $config Configuration options for the plugin.
      * @return \Cake\Core\PluginInterface
      * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
      */
@@ -326,9 +326,8 @@ class PluginCollection implements Iterator, Countable
      * Filter the plugins to those with the named hook enabled.
      *
      * @param string $hook The hook to filter plugins by
-     * @return \Generator&\Cake\Core\PluginInterface[] A generator containing matching plugins.
+     * @return \Generator<\Cake\Core\PluginInterface> A generator containing matching plugins.
      * @throws \InvalidArgumentException on invalid hooks
-     * @psalm-return \Generator<\Cake\Core\PluginInterface>
      */
     public function with(string $hook): Generator
     {

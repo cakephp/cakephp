@@ -31,8 +31,6 @@ class OpenSslTest extends TestCase
 
     /**
      * Setup function.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,10 +41,8 @@ class OpenSslTest extends TestCase
 
     /**
      * Test encrypt/decrypt.
-     *
-     * @return void
      */
-    public function testEncryptDecrypt()
+    public function testEncryptDecrypt(): void
     {
         $txt = 'The quick brown fox';
         $key = 'This key is enough bytes';
@@ -58,10 +54,8 @@ class OpenSslTest extends TestCase
 
     /**
      * Test that changing the key causes decryption to fail.
-     *
-     * @return void
      */
-    public function testDecryptKeyFailure()
+    public function testDecryptKeyFailure(): void
     {
         $txt = 'The quick brown fox';
         $key = 'This key is enough bytes';

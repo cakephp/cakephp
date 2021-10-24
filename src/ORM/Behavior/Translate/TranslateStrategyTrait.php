@@ -106,7 +106,7 @@ trait TranslateStrategyTrait
      */
     protected function unsetEmptyFields($entity)
     {
-        /** @var \Cake\ORM\Entity[] $translations */
+        /** @var array<\Cake\ORM\Entity> $translations */
         $translations = (array)$entity->get('_translations');
         foreach ($translations as $locale => $translation) {
             $fields = $translation->extract($this->_config['fields'], false);
@@ -141,7 +141,7 @@ trait TranslateStrategyTrait
      *
      * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -178,7 +178,7 @@ trait TranslateStrategyTrait
 
                 // Set errors into the root entity, so validation errors match the original form data position.
                 if ($errors) {
-                    $entity->setErrors($errors);
+                    $entity->setErrors(['_translations' => $errors]);
                 }
 
                 return $translations;

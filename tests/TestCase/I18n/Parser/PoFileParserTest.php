@@ -28,8 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class PoFileParserTest extends TestCase
 {
-    protected $locale;
-
     /**
      * Locale folder path
      *
@@ -39,35 +37,28 @@ class PoFileParserTest extends TestCase
 
     /**
      * Set Up
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->locale = I18n::getLocale();
         $this->path = Configure::read('App.paths.locales.0');
     }
 
     /**
      * Tear down method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
         parent::tearDown();
         I18n::clear();
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
         Cache::clear('_cake_core_');
     }
 
     /**
      * Tests parsing a file with plurals and message context
-     *
-     * @return void
      */
-    public function testParse()
+    public function testParse(): void
     {
         $parser = new PoFileParser();
         $file = $this->path . 'rule_1_po' . DS . 'default.po';
@@ -136,10 +127,8 @@ class PoFileParserTest extends TestCase
 
     /**
      * Tests parsing a file with multiline keys and values
-     *
-     * @return void
      */
-    public function testParseMultiLine()
+    public function testParseMultiLine(): void
     {
         $parser = new PoFileParser();
         $file = $this->path . 'en' . DS . 'default.po';
@@ -152,10 +141,8 @@ class PoFileParserTest extends TestCase
 
     /**
      * Test parsing a file with quoted strings
-     *
-     * @return void
      */
-    public function testQuotedString()
+    public function testQuotedString(): void
     {
         $parser = new PoFileParser();
         $file = $this->path . 'en' . DS . 'default.po';
@@ -170,10 +157,8 @@ class PoFileParserTest extends TestCase
      * This behavior is not ideal, but more thorough solutions
      * would break compatibility. Perhaps this is something we can
      * reconsider in 4.x
-     *
-     * @return void
      */
-    public function testParseContextOnSomeMessages()
+    public function testParseContextOnSomeMessages(): void
     {
         $parser = new PoFileParser();
         $file = $this->path . 'en' . DS . 'context.po';
@@ -206,10 +191,8 @@ class PoFileParserTest extends TestCase
 
     /**
      * Test parsing context based messages
-     *
-     * @return void
      */
-    public function testParseContextMessages()
+    public function testParseContextMessages(): void
     {
         $parser = new PoFileParser();
         $file = $this->path . 'en' . DS . 'context.po';
@@ -231,10 +214,8 @@ class PoFileParserTest extends TestCase
 
     /**
      * Test parsing plurals
-     *
-     * @return void
      */
-    public function testPlurals()
+    public function testPlurals(): void
     {
         I18n::getTranslator('default', 'de_DE');
 

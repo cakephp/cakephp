@@ -93,7 +93,7 @@ abstract class Cell implements EventDispatcherInterface
      * Override this property in subclasses to allow
      * which options you want set as properties in your Cell.
      *
-     * @var array
+     * @var array<string>
      */
     protected $_validCellOptions = [];
 
@@ -109,8 +109,8 @@ abstract class Cell implements EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest $request The request to use in the cell.
      * @param \Cake\Http\Response $response The response to use in the cell.
-     * @param \Cake\Event\EventManagerInterface $eventManager The eventManager to bind events to.
-     * @param array $cellOptions Cell options to apply.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager The eventManager to bind events to.
+     * @param array<string, mixed> $cellOptions Cell options to apply.
      */
     public function __construct(
         ServerRequest $request,
@@ -158,6 +158,7 @@ abstract class Cell implements EventDispatcherInterface
      * @return string The rendered cell.
      * @throws \Cake\View\Exception\MissingCellTemplateException
      *   When a MissingTemplateException is raised during rendering.
+     * @throws \BadMethodCallException
      */
     public function render(?string $template = null): string
     {
@@ -284,7 +285,7 @@ abstract class Cell implements EventDispatcherInterface
     /**
      * Debug info.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

@@ -48,7 +48,7 @@ class TaskRegistry extends ObjectRegistry
     /**
      * Resolve a task classname.
      *
-     * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}.
      *
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
@@ -66,7 +66,7 @@ class TaskRegistry extends ObjectRegistry
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the task is missing in.
+     * @param string|null $plugin The plugin the task is missing in.
      * @return void
      * @throws \Cake\Console\Exception\MissingTaskException
      */
@@ -85,7 +85,7 @@ class TaskRegistry extends ObjectRegistry
      *
      * @param string $class The classname to create.
      * @param string $alias The alias of the task.
-     * @param array $config An array of settings to use for the task.
+     * @param array<string, mixed> $config An array of settings to use for the task.
      * @return \Cake\Console\Shell The constructed task class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */

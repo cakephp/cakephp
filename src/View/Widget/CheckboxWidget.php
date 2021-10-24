@@ -29,7 +29,7 @@ class CheckboxWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaults = [
         'name' => '',
@@ -48,11 +48,11 @@ class CheckboxWidget extends BasicWidget
      * - `value` - The value attribute. Defaults to '1'.
      * - `val` - The current value. If it matches `value` the checkbox will be checked.
      *   You can also use the 'checked' attribute to make the checkbox checked.
-     * - `disabled` - Whether or not the checkbox should be disabled.
+     * - `disabled` - Whether the checkbox should be disabled.
      *
      * Any other attributes passed in will be treated as HTML attributes.
      *
-     * @param array $data The data to create a checkbox with.
+     * @param array<string, mixed> $data The data to create a checkbox with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string Generated HTML string.
      */
@@ -79,9 +79,9 @@ class CheckboxWidget extends BasicWidget
     }
 
     /**
-     * Check whether or not the checkbox should be checked.
+     * Checks whether the checkbox should be checked.
      *
-     * @param array $data Data to look at and determine checked state.
+     * @param array<string, mixed> $data Data to look at and determine checked state.
      * @return bool
      */
     protected function _isChecked(array $data): bool

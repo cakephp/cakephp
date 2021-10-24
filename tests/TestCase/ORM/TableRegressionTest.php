@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -27,7 +28,7 @@ class TableRegressionTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Authors',
@@ -38,15 +39,14 @@ class TableRegressionTest extends TestCase
      * in the afterSave callback
      *
      * @see https://github.com/cakephp/cakephp/issues/9079
-     * @return void
      */
-    public function testAfterSaveRollbackTransaction()
+    public function testAfterSaveRollbackTransaction(): void
     {
-        $this->expectException(\Cake\ORM\Exception\RolledbackTransactionException::class);
+        $this->expectException(RolledbackTransactionException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',
-            function () use ($table) {
+            function () use ($table): void {
                 $table->getConnection()->rollback();
             }
         );
@@ -56,10 +56,8 @@ class TableRegressionTest extends TestCase
 
     /**
      * Ensure that saving to a table with no primary key fails.
-     *
-     * @return void
      */
-    public function testSaveNoPrimaryKeyException()
+    public function testSaveNoPrimaryKeyException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('primary key');

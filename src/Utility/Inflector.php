@@ -29,7 +29,7 @@ class Inflector
     /**
      * Plural inflector rules
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_plural = [
         '/(s)tatus$/i' => '\1tatuses',
@@ -60,7 +60,7 @@ class Inflector
     /**
      * Singular inflector rules
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_singular = [
         '/(s)tatuses$/i' => '\1\2tatus',
@@ -69,7 +69,7 @@ class Inflector
         '/(matr)ices$/i' => '\1ix',
         '/(vert|ind)ices$/i' => '\1ex',
         '/^(ox)en/i' => '\1',
-        '/(alias)(es)*$/i' => '\1',
+        '/(alias|lens)(es)*$/i' => '\1',
         '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
         '/([ftw]ax)es/i' => '\1',
         '/(cris|ax|test)es$/i' => '\1is',
@@ -81,6 +81,7 @@ class Inflector
         '/(x|ch|ss|sh)es$/i' => '\1',
         '/(m)ovies$/i' => '\1\2ovie',
         '/(s)eries$/i' => '\1\2eries',
+        '/(s)pecies$/i' => '\1\2pecies',
         '/([^aeiouy]|qu)ies$/i' => '\1y',
         '/(tive)s$/i' => '\1',
         '/(hive)s$/i' => '\1',
@@ -102,7 +103,7 @@ class Inflector
     /**
      * Irregular rules
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_irregular = [
         'atlas' => 'atlases',
@@ -152,7 +153,7 @@ class Inflector
     /**
      * Words that should not be inflected
      *
-     * @var array
+     * @var array<string>
      */
     protected static $_uninflected = [
         '.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',

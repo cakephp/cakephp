@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\TestSuite\TestCase;
+use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 use TestApp\Config\ReadOnlyTestInstanceConfig;
@@ -31,8 +32,6 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,10 +41,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testDefaultsAreSet
-     *
-     * @return void
      */
-    public function testDefaultsAreSet()
+    public function testDefaultsAreSet(): void
     {
         $this->assertSame(
             [
@@ -62,10 +59,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testGetSimple
-     *
-     * @return void
      */
-    public function testGetSimple()
+    public function testGetSimple(): void
     {
         $this->assertSame(
             'string',
@@ -82,10 +77,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testGetDot
-     *
-     * @return void
      */
-    public function testGetDot()
+    public function testGetDot(): void
     {
         $this->assertSame(
             'value',
@@ -96,10 +89,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testGetDefault
-     *
-     * @return void
      */
-    public function testGetDefault()
+    public function testGetDefault(): void
     {
         $this->assertSame(
             'default',
@@ -114,10 +105,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testSetSimple
-     *
-     * @return void
      */
-    public function testSetSimple()
+    public function testSetSimple(): void
     {
         $this->object->setConfig('foo', 'bar');
         $this->assertSame(
@@ -151,10 +140,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testSetNested
-     *
-     * @return void
      */
-    public function testSetNested()
+    public function testSetNested(): void
     {
         $this->object->setConfig('new.foo', 'bar');
         $this->assertSame(
@@ -183,10 +170,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testSetNested
-     *
-     * @return void
      */
-    public function testSetArray()
+    public function testSetArray(): void
     {
         $this->object->setConfig(['foo' => 'bar']);
         $this->assertSame(
@@ -238,10 +223,7 @@ class InstanceConfigTraitTest extends TestCase
         );
     }
 
-    /**
-     * @return void
-     */
-    public function testGetConfigOrFail()
+    public function testGetConfigOrFail(): void
     {
         $this->object->setConfig(['foo' => 'bar']);
         $this->assertSame(
@@ -251,10 +233,7 @@ class InstanceConfigTraitTest extends TestCase
         );
     }
 
-    /**
-     * @return void
-     */
-    public function testGetConfigOrFailException()
+    public function testGetConfigOrFailException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected configuration `foo` not found.');
@@ -264,10 +243,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * test shallow merge
-     *
-     * @return void
      */
-    public function testConfigShallow()
+    public function testConfigShallow(): void
     {
         $this->object->configShallow(['a' => ['new_nested' => true], 'new' => 'bar']);
 
@@ -284,10 +261,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testSetClobber
-     *
-     * @return void
      */
-    public function testSetClobber()
+    public function testSetClobber(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot set a.nested.value');
@@ -297,10 +272,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testMerge
-     *
-     * @return void
      */
-    public function testMerge()
+    public function testMerge(): void
     {
         $this->object->setConfig(['a' => ['nother' => 'value']]);
 
@@ -320,10 +293,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testMergeDotKey
-     *
-     * @return void
      */
-    public function testMergeDotKey()
+    public function testMergeDotKey(): void
     {
         $this->object->setConfig('a.nother', 'value');
 
@@ -359,10 +330,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testSetDefaultsMerge
-     *
-     * @return void
      */
-    public function testSetDefaultsMerge()
+    public function testSetDefaultsMerge(): void
     {
         $this->object->setConfig(['a' => ['nother' => 'value']]);
 
@@ -382,10 +351,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testSetDefaultsNoMerge
-     *
-     * @return void
      */
-    public function testSetDefaultsNoMerge()
+    public function testSetDefaultsNoMerge(): void
     {
         $this->object->setConfig(['a' => ['nother' => 'value']], null, false);
 
@@ -406,10 +373,8 @@ class InstanceConfigTraitTest extends TestCase
      *
      * Merging offers no such protection of clobbering a value whilst implemented
      * using the Hash class
-     *
-     * @return void
      */
-    public function testSetMergeNoClobber()
+    public function testSetMergeNoClobber(): void
     {
         $this->object->setConfig(['a.nested.value' => 'it is possible']);
 
@@ -430,12 +395,10 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testReadOnlyConfig
-     *
-     * @return void
      */
-    public function testReadOnlyConfig()
+    public function testReadOnlyConfig(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('This Instance is readonly');
         $object = new ReadOnlyTestInstanceConfig();
 
@@ -453,10 +416,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testDeleteSimple
-     *
-     * @return void
      */
-    public function testDeleteSimple()
+    public function testDeleteSimple(): void
     {
         $this->object->setConfig('foo', null);
         $this->assertNull(
@@ -481,10 +442,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testDeleteNested
-     *
-     * @return void
      */
-    public function testDeleteNested()
+    public function testDeleteNested(): void
     {
         $this->object->setConfig('new.foo', null);
         $this->assertNull(
@@ -525,10 +484,8 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testDeleteArray
-     *
-     * @return void
      */
-    public function testDeleteArray()
+    public function testDeleteArray(): void
     {
         $this->object->setConfig('a', null);
         $this->assertNull(
@@ -546,12 +503,10 @@ class InstanceConfigTraitTest extends TestCase
 
     /**
      * testDeleteClobber
-     *
-     * @return void
      */
-    public function testDeleteClobber()
+    public function testDeleteClobber(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot unset a.nested.value.whoops');
         $this->object->setConfig('a.nested.value.whoops', null);
     }

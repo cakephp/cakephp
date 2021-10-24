@@ -34,7 +34,7 @@ class EagerLoader
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_containments = [];
 
@@ -42,7 +42,7 @@ class EagerLoader
      * Contains a nested array with the compiled containments tree
      * This is a normalized version of the user provided containments array.
      *
-     * @var \Cake\ORM\EagerLoadable[]|\Cake\ORM\EagerLoadable|null
+     * @var \Cake\ORM\EagerLoadable|array<\Cake\ORM\EagerLoadable>|null
      */
     protected $_normalized;
 
@@ -50,7 +50,7 @@ class EagerLoader
      * List of options accepted by associations in contain()
      * index by key for faster access
      *
-     * @var array
+     * @var array<string, int>
      */
     protected $_containOptions = [
         'associations' => 1,
@@ -69,7 +69,7 @@ class EagerLoader
     /**
      * A list of associations that should be loaded with a separate query
      *
-     * @var \Cake\ORM\EagerLoadable[]
+     * @var array<\Cake\ORM\EagerLoadable>
      */
     protected $_loadExternal = [];
 
@@ -96,7 +96,7 @@ class EagerLoader
     protected $_joinsMap = [];
 
     /**
-     * Controls whether or not fields from associated tables
+     * Controls whether fields from associated tables
      * will be eagerly loaded. When set to false, no fields will
      * be loaded from associations.
      *
@@ -137,7 +137,7 @@ class EagerLoader
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
-                    sprintf('Cannot set containments. To use $queryBuilder, $associations must be a string')
+                    'Cannot set containments. To use $queryBuilder, $associations must be a string'
                 );
             }
 
@@ -187,7 +187,7 @@ class EagerLoader
     }
 
     /**
-     * Sets whether or not contained associations will load fields automatically.
+     * Sets whether contained associations will load fields automatically.
      *
      * @param bool $enable The value to set.
      * @return $this
@@ -212,7 +212,7 @@ class EagerLoader
     }
 
     /**
-     * Gets whether or not contained associations will load fields automatically.
+     * Gets whether contained associations will load fields automatically.
      *
      * @return bool The current value.
      */
@@ -230,41 +230,37 @@ class EagerLoader
      *
      *  ### Options
      *
-     *  - 'joinType': INNER, OUTER, ...
-     *  - 'fields': Fields to contain
+     *  - `joinType`: INNER, OUTER, ...
+     *  - `fields`: Fields to contain
+     *  - `negateMatch`: Whether to add conditions negate match on target association
      *
-     * @param string $assoc A single association or a dot separated path of associations.
+     * @param string $associationPath Dot separated association path, 'Name1.Name2.Name3'
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
-     * @param array $options Extra options for the association matching.
+     * @param array<string, mixed> $options Extra options for the association matching.
      * @return $this
      */
-    public function setMatching(string $assoc, ?callable $builder = null, array $options = [])
+    public function setMatching(string $associationPath, ?callable $builder = null, array $options = [])
     {
         if ($this->_matching === null) {
             $this->_matching = new static();
         }
 
-        if (!isset($options['joinType'])) {
-            $options['joinType'] = Query::JOIN_TYPE_INNER;
+        $options += ['joinType' => Query::JOIN_TYPE_INNER];
+        $sharedOptions = ['negateMatch' => false, 'matching' => true] + $options;
+
+        $contains = [];
+        $nested = &$contains;
+        foreach (explode('.', $associationPath) as $association) {
+            // Add contain to parent contain using association name as key
+            $nested[$association] = $sharedOptions;
+            // Set to next nested level
+            $nested = &$nested[$association];
         }
 
-        $assocs = explode('.', $assoc);
-        $last = array_pop($assocs);
-        $containments = [];
-        $pointer = &$containments;
-        $opts = ['matching' => true] + $options;
-        /** @psalm-suppress InvalidArrayOffset */
-        unset($opts['negateMatch']);
-
-        foreach ($assocs as $name) {
-            $pointer[$name] = $opts;
-            $pointer = &$pointer[$name];
-        }
-
-        $pointer[$last] = ['queryBuilder' => $builder, 'matching' => true] + $options;
-
-        $this->_matching->contain($containments);
+        // Add all options to target association contain which is the last in nested chain
+        $nested = ['matching' => true, 'queryBuilder' => $builder] + $options;
+        $this->_matching->contain($contains);
 
         return $this;
     }
@@ -288,11 +284,11 @@ class EagerLoader
      * loaded for a table. The normalized array will restructure the original array
      * by sorting all associations under one key and special options under another.
      *
-     * Each of the levels of the associations tree will converted to a Cake\ORM\EagerLoadable
+     * Each of the levels of the associations tree will be converted to a {@link \Cake\ORM\EagerLoadable}
      * object, that contains all the information required for the association objects
      * to load the information from the database.
      *
-     * Additionally it will set an 'instance' key per association containing the
+     * Additionally, it will set an 'instance' key per association containing the
      * association instance from the corresponding source table
      *
      * @param \Cake\ORM\Table $repository The table containing the association that
@@ -442,7 +438,7 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the associations to be
      * attached
-     * @return \Cake\ORM\EagerLoadable[]
+     * @return array<\Cake\ORM\EagerLoadable>
      */
     public function attachableAssociations(Table $repository): array
     {
@@ -456,11 +452,11 @@ class EagerLoader
 
     /**
      * Returns an array with the associations that need to be fetched using a
-     * separate query, each array value will contain a Cake\ORM\EagerLoadable object.
+     * separate query, each array value will contain a {@link \Cake\ORM\EagerLoadable} object.
      *
      * @param \Cake\ORM\Table $repository The table containing the associations
      * to be loaded
-     * @return \Cake\ORM\EagerLoadable[]
+     * @return array<\Cake\ORM\EagerLoadable>
      */
     public function externalAssociations(Table $repository): array
     {
@@ -479,8 +475,8 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $parent owning side of the association
      * @param string $alias name of the association to be loaded
-     * @param array $options list of extra options to use for this association
-     * @param array $paths An array with two values, the first one is a list of dot
+     * @param array<string, mixed> $options list of extra options to use for this association
+     * @param array<string, mixed> $paths An array with two values, the first one is a list of dot
      * separated strings representing associations that lead to this `$alias` in the
      * chain of associations to be loaded. The second value is the path to follow in
      * entities' properties to fetch a record of the corresponding association.
@@ -586,9 +582,9 @@ class EagerLoader
      * Helper function used to compile a list of all associations that can be
      * joined in the query.
      *
-     * @param \Cake\ORM\EagerLoadable[] $associations list of associations from which to obtain joins.
-     * @param \Cake\ORM\EagerLoadable[] $matching list of associations that should be forcibly joined.
-     * @return \Cake\ORM\EagerLoadable[]
+     * @param array<\Cake\ORM\EagerLoadable> $associations list of associations from which to obtain joins.
+     * @param array<\Cake\ORM\EagerLoadable> $matching list of associations that should be forcibly joined.
+     * @return array<\Cake\ORM\EagerLoadable>
      */
     protected function _resolveJoins(array $associations, array $matching = []): array
     {
@@ -690,10 +686,10 @@ class EagerLoader
      *
      * - alias: The association alias
      * - instance: The association instance
-     * - canBeJoined: Whether or not the association will be loaded using a JOIN
+     * - canBeJoined: Whether the association will be loaded using a JOIN
      * - entityClass: The entity that should be used for hydrating the results
      * - nestKey: A dotted path that can be used to correctly insert the data into the results.
-     * - matching: Whether or not it is an association loaded through `matching()`.
+     * - matching: Whether it is an association loaded through `matching()`.
      *
      * @param \Cake\ORM\Table $table The table containing the association that
      * will be normalized
@@ -720,8 +716,8 @@ class EagerLoader
      * associationsMap() method.
      *
      * @param array $map An initial array for the map.
-     * @param \Cake\ORM\EagerLoadable[] $level An array of EagerLoadable instances.
-     * @param bool $matching Whether or not it is an association loaded through `matching()`.
+     * @param array<\Cake\ORM\EagerLoadable> $level An array of EagerLoadable instances.
+     * @param bool $matching Whether it is an association loaded through `matching()`.
      * @return array
      */
     protected function _buildAssociationsMap(array $map, array $level, bool $matching = false): array
@@ -756,9 +752,9 @@ class EagerLoader
      * @param string $alias The table alias as it appears in the query.
      * @param \Cake\ORM\Association $assoc The association object the alias represents;
      * will be normalized
-     * @param bool $asMatching Whether or not this join results should be treated as a
+     * @param bool $asMatching Whether this join results should be treated as a
      * 'matching' association.
-     * @param string $targetProperty The property name where the results of the join should be nested at.
+     * @param string|null $targetProperty The property name where the results of the join should be nested at.
      * If not passed, the default property for the association will be used.
      * @return void
      */
@@ -781,7 +777,7 @@ class EagerLoader
      * Helper function used to return the keys from the query records that will be used
      * to eagerly load associations.
      *
-     * @param \Cake\ORM\EagerLoadable[] $external the list of external associations to be loaded
+     * @param array<\Cake\ORM\EagerLoadable> $external the list of external associations to be loaded
      * @param \Cake\ORM\Query $query The query from which the results where generated
      * @param \Cake\Database\StatementInterface $statement The statement to work on
      * @return array
@@ -823,7 +819,7 @@ class EagerLoader
      * defined in $collectKeys
      *
      * @param \Cake\Database\Statement\BufferedStatement $statement The statement to read from.
-     * @param array $collectKeys The keys to collect
+     * @param array<string, array> $collectKeys The keys to collect
      * @return array
      */
     protected function _groupKeys(BufferedStatement $statement, array $collectKeys): array

@@ -43,28 +43,28 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Columns in the table.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_columns = [];
 
     /**
      * A map with columns to types
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $_typeMap = [];
 
     /**
      * Indexes in the table.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_indexes = [];
 
     /**
      * Constraints in the table.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected $_constraints = [];
 
@@ -76,7 +76,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     protected $_options = [];
 
     /**
-     * Whether or not the table is temporary
+     * Whether the table is temporary
      *
      * @var bool
      */
@@ -106,7 +106,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Valid column length that can be used with text type columns
      *
-     * @var array
+     * @var array<string, int>
      */
     public static $columnLengths = [
         'tiny' => self::LENGTH_TINY,
@@ -118,7 +118,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * The valid keys that can be used in a column
      * definition.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static $_columnKeys = [
         'type' => null,
@@ -133,7 +133,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Additional type specific properties.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected static $_columnExtras = [
         'string' => [
@@ -171,7 +171,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * The valid keys that can be used in an index
      * definition.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static $_indexKeys = [
         'type' => null,
@@ -185,7 +185,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Names of the valid index types.
      *
-     * @var array
+     * @var array<string>
      */
     protected static $_validIndexTypes = [
         self::INDEX_INDEX,
@@ -195,7 +195,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Names of the valid constraint types.
      *
-     * @var array
+     * @var array<string>
      */
     protected static $_validConstraintTypes = [
         self::CONSTRAINT_PRIMARY,
@@ -206,7 +206,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Names of the valid foreign key actions.
      *
-     * @var array
+     * @var array<string>
      */
     protected static $_validForeignKeyActions = [
         self::ACTION_CASCADE,
@@ -290,7 +290,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * Constructor.
      *
      * @param string $table The table name.
-     * @param array $columns The list of columns for the schema.
+     * @param array<string, array|string> $columns The list of columns for the schema.
      */
     public function __construct(string $table, array $columns = [])
     {
@@ -624,7 +624,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Check whether or not a table has an autoIncrement column defined.
+     * Check whether a table has an autoIncrement column defined.
      *
      * @return bool
      */
@@ -642,8 +642,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Helper method to check/validate foreign keys.
      *
-     * @param array $attrs Attributes to set.
-     * @return array
+     * @param array<string, mixed> $attrs Attributes to set.
+     * @return array<string, mixed>
      * @throws \Cake\Database\Exception\DatabaseException When foreign key definition is not valid.
      */
     protected function _checkForeignKey(array $attrs): array
@@ -680,11 +680,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function getConstraint(string $name): ?array
     {
-        if (!isset($this->_constraints[$name])) {
-            return null;
-        }
-
-        return $this->_constraints[$name];
+        return $this->_constraints[$name] ?? null;
     }
 
     /**
@@ -692,7 +688,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function setOptions(array $options)
     {
-        $this->_options = array_merge($this->_options, $options);
+        $this->_options = $options + $this->_options;
 
         return $this;
     }
@@ -786,7 +782,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Returns an array of the table schema.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

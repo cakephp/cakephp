@@ -19,6 +19,12 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 use ArrayObject;
 use Cake\Collection\Iterator\SortIterator;
 use Cake\TestSuite\TestCase;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
+use const SORT_ASC;
+use const SORT_DESC;
+use const SORT_NUMERIC;
 
 /**
  * SortIterator Test
@@ -27,10 +33,8 @@ class SortIteratorTest extends TestCase
 {
     /**
      * Tests sorting numbers with an identity callbacks
-     *
-     * @return void
      */
-    public function testSortNumbersIdentity()
+    public function testSortNumbersIdentity(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
         $identity = function ($a) {
@@ -47,10 +51,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting numbers with custom callback
-     *
-     * @return void
      */
-    public function testSortNumbersCustom()
+    public function testSortNumbersCustom(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
         $callback = function ($a) {
@@ -67,10 +69,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with numeric sort
-     *
-     * @return void
      */
-    public function testSortComplexNumeric()
+    public function testSortComplexNumeric(): void
     {
         $items = new ArrayObject([
             ['foo' => 1, 'bar' => 'a'],
@@ -81,7 +81,7 @@ class SortIteratorTest extends TestCase
         $callback = function ($a) {
             return $a['foo'];
         };
-        $sorted = new SortIterator($items, $callback, \SORT_DESC, \SORT_NUMERIC);
+        $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NUMERIC);
         $expected = [
             ['foo' => 13, 'bar' => 'a'],
             ['foo' => 10, 'bar' => 'a'],
@@ -90,7 +90,7 @@ class SortIteratorTest extends TestCase
         ];
         $this->assertEquals($expected, $sorted->toList());
 
-        $sorted = new SortIterator($items, $callback, \SORT_ASC, \SORT_NUMERIC);
+        $sorted = new SortIterator($items, $callback, SORT_ASC, SORT_NUMERIC);
         $expected = [
             ['foo' => 1, 'bar' => 'a'],
             ['foo' => 2, 'bar' => 'a'],
@@ -102,10 +102,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with natural sort
-     *
-     * @return void
      */
-    public function testSortComplexNatural()
+    public function testSortComplexNatural(): void
     {
         $items = new ArrayObject([
             ['foo' => 'foo_1', 'bar' => 'a'],
@@ -138,10 +136,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with natural sort with string callback
-     *
-     * @return void
      */
-    public function testSortComplexNaturalWithPath()
+    public function testSortComplexNaturalWithPath(): void
     {
         $items = new ArrayObject([
             ['foo' => 'foo_1', 'bar' => 'a'],
@@ -171,10 +167,8 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting a complex structure with a deep path
-     *
-     * @return void
      */
-    public function testSortComplexDeepPath()
+    public function testSortComplexDeepPath(): void
     {
         $items = new ArrayObject([
             ['foo' => ['bar' => 1], 'bar' => 'a'],
@@ -194,40 +188,38 @@ class SortIteratorTest extends TestCase
 
     /**
      * Tests sorting datetime
-     *
-     * @return void
      */
-    public function testSortDateTime()
+    public function testSortDateTime(): void
     {
         $items = new ArrayObject([
-            new \DateTime('2014-07-21'),
-            new \DateTime('2015-06-30'),
-            new \DateTimeImmutable('2013-08-12'),
+            new DateTime('2014-07-21'),
+            new DateTime('2015-06-30'),
+            new DateTimeImmutable('2013-08-12'),
         ]);
 
         $callback = function ($a) {
-            return $a->add(new \DateInterval('P1Y'));
+            return $a->add(new DateInterval('P1Y'));
         };
         $sorted = new SortIterator($items, $callback);
         $expected = [
-            new \DateTime('2016-06-30'),
-            new \DateTime('2015-07-21'),
-            new \DateTimeImmutable('2013-08-12'),
+            new DateTime('2016-06-30'),
+            new DateTime('2015-07-21'),
+            new DateTimeImmutable('2013-08-12'),
 
         ];
         $this->assertEquals($expected, $sorted->toList());
 
         $items = new ArrayObject([
-            new \DateTime('2014-07-21'),
-            new \DateTime('2015-06-30'),
-            new \DateTimeImmutable('2013-08-12'),
+            new DateTime('2014-07-21'),
+            new DateTime('2015-06-30'),
+            new DateTimeImmutable('2013-08-12'),
         ]);
 
         $sorted = new SortIterator($items, $callback, SORT_ASC);
         $expected = [
-            new \DateTimeImmutable('2013-08-12'),
-            new \DateTime('2015-07-21'),
-            new \DateTime('2016-06-30'),
+            new DateTimeImmutable('2013-08-12'),
+            new DateTime('2015-07-21'),
+            new DateTime('2016-06-30'),
         ];
         $this->assertEquals($expected, $sorted->toList());
     }

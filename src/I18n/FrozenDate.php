@@ -24,7 +24,7 @@ use IntlDateFormatter;
  *
  * Adds handy methods and locale-aware formatting helpers
  *
- * This object provides an immutable variant of Cake\I18n\Date
+ * This object provides an immutable variant of {@link \Cake\I18n\Date}
  */
 class FrozenDate extends ChronosDate implements I18nDateTimeInterface
 {
@@ -42,7 +42,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\DateFormatTrait::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, -1];
@@ -58,7 +58,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]|\Closure
+     * @var \Closure|array<int>|string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = 'yyyy-MM-dd';
@@ -67,7 +67,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Date::$wordEnd`
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\DateFormatTrait::parseDate()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
@@ -83,7 +83,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|int|int[]
+     * @var array<int>|string|int
      * @see \Cake\I18n\DateFormatTrait::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE];
@@ -92,7 +92,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * The format to use when formatting a time using `Date::timeAgoInWords()`
      * and the difference is less than `Date::$wordEnd`
      *
-     * @var string[]
+     * @var array<string>
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static $wordAccuracy = [
@@ -127,7 +127,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * timezone will always be the server local time. Normalizing the timezone allows for
      * subtraction/addition to have deterministic results.
      *
-     * @param string|int|\DateTime|\DateTimeImmutable|null $time Fixed or relative time
+     * @param \DateTime|\DateTimeImmutable|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone in which the date is taken.
      *                                  Ignored if `$time` is a DateTimeInterface instance.
      */
@@ -167,7 +167,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      *
      * NOTE: If the difference is one week or more, the lowest level of accuracy is day.
      *
-     * @param array $options Array of options.
+     * @param array<string, mixed> $options Array of options.
      * @return string Relative time string.
      */
     public function timeAgoInWords(array $options = []): string

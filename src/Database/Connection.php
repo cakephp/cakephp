@@ -47,7 +47,7 @@ class Connection implements ConnectionInterface
     /**
      * Contains the configuration params for this connection.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_config;
 
@@ -129,7 +129,7 @@ class Connection implements ConnectionInterface
      *    If set to a string it will be used as the name of cache config to use.
      * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
      *
-     * @param array $config Configuration array.
+     * @param array<string, mixed> $config Configuration array.
      */
     public function __construct(array $config)
     {
@@ -179,7 +179,7 @@ class Connection implements ConnectionInterface
      * as a class name and will be instantiated.
      *
      * @param \Cake\Database\DriverInterface|string $driver The driver instance to use.
-     * @param array $config Config for a new driver.
+     * @param array<string, mixed> $config Config for a new driver.
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
      * @return $this
@@ -271,7 +271,7 @@ class Connection implements ConnectionInterface
     /**
      * Prepares a SQL statement to be executed.
      *
-     * @param string|\Cake\Database\Query $query The SQL to convert into a prepared statement.
+     * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
     public function prepare($query): StatementInterface
@@ -406,7 +406,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $table the table to insert values in
      * @param array $values values to be inserted
-     * @param array $types list of associative array containing the types to be used for casting
+     * @param array<string, string> $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface
@@ -525,7 +525,7 @@ class Connection implements ConnectionInterface
     /**
      * Rollback current transaction.
      *
-     * @param bool|null $toBeginning Whether or not the transaction should be rolled back to the
+     * @param bool|null $toBeginning Whether the transaction should be rolled back to the
      * beginning of it. Defaults to false if using savepoints, or true if not.
      * @return bool
      */
@@ -567,7 +567,7 @@ class Connection implements ConnectionInterface
      * If you are trying to enable this feature, make sure you check
      * `isSavePointsEnabled()` to verify that savepoints were enabled successfully.
      *
-     * @param bool $enable Whether or not save points should be used.
+     * @param bool $enable Whether save points should be used.
      * @return $this
      */
     public function enableSavePoints(bool $enable = true)
@@ -575,7 +575,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->_useSavePoints = false;
         } else {
-            $this->_useSavePoints = $this->_driver->supportsSavePoints();
+            $this->_useSavePoints = $this->_driver->supports(DriverInterface::FEATURE_SAVEPOINT);
         }
 
         return $this;
@@ -622,7 +622,10 @@ class Connection implements ConnectionInterface
      */
     public function releaseSavePoint($name): void
     {
-        $this->execute($this->_driver->releaseSavePointSQL($name))->closeCursor();
+        $sql = $this->_driver->releaseSavePointSQL($name);
+        if ($sql) {
+            $this->execute($sql)->closeCursor();
+        }
     }
 
     /**
@@ -665,6 +668,7 @@ class Connection implements ConnectionInterface
      * to already created tables.
      *
      * @return bool true if driver supports dynamic constraints
+     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
      */
     public function supportsDynamicConstraints(): bool
     {
@@ -742,8 +746,10 @@ class Connection implements ConnectionInterface
     /**
      * Quotes value to be used safely in database query.
      *
+     * This uses `PDO::quote()` and requires `supportsQuoting()` to work.
+     *
      * @param mixed $value The value to quote.
-     * @param string|int|\Cake\Database\TypeInterface $type Type to be used for determining kind of quoting to perform
+     * @param \Cake\Database\TypeInterface|string|int $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
     public function quote($value, $type = 'string'): string
@@ -754,18 +760,22 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Checks if the driver supports quoting.
+     * Checks if using `quote()` is supported.
+     *
+     * This is not required to use `quoteIdentifier()`.
      *
      * @return bool
      */
     public function supportsQuoting(): bool
     {
-        return $this->_driver->supportsQuoting();
+        return $this->_driver->supports(DriverInterface::FEATURE_QUOTE);
     }
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
      * be used safely in queries without the risk of using reserved words.
+     *
+     * This does not require `supportsQuoting()` to work.
      *
      * @param string $identifier The identifier to quote.
      * @return string
@@ -780,7 +790,7 @@ class Connection implements ConnectionInterface
      *
      * Changing this setting will not modify existing schema collections objects.
      *
-     * @param bool|string $cache Either boolean false to disable metadata caching, or
+     * @param string|bool $cache Either boolean false to disable metadata caching, or
      *   true to use `_cake_model_` or the name of the cache config to use.
      * @return void
      */
@@ -929,7 +939,7 @@ class Connection implements ConnectionInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

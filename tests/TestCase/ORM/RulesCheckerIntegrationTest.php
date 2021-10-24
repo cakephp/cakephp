@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use ArrayObject;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -25,6 +26,9 @@ use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Closure;
+use RuntimeException;
+use stdClass;
 
 /**
  * Tests the integration between the ORM and the domain checker
@@ -34,21 +38,20 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
-        'core.Articles', 'core.ArticlesTags', 'core.Authors', 'core.Comments', 'core.Tags',
+        'core.Articles', 'core.Tags', 'core.ArticlesTags', 'core.Authors', 'core.Comments',
         'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
-        'core.Comments', 'core.UniqueAuthors',
+        'core.UniqueAuthors',
     ];
 
     /**
      * Tests saving belongsTo association and get a validation error
      *
      * @group save
-     * @return void
      */
-    public function testsSaveBelongsToWithValidationError()
+    public function testsSaveBelongsToWithValidationError(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
@@ -85,9 +88,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * abort the saving process
      *
      * @group save
-     * @return void
      */
-    public function testSaveHasOneWithValidationError()
+    public function testSaveHasOneWithValidationError(): void
     {
         $entity = new Entity([
             'name' => 'Jose',
@@ -123,10 +125,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests saving multiple entities in a hasMany association and getting and
      * error while saving one of them. It should abort all the save operation
      * when options are set to defaults
-     *
-     * @return void
      */
-    public function testSaveHasManyWithErrorsAtomic()
+    public function testSaveHasManyWithErrorsAtomic(): void
     {
         $entity = new Entity([
             'name' => 'Jose',
@@ -172,10 +172,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests that it is possible to continue saving hasMany associations
      * even if any of the records fail validation when atomic is set
      * to false
-     *
-     * @return void
      */
-    public function testSaveHasManyWithErrorsNonAtomic()
+    public function testSaveHasManyWithErrorsNonAtomic(): void
     {
         $entity = new Entity([
             'name' => 'Jose',
@@ -217,9 +215,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests saving belongsToMany records with a validation error in a joint entity
      *
      * @group save
-     * @return void
      */
-    public function testSaveBelongsToManyWithValidationErrorInJointEntity()
+    public function testSaveBelongsToManyWithValidationErrorInJointEntity(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
@@ -257,9 +254,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * and atomic set to false
      *
      * @group save
-     * @return void
      */
-    public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic()
+    public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
@@ -297,9 +293,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Test adding rule with name
      *
      * @group save
-     * @return void
      */
-    public function testAddingRuleWithName()
+    public function testAddingRuleWithName(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -321,10 +316,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Ensure that add(isUnique()) only invokes a rule once.
-     *
-     * @return void
      */
-    public function testIsUniqueRuleSingleInvocation()
+    public function testIsUniqueRuleSingleInvocation(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -347,9 +340,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the isUnique domain rule
      *
      * @group save
-     * @return void
      */
-    public function testIsUniqueDomainRule()
+    public function testIsUniqueDomainRule(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -374,9 +366,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests isUnique with multiple fields
      *
      * @group save
-     * @return void
      */
-    public function testIsUniqueMultipleFields()
+    public function testIsUniqueMultipleFields(): void
     {
         $entity = new Entity([
             'author_id' => 1,
@@ -397,10 +388,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with non-unique null values
-     *
-     * @return void
      */
-    public function testIsUniqueNonUniqueNulls()
+    public function testIsUniqueNonUniqueNulls(): void
     {
         $table = $this->getTableLocator()->get('UniqueAuthors');
         $rules = $table->rulesChecker();
@@ -420,9 +409,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests isUnique with allowMultipleNulls
      *
      * @group save
-     * @return void
      */
-    public function testIsUniqueAllowMultipleNulls()
+    public function testIsUniqueAllowMultipleNulls(): void
     {
         $this->skipIf(ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
 
@@ -454,9 +442,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the existsIn domain rule
      *
      * @group save
-     * @return void
      */
-    public function testExistsInDomainRule()
+    public function testExistsInDomainRule(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -474,10 +461,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Ensure that add(existsIn()) only invokes a rule once.
-     *
-     * @return void
      */
-    public function testExistsInRuleSingleInvocation()
+    public function testExistsInRuleSingleInvocation(): void
     {
         $entity = new Entity([
             'title' => 'larry',
@@ -502,9 +487,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the existsIn domain rule when passing an object
      *
      * @group save
-     * @return void
      */
-    public function testExistsInDomainRuleWithObject()
+    public function testExistsInDomainRuleWithObject(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -521,10 +505,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * ExistsIn uses the schema to verify that nullable fields are ok.
-     *
-     * @return void
      */
-    public function testExistsInNullValue()
+    public function testExistsInNullValue(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -545,10 +527,8 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * This use case is important for saving records and their
      * associated belongsTo records in one pass.
-     *
-     * @return void
      */
-    public function testExistsInNotNullValueNewEntity()
+    public function testExistsInNotNullValueNewEntity(): void
     {
         $entity = new Entity([
             'name' => 'A Category',
@@ -566,10 +546,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests exists in uses the bindingKey of the association
-     *
-     * @return void
      */
-    public function testExistsInWithBindingKey()
+    public function testExistsInWithBindingKey(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -595,11 +573,10 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests existsIn with invalid associations
      *
      * @group save
-     * @return void
      */
-    public function testExistsInInvalidAssociation()
+    public function testExistsInInvalidAssociation(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('ExistsIn rule for \'author_id\' is invalid. \'NotValid\' is not associated with \'Cake\ORM\Table\'.');
         $entity = new Entity([
             'title' => 'An Article',
@@ -616,10 +593,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests existsIn does not prevent new entities from saving if parent entity is new
-     *
-     * @return void
      */
-    public function testExistsInHasManyNewEntities()
+    public function testExistsInHasManyNewEntities(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
@@ -648,10 +623,8 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests existsIn does not prevent new entities from saving if parent entity is new,
      * getting the parent entity from the association
-     *
-     * @return void
      */
-    public function testExistsInHasManyNewEntitiesViaAssociation()
+    public function testExistsInHasManyNewEntitiesViaAssociation(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
@@ -678,9 +651,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the checkRules save option
      *
      * @group save
-     * @return void
      */
-    public function testSkipRulesChecking()
+    public function testSkipRulesChecking(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -698,9 +670,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the beforeRules event
      *
      * @group save
-     * @return void
      */
-    public function testUseBeforeRules()
+    public function testUseBeforeRules(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -713,7 +684,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.beforeRules',
-            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -738,9 +709,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the afterRules event
      *
      * @group save
-     * @return void
      */
-    public function testUseAfterRules()
+    public function testUseAfterRules(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -753,7 +723,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.afterRules',
-            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $result, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -779,9 +749,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests that rules can be changed using the buildRules event
      *
      * @group save
-     * @return void
      */
-    public function testUseBuildRulesEvent()
+    public function testUseBuildRulesEvent(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -789,7 +758,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
 
         $table = $this->getTableLocator()->get('Articles');
-        $table->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules) {
+        $table->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules): void {
             $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
         });
 
@@ -800,9 +769,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests isUnique with untouched fields
      *
      * @group save
-     * @return void
      */
-    public function testIsUniqueWithCleanFields()
+    public function testIsUniqueWithCleanFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $entity = $table->get(1);
@@ -820,9 +788,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests isUnique rule with conflicting columns
      *
      * @group save
-     * @return void
      */
-    public function testIsUniqueAliasPrefix()
+    public function testIsUniqueAliasPrefix(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -834,7 +801,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id']));
 
-        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -846,9 +813,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the existsIn rule when passing non dirty fields
      *
      * @group save
-     * @return void
      */
-    public function testExistsInWithCleanFields()
+    public function testExistsInWithCleanFields(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
@@ -866,9 +832,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the existsIn with conflicting columns
      *
      * @group save
-     * @return void
      */
-    public function testExistsInAliasPrefix()
+    public function testExistsInAliasPrefix(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -880,7 +845,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
-        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -890,10 +855,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that using an array in existsIn() sets the error message correctly
-     *
-     * @return void
      */
-    public function testExistsInErrorWithArrayField()
+    public function testExistsInErrorWithArrayField(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -911,10 +874,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to null
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOn()
+    public function testExistsInAllowNullableNullsOn(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -934,10 +895,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to null
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOff()
+    public function testExistsInAllowNullableNullsOff(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -957,10 +916,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to null
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsDefaultValue()
+    public function testExistsInAllowNullableNullsDefaultValue(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -978,10 +935,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to null
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsCustomMessage()
+    public function testExistsInAllowNullableNullsCustomMessage(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -1003,10 +958,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to 1
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOnAllKeysSet()
+    public function testExistsInAllowNullableNullsOnAllKeysSet(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -1024,10 +977,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to 1
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOffAllKeysSet()
+    public function testExistsInAllowNullableNullsOffAllKeysSet(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -1045,10 +996,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to 1
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOnAllKeysCustomMessage()
+    public function testExistsInAllowNullableNullsOnAllKeysCustomMessage(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -1068,10 +1017,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls flag with author id set to 99999999 (does not exist)
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOnInvalidKey()
+    public function testExistsInAllowNullableNullsOnInvalidKey(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -1093,10 +1040,8 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to 99999999 (does not exist)
      * and site_id set to 99999999 (does not exist)
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOnInvalidKeys()
+    public function testExistsInAllowNullableNullsOnInvalidKeys(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -1118,10 +1063,8 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to 1 (does exist)
      * and site_id set to 99999999 (does not exist)
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsOnInvalidKeySecond()
+    public function testExistsInAllowNullableNullsOnInvalidKeySecond(): void
     {
         $entity = new Entity([
             'id' => 10,
@@ -1142,10 +1085,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests new allowNullableNulls with saveMany
-     *
-     * @return void
      */
-    public function testExistsInAllowNullableNullsSaveMany()
+    public function testExistsInAllowNullableNullsSaveMany(): void
     {
         $entities = [
             new Entity([
@@ -1182,9 +1123,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests using rules to prevent delete operations
      *
      * @group delete
-     * @return void
      */
-    public function testDeleteRules()
+    public function testDeleteRules(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
@@ -1200,9 +1140,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Checks that it is possible to pass custom options to rules when saving
      *
      * @group save
-     * @return void
      */
-    public function testCustomOptionsPassingSave()
+    public function testCustomOptionsPassingSave(): void
     {
         $entity = new Entity([
             'name' => 'jose',
@@ -1224,9 +1163,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests passing custom options to rules from delete
      *
      * @group delete
-     * @return void
      */
-    public function testCustomOptionsPassingDelete()
+    public function testCustomOptionsPassingDelete(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
@@ -1245,9 +1183,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Test adding rules that return error string
      *
      * @group save
-     * @return void
      */
-    public function testCustomErrorMessageFromRule()
+    public function testCustomErrorMessageFromRule(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -1267,9 +1204,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Test adding rules with no errorField do not accept strings
      *
      * @group save
-     * @return void
      */
-    public function testCustomErrorMessageFromRuleNoErrorField()
+    public function testCustomErrorMessageFromRuleNoErrorField(): void
     {
         $entity = new Entity([
             'name' => 'larry',
@@ -1290,9 +1226,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * as the foreign key for the association was automatically validated already.
      *
      * @group save
-     * @return void
      */
-    public function testAvoidExistsInOnAutomaticSaving()
+    public function testAvoidExistsInOnAutomaticSaving(): void
     {
         $entity = new Entity([
             'name' => 'Jose',
@@ -1330,9 +1265,8 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests the existsIn domain rule respects the conditions set for the associations
      *
      * @group save
-     * @return void
      */
-    public function testExistsInDomainRuleWithAssociationConditions()
+    public function testExistsInDomainRuleWithAssociationConditions(): void
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -1352,10 +1286,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that associated items have a count of X.
-     *
-     * @return void
      */
-    public function testCountOfAssociatedItems()
+    public function testCountOfAssociatedItems(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
@@ -1389,7 +1321,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity->tags = null;
         $this->assertFalse($table->save($entity));
 
-        $entity->tags = new \stdClass();
+        $entity->tags = new stdClass();
         $this->assertFalse($table->save($entity));
 
         $entity->tags = 'string';
@@ -1404,8 +1336,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     *
-     * @return void
      */
     public function testIsLinkedToInvalidArgumentOne(): void
     {
@@ -1421,8 +1351,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     *
-     * @return void
      */
     public function testIsNotLinkedToInvalidArgumentOne(): void
     {
@@ -1438,8 +1366,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the error field name is inferred from the association name in case no name is provided.
-     *
-     * @return void
      */
     public function testIsLinkedToInferFieldFromAssociationName(): void
     {
@@ -1471,8 +1397,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the error field name is inferred from the association name in case no name is provided.
-     *
-     * @return void
      */
     public function testIsNotLinkedToInferFieldFromAssociationName(): void
     {
@@ -1499,8 +1423,6 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests that the error field name is inferred from the association name in case no name is provided,
      * and no repository is available at the time of creating the rule.
-     *
-     * @return void
      */
     public function testIsLinkedToInferFieldFromAssociationNameWithNoRepositoryAvailable(): void
     {
@@ -1540,8 +1462,6 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests that the error field name is inferred from the association name in case no name is provided,
      * and no repository is available at the time of creating the rule.
-     *
-     * @return void
      */
     public function testIsNotLinkedToInferFieldFromAssociationNameWithNoRepositoryAvailable(): void
     {
@@ -1574,8 +1494,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the error field name is inferred from the association object in case no name is provided.
-     *
-     * @return void
      */
     public function testIsLinkedToInferFieldFromAssociationObject(): void
     {
@@ -1607,8 +1525,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the error field name is inferred from the association object in case no name is provided.
-     *
-     * @return void
      */
     public function testIsNotLinkedToInferFieldFromAssociationObject(): void
     {
@@ -1634,8 +1550,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the custom error field name is being used.
-     *
-     * @return void
      */
     public function testIsLinkedToWithCustomField(): void
     {
@@ -1667,8 +1581,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the custom error field name is being used.
-     *
-     * @return void
      */
     public function testIsNotLinkedToWithCustomField(): void
     {
@@ -1694,8 +1606,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the custom error message is being used.
-     *
-     * @return void
      */
     public function testIsLinkedToWithCustomMessage(): void
     {
@@ -1727,8 +1637,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the custom error message is being used.
-     *
-     * @return void
      */
     public function testIsNotLinkedToWithCustomMessage(): void
     {
@@ -1754,8 +1662,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the default error message can be translated.
-     *
-     * @return void
      */
     public function testIsLinkedToMessageWithI18n(): void
     {
@@ -1799,8 +1705,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the default error message can be translated.
-     *
-     * @return void
      */
     public function testIsNotLinkedToMessageWithI18n(): void
     {
@@ -1839,8 +1743,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the default error message works without I18n.
-     *
-     * @return void
      */
     public function testIsLinkedToMessageWithoutI18n(): void
     {
@@ -1865,8 +1767,8 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
 
-        \Closure::bind(
-            function () use ($rulesChecker) {
+        Closure::bind(
+            function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,
@@ -1892,8 +1794,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the default error message works without I18n.
-     *
-     * @return void
      */
     public function testIsNotLinkedToMessageWithoutI18n(): void
     {
@@ -1912,8 +1812,8 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
 
-        \Closure::bind(
-            function () use ($rulesChecker) {
+        Closure::bind(
+            function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,
@@ -1940,8 +1840,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the rule can pass.
-     *
-     * @return void
      */
     public function testIsLinkedToIsLinked(): void
     {
@@ -1961,8 +1859,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that the rule can pass.
-     *
-     * @return void
      */
     public function testIsNotLinkedToIsNotLinked(): void
     {

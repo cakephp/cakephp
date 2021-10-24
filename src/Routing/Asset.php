@@ -51,7 +51,7 @@ class Asset
      * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `plugin` False value will prevent parsing path as a plugin
@@ -75,7 +75,7 @@ class Asset
      * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
@@ -101,7 +101,7 @@ class Asset
      * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
@@ -140,7 +140,7 @@ class Asset
      *    enable timestamping regardless of debug value.
      *
      * @param string $path Path string or URL array
-     * @param array $options Options array.
+     * @param array<string, mixed> $options Options array.
      * @return string Generated URL
      */
     public static function url(string $path, array $options = []): string
@@ -231,7 +231,7 @@ class Asset
      * a timestamp will be added.
      *
      * @param string $path The file path to timestamp, the path must be inside `App.wwwRoot` in Configure.
-     * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
+     * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
     public static function assetTimestamp(string $path, $timestamp = null): string
@@ -284,7 +284,7 @@ class Asset
      * - `theme` Optional theme name
      *
      * @param string $file The file to create a webroot path to.
-     * @param array $options Options array.
+     * @param array<string, mixed> $options Options array.
      * @return string Web accessible path to file.
      */
     public static function webroot(string $file, array $options = []): string

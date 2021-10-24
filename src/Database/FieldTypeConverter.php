@@ -29,7 +29,7 @@ class FieldTypeConverter
      * An array containing the name of the fields and the Type objects
      * each should use when converting them.
      *
-     * @var \Cake\Database\TypeInterface[]
+     * @var array<\Cake\Database\TypeInterface>
      */
     protected $_typeMap;
 
@@ -37,7 +37,7 @@ class FieldTypeConverter
      * An array containing the name of the fields and the Type objects
      * each should use when converting them using batching.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $batchingTypeMap;
 
@@ -46,7 +46,7 @@ class FieldTypeConverter
      * at the moment this object is created. Used so that the types list
      * is not fetched on each single row of the results.
      *
-     * @var \Cake\Database\TypeInterface[]|\Cake\Database\Type\BatchCastingInterface[]
+     * @var array<\Cake\Database\TypeInterface|\Cake\Database\Type\BatchCastingInterface>
      */
     protected $types;
 

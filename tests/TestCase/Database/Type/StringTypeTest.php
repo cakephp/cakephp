@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -38,8 +39,6 @@ class StringTypeTest extends TestCase
 
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -50,10 +49,8 @@ class StringTypeTest extends TestCase
 
     /**
      * Test toPHP
-     *
-     * @return void
      */
-    public function testToPHP()
+    public function testToPHP(): void
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertSame('word', $this->type->toPHP('word', $this->driver));
@@ -62,10 +59,8 @@ class StringTypeTest extends TestCase
 
     /**
      * Test converting to database format
-     *
-     * @return void
      */
-    public function testToDatabase()
+    public function testToDatabase(): void
     {
         $obj = $this->getMockBuilder('StdClass')
             ->addMethods(['__toString'])
@@ -80,21 +75,17 @@ class StringTypeTest extends TestCase
 
     /**
      * Tests that passing an invalid value will throw an exception
-     *
-     * @return void
      */
-    public function testToDatabaseInvalidArray()
+    public function testToDatabaseInvalidArray(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase([1, 2, 3], $this->driver);
     }
 
     /**
      * Test marshalling
-     *
-     * @return void
      */
-    public function testMarshal()
+    public function testMarshal(): void
     {
         $this->assertNull($this->type->marshal(null));
         $this->assertNull($this->type->marshal([1, 2, 3]));
@@ -104,10 +95,8 @@ class StringTypeTest extends TestCase
 
     /**
      * Test that the PDO binding type is correct.
-     *
-     * @return void
      */
-    public function testToStatement()
+    public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }

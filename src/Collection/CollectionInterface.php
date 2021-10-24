@@ -64,7 +64,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable|null $callback the method that will receive each of the elements and
-     *   returns true whether or not they should be in the resulting collection.
+     *   returns true whether they should be in the resulting collection.
      *   If left null, a callback that filters out falsey values will be used.
      * @return self
      */
@@ -90,7 +90,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable $callback the method that will receive each of the elements and
-     * returns true whether or not they should be out of the resulting collection.
+     * returns true whether they should be out of the resulting collection.
      * @return self
      */
     public function reject(callable $callback): CollectionInterface;
@@ -226,7 +226,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * [1, 2, 3, 4]
      * ```
      *
-     * @param string|callable $path A dot separated path of column to follow
+     * @param callable|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
      * @return self
@@ -308,7 +308,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * The average of an empty set or 0 rows is `null`. Collections with `null`
      * values are not considered empty.
      *
-     * @param string|callable|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int|null
@@ -341,7 +341,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * The median of an empty set or 0 rows is `null`. Collections with `null`
      * values are not considered empty.
      *
-     * @param string|callable|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int|null
@@ -526,7 +526,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 6
      * ```
      *
-     * @param string|callable|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int
@@ -619,7 +619,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function match(array $conditions): CollectionInterface;
 
     /**
-     * Returns the first result matching all of the key-value pairs listed in
+     * Returns the first result matching all the key-value pairs listed in
      * conditions.
      *
      * @param array $conditions a key-value list of conditions where the key is
@@ -775,13 +775,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
     /**
      * Returns an array representation of the results
      *
-     * @param bool $preserveKeys whether to use the keys returned by this
+     * @param bool $keepKeys Whether to use the keys returned by this
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
      * @return array
      */
-    public function toArray(bool $preserveKeys = true): array;
+    public function toArray(bool $keepKeys = true): array;
 
     /**
      * Returns an numerically-indexed array representation of the results.
@@ -827,13 +827,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * You can think of this method as a way to create save points for complex
      * calculations in a collection.
      *
-     * @param bool $preserveKeys whether to use the keys returned by this
+     * @param bool $keepKeys Whether to use the keys returned by this
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
      * @return self
      */
-    public function compile(bool $preserveKeys = true): CollectionInterface;
+    public function compile(bool $keepKeys = true): CollectionInterface;
 
     /**
      * Returns a new collection where any operations chained after it are guaranteed
@@ -891,7 +891,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param string|int $order The order in which to return the elements
-     * @param string|callable $nestingKey The key name under which children are nested
+     * @param callable|string $nestingKey The key name under which children are nested
      * or a callable function that will return the children list
      * @return self
      */
@@ -1052,13 +1052,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param int $chunkSize The maximum size for each chunk
-     * @param bool $preserveKeys If the keys of the array should be preserved
+     * @param bool $keepKeys If the keys of the array should be kept
      * @return self
      */
-    public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface;
+    public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface;
 
     /**
-     * Returns whether or not there are elements in this collection
+     * Returns whether there are elements in this collection
      *
      * ### Example:
      *

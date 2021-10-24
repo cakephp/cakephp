@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 use Countable;
 use DateTimeInterface;
@@ -97,7 +97,7 @@ class Validation
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected const COMPARE_STRING = [
         self::COMPARE_EQUAL,
@@ -116,7 +116,7 @@ class Validation
     /**
      * Some complex patterns needed in multiple places
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $_pattern = [
         'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',
@@ -232,7 +232,7 @@ class Validation
      * Returns true if $check is in the proper credit card format.
      *
      * @param mixed $check credit card number to validate
-     * @param string|string[] $type 'all' may be passed as a string, defaults to fast which checks format of
+     * @param array<string>|string $type 'all' may be passed as a string, defaults to fast which checks format of
      *     most major credit cards if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -395,7 +395,7 @@ class Validation
      *
      * @param mixed $check The value to find in $field.
      * @param string $field The field to check $check against. This field must be present in $context.
-     * @param array $context The validation context.
+     * @param array<string, mixed> $context The validation context.
      * @return bool
      */
     public static function compareWith($check, string $field, array $context): bool
@@ -411,7 +411,7 @@ class Validation
      * @param mixed $check The value to find in $field.
      * @param string $field The field to check $check against. This field must be present in $context.
      * @param string $operator Comparison operator. See Validation::comparison().
-     * @param array $context The validation context.
+     * @param array<string, mixed> $context The validation context.
      * @return bool
      * @since 3.6.0
      */
@@ -486,7 +486,7 @@ class Validation
      * - `y` 2006 just the year without any separators
      *
      * @param mixed $check a valid date string/object
-     * @param string|array $format Use a string or an array of the keys above.
+     * @param array|string $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', etc]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
      * @return bool Success
@@ -561,7 +561,7 @@ class Validation
      * All values matching the "date" core validation rule, and the "time" one will be valid
      *
      * @param mixed $check Value to check
-     * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
+     * @param array|string $dateFormat Format of the date part. See Validation::date() for more information.
      *   Or `Validation::DATETIME_ISO8601` to validate an ISO8601 datetime value.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used
      *   this is the only validation that will occur.
@@ -687,7 +687,7 @@ class Validation
         }
         $method = $methods[$type];
 
-        return Time::$method($check, $format) !== null;
+        return FrozenTime::$method($check, $format) !== null;
     }
 
     /**
@@ -695,7 +695,7 @@ class Validation
      *
      * The list of what is considered to be boolean values, may be set via $booleanValues.
      *
-     * @param bool|int|string $check Value to check.
+     * @param string|int|bool $check Value to check.
      * @param array $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success.
      */
@@ -713,7 +713,7 @@ class Validation
      *
      * The list of what is considered to be truthy values, may be set via $truthyValues.
      *
-     * @param bool|int|string $check Value to check.
+     * @param string|int|bool $check Value to check.
      * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
      * @return bool Success.
      */
@@ -731,7 +731,7 @@ class Validation
      *
      * The list of what is considered to be falsey values, may be set via $falseyValues.
      *
-     * @param bool|int|string $check Value to check.
+     * @param string|int|bool $check Value to check.
      * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
      * @return bool Success.
      */
@@ -857,8 +857,8 @@ class Validation
     /**
      * Checks that value has a valid file extension.
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check
-     * @param string[] $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check
+     * @param array<string> $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension($check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
@@ -1003,7 +1003,7 @@ class Validation
      * - min => minimum number of non-zero choices that can be made
      *
      * @param mixed $check Value to check
-     * @param array $options Options for the check.
+     * @param array<string, mixed> $options Options for the check.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success
      */
@@ -1142,7 +1142,7 @@ class Validation
      * Checks if a value is in a given list. Comparison is case sensitive by default.
      *
      * @param mixed $check Value to check.
-     * @param string[] $list List to check against.
+     * @param array<string> $list List to check against.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success.
      */
@@ -1221,7 +1221,7 @@ class Validation
      * by checking the using finfo on the file, not relying on the content-type
      * sent by the client.
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check.
      * @param array|string $mimeTypes Array of mime types or regex pattern to check.
      * @return bool Success
      * @throws \RuntimeException when mime type can not be determined.
@@ -1300,9 +1300,9 @@ class Validation
      * by checking the filesize() on disk and not relying on the length
      * reported by the client.
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check.
      * @param string $operator See `Validation::comparison()`.
-     * @param int|string $size Size in bytes or human readable string like '5MB'.
+     * @param string|int $size Size in bytes or human readable string like '5MB'.
      * @return bool Success
      */
     public static function fileSize($check, string $operator, $size): bool
@@ -1323,7 +1323,7 @@ class Validation
     /**
      * Checking for upload errors
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
+     * @param \Psr\Http\Message\UploadedFileInterface|array|string $check Value to check.
      * @param bool $allowNoFile Set to true to allow UPLOAD_ERR_NO_FILE as a pass.
      * @return bool
      * @see https://secure.php.net/manual/en/features.file-upload.errors.php
@@ -1357,11 +1357,11 @@ class Validation
      *   the file type will be checked with ext/finfo.
      * - `minSize` - The minimum file size in bytes. Defaults to not checking.
      * - `maxSize` - The maximum file size in bytes. Defaults to not checking.
-     * - `optional` - Whether or not this file is optional. Defaults to false.
+     * - `optional` - Whether this file is optional. Defaults to false.
      *   If true a missing file will pass the validator regardless of other constraints.
      *
      * @param mixed $file The uploaded file data from PHP.
-     * @param array $options An array of options for the validation.
+     * @param array<string, mixed> $options An array of options for the validation.
      * @return bool
      */
     public static function uploadedFile($file, array $options = []): bool
@@ -1419,7 +1419,7 @@ class Validation
      * Validates the size of an uploaded image.
      *
      * @param mixed $file The uploaded file data from PHP.
-     * @param array $options Options to validate width and height.
+     * @param array<string, mixed> $options Options to validate width and height.
      * @return bool
      * @throws \InvalidArgumentException
      */
@@ -1509,7 +1509,7 @@ class Validation
      *   only a part of the coordinate.
      *
      * @param mixed $value Geographic location as string
-     * @param array $options Options for the validation logic.
+     * @param array<string, mixed> $options Options for the validation logic.
      * @return bool
      */
     public static function geoCoordinate($value, array $options = []): bool
@@ -1543,7 +1543,7 @@ class Validation
      * Convenience method for latitude validation.
      *
      * @param mixed $value Latitude as string
-     * @param array $options Options for the validation logic.
+     * @param array<string, mixed> $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Latitude
      * @see \Cake\Validation\Validation::geoCoordinate()
@@ -1559,7 +1559,7 @@ class Validation
      * Convenience method for longitude validation.
      *
      * @param mixed $value Latitude as string
-     * @param array $options Options for the validation logic.
+     * @param array<string, mixed> $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Longitude
      * @see \Cake\Validation\Validation::geoCoordinate()
@@ -1600,7 +1600,7 @@ class Validation
      *   the basic multilingual plane. Defaults to false.
      *
      * @param mixed $value The value to check
-     * @param array $options An array of options. See above for the supported options.
+     * @param array<string, mixed> $options An array of options. See above for the supported options.
      * @return bool
      */
     public static function utf8($value, array $options = []): bool
@@ -1716,7 +1716,7 @@ class Validation
      * The arrays are typically sent for validation from a form generated by
      * the CakePHP FormHelper.
      *
-     * @param array $value The array representing a date or datetime.
+     * @param array<string, mixed> $value The array representing a date or datetime.
      * @return string
      */
     protected static function _getDateString(array $value): string

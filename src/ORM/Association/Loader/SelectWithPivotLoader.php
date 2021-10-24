@@ -50,7 +50,7 @@ class SelectWithPivotLoader extends SelectLoader
     /**
      * Custom conditions for the junction association
      *
-     * @var string|array|\Cake\Database\ExpressionInterface|\Closure|null
+     * @var \Cake\Database\ExpressionInterface|\Closure|array|string|null
      */
     protected $junctionConditions;
 
@@ -73,7 +73,7 @@ class SelectWithPivotLoader extends SelectLoader
      *
      * This is used for eager loading records on the target table based on conditions.
      *
-     * @param array $options options accepted by eagerLoader()
+     * @param array<string, mixed> $options options accepted by eagerLoader()
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
@@ -141,8 +141,8 @@ class SelectWithPivotLoader extends SelectLoader
      * Generates a string used as a table field that contains the values upon
      * which the filter should be applied
      *
-     * @param array $options the options to use for getting the link field.
-     * @return string|string[]
+     * @param array<string, mixed> $options the options to use for getting the link field.
+     * @return array<string>|string
      */
     protected function _linkField(array $options)
     {
@@ -165,8 +165,8 @@ class SelectWithPivotLoader extends SelectLoader
      * the foreignKey value corresponding to this association.
      *
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
-     * @param array $options The options passed to the eager loader
-     * @return array
+     * @param array<string, mixed> $options The options passed to the eager loader
+     * @return array<string, mixed>
      * @throws \RuntimeException when the association property is not part of the results set.
      */
     protected function _buildResultMap(Query $fetchQuery, array $options): array

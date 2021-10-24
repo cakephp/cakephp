@@ -27,8 +27,6 @@ class IntegrationShell extends Shell
 {
     /**
      * Option parser
-     *
-     * @return ConsoleOptionParser
      */
     public function getOptionParser(): ConsoleOptionParser
     {
@@ -53,10 +51,8 @@ class IntegrationShell extends Shell
 
     /**
      * Bridge of Death question
-     *
-     * @return void
      */
-    public function bridge()
+    public function bridge(): void
     {
         $name = $this->in('What is your name');
 
@@ -77,10 +73,8 @@ class IntegrationShell extends Shell
 
     /**
      * A sub command that requires an argument and has an option
-     *
-     * @return void
      */
-    public function argsAndOptions()
+    public function argsAndOptions(): void
     {
         $this->out('arg: ' . $this->args[0]);
         $this->out('opt: ' . $this->param('opt'));
@@ -89,7 +83,7 @@ class IntegrationShell extends Shell
     /**
      * @throws \Cake\Console\Exception\StopException
      */
-    public function abortShell()
+    public function abortShell(): void
     {
         $this->abort('Shell aborted');
     }

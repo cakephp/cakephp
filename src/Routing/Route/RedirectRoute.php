@@ -41,7 +41,7 @@ class RedirectRoute extends Route
      *
      * @param string $template Template string with parameter placeholders
      * @param array $defaults Defaults for the route. Either a redirect=>value array or a CakePHP array URL.
-     * @param array $options Array of additional options for the Route
+     * @param array<string, mixed> $options Array of additional options for the Route
      */
     public function __construct(string $template, array $defaults = [], array $options = [])
     {

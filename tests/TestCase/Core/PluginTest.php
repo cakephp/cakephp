@@ -28,8 +28,6 @@ class PluginTest extends TestCase
 {
     /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -39,8 +37,6 @@ class PluginTest extends TestCase
 
     /**
      * Reverts the changes done to the environment while testing
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -50,10 +46,8 @@ class PluginTest extends TestCase
 
     /**
      * Tests loading a plugin with a class
-     *
-     * @return void
      */
-    public function testLoadConcreteClass()
+    public function testLoadConcreteClass(): void
     {
         $this->loadPlugins(['TestPlugin']);
         $instance = Plugin::getCollection()->get('TestPlugin');
@@ -62,10 +56,8 @@ class PluginTest extends TestCase
 
     /**
      * Tests loading a plugin without a class
-     *
-     * @return void
      */
-    public function testLoadDynamicClass()
+    public function testLoadDynamicClass(): void
     {
         $this->loadPlugins(['TestPluginTwo']);
         $instance = Plugin::getCollection()->get('TestPluginTwo');
@@ -74,10 +66,8 @@ class PluginTest extends TestCase
 
     /**
      * Tests that Plugin::path() returns the correct path for the loaded plugins
-     *
-     * @return void
      */
-    public function testPath()
+    public function testPath(): void
     {
         $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
@@ -92,10 +82,8 @@ class PluginTest extends TestCase
 
     /**
      * Tests that Plugin::path() throws an exception on unknown plugin
-     *
-     * @return void
      */
-    public function testPathNotFound()
+    public function testPathNotFound(): void
     {
         $this->expectException(MissingPluginException::class);
         Plugin::path('NonExistentPlugin');
@@ -103,10 +91,8 @@ class PluginTest extends TestCase
 
     /**
      * Tests that Plugin::classPath() returns the correct path for the loaded plugins
-     *
-     * @return void
      */
-    public function testClassPath()
+    public function testClassPath(): void
     {
         $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS;
@@ -121,10 +107,8 @@ class PluginTest extends TestCase
 
     /**
      * Tests that Plugin::templatePath() returns the correct path for the loaded plugins
-     *
-     * @return void
      */
-    public function testTemplatePath()
+    public function testTemplatePath(): void
     {
         $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS;
@@ -139,10 +123,8 @@ class PluginTest extends TestCase
 
     /**
      * Tests that Plugin::classPath() throws an exception on unknown plugin
-     *
-     * @return void
      */
-    public function testClassPathNotFound()
+    public function testClassPathNotFound(): void
     {
         $this->expectException(MissingPluginException::class);
         Plugin::classPath('NonExistentPlugin');

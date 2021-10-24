@@ -30,7 +30,7 @@ class SchemaCacheTest extends TestCase
     /**
      * Fixtures.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = ['core.Articles', 'core.Tags'];
 
@@ -48,8 +48,6 @@ class SchemaCacheTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -64,24 +62,20 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
+        $this->connection->cacheMetadata(false);
         parent::tearDown();
 
-        $this->connection->cacheMetadata(false);
         unset($this->connection);
         Cache::drop('orm_cache');
     }
 
     /**
      * Test that clear enables the cache if it was disabled.
-     *
-     * @return void
      */
-    public function testClearEnablesMetadataCache()
+    public function testClearEnablesMetadataCache(): void
     {
         $this->connection->cacheMetadata(false);
 
@@ -93,10 +87,8 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Test that build enables the cache if it was disabled.
-     *
-     * @return void
      */
-    public function testBuildEnablesMetadataCache()
+    public function testBuildEnablesMetadataCache(): void
     {
         $this->connection->cacheMetadata(false);
 
@@ -108,10 +100,8 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Test build() with no args.
-     *
-     * @return void
      */
-    public function testBuildNoArgs()
+    public function testBuildNoArgs(): void
     {
         $ormCache = new SchemaCache($this->connection);
         $ormCache->build();
@@ -121,10 +111,8 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Test build() with one arg.
-     *
-     * @return void
      */
-    public function testBuildNamedModel()
+    public function testBuildNamedModel(): void
     {
         $ormCache = new SchemaCache($this->connection);
         $ormCache->build('articles');
@@ -134,10 +122,8 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Test build() overwrites cached data.
-     *
-     * @return void
      */
-    public function testBuildOverwritesExistingData()
+    public function testBuildOverwritesExistingData(): void
     {
         $this->cache->set('test_articles', 'dummy data');
 
@@ -149,10 +135,8 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Test clear() with no args.
-     *
-     * @return void
      */
-    public function testClearNoArgs()
+    public function testClearNoArgs(): void
     {
         $this->cache->set('test_articles', 'dummy data');
 
@@ -163,10 +147,8 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Test clear() with a model name.
-     *
-     * @return void
      */
-    public function testClearNamedModel()
+    public function testClearNamedModel(): void
     {
         $this->cache->set('test_articles', 'dummy data');
 
@@ -177,10 +159,8 @@ class SchemaCacheTest extends TestCase
 
     /**
      * Tests getting a schema config from a connection instance
-     *
-     * @return void
      */
-    public function testGetSchemaWithConnectionInstance()
+    public function testGetSchemaWithConnectionInstance(): void
     {
         $ormCache = new SchemaCache($this->connection);
         $result = $ormCache->getSchema($this->connection);

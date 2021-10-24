@@ -25,8 +25,6 @@ class PaginatorPostsTable extends Table
 {
     /**
      * initialize method
-     *
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -39,7 +37,7 @@ class PaginatorPostsTable extends Table
     /**
      * Finder method for find('popular');
      */
-    public function findPopular(Query $query, array $options)
+    public function findPopular(Query $query, array $options): Query
     {
         $field = $this->getAlias() . '.' . $this->getPrimaryKey();
         $query->where([$field . ' >' => '1']);
@@ -50,7 +48,7 @@ class PaginatorPostsTable extends Table
     /**
      * Finder for published posts.
      */
-    public function findPublished(Query $query, array $options)
+    public function findPublished(Query $query, array $options): Query
     {
         $query->where(['published' => 'Y']);
 
@@ -59,12 +57,8 @@ class PaginatorPostsTable extends Table
 
     /**
      * Custom finder, used with fixture data to ensure Paginator is sending options
-     *
-     * @param \Cake\ORM\Query $query
-     * @param array $options
-     * @return \Cake\ORM\Query
      */
-    public function findAuthor(Query $query, array $options = [])
+    public function findAuthor(Query $query, array $options = []): Query
     {
         if (isset($options['author_id'])) {
             $query->where(['PaginatorPosts.author_id' => $options['author_id']]);

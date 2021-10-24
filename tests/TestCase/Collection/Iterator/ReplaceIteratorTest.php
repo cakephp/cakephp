@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\TestSuite\TestCase;
 
@@ -26,12 +27,10 @@ class ReplaceIteratorTest extends TestCase
 {
     /**
      * Tests that the iterator works correctly
-     *
-     * @return void
      */
-    public function testReplace()
+    public function testReplace(): void
     {
-        $items = new \ArrayIterator([1, 2, 3]);
+        $items = new ArrayIterator([1, 2, 3]);
         $callable = function ($value, $key, $itemsArg) use ($items) {
             $this->assertSame($items, $itemsArg);
             $this->assertContains($value, $items);

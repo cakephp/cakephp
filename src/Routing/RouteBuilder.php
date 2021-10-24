@@ -51,14 +51,14 @@ class RouteBuilder
     /**
      * Default HTTP request method => controller action map.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected static $_resourceMap = [
         'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
         'create' => ['action' => 'add', 'method' => 'POST', 'path' => ''],
-        'view' => ['action' => 'view', 'method' => 'GET', 'path' => ':id'],
-        'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'path' => ':id'],
-        'delete' => ['action' => 'delete', 'method' => 'DELETE', 'path' => ':id'],
+        'view' => ['action' => 'view', 'method' => 'GET', 'path' => '{id}'],
+        'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'path' => '{id}'],
+        'delete' => ['action' => 'delete', 'method' => 'DELETE', 'path' => '{id}'],
     ];
 
     /**
@@ -71,7 +71,7 @@ class RouteBuilder
     /**
      * The extensions that should be set into the routes connected.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_extensions = [];
 
@@ -107,7 +107,7 @@ class RouteBuilder
      * The list of middleware that routes in this builder get
      * added during construction.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $middleware = [];
 
@@ -124,7 +124,7 @@ class RouteBuilder
      * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
      * @param string $path The path prefix the scope is for.
      * @param array $params The scope's routing parameters.
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      */
     public function __construct(RouteCollection $collection, string $path, array $params = [], array $options = [])
     {
@@ -174,7 +174,7 @@ class RouteBuilder
      * Future routes connected in through this builder will have the connected
      * extensions applied. However, setting extensions does not modify existing routes.
      *
-     * @param string|string[] $extensions The extensions to set.
+     * @param array<string>|string $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions($extensions)
@@ -187,7 +187,7 @@ class RouteBuilder
     /**
      * Get the extensions in this route builder's scope.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getExtensions(): array
     {
@@ -197,7 +197,7 @@ class RouteBuilder
     /**
      * Add additional extensions to what is already in current scope
      *
-     * @param string|string[] $extensions One or more extensions to add
+     * @param array<string>|string $extensions One or more extensions to add
      * @return $this
      */
     public function addExtensions($extensions)
@@ -215,6 +215,11 @@ class RouteBuilder
      */
     public function path(): string
     {
+        $routeKey = strpos($this->_path, '{');
+        if ($routeKey !== false && strpos($this->_path, '}') !== false) {
+            return substr($this->_path, 0, $routeKey);
+        }
+
         $routeKey = strpos($this->_path, ':');
         if ($routeKey !== false) {
             return substr($this->_path, 0, $routeKey);
@@ -317,7 +322,7 @@ class RouteBuilder
      * ```
      *
      * In addition to the default routes, this would also connect a route for `/articles/delete_all`.
-     * By default the path segment will match the key name. You can use the 'path' key inside the resource
+     * By default, the path segment will match the key name. You can use the 'path' key inside the resource
      * definition to customize the path name.
      *
      * You can use the `inflect` option to change how path segments are generated:
@@ -344,7 +349,7 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param array|callable $options Options to use when generating REST routes, or a callback.
+     * @param callable|array $options Options to use when generating REST routes, or a callback.
      * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @return $this
@@ -400,10 +405,7 @@ class RouteBuilder
                 continue;
             }
 
-            $action = $params['action'];
-            if (isset($options['actions'][$method])) {
-                $action = $options['actions'][$method];
-            }
+            $action = $options['actions'][$method] ?? $params['action'];
 
             $url = '/' . implode('/', array_filter([$options['path'], $params['path']]));
             $params = [
@@ -424,7 +426,7 @@ class RouteBuilder
 
         if ($callback !== null) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
-            $path = '/' . $options['path'] . '/:' . $idName;
+            $path = '/' . $options['path'] . '/{' . $idName . '}';
             $this->scope($path, [], $callback);
         }
 
@@ -657,10 +659,10 @@ class RouteBuilder
      *
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
-     * @param string|\Cake\Routing\Route\Route $route A string describing the template of the route
+     * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
      * @param array|string $defaults An array describing the default route parameters.
      *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
-     * @param array $options An array matching the named elements in the route to regular expressions which that
+     * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
      *   custom routing class.
@@ -693,7 +695,7 @@ class RouteBuilder
     /**
      * Parse the defaults if they're a string
      *
-     * @param string|array $defaults Defaults array from the connect() method.
+     * @param array|string $defaults Defaults array from the connect() method.
      * @return array
      */
     protected function parseDefaults($defaults): array
@@ -708,9 +710,9 @@ class RouteBuilder
     /**
      * Create a route object, or return the provided object.
      *
-     * @param string|\Cake\Routing\Route\Route $route The route template or route object.
+     * @param \Cake\Routing\Route\Route|string $route The route template or route object.
      * @param array $defaults Default parameters.
-     * @param array $options Additional options parameters.
+     * @param array<string, mixed> $options Additional options parameters.
      * @return \Cake\Routing\Route\Route
      * @throws \InvalidArgumentException when route class or route object is invalid.
      * @throws \BadMethodCallException when the route to make conflicts with the current scope
@@ -790,16 +792,14 @@ class RouteBuilder
      *
      * @param string $route A string describing the template of the route
      * @param array|string $url A URL to redirect to. Can be a string or a Cake array-based URL
-     * @param array $options An array matching the named elements in the route to regular expressions which that
+     * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return \Cake\Routing\Route\Route|\Cake\Routing\Route\RedirectRoute
      */
     public function redirect(string $route, $url, array $options = []): Route
     {
-        if (!isset($options['routeClass'])) {
-            $options['routeClass'] = RedirectRoute::class;
-        }
+        $options['routeClass'] = $options['routeClass'] ?? RedirectRoute::class;
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
@@ -833,7 +833,7 @@ class RouteBuilder
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
+     * @param callable|array $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return $this
@@ -879,7 +879,7 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $name The plugin name to build routes for
-     * @param array|callable $options Either the options to use, or a callback to build routes.
+     * @param callable|array $options Either the options to use, or a callback to build routes.
      * @param callable|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return $this
@@ -912,7 +912,7 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
-     * @param array|callable $params Either the parameters to add to routes, or a callback.
+     * @param callable|array $params Either the parameters to add to routes, or a callback.
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $params is defined.
      * @return $this
@@ -977,7 +977,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to register.
+     * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */
@@ -1026,7 +1026,7 @@ class RouteBuilder
      * Apply a set of middleware to a group
      *
      * @param string $name Name of the middleware group
-     * @param string[] $middlewareNames Names of the middleware
+     * @param array<string> $middlewareNames Names of the middleware
      * @return $this
      */
     public function middlewareGroup(string $name, array $middlewareNames)

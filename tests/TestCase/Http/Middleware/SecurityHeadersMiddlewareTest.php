@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Http\Middleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Laminas\Diactoros\Response;
 use TestApp\Http\TestRequestHandler;
 
@@ -29,10 +30,8 @@ class SecurityHeadersMiddlewareTest extends TestCase
 {
     /**
      * Test adding the security headers
-     *
-     * @return void
      */
-    public function testAddingSecurityHeaders()
+    public function testAddingSecurityHeaders(): void
     {
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/',
@@ -65,12 +64,10 @@ class SecurityHeadersMiddlewareTest extends TestCase
 
     /**
      * Testing that the URL is required when option is `allow-from`
-     *
-     * @return void
      */
-    public function testInvalidArgumentExceptionForsetXFrameOptionsUrl()
+    public function testInvalidArgumentExceptionForsetXFrameOptionsUrl(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The 2nd arg $url can not be empty when `allow-from` is used');
         $middleware = new SecurityHeadersMiddleware();
         $middleware->setXFrameOptions('allow-from');
@@ -79,12 +76,10 @@ class SecurityHeadersMiddlewareTest extends TestCase
     /**
      * Testing the protected checkValues() method that is used by most of the
      * methods in the test to avoid passing an invalid argument.
-     *
-     * @return void
      */
-    public function testCheckValues()
+    public function testCheckValues(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid arg `INVALID-VALUE!`, use one of these: all, none, master-only, by-content-type, by-ftp-filename');
         $middleware = new SecurityHeadersMiddleware();
         $middleware->setCrossDomainPolicy('INVALID-VALUE!');

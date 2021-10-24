@@ -42,7 +42,7 @@ class DateTimeWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaults = [
         'name' => '',
@@ -56,7 +56,7 @@ class DateTimeWidget extends BasicWidget
     /**
      * Formats for various input types.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $formatMap = [
         'datetime-local' => 'Y-m-d\TH:i:s',
@@ -71,7 +71,7 @@ class DateTimeWidget extends BasicWidget
      *
      * If not set, defaults to browser default.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $defaultStep = [
         'datetime-local' => '1',
@@ -94,14 +94,14 @@ class DateTimeWidget extends BasicWidget
      * - `step` The "step" attribute. Defaults to `1` for "time" and "datetime-local" type inputs.
      *   You can set it to `null` or `false` to prevent explicit step attribute being added in HTML.
      * - `format` A `date()` function compatible datetime format string.
-     *   By default the widget will use a suitable format based on the input type and
+     *   By default, the widget will use a suitable format based on the input type and
      *   database type for the context. If an explicit format is provided, then no
      *   default value will be set for the `step` attribute, and it needs to be
      *   explicitly set if required.
      *
      * All other keys will be converted into HTML attributes.
      *
-     * @param array $data The data to build a file input with.
+     * @param array<string, mixed> $data The data to build a file input with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string HTML elements.
      */
@@ -135,10 +135,10 @@ class DateTimeWidget extends BasicWidget
     /**
      * Set value for "step" attribute if applicable.
      *
-     * @param array $data Data array
+     * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
-     * @return array Updated data array.
+     * @return array<string, mixed> Updated data array.
      */
     protected function setStep(array $data, ContextInterface $context, string $fieldName): array
     {
@@ -173,8 +173,8 @@ class DateTimeWidget extends BasicWidget
     /**
      * Formats the passed date/time value into required string format.
      *
-     * @param string|int|\DateTime|null $value Value to deconstruct.
-     * @param array $options Options for conversion.
+     * @param \DateTime|string|int|null $value Value to deconstruct.
+     * @param array<string, mixed> $options Options for conversion.
      * @return string
      * @throws \InvalidArgumentException If invalid input type is passed.
      */

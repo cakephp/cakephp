@@ -19,7 +19,7 @@ namespace Cake\Datasource;
 /**
  * Contains logic for invoking an application rule.
  *
- * Combined with Cake\Datasource\RuleChecker as an implementation
+ * Combined with {@link \Cake\Datasource\RulesChecker} as an implementation
  * detail to de-duplicate rule decoration and provide cleaner separation
  * of duties.
  *
@@ -61,8 +61,8 @@ class RuleInvoker
      * rule $scope.
      *
      * @param callable $rule The rule to be invoked.
-     * @param ?string $name The name of the rule. Used in error messsages.
-     * @param array $options The options for the rule. See above.
+     * @param ?string $name The name of the rule. Used in error messages.
+     * @param array<string, mixed> $options The options for the rule. See above.
      */
     public function __construct(callable $rule, ?string $name, array $options = [])
     {
@@ -76,7 +76,7 @@ class RuleInvoker
      *
      * Old options will be merged with the new ones.
      *
-     * @param array $options The options to set.
+     * @param array<string, mixed> $options The options to set.
      * @return $this
      */
     public function setOptions(array $options)
@@ -109,7 +109,7 @@ class RuleInvoker
      * @param \Cake\Datasource\EntityInterface $entity The entity the rule
      *   should apply to.
      * @param array $scope The rule's scope/options.
-     * @return bool Whether or not the rule passed.
+     * @return bool Whether the rule passed.
      */
     public function __invoke(EntityInterface $entity, array $scope): bool
     {
@@ -119,10 +119,7 @@ class RuleInvoker
             return $pass === true;
         }
 
-        $message = 'invalid';
-        if (isset($this->options['message'])) {
-            $message = $this->options['message'];
-        }
+        $message = $this->options['message'] ?? 'invalid';
         if (is_string($pass)) {
             $message = $pass;
         }

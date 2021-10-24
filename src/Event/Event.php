@@ -76,7 +76,7 @@ class Event implements EventInterface
      * @param string $name Name of the event
      * @param object|null $subject the object that this event applies to
      *   (usually the object that is generating the event).
-     * @param array|\ArrayAccess|null $data any value you wish to be transported
+     * @param \ArrayAccess|array|null $data any value you wish to be transported
      *   with this event to it can be read by listeners.
      * @psalm-param TSubject|null $subject
      */
@@ -163,7 +163,7 @@ class Event implements EventInterface
      * Access the event data/payload.
      *
      * @param string|null $key The data payload element to return, or null to return all data.
-     * @return array|mixed|null The data payload if $key is null, or the data value for the given $key.
+     * @return mixed|array|null The data payload if $key is null, or the data value for the given $key.
      *   If the $key does not exist a null value is returned.
      */
     public function getData(?string $key = null)

@@ -19,6 +19,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use stdClass;
 
 /**
  * FactoryLocatorTest test case
@@ -27,10 +28,8 @@ class FactoryLocatorTest extends TestCase
 {
     /**
      * Test get factory
-     *
-     * @return void
      */
-    public function testGet()
+    public function testGet(): void
     {
         $factory = FactoryLocator::get('Table');
         $this->assertTrue(is_callable($factory) || $factory instanceof LocatorInterface);
@@ -38,25 +37,21 @@ class FactoryLocatorTest extends TestCase
 
     /**
      * Test get nonexistent factory
-     *
-     * @return void
      */
-    public function testGetNonExistent()
+    public function testGetNonExistent(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::get('Test');
     }
 
     /**
      * test add()
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         FactoryLocator::add('Test', function ($name) {
-            $mock = new \stdClass();
+            $mock = new stdClass();
             $mock->name = $name;
 
             return $mock;
@@ -68,7 +63,7 @@ class FactoryLocatorTest extends TestCase
         $this->assertInstanceOf(LocatorInterface::class, FactoryLocator::get('MyType'));
     }
 
-    public function testFactoryAddException()
+    public function testFactoryAddException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -81,12 +76,10 @@ class FactoryLocatorTest extends TestCase
 
     /**
      * test drop()
-     *
-     * @return void
      */
-    public function testDrop()
+    public function testDrop(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::drop('Test');
 

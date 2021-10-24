@@ -51,17 +51,17 @@ class ConsoleInputArgument
     /**
      * An array of valid choices for this argument.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_choices;
 
     /**
      * Make a new Input Argument
      *
-     * @param string|array $name The long name of the option, or an array with all the properties.
+     * @param array|string $name The long name of the option, or an array with all the properties.
      * @param string $help The help text for this option
      * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
-     * @param string[] $choices Valid choices for this option.
+     * @param array<string> $choices Valid choices for this option.
      */
     public function __construct($name, $help = '', $required = false, $choices = [])
     {

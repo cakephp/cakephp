@@ -54,14 +54,14 @@ class Helper implements EventListenerInterface
     /**
      * Default config for this helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
     /**
      * A helper lookup table used to lazy load helper objects.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_helperMap = [];
 
@@ -76,7 +76,7 @@ class Helper implements EventListenerInterface
      * Default Constructor
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper.
+     * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
     {
@@ -143,10 +143,10 @@ class Helper implements EventListenerInterface
     /**
      * Adds the given class to the element options
      *
-     * @param array $options Array options/attributes to add a class to
+     * @param array<string, mixed> $options Array options/attributes to add a class to
      * @param string $class The class name being added.
      * @param string $key the key to use for class. Defaults to `'class'`.
-     * @return array Array of options with $key set.
+     * @return array<string, mixed> Array of options with $key set.
      */
     public function addClass(array $options, string $class, string $key = 'class'): array
     {
@@ -170,7 +170,7 @@ class Helper implements EventListenerInterface
      * Override this method if you need to add non-conventional event listeners.
      * Or if you want helpers to listen to non-standard events.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -197,7 +197,7 @@ class Helper implements EventListenerInterface
      *
      * Implement this method to avoid having to overwrite the constructor and call parent.
      *
-     * @param array $config The configuration settings provided to this helper.
+     * @param array<string, mixed> $config The configuration settings provided to this helper.
      * @return void
      */
     public function initialize(array $config): void
@@ -208,7 +208,7 @@ class Helper implements EventListenerInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

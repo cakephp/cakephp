@@ -49,7 +49,7 @@ class SaveOptionsBuilder extends ArrayObject
      * Constructor.
      *
      * @param \Cake\ORM\Table $table A table instance.
-     * @param array $options Options to parse when instantiating.
+     * @param array<string, mixed> $options Options to parse when instantiating.
      */
     public function __construct(Table $table, array $options = [])
     {
@@ -80,7 +80,7 @@ class SaveOptionsBuilder extends ArrayObject
     /**
      * Set associated options.
      *
-     * @param string|array $associated String or array of associations.
+     * @param array|string $associated String or array of associations.
      * @return $this
      */
     public function associated($associated)

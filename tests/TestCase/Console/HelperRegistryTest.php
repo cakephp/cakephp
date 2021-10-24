@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\Exception\MissingHelperException;
 use Cake\Console\HelperRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Command\Helper\CommandHelper;
@@ -33,8 +34,6 @@ class HelperRegistryTest extends TestCase
 
     /**
      * setUp
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -49,8 +48,6 @@ class HelperRegistryTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -60,10 +57,8 @@ class HelperRegistryTest extends TestCase
 
     /**
      * test loading helpers.
-     *
-     * @return void
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $result = $this->helpers->load('Simple');
         $this->assertInstanceOf(SimpleHelper::class, $result);
@@ -75,10 +70,8 @@ class HelperRegistryTest extends TestCase
 
     /**
      * test loading helpers.
-     *
-     * @return void
      */
-    public function testLoadCommandNamespace()
+    public function testLoadCommandNamespace(): void
     {
         $result = $this->helpers->load('Command');
         $this->assertInstanceOf(CommandHelper::class, $result);
@@ -90,10 +83,8 @@ class HelperRegistryTest extends TestCase
 
     /**
      * test triggering callbacks on loaded helpers
-     *
-     * @return void
      */
-    public function testLoadWithConfig()
+    public function testLoadWithConfig(): void
     {
         $result = $this->helpers->load('Simple', ['key' => 'value']);
         $this->assertSame('value', $result->getConfig('key'));
@@ -101,21 +92,17 @@ class HelperRegistryTest extends TestCase
 
     /**
      * test missing helper exception
-     *
-     * @return void
      */
-    public function testLoadMissingHelper()
+    public function testLoadMissingHelper(): void
     {
-        $this->expectException(\Cake\Console\Exception\MissingHelperException::class);
+        $this->expectException(MissingHelperException::class);
         $this->helpers->load('ThisTaskShouldAlwaysBeMissing');
     }
 
     /**
      * Tests loading as an alias
-     *
-     * @return void
      */
-    public function testLoadWithAlias()
+    public function testLoadWithAlias(): void
     {
         $this->loadPlugins(['TestPlugin']);
 

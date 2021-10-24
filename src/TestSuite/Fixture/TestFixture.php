@@ -53,7 +53,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * Fields / Schema for the fixture.
      *
-     * This array should be compatible with Cake\Database\Schema\Schema.
+     * This array should be compatible with {@link \Cake\Database\Schema\Schema}.
      * The `_constraints`, `_options` and `_indexes` keys are reserved for defining
      * constraints, options and indexes respectively.
      *
@@ -90,7 +90,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * Fixture constraints to be created.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_constraints = [];
 
@@ -165,11 +165,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     {
         [, $class] = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
-        $table = $class;
-
-        if (isset($matches[1])) {
-            $table = $matches[1];
-        }
+        $table = $matches[1] ?? $class;
 
         return Inflector::tableize($table);
     }
@@ -332,7 +328,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     public function insert(ConnectionInterface $connection)
     {
-        if (isset($this->records) && !empty($this->records)) {
+        if (!empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
             $query = $connection->newQuery()
                 ->insert($fields, $types)

@@ -27,6 +27,8 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
+use Cake\TestSuite\Fixture\FixtureStrategyInterface;
+use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
@@ -50,12 +52,12 @@ abstract class TestCase extends BaseTestCase
      *
      * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
-    public $fixtureManager;
+    public static $fixtureManager;
 
     /**
      * Fixtures used by this test case.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $fixtures = [];
 
@@ -64,6 +66,8 @@ abstract class TestCase extends BaseTestCase
      * Set this to false to handle manually
      *
      * @var bool
+     * @deprecated 4.3.0 autoFixtures is only used by deprecated fixture features.
+     *   This property will be removed in 5.0
      */
     public $autoFixtures = true;
 
@@ -74,8 +78,15 @@ abstract class TestCase extends BaseTestCase
      * end of each test runner execution.
      *
      * @var bool
+     * @deprecated 4.3.0 dropTables is only used by deprecated fixture features.
+     *   This property will be removed in 5.0
      */
     public $dropTables = false;
+
+    /**
+     * @var \Cake\TestSuite\Fixture\FixtureStrategyInterface|null
+     */
+    protected $fixtureStrategy = null;
 
     /**
      * Configure values to restore at end of test.
@@ -153,7 +164,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
      *
-     * @param bool $shouldSkip Whether or not the test should be skipped.
+     * @param bool $shouldSkip Whether the test should be skipped.
      * @param string $message The message to display.
      * @return bool
      */
@@ -192,13 +203,37 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated(callable $callable): void
     {
-        $errorLevel = error_reporting();
-        error_reporting(E_ALL ^ E_USER_DEPRECATED);
+        $duplicate = Configure::read('Error.allowDuplicateDeprecations');
+        Configure::write('Error.allowDuplicateDeprecations', true);
+        /** @var bool $deprecation */
+        $deprecation = false;
+
+        /**
+         * @psalm-suppress InvalidArgument
+         */
+        $previousHandler = set_error_handler(
+            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation) {
+                if ($code == E_USER_DEPRECATED) {
+                    $deprecation = true;
+
+                    return;
+                }
+                if ($previousHandler) {
+                    return $previousHandler($code, $message, $file, $line, $context);
+                }
+
+                return false;
+            }
+        );
         try {
             $callable();
         } finally {
-            error_reporting($errorLevel);
+            restore_error_handler();
+            if ($duplicate !== Configure::read('Error.allowDuplicateDeprecations')) {
+                Configure::write('Error.allowDuplicateDeprecations', $duplicate);
+            }
         }
+        $this->assertTrue($deprecation, 'Should have at least one deprecation warning');
     }
 
     /**
@@ -211,6 +246,7 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->setupFixtures();
 
         if (!$this->_configure) {
             $this->_configure = Configure::read();
@@ -230,6 +266,8 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        $this->teardownFixtures();
+
         if ($this->_configure) {
             Configure::clear();
             Configure::write($this->_configure);
@@ -237,7 +275,53 @@ abstract class TestCase extends BaseTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
-        $this->fixtureManager = null;
+    }
+
+    /**
+     * Initialized and loads any use fixtures.
+     *
+     * @return void
+     */
+    protected function setupFixtures(): void
+    {
+        $fixtureNames = $this->getFixtures();
+
+        if (!empty($fixtureNames) && static::$fixtureManager) {
+            if (!$this->autoFixtures) {
+                deprecationWarning('`$autoFixtures` is deprecated and will be removed in 5.0.', 0);
+            }
+            if ($this->dropTables) {
+                deprecationWarning('`$dropTables` is deprecated and will be removed in 5.0.', 0);
+            }
+            // legacy fixtures are managed by FixtureInjector
+            return;
+        }
+
+        $this->fixtureStrategy = $this->getFixtureStrategy();
+        $this->fixtureStrategy->setupTest($fixtureNames);
+    }
+
+    /**
+     * Unloads any use fixtures.
+     *
+     * @return void
+     */
+    protected function teardownFixtures(): void
+    {
+        if ($this->fixtureStrategy) {
+            $this->fixtureStrategy->teardownTest();
+            $this->fixtureStrategy = null;
+        }
+    }
+
+    /**
+     * Returns fixture strategy used by these tests.
+     *
+     * @return \Cake\TestSuite\Fixture\FixtureStrategyInterface
+     */
+    protected function getFixtureStrategy(): FixtureStrategyInterface
+    {
+        return new TruncateStrategy();
     }
 
     /**
@@ -249,25 +333,26 @@ abstract class TestCase extends BaseTestCase
      * @return void
      * @see \Cake\TestSuite\TestCase::$autoFixtures
      * @throws \RuntimeException when no fixture manager is available.
+     * @deprecated 4.3.0 Disabling auto-fixtures is deprecated and only available using FixtureInjector fixture system.
      */
     public function loadFixtures(): void
     {
         if ($this->autoFixtures) {
             throw new RuntimeException('Cannot use `loadFixtures()` with `$autoFixtures` enabled.');
         }
-        if ($this->fixtureManager === null) {
+        if (static::$fixtureManager === null) {
             throw new RuntimeException('No fixture manager to load the test fixture');
         }
 
         $args = func_get_args();
         foreach ($args as $class) {
-            $this->fixtureManager->loadSingle($class, null, $this->dropTables);
+            static::$fixtureManager->loadSingle($class, null, $this->dropTables);
         }
 
         if (empty($args)) {
             $autoFixtures = $this->autoFixtures;
             $this->autoFixtures = true;
-            $this->fixtureManager->load($this);
+            static::$fixtureManager->load($this);
             $this->autoFixtures = $autoFixtures;
         }
     }
@@ -306,7 +391,7 @@ abstract class TestCase extends BaseTestCase
      * Useful to test how plugins being loaded/not loaded interact with other
      * elements in CakePHP or applications.
      *
-     * @param array $plugins List of Plugins to load.
+     * @param array<string, mixed> $plugins List of Plugins to load.
      * @return \Cake\Http\BaseApplication
      */
     public function loadPlugins(array $plugins = []): BaseApplication
@@ -336,7 +421,7 @@ abstract class TestCase extends BaseTestCase
      *
      * Useful in test case teardown methods.
      *
-     * @param string[] $names A list of plugins you want to remove.
+     * @param array<string> $names A list of plugins you want to remove.
      * @return void
      */
     public function removePlugins(array $names = []): void
@@ -503,7 +588,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $needle The string to search for.
      * @param string $haystack The string to search through.
      * @param string $message The message to display on failure.
-     * @param bool $ignoreCase Whether or not the search should be case-sensitive.
+     * @param bool $ignoreCase Whether the search should be case-sensitive.
      * @return void
      */
     public function assertTextContains(
@@ -529,7 +614,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $needle The string to search for.
      * @param string $haystack The string to search through.
      * @param string $message The message to display on failure.
-     * @param bool $ignoreCase Whether or not the search should be case-sensitive.
+     * @param bool $ignoreCase Whether the search should be case-sensitive.
      * @return void
      */
     public function assertTextNotContains(
@@ -624,7 +709,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param array $expected An array, see above
      * @param string $string An HTML/XHTML/XML string
-     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param bool $fullDebug Whether more verbose output should be used.
      * @return bool
      */
     public function assertHtml(array $expected, string $string, bool $fullDebug = false): bool
@@ -733,6 +818,9 @@ abstract class TestCase extends BaseTestCase
                 ];
             }
         }
+        /**
+         * @var array<string, mixed> $assertion
+         */
         foreach ($regex as $i => $assertion) {
             $matches = false;
             if (isset($assertion['attrs'])) {
@@ -779,9 +867,9 @@ abstract class TestCase extends BaseTestCase
     /**
      * Check the attributes as part of an assertTags() check.
      *
-     * @param array $assertions Assertions to run.
+     * @param array<string, mixed> $assertions Assertions to run.
      * @param string $string The HTML string to check.
-     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param bool $fullDebug Whether more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
      * @return string|false
      */
@@ -896,8 +984,8 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param string[] $methods The list of methods to mock
-     * @param array $options The config data for the mock's constructor.
+     * @param array<string> $methods The list of methods to mock
+     * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -957,7 +1045,7 @@ abstract class TestCase extends BaseTestCase
      * Gets the class name for the table.
      *
      * @param string $alias The model to get a mock for.
-     * @param array $options The config data for the mock's constructor.
+     * @param array<string, mixed> $options The config data for the mock's constructor.
      * @return string
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @psalm-return class-string<\Cake\ORM\Table>
@@ -1013,9 +1101,9 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Gets fixtures.
+     * Get the fixtures this test should use.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getFixtures(): array
     {

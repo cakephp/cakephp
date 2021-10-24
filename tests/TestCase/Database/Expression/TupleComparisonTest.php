@@ -20,6 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests TupleComparison class
@@ -28,10 +29,8 @@ class TupleComparisonTest extends TestCase
 {
     /**
      * Tests generating a function with no arguments
-     *
-     * @return void
      */
-    public function testsSimpleTuple()
+    public function testsSimpleTuple(): void
     {
         $f = new TupleComparison(['field1', 'field2'], [1, 2], ['integer', 'integer'], '=');
         $binder = new ValueBinder();
@@ -44,10 +43,8 @@ class TupleComparisonTest extends TestCase
 
     /**
      * Tests generating tuples in the fields side containing expressions
-     *
-     * @return void
      */
-    public function testTupleWithExpressionFields()
+    public function testTupleWithExpressionFields(): void
     {
         $field1 = new QueryExpression(['a' => 1]);
         $f = new TupleComparison([$field1, 'field2'], [4, 5], ['integer', 'integer'], '>');
@@ -60,10 +57,8 @@ class TupleComparisonTest extends TestCase
 
     /**
      * Tests generating tuples in the values side containing expressions
-     *
-     * @return void
      */
-    public function testTupleWithExpressionValues()
+    public function testTupleWithExpressionValues(): void
     {
         $value1 = new QueryExpression(['a' => 1]);
         $f = new TupleComparison(['field1', 'field2'], [$value1, 2], ['integer', 'integer'], '=');
@@ -75,10 +70,8 @@ class TupleComparisonTest extends TestCase
 
     /**
      * Tests generating tuples using the IN conjunction
-     *
-     * @return void
      */
-    public function testTupleWithInComparison()
+    public function testTupleWithInComparison(): void
     {
         $f = new TupleComparison(
             ['field1', 'field2'],
@@ -96,10 +89,8 @@ class TupleComparisonTest extends TestCase
 
     /**
      * Tests traversing
-     *
-     * @return void
      */
-    public function testTraverse()
+    public function testTraverse(): void
     {
         $value1 = new QueryExpression(['a' => 1]);
         $field2 = new QueryExpression(['b' => 2]);
@@ -107,7 +98,7 @@ class TupleComparisonTest extends TestCase
         $binder = new ValueBinder();
         $expressions = [];
 
-        $collector = function ($e) use (&$expressions) {
+        $collector = function ($e) use (&$expressions): void {
             $expressions[] = $e;
         };
 
@@ -132,10 +123,8 @@ class TupleComparisonTest extends TestCase
     /**
      * Tests that a single ExpressionInterface can be used as the value for
      * comparison
-     *
-     * @return void
      */
-    public function testValueAsSingleExpression()
+    public function testValueAsSingleExpression(): void
     {
         $value = new QueryExpression('SELECT 1, 1');
         $f = new TupleComparison(['field1', 'field2'], $value);
@@ -146,14 +135,38 @@ class TupleComparisonTest extends TestCase
     /**
      * Tests that a single ExpressionInterface can be used as the field for
      * comparison
-     *
-     * @return void
      */
-    public function testFieldAsSingleExpression()
+    public function testFieldAsSingleExpression(): void
     {
         $value = [1, 1];
         $f = new TupleComparison(new QueryExpression('a, b'), $value);
         $binder = new ValueBinder();
         $this->assertSame('(a, b) = (:tuple0, :tuple1)', $f->sql($binder));
+    }
+
+    public function testMultiTupleComparisonRequiresMultiTupleValue(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Multi-tuple comparisons require a multi-tuple value, single-tuple given.');
+
+        new TupleComparison(
+            ['field1', 'field2'],
+            [1, 1],
+            ['integer', 'integer'],
+            'IN'
+        );
+    }
+
+    public function testSingleTupleComparisonRequiresSingleTupleValue(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Single-tuple comparisons require a single-tuple value, multi-tuple given.');
+
+        new TupleComparison(
+            ['field1', 'field2'],
+            [[1, 1], [2, 2]],
+            ['integer', 'integer'],
+            '='
+        );
     }
 }

@@ -28,10 +28,8 @@ class EntityRouteTest extends TestCase
 {
     /**
      * test that route keys take precedence to object properties.
-     *
-     * @return void
      */
-    public function testMatchRouteKeyPrecedence()
+    public function testMatchRouteKeyPrecedence(): void
     {
         $entity = new Article([
             'category_id' => 2,
@@ -39,7 +37,7 @@ class EntityRouteTest extends TestCase
         ]);
 
         $route = new EntityRoute(
-            '/articles/:category_id/:slug',
+            '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
             ]
@@ -56,10 +54,8 @@ class EntityRouteTest extends TestCase
 
     /**
      * test that routes match their pattern.
-     *
-     * @return void
      */
-    public function testMatchEntityObject()
+    public function testMatchEntityObject(): void
     {
         $entity = new Article([
             'category_id' => 2,
@@ -67,7 +63,7 @@ class EntityRouteTest extends TestCase
         ]);
 
         $route = new EntityRoute(
-            '/articles/:category_id/:slug',
+            '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
             ]
@@ -83,10 +79,8 @@ class EntityRouteTest extends TestCase
 
     /**
      * test that routes match their pattern.
-     *
-     * @return void
      */
-    public function testMatchUnderscoreBetweenVar()
+    public function testMatchUnderscoreBetweenVar(): void
     {
         $entity = new Article([
             'category_id' => 2,
@@ -94,7 +88,7 @@ class EntityRouteTest extends TestCase
         ]);
 
         $route = new EntityRoute(
-            '/articles/:category_id_:slug',
+            '/articles/{category_id}_{slug}',
             [
                 '_name' => 'articlesView',
             ]
@@ -110,10 +104,8 @@ class EntityRouteTest extends TestCase
 
     /**
      * test that routes match their pattern.
-     *
-     * @return void
      */
-    public function testMatchingArray()
+    public function testMatchingArray(): void
     {
         $entity = [
             'category_id' => 2,
@@ -121,7 +113,7 @@ class EntityRouteTest extends TestCase
         ];
 
         $route = new EntityRoute(
-            '/articles/:category_id/:slug',
+            '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
                 '_entity' => $entity,
@@ -139,7 +131,7 @@ class EntityRouteTest extends TestCase
     /**
      * Test invalid entity option value
      */
-    public function testInvalidEntityValueException()
+    public function testInvalidEntityValueException(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Route `/` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, but `string` passed.');

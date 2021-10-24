@@ -29,7 +29,7 @@ trait ExtractTrait
      * Returns a callable that can be used to extract a property or column from
      * an array or object based on a dot separated path.
      *
-     * @param string|callable $path A dot separated path of column to follow
+     * @param callable|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
      * @return callable
@@ -58,8 +58,8 @@ trait ExtractTrait
      * by iterating over the column names contained in $path.
      * It will return arrays for elements in represented with `{*}`
      *
-     * @param array|\ArrayAccess $data Data.
-     * @param string[] $parts Path to extract from.
+     * @param \ArrayAccess|array $data Data.
+     * @param array<string> $parts Path to extract from.
      * @return mixed
      */
     protected function _extract($data, array $parts)
@@ -104,8 +104,8 @@ trait ExtractTrait
      * Returns a column from $data that can be extracted
      * by iterating over the column names contained in $path
      *
-     * @param array|\ArrayAccess $data Data.
-     * @param string[] $parts Path to extract from.
+     * @param \ArrayAccess|array $data Data.
+     * @param array<string> $parts Path to extract from.
      * @return mixed
      */
     protected function _simpleExtract($data, array $parts)
@@ -123,7 +123,7 @@ trait ExtractTrait
     }
 
     /**
-     * Returns a callable that receives a value and will return whether or not
+     * Returns a callable that receives a value and will return whether
      * it matches certain condition.
      *
      * @param array $conditions A key-value list of conditions to match where the

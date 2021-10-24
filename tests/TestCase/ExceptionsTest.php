@@ -36,9 +36,8 @@ class ExceptionsTest extends TestCase
      * @dataProvider exceptionProvider
      * @param string $class The exception class name
      * @param int $defaultCode The default exception code
-     * @return void
      */
-    public function testSimpleException($class, $defaultCode)
+    public function testSimpleException($class, $defaultCode): void
     {
         $previous = new Exception();
 
@@ -56,10 +55,8 @@ class ExceptionsTest extends TestCase
 
     /**
      * Tests FatalErrorException works.
-     *
-     * @return void
      */
-    public function testFatalErrorException()
+    public function testFatalErrorException(): void
     {
         $previous = new Exception();
 
@@ -73,10 +70,8 @@ class ExceptionsTest extends TestCase
 
     /**
      * Tests PersistenceFailedException works.
-     *
-     * @return void
      */
-    public function testPersistenceFailedException()
+    public function testPersistenceFailedException(): void
     {
         $previous = new Exception();
         $entity = new Entity();
@@ -90,10 +85,8 @@ class ExceptionsTest extends TestCase
 
     /**
      * Test the template exceptions
-     *
-     * @return void
      */
-    public function testMissingTemplateExceptions()
+    public function testMissingTemplateExceptions(): void
     {
         $previous = new Exception();
 
@@ -134,7 +127,7 @@ class ExceptionsTest extends TestCase
      *
      * @return array
      */
-    public function exceptionProvider()
+    public function exceptionProvider(): array
     {
         return [
             ['Cake\Console\Exception\ConsoleException', 1],

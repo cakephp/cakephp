@@ -21,9 +21,9 @@ namespace Cake\Validation;
  * during tests.
  *
  * @param string $filename The file to check.
- * @return bool Whether or not the file exists.
+ * @return bool Whether the file exists.
  */
-function is_uploaded_file($filename)
+function is_uploaded_file($filename): bool
 {
     return file_exists($filename);
 }

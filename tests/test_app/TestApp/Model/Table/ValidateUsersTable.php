@@ -30,7 +30,6 @@ class ValidateUsersTable extends Table
      * Initializes the schema
      *
      * @param array $config
-     * @return void
      */
     public function initialize(array $config): void
     {

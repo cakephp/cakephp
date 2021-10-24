@@ -15,17 +15,17 @@ declare(strict_types=1);
  */
 namespace TestPlugin\View\Cell\Admin;
 
+use Cake\View\Cell;
+
 /**
  * TestPlugin Admin Menu Cell
  */
-class MenuCell extends \Cake\View\Cell
+class MenuCell extends Cell
 {
     /**
      * Default cell action.
-     *
-     * @return void
      */
-    public function display()
+    public function display(): void
     {
     }
 }

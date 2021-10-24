@@ -52,16 +52,19 @@ class AuthComponentTest extends TestCase
     protected $Auth;
 
     /**
+     * @var \Cake\Http\ServerRequest
+     */
+    protected $request;
+
+    /**
      * fixtures property
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -70,9 +73,7 @@ class AuthComponentTest extends TestCase
         Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
         static::setAppNamespace();
 
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(InflectedRoute::class);
-        });
+        Router::createRouteBuilder('/')->fallbacks(InflectedRoute::class);
 
         $request = new ServerRequest([
             'url' => '/auth_test',
@@ -99,8 +100,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * tearDown method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -112,8 +111,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testNoAuth method
-     *
-     * @return void
      */
     public function testNoAuth(): void
     {
@@ -122,8 +119,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testIdentify method
-     *
-     * @return void
      */
     public function testIdentify(): void
     {
@@ -163,8 +158,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * Test identify with user record as ArrayObject instance.
-     *
-     * @return void
      */
     public function testIdentifyArrayAccess(): void
     {
@@ -205,7 +198,6 @@ class AuthComponentTest extends TestCase
     /**
      * testAuthorizeFalse method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthorizeFalse(): void
@@ -233,8 +225,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testIsAuthorizedMissingFile function
-     *
-     * @return void
      */
     public function testIsAuthorizedMissingFile(): void
     {
@@ -245,8 +235,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test that isAuthorized calls methods correctly
-     *
-     * @return void
      */
     public function testIsAuthorizedDelegation(): void
     {
@@ -287,8 +275,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test isAuthorized passing it an ArrayObject instance.
-     *
-     * @return void
      */
     public function testIsAuthorizedWithArrayObject(): void
     {
@@ -313,8 +299,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test that isAuthorized will use the session user if none is given.
-     *
-     * @return void
      */
     public function testIsAuthorizedUsingUserInSession(): void
     {
@@ -339,8 +323,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test that loadAuthorize resets the loaded objects each time.
-     *
-     * @return void
      */
     public function testLoadAuthorizeResets(): void
     {
@@ -354,8 +336,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testLoadAuthenticateNoFile function
-     *
-     * @return void
      */
     public function testLoadAuthenticateNoFile(): void
     {
@@ -369,8 +349,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test the * key with authenticate
-     *
-     * @return void
      */
     public function testAllConfigWithAuthorize(): void
     {
@@ -385,8 +363,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test that loadAuthorize resets the loaded objects each time.
-     *
-     * @return void
      */
     public function testLoadAuthenticateResets(): void
     {
@@ -400,8 +376,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test the * key with authenticate
-     *
-     * @return void
      */
     public function testAllConfigWithAuthenticate(): void
     {
@@ -416,8 +390,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test defining the same Authenticate object but with different password hashers
-     *
-     * @return void
      */
     public function testSameAuthenticateWithDifferentHashers(): void
     {
@@ -439,7 +411,6 @@ class AuthComponentTest extends TestCase
     /**
      * Tests that deny always takes precedence over allow
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAllowDenyAll(): void
@@ -499,7 +470,6 @@ class AuthComponentTest extends TestCase
     /**
      * test that deny() converts camel case inputs to lowercase.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testDenyWithCamelCaseMethods(): void
@@ -527,7 +497,6 @@ class AuthComponentTest extends TestCase
     /**
      * test that allow() and allowedActions work with camelCase method names.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAllowedActionsWithCamelCaseMethods(): void
@@ -570,8 +539,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testAllowedActionsSetWithAllowMethod method
-     *
-     * @return void
      */
     public function testAllowedActionsSetWithAllowMethod(): void
     {
@@ -585,7 +552,6 @@ class AuthComponentTest extends TestCase
     /**
      * testLoginRedirect method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testLoginRedirect(): void
@@ -660,8 +626,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testLoginRedirect method with non GET
-     *
-     * @return void
      */
     public function testLoginRedirectPost(): void
     {
@@ -687,8 +651,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testLoginRedirect method with non GET and no referrer
-     *
-     * @return void
      */
     public function testLoginRedirectPostNoReferer(): void
     {
@@ -804,7 +766,6 @@ class AuthComponentTest extends TestCase
     /**
      * testNoLoginRedirectForAuthenticatedUser method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testNoLoginRedirectForAuthenticatedUser(): void
@@ -839,7 +800,6 @@ class AuthComponentTest extends TestCase
     /**
      * testNoLoginRedirectForAuthenticatedUser method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testStartupLoginActionIgnoreQueryString(): void
@@ -869,7 +829,6 @@ class AuthComponentTest extends TestCase
     /**
      * Default to loginRedirect, if set, on authError.
      *
-     * @return void
      * @triggers Controller.startup $Controller
      */
     public function testDefaultToLoginRedirect(): void
@@ -917,7 +876,6 @@ class AuthComponentTest extends TestCase
     /**
      * testRedirectToUnauthorizedRedirect
      *
-     * @return void
      * @triggers Controller.startup $Controller
      */
     public function testRedirectToUnauthorizedRedirect(): void
@@ -959,8 +917,6 @@ class AuthComponentTest extends TestCase
     /**
      * test unauthorized redirect defaults to loginRedirect
      * which is a string URL.
-     *
-     * @return void
      */
     public function testRedirectToUnauthorizedRedirectLoginAction(): void
     {
@@ -999,7 +955,6 @@ class AuthComponentTest extends TestCase
     /**
      * testRedirectToUnauthorizedRedirectSuppressedAuthError
      *
-     * @return void
      * @triggers Controller.startup $Controller
      */
     public function testRedirectToUnauthorizedRedirectSuppressedAuthError(): void
@@ -1040,7 +995,6 @@ class AuthComponentTest extends TestCase
     /**
      * Throw ForbiddenException if config `unauthorizedRedirect` is set to false
      *
-     * @return void
      * @triggers Controller.startup $Controller
      */
     public function testForbiddenException(): void
@@ -1069,7 +1023,6 @@ class AuthComponentTest extends TestCase
     /**
      * Test that no redirects or authorization tests occur on the loginAction
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testNoRedirectOnLoginAction(): void
@@ -1100,7 +1053,6 @@ class AuthComponentTest extends TestCase
      * Ensure that no redirect is performed when a 404 is reached
      * And the user doesn't have a session.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testNoRedirectOn404(): void
@@ -1118,19 +1070,18 @@ class AuthComponentTest extends TestCase
     /**
      * testAdminRoute method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAdminRoute(): void
     {
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
-        Router::prefix('admin', function (RouteBuilder $routes): void {
+        $builder = Router::createRouteBuilder('/');
+        $builder->prefix('admin', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(InflectedRoute::class);
-        });
+        $builder->fallbacks(InflectedRoute::class);
+
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'GET',
@@ -1167,7 +1118,6 @@ class AuthComponentTest extends TestCase
     /**
      * test AJAX unauthenticated
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAjaxUnauthenticated(): void
@@ -1189,19 +1139,17 @@ class AuthComponentTest extends TestCase
     /**
      * testLoginActionRedirect method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testLoginActionRedirect(): void
     {
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
-        Router::prefix('admin', function (RouteBuilder $routes): void {
+        $builder = Router::createRouteBuilder('/');
+        $builder->prefix('admin', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(InflectedRoute::class);
-        });
+        $builder->fallbacks(InflectedRoute::class);
 
         $url = '/admin/auth_test/login';
         $request = new ServerRequest([
@@ -1231,7 +1179,6 @@ class AuthComponentTest extends TestCase
      * Stateless auth methods like Basic should populate data that can be
      * accessed by $this->user().
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testStatelessAuthWorksWithUser(): void
@@ -1269,8 +1216,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test $settings in Controller::$components
-     *
-     * @return void
      */
     public function testComponentSettings(): void
     {
@@ -1295,8 +1240,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test that logout deletes the session variables. and returns the correct URL
-     *
-     * @return void
      */
     public function testLogout(): void
     {
@@ -1310,8 +1253,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * Test that Auth.afterIdentify and Auth.logout events are triggered
-     *
-     * @return void
      */
     public function testEventTriggering(): void
     {
@@ -1342,7 +1283,6 @@ class AuthComponentTest extends TestCase
     /**
      * testAfterIdentifyForStatelessAuthentication
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAfterIdentifyForStatelessAuthentication(): void
@@ -1374,8 +1314,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test setting user info to session.
-     *
-     * @return void
      */
     public function testSetUser(): void
     {
@@ -1396,8 +1334,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testGettingUserAfterSetUser
-     *
-     * @return void
      */
     public function testGettingUserAfterSetUser(): void
     {
@@ -1417,7 +1353,6 @@ class AuthComponentTest extends TestCase
     /**
      * test flash settings.
      *
-     * @return void
      * @triggers Controller.startup $this->Controller)
      */
     public function testFlashSettings(): void
@@ -1458,8 +1393,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test the various states of Auth::redirect()
-     *
-     * @return void
      */
     public function testRedirectSet(): void
     {
@@ -1470,8 +1403,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * Tests redirect using redirect key from the query string.
-     *
-     * @return void
      */
     public function testRedirectQueryStringRead(): void
     {
@@ -1484,8 +1415,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * Tests redirectUrl with duplicate base.
-     *
-     * @return void
      */
     public function testRedirectQueryStringReadDuplicateBase(): void
     {
@@ -1503,8 +1432,6 @@ class AuthComponentTest extends TestCase
     /**
      * test that redirect does not return loginAction if that is what's passed as redirect.
      * instead loginRedirect should be used.
-     *
-     * @return void
      */
     public function testRedirectQueryStringReadEqualToLoginAction(): void
     {
@@ -1521,8 +1448,6 @@ class AuthComponentTest extends TestCase
     /**
      * Tests that redirect does not return loginAction if that contains a host,
      * instead loginRedirect should be used.
-     *
-     * @return void
      */
     public function testRedirectQueryStringInvalid(): void
     {
@@ -1576,8 +1501,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * testUser method
-     *
-     * @return void
      */
     public function testUser(): void
     {
@@ -1617,7 +1540,6 @@ class AuthComponentTest extends TestCase
     /**
      * testStatelessAuthNoRedirect method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testStatelessAuthNoRedirect(): void
@@ -1636,7 +1558,6 @@ class AuthComponentTest extends TestCase
     /**
      * testStatelessAuthRedirect method
      *
-     * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testStatelessAuthRedirectToLogin(): void
@@ -1656,8 +1577,6 @@ class AuthComponentTest extends TestCase
 
     /**
      * test null action no error
-     *
-     * @return void
      */
     public function testStartupNullAction(): void
     {
@@ -1687,8 +1606,6 @@ class AuthComponentTest extends TestCase
     /**
      * test for BC getting/setting AuthComponent::$sessionKey gets/sets `key`
      * config of session storage.
-     *
-     * @return void
      */
     public function testSessionKeyBC(): void
     {
@@ -1705,8 +1622,6 @@ class AuthComponentTest extends TestCase
     /**
      * Test that setting config 'earlyAuth' to true make AuthComponent do the initial
      * checks in beforeFilter() instead of startup().
-     *
-     * @return void
      */
     public function testCheckAuthInConfig(): void
     {

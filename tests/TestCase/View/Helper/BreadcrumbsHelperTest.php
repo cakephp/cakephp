@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\BreadcrumbsHelper;
 use Cake\View\View;
+use LogicException;
 
 class BreadcrumbsHelperTest extends TestCase
 {
@@ -33,8 +33,6 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,17 +41,13 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs = new BreadcrumbsHelper($view);
 
         Router::reload();
-        Router::scope('/', function (RouteBuilder $routes) {
-            $routes->fallbacks();
-        });
+        Router::createRouteBuilder('/')->fallbacks();
     }
 
     /**
      * Test adding crumbs to the trail using add()
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
@@ -82,10 +76,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding multiple crumbs at once to the trail using add()
-     *
-     * @return void
      */
-    public function testAddMultiple()
+    public function testAddMultiple(): void
     {
         $this->breadcrumbs
             ->add([
@@ -131,10 +123,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs to the trail using prepend()
-     *
-     * @return void
      */
-    public function testPrepend()
+    public function testPrepend(): void
     {
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
@@ -169,10 +159,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs to the trail using prepend()
-     *
-     * @return void
      */
-    public function testPrependMultiple()
+    public function testPrependMultiple(): void
     {
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
@@ -209,10 +197,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test ability to empty crumbs list.
-     *
-     * @return void
      */
-    public function testReset()
+    public function testReset(): void
     {
         $this->breadcrumbs->add('Home', '/');
         $this->breadcrumbs->add('Products', '/products');
@@ -227,10 +213,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs to a specific index
-     *
-     * @return void
      */
-    public function testInsertAt()
+    public function testInsertAt(): void
     {
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
@@ -278,9 +262,9 @@ class BreadcrumbsHelperTest extends TestCase
     /**
      * Test adding crumbs to a specific index
      */
-    public function testInsertAtIndexOutOfBounds()
+    public function testInsertAtIndexOutOfBounds(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
             ->insertAt(2, 'Insert At Again', ['controller' => 'Insert', 'action' => 'at_again']);
@@ -288,10 +272,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs before a specific one
-     *
-     * @return void
      */
-    public function testInsertBefore()
+    public function testInsertBefore(): void
     {
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
@@ -332,10 +314,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs after a specific one
-     *
-     * @return void
      */
-    public function testInsertAfter()
+    public function testInsertAfter(): void
     {
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
@@ -376,10 +356,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Tests the render method
-     *
-     * @return void
      */
-    public function testRender()
+    public function testRender(): void
     {
         $this->assertSame('', $this->breadcrumbs->render());
 
@@ -428,10 +406,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Tests the render method with custom templates
-     *
-     * @return void
      */
-    public function testRenderCustomTemplate()
+    public function testRenderCustomTemplate(): void
     {
         $this->breadcrumbs = new BreadcrumbsHelper(new View(), [
             'templates' => [
@@ -469,10 +445,8 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Tests the render method with template vars
-     *
-     * @return void
      */
-    public function testRenderCustomTemplateTemplateVars()
+    public function testRenderCustomTemplateTemplateVars(): void
     {
         $this->breadcrumbs = new BreadcrumbsHelper(new View(), [
             'templates' => [

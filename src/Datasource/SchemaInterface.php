@@ -41,10 +41,10 @@ interface SchemaInterface
      * - `precision` The number of decimal places to store
      *   for float and decimal types.
      * - `default` The default value of the column.
-     * - `null` Whether or not the column can hold nulls.
-     * - `fixed` Whether or not the column is a fixed length column.
+     * - `null` Whether the column can hold nulls.
+     * - `fixed` Whether the column is a fixed length column.
      *   This is only present/valid with string columns.
-     * - `unsigned` Whether or not the column is an unsigned column.
+     * - `unsigned` Whether the column is an unsigned column.
      *   This is only present/valid for integer, decimal, float columns.
      *
      * In addition to the above keys, the following keys are
@@ -53,7 +53,7 @@ interface SchemaInterface
      * - `comment` The comment for the column.
      *
      * @param string $name The name of the column
-     * @param string|array $attrs The attributes for the column or the type name.
+     * @param array<string, mixed>|string $attrs The attributes for the column or the type name.
      * @return $this
      */
     public function addColumn(string $name, $attrs);
@@ -62,7 +62,7 @@ interface SchemaInterface
      * Get column data in the table.
      *
      * @param string $name The column name.
-     * @return array|null Column data or null.
+     * @return array<string, mixed>|null Column data or null.
      */
     public function getColumn(string $name): ?array;
 
@@ -87,7 +87,7 @@ interface SchemaInterface
     /**
      * Get the column names in the table.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function columns(): array;
 
@@ -119,12 +119,12 @@ interface SchemaInterface
     public function baseColumnType(string $column): ?string;
 
     /**
-     * Check whether or not a field is nullable
+     * Check whether a field is nullable
      *
      * Missing columns are nullable.
      *
      * @param string $name The column to get the type of.
-     * @return bool Whether or not the field is nullable.
+     * @return bool Whether the field is nullable.
      */
     public function isNullable(string $name): bool;
 
@@ -132,14 +132,14 @@ interface SchemaInterface
      * Returns an array where the keys are the column names in the schema
      * and the values the database type they have.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function typeMap(): array;
 
     /**
      * Get a hash of columns and their default values.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function defaultValues(): array;
 
@@ -149,7 +149,7 @@ interface SchemaInterface
      * Table options allow you to set platform specific table level options.
      * For example the engine type in MySQL.
      *
-     * @param array $options The options to set, or null to read options.
+     * @param array<string, mixed> $options The options to set, or null to read options.
      * @return $this
      */
     public function setOptions(array $options);
@@ -160,7 +160,7 @@ interface SchemaInterface
      * Table options allow you to set platform specific table level options.
      * For example the engine type in MySQL.
      *
-     * @return array An array of options.
+     * @return array<string, mixed> An array of options.
      */
     public function getOptions(): array;
 }

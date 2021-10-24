@@ -57,7 +57,7 @@ use UnexpectedValueException;
  * possibly a redirection to another URL. In either case `$this->getResponse()`
  * allows you to manipulate all aspects of the response.
  *
- * Controllers are created by `ActionDispatcher` based on request parameters and
+ * Controllers are created based on request parameters and
  * routing. By default controllers and actions use conventional names.
  * For example `/posts/index` maps to `PostsController::index()`. You can re-map
  * URLs using Router::connect() or RouterBuilder::connect().
@@ -122,13 +122,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $response;
 
     /**
-     * The class name to use for creating the response object.
-     *
-     * @var string
-     */
-    protected $_responseClass = Response::class;
-
-    /**
      * Settings for pagination.
      *
      * Used to pre-configure pagination preferences for the various
@@ -162,6 +155,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $plugin;
 
     /**
+     * Middlewares list.
+     *
+     * @var array
+     * @psalm-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
+     */
+    protected $middlewares = [];
+
+    /**
      * Constructor.
      *
      * Sets a number of properties based on conventions if they are empty. To override the
@@ -183,9 +184,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     ) {
         if ($name !== null) {
             $this->name = $name;
-        }
-
-        if ($this->name === null && $request && $request->getParam('controller')) {
+        } elseif ($this->name === null && $request) {
             $this->name = $request->getParam('controller');
         }
 
@@ -202,9 +201,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
-        $plugin = $this->request->getParam('plugin');
-        $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
-        $this->_setModelClass($modelClass);
+
+        if ($this->defaultTable !== null) {
+            $this->modelClass = $this->defaultTable;
+        }
+
+        if ($this->modelClass === null) {
+            $plugin = $this->request->getParam('plugin');
+            $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
+            $this->_setModelClass($modelClass);
+        }
 
         if ($components !== null) {
             $this->components($components);
@@ -277,7 +283,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Will result in a `Authentication` property being set.
      *
      * @param string $name The name of the component to load.
-     * @param array $config The config for the component.
+     * @param array<string, mixed> $config The config for the component.
      * @return \Cake\Controller\Component
      * @throws \Exception
      */
@@ -545,10 +551,61 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
+     * Register middleware for the controller.
+     *
+     * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware Middleware.
+     * @param array<string, mixed> $options Valid options:
+     *  - `only`: (array|string) Only run the middleware for specified actions.
+     *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
+     * @return void
+     * @psalm-param array{only?: array|string, except?: array|string} $options
+     */
+    public function middleware($middleware, array $options = [])
+    {
+        $this->middlewares[] = [
+            'middleware' => $middleware,
+            'options' => $options,
+        ];
+    }
+
+    /**
+     * Get middleware to be applied for this controller.
+     *
+     * @return array
+     */
+    public function getMiddleware(): array
+    {
+        $matching = [];
+        $action = $this->request->getParam('action');
+
+        foreach ($this->middlewares as $middleware) {
+            $options = $middleware['options'];
+            if (!empty($options['only'])) {
+                if (in_array($action, (array)$options['only'], true)) {
+                    $matching[] = $middleware['middleware'];
+                }
+
+                continue;
+            }
+
+            if (
+                !empty($options['except']) &&
+                in_array($action, (array)$options['except'], true)
+            ) {
+                continue;
+            }
+
+            $matching[] = $middleware['middleware'];
+        }
+
+        return $matching;
+    }
+
+    /**
      * Returns a list of all events that will fire in the controller during its lifecycle.
      * You can override this function to add your own listener callbacks
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -606,7 +663,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Redirects to given $url, after turning off $this->autoRender.
      *
-     * @param string|array|\Psr\Http\Message\UriInterface $url A string, array-based URL or UriInterface instance.
+     * @param \Psr\Http\Message\UriInterface|array|string $url A string, array-based URL or UriInterface instance.
      * @param int $status HTTP status code. Defaults to `302`.
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/4/en/controllers.html#Controller::redirect
@@ -653,6 +710,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function setAction(string $action, ...$args)
     {
+        deprecationWarning(
+            'Controller::setAction() is deprecated. Either refactor your code to use `redirect()`, ' .
+            'or call the other action as a method.'
+        );
         $this->setRequest($this->request->withParam('action', $action));
 
         return $this->$action(...$args);
@@ -724,7 +785,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Returns the referring URL for this request.
      *
-     * @param string|array|null $default Default URL to use if HTTP_REFERER cannot be read from headers
+     * @param array|string|null $default Default URL to use if HTTP_REFERER cannot be read from headers
      * @param bool $local If false, do not restrict referring URLs to local server.
      *   Careful with trusting external sources.
      * @return string Referring URL
@@ -758,9 +819,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * This method will also make the PaginatorHelper available in the view.
      *
-     * @param \Cake\ORM\Table|string|\Cake\ORM\Query|null $object Table to paginate
+     * @param \Cake\ORM\Table|\Cake\ORM\Query|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
-     * @param array $settings The settings/configuration used for pagination.
+     * @param array<string, mixed> $settings The settings/configuration used for pagination.
      * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
@@ -799,7 +860,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * and allows all public methods on all subclasses of this class.
      *
      * @param string $action The action to check.
-     * @return bool Whether or not the method is accessible from a URL.
+     * @return bool Whether the method is accessible from a URL.
      * @throws \ReflectionException
      */
     public function isAction(string $action): bool
@@ -851,7 +912,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * using controller's response instance.
      *
      * @param \Cake\Event\EventInterface $event An Event instance
-     * @param string|array $url A string or array-based URL pointing to another location within the app,
+     * @param array|string $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null|void

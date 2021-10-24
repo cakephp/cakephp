@@ -36,14 +36,14 @@ class ConsoleOutput extends ConsoleOutputBase
     /**
      * Buffered messages.
      *
-     * @var array
+     * @var array<string>
      */
     protected $_out = [];
 
     /**
      * Write output to the buffer.
      *
-     * @param string|string[] $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int
      */
@@ -65,7 +65,7 @@ class ConsoleOutput extends ConsoleOutputBase
     /**
      * Get the buffered output.
      *
-     * @return array
+     * @return array<string>
      */
     public function messages(): array
     {

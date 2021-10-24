@@ -82,9 +82,9 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      *      });
      * ```
      *
-     * @param string|callable $valuePath The property to extract or a callable to return
+     * @param callable|string $valuePath The property to extract or a callable to return
      * the display value
-     * @param string|callable|null $keyPath The property to use as iteration key or a
+     * @param callable|string|null $keyPath The property to use as iteration key or a
      * callable returning the key value.
      * @param string $spacer The string to use for prefixing the values according to
      * their depth in the tree

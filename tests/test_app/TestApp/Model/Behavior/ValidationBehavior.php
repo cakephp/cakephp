@@ -25,11 +25,12 @@ use Cake\Validation\Validator;
 
 /**
  * Description of ValidationBehavior
- *
- * @author Robert Pustułka <r.pustulka@robotusers.com>
  */
 class ValidationBehavior extends Behavior
 {
+    /**
+     * @return $this
+     */
     public function validationBehavior(Validator $validator)
     {
         return $validator->add('name', 'behaviorRule');

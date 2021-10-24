@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Tests the features related to proxying methods from the Association
@@ -27,7 +28,7 @@ class AssociationProxyTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.Articles', 'core.Authors', 'core.Comments',
@@ -35,10 +36,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that it is possible to get associations as a property
-     *
-     * @return void
      */
-    public function testAssociationAsProperty()
+    public function testAssociationAsProperty(): void
     {
         $articles = $this->getTableLocator()->get('articles');
         $articles->hasMany('comments');
@@ -52,12 +51,10 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that getting a bad property throws exception
-     *
-     * @return void
      */
-    public function testGetBadAssociation()
+    public function testGetBadAssociation(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('You have not defined');
         $articles = $this->getTableLocator()->get('articles');
         $articles->posts;
@@ -65,10 +62,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Test that find() with empty conditions generates valid SQL
-     *
-     * @return void
      */
-    public function testFindEmptyConditions()
+    public function testFindEmptyConditions(): void
     {
         $table = $this->getTableLocator()->get('Users');
         $table->hasMany('Articles', [
@@ -81,10 +76,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that the proxied updateAll will preserve conditions set for the association
-     *
-     * @return void
      */
-    public function testUpdateAllFromAssociation()
+    public function testUpdateAllFromAssociation(): void
     {
         $articles = $this->getTableLocator()->get('articles');
         $comments = $this->getTableLocator()->get('comments');
@@ -96,10 +89,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that the proxied updateAll uses the association finder
-     *
-     * @return void
      */
-    public function testUpdateAllFromAssociationFinder()
+    public function testUpdateAllFromAssociationFinder(): void
     {
         $this->setAppNamespace('TestApp');
 
@@ -121,10 +112,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that the proxied deleteAll preserves conditions set for the association
-     *
-     * @return void
      */
-    public function testDeleteAllFromAssociationConditions()
+    public function testDeleteAllFromAssociationConditions(): void
     {
         $articles = $this->getTableLocator()->get('articles');
         $comments = $this->getTableLocator()->get('comments');
@@ -136,10 +125,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that the proxied deleteAll uses the association finder
-     *
-     * @return void
      */
-    public function testDeleteAllFromAssociationFinder()
+    public function testDeleteAllFromAssociationFinder(): void
     {
         $this->setAppNamespace('TestApp');
 
@@ -159,10 +146,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that it is possible to get associations as a property
-     *
-     * @return void
      */
-    public function testAssociationAsPropertyProxy()
+    public function testAssociationAsPropertyProxy(): void
     {
         $articles = $this->getTableLocator()->get('articles');
         $authors = $this->getTableLocator()->get('authors');
@@ -174,10 +159,8 @@ class AssociationProxyTest extends TestCase
 
     /**
      * Tests that methods are proxied from the Association to the target table
-     *
-     * @return void
      */
-    public function testAssociationMethodProxy()
+    public function testAssociationMethodProxy(): void
     {
         $articles = $this->getTableLocator()->get('articles');
         $mock = $this->getMockBuilder('Cake\ORM\Table')

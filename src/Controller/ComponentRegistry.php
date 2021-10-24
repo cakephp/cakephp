@@ -84,7 +84,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Resolve a component classname.
      *
-     * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}.
      *
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
@@ -98,8 +98,8 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Throws an exception when a component is missing.
      *
-     * Part of the template method for Cake\Core\ObjectRegistry::load()
-     * and Cake\Core\ObjectRegistry::unload()
+     * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}
+     * and {@link \Cake\Core\ObjectRegistry::unload()}
      *
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the component is missing in.
@@ -117,12 +117,12 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Create the component instance.
      *
-     * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}
      * Enabled components will be registered with the event manager.
      *
      * @param string $class The classname to create.
      * @param string $alias The alias of the component.
-     * @param array $config An array of config to use for the component.
+     * @param array<string, mixed> $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
      * @psalm-suppress MoreSpecificImplementedParamType
      * @psalm-param class-string $class

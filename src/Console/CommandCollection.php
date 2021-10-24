@@ -34,8 +34,8 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Command list
      *
-     * @var array
-     * @psalm-var (\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string)[]
+     * @var array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string>
+     * @psalm-var array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string>
      * @psalm-suppress DeprecatedClass
      */
     protected $commands = [];
@@ -43,7 +43,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Constructor
      *
-     * @param array $commands The map of commands to add to the collection.
+     * @param array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string> $commands The map of commands to add to the collection.
      */
     public function __construct(array $commands = [])
     {
@@ -56,7 +56,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Add a command to the collection
      *
      * @param string $name The name of the command you want to map.
-     * @param string|\Cake\Console\Shell|\Cake\Console\CommandInterface $command The command to map.
+     * @param \Cake\Console\CommandInterface|\Cake\Console\Shell|string $command The command to map.
      *   Can be a FQCN, Shell instance or CommandInterface instance.
      * @return $this
      * @throws \InvalidArgumentException
@@ -86,7 +86,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Add multiple commands at once.
      *
-     * @param array $commands A map of command names => command classes/instances.
+     * @param array<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string> $commands A map of command names => command classes/instances.
      * @return $this
      * @see \Cake\Console\CommandCollection::add()
      */
@@ -127,9 +127,9 @@ class CommandCollection implements IteratorAggregate, Countable
      * Get the target for a command.
      *
      * @param string $name The named shell.
-     * @return string|\Cake\Console\Shell|\Cake\Console\CommandInterface Either the command class or an instance.
+     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell|string Either the command class or an instance.
      * @throws \InvalidArgumentException when unknown commands are fetched.
-     * @psalm-return class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface
+     * @psalm-return \Cake\Console\CommandInterface|\Cake\Console\Shell|class-string
      */
     public function get(string $name)
     {
@@ -172,7 +172,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * the long name (`plugin.command`) will be returned.
      *
      * @param string $plugin The plugin to scan.
-     * @return string[] Discovered plugin commands.
+     * @return array<string, string> Discovered plugin commands.
      */
     public function discoverPlugin(string $plugin): array
     {
@@ -186,7 +186,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Resolve names based on existing commands
      *
      * @param array $input The results of a CommandScanner operation.
-     * @return string[] A flat map of command names => class names.
+     * @return array<string, string> A flat map of command names => class names.
      */
     protected function resolveNames(array $input): array
     {
@@ -223,7 +223,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Commands defined in the application will overwrite commands with
      * the same name provided by CakePHP.
      *
-     * @return string[] An array of command names and their classes.
+     * @return array<string, string> An array of command names and their classes.
      */
     public function autoDiscover(): array
     {
@@ -232,13 +232,13 @@ class CommandCollection implements IteratorAggregate, Countable
         $core = $this->resolveNames($scanner->scanCore());
         $app = $this->resolveNames($scanner->scanApp());
 
-        return array_merge($core, $app);
+        return $app + $core;
     }
 
     /**
      * Get the list of available command names.
      *
-     * @return string[] Command names
+     * @return array<string> Command names
      */
     public function keys(): array
     {

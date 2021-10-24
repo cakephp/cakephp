@@ -55,12 +55,12 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * The in-memory cache containing results from previous iterators
      *
-     * @var array
+     * @var array<int, array>
      */
     protected $buffer = [];
 
     /**
-     * Whether or not this statement has already been executed
+     * Whether this statement has already been executed
      *
      * @var bool
      */
@@ -89,7 +89,7 @@ class BufferedStatement implements Iterator, StatementInterface
      * Magic getter to return $queryString as read-only.
      *
      * @param string $property internal property to get
-     * @return mixed
+     * @return string|null
      */
     public function __get(string $property)
     {
@@ -97,6 +97,8 @@ class BufferedStatement implements Iterator, StatementInterface
             /** @psalm-suppress NoInterfaceProperties */
             return $this->statement->queryString;
         }
+
+        return null;
     }
 
     /**
@@ -193,7 +195,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * {@inheritDoc}
      *
-     * @param int|string $type The type to fetch.
+     * @param string|int $type The type to fetch.
      * @return array|false
      */
     public function fetch($type = self::FETCH_TYPE_NUM)
@@ -225,7 +227,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * @inheritDoc
+     * @return array
      */
     public function fetchAssoc(): array
     {
@@ -281,6 +283,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->index;
@@ -291,6 +294,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->buffer[$this->index];
@@ -307,7 +311,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * Returns whether or not the iterator has more elements
+     * Returns whether the iterator has more elements
      *
      * @return bool
      */

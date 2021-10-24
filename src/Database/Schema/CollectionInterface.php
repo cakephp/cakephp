@@ -27,7 +27,7 @@ interface CollectionInterface
     /**
      * Get the list of tables available in the current connection.
      *
-     * @return string[] The list of tables in the connected database/schema.
+     * @return array<string> The list of tables in the connected database/schema.
      */
     public function listTables(): array;
 
@@ -43,7 +43,7 @@ interface CollectionInterface
      *   Defaults to false.
      *
      * @param string $name The name of the table to describe.
-     * @param array $options The options to use, see above.
+     * @param array<string, mixed> $options The options to use, see above.
      * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
      * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
      */

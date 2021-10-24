@@ -29,10 +29,8 @@ class HelpFormatterTest extends TestCase
 {
     /**
      * test that the console max width is respected when generating help.
-     *
-     * @return void
      */
-    public function testWidthFormatting()
+    public function testWidthFormatting(): void
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->setDescription('This is fifteen This is fifteen This is fifteen')
@@ -74,10 +72,8 @@ txt;
 
     /**
      * test help() with options and arguments that have choices.
-     *
-     * @return void
      */
-    public function testHelpWithChoices()
+    public function testHelpWithChoices(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.', 'choices' => ['one', 'two']])
@@ -110,10 +106,8 @@ txt;
 
     /**
      * test description and epilog in the help
-     *
-     * @return void
      */
-    public function testHelpDescriptionAndEpilog()
+    public function testHelpDescriptionAndEpilog(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->setDescription('Description text')
@@ -146,10 +140,8 @@ txt;
 
     /**
      * test that help() outputs subcommands.
-     *
-     * @return void
      */
-    public function testHelpSubcommand()
+    public function testHelpSubcommand(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', ['help' => 'This is another command'])
@@ -184,10 +176,8 @@ txt;
 
     /**
      * test getting help with defined options.
-     *
-     * @return void
      */
-    public function testHelpWithOptions()
+    public function testHelpWithOptions(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
@@ -221,10 +211,8 @@ txt;
 
     /**
      * test getting help with defined options.
-     *
-     * @return void
      */
-    public function testHelpWithOptionsAndArguments()
+    public function testHelpWithOptionsAndArguments(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
@@ -253,10 +241,8 @@ xml;
 
     /**
      * Test that a long set of options doesn't make useless output.
-     *
-     * @return void
      */
-    public function testHelpWithLotsOfOptions()
+    public function testHelpWithLotsOfOptions(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser
@@ -278,10 +264,8 @@ xml;
 
     /**
      * Test that a long set of arguments doesn't make useless output.
-     *
-     * @return void
      */
-    public function testHelpWithLotsOfArguments()
+    public function testHelpWithLotsOfArguments(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser
@@ -303,10 +287,8 @@ xml;
 
     /**
      * Test setting a help alias
-     *
-     * @return void
      */
-    public function testWithHelpAlias()
+    public function testWithHelpAlias(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $formatter = new HelpFormatter($parser);
@@ -318,10 +300,8 @@ xml;
 
     /**
      * test help() with options and arguments that have choices.
-     *
-     * @return void
      */
-    public function testXmlHelpWithChoices()
+    public function testXmlHelpWithChoices(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.', 'choices' => ['one', 'two']])
@@ -372,10 +352,8 @@ xml;
 
     /**
      * test description and epilog in the help
-     *
-     * @return void
      */
-    public function testXmlHelpDescriptionAndEpilog()
+    public function testXmlHelpDescriptionAndEpilog(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->setDescription('Description text')
@@ -414,10 +392,8 @@ xml;
 
     /**
      * test that help() outputs subcommands.
-     *
-     * @return void
      */
-    public function testXmlHelpSubcommand()
+    public function testXmlHelpSubcommand(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', ['help' => 'This is another command'])
@@ -452,10 +428,8 @@ xml;
 
     /**
      * test getting help with defined options.
-     *
-     * @return void
      */
-    public function testXmlHelpWithOptions()
+    public function testXmlHelpWithOptions(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
@@ -494,10 +468,8 @@ xml;
 
     /**
      * test getting help with defined options.
-     *
-     * @return void
      */
-    public function testXmlHelpWithOptionsAndArguments()
+    public function testXmlHelpWithOptionsAndArguments(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
@@ -538,10 +510,8 @@ xml;
 
     /**
      * Test XML help as object
-     *
-     * @return void
      */
-    public function testXmlHelpAsObject()
+    public function testXmlHelpAsObject(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])

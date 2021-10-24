@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
 use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Formatter\JsonFormatter;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,7 +28,7 @@ class ConsoleLogTest extends TestCase
     /**
      * Test writing to ConsoleOutput
      */
-    public function testConsoleOutputlogs()
+    public function testConsoleOutputlogs(): void
     {
         $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
@@ -44,10 +45,8 @@ class ConsoleLogTest extends TestCase
 
     /**
      * Test writing to a file stream
-     *
-     * @return void
      */
-    public function testlogToFileStream()
+    public function testlogToFileStream(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([
@@ -56,14 +55,14 @@ class ConsoleLogTest extends TestCase
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertStringContainsString('Error: oh noes', $line);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Error: oh noes/', $line);
+        $this->assertStringContainsString('error: oh noes', $line);
+        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ error: oh noes/', $line);
     }
 
     /**
      * test value of stream 'outputAs'
      */
-    public function testDefaultOutputAs()
+    public function testDefaultOutputAs(): void
     {
         $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
 
@@ -80,19 +79,80 @@ class ConsoleLogTest extends TestCase
 
     /**
      * test dateFormat option
-     *
-     * @return void
      */
-    public function testDateFormat()
+    public function testDateFormat(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([
             'stream' => $filename,
-            'dateFormat' => 'c',
+            'formatter.dateFormat' => 'c',
         ]);
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Error: oh noes/', $line);
+        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} error: oh noes/', $line);
+    }
+
+    /**
+     * Test json formatter
+     */
+    public function testJsonFormatter(): void
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+        $log = new ConsoleLog([
+            'stream' => $filename,
+            'formatter' => [
+                'className' => JsonFormatter::class,
+            ],
+        ]);
+        $log->log('error', 'test with newline');
+        $fh = fopen($filename, 'r');
+        $line = fgets($fh);
+        $this->assertSame(strlen($line) - 1, strpos($line, "\n"));
+
+        $entry = json_decode($line, true);
+        $this->assertNotNull($entry['date']);
+        $this->assertSame('error', $entry['level']);
+        $this->assertSame('test with newline', $entry['message']);
+    }
+
+    /**
+     * Test json formatter custom flags
+     */
+    public function testJsonFormatterFlags(): void
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+        $log = new ConsoleLog([
+            'stream' => $filename,
+            'formatter' => [
+                'className' => JsonFormatter::class,
+                'flags' => JSON_HEX_QUOT,
+            ],
+        ]);
+        $log->log('error', 'oh "{p1}"', ['p1' => 'noes']);
+        $fh = fopen($filename, 'r');
+        $line = fgets($fh);
+        $this->assertStringContainsString('\u0022noes\u0022', $line);
+
+        $entry = json_decode($line, true);
+        $this->assertSame('oh "noes"', $entry['message']);
+    }
+
+    /**
+     * Test deprecated dateFormat option
+     */
+    public function testDeprecatedDateFormat(): void
+    {
+        $this->deprecated(function (): void {
+            $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+            $log = new ConsoleLog([
+                'stream' => $filename,
+                'dateFormat' => 'c',
+            ]);
+            $log->log('error', 'oh noes');
+            $fh = fopen($filename, 'r');
+            $line = fgets($fh);
+            $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} error: oh noes/', $line);
+        });
     }
 }

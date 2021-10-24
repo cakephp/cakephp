@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Command\Command;
+use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -30,8 +31,6 @@ class RoutesCommandTest extends TestCase
 
     /**
      * setUp method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -42,8 +41,6 @@ class RoutesCommandTest extends TestCase
 
     /**
      * tearDown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -53,10 +50,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Ensure help for `routes` works
-     *
-     * @return void
      */
-    public function testRouteListHelp()
+    public function testRouteListHelp(): void
     {
         $this->exec('routes -h');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -66,41 +61,96 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test checking an nonexistent route.
-     *
-     * @return void
      */
-    public function testRouteList()
+    public function testRouteList(): void
     {
         $this->exec('routes');
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
-            '<info>Defaults</info>',
+            '<info>Plugin</info>',
+            '<info>Prefix</info>',
+            '<info>Controller</info>',
+            '<info>Action</info>',
+            '<info>Method(s)</info>',
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
-            '/app/articles/:action/*',
-            '{"action":"index","controller":"Articles","plugin":null}',
+            '/app/articles/{action}/*',
+            '',
+            '',
+            'Articles',
+            'index',
+            '',
         ]);
         $this->assertOutputContainsRow([
             'bake._controller:_action',
-            '/bake/:controller/:action',
-            '{"action":"index","plugin":"Bake"}',
+            '/bake/{controller}/{action}',
+            'Bake',
+            '',
+            '',
+            'index',
+            '',
         ]);
         $this->assertOutputContainsRow([
             'testName',
-            '/app/tests/:action/*',
-            '{"action":"index","controller":"Tests","plugin":null}',
+            '/app/tests/{action}/*',
+            '',
+            '',
+            'Tests',
+            'index',
+            '',
         ]);
     }
 
     /**
-     * Ensure help for `routes` works
-     *
-     * @return void
+     * Test routes with --verbose option
      */
-    public function testCheckHelp()
+    public function testRouteListVerbose(): void
+    {
+        $this->exec('routes -v');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>Route name</info>',
+            '<info>URI template</info>',
+            '<info>Plugin</info>',
+            '<info>Prefix</info>',
+            '<info>Controller</info>',
+            '<info>Action</info>',
+            '<info>Method(s)</info>',
+            '<info>Defaults</info>',
+        ]);
+        $this->assertOutputContainsRow([
+            'articles:_action',
+            '/app/articles/{action}/*',
+            '',
+            '',
+            'Articles',
+            'index',
+            '',
+            '{"action":"index","controller":"Articles","plugin":null}',
+        ]);
+    }
+
+    /**
+     * Test routes with --sort option
+     */
+    public function testRouteListSorted(): void
+    {
+        Router::createRouteBuilder('/')->connect(
+            new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
+        );
+
+        $this->exec('routes -s');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContains('_aRoute', $this->_out->messages()[3]);
+    }
+
+    /**
+     * Ensure help for `routes` works
+     */
+    public function testCheckHelp(): void
     {
         $this->exec('routes check -h');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -110,10 +160,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Ensure routes check with no input
-     *
-     * @return void
      */
-    public function testCheckNoInput()
+    public function testCheckNoInput(): void
     {
         $this->exec('routes check');
         $this->assertExitCode(Command::CODE_ERROR);
@@ -122,10 +170,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test checking an existing route.
-     *
-     * @return void
      */
-    public function testCheck()
+    public function testCheck(): void
     {
         $this->exec('routes check /app/articles/check');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -143,10 +189,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test checking an existing route with named route.
-     *
-     * @return void
      */
-    public function testCheckWithNamedRoute()
+    public function testCheckWithNamedRoute(): void
     {
         $this->exec('routes check /app/tests/index');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -164,10 +208,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test checking an existing route with redirect route.
-     *
-     * @return void
      */
-    public function testCheckWithRedirectRoute()
+    public function testCheckWithRedirectRoute(): void
     {
         $this->exec('routes check /app/redirect');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -183,10 +225,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test checking an nonexistent route.
-     *
-     * @return void
      */
-    public function testCheckNotFound()
+    public function testCheckNotFound(): void
     {
         $this->exec('routes check /nope');
         $this->assertExitCode(Command::CODE_ERROR);
@@ -195,10 +235,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Ensure help for `routes` works
-     *
-     * @return void
      */
-    public function testGenerareHelp()
+    public function testGenerareHelp(): void
     {
         $this->exec('routes generate -h');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -208,10 +246,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test generating URLs
-     *
-     * @return void
      */
-    public function testGenerateNoPassArgs()
+    public function testGenerateNoPassArgs(): void
     {
         $this->exec('routes generate controller:Articles action:index');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -221,10 +257,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test generating URLs with passed arguments
-     *
-     * @return void
      */
-    public function testGeneratePassedArguments()
+    public function testGeneratePassedArguments(): void
     {
         $this->exec('routes generate controller:Articles action:view 2 3');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -234,10 +268,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test generating URLs with bool params
-     *
-     * @return void
      */
-    public function testGenerateBoolParams()
+    public function testGenerateBoolParams(): void
     {
         $this->exec('routes generate controller:Articles action:index _ssl:true _host:example.com');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -246,10 +278,8 @@ class RoutesCommandTest extends TestCase
 
     /**
      * Test generating URLs
-     *
-     * @return void
      */
-    public function testGenerateMissing()
+    public function testGenerateMissing(): void
     {
         $this->exec('routes generate plugin:Derp controller:Derp');
         $this->assertExitCode(Command::CODE_ERROR);

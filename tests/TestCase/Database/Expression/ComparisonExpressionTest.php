@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\ComparisonExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -26,11 +28,30 @@ use Cake\TestSuite\TestCase;
 class ComparisonExpressionTest extends TestCase
 {
     /**
-     * Tests that cloning Comparion instance clones it's value and field expressions.
-     *
-     * @return void
+     * Test sql generation using IdentifierExpression
      */
-    public function testClone()
+    public function testIdentifiers(): void
+    {
+        $expr = new ComparisonExpression('field', new IdentifierExpression('other_field'));
+        $this->assertEqualsSql('field = other_field', $expr->sql(new ValueBinder()));
+
+        $expr = new ComparisonExpression(new IdentifierExpression('field'), new IdentifierExpression('other_field'));
+        $this->assertEqualsSql('field = other_field', $expr->sql(new ValueBinder()));
+
+        $expr = new ComparisonExpression(new IdentifierExpression('field'), new QueryExpression(['other_field']));
+        $this->assertEqualsSql('field = (other_field)', $expr->sql(new ValueBinder()));
+
+        $expr = new ComparisonExpression(new IdentifierExpression('field'), 'value');
+        $this->assertEqualsSql('field = :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new ComparisonExpression(new QueryExpression(['field']), new IdentifierExpression('other_field'));
+        $this->assertEqualsSql('field = other_field', $expr->sql(new ValueBinder()));
+    }
+
+    /**
+     * Tests that cloning Comparion instance clones it's value and field expressions.
+     */
+    public function testClone(): void
     {
         $exp = new ComparisonExpression(new QueryExpression('field1'), 1, 'integer', '<');
         $exp2 = clone $exp;

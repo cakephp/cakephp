@@ -27,9 +27,17 @@ use Cake\View\Widget\CheckboxWidget;
 class CheckboxWidgetTest extends TestCase
 {
     /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,10 +51,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Test rendering simple checkboxes.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -79,10 +85,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Test rendering disabled checkboxes.
-     *
-     * @return void
      */
-    public function testRenderDisabled()
+    public function testRenderDisabled(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -103,10 +107,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Test rendering checked checkboxes.
-     *
-     * @return void
      */
-    public function testRenderChecked()
+    public function testRenderChecked(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -158,7 +160,7 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function checkedProvider()
+    public static function checkedProvider(): array
     {
         return [
             ['checked'],
@@ -172,9 +174,9 @@ class CheckboxWidgetTest extends TestCase
      * Test rendering checked checkboxes with value.
      *
      * @dataProvider checkedProvider
-     * @return void
+     * @param mixed $checked
      */
-    public function testRenderCheckedValue($checked)
+    public function testRenderCheckedValue($checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -199,7 +201,7 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function uncheckedProvider()
+    public static function uncheckedProvider(): array
     {
         return [
             [''],
@@ -214,9 +216,9 @@ class CheckboxWidgetTest extends TestCase
      * Test rendering unchecked checkboxes
      *
      * @dataProvider uncheckedProvider
-     * @return void
+     * @param mixed $checked
      */
-    public function testRenderUnCheckedValue($checked)
+    public function testRenderUnCheckedValue($checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -238,10 +240,8 @@ class CheckboxWidgetTest extends TestCase
 
     /**
      * Ensure templateVars option is hooked up.
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $this->templates->add([
             'checkbox' => '<input type="checkbox" custom="{{custom}}" name="{{name}}" value="{{value}}"{{attrs}}>',
@@ -269,10 +269,8 @@ class CheckboxWidgetTest extends TestCase
      * testRenderCustomAttributes method
      *
      * Test render with custom attributes.
-     *
-     * @return void
      */
-    public function testRenderCustomAttributes()
+    public function testRenderCustomAttributes(): void
     {
         $checkbox = new CheckboxWidget($this->templates);
 

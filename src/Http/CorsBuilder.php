@@ -47,7 +47,7 @@ class CorsBuilder
     protected $_origin;
 
     /**
-     * Whether or not the request was over SSL.
+     * Whether the request was over SSL.
      *
      * @var bool
      */
@@ -56,7 +56,7 @@ class CorsBuilder
     /**
      * The headers that have been queued so far.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_headers = [];
 
@@ -65,7 +65,7 @@ class CorsBuilder
      *
      * @param \Psr\Http\Message\MessageInterface $response The response object to add headers onto.
      * @param string $origin The request's Origin header.
-     * @param bool $isSsl Whether or not the request was over SSL.
+     * @param bool $isSsl Whether the request was over SSL.
      */
     public function __construct(MessageInterface $response, string $origin, bool $isSsl = false)
     {
@@ -104,7 +104,7 @@ class CorsBuilder
      * Accepts a string or an array of domains that have CORS enabled.
      * You can use `*.example.com` wildcards to accept subdomains, or `*` to allow all domains
      *
-     * @param string|string[] $domains The allowed domains
+     * @param array<string>|string $domains The allowed domains
      * @return $this
      */
     public function allowOrigin($domains)
@@ -125,7 +125,7 @@ class CorsBuilder
     /**
      * Normalize the origin to regular expressions and put in an array format
      *
-     * @param string[] $domains Domain names to normalize.
+     * @param array<string> $domains Domain names to normalize.
      * @return array
      */
     protected function _normalizeDomains(array $domains): array
@@ -151,7 +151,7 @@ class CorsBuilder
     /**
      * Set the list of allowed HTTP Methods.
      *
-     * @param string[] $methods The allowed HTTP methods
+     * @param array<string> $methods The allowed HTTP methods
      * @return $this
      */
     public function allowMethods(array $methods)
@@ -176,7 +176,7 @@ class CorsBuilder
     /**
      * Allowed headers that can be sent in CORS requests.
      *
-     * @param string[] $headers The list of headers to accept in CORS requests.
+     * @param array<string> $headers The list of headers to accept in CORS requests.
      * @return $this
      */
     public function allowHeaders(array $headers)
@@ -189,7 +189,7 @@ class CorsBuilder
     /**
      * Define the headers a client library/browser can expose to scripting
      *
-     * @param string[] $headers The list of headers to expose CORS responses
+     * @param array<string> $headers The list of headers to expose CORS responses
      * @return $this
      */
     public function exposeHeaders(array $headers)
@@ -202,7 +202,7 @@ class CorsBuilder
     /**
      * Define the max-age preflight OPTIONS requests are valid for.
      *
-     * @param int|string $age The max-age for OPTIONS requests in seconds
+     * @param string|int $age The max-age for OPTIONS requests in seconds
      * @return $this
      */
     public function maxAge($age)

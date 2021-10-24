@@ -40,10 +40,8 @@ class XmlViewTest extends TestCase
 
     /**
      * testRenderWithoutView method
-     *
-     * @return void
      */
-    public function testRenderWithoutView()
+    public function testRenderWithoutView(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -93,10 +91,8 @@ class XmlViewTest extends TestCase
 
     /**
      * Test that rendering with _serialize does not load helpers
-     *
-     * @return void
      */
-    public function testRenderSerializeNoHelpers()
+    public function testRenderSerializeNoHelpers(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -114,10 +110,8 @@ class XmlViewTest extends TestCase
 
     /**
      * Test that rendering with _serialize respects XML options.
-     *
-     * @return void
      */
-    public function testRenderSerializeWithOptions()
+    public function testRenderSerializeWithOptions(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -152,10 +146,8 @@ class XmlViewTest extends TestCase
 
     /**
      * Test that rendering with _serialize can work with string setting.
-     *
-     * @return void
      */
-    public function testRenderSerializeWithString()
+    public function testRenderSerializeWithString(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -192,10 +184,8 @@ class XmlViewTest extends TestCase
 
     /**
      * Test render with an array in _serialize
-     *
-     * @return void
      */
-    public function testRenderWithoutViewMultiple()
+    public function testRenderWithoutViewMultiple(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -226,10 +216,8 @@ class XmlViewTest extends TestCase
 
     /**
      * Test render with an array in _serialize and alias
-     *
-     * @return void
      */
-    public function testRenderWithoutViewMultipleAndAlias()
+    public function testRenderWithoutViewMultipleAndAlias(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -260,10 +248,8 @@ class XmlViewTest extends TestCase
 
     /**
      * test rendering with _serialize true
-     *
-     * @return void
      */
-    public function testRenderWithSerializeTrue()
+    public function testRenderWithSerializeTrue(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -295,10 +281,8 @@ class XmlViewTest extends TestCase
 
     /**
      * testRenderWithView method
-     *
-     * @return void
      */
-    public function testRenderWithView()
+    public function testRenderWithView(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();
@@ -332,7 +316,7 @@ class XmlViewTest extends TestCase
         $this->assertInstanceOf('Cake\View\HelperRegistry', $View->helpers());
     }
 
-    public function testSerializingResultSet()
+    public function testSerializingResultSet(): void
     {
         $Request = new ServerRequest();
         $Response = new Response();

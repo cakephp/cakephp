@@ -30,7 +30,7 @@ class MoFileParser
      * Magic used for validating the format of a MO file as well as
      * detecting if the machine used to create that file was little endian.
      *
-     * @var float
+     * @var int
      */
     public const MO_LITTLE_ENDIAN_MAGIC = 0x950412de;
 
@@ -38,7 +38,7 @@ class MoFileParser
      * Magic used for validating the format of a MO file as well as
      * detecting if the machine used to create that file was big endian.
      *
-     * @var float
+     * @var int
      */
     public const MO_BIG_ENDIAN_MAGIC = 0xde120495;
 
@@ -149,7 +149,7 @@ class MoFileParser
      * Reads an unsigned long from stream respecting endianess.
      *
      * @param resource $stream The File being read.
-     * @param bool $isBigEndian Whether or not the current platform is Big Endian
+     * @param bool $isBigEndian Whether the current platform is Big Endian
      * @return int
      */
     protected function _readLong($stream, $isBigEndian): int

@@ -16,15 +16,19 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\MiddlewareQueue;
+use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionNamedType;
@@ -34,12 +38,17 @@ use ReflectionNamedType;
  *
  * @implements \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
  */
-class ControllerFactory implements ControllerFactoryInterface
+class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInterface
 {
     /**
      * @var \Cake\Core\ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var \Cake\Controller\Controller
+     */
+    protected $controller;
 
     /**
      * Constructor
@@ -85,67 +94,49 @@ class ControllerFactory implements ControllerFactoryInterface
     /**
      * Invoke a controller's action and wrapping methods.
      *
-     * @param mixed $controller The controller to invoke.
+     * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
-     * @psalm-param \Cake\Controller\Controller $controller
      */
     public function invoke($controller): ResponseInterface
     {
+        $this->controller = $controller;
+
+        $middlewares = $controller->getMiddleware();
+
+        if ($middlewares) {
+            $middlewareQueue = new MiddlewareQueue($middlewares);
+            $runner = new Runner();
+
+            return $runner->run($middlewareQueue, $controller->getRequest(), $this);
+        }
+
+        return $this->handle($controller->getRequest());
+    }
+
+    /**
+     * Invoke the action.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $controller = $this->controller;
+        /** @psalm-suppress ArgumentTypeCoercion */
+        $controller->setRequest($request);
+
         $result = $controller->startupProcess();
         if ($result instanceof ResponseInterface) {
             return $result;
         }
+
         $action = $controller->getAction();
-
-        $args = [];
-        $reflection = new ReflectionFunction($action);
-        $passed = array_values((array)$controller->getRequest()->getParam('pass'));
-        foreach ($reflection->getParameters() as $i => $parameter) {
-            $position = $parameter->getPosition();
-            $hasDefault = $parameter->isDefaultValueAvailable();
-
-            // If there is no type we can't look in the container
-            // assume the parameter is a passed param
-            $type = $parameter->getType();
-            if (!$type) {
-                if (count($passed)) {
-                    $args[$position] = array_shift($passed);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
-                }
-                continue;
-            }
-            $typeName = $type instanceof ReflectionNamedType ? ltrim($type->getName(), '?') : null;
-
-            // Primitive types are passed args as they can't be looked up in the container.
-            // We only handle strings currently.
-            if ($typeName === 'string') {
-                if (count($passed)) {
-                    $args[$position] = array_shift($passed);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
-                }
-                continue;
-            }
-
-            // Check the container and parameter default value.
-            if ($typeName && $this->container->has($typeName)) {
-                $args[$position] = $this->container->get($typeName);
-            } elseif ($hasDefault) {
-                $args[$position] = $parameter->getDefaultValue();
-            }
-            if (!array_key_exists($position, $args)) {
-                throw new InvalidArgumentException(
-                    "Could not resolve action argument `{$parameter->getName()}`. " .
-                    'It has no definition in the container, no passed parameter, and no default value.'
-                );
-            }
-        }
-        if (count($passed)) {
-            $args = array_merge($args, $passed);
-        }
+        $args = $this->getActionArgs(
+            $action,
+            array_values((array)$controller->getRequest()->getParam('pass'))
+        );
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
@@ -154,6 +145,127 @@ class ControllerFactory implements ControllerFactoryInterface
         }
 
         return $controller->getResponse();
+    }
+
+    /**
+     * Get the arguments for the controller action invocation.
+     *
+     * @param \Closure $action Controller action.
+     * @param array $passedParams Params passed by the router.
+     * @return array
+     */
+    protected function getActionArgs(Closure $action, array $passedParams): array
+    {
+        $resolved = [];
+        $function = new ReflectionFunction($action);
+        foreach ($function->getParameters() as $parameter) {
+            $type = $parameter->getType();
+            if ($type && !$type instanceof ReflectionNamedType) {
+                // Only single types are supported
+                throw new InvalidParameterException([
+                    'template' => 'unsupported_type',
+                    'parameter' => $parameter->getName(),
+                    'controller' => $this->controller->getName(),
+                    'action' => $this->controller->getRequest()->getParam('action'),
+                    'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                    'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                ]);
+            }
+
+            // Check for dependency injection for classes
+            if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+                if ($this->container->has($type->getName())) {
+                    $resolved[] = $this->container->get($type->getName());
+                    continue;
+                }
+
+                // Add default value if provided
+                // Do not allow positional arguments for classes
+                if ($parameter->isDefaultValueAvailable()) {
+                    $resolved[] = $parameter->getDefaultValue();
+                    continue;
+                }
+
+                throw new InvalidParameterException([
+                    'template' => 'missing_dependency',
+                    'parameter' => $parameter->getName(),
+                    'controller' => $this->controller->getName(),
+                    'action' => $this->controller->getRequest()->getParam('action'),
+                    'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                    'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                ]);
+            }
+
+            // Use any passed params as positional arguments
+            if ($passedParams) {
+                $argument = array_shift($passedParams);
+                if ($type instanceof ReflectionNamedType) {
+                    $typedArgument = $this->coerceStringToType($argument, $type);
+
+                    if ($typedArgument === null) {
+                        throw new InvalidParameterException([
+                            'template' => 'failed_coercion',
+                            'passed' => $argument,
+                            'type' => $type->getName(),
+                            'parameter' => $parameter->getName(),
+                            'controller' => $this->controller->getName(),
+                            'action' => $this->controller->getRequest()->getParam('action'),
+                            'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                            'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                        ]);
+                    }
+                    $argument = $typedArgument;
+                }
+
+                $resolved[] = $argument;
+                continue;
+            }
+
+            // Add default value if provided
+            if ($parameter->isDefaultValueAvailable()) {
+                $resolved[] = $parameter->getDefaultValue();
+                continue;
+            }
+
+            // Variadic parameter can have 0 arguments
+            if ($parameter->isVariadic()) {
+                continue;
+            }
+
+            throw new InvalidParameterException([
+                'template' => 'missing_parameter',
+                'parameter' => $parameter->getName(),
+                'controller' => $this->controller->getName(),
+                'action' => $this->controller->getRequest()->getParam('action'),
+                'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                'plugin' => $this->controller->getRequest()->getParam('plugin'),
+            ]);
+        }
+
+        return array_merge($resolved, $passedParams);
+    }
+
+    /**
+     * Coerces string argument to primitive type.
+     *
+     * @param string $argument Argument to coerce
+     * @param \ReflectionNamedType $type Parameter type
+     * @return string|float|int|bool|null
+     */
+    protected function coerceStringToType(string $argument, ReflectionNamedType $type)
+    {
+        switch ($type->getName()) {
+            case 'string':
+                return $argument;
+            case 'float':
+                return is_numeric($argument) ? (float)$argument : null;
+            case 'int':
+                return ctype_digit($argument) ? (int)$argument : null;
+            case 'bool':
+                return $argument === '0' ? false : ($argument === '1' ? true : null);
+        }
+
+        return null;
     }
 
     /**

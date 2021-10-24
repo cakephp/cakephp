@@ -30,14 +30,14 @@ abstract class AbstractPasswordHasher
      *
      * These are merged with user-provided config when the object is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [];
 
     /**
      * Constructor
      *
-     * @param array $config Array of config.
+     * @param array<string, mixed> $config Array of config.
      */
     public function __construct(array $config = [])
     {

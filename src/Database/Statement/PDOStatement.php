@@ -47,6 +47,22 @@ class PDOStatement extends StatementDecorator
     }
 
     /**
+     * Magic getter to return PDOStatement::$queryString as read-only.
+     *
+     * @param string $property internal property to get
+     * @return string|null
+     */
+    public function __get(string $property)
+    {
+        if ($property === 'queryString' && isset($this->_statement->queryString)) {
+            /** @psalm-suppress NoInterfaceProperties */
+            return $this->_statement->queryString;
+        }
+
+        return null;
+    }
+
+    /**
      * Assign a value to a positional or named variable in prepared query. If using
      * positional variables you need to start with index one, if using named params then
      * just use the name in any order.

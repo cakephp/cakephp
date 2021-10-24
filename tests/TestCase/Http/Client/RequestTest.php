@@ -25,10 +25,8 @@ class RequestTest extends TestCase
 {
     /**
      * test string ata, header and constructor
-     *
-     * @return void
      */
-    public function testConstructorStringData()
+    public function testConstructorStringData(): void
     {
         $headers = [
             'Content-Type' => 'application/json',
@@ -49,7 +47,7 @@ class RequestTest extends TestCase
      * @param string $method The HTTP method to use.
      * @dataProvider additionProvider
      */
-    public function testMethods(array $headers, $data, $method)
+    public function testMethods(array $headers, $data, $method): void
     {
         $request = new Request('http://example.com', $method, $headers, json_encode($data));
 
@@ -62,7 +60,7 @@ class RequestTest extends TestCase
     /**
      * @dataProvider additionProvider
      */
-    public function additionProvider()
+    public function additionProvider(): array
     {
         $headers = [
             'Content-Type' => 'application/json',
@@ -80,10 +78,8 @@ class RequestTest extends TestCase
 
     /**
      * test array data, header and constructor
-     *
-     * @return void
      */
-    public function testConstructorArrayData()
+    public function testConstructorArrayData(): void
     {
         $headers = [
             'Content-Type' => 'application/json',
@@ -100,10 +96,8 @@ class RequestTest extends TestCase
 
     /**
      * test nested array data for encoding of brackets, header and constructor
-     *
-     * @return void
      */
-    public function testConstructorArrayNestedData()
+    public function testConstructorArrayNestedData(): void
     {
         $headers = [
             'Content-Type' => 'application/json',
@@ -120,10 +114,8 @@ class RequestTest extends TestCase
 
     /**
      * test body method.
-     *
-     * @return void
      */
-    public function testBody()
+    public function testBody(): void
     {
         $data = '{"json":"data"}';
         $request = new Request('', Request::METHOD_GET, [], $data);
@@ -133,10 +125,8 @@ class RequestTest extends TestCase
 
     /**
      * test body method with array payload
-     *
-     * @return void
      */
-    public function testBodyArray()
+    public function testBodyArray(): void
     {
         $data = [
             'a' => 'b',
@@ -154,10 +144,8 @@ class RequestTest extends TestCase
 
     /**
      * Test that body() modifies the PSR7 stream
-     *
-     * @return void
      */
-    public function testBodyInteroperability()
+    public function testBodyInteroperability(): void
     {
         $request = new Request();
         $this->assertSame('', $request->getBody()->__toString());
@@ -169,10 +157,8 @@ class RequestTest extends TestCase
 
     /**
      * Test the default headers
-     *
-     * @return void
      */
-    public function testDefaultHeaders()
+    public function testDefaultHeaders(): void
     {
         $request = new Request();
         $this->assertSame('CakePHP', $request->getHeaderLine('User-Agent'));

@@ -32,7 +32,7 @@ class ClassNode implements NodeInterface
     private $id;
 
     /**
-     * @var \Cake\Error\Debug\PropertyNode[]
+     * @var array<\Cake\Error\Debug\PropertyNode>
      */
     private $properties = [];
 
@@ -82,7 +82,7 @@ class ClassNode implements NodeInterface
     /**
      * Get property nodes
      *
-     * @return \Cake\Error\Debug\PropertyNode[]
+     * @return array<\Cake\Error\Debug\PropertyNode>
      */
     public function getChildren(): array
     {

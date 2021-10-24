@@ -31,10 +31,8 @@ class LogTraitTest extends TestCase
 
     /**
      * Test log method.
-     *
-     * @return void
      */
-    public function testLog()
+    public function testLog(): void
     {
         $mock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
         $mock->expects($this->exactly(2))

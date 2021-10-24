@@ -77,7 +77,7 @@ class Folder
     public $path;
 
     /**
-     * Sortedness. Whether or not list results
+     * Sortedness. Whether list results
      * should be sorted by name.
      *
      * @var bool
@@ -95,7 +95,7 @@ class Folder
     /**
      * Functions array to be called depending on the sort type chosen.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',
@@ -257,7 +257,7 @@ class Folder
      *
      * @param string $regexpPattern Preg_match pattern (Defaults to: .*)
      * @param string|bool $sort Whether results should be sorted.
-     * @return array Files that match given pattern
+     * @return array<string> Files that match given pattern
      */
     public function find(string $regexpPattern = '.*', $sort = false): array
     {
@@ -349,7 +349,7 @@ class Folder
      */
     public static function isRegisteredStreamWrapper(string $path): bool
     {
-        return preg_match('/^[^:\/\/]+?(?=:\/\/)/', $path, $matches) &&
+        return preg_match('/^[^:\/]+?(?=:\/\/)/', $path, $matches) &&
             in_array($matches[0], stream_get_wrappers(), true);
     }
 
@@ -397,7 +397,7 @@ class Folder
      * Returns $path with $element added, with correct slash in-between.
      *
      * @param string $path Path
-     * @param string|array $element Element to add at end of path
+     * @param array|string $element Element to add at end of path
      * @return string Combined path
      */
     public static function addPathElement(string $path, $element): string
@@ -440,7 +440,7 @@ class Folder
      * @param string $path The path to chmod.
      * @param int|null $mode Octal value, e.g. 0755.
      * @param bool $recursive Chmod recursively, set to false to only change the current directory.
-     * @param string[] $exceptions Array of files, directories to skip.
+     * @param array<string> $exceptions Array of files, directories to skip.
      * @return bool Success.
      */
     public function chmod(string $path, ?int $mode = null, bool $recursive = true, array $exceptions = []): bool
@@ -646,13 +646,12 @@ class Folder
         if ($this->create($nextPathname, $mode)) {
             if (!file_exists($pathname)) {
                 $old = umask(0);
+                umask($old);
                 if (mkdir($pathname, $mode, true)) {
-                    umask($old);
                     $this->_messages[] = sprintf('%s created', $pathname);
 
                     return true;
                 }
-                umask($old);
                 $this->_errors[] = sprintf('%s NOT created', $pathname);
 
                 return false;
@@ -783,7 +782,7 @@ class Folder
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
      * @param string $to The directory to copy to.
-     * @param array $options Array of options (see above).
+     * @param array<string, mixed> $options Array of options (see above).
      * @return bool Success.
      */
     public function copy(string $to, array $options = []): bool
@@ -884,7 +883,7 @@ class Folder
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
      * @param string $to The directory to move to.
-     * @param array $options Array of options (see above).
+     * @param array<string, mixed> $options Array of options (see above).
      * @return bool Success
      */
     public function move(string $to, array $options = []): bool

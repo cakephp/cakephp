@@ -25,10 +25,8 @@ class FormDataTest extends TestCase
 {
     /**
      * Test getting the boundary.
-     *
-     * @return void
      */
-    public function testBoundary()
+    public function testBoundary(): void
     {
         $data = new FormData();
         $result = $data->boundary();
@@ -40,10 +38,8 @@ class FormDataTest extends TestCase
 
     /**
      * test adding parts returns this.
-     *
-     * @return void
      */
-    public function testAddReturnThis()
+    public function testAddReturnThis(): void
     {
         $data = new FormData();
         $return = $data->add('test', 'value');
@@ -52,10 +48,8 @@ class FormDataTest extends TestCase
 
     /**
      * Test adding parts that are simple.
-     *
-     * @return void
      */
-    public function testAddSimple()
+    public function testAddSimple(): void
     {
         $data = new FormData();
         $data->add('test', 'value')
@@ -73,10 +67,8 @@ class FormDataTest extends TestCase
 
     /**
      * Test addMany method.
-     *
-     * @return void
      */
-    public function testAddMany()
+    public function testAddMany(): void
     {
         $data = new FormData();
         $array = [
@@ -94,10 +86,8 @@ class FormDataTest extends TestCase
 
     /**
      * Test adding a part object.
-     *
-     * @return void
      */
-    public function testAddPartObject()
+    public function testAddPartObject(): void
     {
         $data = new FormData();
         $boundary = $data->boundary();
@@ -123,10 +113,8 @@ class FormDataTest extends TestCase
 
     /**
      * Test adding parts that are arrays.
-     *
-     * @return void
      */
-    public function testAddArray()
+    public function testAddArray(): void
     {
         $data = new FormData();
         $data->add('Article', [
@@ -142,10 +130,8 @@ class FormDataTest extends TestCase
 
     /**
      * Test adding a part with a file in it.
-     *
-     * @return void
      */
-    public function testAddFile()
+    public function testAddFile(): void
     {
         $file = CORE_PATH . 'VERSION.txt';
         $contents = file_get_contents($file);
@@ -169,10 +155,8 @@ class FormDataTest extends TestCase
 
     /**
      * Test adding a part with a filehandle.
-     *
-     * @return void
      */
-    public function testAddFileHandle()
+    public function testAddFileHandle(): void
     {
         $file = CORE_PATH . 'VERSION.txt';
         $fh = fopen($file, 'r');
@@ -199,10 +183,8 @@ class FormDataTest extends TestCase
 
     /**
      * Test contentType method.
-     *
-     * @return void
      */
-    public function testContentType()
+    public function testContentType(): void
     {
         $data = new FormData();
         $data->add('key', 'value');

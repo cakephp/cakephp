@@ -26,7 +26,6 @@ use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
-use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
 use TestApp\Model\Table\SecondaryPostsTable;
@@ -39,9 +38,9 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      */
-    public function testEventFiredMisconfiguredEventList()
+    public function testEventFiredMisconfiguredEventList(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFired('my.event', $manager);
     }
@@ -49,19 +48,17 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      */
-    public function testEventFiredWithMisconfiguredEventList()
+    public function testEventFiredWithMisconfiguredEventList(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFiredWith('my.event', 'some', 'data', $manager);
     }
 
     /**
      * tests assertEventFiredWith
-     *
-     * @return void
      */
-    public function testEventFiredWith()
+    public function testEventFiredWith(): void
     {
         $manager = EventManager::instance();
         $manager->setEventList(new EventList());
@@ -86,10 +83,8 @@ class TestCaseTest extends TestCase
 
     /**
      * tests assertEventFired
-     *
-     * @return void
      */
-    public function testEventFired()
+    public function testEventFired(): void
     {
         $manager = EventManager::instance();
         $manager->setEventList(new EventList());
@@ -109,49 +104,9 @@ class TestCaseTest extends TestCase
     }
 
     /**
-     * testLoadFixturesOnDemand
-     *
-     * @return void
-     */
-    public function testLoadFixturesOnDemand()
-    {
-        $test = new FixturizedTestCase('testFixtureLoadOnDemand');
-        $test->autoFixtures = false;
-        $manager = $this->getMockBuilder('Cake\TestSuite\Fixture\FixtureManager')->getMock();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-        $manager->expects($this->once())->method('loadSingle');
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-    }
-
-    /**
-     * tests loadFixtures loads all fixtures on the test
-     *
-     * @return void
-     */
-    public function testLoadAllFixtures()
-    {
-        $test = new FixturizedTestCase('testLoadAllFixtures');
-        $test->autoFixtures = false;
-        $manager = new FixtureManager();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-        $this->assertCount(1, $result->passed());
-        $this->assertFalse($test->autoFixtures);
-    }
-
-    /**
      * testSkipIf
-     *
-     * @return void
      */
-    public function testSkipIf()
+    public function testSkipIf(): void
     {
         $test = new FixturizedTestCase('testSkipIfTrue');
         $result = $test->run();
@@ -164,13 +119,11 @@ class TestCaseTest extends TestCase
 
     /**
      * test withErrorReporting
-     *
-     * @return void
      */
-    public function testWithErrorReporting()
+    public function testWithErrorReporting(): void
     {
         $errorLevel = error_reporting();
-        $this->withErrorReporting(E_USER_WARNING, function () {
+        $this->withErrorReporting(E_USER_WARNING, function (): void {
               $this->assertSame(E_USER_WARNING, error_reporting());
         });
         $this->assertSame($errorLevel, error_reporting());
@@ -178,16 +131,14 @@ class TestCaseTest extends TestCase
 
     /**
      * test withErrorReporting with exceptions
-     *
-     * @return void
      */
-    public function testWithErrorReportingWithException()
+    public function testWithErrorReportingWithException(): void
     {
         $this->expectException(AssertionFailedError::class);
 
         $errorLevel = error_reporting();
         try {
-            $this->withErrorReporting(E_USER_WARNING, function () {
+            $this->withErrorReporting(E_USER_WARNING, function (): void {
                 $this->assertSame(1, 2);
             });
         } finally {
@@ -196,21 +147,79 @@ class TestCaseTest extends TestCase
     }
 
     /**
-     * Test that TestCase::setUp() backs up values.
-     *
-     * @return void
+     * test deprecated
      */
-    public function testSetupBackUpValues()
+    public function testDeprecated(): void
+    {
+        $this->deprecated(function () {
+            trigger_error('deprecation message', E_USER_DEPRECATED);
+        });
+    }
+
+    /**
+     * test deprecated with assert after trigger warning
+     */
+    public function testDeprecatedWithAssertAfterTriggerWarning(): void
+    {
+        try {
+            $this->deprecated(function () {
+                trigger_error('deprecation message', E_USER_DEPRECATED);
+                $this->assertTrue(false, 'A random message');
+            });
+
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('A random message', $e->getMessage());
+        }
+    }
+
+    /**
+     * test deprecated
+     */
+    public function testDeprecatedWithNoDeprecation(): void
+    {
+        try {
+            $this->deprecated(function () {
+            });
+
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertStringStartsWith('Should have at least one deprecation warning', $e->getMessage());
+        }
+    }
+
+    /**
+     * test deprecated() with duplicate deprecation with same messsage and line
+     */
+    public function testDeprecatedWithDuplicatedDeprecation(): void
+    {
+        /**
+         * setting stackframe = 0 and having same method
+         * to have same deprecation message and same line for all cases
+         */
+        $fun = function () {
+            deprecationWarning('Test same deprecation message', 0);
+        };
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
+    }
+
+    /**
+     * Test that TestCase::setUp() backs up values.
+     */
+    public function testSetupBackUpValues(): void
     {
         $this->assertArrayHasKey('debug', $this->_configure);
     }
 
     /**
      * test assertTextNotEquals()
-     *
-     * @return void
      */
-    public function testAssertTextNotEquals()
+    public function testAssertTextNotEquals(): void
     {
         $one = "\r\nOne\rTwooo";
         $two = "\nOne\nTwo";
@@ -219,10 +228,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextEquals()
-     *
-     * @return void
      */
-    public function testAssertTextEquals()
+    public function testAssertTextEquals(): void
     {
         $one = "\r\nOne\rTwo";
         $two = "\nOne\nTwo";
@@ -231,10 +238,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextStartsWith()
-     *
-     * @return void
      */
-    public function testAssertTextStartsWith()
+    public function testAssertTextStartsWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -248,10 +253,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextStartsNotWith()
-     *
-     * @return void
      */
-    public function testAssertTextStartsNotWith()
+    public function testAssertTextStartsNotWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -260,10 +263,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextEndsWith()
-     *
-     * @return void
      */
-    public function testAssertTextEndsWith()
+    public function testAssertTextEndsWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -273,10 +274,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextEndsNotWith()
-     *
-     * @return void
      */
-    public function testAssertTextEndsNotWith()
+    public function testAssertTextEndsNotWith(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -286,10 +285,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextContains()
-     *
-     * @return void
      */
-    public function testAssertTextContains()
+    public function testAssertTextContains(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -301,10 +298,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test assertTextNotContains()
-     *
-     * @return void
      */
-    public function testAssertTextNotContains()
+    public function testAssertTextNotContains(): void
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
 
@@ -313,10 +308,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test testAssertWithinRange()
-     *
-     * @return void
      */
-    public function testAssertWithinRange()
+    public function testAssertWithinRange(): void
     {
         $this->assertWithinRange(21, 22, 1, 'Not within range');
         $this->assertWithinRange(21.3, 22.2, 1.0, 'Not within range');
@@ -324,10 +317,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test testAssertNotWithinRange()
-     *
-     * @return void
      */
-    public function testAssertNotWithinRange()
+    public function testAssertNotWithinRange(): void
     {
         $this->assertNotWithinRange(21, 23, 1, 'Within range');
         $this->assertNotWithinRange(21.3, 22.2, 0.7, 'Within range');
@@ -335,10 +326,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test getMockForModel()
-     *
-     * @return void
      */
-    public function testGetMockForModel()
+    public function testGetMockForModel(): void
     {
         static::setAppNamespace();
         // No methods will be mocked if $methods argument of getMockForModel() is empty.
@@ -377,10 +366,8 @@ class TestCaseTest extends TestCase
 
     /**
      * Test getMockForModel on secondary datasources.
-     *
-     * @return void
      */
-    public function testGetMockForModelSecondaryDatasource()
+    public function testGetMockForModelSecondaryDatasource(): void
     {
         ConnectionManager::alias('test', 'secondary');
 
@@ -390,10 +377,8 @@ class TestCaseTest extends TestCase
 
     /**
      * test getMockForModel() with plugin models
-     *
-     * @return void
      */
-    public function testGetMockForModelWithPlugin()
+    public function testGetMockForModelWithPlugin(): void
     {
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
@@ -426,10 +411,8 @@ class TestCaseTest extends TestCase
 
     /**
      * testGetMockForModelTable
-     *
-     * @return void
      */
-    public function testGetMockForModelTable()
+    public function testGetMockForModelTable(): void
     {
         $Mock = $this->getMockForModel(
             'Table',
@@ -464,26 +447,24 @@ class TestCaseTest extends TestCase
 
     /**
      * Test getting a table mock that doesn't have a preset table name sets the proper name
-     *
-     * @return void
      */
-    public function testGetMockForModelSetTable()
+    public function testGetMockForModelSetTable(): void
     {
         static::setAppNamespace();
+        ConnectionManager::alias('test', 'custom_i18n_datasource');
 
         $I18n = $this->getMockForModel('CustomI18n', ['save']);
         $this->assertSame('custom_i18n_table', $I18n->getTable());
 
         $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('tags', $Tags->getTable());
+        ConnectionManager::dropAlias('custom_i18n_datasource');
     }
 
     /**
      * Test loadRoutes() helper
-     *
-     * @return void
      */
-    public function testLoadRoutes()
+    public function testLoadRoutes(): void
     {
         $url = ['controller' => 'Articles', 'action' => 'index'];
         try {

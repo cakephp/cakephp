@@ -25,7 +25,7 @@ use Traversable;
 /**
  * Handles caching queries and loading results from the cache.
  *
- * Used by Cake\Datasource\QueryTrait internally.
+ * Used by {@link \Cake\Datasource\QueryTrait} internally.
  *
  * @internal
  * @see \Cake\Datasource\QueryTrait::cache() for the public interface.
@@ -35,22 +35,22 @@ class QueryCacher
     /**
      * The key or function to generate a key.
      *
-     * @var string|\Closure
+     * @var \Closure|string
      */
     protected $_key;
 
     /**
      * Config for cache engine.
      *
-     * @var string|\Psr\SimpleCache\CacheInterface
+     * @var \Psr\SimpleCache\CacheInterface|string
      */
     protected $_config;
 
     /**
      * Constructor.
      *
-     * @param string|\Closure $key The key or function to generate a key.
-     * @param string|\Psr\SimpleCache\CacheInterface $config The cache config name or cache engine instance.
+     * @param \Closure|string $key The key or function to generate a key.
+     * @param \Psr\SimpleCache\CacheInterface|string $config The cache config name or cache engine instance.
      * @throws \RuntimeException
      */
     public function __construct($key, $config)

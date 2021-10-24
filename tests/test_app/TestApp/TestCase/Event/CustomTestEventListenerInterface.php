@@ -11,7 +11,7 @@ use Cake\Event\EventListenerInterface;
 class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -27,10 +27,8 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
 
     /**
      * Test function to be used in event dispatching
-     *
-     * @return void
      */
-    public function thirdListenerFunction()
+    public function thirdListenerFunction(): void
     {
         $this->callList[] = __FUNCTION__;
     }

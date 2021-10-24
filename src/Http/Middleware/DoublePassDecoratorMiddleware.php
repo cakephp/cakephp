@@ -38,6 +38,9 @@ use Psr\Http\Server\RequestHandlerInterface;
  * or a class with `__invoke()` method with same signature as above.
  *
  * Neither the arguments nor the return value need be typehinted.
+ *
+ * @deprecated 4.3.0 "Double pass" middleware are deprecated.
+ *   Use a `Closure` or a class which implements `Psr\Http\Server\MiddlewareInterface` instead.
  */
 class DoublePassDecoratorMiddleware implements MiddlewareInterface
 {
@@ -55,6 +58,11 @@ class DoublePassDecoratorMiddleware implements MiddlewareInterface
      */
     public function __construct(callable $callable)
     {
+        deprecationWarning(
+            '"Double pass" middleware are deprecated. Use a `Closure` with the signature of'
+            . ' `($request, $handler)` or a class which implements `Psr\Http\Server\MiddlewareInterface` instead.',
+            0
+        );
         $this->callable = $callable;
     }
 

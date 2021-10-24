@@ -28,10 +28,8 @@ class BufferedIteratorTest extends TestCase
 {
     /**
      * Tests that items are cached once iterated over them
-     *
-     * @return void
      */
-    public function testBufferItems()
+    public function testBufferItems(): void
     {
         $items = new ArrayObject([
             'a' => 1,
@@ -49,10 +47,8 @@ class BufferedIteratorTest extends TestCase
 
     /**
      * Tests that items are cached once iterated over them
-     *
-     * @return void
      */
-    public function testCount()
+    public function testCount(): void
     {
         $items = new ArrayObject([
             'a' => 1,
@@ -72,10 +68,8 @@ class BufferedIteratorTest extends TestCase
 
     /**
      * Tests that partial iteration can be reset.
-     *
-     * @return void
      */
-    public function testBufferPartial()
+    public function testBufferPartial(): void
     {
         $items = new ArrayObject([1, 2, 3]);
         $iterator = new BufferedIterator($items);
@@ -89,5 +83,24 @@ class BufferedIteratorTest extends TestCase
             $result[] = $value;
         }
         $this->assertEquals([1, 2, 3], $result);
+    }
+
+    /**
+     * Testing serialize and unserialize features.
+     */
+    public function testSerialization(): void
+    {
+        $items = new ArrayObject([
+            'a' => 1,
+            'b' => 2,
+            'c' => 3,
+        ]);
+        $expected = (array)$items;
+
+        $iterator = new BufferedIterator($items);
+
+        $serialized = serialize($iterator);
+        $outcome = unserialize($serialized);
+        $this->assertEquals($expected, $outcome->toArray());
     }
 }

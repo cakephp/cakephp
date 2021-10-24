@@ -45,11 +45,11 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * order to marshal the request URI and headers.
      *
      * @see fromServer()
-     * @param array $server $_SERVER superglobal
-     * @param array $query $_GET superglobal
-     * @param array $parsedBody $_POST superglobal
-     * @param array $cookies $_COOKIE superglobal
-     * @param array $files $_FILES superglobal
+     * @param array|null $server $_SERVER superglobal
+     * @param array|null $query $_GET superglobal
+     * @param array|null $parsedBody $_POST superglobal
+     * @param array|null $cookies $_COOKIE superglobal
+     * @param array|null $files $_FILES superglobal
      * @return \Cake\Http\ServerRequest
      * @throws \InvalidArgumentException for invalid file values
      */
@@ -268,7 +268,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     protected static function updatePath(string $base, UriInterface $uri): UriInterface
     {
         $path = $uri->getPath();
-        if (strlen($base) > 0 && strpos($path, $base) === 0) {
+        if ($base !== '' && strpos($path, $base) === 0) {
             $path = substr($path, strlen($base));
         }
         if ($path === '/index.php' && $uri->getQuery()) {

@@ -53,7 +53,7 @@ class I18n
      * for getting specific translators based of their name and locale
      * or to configure some aspect of future translations that are not yet constructed.
      *
-     * @return \Cake\I18n\TranslatorRegistry The translators collection.
+     * @return \Cake\I18n\TranslatorRegistry The translator collection.
      */
     public static function translators(): TranslatorRegistry
     {
@@ -272,7 +272,7 @@ class I18n
 
     /**
      * Sets the name of the default messages formatter to use for future
-     * translator instances. By default the `default` and `sprintf` formatters
+     * translator instances. By default, the `default` and `sprintf` formatters
      * are available.
      *
      * @param string $name The name of the formatter to use.

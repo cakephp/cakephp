@@ -34,6 +34,7 @@ use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -87,8 +88,8 @@ abstract class BaseApplication implements
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
-     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
-     * @param \Cake\Http\ControllerFactoryInterface $controllerFactory Controller factory.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager Application event manager instance.
+     * @param \Cake\Http\ControllerFactoryInterface|null $controllerFactory Controller factory.
      */
     public function __construct(
         string $configDir,
@@ -139,8 +140,8 @@ abstract class BaseApplication implements
      *
      * If it isn't available, ignore it.
      *
-     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
-     * @param array $config The configuration data for the plugin if using a string for $name
+     * @param \Cake\Core\PluginInterface|string $name The plugin name or plugin object.
+     * @param array<string, mixed> $config The configuration data for the plugin if using a string for $name
      * @return $this
      */
     public function addOptionalPlugin($name, array $config = [])
@@ -185,7 +186,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      *
-     * By default this will load `config/routes.php` for ease of use and backwards compatibility.
+     * By default, this will load `config/routes.php` for ease of use and backwards compatibility.
      *
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
@@ -194,7 +195,10 @@ abstract class BaseApplication implements
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
-            require $this->configDir . 'routes.php';
+            $return = require $this->configDir . 'routes.php';
+            if ($return instanceof Closure) {
+                $return($routes);
+            }
         }
     }
 
@@ -213,7 +217,7 @@ abstract class BaseApplication implements
     /**
      * Define the console commands for an application.
      *
-     * By default all commands in CakePHP, plugins and the application will be
+     * By default, all commands in CakePHP, plugins and the application will be
      * loaded using conventions based names.
      *
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.

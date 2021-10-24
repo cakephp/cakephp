@@ -17,13 +17,17 @@ declare(strict_types=1);
 namespace TestApp\Middleware;
 
 use Cake\Http\Exception\ForbiddenException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Testing stub for middleware tests.
  */
-class ThrowsExceptionMiddleware
+class ThrowsExceptionMiddleware implements MiddlewareInterface
 {
-    public function __invoke($req, $res, $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         throw new ForbiddenException('Sample Message');
     }

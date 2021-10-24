@@ -26,11 +26,11 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^2.0",
+        "cakephp/chronos": "^2.2",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
         "laminas/laminas-httphandlerrunner": "^1.1",
-        "league/container": "^3.2",
+        "league/container": "^4.1.1",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
@@ -55,8 +55,8 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "^4.0",
-        "mikey179/vfsstream": "^1.6",
+        "cakephp/cakephp-codesniffer": "^4.5",
+        "mikey179/vfsstream": "^1.6.10",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "^8.5 || ^9.3"
     },
@@ -87,6 +87,7 @@
             "Cake\\PHPStan\\": "tests/PHPStan/",
             "Cake\\Test\\": "tests/",
             "TestApp\\": "tests/test_app/TestApp/",
+            "TestApp\\Test\\": "tests/test_app/TestApp/tests/",
             "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src/",
             "TestPlugin\\Test\\": "tests/test_app/Plugin/TestPlugin/tests/",
             "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src/",
@@ -108,7 +109,8 @@
             "@phpstan",
             "@psalm"
         ],
-        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:0.12.94 psalm/phar:~4.9.3 && mv composer.backup composer.json",
+        "stan-tests": "phpstan.phar analyze -c tests/phpstan.neon",
+        "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:0.12.96 psalm/phar:~4.10.0 && mv composer.backup composer.json",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml"
     },

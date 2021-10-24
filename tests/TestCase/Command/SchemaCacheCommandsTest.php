@@ -18,8 +18,6 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
-use Cake\Console\ConsoleIo;
-use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -34,7 +32,7 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * Fixtures.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = ['core.Articles', 'core.Tags'];
 
@@ -50,8 +48,6 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * setup method
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -70,40 +66,20 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Teardown
-     *
-     * @return void
      */
     public function tearDown(): void
     {
+        $this->connection->cacheMetadata(false);
         parent::tearDown();
 
-        $this->connection->cacheMetadata('_cake_model_');
         unset($this->connection);
         Cache::drop('orm_cache');
     }
 
-    protected function getShell()
-    {
-        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
-        $shell = $this->getMockBuilder(SchemaCacheShell::class)
-            ->setConstructorArgs([$io])
-            ->onlyMethods(['_getSchemaCache'])
-            ->getMock();
-
-        $schemaCache = new SchemaCache($this->connection);
-        $shell->expects($this->once())
-            ->method('_getSchemaCache')
-            ->willReturn($schemaCache);
-
-        return $shell;
-    }
-
     /**
      * Test that clear enables the cache if it was disabled.
-     *
-     * @return void
      */
-    public function testClearEnablesMetadataCache()
+    public function testClearEnablesMetadataCache(): void
     {
         $this->connection->cacheMetadata(false);
 
@@ -114,10 +90,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test that build enables the cache if it was disabled.
-     *
-     * @return void
      */
-    public function testBuildEnablesMetadataCache()
+    public function testBuildEnablesMetadataCache(): void
     {
         $this->connection->cacheMetadata(false);
 
@@ -128,10 +102,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() with no args.
-     *
-     * @return void
      */
-    public function testBuildNoArgs()
+    public function testBuildNoArgs(): void
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('set')
@@ -144,10 +116,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() with one arg.
-     *
-     * @return void
      */
-    public function testBuildNamedModel()
+    public function testBuildNamedModel(): void
     {
         $this->cache->expects($this->once())
             ->method('set')
@@ -163,10 +133,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() overwrites cached data.
-     *
-     * @return void
      */
-    public function testBuildOverwritesExistingData()
+    public function testBuildOverwritesExistingData(): void
     {
         $this->cache->expects($this->once())
             ->method('set')
@@ -184,10 +152,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test build() with a nonexistent connection name.
-     *
-     * @return void
      */
-    public function testBuildInvalidConnection()
+    public function testBuildInvalidConnection(): void
     {
         $this->exec('schema_cache build --connection derpy-derp articles');
         $this->assertExitError();
@@ -195,10 +161,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test clear() with an invalid connection name.
-     *
-     * @return void
      */
-    public function testClearInvalidConnection()
+    public function testClearInvalidConnection(): void
     {
         $this->exec('schema_cache clear --connection derpy-derp articles');
         $this->assertExitError();
@@ -206,10 +170,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test clear() with no args.
-     *
-     * @return void
      */
-    public function testClearNoArgs()
+    public function testClearNoArgs(): void
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('delete')
@@ -222,10 +184,8 @@ class SchemaCacheCommandsTest extends TestCase
 
     /**
      * Test clear() with a model name.
-     *
-     * @return void
      */
-    public function testClearNamedModel()
+    public function testClearNamedModel(): void
     {
         $this->cache->expects($this->never())
             ->method('set')

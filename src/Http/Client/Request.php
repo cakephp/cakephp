@@ -34,6 +34,7 @@ class Request extends Message implements RequestInterface
      *
      * Provides backwards compatible defaults for some properties.
      *
+     * @phpstan-param array<non-empty-string, non-empty-string> $headers
      * @param string $url The request URL
      * @param string $method The HTTP method to use.
      * @param array $headers The HTTP headers to set.
@@ -45,7 +46,7 @@ class Request extends Message implements RequestInterface
         $this->uri = $this->createUri($url);
         $headers += [
             'Connection' => 'close',
-            'User-Agent' => 'CakePHP',
+            'User-Agent' => ini_get('user_agent') ?: 'CakePHP',
         ];
         $this->addHeaders($headers);
 
@@ -59,7 +60,8 @@ class Request extends Message implements RequestInterface
     /**
      * Add an array of headers to the request.
      *
-     * @param array $headers The headers to add.
+     * @phpstan-param array<non-empty-string, non-empty-string> $headers
+     * @param array<string, string> $headers The headers to add.
      * @return void
      */
     protected function addHeaders(array $headers): void
@@ -74,10 +76,10 @@ class Request extends Message implements RequestInterface
     /**
      * Set the body/payload for the message.
      *
-     * Array data will be serialized with Cake\Http\FormData,
+     * Array data will be serialized with {@link \Cake\Http\FormData},
      * and the content-type will be set.
      *
-     * @param string|array $content The body for the request.
+     * @param array|string $content The body for the request.
      * @return $this
      */
     protected function setContent($content)
@@ -85,7 +87,9 @@ class Request extends Message implements RequestInterface
         if (is_array($content)) {
             $formData = new FormData();
             $formData->addMany($content);
-            $this->addHeaders(['Content-Type' => $formData->contentType()]);
+            /** @phpstan-var array<non-empty-string, non-empty-string> $headers */
+            $headers = ['Content-Type' => $formData->contentType()];
+            $this->addHeaders($headers);
             $content = (string)$formData;
         }
 

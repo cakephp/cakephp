@@ -34,7 +34,7 @@ class HasOne extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -44,7 +44,7 @@ class HasOne extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string|string[]
+     * @return array<string>|string
      */
     public function getForeignKey()
     {
@@ -68,7 +68,7 @@ class HasOne extends Association
     }
 
     /**
-     * Returns whether or not the passed table is the owning side for this
+     * Returns whether the passed table is the owning side for this
      * association. This means that rows in the 'target' table would miss important
      * or required information if the row in 'source' did not exist.
      *
@@ -97,7 +97,7 @@ class HasOne extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array $options options to be passed to the save method in the target table
+     * @param array<string, mixed> $options options to be passed to the save method in the target table
      * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()

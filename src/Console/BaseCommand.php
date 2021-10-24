@@ -246,9 +246,9 @@ abstract class BaseCommand implements CommandInterface
      * will not be resolved with the application container. Instead you will
      * need to pass the command as an object with all of its dependencies.
      *
-     * @param string|\Cake\Console\CommandInterface $command The command class name or command instance.
+     * @param \Cake\Console\CommandInterface|string $command The command class name or command instance.
      * @param array $args The arguments to invoke the command with.
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
+     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
      */
     public function executeCommand($command, array $args = [], ?ConsoleIo $io = null): ?int

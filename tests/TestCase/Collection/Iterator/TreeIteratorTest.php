@@ -27,10 +27,8 @@ class TreeIteratorTest extends TestCase
 {
     /**
      * Tests the printer function with defaults
-     *
-     * @return void
      */
-    public function testPrinter()
+    public function testPrinter(): void
     {
         $items = [
             [
@@ -56,10 +54,8 @@ class TreeIteratorTest extends TestCase
 
     /**
      * Tests the printer function with a custom key extractor and spacer
-     *
-     * @return void
      */
-    public function testPrinterCustomKeyAndSpacer()
+    public function testPrinterCustomKeyAndSpacer(): void
     {
         $items = [
             [
@@ -85,10 +81,8 @@ class TreeIteratorTest extends TestCase
 
     /**
      * Tests the printer function with a closure extractor
-     *
-     * @return void
      */
-    public function testPrinterWithClosure()
+    public function testPrinterWithClosure(): void
     {
         $items = [
             [

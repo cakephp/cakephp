@@ -15,6 +15,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\QueryTests;
 
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query;
@@ -30,8 +34,6 @@ class WindowQueryTest extends TestCase
     protected $fixtures = [
         'core.Comments',
     ];
-
-    public $autoFixtures = false;
 
     /**
      * @var \Cake\Database\Connection
@@ -56,10 +58,10 @@ class WindowQueryTest extends TestCase
 
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof \Cake\Database\Driver\Mysql ||
-            $driver instanceof \Cake\Database\Driver\Sqlite
+            $driver instanceof Mysql ||
+            $driver instanceof Sqlite
         ) {
-            $this->skipTests = !$this->connection->getDriver()->supportsWindowFunctions();
+            $this->skipTests = !$this->connection->getDriver()->supports(DriverInterface::FEATURE_WINDOW);
         } else {
             $this->skipTests = false;
         }
@@ -72,10 +74,8 @@ class WindowQueryTest extends TestCase
 
     /**
      * Tests window sql generation.
-     *
-     * @return void
      */
-    public function testWindowSql()
+    public function testWindowSql(): void
     {
         $query = new Query($this->connection);
         $sql = $query
@@ -97,7 +97,7 @@ class WindowQueryTest extends TestCase
         $this->assertEqualsSql('SELECT * WINDOW name AS (name3)', $sql);
     }
 
-    public function testMissingWindow()
+    public function testMissingWindow(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
@@ -106,10 +106,9 @@ class WindowQueryTest extends TestCase
         });
     }
 
-    public function testPartitions()
+    public function testPartitions(): void
     {
         $this->skipIf($this->skipTests);
-        $this->loadFixtures('Comments');
 
         $query = new Query($this->connection);
         $result = $query
@@ -142,18 +141,14 @@ class WindowQueryTest extends TestCase
 
     /**
      * Tests adding named windows to the query.
-     *
-     * @return void
      */
-    public function testNamedWindow()
+    public function testNamedWindow(): void
     {
         $skip = $this->skipTests;
         if (!$skip) {
-            $skip = $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver;
+            $skip = $this->connection->getDriver() instanceof Sqlserver;
         }
         $this->skipIf($skip);
-
-        $this->loadFixtures('Comments');
 
         $query = new Query($this->connection);
         $result = $query
@@ -166,19 +161,17 @@ class WindowQueryTest extends TestCase
         $this->assertEquals(4, $result[0]['num_rows']);
     }
 
-    public function testWindowChaining()
+    public function testWindowChaining(): void
     {
         $skip = $this->skipTests;
         if (!$skip) {
             $driver = $this->connection->getDriver();
-            $skip = $driver instanceof \Cake\Database\Driver\Sqlserver;
-            if ($driver instanceof \Cake\Database\Driver\Sqlite) {
+            $skip = $driver instanceof Sqlserver;
+            if ($driver instanceof Sqlite) {
                 $skip = version_compare($driver->version(), '3.28.0', '<');
             }
         }
         $this->skipIf($skip);
-
-        $this->loadFixtures('Comments');
 
         $query = new Query($this->connection);
         $result = $query

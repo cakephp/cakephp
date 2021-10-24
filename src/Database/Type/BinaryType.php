@@ -35,7 +35,7 @@ class BinaryType extends BaseType
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return string|resource
+     * @return resource|string
      */
     public function toDatabase($value, DriverInterface $driver)
     {

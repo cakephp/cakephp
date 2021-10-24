@@ -50,7 +50,7 @@ trait ValidatorAwareTrait
     /**
      * A list of validation objects indexed by name
      *
-     * @var \Cake\Validation\Validator[]
+     * @var array<\Cake\Validation\Validator>
      */
     protected $_validators = [];
 
@@ -165,7 +165,7 @@ trait ValidatorAwareTrait
     }
 
     /**
-     * Checks whether or not a validator has been set.
+     * Checks whether a validator has been set.
      *
      * @param string $name The name of a validator.
      * @return bool

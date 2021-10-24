@@ -25,9 +25,60 @@ use Closure;
  *
  * @method int|null getMaxAliasLength() Returns the maximum alias length allowed.
  * @method int getConnectRetries() Returns the number of connection retry attempts made.
+ * @method bool supports(string $feature) Checks whether a feature is supported by the driver.
+ * @method bool inTransaction() Returns whether a transaction is active.
  */
 interface DriverInterface
 {
+    /**
+     * Common Table Expressions (with clause) support.
+     *
+     * @var string
+     */
+    public const FEATURE_CTE = 'cte';
+
+    /**
+     * Disabling constraints without being in transaction support.
+     *
+     * @var string
+     */
+    public const FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION = 'disable-constraint-without-transaction';
+
+    /**
+     * Native JSON data type support.
+     *
+     * @var string
+     */
+    public const FEATURE_JSON = 'json';
+
+    /**
+     * PDO::quote() support.
+     *
+     * @var string
+     */
+    public const FEATURE_QUOTE = 'quote';
+
+    /**
+     * Transaction savepoint support.
+     *
+     * @var string
+     */
+    public const FEATURE_SAVEPOINT = 'savepoint';
+
+    /**
+     * Truncate with foreign keys attached support.
+     *
+     * @var string
+     */
+    public const FEATURE_TRUNCATE_WITH_CONSTRAINTS = 'truncate-with-constraints';
+
+    /**
+     * Window function support (all or partial clauses).
+     *
+     * @var string
+     */
+    public const FEATURE_WINDOW = 'window';
+
     /**
      * Establishes a connection to the database server.
      *
@@ -68,7 +119,7 @@ interface DriverInterface
     /**
      * Prepares a sql statement to be executed.
      *
-     * @param string|\Cake\Database\Query $query The query to turn into a prepared statement.
+     * @param \Cake\Database\Query|string $query The query to turn into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
     public function prepare($query): StatementInterface;
@@ -137,6 +188,7 @@ interface DriverInterface
      * to already created tables.
      *
      * @return bool True if driver supports dynamic constraints.
+     * @deprecated 4.3.0 Fixtures no longer dynamically drop and create constraints.
      */
     public function supportsDynamicConstraints(): bool;
 
@@ -144,6 +196,7 @@ interface DriverInterface
      * Returns whether this driver supports save points for nested transactions.
      *
      * @return bool True if save points are supported, false otherwise.
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_SAVEPOINT)` instead
      */
     public function supportsSavePoints(): bool;
 
@@ -160,6 +213,7 @@ interface DriverInterface
      * Checks if the driver supports quoting.
      *
      * @return bool
+     * @deprecated 4.3.0 Use `supports(DriverInterface::FEATURE_QUOTE)` instead
      */
     public function supportsQuoting(): bool;
 
@@ -177,7 +231,7 @@ interface DriverInterface
     /**
      * Get the schema dialect.
      *
-     * Used by Cake\Database\Schema package to reflect schema and
+     * Used by {@link \Cake\Database\Schema} package to reflect schema and
      * generate schema.
      *
      * If all the tables that use this Driver specify their
@@ -221,14 +275,14 @@ interface DriverInterface
     public function lastInsertId(?string $table = null, ?string $column = null);
 
     /**
-     * Checks whether or not the driver is connected.
+     * Checks whether the driver is connected.
      *
      * @return bool
      */
     public function isConnected(): bool;
 
     /**
-     * Sets whether or not this driver should automatically quote identifiers
+     * Sets whether this driver should automatically quote identifiers
      * in queries.
      *
      * @param bool $enable Whether to enable auto quoting
@@ -244,7 +298,7 @@ interface DriverInterface
     public function disableAutoQuoting();
 
     /**
-     * Returns whether or not this driver should automatically quote identifiers
+     * Returns whether this driver should automatically quote identifiers
      * in queries.
      *
      * @return bool

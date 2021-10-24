@@ -12,33 +12,57 @@ class TestAppLibSession implements SessionHandlerInterface
 {
     public $options = [];
 
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         $this->options = $options;
     }
 
-    public function open($savePath, $name)
+    /**
+     * @inheritDoc
+     */
+    public function open($path, $name): bool
     {
         return true;
     }
 
-    public function close()
+    /**
+     * @inheritDoc
+     */
+    public function close(): bool
     {
+        return true;
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[\ReturnTypeWillChange]
     public function read($id)
     {
     }
 
-    public function write($id, $data)
+    /**
+     * @inheritDoc
+     */
+    public function write($id, $data): bool
     {
+        return true;
     }
 
-    public function destroy($id)
+    /**
+     * @inheritDoc
+     */
+    public function destroy($id): bool
     {
+        return true;
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
+        return 0;
     }
 }

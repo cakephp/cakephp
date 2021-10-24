@@ -72,7 +72,7 @@ class ConsoleInputOption
     /**
      * An array of choices for the option.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $_choices;
 
@@ -91,7 +91,7 @@ class ConsoleInputOption
      * @param string $help The help text for this option
      * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool|null $default The default value for this option.
-     * @param string[] $choices Valid choices for this option.
+     * @param array<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
      * @throws \Cake\Console\Exception\ConsoleException
@@ -162,7 +162,7 @@ class ConsoleInputOption
         if ($this->_choices) {
             $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
-        if (strlen($this->_short) > 0) {
+        if ($this->_short !== '') {
             $short = ', -' . $this->_short;
         }
         $name = sprintf('--%s%s', $this->_name, $short);
@@ -184,9 +184,9 @@ class ConsoleInputOption
      */
     public function usage(): string
     {
-        $name = strlen($this->_short) > 0 ? '-' . $this->_short : '--' . $this->_name;
+        $name = $this->_short === '' ? '--' . $this->_name : '-' . $this->_short;
         $default = '';
-        if ($this->_default !== null && !is_bool($this->_default) && strlen($this->_default) > 0) {
+        if ($this->_default !== null && !is_bool($this->_default) && $this->_default !== '') {
             $default = ' ' . $this->_default;
         }
         if ($this->_choices) {
@@ -277,7 +277,7 @@ class ConsoleInputOption
         $option = $parent->addChild('option');
         $option->addAttribute('name', '--' . $this->_name);
         $short = '';
-        if (strlen($this->_short) > 0) {
+        if ($this->_short !== '') {
             $short = '-' . $this->_short;
         }
         $default = $this->_default;

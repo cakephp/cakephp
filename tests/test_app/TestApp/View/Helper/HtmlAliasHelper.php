@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\View\Helper;
 
+use Cake\Event\EventInterface;
 use Cake\View\Helper;
 
 /**
@@ -10,11 +11,7 @@ use Cake\View\Helper;
  */
 class HtmlAliasHelper extends Helper
 {
-    /**
-     * @param string $viewFile
-     * @return void
-     */
-    public function afterRender($viewFile)
+    public function afterRender(EventInterface $event, string $viewFile): void
     {
     }
 }

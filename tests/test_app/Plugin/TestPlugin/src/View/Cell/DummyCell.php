@@ -15,17 +15,17 @@ declare(strict_types=1);
  */
 namespace TestPlugin\View\Cell;
 
+use Cake\View\Cell;
+
 /**
  * DummyCell class
  */
-class DummyCell extends \Cake\View\Cell
+class DummyCell extends Cell
 {
     /**
      * Default cell action.
-     *
-     * @return void
      */
-    public function display()
+    public function display(): void
     {
     }
 
@@ -33,9 +33,8 @@ class DummyCell extends \Cake\View\Cell
      * Simple echo.
      *
      * @param string $msg
-     * @return void
      */
-    public function echoThis($msg)
+    public function echoThis($msg): void
     {
         $this->set('msg', $msg);
     }

@@ -30,7 +30,7 @@ class FlashMessage
     /**
      * Default configuration
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'key' => 'flash',
@@ -50,7 +50,7 @@ class FlashMessage
      * Constructor
      *
      * @param \Cake\Http\Session $session Session instance.
-     * @param array $config Config array.
+     * @param array<string, mixed> $config Config array.
      * @see FlashMessage::set() For list of valid config keys.
      */
     public function __construct(Session $session, array $config = [])
@@ -76,7 +76,7 @@ class FlashMessage
      * - `escape` Set to false to allow templates to print out HTML content.
      *
      * @param string $message Message to be flashed.
-     * @param array $options An array of options
+     * @param array<string, mixed> $options An array of options
      * @return void
      * @see FlashMessage::$_defaultConfig For default values for the options.
      */
@@ -132,18 +132,14 @@ class FlashMessage
      * ```
      *
      * @param \Throwable $exception Exception instance.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return void
      * @see FlashMessage::set() For list of valid options
      */
     public function setExceptionMessage(Throwable $exception, array $options = []): void
     {
-        if (!isset($options['element'])) {
-            $options['element'] = 'error';
-        }
-        if (!isset($options['params']['code'])) {
-            $options['params']['code'] = $exception->getCode();
-        }
+        $options['element'] = $options['element'] ?? 'error';
+        $options['params']['code'] = $options['params']['code'] ?? $exception->getCode();
 
         $message = $exception->getMessage();
         $this->set($message, $options);
@@ -166,7 +162,7 @@ class FlashMessage
      * The `'element'` option will be set to  `'success'`.
      *
      * @param string $message Message to flash.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return void
      * @see FlashMessage::set() For list of valid options
      */
@@ -182,7 +178,7 @@ class FlashMessage
      * The `'element'` option will be set to  `'error'`.
      *
      * @param string $message Message to flash.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return void
      * @see FlashMessage::set() For list of valid options
      */
@@ -198,7 +194,7 @@ class FlashMessage
      * The `'element'` option will be set to  `'warning'`.
      *
      * @param string $message Message to flash.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return void
      * @see FlashMessage::set() For list of valid options
      */
@@ -214,7 +210,7 @@ class FlashMessage
      * The `'element'` option will be set to  `'info'`.
      *
      * @param string $message Message to flash.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return void
      * @see FlashMessage::set() For list of valid options
      */

@@ -31,7 +31,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     protected $name;
 
     /**
-     * @var \Cake\Database\ExpressionInterface[]
+     * @var array<\Cake\Database\ExpressionInterface>
      */
     protected $partitions = [];
 
@@ -296,7 +296,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * Builds frame offset sql.
      *
      * @param \Cake\Database\ValueBinder $binder Value binder
-     * @param int|string|\Cake\Database\ExpressionInterface|null $offset Frame offset
+     * @param \Cake\Database\ExpressionInterface|string|int|null $offset Frame offset
      * @param string $direction Frame offset direction
      * @return string
      */

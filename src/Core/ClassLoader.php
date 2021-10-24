@@ -26,7 +26,7 @@ class ClassLoader
      * An associative array where the key is a namespace prefix and the value
      * is an array of base directories for classes in that namespace.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_prefixes = [];
 
@@ -37,7 +37,9 @@ class ClassLoader
      */
     public function register(): void
     {
-        spl_autoload_register([$this, 'loadClass']);
+        /** @var callable $callable */
+        $callable = [$this, 'loadClass'];
+        spl_autoload_register($callable);
     }
 
     /**
@@ -58,9 +60,7 @@ class ClassLoader
         $baseDir = rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
         $baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
 
-        if (!isset($this->_prefixes[$prefix])) {
-            $this->_prefixes[$prefix] = [];
-        }
+        $this->_prefixes[$prefix] = $this->_prefixes[$prefix] ?? [];
 
         if ($prepend) {
             array_unshift($this->_prefixes[$prefix], $baseDir);

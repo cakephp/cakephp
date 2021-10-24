@@ -28,7 +28,7 @@ class TableUuidTest extends TestCase
     /**
      * Fixtures
      *
-     * @var array
+     * @var array<string>
      */
     protected $fixtures = [
         'core.BinaryUuidItems',
@@ -37,8 +37,6 @@ class TableUuidTest extends TestCase
 
     /**
      * setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -51,7 +49,7 @@ class TableUuidTest extends TestCase
      *
      * @return array
      */
-    public function uuidTableProvider()
+    public function uuidTableProvider(): array
     {
         return [['uuid_items'], ['binary_uuid_items']];
     }
@@ -60,9 +58,8 @@ class TableUuidTest extends TestCase
      * Test saving new records sets uuids
      *
      * @dataProvider uuidTableProvider
-     * @return void
      */
-    public function testSaveNew($tableName)
+    public function testSaveNew(string $tableName): void
     {
         $entity = new Entity([
             'name' => 'shiny new',
@@ -81,9 +78,8 @@ class TableUuidTest extends TestCase
      * Test saving new records allows manual uuids
      *
      * @dataProvider uuidTableProvider
-     * @return void
      */
-    public function testSaveNewSpecificId($tableName)
+    public function testSaveNewSpecificId(string $tableName): void
     {
         $id = Text::uuid();
         $entity = new Entity([
@@ -105,9 +101,8 @@ class TableUuidTest extends TestCase
      * Test saving existing records works
      *
      * @dataProvider uuidTableProvider
-     * @return void
      */
-    public function testSaveUpdate($tableName)
+    public function testSaveUpdate(string $tableName): void
     {
         $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
         $entity = new Entity([
@@ -129,9 +124,8 @@ class TableUuidTest extends TestCase
      * Test delete with string pk.
      *
      * @dataProvider uuidTableProvider
-     * @return void
      */
-    public function testGetById($tableName)
+    public function testGetById(string $tableName): void
     {
         $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')->firstOrFail();
@@ -144,9 +138,8 @@ class TableUuidTest extends TestCase
      * Test delete with string pk.
      *
      * @dataProvider uuidTableProvider
-     * @return void
      */
-    public function testDelete($tableName)
+    public function testDelete(string $tableName): void
     {
         $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')->firstOrFail();
@@ -160,9 +153,8 @@ class TableUuidTest extends TestCase
      * Tests that sql server does not error when an empty uuid is bound
      *
      * @dataProvider uuidTableProvider
-     * @return void
      */
-    public function testEmptyUuid($tableName)
+    public function testEmptyUuid(string $tableName): void
     {
         $id = '';
         $table = $this->getTableLocator()->get($tableName);

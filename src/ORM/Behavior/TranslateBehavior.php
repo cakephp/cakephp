@@ -45,7 +45,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * These are merged with user-provided configuration when the behavior is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
@@ -103,7 +103,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *   are created/modified. Default `null`.
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -119,7 +119,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Initialize hook
      *
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      * @return void
      */
     public function initialize(array $config): void
@@ -202,7 +202,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Gets the Model callbacks this behavior is interested in.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -222,7 +222,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -306,7 +306,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * for each record.
      *
      * @param \Cake\ORM\Query $query The original query to modify
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @return \Cake\ORM\Query
      */
     public function findTranslations(Query $query, array $options): Query

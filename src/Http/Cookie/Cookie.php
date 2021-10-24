@@ -59,12 +59,12 @@ class Cookie implements CookieInterface
     /**
      * Raw Cookie value.
      *
-     * @var string|array
+     * @var array|string
      */
     protected $value = '';
 
     /**
-     * Whether or not a JSON value has been expanded into an array.
+     * Whether a JSON value has been expanded into an array.
      *
      * @var bool
      */
@@ -115,8 +115,8 @@ class Cookie implements CookieInterface
     /**
      * Default attributes for a cookie.
      *
-     * @var array
-     * @see \Cake\Cookie\Cookie::setDefaults()
+     * @var array<string, mixed>
+     * @see \Cake\Http\Cookie\Cookie::setDefaults()
      */
     protected static $defaults = [
         'expires' => null,
@@ -136,7 +136,7 @@ class Cookie implements CookieInterface
      *
      * @link http://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
-     * @param string|array $value Value of the cookie
+     * @param array|string $value Value of the cookie
      * @param \DateTime|\DateTimeImmutable|null $expiresAt Expiration time and date
      * @param string|null $path Path
      * @param string|null $domain Domain
@@ -191,7 +191,7 @@ class Cookie implements CookieInterface
      * - `samesite`: Can be one of `CookieInterface::SAMESITE_LAX`, `CookieInterface::SAMESITE_STRICT`,
      *    `CookieInterface::SAMESITE_NONE` or `null`. Defaults to `null`.
      *
-     * @param array $options Default options.
+     * @param array<string, mixed> $options Default options.
      * @return void
      */
     public static function setDefaults(array $options): void
@@ -210,8 +210,8 @@ class Cookie implements CookieInterface
      * Factory method to create Cookie instances.
      *
      * @param string $name Cookie name
-     * @param string|array $value Value of the cookie
-     * @param array $options Cookies options.
+     * @param array|string $value Value of the cookie
+     * @param array<string, mixed> $options Cookies options.
      * @return static
      * @see \Cake\Cookie\Cookie::setDefaults()
      */
@@ -241,7 +241,7 @@ class Cookie implements CookieInterface
     protected static function dateTimeInstance($expires): ?DateTimeInterface
     {
         if ($expires === null) {
-            return $expires;
+            return null;
         }
 
         if ($expires instanceof DateTimeInterface) {
@@ -271,9 +271,9 @@ class Cookie implements CookieInterface
      * Create Cookie instance from "set-cookie" header string.
      *
      * @param string $cookie Cookie header string.
-     * @param array $defaults Default attributes.
+     * @param array<string, mixed> $defaults Default attributes.
      * @return static
-     * @see \Cake\Cookie\Cookie::setDefaults()
+     * @see \Cake\Http\Cookie\Cookie::setDefaults()
      */
     public static function createFromHeaderString(string $cookie, array $defaults = [])
     {
@@ -463,7 +463,7 @@ class Cookie implements CookieInterface
     /**
      * Setter for the value attribute.
      *
-     * @param string|array $value The value to store.
+     * @param array|string $value The value to store.
      * @return void
      */
     protected function _setValue($value): void
@@ -732,7 +732,7 @@ class Cookie implements CookieInterface
      * This method will expand serialized complex data,
      * on first use.
      *
-     * @param string $path Path to read the data from
+     * @param string|null $path Path to read the data from
      * @return mixed
      */
     public function read(?string $path = null)
@@ -807,7 +807,7 @@ class Cookie implements CookieInterface
      * Maintains reading backwards compatibility with 1.x CookieComponent::_flatten().
      *
      * @param string $string A string containing JSON encoded data, or a bare string.
-     * @return string|array Map of key and values
+     * @return array|string Map of key and values
      */
     protected function _expand(string $string)
     {

@@ -20,7 +20,7 @@ use Cake\Database\Type\DateTimeType;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Behavior;
 use DateTimeInterface;
 use RuntimeException;
@@ -44,7 +44,7 @@ class TimestampBehavior extends Behavior
      * the code is executed, to set to an explicit date time value - set refreshTimetamp to false
      * and call setTimestamp() on the behavior class before use.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'implementedFinders' => [],
@@ -64,7 +64,7 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \Cake\I18n\Time|null
+     * @var \Cake\I18n\FrozenTime|null
      */
     protected $_ts;
 
@@ -74,7 +74,7 @@ class TimestampBehavior extends Behavior
      * If events are specified - do *not* merge them with existing events,
      * overwrite the events to listen on
      *
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      * @return void
      */
     public function initialize(array $config): void
@@ -131,7 +131,7 @@ class TimestampBehavior extends Behavior
      *
      * The implemented events of this behavior depend on configuration
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -147,7 +147,7 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTimeInterface|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \Cake\I18n\Time
+     * @return \Cake\I18n\FrozenTime
      */
     public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTimeInterface
     {
@@ -155,9 +155,9 @@ class TimestampBehavior extends Behavior
             if ($this->_config['refreshTimestamp']) {
                 $this->_config['refreshTimestamp'] = false;
             }
-            $this->_ts = new Time($ts);
+            $this->_ts = new FrozenTime($ts);
         } elseif ($this->_ts === null || $refreshTimestamp) {
-            $this->_ts = new Time();
+            $this->_ts = new FrozenTime();
         }
 
         return $this->_ts;

@@ -31,7 +31,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets hidden fields.
      *
-     * @param string[] $fields An array of fields to hide from array exports.
+     * @param array<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -40,14 +40,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the hidden fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getHidden(): array;
 
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param string[] $fields An array of fields to treat as virtual.
+     * @param array<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -56,7 +56,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getVirtual(): array;
 
@@ -81,7 +81,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the dirty fields.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getDirty(): array;
 
@@ -112,7 +112,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Sets error messages to the entity
      *
      * @param array $errors The array of errors to set.
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $fields
      * @return $this
      */
     public function setErrors(array $errors, bool $overwrite = false);
@@ -121,16 +121,16 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Sets errors for a single field
      *
      * @param string $field The field to get errors for, or the array of errors to set.
-     * @param string|array $errors The errors to be set for $field
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
+     * @param array|string $errors The errors to be set for $field
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $field
      * @return $this
      */
     public function setError(string $field, $errors, bool $overwrite = false);
 
     /**
-     * Stores whether or not a field value can be changed or set in this entity.
+     * Stores whether a field value can be changed or set in this entity.
      *
-     * @param string|array $field single or list of fields to change its accessibility
+     * @param array|string $field single or list of fields to change its accessibility
      * @param bool $set true marks the field as accessible, false will
      * mark it as protected.
      * @return $this
@@ -164,7 +164,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested original fields
      * stored in this entity, indexed by field name.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array;
@@ -173,7 +173,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with only the original fields
      * stored in this entity, indexed by field name.
      *
-     * @param string[] $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array;
@@ -181,11 +181,11 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets one or multiple fields to the specified value
      *
-     * @param string|array $field the name of field to set or a list of
+     * @param array|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
-     * @param array $options options to be used for setting the field. Allowed option
+     * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
      * @return $this
      */
@@ -218,7 +218,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns whether this entity contains a field named $field
      * regardless of if it is empty.
      *
-     * @param string|string[] $field The field to check.
+     * @param array<string>|string $field The field to check.
      * @return bool
      */
     public function has($field): bool;
@@ -226,7 +226,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Removes a field or list of fields from this entity
      *
-     * @param string|string[] $field The field to unset.
+     * @param array<string>|string $field The field to unset.
      * @return $this
      */
     public function unset($field);
@@ -234,7 +234,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Get the list of visible fields.
      *
-     * @return string[] A list of fields that are 'visible' in all representations.
+     * @return array<string> A list of fields that are 'visible' in all representations.
      */
     public function getVisible(): array;
 
@@ -252,7 +252,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param string[] $fields list of fields to be returned
+     * @param array<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
@@ -273,15 +273,15 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Using `true` means that the entity has not been persisted in the database,
      * `false` indicates that the entity has been persisted.
      *
-     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @param bool $new Indicate whether this entity has been persisted.
      * @return $this
      */
     public function setNew(bool $new);
 
     /**
-     * Returns whether or not this entity has already been persisted.
+     * Returns whether this entity has already been persisted.
      *
-     * @return bool Whether or not the entity has been persisted.
+     * @return bool Whether the entity has been persisted.
      */
     public function isNew(): bool;
 }

@@ -28,7 +28,6 @@ class TestController extends ControllerTestAppController
     /**
      * beforeFilter handler
      *
-     * @param \Cake\Event\EventInterface $event
      * @return \Cake\Http\Response|null|void
      */
     public function beforeFilter(EventInterface $event)
@@ -65,15 +64,24 @@ class TestController extends ControllerTestAppController
         ]);
     }
 
+    /**
+     * @param mixed $passed
+     */
     public function reflection($passed, Table $table)
     {
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function returner()
     {
         return $this->response->withStringBody('I am from the controller.');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function willCauseException()
     {
         return '';

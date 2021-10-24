@@ -34,18 +34,12 @@ class ApplicationWithDefaultRoutes extends BaseApplication
      * Bootstrap hook.
      *
      * Nerfed as this is for IntegrationTestCase testing.
-     *
-     * @return void
      */
     public function bootstrap(): void
     {
         // Do nothing.
     }
 
-    /**
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueueQueue
-     * @return \Cake\Http\MiddlewareQueue
-     */
     public function middleware(MiddlewareQueue $middlewareQueueQueue): MiddlewareQueue
     {
         $middlewareQueueQueue->add(new RoutingMiddleware($this));

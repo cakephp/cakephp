@@ -31,8 +31,6 @@ class ApplicationWithExceptionsInMiddleware extends BaseApplication
      * Bootstrap hook.
      *
      * Nerfed as this is for IntegrationTestCase testing.
-     *
-     * @return void
      */
     public function bootstrap(): void
     {

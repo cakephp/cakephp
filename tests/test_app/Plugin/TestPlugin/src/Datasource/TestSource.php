@@ -25,7 +25,7 @@ class TestSource
      *
      * @return array
      */
-    public function config()
+    public function config(): array
     {
         return $this->_config;
     }

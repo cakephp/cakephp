@@ -31,10 +31,8 @@ class CookieCollectionTest extends TestCase
 {
     /**
      * Test constructor
-     *
-     * @return void
      */
-    public function testConstructorWithEmptyArray()
+    public function testConstructorWithEmptyArray(): void
     {
         $collection = new CookieCollection([]);
         $this->assertCount(0, $collection);
@@ -42,10 +40,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test valid cookies
-     *
-     * @return void
      */
-    public function testConstructorWithCookieArray()
+    public function testConstructorWithCookieArray(): void
     {
         $cookies = [
             new Cookie('one', 'one'),
@@ -58,10 +54,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test iteration
-     *
-     * @return void
      */
-    public function testIteration()
+    public function testIteration(): void
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
@@ -79,10 +73,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies
-     *
-     * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $cookies = [];
 
@@ -102,10 +94,8 @@ class CookieCollectionTest extends TestCase
     /**
      * Cookie collections need to support duplicate cookie names because
      * of use cases in Http\Client
-     *
-     * @return void
      */
-    public function testAddDuplicates()
+    public function testAddDuplicates(): void
     {
         $remember = new Cookie('remember_me', 'yes');
         $rememberNo = new Cookie('remember_me', 'no', null, '/path2');
@@ -121,10 +111,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test has()
-     *
-     * @return void
      */
-    public function testHas()
+    public function testHas(): void
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
@@ -139,10 +127,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test removing cookies
-     *
-     * @return void
      */
-    public function testRemove()
+    public function testRemove(): void
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
@@ -163,10 +149,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test getting cookies by name
-     *
-     * @return void
      */
-    public function testGetByName()
+    public function testGetByName(): void
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
@@ -183,12 +167,10 @@ class CookieCollectionTest extends TestCase
     /**
      * Test that the constructor takes only an array of objects implementing
      * the CookieInterface
-     *
-     * @return void
      */
-    public function testConstructorWithInvalidCookieObjects()
+    public function testConstructorWithInvalidCookieObjects(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1');
         $array = [
             new Cookie('one', 'one'),
@@ -200,10 +182,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies from a response.
-     *
-     * @return void
      */
-    public function testAddFromResponse()
+    public function testAddFromResponse(): void
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
@@ -248,10 +228,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies that contain URL encoded data
-     *
-     * @return void
      */
-    public function testAddFromResponseValueUrldecodeData()
+    public function testAddFromResponseValueUrldecodeData(): void
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
@@ -269,10 +247,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies from a response ignores empty headers
-     *
-     * @return void
      */
-    public function testAddFromResponseIgnoreEmpty()
+    public function testAddFromResponseIgnoreEmpty(): void
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
@@ -286,10 +262,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies from a response ignores expired cookies
-     *
-     * @return void
      */
-    public function testAddFromResponseIgnoreExpired()
+    public function testAddFromResponseIgnoreExpired(): void
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
@@ -305,10 +279,8 @@ class CookieCollectionTest extends TestCase
     /**
      * Test adding cookies from a response removes existing cookies if
      * the new response marks them as expired.
-     *
-     * @return void
      */
-    public function testAddFromResponseRemoveExpired()
+    public function testAddFromResponseRemoveExpired(): void
     {
         $collection = new CookieCollection([
             new Cookie('expired', 'not yet', null, '/', 'example.com'),
@@ -328,10 +300,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies from a response with bad expires values
-     *
-     * @return void
      */
-    public function testAddFromResponseInvalidExpires()
+    public function testAddFromResponseInvalidExpires(): void
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
@@ -349,10 +319,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies from responses updates cookie values.
-     *
-     * @return void
      */
-    public function testAddFromResponseUpdateExisting()
+    public function testAddFromResponseUpdateExisting(): void
     {
         $collection = new CookieCollection([
             new Cookie('key', 'old value', null, '/', 'example.com'),
@@ -371,10 +339,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies from the collection to request.
-     *
-     * @return void
      */
-    public function testAddToRequest()
+    public function testAddToRequest(): void
     {
         $collection = new CookieCollection();
         $collection = $collection
@@ -405,10 +371,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding no cookies
-     *
-     * @return void
      */
-    public function testAddToRequestNoCookies()
+    public function testAddToRequestNoCookies(): void
     {
         $collection = new CookieCollection();
         $request = new ClientRequest('http://example.com/api');
@@ -418,10 +382,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Testing the cookie size limit warning
-     *
-     * @return void
      */
-    public function testCookieSizeWarning()
+    public function testCookieSizeWarning(): void
     {
         $this->expectWarning();
         $this->expectWarningMessage('The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.');
@@ -436,10 +398,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies from the collection to request.
-     *
-     * @return void
      */
-    public function testAddToRequestExtraCookies()
+    public function testAddToRequestExtraCookies(): void
     {
         $collection = new CookieCollection();
         $collection = $collection
@@ -457,10 +417,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies ignores leading dot
-     *
-     * @return void
      */
-    public function testAddToRequestLeadingDot()
+    public function testAddToRequestLeadingDot(): void
     {
         $collection = new CookieCollection();
         $collection = $collection
@@ -472,10 +430,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Test adding cookies checks the secure crumb
-     *
-     * @return void
      */
-    public function testAddToRequestSecureCrumb()
+    public function testAddToRequestSecureCrumb(): void
     {
         $collection = new CookieCollection();
         $collection = $collection
@@ -493,10 +449,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * test createFromHeader() building cookies from a header string.
-     *
-     * @return void
      */
-    public function testCreateFromHeader()
+    public function testCreateFromHeader(): void
     {
         $header = [
             'http=name; HttpOnly; Secure;',
@@ -513,10 +467,8 @@ class CookieCollectionTest extends TestCase
 
     /**
      * test createFromServerRequest() building cookies from a header string.
-     *
-     * @return void
      */
-    public function testCreateFromServerRequest()
+    public function testCreateFromServerRequest(): void
     {
         $request = new ServerRequest(['cookies' => ['name' => 'val', 'cakephp' => 'rocks']]);
         $cookies = CookieCollection::createFromServerRequest($request);

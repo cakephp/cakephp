@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use InvalidArgumentException;
 
 /**
  * This expression represents SQL fragments that are used for comparing one tuple
@@ -37,8 +38,8 @@ class TupleComparison extends ComparisonExpression
     /**
      * Constructor
      *
-     * @param string|array|\Cake\Database\ExpressionInterface $fields the fields to use to form a tuple
-     * @param array|\Cake\Database\ExpressionInterface $values the values to use to form a tuple
+     * @param \Cake\Database\ExpressionInterface|array|string $fields the fields to use to form a tuple
+     * @param \Cake\Database\ExpressionInterface|array $values the values to use to form a tuple
      * @param array<string|null> $types the types names to use for casting each of the values, only
      * one type per position in the value array in needed
      * @param string $conjunction the operator used for comparing field and value
@@ -47,8 +48,8 @@ class TupleComparison extends ComparisonExpression
     {
         $this->_type = $types;
         $this->setField($fields);
-        $this->setValue($values);
         $this->_operator = $conjunction;
+        $this->setValue($values);
     }
 
     /**
@@ -69,6 +70,20 @@ class TupleComparison extends ComparisonExpression
      */
     public function setValue($value): void
     {
+        if ($this->isMulti()) {
+            if (is_array($value) && !is_array(current($value))) {
+                throw new InvalidArgumentException(
+                    'Multi-tuple comparisons require a multi-tuple value, single-tuple given.'
+                );
+            }
+        } else {
+            if (is_array($value) && is_array(current($value))) {
+                throw new InvalidArgumentException(
+                    'Single-tuple comparisons require a single-tuple value, multi-tuple given.'
+                );
+            }
+        }
+
         $this->_value = $value;
     }
 
@@ -160,7 +175,7 @@ class TupleComparison extends ComparisonExpression
      */
     public function traverse(Closure $callback)
     {
-        /** @var string[] $fields */
+        /** @var array<string> $fields */
         $fields = $this->getField();
         foreach ($fields as $field) {
             $this->_traverseValue($field, $callback);

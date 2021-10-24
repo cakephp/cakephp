@@ -25,30 +25,30 @@ class Arguments
     /**
      * Positional argument name map
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $argNames;
 
     /**
      * Positional arguments.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $args;
 
     /**
      * Named options
      *
-     * @var array
+     * @var array<string, string|int|bool|null>
      */
     protected $options;
 
     /**
      * Constructor
      *
-     * @param string[] $args Positional arguments
-     * @param array $options Named arguments
-     * @param string[] $argNames List of argument names. Order is expected to be
+     * @param array<int, string> $args Positional arguments
+     * @param array<string, string|int|bool|null> $options Named arguments
+     * @param array<int, string> $argNames List of argument names. Order is expected to be
      *  the same as $args.
      */
     public function __construct(array $args, array $options, array $argNames)
@@ -61,7 +61,7 @@ class Arguments
     /**
      * Get all positional arguments.
      *
-     * @return string[]
+     * @return array<int, string>
      */
     public function getArguments(): array
     {
@@ -129,7 +129,7 @@ class Arguments
     /**
      * Get an array of all the options
      *
-     * @return array
+     * @return array<string, string|int|bool|null>
      */
     public function getOptions(): array
     {
@@ -144,11 +144,7 @@ class Arguments
      */
     public function getOption(string $name)
     {
-        if (isset($this->options[$name])) {
-            return $this->options[$name];
-        }
-
-        return null;
+        return $this->options[$name] ?? null;
     }
 
     /**

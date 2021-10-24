@@ -29,9 +29,17 @@ use Cake\View\Widget\NestingLabelWidget;
 class MultiCheckboxWidgetTest extends TestCase
 {
     /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -51,10 +59,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render simple option sets.
-     *
-     * @return void
      */
-    public function testRenderSimple()
+    public function testRenderSimple(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -95,10 +101,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render complex and additional attributes.
-     *
-     * @return void
      */
-    public function testRenderComplex()
+    public function testRenderComplex(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -145,10 +149,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render escpaing options.
-     *
-     * @return void
      */
-    public function testRenderEscaping()
+    public function testRenderEscaping(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -177,10 +179,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render selected checkboxes.
-     *
-     * @return void
      */
-    public function testRenderSelected()
+    public function testRenderSelected(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -232,10 +232,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render disabled checkboxes.
-     *
-     * @return void
      */
-    public function testRenderDisabled()
+    public function testRenderDisabled(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -322,10 +320,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render templateVars
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $templates = [
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}" data-var="{{inputVar}}" {{attrs}}>',
@@ -376,10 +372,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test label = false with checkboxWrapper option.
-     *
-     * @return void
      */
-    public function testNoLabelWithCheckboxWrapperOption()
+    public function testNoLabelWithCheckboxWrapperOption(): void
     {
         $data = [
             'label' => false,
@@ -447,10 +441,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test rendering without input nesting inspite of using NestingLabelWidget
-     *
-     * @return void
      */
-    public function testRenderNestingLabelWidgetWithoutInputNesting()
+    public function testRenderNestingLabelWidgetWithoutInputNesting(): void
     {
         $label = new NestingLabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -483,10 +475,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render with groupings.
-     *
-     * @return void
      */
-    public function testRenderGrouped()
+    public function testRenderGrouped(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -538,10 +528,8 @@ class MultiCheckboxWidgetTest extends TestCase
 
     /**
      * Test render with partial groupings.
-     *
-     * @return void
      */
-    public function testRenderPartialGrouped()
+    public function testRenderPartialGrouped(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -603,10 +591,8 @@ class MultiCheckboxWidgetTest extends TestCase
      * testRenderCustomAttributes method
      *
      * Test render with custom attributes
-     *
-     * @return void
      */
-    public function testRenderCustomAttributes()
+    public function testRenderCustomAttributes(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -657,10 +643,8 @@ class MultiCheckboxWidgetTest extends TestCase
      *
      * Test that the id passed is actually used
      * Issue: https://github.com/cakephp/cakephp/issues/13342
-     *
-     * @return void
      */
-    public function testRenderExplicitId()
+    public function testRenderExplicitId(): void
     {
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
@@ -723,10 +707,8 @@ class MultiCheckboxWidgetTest extends TestCase
      *
      * Test that the custom selected class is passed to label
      * Issue: https://github.com/cakephp/cakephp/issues/11249
-     *
-     * @return void
      */
-    public function testRenderSelectedClass()
+    public function testRenderSelectedClass(): void
     {
         $this->templates->add(['selectedClass' => 'active']);
 

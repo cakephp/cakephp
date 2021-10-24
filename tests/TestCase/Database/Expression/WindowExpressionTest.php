@@ -31,10 +31,8 @@ class WindowExpressionTest extends TestCase
 {
     /**
      * Tests an empty window expression
-     *
-     * @return void
      */
-    public function testEmptyWindow()
+    public function testEmptyWindow(): void
     {
         $w = new WindowExpression();
         $this->assertSame('', $w->sql(new ValueBinder()));
@@ -45,10 +43,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests windows with partitions
-     *
-     * @return void
      */
-    public function testPartitions()
+    public function testPartitions(): void
     {
         $w = (new WindowExpression())->partition('test');
         $this->assertEqualsSql(
@@ -79,10 +75,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests windows with order by
-     *
-     * @return void
      */
-    public function testOrder()
+    public function testOrder(): void
     {
         $w = (new WindowExpression())->order('test');
         $this->assertEqualsSql(
@@ -117,10 +111,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests windows with range frames
-     *
-     * @return void
      */
-    public function testRange()
+    public function testRange(): void
     {
         $w = (new WindowExpression())->range(null);
         $this->assertEqualsSql(
@@ -191,10 +183,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests windows with rows frames
-     *
-     * @return void
      */
-    public function testRows()
+    public function testRows(): void
     {
         $w = (new WindowExpression())->rows(null);
         $this->assertEqualsSql(
@@ -254,10 +244,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests windows with groups frames
-     *
-     * @return void
      */
-    public function testGroups()
+    public function testGroups(): void
     {
         $w = (new WindowExpression())->groups(null);
         $this->assertEqualsSql(
@@ -317,10 +305,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests windows with frame exclusion
-     *
-     * @return void
      */
-    public function testExclusion()
+    public function testExclusion(): void
     {
         $w = (new WindowExpression())->excludeCurrent();
         $this->assertEqualsSql(
@@ -349,10 +335,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests windows with partition, order and frames
-     *
-     * @return void
      */
-    public function testCombined()
+    public function testCombined(): void
     {
         $w = (new WindowExpression())->partition('test')->range(null);
         $this->assertEqualsSql(
@@ -381,10 +365,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests named windows
-     *
-     * @return void
      */
-    public function testNamedWindow()
+    public function testNamedWindow(): void
     {
         $w = new WindowExpression();
         $this->assertFalse($w->isNamedOnly());
@@ -412,10 +394,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests traversing window expressions.
-     *
-     * @return void
      */
-    public function testTraverse()
+    public function testTraverse(): void
     {
         $w = (new WindowExpression('test1'))
             ->partition('test2')
@@ -423,7 +403,7 @@ class WindowExpressionTest extends TestCase
             ->range(new QueryExpression("'1 day'"));
 
         $expressions = [];
-        $w->traverse(function ($expression) use (&$expressions) {
+        $w->traverse(function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 
@@ -435,7 +415,7 @@ class WindowExpressionTest extends TestCase
         $w->range(new QueryExpression("'1 day'"), new QueryExpression("'10 days'"));
 
         $expressions = [];
-        $w->traverse(function ($expression) use (&$expressions) {
+        $w->traverse(function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 
@@ -445,10 +425,8 @@ class WindowExpressionTest extends TestCase
 
     /**
      * Tests cloning window expressions
-     *
-     * @return void
      */
-    public function testCloning()
+    public function testCloning(): void
     {
         $w1 = (new WindowExpression())->name('test');
         $w2 = (clone $w1)->name('test2');

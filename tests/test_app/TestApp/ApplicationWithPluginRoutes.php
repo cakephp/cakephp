@@ -23,19 +23,12 @@ use Cake\Routing\RouteBuilder;
 
 class ApplicationWithPluginRoutes extends BaseApplication
 {
-    /**
-     * @return void
-     */
     public function bootstrap(): void
     {
         parent::bootstrap();
         $this->addPlugin('TestPlugin');
     }
 
-    /**
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueue
-     * @return \Cake\Http\MiddlewareQueue
-     */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue->add(new RoutingMiddleware($this));
@@ -45,13 +38,10 @@ class ApplicationWithPluginRoutes extends BaseApplication
 
     /**
      * Routes hook, used for testing with RoutingMiddleware.
-     *
-     * @param \Cake\Routing\RouteBuilder $routes
-     * @return void
      */
     public function routes(RouteBuilder $routes): void
     {
-        $routes->scope('/app', function (RouteBuilder $routes) {
+        $routes->scope('/app', function (RouteBuilder $routes): void {
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
         $routes->loadPlugin('TestPlugin');

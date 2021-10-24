@@ -25,7 +25,7 @@ use SimpleXMLElement;
 /**
  * Implements methods for HTTP responses.
  *
- * All of the following examples assume that `$response` is an
+ * All the following examples assume that `$response` is an
  * instance of this class.
  *
  * ### Get header values
@@ -189,6 +189,7 @@ class Response extends Message implements ResponseInterface
             }
             [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
+            /** @phpstan-var non-empty-string $name */
             $name = trim($name);
 
             $normalized = strtolower($name);
@@ -324,7 +325,7 @@ class Response extends Message implements ResponseInterface
      * Get the value of a single cookie.
      *
      * @param string $name The name of the cookie value.
-     * @return string|array|null Either the cookie's value or null when the cookie is undefined.
+     * @return array|string|null Either the cookie's value or null when the cookie is undefined.
      */
     public function getCookie(string $name)
     {
@@ -377,7 +378,7 @@ class Response extends Message implements ResponseInterface
         $this->buildCookieCollection();
 
         $out = [];
-        /** @var \Cake\Http\Cookie\Cookie[] $cookies */
+        /** @var array<\Cake\Http\Cookie\Cookie> $cookies */
         $cookies = $this->cookies;
         foreach ($cookies as $cookie) {
             $out[$cookie->getName()] = $cookie->toArray();
@@ -454,7 +455,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Provides magic __get() support.
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function _getHeaders(): array
     {

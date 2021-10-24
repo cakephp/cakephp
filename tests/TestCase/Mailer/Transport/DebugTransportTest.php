@@ -28,9 +28,12 @@ use Cake\TestSuite\TestCase;
 class DebugTransportTest extends TestCase
 {
     /**
+     * @var \Cake\Mailer\Transport\DebugTransport
+     */
+    protected $DebugTransport;
+
+    /**
      * Setup
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -40,10 +43,8 @@ class DebugTransportTest extends TestCase
 
     /**
      * testSend method
-     *
-     * @return void
      */
-    public function testSend()
+    public function testSend(): void
     {
         $message = new Message();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');

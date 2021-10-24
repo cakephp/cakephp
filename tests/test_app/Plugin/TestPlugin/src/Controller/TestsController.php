@@ -22,11 +22,14 @@ namespace TestPlugin\Controller;
 
 class TestsController extends TestPluginAppController
 {
-    public function index()
+    public function index(): void
     {
         $this->set('test_value', 'It is a variable');
     }
 
+    /**
+     * @return \Cake\Http\Response
+     */
     public function some_method()
     {
         $this->response->body(25);

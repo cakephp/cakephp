@@ -45,7 +45,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      *
      * These are merged with user-provided configuration.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'fields' => [],
@@ -62,7 +62,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Constructor
      *
      * @param \Cake\ORM\Table $table Table instance.
-     * @param array $config Configuration.
+     * @param array<string, mixed> $config Configuration.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -135,7 +135,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $fieldsAdded = $this->addFieldsToQuery($query, $config);
         $orderByTranslatedField = $this->iterateClause($query, 'order', $config);
-        $filteredByTranslatedField = $this->traverseClause($query, 'where', $config);
+        $filteredByTranslatedField =
+            $this->traverseClause($query, 'where', $config) ||
+            $config['onlyTranslated'] ||
+            ($options['filterByCurrentLocale'] ?? null);
 
         if (!$fieldsAdded && !$orderByTranslatedField && !$filteredByTranslatedField) {
             return;
@@ -199,7 +202,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * add the locale field though.
      *
      * @param \Cake\ORM\Query $query The query to check.
-     * @param array $config The config to use for adding fields.
+     * @param array<string, mixed> $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
     protected function addFieldsToQuery($query, array $config)
@@ -241,7 +244,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      *
      * @param \Cake\ORM\Query $query the query to check.
      * @param string $name The clause name.
-     * @param array $config The config to use for adding fields.
+     * @param array<string, mixed> $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
     protected function iterateClause($query, $name = '', $config = []): bool
@@ -287,7 +290,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      *
      * @param \Cake\ORM\Query $query the query to check.
      * @param string $name The clause name.
-     * @param array $config The config to use for adding fields.
+     * @param array<string, mixed> $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
     protected function traverseClause($query, $name = '', $config = []): bool

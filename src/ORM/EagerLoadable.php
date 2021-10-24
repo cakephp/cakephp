@@ -36,7 +36,7 @@ class EagerLoadable
     /**
      * A list of other associations to load from this level.
      *
-     * @var \Cake\ORM\EagerLoadable[]
+     * @var array<\Cake\ORM\EagerLoadable>
      */
     protected $_associations = [];
 
@@ -80,14 +80,14 @@ class EagerLoadable
     protected $_propertyPath;
 
     /**
-     * Whether or not this level can be fetched using a join.
+     * Whether this level can be fetched using a join.
      *
      * @var bool
      */
     protected $_canBeJoined = false;
 
     /**
-     * Whether or not this level was meant for a "matching" fetch
+     * Whether this level was meant for a "matching" fetch
      * operation
      *
      * @var bool|null
@@ -126,7 +126,7 @@ class EagerLoadable
      * The keys maps to the settable properties in this class.
      *
      * @param string $name The Association name.
-     * @param array $config The list of properties to set.
+     * @param array<string, mixed> $config The list of properties to set.
      */
     public function __construct(string $name, array $config = [])
     {
@@ -157,7 +157,7 @@ class EagerLoadable
     /**
      * Returns the Association class instance to use for loading the records.
      *
-     * @return \Cake\ORM\EagerLoadable[]
+     * @return array<\Cake\ORM\EagerLoadable>
      */
     public function associations(): array
     {
@@ -210,7 +210,7 @@ class EagerLoadable
     }
 
     /**
-     * Sets whether or not this level can be fetched using a join.
+     * Sets whether this level can be fetched using a join.
      *
      * @param bool $possible The value to set.
      * @return $this
@@ -223,7 +223,7 @@ class EagerLoadable
     }
 
     /**
-     * Gets whether or not this level can be fetched using a join.
+     * Gets whether this level can be fetched using a join.
      *
      * @return bool
      */
@@ -236,7 +236,7 @@ class EagerLoadable
      * Sets the list of options to pass to the association object for loading
      * the records.
      *
-     * @param array $config The value to set.
+     * @param array<string, mixed> $config The value to set.
      * @return $this
      */
     public function setConfig(array $config)
@@ -258,7 +258,7 @@ class EagerLoadable
     }
 
     /**
-     * Gets whether or not this level was meant for a
+     * Gets whether this level was meant for a
      * "matching" fetch operation.
      *
      * @return bool|null

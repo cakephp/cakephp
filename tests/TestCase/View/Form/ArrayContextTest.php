@@ -26,15 +26,13 @@ class ArrayContextTest extends TestCase
 {
     /**
      * setup method.
-     *
-     * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
     }
 
-    public function testGetRequiredMessage()
+    public function testGetRequiredMessage(): void
     {
         $context = new ArrayContext([
             'required' => [
@@ -53,10 +51,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test getting the primary key.
-     *
-     * @return void
      */
-    public function testPrimaryKey()
+    public function testPrimaryKey(): void
     {
         $context = new ArrayContext([]);
         $this->assertEquals([], $context->getPrimaryKey());
@@ -83,10 +79,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test isPrimaryKey.
-     *
-     * @return void
      */
-    public function testIsPrimaryKey()
+    public function testIsPrimaryKey(): void
     {
         $context = new ArrayContext([]);
         $this->assertFalse($context->isPrimaryKey('id'));
@@ -123,10 +117,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test the isCreate method.
-     *
-     * @return void
      */
-    public function testIsCreate()
+    public function testIsCreate(): void
     {
         $context = new ArrayContext([]);
         $this->assertTrue($context->isCreate());
@@ -149,7 +141,7 @@ class ArrayContextTest extends TestCase
     /**
      * Test reading values from data & defaults.
      */
-    public function testValPresent()
+    public function testValPresent(): void
     {
         $context = new ArrayContext([
             'data' => [
@@ -173,10 +165,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test getting values when the data and defaults are missing.
-     *
-     * @return void
      */
-    public function testValMissing()
+    public function testValMissing(): void
     {
         $context = new ArrayContext([]);
         $this->assertNull($context->val('Comments.field'));
@@ -187,10 +177,8 @@ class ArrayContextTest extends TestCase
      *
      * Tests includes making sure numeric elements are stripped but not keys beginning with numeric
      * value
-     *
-     * @return void
      */
-    public function testValDefault()
+    public function testValDefault(): void
     {
         $context = new ArrayContext([
             'defaults' => [
@@ -209,10 +197,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test isRequired
-     *
-     * @return void
      */
-    public function testIsRequired()
+    public function testIsRequired(): void
     {
         $context = new ArrayContext([
             'required' => [
@@ -231,10 +217,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test isRequired when the required key is omitted
-     *
-     * @return void
      */
-    public function testIsRequiredUndefined()
+    public function testIsRequiredUndefined(): void
     {
         $context = new ArrayContext([]);
         $this->assertNull($context->isRequired('Comments.field'));
@@ -242,10 +226,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test the type method.
-     *
-     * @return void
      */
-    public function testType()
+    public function testType(): void
     {
         $context = new ArrayContext([
             'schema' => [
@@ -264,10 +246,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test the type method when the data is missing.
-     *
-     * @return void
      */
-    public function testIsTypeUndefined()
+    public function testIsTypeUndefined(): void
     {
         $context = new ArrayContext([]);
         $this->assertNull($context->type('Comments.undefined'));
@@ -275,10 +255,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test fetching attributes.
-     *
-     * @return void
      */
-    public function testAttributes()
+    public function testAttributes(): void
     {
         $context = new ArrayContext([
             'schema' => [
@@ -300,10 +278,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test fetching errors.
-     *
-     * @return void
      */
-    public function testError()
+    public function testError(): void
     {
         $context = new ArrayContext([]);
         $this->assertEquals([], $context->error('Comments.empty'));
@@ -325,10 +301,8 @@ class ArrayContextTest extends TestCase
 
     /**
      * Test checking errors.
-     *
-     * @return void
      */
-    public function testHasError()
+    public function testHasError(): void
     {
         $context = new ArrayContext([
             'errors' => [

@@ -67,7 +67,7 @@ class LabelWidget implements WidgetInterface
      *
      * All other attributes will be converted into HTML attributes.
      *
-     * @param array $data Data array.
+     * @param array<string, mixed> $data Data array.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */

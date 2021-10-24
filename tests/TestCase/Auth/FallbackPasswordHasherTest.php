@@ -35,8 +35,6 @@ class FallbackPasswordHasherTest extends TestCase
 
     /**
      * Tests that only the first hasher is user for hashing a password
-     *
-     * @return void
      */
     public function testHash(): void
     {
@@ -52,8 +50,6 @@ class FallbackPasswordHasherTest extends TestCase
     /**
      * Tests that the check method will check with configured hashers until a match
      * is found
-     *
-     * @return void
      */
     public function testCheck(): void
     {
@@ -70,8 +66,6 @@ class FallbackPasswordHasherTest extends TestCase
     /**
      * Tests that the check method will work with configured hashers including different
      * configs per hasher.
-     *
-     * @return void
      */
     public function testCheckWithConfigs(): void
     {
@@ -88,8 +82,6 @@ class FallbackPasswordHasherTest extends TestCase
 
     /**
      * Tests that the password only needs to be re-built according to the first hasher
-     *
-     * @return void
      */
     public function testNeedsRehash(): void
     {

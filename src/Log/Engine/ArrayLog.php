@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Engine;
 
+use Cake\Log\Formatter\DefaultFormatter;
+
 /**
  * Array logger.
  *
@@ -25,6 +27,20 @@ namespace Cake\Log\Engine;
  */
 class ArrayLog extends BaseLog
 {
+    /**
+     * Default config for this class
+     *
+     * @var array<string, mixed>
+     */
+    protected $_defaultConfig = [
+        'levels' => [],
+        'scopes' => [],
+        'formatter' => [
+            'className' => DefaultFormatter::class,
+            'includeDate' => false,
+        ],
+    ];
+
     /**
      * Captured messages
      *
@@ -39,17 +55,18 @@ class ArrayLog extends BaseLog
      * @param string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void success of write.
-     * @see Cake\Log\Log::$_levels
+     * @see \Cake\Log\Log::$_levels
      */
     public function log($level, $message, array $context = [])
     {
-        $this->content[] = $level . ' ' . $this->_format($message, $context);
+        $message = $this->_format($message, $context);
+        $this->content[] = $this->formatter->format($level, $message, $context);
     }
 
     /**
      * Read the internal storage
      *
-     * @return string[]
+     * @return array<string>
      */
     public function read(): array
     {

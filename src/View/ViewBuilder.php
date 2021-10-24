@@ -72,7 +72,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     protected $_layout;
 
     /**
-     * Whether or not autoLayout should be enabled.
+     * Whether autoLayout should be enabled.
      *
      * @var bool
      */
@@ -105,10 +105,10 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Additional options used when constructing the view.
      *
-     * This options array lets you provide custom constructor
+     * These options array lets you provide custom constructor
      * arguments to application/plugin view classes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_options = [];
 
@@ -122,7 +122,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * View vars
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_vars = [];
 
@@ -143,7 +143,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Saves view vars for use inside templates.
      *
-     * @param array $data Array of data.
+     * @param array<string, mixed> $data Array of data.
      * @param bool $merge Whether to merge with existing vars, default true.
      * @return $this
      */
@@ -183,7 +183,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Get all view vars.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getVars(): array
     {
@@ -305,7 +305,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Adds a helper to use.
      *
      * @param string $helper Helper to use.
-     * @param array $options Options.
+     * @param array<string, mixed> $options Options.
      * @return $this
      * @since 4.1.0
      */
@@ -317,19 +317,42 @@ class ViewBuilder implements JsonSerializable, Serializable
             $array = [$helper];
         }
 
-        return $this->setHelpers($array);
+        $this->_helpers = array_merge($this->_helpers, $array);
+
+        return $this;
+    }
+
+    /**
+     * Adds helpers to use by merging with existing ones.
+     *
+     * @param array $helpers Helpers to use.
+     * @return $this
+     * @since 4.3.0
+     */
+    public function addHelpers(array $helpers)
+    {
+        foreach ($helpers as $helper => $config) {
+            if (is_int($helper)) {
+                $helper = $config;
+                $config = [];
+            }
+            $this->addHelper($helper, $config);
+        }
+
+        return $this;
     }
 
     /**
      * Sets the helpers to use.
      *
      * @param array $helpers Helpers to use.
-     * @param bool $merge Whether or not to merge existing data with the new data.
+     * @param bool $merge Whether to merge existing data with the new data.
      * @return $this
      */
     public function setHelpers(array $helpers, bool $merge = true)
     {
         if ($merge) {
+            deprecationWarning('The $merge param is deprecated, use addHelper()/addHelpers() instead.');
             $helpers = array_merge($this->_helpers, $helpers);
         }
         $this->_helpers = $helpers;
@@ -451,8 +474,8 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * This lets you provide custom constructor arguments to application/plugin view classes.
      *
-     * @param array $options An array of options.
-     * @param bool $merge Whether or not to merge existing data with the new data.
+     * @param array<string, mixed> $options An array of options.
+     * @param bool $merge Whether to merge existing data with the new data.
      * @return $this
      */
     public function setOptions(array $options, bool $merge = true)
@@ -468,7 +491,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets additional options for the view.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOptions(): array
     {
@@ -529,9 +552,9 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Using the data in the builder, create a view instance.
      *
      * If className() is null, App\View\AppView will be used.
-     * If that class does not exist, then Cake\View\View will be used.
+     * If that class does not exist, then {@link \Cake\View\View} will be used.
      *
-     * @param array $vars The view variables/context to use.
+     * @param array<string, mixed> $vars The view variables/context to use.
      * @param \Cake\Http\ServerRequest|null $request The request to use.
      * @param \Cake\Http\Response|null $response The response to use.
      * @param \Cake\Event\EventManagerInterface|null $events The event manager to use.
@@ -554,6 +577,12 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
         if ($className === null) {
             throw new MissingViewException(['class' => $this->_className]);
+        }
+
+        if (!empty($vars)) {
+            deprecationWarning(
+                'The $vars argument is deprecated. Use the setVar()/setVars() methods instead.'
+            );
         }
 
         $data = [
@@ -638,8 +667,8 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Configures a view builder instance from serialized config.
      *
-     * @param array $config View builder configuration array.
-     * @return $this Configured view builder instance.
+     * @param array<string, mixed> $config View builder configuration array.
+     * @return $this
      */
     public function createFromArray(array $config)
     {
@@ -663,6 +692,16 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
+     * Magic method used for serializing the view builder object.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return $this->jsonSerialize();
+    }
+
+    /**
      * Unserializes the view builder object.
      *
      * @param string $data Serialized string.
@@ -671,5 +710,16 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function unserialize($data): void
     {
         $this->createFromArray(unserialize($data));
+    }
+
+    /**
+     * Magic method used to rebuild the view builder object.
+     *
+     * @param array<string, mixed> $data Data array.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->createFromArray($data);
     }
 }

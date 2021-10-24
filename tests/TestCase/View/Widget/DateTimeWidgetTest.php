@@ -20,6 +20,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\DateTimeWidget;
+use DateTime;
 
 /**
  * DateTimeWidget test case
@@ -27,9 +28,20 @@ use Cake\View\Widget\DateTimeWidget;
 class DateTimeWidgetTest extends TestCase
 {
     /**
-     * @setUp
-     * @return void
+     * @var \Cake\View\Form\NullContext
      */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
+     * @var \Cake\View\Widget\DateTimeWidget
+     */
+    protected $DateTime;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -46,7 +58,7 @@ class DateTimeWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function invalidSelectedValuesProvider()
+    public static function invalidSelectedValuesProvider(): array
     {
         return [
             'false' => [false],
@@ -62,9 +74,9 @@ class DateTimeWidgetTest extends TestCase
      * test rendering selected values.
      *
      * @dataProvider invalidSelectedValuesProvider
-     * @return void
+     * @param mixed $selected
      */
-    public function testRenderInvalid($selected)
+    public function testRenderInvalid($selected): void
     {
         $result = $this->DateTime->render(['val' => $selected, 'type' => 'month'], $this->context);
         $now = new \DateTime();
@@ -79,9 +91,9 @@ class DateTimeWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function selectedValuesProvider()
+    public static function selectedValuesProvider(): array
     {
-        $date = new \DateTime('2014-01-20 12:30:45');
+        $date = new DateTime('2014-01-20 12:30:45');
 
         return [
             'DateTime' => [$date],
@@ -95,9 +107,9 @@ class DateTimeWidgetTest extends TestCase
      * test rendering selected values.
      *
      * @dataProvider selectedValuesProvider
-     * @return void
+     * @param mixed $selected
      */
-    public function testRenderValid($selected)
+    public function testRenderValid($selected): void
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $expected = [
@@ -113,10 +125,8 @@ class DateTimeWidgetTest extends TestCase
 
     /**
      * testTimezoneOption
-     *
-     * @return void
      */
-    public function testTimezoneOption()
+    public function testTimezoneOption(): void
     {
         $result = $this->DateTime->render([
             'val' => '2019-02-03 10:00:00',
@@ -133,7 +143,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-    public function testUnsettingStep()
+    public function testUnsettingStep(): void
     {
         $result = $this->DateTime->render([
             'val' => '2019-02-03 10:11:12',
@@ -162,7 +172,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-    public function testDatetimeFormat()
+    public function testDatetimeFormat(): void
     {
         $result = $this->DateTime->render([
             'val' => '2019-02-03 10:11:12',
@@ -225,10 +235,8 @@ class DateTimeWidgetTest extends TestCase
 
     /**
      * Test rendering with templateVars
-     *
-     * @return void
      */
-    public function testRenderTemplateVars()
+    public function testRenderTemplateVars(): void
     {
         $templates = [
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}><span>{{help}}</span>',
@@ -244,22 +252,18 @@ class DateTimeWidgetTest extends TestCase
 
     /**
      * testRenderInvalidTypeException
-     *
-     * @return void
      */
-    public function testRenderInvalidTypeException()
+    public function testRenderInvalidTypeException(): void
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Invalid type `foo` for input tag, expected datetime-local, date, time, month or week');
-        $result = $this->DateTime->render(['type' => 'foo', 'val' => new \DateTime()], $this->context);
+        $result = $this->DateTime->render(['type' => 'foo', 'val' => new DateTime()], $this->context);
     }
 
     /**
      * Test that secureFields omits removed selects
-     *
-     * @return void
      */
-    public function testSecureFields()
+    public function testSecureFields(): void
     {
         $data = [
             'name' => 'date',

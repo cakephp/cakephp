@@ -32,8 +32,6 @@ class MessagesFileLoaderTest extends TestCase
 
     /**
      * Set Up
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -43,8 +41,6 @@ class MessagesFileLoaderTest extends TestCase
 
     /**
      * Tear down method
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -54,10 +50,8 @@ class MessagesFileLoaderTest extends TestCase
 
     /**
      * test reading file from custom locale folder
-     *
-     * @return void
      */
-    public function testCustomLocalePath()
+    public function testCustomLocalePath(): void
     {
         $loader = new MessagesFileLoader('default', 'en');
         $package = $loader();
@@ -73,10 +67,8 @@ class MessagesFileLoaderTest extends TestCase
 
     /**
      * Test reading MO files
-     *
-     * @return void
      */
-    public function testLoadingMoFiles()
+    public function testLoadingMoFiles(): void
     {
         $loader = new MessagesFileLoader('empty', 'es', 'mo');
         $package = $loader();

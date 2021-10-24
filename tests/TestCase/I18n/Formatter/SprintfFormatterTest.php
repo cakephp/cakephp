@@ -26,10 +26,8 @@ class SprintfFormatterTest extends TestCase
 {
     /**
      * Tests that variables are interpolated correctly
-     *
-     * @return void
      */
-    public function testFormatSimple()
+    public function testFormatSimple(): void
     {
         $formatter = new SprintfFormatter();
         $this->assertSame('Hello José', $formatter->format('en_US', 'Hello %s', ['José']));
