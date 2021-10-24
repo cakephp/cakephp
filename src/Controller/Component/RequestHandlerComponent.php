@@ -482,6 +482,7 @@ class RequestHandlerComponent extends Component
             return false;
         }
 
+        /** @psalm-suppress PossiblyInvalidArgument */
         $response = $response->withType($cType);
 
         if (!empty($options['charset'])) {
