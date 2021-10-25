@@ -22,7 +22,7 @@
         "source": "https://github.com/cakephp/validation"
     },
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.4.0",
         "cakephp/core": "^4.0",
         "cakephp/utility": "^4.0",
         "psr/http-message": "^1.0.0"
