@@ -629,8 +629,8 @@ class File
     /**
      * Searches for a given text and replaces the text if found.
      *
-     * @param array|string $search Text(s) to search for.
-     * @param array|string $replace Text(s) to replace with.
+     * @param array<string>|string $search Text(s) to search for.
+     * @param array<string>|string $replace Text(s) to replace with.
      * @return bool Success
      */
     public function replaceText($search, $replace): bool

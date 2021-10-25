@@ -412,7 +412,7 @@ class TextHelper extends Helper
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
      * @param string $string the string you want to slug
-     * @param array|string $options If string it will be used as replacement character
+     * @param array<string, mixed>|string $options If string it will be used as replacement character
      *   or an array of options.
      * @return string
      * @see \Cake\Utility\Text::setTransliterator()

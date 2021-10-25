@@ -648,7 +648,7 @@ class Shell
      * - `indent` Indent the text with the string provided. Defaults to null.
      *
      * @param string $text Text the text to format.
-     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @param array<string, mixed>|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Wrapped / indented text
      * @see \Cake\Utility\Text::wrap()
      * @link https://book.cakephp.org/4/en/console-and-shells.html#Shell::wrapText

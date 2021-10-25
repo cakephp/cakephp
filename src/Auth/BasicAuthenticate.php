@@ -59,7 +59,7 @@ class BasicAuthenticate extends BaseAuthenticate
      *
      * @param \Cake\Http\ServerRequest $request The request to authenticate with.
      * @param \Cake\Http\Response $response The response to add headers to.
-     * @return array|false Either false on failure, or an array of user data on success.
+     * @return array<string, mixed>|false Either false on failure, or an array of user data on success.
      */
     public function authenticate(ServerRequest $request, Response $response)
     {

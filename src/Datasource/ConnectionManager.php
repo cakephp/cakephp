@@ -72,7 +72,7 @@ class ConnectionManager
      *
      * The connection will not be constructed until it is first used.
      *
-     * @param array|string $key The name of the connection config, or an array of multiple configs.
+     * @param array<string, mixed>|string $key The name of the connection config, or an array of multiple configs.
      * @param array<string, mixed>|null $config An array of name => config data for adapter.
      * @return void
      * @throws \Cake\Core\Exception\CakeException When trying to modify an existing config.

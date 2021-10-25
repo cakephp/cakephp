@@ -88,7 +88,7 @@ class FlashComponent extends Component
     /**
      * Proxy method to FlashMessage instance.
      *
-     * @param array|string $key The key to set, or a complete array of configs.
+     * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
@@ -128,7 +128,7 @@ class FlashComponent extends Component
     /**
      * Proxy method to FlashMessage instance.
      *
-     * @param array|string $key The key to set, or a complete array of configs.
+     * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @return $this
      */

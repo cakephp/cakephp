@@ -330,7 +330,7 @@ class Text
      * - `indentAt` 0 based index to start indenting at. Defaults to 0.
      *
      * @param string $text The text to format.
-     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @param array<string, mixed>|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
     public static function wrap(string $text, $options = []): string
@@ -367,7 +367,7 @@ class Text
      * - `indentAt` 0 based index to start indenting at. Defaults to 0.
      *
      * @param string $text The text to format.
-     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @param array<string, mixed>|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
     public static function wrapBlock(string $text, $options = []): string
@@ -1147,7 +1147,7 @@ class Text
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
      * @param string $string the string you want to slug
-     * @param array|string $options If string it will be use as replacement character
+     * @param array<string, mixed>|string $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
      * @see setTransliterator()

@@ -115,7 +115,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Constructor
      *
-     * @param array|string|null $config Array of configs, or string to load configs from app.php
+     * @param array<string, mixed>|string|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct($config = null)
     {
@@ -290,7 +290,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Sets the configuration profile to use for this instance.
      *
-     * @param array|string $config String with configuration name, or
+     * @param array<string, mixed>|string $config String with configuration name, or
      *    an array with config.
      * @return $this
      */
@@ -358,7 +358,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Send an email using the specified content, template and layout
      *
-     * @param array|string|null $content String with message or array with messages
+     * @param array<string>|string|null $content String with message or array with messages
      * @return array
      * @throws \BadMethodCallException
      * @psalm-return array{headers: string, message: string}
@@ -386,7 +386,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Render email.
      *
-     * @param array|string|null $content Content array or string
+     * @param array<string>|string|null $content Content array or string
      * @return void
      */
     public function render($content = null): void
@@ -471,7 +471,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Converts given value to string
      *
-     * @param array|string $value The value to convert
+     * @param array<string>|string $value The value to convert
      * @return string
      */
     protected function flatten($value): string
@@ -486,7 +486,7 @@ class Email implements JsonSerializable, Serializable
      *   If null, will try to use 'to' from transport config
      * @param string|null $subject String of subject or null to use 'subject' from transport config
      * @param array|string|null $message String with message or array with variables to be used in render
-     * @param array|string $config String to use Email delivery profile from app.php or array with configs
+     * @param array<string, mixed>|string $config String to use Email delivery profile from app.php or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
      * @return \Cake\Mailer\Email
      * @throws \InvalidArgumentException
