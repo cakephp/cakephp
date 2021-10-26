@@ -40,7 +40,7 @@ class CakeException extends RuntimeException
     protected $_messageTemplate = '';
 
     /**
-     * Array of headers to be passed to {@link \Cake\Http\Response::header()}
+     * Array of headers to be passed to {@link \Cake\Http\Response::withHeader()}
      *
      * @var array|null
      */

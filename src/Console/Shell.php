@@ -620,7 +620,7 @@ class Shell
      * Prompts the user for input, and returns it.
      *
      * @param string $prompt Prompt text.
-     * @param array|string|null $options Array or string of options.
+     * @param array<string>|string|null $options Array or string of options.
      * @param string|null $default Default input value.
      * @return string|null Either the default value, or the user-provided input.
      * @link https://book.cakephp.org/4/en/console-and-shells.html#Shell::in

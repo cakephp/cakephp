@@ -835,12 +835,12 @@ class Query implements ExpressionInterface, IteratorAggregate
      * This is a shorthand method for building joins via `join()`.
      *
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
-     * to that methods description for further details.
+     * to that methods' description for further details.
      *
      * @param array|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
      * to use for joining.
-     * @param array $types a list of types associated to the conditions used for converting
+     * @param array<string, string> $types a list of types associated to the conditions used for converting
      * values to the corresponding database representation.
      * @return $this
      */
@@ -1790,7 +1790,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param mixed $value The value to update $key to. Can be null if $key is an
      *    array or QueryExpression. When $key is an array, this parameter will be
      *    used as $types instead.
-     * @param array|string $types The column types to treat data as.
+     * @param array<string, string>|string $types The column types to treat data as.
      * @return $this
      */
     public function set($key, $value = null, $types = [])
