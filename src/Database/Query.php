@@ -835,7 +835,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * This is a shorthand method for building joins via `join()`.
      *
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
-     * to that methods' description for further details.
+     * to that method's description for further details.
      *
      * @param array|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
