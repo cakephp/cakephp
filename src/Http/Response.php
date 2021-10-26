@@ -563,6 +563,7 @@ class Response implements ResponseInterface
     protected function _clearHeader(string $header): void
     {
         $normalized = strtolower($header);
+        /** @psalm-suppress InvalidArrayOffset */
         if (!isset($this->headerNames[$normalized])) {
             return;
         }
