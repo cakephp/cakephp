@@ -184,13 +184,12 @@ class TestFixtureTest extends TestCase
             $db->execute($stmt);
         }
 
-        $table = $this->fetchTable('Letters');
+        $table = $this->fetchTable('Letters', ['connection' => $db]);
         $table->getSchema()->setColumnType('complex_field', 'json');
 
         $fixture = new LettersFixture();
         $fixture->init();
         $fixtureSchema = $fixture->getTableSchema();
-        $this->assertSame($table->getSchema(), $fixtureSchema);
         $this->assertSame(['id', 'letter', 'complex_field'], $fixtureSchema->columns());
         $this->assertSame('json', $fixtureSchema->getColumnType('complex_field'));
     }

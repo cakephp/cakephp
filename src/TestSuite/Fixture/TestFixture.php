@@ -246,8 +246,10 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     {
         $db = ConnectionManager::get($this->connection());
         try {
-            $table = $this->fetchTable($this->table, ['connection' => $db]);
-            $this->_schema = $table->getSchema();
+            $name = Inflector::camelize($this->table);
+            $ormTable = $this->fetchTable($name, ['connection' => $db]);
+
+            $this->_schema = $ormTable->getSchema();
         } catch (CakeException $e) {
             $message = sprintf(
                 'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
