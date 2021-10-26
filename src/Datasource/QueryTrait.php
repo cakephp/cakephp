@@ -227,21 +227,15 @@ trait QueryTrait
      */
     public function aliasField(string $field, ?string $alias = null): array
     {
-        $namespaced = strpos($field, '.') !== false;
-        $aliasedField = $field;
-
-        if ($namespaced) {
+        if (strpos($field, '.') === false) {
+            $alias = $alias ?: $this->getRepository()->getAlias();
+            $aliasedField = $alias . '.' . $field;
+        } else {
+            $aliasedField = $field;
             [$alias, $field] = explode('.', $field);
         }
 
-        if (!$alias) {
-            $alias = $this->getRepository()->getAlias();
-        }
-
         $key = sprintf('%s__%s', $alias, $field);
-        if (!$namespaced) {
-            $aliasedField = $alias . '.' . $field;
-        }
 
         return [$key => $aliasedField];
     }
