@@ -902,7 +902,7 @@ class BelongsToMany extends Association
      *   this association.
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities List of entities persisted in the target table for
      *   this association.
-     * @param array|bool $options List of options to be passed to the internal `delete` call,
+     * @param array<string>|bool $options List of options to be passed to the internal `delete` call,
      *   or a `boolean` as `cleanProperty` key shortcut.
      * @throws \InvalidArgumentException If non persisted entities are passed or if
      *   any of them is lacking a primary key value.
