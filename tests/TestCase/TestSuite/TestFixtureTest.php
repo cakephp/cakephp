@@ -56,6 +56,7 @@ class TestFixtureTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+        ConnectionManager::get('test')->execute('DROP TABLE IF EXISTS letters');
     }
 
     /**
@@ -138,7 +139,7 @@ class TestFixtureTest extends TestCase
     public function testInitNoImportNoFieldsException(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`: the table does not exist.');
+        $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`. The table does not exist.');
         $fixture = new LettersFixture();
         $fixture->init();
     }
@@ -163,10 +164,6 @@ class TestFixtureTest extends TestCase
         $fixture = new LettersFixture();
         $fixture->init();
         $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
-
-        // Cleanup.
-        $db = ConnectionManager::get('test');
-        $db->execute('DROP TABLE letters');
     }
 
     /**
@@ -193,12 +190,9 @@ class TestFixtureTest extends TestCase
         $fixture = new LettersFixture();
         $fixture->init();
         $fixtureSchema = $fixture->getTableSchema();
+        $this->assertSame($table->getSchema(), $fixtureSchema);
         $this->assertSame(['id', 'letter', 'complex_field'], $fixtureSchema->columns());
         $this->assertSame('json', $fixtureSchema->getColumnType('complex_field'));
-
-        // Cleanup.
-        $db = ConnectionManager::get('test');
-        $db->execute('DROP TABLE letters');
     }
 
     /**

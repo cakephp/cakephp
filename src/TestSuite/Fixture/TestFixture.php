@@ -250,9 +250,9 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             $this->_schema = $table->getSchema();
         } catch (CakeException $e) {
             $message = sprintf(
-                'Cannot describe schema for table `%s` for fixture `%s`: the table does not exist.',
+                'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
                 $this->table,
-                static::class,
+                static::class
             );
             throw new CakeException($message, null, $e);
         }
