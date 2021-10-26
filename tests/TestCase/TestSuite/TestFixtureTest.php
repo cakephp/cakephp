@@ -164,15 +164,37 @@ class TestFixtureTest extends TestCase
         $fixture->init();
         $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
 
-        $db = $this->getMockBuilder('Cake\Database\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $db->expects($this->never())
-            ->method('prepare');
-        $db->expects($this->never())
-            ->method('execute');
-        $this->assertTrue($fixture->create($db));
-        $this->assertTrue($fixture->drop($db));
+        // Cleanup.
+        $db = ConnectionManager::get('test');
+        $db->execute('DROP TABLE letters');
+    }
+
+    /**
+     * test schema reflection without $import or $fields will reflect the schema
+     */
+    public function testInitReflectSchemaCustomTypes(): void
+    {
+        $db = ConnectionManager::get('test');
+        $table = new TableSchema('letters', [
+            'id' => ['type' => 'integer'],
+            'letter' => ['type' => 'string', 'length' => 1],
+            'complex_field' => ['type' => 'json'],
+        ]);
+        $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+        $sql = $table->createSql($db);
+
+        foreach ($sql as $stmt) {
+            $db->execute($stmt);
+        }
+
+        $table = $this->fetchTable('Letters');
+        $table->getSchema()->setColumnType('complex_field', 'json');
+
+        $fixture = new LettersFixture();
+        $fixture->init();
+        $fixtureSchema = $fixture->getTableSchema();
+        $this->assertSame(['id', 'letter', 'complex_field'], $fixtureSchema->columns());
+        $this->assertSame('json', $fixtureSchema->getColumnType('complex_field'));
 
         // Cleanup.
         $db = ConnectionManager::get('test');
