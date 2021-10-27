@@ -60,7 +60,7 @@ use UnexpectedValueException;
  * Controllers are created based on request parameters and
  * routing. By default controllers and actions use conventional names.
  * For example `/posts/index` maps to `PostsController::index()`. You can re-map
- * URLs using Router::connect() or RouterBuilder::connect().
+ * URLs using Router::connect() or RouteBuilder::connect().
  *
  * ### Life cycle callbacks
  *
