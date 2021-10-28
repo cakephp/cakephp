@@ -208,6 +208,7 @@ class QueryExpressionTest extends TestCase
     {
         $this->expectDeprecation();
         $this->expectDeprecationMessage('QueryExpression::addCase() is deprecated, use case() instead.');
+        $this->expectDeprecationMessageMatches('#or add `src/Database/Expression/QueryExpression\.php` to#');
 
         (new QueryExpression())->addCase([]);
     }

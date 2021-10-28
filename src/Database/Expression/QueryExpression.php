@@ -343,7 +343,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function addCase($conditions, $values = [], $types = [])
     {
-        deprecationWarning('QueryExpression::addCase() is deprecated, use case() instead.');
+        deprecationWarning('QueryExpression::addCase() is deprecated, use case() instead.', 0);
 
         return $this->add(new CaseExpression($conditions, $values, $types));
     }
