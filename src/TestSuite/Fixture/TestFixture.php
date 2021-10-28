@@ -245,20 +245,21 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     protected function _schemaFromReflection(): void
     {
         $db = ConnectionManager::get($this->connection());
-        $schemaCollection = $db->getSchemaCollection();
-        $tables = $schemaCollection->listTables();
+        try {
+            $name = Inflector::camelize($this->table);
+            $ormTable = $this->fetchTable($name, ['connection' => $db]);
 
-        if (!in_array($this->table, $tables, true)) {
-            throw new CakeException(
-                sprintf(
-                    'Cannot describe schema for table `%s` for fixture `%s`: the table does not exist.',
-                    $this->table,
-                    static::class
-                )
+            /** @var \Cake\Database\Schema\TableSchema $schema */
+            $schema = $ormTable->getSchema();
+            $this->_schema = $schema;
+        } catch (CakeException $e) {
+            $message = sprintf(
+                'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
+                $this->table,
+                static::class
             );
+            throw new CakeException($message, null, $e);
         }
-
-        $this->_schema = $schemaCollection->describe($this->table);
     }
 
     /**
