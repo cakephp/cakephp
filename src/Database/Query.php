@@ -1886,14 +1886,36 @@ class Query implements ExpressionInterface, IteratorAggregate
      * any format accepted by \Cake\Database\Expression\QueryExpression:
      *
      * ```
-     * $expression = $query->newExpr(); // Returns an empty expression object
-     * $expression = $query->newExpr('Table.column = Table2.column'); // Return a raw SQL expression
+     * $expression = $query->expr(); // Returns an empty expression object
+     * $expression = $query->expr('Table.column = Table2.column'); // Return a raw SQL expression
      * ```
      *
      * @param \Cake\Database\ExpressionInterface|array|string|null $rawExpression A string, array or anything you want wrapped in an expression object
      * @return \Cake\Database\Expression\QueryExpression
      */
     public function newExpr($rawExpression = null): QueryExpression
+    {
+        return $this->expr($rawExpression);
+    }
+
+    /**
+     * Returns a new QueryExpression object. This is a handy function when
+     * building complex queries using a fluent interface. You can also override
+     * this function in subclasses to use a more specialized QueryExpression class
+     * if required.
+     *
+     * You can optionally pass a single raw SQL string or an array or expressions in
+     * any format accepted by \Cake\Database\Expression\QueryExpression:
+     *
+     * ```
+     * $expression = $query->expr(); // Returns an empty expression object
+     * $expression = $query->expr('Table.column = Table2.column'); // Return a raw SQL expression
+     * ```
+     *
+     * @param \Cake\Database\ExpressionInterface|array|string|null $rawExpression A string, array or anything you want wrapped in an expression object
+     * @return \Cake\Database\Expression\QueryExpression
+     */
+    public function expr($rawExpression = null): QueryExpression
     {
         $expression = new QueryExpression([], $this->getTypeMap());
 
