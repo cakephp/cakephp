@@ -1300,7 +1300,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|string $field The field to order on.
+     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
      * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      */
@@ -1334,7 +1334,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|string $field The field to order on.
+     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
      * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      */
