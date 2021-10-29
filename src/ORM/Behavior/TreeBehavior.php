@@ -109,21 +109,21 @@ class TreeBehavior extends Behavior
             throw new RuntimeException("Cannot set a node's parent as itself");
         }
 
-        if ($isNew && $parent) {
-            $parentNode = $this->_getNode($parent);
-            $edge = $parentNode->get($config['right']);
-            $entity->set($config['left'], $edge);
-            $entity->set($config['right'], $edge + 1);
-            $this->_sync(2, '+', ">= {$edge}");
+        if ($isNew) {
+            if ($parent) {
+                $parentNode = $this->_getNode($parent);
+                $edge = $parentNode->get($config['right']);
+                $entity->set($config['left'], $edge);
+                $entity->set($config['right'], $edge + 1);
+                $this->_sync(2, '+', ">= {$edge}");
 
-            if ($level) {
-                $entity->set($level, $parentNode[$level] + 1);
+                if ($level) {
+                    $entity->set($level, $parentNode[$level] + 1);
+                }
+
+                return;
             }
 
-            return;
-        }
-
-        if ($isNew && !$parent) {
             $edge = $this->_getMax();
             $entity->set($config['left'], $edge + 1);
             $entity->set($config['right'], $edge + 2);
@@ -135,18 +135,18 @@ class TreeBehavior extends Behavior
             return;
         }
 
-        if ($dirty && $parent) {
-            $this->_setParent($entity, $parent);
+        if ($dirty) {
+            if ($parent) {
+                $this->_setParent($entity, $parent);
 
-            if ($level) {
-                $parentNode = $this->_getNode($parent);
-                $entity->set($level, $parentNode[$level] + 1);
+                if ($level) {
+                    $parentNode = $this->_getNode($parent);
+                    $entity->set($level, $parentNode[$level] + 1);
+                }
+
+                return;
             }
 
-            return;
-        }
-
-        if ($dirty && !$parent) {
             $this->_setAsRoot($entity);
 
             if ($level) {

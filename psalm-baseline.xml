@@ -55,6 +55,11 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Database/Expression/QueryExpression.php">
+    <DeprecatedClass occurrences="1">
+      <code>new CaseExpression($conditions, $values, $types)</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/Database/Statement/PDOStatement.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$_statement</code>

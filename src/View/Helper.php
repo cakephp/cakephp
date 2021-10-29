@@ -91,18 +91,6 @@ class Helper implements EventListenerInterface
     }
 
     /**
-     * Provide non fatal errors on missing method calls.
-     *
-     * @param string $method Method to invoke
-     * @param array $params Array of params for the method.
-     * @return mixed|void
-     */
-    public function __call(string $method, array $params): mixed
-    {
-        trigger_error(sprintf('Method %1$s::%2$s does not exist', static::class, $method), E_USER_WARNING);
-    }
-
-    /**
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.

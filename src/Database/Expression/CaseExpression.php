@@ -71,6 +71,9 @@ class CaseExpression implements ExpressionInterface
     ) {
         $conditions = is_array($conditions) ? $conditions : [$conditions];
         $values = is_array($values) ? $values : [$values];
+        /**
+         * @psalm-suppress TypeDoesNotContainType,RedundantCondition
+         */
         $types = is_array($types) ? $types : [$types];
 
         if (!empty($conditions)) {

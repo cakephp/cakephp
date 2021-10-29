@@ -281,11 +281,6 @@ parameters:
 			path: src/I18n/DateTime.php
 
 		-
-			message: "#^Offset 1 does not exist on array\\(\\)\\|array\\(0 \\=\\> 'context'\\|'ids'\\|'translated', \\?1 \\=\\> 'plural'\\|'singular'\\|int\\)\\.$#"
-			count: 1
-			path: src/I18n/Parser/PoFileParser.php
-
-		-
 			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
 			count: 1
 			path: src/Mailer/Renderer.php
@@ -359,16 +354,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Routing/RouteBuilder.php
-
-		-
-			message: "#^PHPDoc tag @template TCode for class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\StatusCodeBase with bound type array\\<int, int\\> is not supported\\.$#"
-			count: 1
-			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\Fixture\\\\TestFixture\\:\\:\\$_schema \\(Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface&Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\) does not accept Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
