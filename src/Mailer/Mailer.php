@@ -198,7 +198,7 @@ class Mailer implements EventListenerInterface
     /**
      * Constructor
      *
-     * @param array|string|null $config Array of configs, or string to load configs from app.php
+     * @param array<string, mixed>|string|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct(array|string|null $config = null)
     {
@@ -389,7 +389,7 @@ class Mailer implements EventListenerInterface
     /**
      * Sets the configuration profile to use for this instance.
      *
-     * @param array|string $config String with configuration name, or
+     * @param array<string, mixed>|string $config String with configuration name, or
      *    an array with config.
      * @return $this
      */
@@ -546,7 +546,7 @@ class Mailer implements EventListenerInterface
     /**
      * Set logging config.
      *
-     * @param array|string|true $log Log config.
+     * @param array<string, mixed>|string|true $log Log config.
      * @return void
      */
     protected function setLogConfig(array|string|bool $log): void
@@ -568,7 +568,7 @@ class Mailer implements EventListenerInterface
     /**
      * Converts given value to string
      *
-     * @param array|string $value The value to convert
+     * @param array<string>|string $value The value to convert
      * @return string
      */
     protected function flatten(array|string $value): string

@@ -161,7 +161,7 @@ class SqliteTest extends TestCase
 
         $featureVersions = [
             'cte' => '3.8.3',
-            'window' => '3.25.0',
+            'window' => '3.28.0',
         ];
 
         $this->assertSame(

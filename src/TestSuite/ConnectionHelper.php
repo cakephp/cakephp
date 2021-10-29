@@ -77,7 +77,7 @@ class ConnectionHelper
      * Drops all tables.
      *
      * @param string $connectionName Connection name
-     * @param array|null $tables List of tables names or null for all.
+     * @param array<string>|null $tables List of tables names or null for all.
      * @return void
      */
     public function dropTables(string $connectionName, ?array $tables = null): void
@@ -111,7 +111,7 @@ class ConnectionHelper
      * Truncates all tables.
      *
      * @param string $connectionName Connection name
-     * @param array|null $tables List of tables names or null for all.
+     * @param array<string>|null $tables List of tables names or null for all.
      * @return void
      */
     public function truncateTables(string $connectionName, ?array $tables = null): void

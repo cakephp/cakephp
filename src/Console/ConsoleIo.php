@@ -335,7 +335,7 @@ class ConsoleIo
      *
      * **Warning** You cannot overwrite text that contains newlines.
      *
-     * @param array|string $message The message to output.
+     * @param array<string>|string $message The message to output.
      * @param int $newlines Number of newlines to append.
      * @param int|null $size The number of bytes to overwrite. Defaults to the
      *    length of the last message output.
@@ -469,7 +469,7 @@ class ConsoleIo
      * Prompts the user for input based on a list of options, and returns it.
      *
      * @param string $prompt Prompt text.
-     * @param array|string $options Array or string of options.
+     * @param array<string>|string $options Array or string of options.
      * @param string|null $default Default input value.
      * @return string Either the default value, or the user-provided input.
      */

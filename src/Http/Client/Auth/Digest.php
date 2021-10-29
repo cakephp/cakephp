@@ -48,7 +48,7 @@ class Digest
      * Add Authorization header to the request.
      *
      * @param \Cake\Http\Client\Request $request The request object.
-     * @param array $credentials Authentication credentials.
+     * @param array<string, mixed> $credentials Authentication credentials.
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
@@ -110,7 +110,7 @@ class Digest
      * Generate the header Authorization
      *
      * @param \Cake\Http\Client\Request $request The request object.
-     * @param array $credentials Authentication credentials.
+     * @param array<string, mixed> $credentials Authentication credentials.
      * @return string
      */
     protected function _generateHeader(Request $request, array $credentials): string

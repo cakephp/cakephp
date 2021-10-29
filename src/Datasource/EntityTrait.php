@@ -210,7 +210,7 @@ trait EntityTrait
      * $entity->set('name', 'Andrew');
      * ```
      *
-     * @param array|string $field the name of field to set or a list of
+     * @param array<string, mixed>|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
@@ -1125,7 +1125,7 @@ trait EntityTrait
      * $entity->setAccess('*', false); // Mark all fields as protected
      * ```
      *
-     * @param array|string $field Single or list of fields to change its accessibility
+     * @param array<string>|string $field Single or list of fields to change its accessibility
      * @param bool $set True marks the field as accessible, false will
      * mark it as protected.
      * @return $this

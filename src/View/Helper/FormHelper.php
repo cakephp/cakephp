@@ -1441,7 +1441,7 @@ class FormHelper extends Helper
      * used instead of the generated values if present.
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param array|string|null $label Label text or array with label attributes.
+     * @param array<string, mixed>|string|null $label Label text or array with label attributes.
      * @param array<string, mixed> $options Options for the label element.
      * @return string Generated label element
      */

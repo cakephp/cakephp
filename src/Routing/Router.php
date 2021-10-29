@@ -807,7 +807,7 @@ class Router
      * - Vendor/Cms.Management/Admin/Articles::view
      *
      * @param string $url Route path in [Plugin.][Prefix/]Controller::action format
-     * @return array<string>
+     * @return array<string, string>
      */
     public static function parseRoutePath(string $url): array
     {

@@ -99,7 +99,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the levels this logger is interested in.
      *
-     * @return array
+     * @return array<string>
      */
     public function levels(): array
     {
@@ -109,7 +109,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return array|null
+     * @return array<string>|null
      */
     public function scopes(): ?array
     {

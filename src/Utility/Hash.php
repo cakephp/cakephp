@@ -970,7 +970,7 @@ class Hash
      * @param array $data An array of data to sort
      * @param string $path A Set-compatible path to the array value
      * @param string|int $dir See directions above. Defaults to 'asc'.
-     * @param array|string $type See direction types above. Defaults to 'regular'.
+     * @param array<string, mixed>|string $type See direction types above. Defaults to 'regular'.
      * @return array Sorted array of data
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::sort
      */

@@ -99,7 +99,7 @@ abstract class SchemaDialect
      * Convert foreign key constraints references to a valid
      * stringified list
      *
-     * @param array|string $references The referenced columns of a foreign key constraint statement
+     * @param array<string>|string $references The referenced columns of a foreign key constraint statement
      * @return string
      */
     protected function _convertConstraintColumns(array|string $references): string

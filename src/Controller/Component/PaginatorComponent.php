@@ -279,7 +279,7 @@ class PaginatorComponent extends Component
     /**
      * Proxy setting config options to Paginator.
      *
-     * @param array|string $key The key to set, or a complete array of configs.
+     * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
      * @param mixed $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
@@ -306,7 +306,7 @@ class PaginatorComponent extends Component
     /**
      * Proxy setting config options to Paginator.
      *
-     * @param array|string $key The key to set, or a complete array of configs.
+     * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
      * @param mixed $value The value to set.
      * @return $this
      */

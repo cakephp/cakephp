@@ -468,8 +468,8 @@ class Validation
      * - `y` 2006 just the year without any separators
      *
      * @param mixed $check a valid date string/object
-     * @param array|string $format Use a string or an array of the keys above.
-     *    Arrays should be passed as ['dmy', 'mdy', etc]
+     * @param array<string>|string $format Use a string or an array of the keys above.
+     *    Arrays should be passed as ['dmy', 'mdy', ...]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
      * @return bool Success
      */

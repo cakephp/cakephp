@@ -21,10 +21,12 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Statement\StatementDecorator;
@@ -2094,6 +2096,17 @@ class QueryTest extends TestCase
             ->modifier(['TOP 10']);
         $this->assertQuotedQuery(
             'SELECT TOP 10 <city>, <state>, <country> FROM <addresses>',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['city', 'state', 'country'])
+            ->from(['addresses'])
+            ->modifier($query->newExpr('EXPRESSION'));
+        $this->assertQuotedQuery(
+            'SELECT EXPRESSION <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
             !$this->autoQuote
         );
@@ -4217,6 +4230,326 @@ class QueryTest extends TestCase
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
         $result->closeCursor();
+    }
+
+    public function testCloneUpdateExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->update($query->newExpr('update'));
+
+        $clause = $query->clause('update');
+        $clauseClone = (clone $query)->clause('update');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value, $clauseClone[$key]);
+            $this->assertNotSame($value, $clauseClone[$key]);
+        }
+    }
+
+    public function testCloneSetExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->update('table')
+            ->set(['column' => $query->newExpr('value')]);
+
+        $clause = $query->clause('set');
+        $clauseClone = (clone $query)->clause('set');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneValuesExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->insert(['column'])
+            ->into('table')
+            ->values(['column' => $query->newExpr('value')]);
+
+        $clause = $query->clause('values');
+        $clauseClone = (clone $query)->clause('values');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneWithExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->with(
+                new CommonTableExpression(
+                    'cte',
+                    new Query($this->connection)
+                )
+            )
+            ->with(function (CommonTableExpression $cte, Query $query) {
+                return $cte
+                    ->name('cte2')
+                    ->query($query);
+            });
+
+        $clause = $query->clause('with');
+        $clauseClone = (clone $query)->clause('with');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value, $clauseClone[$key]);
+            $this->assertNotSame($value, $clauseClone[$key]);
+        }
+    }
+
+    public function testCloneSelectExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->select($query->newExpr('select'))
+            ->select(['alias' => $query->newExpr('select')]);
+
+        $clause = $query->clause('select');
+        $clauseClone = (clone $query)->clause('select');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value, $clauseClone[$key]);
+            $this->assertNotSame($value, $clauseClone[$key]);
+        }
+    }
+
+    public function testCloneDistinctExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->distinct($query->newExpr('distinct'));
+
+        $clause = $query->clause('distinct');
+        $clauseClone = (clone $query)->clause('distinct');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneModifierExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->modifier($query->newExpr('modifier'));
+
+        $clause = $query->clause('modifier');
+        $clauseClone = (clone $query)->clause('modifier');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value, $clauseClone[$key]);
+            $this->assertNotSame($value, $clauseClone[$key]);
+        }
+    }
+
+    public function testCloneFromExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->from(['alias' => new Query($this->connection)]);
+
+        $clause = $query->clause('from');
+        $clauseClone = (clone $query)->clause('from');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value, $clauseClone[$key]);
+            $this->assertNotSame($value, $clauseClone[$key]);
+        }
+    }
+
+    public function testCloneJoinExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->innerJoin(
+                ['alias_inner' => new Query($this->connection)],
+                ['alias_inner.fk = parent.pk']
+            )
+            ->leftJoin(
+                ['alias_left' => new Query($this->connection)],
+                ['alias_left.fk = parent.pk']
+            )
+            ->rightJoin(
+                ['alias_right' => new Query($this->connection)],
+                ['alias_right.fk = parent.pk']
+            );
+
+        $clause = $query->clause('join');
+        $clauseClone = (clone $query)->clause('join');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value['table'], $clauseClone[$key]['table']);
+            $this->assertNotSame($value['table'], $clauseClone[$key]['table']);
+
+            $this->assertEquals($value['conditions'], $clauseClone[$key]['conditions']);
+            $this->assertNotSame($value['conditions'], $clauseClone[$key]['conditions']);
+        }
+    }
+
+    public function testCloneWhereExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->where($query->newExpr('where'))
+            ->where(['field' => $query->newExpr('where')]);
+
+        $clause = $query->clause('where');
+        $clauseClone = (clone $query)->clause('where');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneGroupExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->group($query->newExpr('group'));
+
+        $clause = $query->clause('group');
+        $clauseClone = (clone $query)->clause('group');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value, $clauseClone[$key]);
+            $this->assertNotSame($value, $clauseClone[$key]);
+        }
+    }
+
+    public function testCloneHavingExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->having($query->newExpr('having'));
+
+        $clause = $query->clause('having');
+        $clauseClone = (clone $query)->clause('having');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneWindowExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->window('window1', new WindowExpression())
+            ->window('window2', function (WindowExpression $window) {
+                return $window;
+            });
+
+        $clause = $query->clause('window');
+        $clauseClone = (clone $query)->clause('window');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value['name'], $clauseClone[$key]['name']);
+            $this->assertNotSame($value['name'], $clauseClone[$key]['name']);
+
+            $this->assertEquals($value['window'], $clauseClone[$key]['window']);
+            $this->assertNotSame($value['window'], $clauseClone[$key]['window']);
+        }
+    }
+
+    public function testCloneOrderExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query
+            ->order($query->newExpr('order'))
+            ->orderAsc($query->newExpr('order_asc'))
+            ->orderDesc($query->newExpr('order_desc'));
+
+        $clause = $query->clause('order');
+        $clauseClone = (clone $query)->clause('order');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneLimitExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->limit($query->newExpr('1'));
+
+        $clause = $query->clause('limit');
+        $clauseClone = (clone $query)->clause('limit');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneOffsetExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->offset($query->newExpr('1'));
+
+        $clause = $query->clause('offset');
+        $clauseClone = (clone $query)->clause('offset');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
+    }
+
+    public function testCloneUnionExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->where(['id' => 1]);
+
+        $query2 = new Query($this->connection);
+        $query2->where(['id' => 2]);
+
+        $query->union($query2);
+
+        $clause = $query->clause('union');
+        $clauseClone = (clone $query)->clause('union');
+
+        $this->assertIsArray($clause);
+
+        foreach ($clause as $key => $value) {
+            $this->assertEquals($value['query'], $clauseClone[$key]['query']);
+            $this->assertNotSame($value['query'], $clauseClone[$key]['query']);
+        }
+    }
+
+    public function testCloneEpilogExpression(): void
+    {
+        $query = new Query($this->connection);
+        $query->epilog($query->newExpr('epilog'));
+
+        $clause = $query->clause('epilog');
+        $clauseClone = (clone $query)->clause('epilog');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $clause);
+
+        $this->assertEquals($clause, $clauseClone);
+        $this->assertNotSame($clause, $clauseClone);
     }
 
     /**

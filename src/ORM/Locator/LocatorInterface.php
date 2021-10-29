@@ -38,9 +38,9 @@ interface LocatorInterface extends BaseLocatorInterface
      * Stores a list of options to be used when instantiating an object
      * with a matching alias.
      *
-     * @param array|string $alias Name of the alias or array to completely
+     * @param array<string, mixed>|string $alias Name of the alias or array to completely
      *   overwrite current config.
-     * @param array|null $options list of options for the alias
+     * @param array<string, mixed>|null $options list of options for the alias
      * @return $this
      * @throws \RuntimeException When you attempt to configure an existing
      *   table instance.

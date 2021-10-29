@@ -130,7 +130,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Stores whether a field value can be changed or set in this entity.
      *
-     * @param array|string $field single or list of fields to change its accessibility
+     * @param array<string>|string $field single or list of fields to change its accessibility
      * @param bool $set true marks the field as accessible, false will
      * mark it as protected.
      * @return $this
@@ -188,7 +188,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Sets one or multiple fields to the specified value
      *
-     * @param array|string $field the name of field to set or a list of
+     * @param array<string, mixed>|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
