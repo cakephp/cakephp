@@ -23,7 +23,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\Test\Fixture\ArticlesFixture;
 use Cake\TestSuite\TestCase;
-use Exception;
 use TestApp\Test\Fixture\LettersFixture;
 
 /**

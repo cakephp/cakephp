@@ -76,7 +76,3 @@ class CakeException extends RuntimeException
         return $this->_attributes;
     }
 }
-
-// phpcs:disable
-class_exists('Cake\Core\Exception\Exception');
-// phpcs:enable

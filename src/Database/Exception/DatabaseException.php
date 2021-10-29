@@ -24,7 +24,3 @@ use Cake\Core\Exception\CakeException;
 class DatabaseException extends CakeException
 {
 }
-
-// phpcs:disable
-class_exists('Cake\Database\Exception');
-// phpcs:enable

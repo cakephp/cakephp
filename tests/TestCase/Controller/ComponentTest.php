@@ -28,7 +28,6 @@ use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\OrangeComponent;
 use TestApp\Controller\Component\SomethingWithFlashComponent;
-use TestApp\Controller\Component\TestShutdownComponent;
 use TestApp\Controller\ComponentTestController;
 
 /**
@@ -246,37 +245,6 @@ class ComponentTest extends TestCase
 
         $Component = new ConfiguredComponent($Collection, [], ['Apple' => ['enabled' => false]]);
         $this->assertInstanceOf(AppleComponent::class, $Component->Apple, 'class is wrong');
-    }
-
-    /**
-     * Tests deprecated shutdown callback
-     */
-    public function testDeprecatedEventShutdown(): void
-    {
-        $Collection = new ComponentRegistry();
-
-        $this->deprecated(function () use ($Collection): void {
-            $Component = new TestShutdownComponent($Collection);
-            $result = $Component->__debugInfo();
-
-            $expected = [
-                'components' => [],
-                'implementedEvents' => [
-                    'Controller.shutdown' => 'shutdown',
-                ],
-                '_config' => [],
-            ];
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    public function testDeprecatedEventShutdownPath(): void
-    {
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage('Component.php');
-
-        $component = new TestShutdownComponent(new ComponentRegistry());
-        $result = $component->__debugInfo();
     }
 
     /**
