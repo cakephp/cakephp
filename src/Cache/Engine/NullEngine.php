@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use DateInterval;
 
 /**
  * Null cache engine, all operations appear to work, but do nothing.
@@ -36,7 +37,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         return true;
     }
@@ -44,7 +45,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function setMultiple($values, $ttl = null): bool
+    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
     {
         return true;
     }
@@ -52,7 +53,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function get($key, $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         return $default;
     }
@@ -60,7 +61,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function getMultiple($keys, $default = null): iterable
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         return [];
     }
@@ -84,7 +85,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         return true;
     }
@@ -92,7 +93,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function deleteMultiple($keys): bool
+    public function deleteMultiple(iterable $keys): bool
     {
         return true;
     }

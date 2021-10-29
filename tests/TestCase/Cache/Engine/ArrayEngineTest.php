@@ -17,8 +17,6 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use ArrayObject;
 use Cake\Cache\Cache;
-use Cake\Cache\Engine\ArrayEngine;
-use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -273,41 +271,5 @@ class ArrayEngineTest extends TestCase
 
         $this->assertSame(1, Cache::read('a', 'array'));
         $this->assertSame('foo', Cache::read('b', 'array'));
-    }
-
-    /**
-     * Test that passing a non iterable argument to setMultiple() throws exception.
-     */
-    public function testSetMultipleException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A cache set must be either an array or a Traversable.');
-
-        $engine = new ArrayEngine();
-        $engine->setMultiple('foo');
-    }
-
-    /**
-     * Test that passing a non iterable argument to getMultiple() throws exception.
-     */
-    public function testGetMultipleException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
-
-        $engine = new ArrayEngine();
-        $engine->getMultiple('foo');
-    }
-
-    /**
-     * Test that passing a non iterable argument to deleteMultiple() throws exception.
-     */
-    public function testDeleteMultipleException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
-
-        $engine = new ArrayEngine();
-        $engine->deleteMultiple('foo');
     }
 }

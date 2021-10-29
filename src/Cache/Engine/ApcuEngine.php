@@ -18,6 +18,7 @@ namespace Cake\Cache\Engine;
 
 use APCUIterator;
 use Cake\Cache\CacheEngine;
+use DateInterval;
 use RuntimeException;
 
 /**
@@ -61,7 +62,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True on success and false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $key = $this->_key($key);
         $duration = $this->duration($ttl);
@@ -78,7 +79,7 @@ class ApcuEngine extends CacheEngine
      *   has expired, or if there was an error fetching it
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
-    public function get($key, $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = apcu_fetch($this->_key($key), $success);
         if ($success === false) {
@@ -125,7 +126,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
 
