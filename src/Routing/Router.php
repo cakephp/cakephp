@@ -206,12 +206,12 @@ class Router
      * @throws \Cake\Core\Exception\CakeException
      * @see \Cake\Routing\RouteBuilder::connect()
      * @see \Cake\Routing\Router::scope()
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::connect()` instead.
+     * @deprecated 4.3.0 Use the non-static method `RouteBuilder::connect()` instead.
      */
     public static function connect($route, $defaults = [], $options = []): void
     {
         deprecationWarning(
-            '`Router::connect()` is deprecated, use the non-static method `RouterBuilder::connect()` instead.'
+            '`Router::connect()` is deprecated, use the non-static method `RouteBuilder::connect()` instead.'
         );
 
         static::scope('/', function ($routes) use ($route, $defaults, $options): void {
@@ -816,12 +816,12 @@ class Router
      * @param callable|null $callback The callback to invoke with the scoped collection.
      * @throws \InvalidArgumentException When an invalid callable is provided.
      * @return void
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::scope()` instead.
+     * @deprecated 4.3.0 Use the non-static method `RouteBuilder::scope()` instead.
      */
     public static function scope(string $path, $params = [], $callback = null): void
     {
         deprecationWarning(
-            '`Router::scope()` is deprecated, use the non-static method `RouterBuilder::scope()` instead.'
+            '`Router::scope()` is deprecated, use the non-static method `RouteBuilder::scope()` instead.'
         );
 
         $options = [];
@@ -855,12 +855,12 @@ class Router
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::prefix()` instead.
+     * @deprecated 4.3.0 Use the non-static method `RouteBuilder::prefix()` instead.
      */
     public static function prefix(string $name, $params = [], $callback = null): void
     {
         deprecationWarning(
-            '`Router::prefix()` is deprecated, use the non-static method `RouterBuilder::prefix()` instead.'
+            '`Router::prefix()` is deprecated, use the non-static method `RouteBuilder::prefix()` instead.'
         );
 
         if (!is_array($params)) {
@@ -892,12 +892,12 @@ class Router
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $options is defined
      * @return void
-     * @deprecated 4.3.0 Use the non-static method `RouterBuilder::plugin()` instead.
+     * @deprecated 4.3.0 Use the non-static method `RouteBuilder::plugin()` instead.
      */
     public static function plugin(string $name, $options = [], $callback = null): void
     {
         deprecationWarning(
-            '`Router::plugin()` is deprecated, use the non-static method `RouterBuilder::plugin()` instead.'
+            '`Router::plugin()` is deprecated, use the non-static method `RouteBuilder::plugin()` instead.'
         );
 
         if (!is_array($options)) {
@@ -978,7 +978,7 @@ class Router
      * - Vendor/Cms.Management/Admin/Articles::view
      *
      * @param string $url Route path in [Plugin.][Prefix/]Controller::action format
-     * @return array<string>
+     * @return array<string, string>
      */
     public static function parseRoutePath(string $url): array
     {

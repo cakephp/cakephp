@@ -857,7 +857,7 @@ abstract class Association
      * and modifies the query accordingly based of this association
      * configuration
      *
-     * @param array|string|null $type the type of query to perform, if an array is passed,
+     * @param array<string, mixed>|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array<string, mixed> $options The options to for the find
      * @see \Cake\ORM\Table::find()

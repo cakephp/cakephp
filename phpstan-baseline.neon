@@ -341,11 +341,6 @@ parameters:
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Offset 1 does not exist on array\\(\\)\\|array\\(0 \\=\\> 'context'\\|'ids'\\|'translated', \\?1 \\=\\> 'plural'\\|'singular'\\|int\\)\\.$#"
-			count: 1
-			path: src/I18n/Parser/PoFileParser.php
-
-		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Time.php
@@ -449,11 +444,6 @@ parameters:
 			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_out \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
-
-		-
-			message: "#^PHPDoc tag @template TCode for class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\StatusCodeBase with bound type array\\<int, int\\> is not supported\\.$#"
-			count: 1
-			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
 
 		-
 			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:addConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"

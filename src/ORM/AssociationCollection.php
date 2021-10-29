@@ -154,7 +154,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get an array of associations matching a specific type.
      *
-     * @param array|string $class The type of associations you want.
+     * @param array<string>|string $class The type of associations you want.
      *   For example 'BelongsTo' or array like ['BelongsTo', 'HasOne']
      * @return array<\Cake\ORM\Association> An array of Association objects.
      * @since 3.5.3

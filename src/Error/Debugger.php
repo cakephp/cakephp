@@ -214,7 +214,7 @@ class Debugger
     /**
      * Read or write configuration options for the Debugger instance.
      *
-     * @param array|string|null $key The key to get/set, or a complete array of configs.
+     * @param array<string, mixed>|string|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return mixed Config value being read, or the object itself on write operations.

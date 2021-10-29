@@ -317,7 +317,7 @@ class SelectLoader
      * target table query given a filter key and some filtering values.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param array|string $key The fields that should be used for filtering
+     * @param array<string>|string $key The fields that should be used for filtering
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query
      */

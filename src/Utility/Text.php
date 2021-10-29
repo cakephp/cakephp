@@ -330,7 +330,7 @@ class Text
      * - `indentAt` 0 based index to start indenting at. Defaults to 0.
      *
      * @param string $text The text to format.
-     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @param array<string, mixed>|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
     public static function wrap(string $text, $options = []): string
@@ -367,7 +367,7 @@ class Text
      * - `indentAt` 0 based index to start indenting at. Defaults to 0.
      *
      * @param string $text The text to format.
-     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @param array<string, mixed>|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
     public static function wrapBlock(string $text, $options = []): string
@@ -492,7 +492,7 @@ class Text
      * - `limit` A limit, optional, defaults to -1 (none)
      *
      * @param string $text Text to search the phrase in.
-     * @param array|string $phrase The phrase or phrases that will be searched.
+     * @param array<string>|string $phrase The phrase or phrases that will be searched.
      * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#highlighting-substrings
@@ -1147,7 +1147,7 @@ class Text
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
      * @param string $string the string you want to slug
-     * @param array|string $options If string it will be use as replacement character
+     * @param array<string, mixed>|string $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
      * @see setTransliterator()

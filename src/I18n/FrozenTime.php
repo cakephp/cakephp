@@ -191,7 +191,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      *   Or one of DateTimeZone class constants
      * @param string|null $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
-     * @param array|bool $options If true (default value) groups the identifiers list by primary region.
+     * @param array<string, mixed>|bool $options If true (default value) groups the identifiers list by primary region.
      *   Otherwise, an array containing `group`, `abbr`, `before`, and `after`
      *   keys. Setting `group` and `abbr` to true will group results and append
      *   timezone abbreviation in the display value. Set `before` and `after`

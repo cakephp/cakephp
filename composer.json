@@ -31,6 +31,7 @@
         "laminas/laminas-diactoros": "^2.2.2",
         "laminas/laminas-httphandlerrunner": "^1.1",
         "league/container": "^4.1.1",
+        "psr/container": "^2.0",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
@@ -110,7 +111,7 @@
             "@psalm"
         ],
         "stan-tests": "phpstan.phar analyze -c tests/phpstan.neon",
-        "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:0.12.96 psalm/phar:~4.10.0 && mv composer.backup composer.json",
+        "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:0.12.99 psalm/phar:~4.11.0 && mv composer.backup composer.json",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml"
     },

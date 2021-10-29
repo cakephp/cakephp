@@ -445,11 +445,11 @@ class Socket
     public function reset(?array $state = null): void
     {
         if (empty($state)) {
-            static $initalState = [];
-            if (empty($initalState)) {
-                $initalState = get_class_vars(self::class);
+            static $initialState = [];
+            if (empty($initialState)) {
+                $initialState = get_class_vars(self::class);
             }
-            $state = $initalState;
+            $state = $initialState;
         }
 
         foreach ($state as $property => $value) {

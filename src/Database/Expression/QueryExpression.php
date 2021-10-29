@@ -339,7 +339,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param array<string> $types Associative array of types to be associated with the values
      * passed in $values
      * @return $this
-     * @deprecated 4.3.0 Use Query::case() or CaseStatementExpression instead
+     * @deprecated 4.3.0 Use QueryExpression::case() or CaseStatementExpression instead
      */
     public function addCase($conditions, $values = [], $types = [])
     {
