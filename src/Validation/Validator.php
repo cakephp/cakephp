@@ -2541,9 +2541,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $message = __d('cake', 'The provided value is invalid');
         }
 
-        /**
-         * @var \Cake\Validation\ValidationRule $rule
-         */
         foreach ($rules as $name => $rule) {
             $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
             if ($result === true) {

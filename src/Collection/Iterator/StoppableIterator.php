@@ -19,6 +19,7 @@ namespace Cake\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
+use Iterator;
 use Traversable;
 
 /**
@@ -86,7 +87,7 @@ class StoppableIterator extends Collection
     /**
      * @inheritDoc
      */
-    public function unwrap(): Traversable
+    public function unwrap(): Iterator
     {
         $iterator = $this->_innerIterator;
 

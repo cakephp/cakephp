@@ -1268,11 +1268,10 @@ class ServerRequest implements ServerRequestInterface
         if ($name === null) {
             return $this->data;
         }
-        if (!is_array($this->data) && $name) {
+        if (!is_array($this->data)) {
             return $default;
         }
 
-        /** @psalm-suppress PossiblyNullArgument */
         return Hash::get($this->data, $name, $default);
     }
 

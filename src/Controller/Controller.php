@@ -501,6 +501,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $result = $this->render();
         }
         if ($result) {
+            /** @psalm-suppress PropertyTypeCoercion */
             $this->response = $result;
         }
     }

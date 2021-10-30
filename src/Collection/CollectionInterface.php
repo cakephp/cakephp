@@ -18,7 +18,6 @@ namespace Cake\Collection;
 
 use Iterator;
 use JsonSerializable;
-use Traversable;
 use const SORT_NUMERIC;
 
 /**
@@ -1096,9 +1095,9 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * losing any possible transformations. This is used mainly to remove empty
      * IteratorIterator wrappers that can only slowdown the iteration process.
      *
-     * @return \Traversable
+     * @return \Iterator
      */
-    public function unwrap(): Traversable;
+    public function unwrap(): Iterator;
 
     /**
      * Transpose rows and columns into columns and rows

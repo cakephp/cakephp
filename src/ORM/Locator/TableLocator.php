@@ -49,6 +49,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Instances that belong to the registry.
      *
      * @var array<string, \Cake\ORM\Table>
+     * @psalm-suppress NonInvariantDocblockPropertyType
      */
     protected array $instances = [];
 

@@ -199,7 +199,7 @@ class SelectBoxWidget extends BasicWidget
      * @param string $label The optgroup label text
      * @param \ArrayAccess|array $optgroup The opt group data.
      * @param array|null $disabled The options to disable.
-     * @param array|string|bool|null $selected The options to select.
+     * @param array|string|int|bool|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
@@ -208,7 +208,7 @@ class SelectBoxWidget extends BasicWidget
         string $label,
         ArrayAccess|array $optgroup,
         ?array $disabled,
-        array|string|bool|null $selected,
+        array|string|int|bool|null $selected,
         array $templateVars,
         bool $escape
     ): string {
@@ -236,7 +236,7 @@ class SelectBoxWidget extends BasicWidget
      *
      * @param iterable $options The options to render.
      * @param array<string>|null $disabled The options to disable.
-     * @param array|string|null $selected The options to select.
+     * @param array|string|int|bool|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
      * @return array<string> Option elements.

@@ -19,7 +19,7 @@ namespace Cake\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
-use Traversable;
+use Iterator;
 
 /**
  * Creates an iterator from another iterator that extract the requested column
@@ -78,7 +78,7 @@ class ExtractIterator extends Collection
     /**
      * @inheritDoc
      */
-    public function unwrap(): Traversable
+    public function unwrap(): Iterator
     {
         $iterator = $this->getInnerIterator();
 
