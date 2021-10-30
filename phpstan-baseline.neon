@@ -61,11 +61,6 @@ parameters:
 			path: src/Collection/Iterator/TreePrinter.php
 
 		-
-			message: "#^Method Cake\\\\Collection\\\\Iterator\\\\ZipIterator\\:\\:toArray\\(\\) should return array but returns array\\<array, array\\>\\.$#"
-			count: 1
-			path: src/Collection/Iterator/ZipIterator.php
-
-		-
 			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
 			count: 2
 			path: src/Collection/Iterator/ZipIterator.php

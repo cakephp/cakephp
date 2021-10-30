@@ -20,7 +20,6 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use MultipleIterator;
-use ReturnTypeWillChange;
 
 /**
  * Creates an iterator that returns elements grouped in pairs
@@ -44,9 +43,14 @@ use ReturnTypeWillChange;
  *  $iterator->toList(); // Returns [4, 6]
  * ```
  */
-class ZipIterator extends MultipleIterator implements CollectionInterface
+class ZipIterator implements CollectionInterface
 {
     use CollectionTrait;
+
+    /**
+     * @var \MultipleIterator
+     */
+    protected $multipleIterator;
 
     /**
      * The function to use for zipping items together
@@ -71,16 +75,16 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
      */
     public function __construct(array $sets, ?callable $callable = null)
     {
-        $sets = array_map(function ($items) {
-            return (new Collection($items))->unwrap();
-        }, $sets);
+        $this->multipleIterator = new MultipleIterator(
+            MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC
+        );
 
         $this->_callback = $callable;
-        parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
 
         foreach ($sets as $set) {
-            $this->_iterators[] = $set;
-            $this->attachIterator($set);
+            $iterator = (new Collection($set))->unwrap();
+            $this->_iterators[] = $iterator;
+            $this->multipleIterator->attachIterator($iterator);
         }
     }
 
@@ -88,16 +92,56 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
      * Returns the value resulting out of zipping all the elements for all the
      * iterators with the same positional index.
      *
-     * @return array
+     * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
-        if ($this->_callback === null) {
-            return parent::current();
+        $current = $this->multipleIterator->current();
+        if ($this->_callback) {
+            return call_user_func_array($this->_callback, $current);
         }
 
-        return call_user_func_array($this->_callback, parent::current());
+        return $current;
+    }
+
+    /**
+     * Implements Iterator::key().
+     *
+     * @return mixed
+     */
+    public function key(): mixed
+    {
+        return $this->multipleIterator->key();
+    }
+
+    /**
+     * Implements Iterator::next().
+     *
+     * @return void
+     */
+    public function next(): void
+    {
+        $this->multipleIterator->next();
+    }
+
+    /**
+     * Implements Iterator::rewind().
+     *
+     * @return void
+     */
+    public function rewind(): void
+    {
+        $this->multipleIterator->rewind();
+    }
+
+    /**
+     * Implements Iterator::valid().
+     *
+     * @return bool
+     */
+    public function valid(): bool
+    {
+        return $this->multipleIterator->valid();
     }
 
     /**
@@ -118,11 +162,13 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
      */
     public function __unserialize(array $data): void
     {
-        parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
+        $this->multipleIterator = new MultipleIterator(
+            MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC
+        );
 
         $this->_iterators = $data;
         foreach ($this->_iterators as $it) {
-            $this->attachIterator($it);
+            $this->multipleIterator->attachIterator($it);
         }
     }
 }
