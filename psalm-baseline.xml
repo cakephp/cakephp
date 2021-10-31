@@ -35,14 +35,6 @@
       <code>$values</code>
     </MissingParamType>
   </file>
-  <file src="src/Collection/Iterator/ZipIterator.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$set</code>
-    </ArgumentTypeCoercion>
-    <UndefinedAttributeClass occurrences="1">
-      <code>ReturnTypeWillChange</code>
-    </UndefinedAttributeClass>
-  </file>
   <file src="src/Controller/ControllerFactory.php">
     <ArgumentTypeCoercion occurrences="3">
       <code>$request</code>
