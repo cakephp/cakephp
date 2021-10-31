@@ -18,7 +18,7 @@ namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
 use DateTimeInterface;
-use Traversable;
+use Iterator;
 use const SORT_DESC;
 use const SORT_NUMERIC;
 
@@ -92,9 +92,9 @@ class SortIterator extends Collection
     /**
      * {@inheritDoc}
      *
-     * @return \Traversable
+     * @return \Iterator
      */
-    public function unwrap(): Traversable
+    public function unwrap(): Iterator
     {
         return $this->getInnerIterator();
     }

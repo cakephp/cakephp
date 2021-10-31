@@ -171,6 +171,7 @@ class Cookie implements CookieInterface
         }
 
         if ($expiresAt) {
+            /** @psalm-suppress UndefinedInterfaceMethod */
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         } else {
             $expiresAt = static::$defaults['expires'];
@@ -424,13 +425,14 @@ class Cookie implements CookieInterface
             return $this->_flatten($this->value);
         }
 
+        /** @var string */
         return $this->value;
     }
 
     /**
      * @inheritDoc
      */
-    public function withValue($value): static
+    public function withValue(array|string|float|int|bool $value): static
     {
         $new = clone $this;
         $new->_setValue($value);
@@ -529,9 +531,10 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withExpiry($dateTime): static
+    public function withExpiry(DateTimeInterface $dateTime): static
     {
         $new = clone $this;
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $new->expiresAt = $dateTime->setTimezone(new DateTimeZone('GMT'));
 
         return $new;
@@ -572,7 +575,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function isExpired($time = null): bool
+    public function isExpired(?DateTimeInterface $time = null): bool
     {
         $time = $time ?: new DateTimeImmutable('now', new DateTimeZone('UTC'));
         if (!$this->expiresAt) {

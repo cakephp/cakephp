@@ -43,11 +43,6 @@
       <code>ReturnTypeWillChange</code>
     </UndefinedAttributeClass>
   </file>
-  <file src="src/Controller/Controller.php">
-    <PropertyTypeCoercion occurrences="1">
-      <code>$result</code>
-    </PropertyTypeCoercion>
-  </file>
   <file src="src/Controller/ControllerFactory.php">
     <ArgumentTypeCoercion occurrences="3">
       <code>$request</code>
@@ -69,50 +64,6 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Http/Cookie/Cookie.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;value</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>string</code>
-    </InvalidReturnType>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>setTimezone</code>
-      <code>setTimezone</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="src/Http/ServerRequest.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;data</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/I18n/DateFormatTrait.php">
-    <MissingParamType occurrences="1">
-      <code>$format</code>
-    </MissingParamType>
-  </file>
-  <file src="src/I18n/functions.php">
-    <InternalMethod occurrences="8">
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-    </InternalMethod>
-  </file>
-  <file src="src/ORM/Association.php">
-    <MismatchingDocblockParamType occurrences="1">
-      <code>\Cake\Database\ExpressionInterface|\Closure|array|string|null</code>
-    </MismatchingDocblockParamType>
-  </file>
-  <file src="src/ORM/Locator/TableLocator.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$instances</code>
-    </NonInvariantDocblockPropertyType>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -187,10 +138,5 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$options</code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="src/View/Widget/SelectBoxWidget.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$selected</code>
-    </InvalidScalarArgument>
   </file>
 </files>

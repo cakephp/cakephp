@@ -852,7 +852,7 @@ abstract class Association
      * @see \Cake\ORM\Table::exists()
      * @return bool
      */
-    public function exists(ExpressionInterface|Closure|array $conditions): bool
+    public function exists(ExpressionInterface|Closure|array|string|null $conditions): bool
     {
         $conditions = $this->find()
             ->where($conditions)

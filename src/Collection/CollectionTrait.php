@@ -32,6 +32,7 @@ use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
 use InvalidArgumentException;
+use Iterator;
 use LimitIterator;
 use LogicException;
 use OuterIterator;
@@ -894,7 +895,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function unwrap(): Traversable
+    public function unwrap(): Iterator
     {
         $iterator = $this;
         while (
