@@ -21,6 +21,11 @@ parameters:
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
+			message: "#^Property Cake\\\\Cache\\\\Engine\\\\MemcachedEngine\\:\\:\\$_Memcached \\(Memcached\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: src/Cache/Engine/MemcachedEngine.php
+
+		-
 			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
 			count: 2
 			path: src/Collection/Collection.php
@@ -136,7 +141,22 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
+			message: "#^Dead catch \\- Cake\\\\Console\\\\Exception\\\\StopException is never thrown in the try block\\.$#"
+			count: 1
+			path: src/Console/ShellDispatcher.php
+
+		-
+			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$request \\(Cake\\\\Http\\\\ServerRequest\\) on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
 			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) on left side of \\?\\? is not nullable\\.$#"
 			count: 1
 			path: src/Controller/Controller.php
 
@@ -221,17 +241,37 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
+			message: "#^PHPDoc type array\\<string\\|null\\> of property Cake\\\\Database\\\\Expression\\\\TupleComparison\\:\\:\\$_type is not covariant with PHPDoc type string\\|null of overridden property Cake\\\\Database\\\\Expression\\\\ComparisonExpression\\:\\:\\$_type\\.$#"
+			count: 1
+			path: src/Database/Expression/TupleComparison.php
+
+		-
 			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
 			count: 1
 			path: src/Database/Log/LoggingStatement.php
 
 		-
-			message: "#^Cannot unset offset 'args' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
+			message: "#^PHPDoc type PDOStatement of property Cake\\\\Database\\\\Statement\\\\PDOStatement\\:\\:\\$_statement is not covariant with PHPDoc type Cake\\\\Database\\\\StatementInterface of overridden property Cake\\\\Database\\\\Statement\\\\StatementDecorator\\:\\:\\$_statement\\.$#"
+			count: 1
+			path: src/Database/Statement/PDOStatement.php
+
+		-
+			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: src/Database/Statement/PDOStatement.php
+
+		-
+			message: "#^Static property Cake\\\\Datasource\\\\ConnectionManager\\:\\:\\$_registry \\(Cake\\\\Datasource\\\\ConnectionRegistry\\) in isset\\(\\) is not nullable\\.$#"
+			count: 2
+			path: src/Datasource/ConnectionManager.php
+
+		-
+			message: "#^Cannot unset offset 'args' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
 			count: 1
 			path: src/Error/Debugger.php
 
 		-
-			message: "#^Cannot unset offset 'object' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
+			message: "#^Cannot unset offset 'object' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
 			count: 1
 			path: src/Error/Debugger.php
 
@@ -261,12 +301,12 @@ parameters:
 			path: src/Http/Client.php
 
 		-
-			message: "#^Parameter \\$ch of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:exec\\(\\) has invalid typehint type CurlHandle\\.$#"
+			message: "#^Parameter \\$ch of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:exec\\(\\) has invalid type CurlHandle\\.$#"
 			count: 1
 			path: src/Http/Client/Adapter/Curl.php
 
 		-
-			message: "#^Parameter \\$handle of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:createResponse\\(\\) has invalid typehint type CurlHandle\\.$#"
+			message: "#^Parameter \\$handle of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:createResponse\\(\\) has invalid type CurlHandle\\.$#"
 			count: 1
 			path: src/Http/Client/Adapter/Curl.php
 
@@ -349,6 +389,11 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Time.php
+
+		-
+			message: "#^Static property Cake\\\\Log\\\\Log\\:\\:\\$_registry \\(Cake\\\\Log\\\\LogEngineRegistry\\) in isset\\(\\) is not nullable\\.$#"
+			count: 3
+			path: src/Log/Log.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -471,6 +516,11 @@ parameters:
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
+			message: "#^Property Cake\\\\TestSuite\\\\Fixture\\\\TestFixture\\:\\:\\$_schema \\(Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface&Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\) in isset\\(\\) is not nullable\\.$#"
+			count: 2
+			path: src/TestSuite/Fixture/TestFixture.php
+
+		-
 			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
@@ -494,6 +544,41 @@ parameters:
 			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_viewName \\(string\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Offset 0 does not exist on array\\<string, mixed\\>\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Offset 1 does not exist on array\\<string, mixed\\>\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Offset 2 does not exist on array\\<string, mixed\\>\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Unsafe access to private property Cake\\\\TestSuite\\\\TestEmailTransport\\:\\:\\$messages through static\\:\\:\\.$#"
+			count: 3
+			path: src/TestSuite/TestEmailTransport.php
+
+		-
+			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
+			count: 1
+			path: src/View/Cell.php
+
+		-
+			message: "#^Property Cake\\\\View\\\\Cell\\:\\:\\$request \\(Cake\\\\Http\\\\ServerRequest\\) on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/View/Cell.php
+
+		-
+			message: "#^Property Cake\\\\View\\\\Cell\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/View/Cell.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

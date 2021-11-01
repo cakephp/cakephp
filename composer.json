@@ -111,7 +111,7 @@
             "@psalm"
         ],
         "stan-tests": "phpstan.phar analyze -c tests/phpstan.neon",
-        "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:0.12.99 psalm/phar:~4.11.0 && mv composer.backup composer.json",
+        "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:~1.0.0 psalm/phar:~4.11.0 && mv composer.backup composer.json",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml"
     },

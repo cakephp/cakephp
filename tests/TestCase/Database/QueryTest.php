@@ -1874,18 +1874,16 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $query = new Query($this->connection);
-        $this->deprecated(function () use ($query) {
-            $query->select(['id'])
-                ->from('articles')
-                ->orderAsc(function (QueryExpression $exp, Query $query) {
-                    return $exp->addCase(
-                        [$query->newExpr()->add(['author_id' => 1])],
-                        [1, $query->identifier('id')],
-                        ['integer', null]
-                    );
-                })
-                ->orderAsc('id');
-        });
+        $query->select(['id'])
+            ->from('articles')
+            ->orderAsc(function (QueryExpression $exp, Query $query) {
+                return $exp
+                    ->case()
+                    ->when(['author_id' => 1])
+                    ->then(1)
+                    ->else($query->identifier('id'));
+            })
+            ->orderAsc('id');
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1895,7 +1893,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
         $this->assertQuotedQuery(
-            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END ASC, <id> ASC',
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :c1 ELSE <id> END ASC, <id> ASC',
             $sql,
             !$this->autoQuote
         );
@@ -1938,18 +1936,16 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $query = new Query($this->connection);
-        $this->deprecated(function () use ($query) {
-            $query->select(['id'])
-                ->from('articles')
-                ->orderDesc(function (QueryExpression $exp, Query $query) {
-                    return $exp->addCase(
-                        [$query->newExpr()->add(['author_id' => 1])],
-                        [1, $query->identifier('id')],
-                        ['integer', null]
-                    );
-                })
-                ->orderDesc('id');
-        });
+        $query->select(['id'])
+            ->from('articles')
+            ->orderDesc(function (QueryExpression $exp, Query $query) {
+                return $exp
+                    ->case()
+                    ->when(['author_id' => 1])
+                    ->then(1)
+                    ->else($query->identifier('id'));
+            })
+            ->orderDesc('id');
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1959,7 +1955,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
         $this->assertQuotedQuery(
-            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END DESC, <id> DESC',
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :c1 ELSE <id> END DESC, <id> DESC',
             $sql,
             !$this->autoQuote
         );
@@ -4120,6 +4116,8 @@ class QueryTest extends TestCase
 
     /**
      * Tests that case statements work correctly for various use-cases.
+     *
+     * @deprecated
      */
     public function testSqlCaseStatement(): void
     {
@@ -4208,6 +4206,27 @@ class QueryTest extends TestCase
         $this->assertSame('Published', $results[2]['status']);
         $this->assertSame('Not published', $results[3]['status']);
         $this->assertSame('None', $results[6]['status']);
+
+        $query = new Query($this->connection);
+        $this->deprecated(function () use ($query) {
+            $query->select(['id'])
+                ->from('articles')
+                ->orderAsc(function (QueryExpression $exp, Query $query) {
+                    return $exp->addCase(
+                        [$query->newExpr()->add(['author_id' => 1])],
+                        [1, $query->identifier('id')],
+                        ['integer', null]
+                    );
+                })
+                ->orderAsc('id');
+        });
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 1],
+            ['id' => 3],
+            ['id' => 2],
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -5102,20 +5121,14 @@ class QueryTest extends TestCase
         $stmt->closeCursor();
 
         $subquery = new Query($connection);
-        $this->deprecated(function () use ($subquery) {
-            $subquery
-                ->select(
-                    $subquery->newExpr()->addCase(
-                        [$subquery->newExpr()->add(['a.published' => 'N'])],
-                        [1, 0],
-                        ['integer', 'integer']
-                    )
-                )
-                ->from(['a' => 'articles'])
-                ->where([
-                    'a.id = articles.id',
-                ]);
-        });
+        $subquery
+            ->select(
+                $subquery->newExpr()->case()->when(['a.published' => 'N'])->then(1)->else(0)
+            )
+            ->from(['a' => 'articles'])
+            ->where([
+                'a.id = articles.id',
+            ]);
 
         $query
             ->select(['id'])
@@ -5128,7 +5141,7 @@ class QueryTest extends TestCase
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY \(' .
-                'SELECT \(CASE WHEN <a>\.<published> = \:c0 THEN \:param1 ELSE \:param2 END\) ' .
+                'SELECT \(CASE WHEN <a>\.<published> = \:c0 THEN \:c1 ELSE \:c2 END\) ' .
                 'FROM <articles> <a> ' .
                 'WHERE a\.id = articles\.id' .
             '\) DESC, <id> ASC',
