@@ -168,11 +168,6 @@ class Stream implements AdapterInterface
     protected function _buildContent(RequestInterface $request, array $options): void
     {
         $body = $request->getBody();
-        if (empty($body)) {
-            $this->_contextOptions['content'] = '';
-
-            return;
-        }
         $body->rewind();
         $this->_contextOptions['content'] = $body->getContents();
     }

@@ -267,7 +267,8 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     public function create(ConnectionInterface $connection): bool
     {
-        if (empty($this->_schema)) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->_schema)) {
             return false;
         }
 
@@ -303,7 +304,8 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      */
     public function drop(ConnectionInterface $connection): bool
     {
-        if (empty($this->_schema)) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->_schema)) {
             return false;
         }
 
