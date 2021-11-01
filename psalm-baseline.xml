@@ -126,9 +126,4 @@
       <code>addTestFile</code>
     </InternalMethod>
   </file>
-  <file src="src/View/View.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$options</code>
-    </ArgumentTypeCoercion>
-  </file>
 </files>

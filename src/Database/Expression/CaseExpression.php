@@ -24,7 +24,7 @@ use Closure;
 /**
  * This class represents a SQL Case statement
  *
- * @deprecated 4.3.0 Use CaseStatementExpression instead or Query::case()
+ * @deprecated 4.3.0 Use QueryExpression::case() or CaseStatementExpression instead
  */
 class CaseExpression implements ExpressionInterface
 {

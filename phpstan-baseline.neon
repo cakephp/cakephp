@@ -131,12 +131,12 @@ parameters:
 			path: src/Core/ObjectRegistry.php
 
 		-
-			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\.$#"
+			message: "#^PHPDoc tag @return with type TObject is not subtype of native type object\\.$#"
 			count: 3
 			path: src/Core/ObjectRegistry.php
 
 		-
-			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\|null\\.$#"
+			message: "#^PHPDoc tag @return with type TObject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Core/ObjectRegistry.php
 
@@ -151,12 +151,22 @@ parameters:
 			path: src/Database/Log/LoggingStatement.php
 
 		-
-			message: "#^Cannot unset offset 'args' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
+			message: "#^PHPDoc type PDOStatement of property Cake\\\\Database\\\\Statement\\\\PDOStatement\\:\\:\\$_statement is not covariant with PHPDoc type Cake\\\\Database\\\\StatementInterface of overridden property Cake\\\\Database\\\\Statement\\\\StatementDecorator\\:\\:\\$_statement\\.$#"
+			count: 1
+			path: src/Database/Statement/PDOStatement.php
+
+		-
+			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/Database/Statement/PDOStatement.php
+
+		-
+			message: "#^Cannot unset offset 'args' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
 			count: 1
 			path: src/Error/Debugger.php
 
 		-
-			message: "#^Cannot unset offset 'object' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
+			message: "#^Cannot unset offset 'object' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
 			count: 1
 			path: src/Error/Debugger.php
 
@@ -166,7 +176,7 @@ parameters:
 			path: src/Event/Event.php
 
 		-
-			message: "#^PHPDoc tag @return with type mixed is not subtype of native type object\\.$#"
+			message: "#^PHPDoc tag @return with type TSubject is not subtype of native type object\\.$#"
 			count: 1
 			path: src/Event/Event.php
 
@@ -301,6 +311,11 @@ parameters:
 			path: src/ORM/Table.php
 
 		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: src/ORM/Table.php
+
+		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:parseRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Routing/Middleware/RoutingMiddleware.php
@@ -314,6 +329,31 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Routing/RouteBuilder.php
+
+		-
+			message: "#^Offset 0 does not exist on array\\<string, mixed\\>\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Offset 1 does not exist on array\\<string, mixed\\>\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Offset 2 does not exist on array\\<string, mixed\\>\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Unsafe access to private property Cake\\\\TestSuite\\\\TestEmailTransport\\:\\:\\$messages through static\\:\\:\\.$#"
+			count: 3
+			path: src/TestSuite/TestEmailTransport.php
+
+		-
+			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
+			count: 1
+			path: src/View/Cell.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

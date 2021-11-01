@@ -196,7 +196,8 @@ class ConnectionManager
         if (empty(static::$_config[$name])) {
             throw new MissingDatasourceConfigException(['name' => $name]);
         }
-        if (static::$_registry === null) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset(static::$_registry)) {
             static::$_registry = new ConnectionRegistry();
         }
 

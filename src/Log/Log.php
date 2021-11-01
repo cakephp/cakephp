@@ -179,7 +179,8 @@ class Log
      */
     protected static function getRegistry(): LogEngineRegistry
     {
-        if (static::$_registry === null) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset(static::$_registry)) {
             static::$_registry = new LogEngineRegistry();
         }
 
@@ -210,7 +211,8 @@ class Log
      */
     public static function reset(): void
     {
-        if (static::$_registry) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (isset(static::$_registry)) {
             static::$_registry->reset();
         }
         static::$_config = [];

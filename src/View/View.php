@@ -604,12 +604,17 @@ class View implements EventDispatcherInterface
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
+     * @psalm-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
      */
     public function element(string $name, array $data = [], array $options = []): string
     {
-        $options += ['callbacks' => false, 'cache' => null, 'plugin' => null];
+        $options += ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
         if (isset($options['cache'])) {
-            $options['cache'] = $this->_elementCache($name, $data, $options);
+            $options['cache'] = $this->_elementCache(
+                $name,
+                $data,
+                array_diff_key($options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
+            );
         }
 
         $pluginCheck = $options['plugin'] !== false;
@@ -623,13 +628,13 @@ class View implements EventDispatcherInterface
             return $this->_renderElement($file, $data, $options);
         }
 
-        if (empty($options['ignoreMissing'])) {
-            [$plugin, $elementName] = $this->pluginSplit($name, $pluginCheck);
-            $paths = iterator_to_array($this->getElementPaths($plugin));
-            throw new MissingElementException([$name . $this->_ext, $elementName . $this->_ext], $paths);
+        if ($options['ignoreMissing']) {
+            return '';
         }
 
-        return '';
+        [$plugin, $elementName] = $this->pluginSplit($name, $pluginCheck);
+        $paths = iterator_to_array($this->getElementPaths($plugin));
+        throw new MissingElementException([$name . $this->_ext, $elementName . $this->_ext], $paths);
     }
 
     /**
@@ -1573,12 +1578,12 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array<string, mixed> $options Element options
      * @return array Element Cache configuration.
-     * @psalm-param array{cache:(array{key:string, config:string}|string|null), callbacks:mixed, plugin:mixed} $options
      * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
     {
         if (isset($options['cache']['key'], $options['cache']['config'])) {
+            /** @psalm-var array{key:string, config:string}*/
             $cache = $options['cache'];
             $cache['key'] = 'element_' . $cache['key'];
 
@@ -1594,7 +1599,7 @@ class View implements EventDispatcherInterface
         $elementKey = str_replace(['\\', '/'], '_', $name);
 
         $cache = $options['cache'];
-        unset($options['cache'], $options['callbacks'], $options['plugin']);
+        unset($options['cache']);
         $keys = array_merge(
             [$pluginKey, $elementKey],
             array_keys($options),
