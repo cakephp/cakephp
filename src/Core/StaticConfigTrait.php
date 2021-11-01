@@ -155,7 +155,6 @@ trait StaticConfigTrait
         if (!isset(static::$_config[$config])) {
             return false;
         }
-        /** @psalm-suppress RedundantPropertyInitializationCheck */
         if (isset(static::$_registry)) {
             static::$_registry->unload($config);
         }
