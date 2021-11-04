@@ -102,15 +102,14 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-(new DatabasesFactory())
-    ->setDsn(getenv('pf_dsn'))
-    ->setUsername(getenv('pf_user'))
-    ->setPassword(getenv('pf_pass'))
-    ->createDatabase('cakephp');
-
 $testDbUrl = getenv('db_dsn');
 
 if (getenv('TEST_TOKEN') !== false) { // Using paratest
+    (new DatabasesFactory())
+        ->setDsn(getenv('pf_dsn'))
+        ->setUsername(getenv('pf_user'))
+        ->setPassword(getenv('pf_pass'))
+        ->createDatabase('cakephp');
     $databaseName = 'cakephp' . getenv('TEST_TOKEN');
     $testDbUrl = str_replace('cakephp', $databaseName, $testDbUrl);
 }
