@@ -114,7 +114,7 @@ jobs:
         fi
 
         if [[ ${{ matrix.db-type }} == 'mysql' ]]; then
-          export pf_dsn='mysql:dbname=pf_test;host=127.0.0.1'
+          export pf_dsn='mysql:dbname=cakephp;host=127.0.0.1'
           export pf_user='root'
           export pf_pass='root'
           set -m
