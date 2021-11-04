@@ -11,6 +11,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Bancer\ParatestDatabasesFactory\DatabasesFactory;
 use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Chronos\Date;
@@ -101,8 +102,21 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-ConnectionManager::setConfig('test', ['url' => getenv('db_dsn')]);
-ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('db_dsn')]);
+(new DatabasesFactory())
+    ->setDsn(getenv('pf_dsn'))
+    ->setUsername(getenv('pf_user'))
+    ->setPassword(getenv('pf_pass'))
+    ->createDatabase('cakephp');
+
+$testDbUrl = getenv('db_dsn');
+
+if (getenv('TEST_TOKEN') !== false) { // Using paratest
+    $databaseName = 'cakephp' . getenv('TEST_TOKEN');
+    $testDbUrl = str_replace('cakephp', $databaseName, $testDbUrl);
+}
+
+ConnectionManager::setConfig('test', ['url' => $testDbUrl]);
+ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => $testDbUrl]);
 
 Configure::write('Session', [
     'defaults' => 'php',

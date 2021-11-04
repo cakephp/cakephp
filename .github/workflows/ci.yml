@@ -113,6 +113,15 @@ jobs:
           vendor/bin/phpunit
         fi
 
+        if [[ ${{ matrix.db-type }} == 'mysql' ]]; then
+          export pf_dsn='mysql:dbname=pf_test;host=127.0.0.1'
+          export pf_user='root'
+          export pf_pass='root'
+          set -m
+          TEST_TOKEN=1 vendor/bin/phpunit --testsuite cakephp &> /tmp/ci-1.out & TEST_TOKEN=2 vendor/bin/phpunit --testsuite database & fg
+          cat /tmp/ci-1.out
+        fi
+
     - name: Submit code coverage
       if: matrix.php-version == '7.4'
       uses: codecov/codecov-action@v1
