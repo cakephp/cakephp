@@ -109,9 +109,9 @@ if (getenv('TEST_TOKEN') !== false) { // Using paratest
         ->setDsn(getenv('pf_dsn'))
         ->setUsername(getenv('pf_user'))
         ->setPassword(getenv('pf_pass'))
-        ->createDatabase('cakephp');
-    $databaseName = 'cakephp' . getenv('TEST_TOKEN');
-    $testDbUrl = str_replace('cakephp', $databaseName, $testDbUrl);
+        ->createDatabase(getenv('pf_test'));
+    $databaseName = getenv('pf_test') . getenv('TEST_TOKEN');
+    $testDbUrl = str_replace(getenv('pf_test'), $databaseName, $testDbUrl);
 }
 
 ConnectionManager::setConfig('test', ['url' => $testDbUrl]);
