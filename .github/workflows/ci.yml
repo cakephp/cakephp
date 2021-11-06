@@ -138,7 +138,7 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'pgsql' || ${{ matrix.db-type }} == 'mysql' ]]; then
           export pf_test='cakephp'
           set -m
-          TEST_TOKEN=1 vendor/bin/phpunit --testsuite cakephp &> /tmp/ci-1.out & TEST_TOKEN=2 vendor/bin/phpunit --testsuite database & fg
+          TEST_TOKEN=1 vendor/bin/phpunit --testsuite cakephp &> /tmp/ci-1.out & TEST_TOKEN=2 vendor/bin/phpunit --testsuite database --debug & fg
           cat /tmp/ci-1.out
           grep "OK, but incomplete, skipped, or risky tests" /tmp/ci-1.out
         fi
