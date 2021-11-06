@@ -130,7 +130,7 @@ jobs:
           export pf_pass='root'
         fi
 
-        if [[ ${{ matrix.db-type }} == 'pgsql' || ${{ matrix.db-type }} == 'mysql']]; then
+        if [[ ${{ matrix.db-type }} == 'pgsql' || ${{ matrix.db-type }} == 'mysql' ]]; then
           export pf_test='cakephp'
           set -m
           TEST_TOKEN=1 vendor/bin/phpunit --testsuite cakephp &> /tmp/ci-1.out & TEST_TOKEN=2 vendor/bin/phpunit --testsuite database & fg
