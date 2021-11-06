@@ -82,6 +82,10 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
 
         if ($this->config['redirect'] && $request->getMethod() === 'GET') {
             $uri = $request->getUri()->withScheme('https');
+            $base = $request->getAttribute('base');
+            if ($base) {
+                $uri = $uri->withPath($base . $uri->getPath());
+            }
 
             return new RedirectResponse(
                 $uri,
