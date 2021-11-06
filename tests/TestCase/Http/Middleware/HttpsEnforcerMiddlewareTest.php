@@ -95,6 +95,26 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         );
     }
 
+    public function testRedirectBasePath(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/articles',
+            'base' => '/base',
+            'method' => 'GET',
+        ]);
+
+        $handler = new TestRequestHandler(function () {
+            return new Response();
+        });
+
+        $middleware = new HttpsEnforcerMiddleware();
+
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertSame(301, $result->getStatusCode());
+        $this->assertEquals(['location' => ['https://localhost/base/articles']], $result->getHeaders());
+    }
+
     /**
      * Test that exception is thrown when redirect is disabled.
      */
