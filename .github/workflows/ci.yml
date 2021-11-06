@@ -124,7 +124,7 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export db_dsn='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then
-          export pf_dsn='postgres:dbname=cakephp;host=127.0.0.1'
+          export pf_dsn='pgsql:dbname=cakephp;host=127.0.0.1'
           export pf_user='postgres'
           export pf_pass='postgres'
         fi
