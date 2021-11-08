@@ -210,6 +210,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $plugin = $this->request->getParam('plugin');
             $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
             $this->_setModelClass($modelClass);
+
+            $this->defaultTable = $modelClass;
         }
 
         if ($components !== null) {
