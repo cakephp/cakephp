@@ -374,7 +374,7 @@ class TreeBehaviorTest extends TestCase
 
         // top level, won't move
         $node = $this->table->moveUp($table->get(1), 10);
-        $this->assertEquals(false, $node);
+        $this->assertFalse($node);
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
@@ -427,7 +427,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $node = $table->moveUp($table->get(5), 1);
-        $this->assertEquals(false, $node);
+        $this->assertFalse($node);
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
@@ -496,7 +496,7 @@ class TreeBehaviorTest extends TestCase
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         // latest node, won't move
         $node = $table->moveDown($table->get(8), 10);
-        $this->assertEquals(false, $node);
+        $this->assertFalse($node);
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
@@ -548,7 +548,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $node = $table->moveDown($table->get(5), 1);
-        $this->assertEquals(false, $node);
+        $this->assertFalse($node);
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
