@@ -21,6 +21,7 @@ use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\MutableDate as ChronosMutableDate;
 use Cake\Database\Expression\CaseStatementExpression;
 use Cake\Database\Expression\ComparisonExpression;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WhenThenExpression;
@@ -218,6 +219,7 @@ class CaseStatementExpressionTest extends TestCase
             [ChronosDate::now(), 'date'],
             [Chronos::now(), 'datetime'],
             [new IdentifierExpression('Table.column'), null],
+            [new FunctionExpression('SUM', ['Table.column' => 'literal'], [], 'integer'), null],
             [new stdClass(), null],
             [null, null],
         ];
@@ -252,6 +254,7 @@ class CaseStatementExpressionTest extends TestCase
             [ChronosDate::now(), 'date'],
             [Chronos::now(), 'datetime'],
             [new IdentifierExpression('Table.column'), null],
+            [new FunctionExpression('SUM', ['Table.column' => 'literal'], [], 'integer'), null],
             [['Table.column' => true], null],
             [new stdClass(), null],
         ];
@@ -287,6 +290,7 @@ class CaseStatementExpressionTest extends TestCase
             [ChronosDate::now(), 'date'],
             [Chronos::now(), 'datetime'],
             [new IdentifierExpression('Table.column'), 'boolean'],
+            [new FunctionExpression('SUM', ['Table.column' => 'literal'], [], 'integer'), 'integer'],
             [new stdClass(), null],
             [null, null],
         ];
