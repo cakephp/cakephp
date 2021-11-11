@@ -212,12 +212,19 @@ class CaseStatementExpressionTest extends TestCase
     public function valueTypeInferenceDataProvider(): array
     {
         return [
+            // Values that should have their type inferred because
+            // they will be bound by the case expression.
             ['1', 'string'],
             [1, 'integer'],
             [1.0, 'float'],
             [true, 'boolean'],
             [ChronosDate::now(), 'date'],
             [Chronos::now(), 'datetime'],
+
+            // Values that should not have a type inferred, either
+            // because they are not bound by the case expression,
+            // and/or because their type is obtained differently
+            // (for example from a type map).
             [new IdentifierExpression('Table.column'), null],
             [new FunctionExpression('SUM', ['Table.column' => 'literal'], [], 'integer'), null],
             [new stdClass(), null],
@@ -247,12 +254,19 @@ class CaseStatementExpressionTest extends TestCase
     public function whenTypeInferenceDataProvider(): array
     {
         return [
+            // Values that should have their type inferred because
+            // they will be bound by the case expression.
             ['1', 'string'],
             [1, 'integer'],
             [1.0, 'float'],
             [true, 'boolean'],
             [ChronosDate::now(), 'date'],
             [Chronos::now(), 'datetime'],
+
+            // Values that should not have a type inferred, either
+            // because they are not bound by the case expression,
+            // and/or because their type is obtained differently
+            // (for example from a type map).
             [new IdentifierExpression('Table.column'), null],
             [new FunctionExpression('SUM', ['Table.column' => 'literal'], [], 'integer'), null],
             [['Table.column' => true], null],
@@ -283,6 +297,8 @@ class CaseStatementExpressionTest extends TestCase
     public function resultTypeInferenceDataProvider(): array
     {
         return [
+            // Unless a result type has been set manually, values
+            // should have their type inferred when possible.
             ['1', 'string'],
             [1, 'integer'],
             [1.0, 'float'],
