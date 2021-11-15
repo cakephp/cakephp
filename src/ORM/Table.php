@@ -1531,7 +1531,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($cacheConfig) {
             if (!$cacheKey) {
                 $cacheKey = sprintf(
-                    'get:%s.%s%s',
+                    'get-%s.%s%s',
                     $this->getConnection()->configName(),
                     $this->getTable(),
                     json_encode($primaryKey)
