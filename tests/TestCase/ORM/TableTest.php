@@ -5347,7 +5347,7 @@ class TableTest extends TestCase
         return [
             [
                 ['fields' => ['id'], 'cache' => 'default'],
-                'get:test.table_name[10]', 'default',
+                'get-test-table_name-[10]', 'default',
             ],
             [
                 ['fields' => ['id'], 'cache' => 'default', 'key' => 'custom_key'],
