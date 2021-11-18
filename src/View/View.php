@@ -360,7 +360,7 @@ class View implements EventDispatcherInterface
      * So this method allows you to manipulate them as required after view instance
      * is constructed.
      *
-     * Helpers be added using {@link addHelper()} method.
+     * Helpers can be added using {@link addHelper()} method.
      *
      * @return void
      */
