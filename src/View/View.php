@@ -369,15 +369,42 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Allows adding helpers from initialize() hook, overwriting any previously set ones.
+     * Allows setting helpers from initialize() hook, overwriting any previously set ones.
      *
      * @param string $helper
      * @param array<string, mixed> $config
      * @return void
      */
+    protected function setHelper(string $helper, array $config = []): void
+    {
+        [$plugin, $name] = pluginSplit($helper);
+        if ($plugin) {
+            $config = [
+                'class' => $helper,
+                'config' => $config,
+            ];
+        }
+
+        $this->helpers[$name] = $config;
+    }
+
+    /**
+     * Allows adding helpers from initialize() hook if no such helper was previously set.
+     *
+     * @param string $helper
+     * @param array<string, mixed> $config
+     * @return void
+     * @throws \RuntimeException When a duplicate is found.
+     */
     protected function addHelper(string $helper, array $config = []): void
     {
         [$plugin, $name] = pluginSplit($helper);
+        if (isset($this->helpers[$name])) {
+            $message = sprintf('The `%s` alias has already been added as helper. Use `setHelper()` instead.', $name);
+
+            throw new RuntimeException($message);
+        }
+
         if ($plugin) {
             $config = [
                 'class' => $helper,

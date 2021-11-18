@@ -989,7 +989,7 @@ class ViewTest extends TestCase
      */
     public function testRenderLoadHelper(): void
     {
-        $this->PostsController->viewBuilder()->setHelpers(['Form', 'Number']);
+        $this->PostsController->viewBuilder()->addHelpers(['Form', 'Number']);
         $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
 
@@ -1000,7 +1000,8 @@ class ViewTest extends TestCase
         // HtmlHelper is loaded in TestView::initialize()
         $this->assertEquals(['Form', 'Number', 'Html'], $attached);
 
-        $this->PostsController->viewBuilder()->addHelpers(
+        // We need to use setHelpers() to allow overwriting now
+        $this->PostsController->viewBuilder()->setHelpers(
             ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
         );
         $View = $this->PostsController->createView(TestView::class);
@@ -1010,7 +1011,7 @@ class ViewTest extends TestCase
         $this->assertSame('posts index', $result);
 
         $attached = $View->helpers()->loaded();
-        $expected = ['Form', 'Number', 'Html', 'PluggedHelper'];
+        $expected = ['Html', 'Form', 'Number', 'PluggedHelper'];
         $this->assertEquals($expected, $attached, 'Attached helpers are wrong.');
     }
 
