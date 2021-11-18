@@ -61,9 +61,9 @@ class CachedCollection implements CollectionInterface
     /**
      * @inheritDoc
      */
-    public function listTables(): array
+    public function listTables(array $options = []): array
     {
-        return $this->collection->listTables();
+        return $this->collection->listTables($options);
     }
 
     /**

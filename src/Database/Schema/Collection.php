@@ -58,9 +58,9 @@ class Collection implements CollectionInterface
      *
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTables(): array
+    public function listTables(array $options = []): array
     {
-        [$sql, $params] = $this->_dialect->listTablesSql($this->_connection->config());
+        [$sql, $params] = $this->_dialect->listTablesSql(array_merge($this->_connection->config(), $options));
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {
