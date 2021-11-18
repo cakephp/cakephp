@@ -440,4 +440,30 @@ class ViewBuilderTest extends TestCase
         $helpers = $builder->getHelpers();
         $this->assertSame(['foo' => 'bar'], $helpers['Text']);
     }
+
+    public function testAddHelperPluginOptions(): void
+    {
+        $builder = new ViewBuilder();
+        $builder->addHelper('Form', ['some' => 'config']);
+        $builder->addHelper('Text', ['foo' => 'bar']);
+
+        $builder->addHelper('MyPlugin.Form');
+        $builder->addHelper('MyPlugin.Text', ['foo' => 'other']);
+
+        $helpers = $builder->getHelpers();
+        $expected = [
+            'Form' => [
+                'class' => 'MyPlugin.Form',
+                'config' => [],
+            ],
+            'Text' => [
+                'class' => 'MyPlugin.Text',
+                'config' => [
+                    'foo' => 'other',
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, $helpers);
+    }
 }
