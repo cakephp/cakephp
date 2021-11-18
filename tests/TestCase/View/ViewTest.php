@@ -989,7 +989,7 @@ class ViewTest extends TestCase
      */
     public function testRenderLoadHelper(): void
     {
-        $this->PostsController->viewBuilder()->setHelpers(['Form', 'Number'], false);
+        $this->PostsController->viewBuilder()->setHelpers(['Form', 'Number']);
         $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
 

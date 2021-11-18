@@ -302,7 +302,7 @@ class MailerTest extends TestCase
         $this->assertInstanceOf(DebugTransport::class, $result);
 
         $result = $this->mailer->viewBuilder()->getHelpers();
-        $this->assertEquals($config['helpers'], $result);
+        $this->assertEquals(['Html' => [], 'Form' => []], $result);
 
         Mailer::drop('test');
     }
@@ -912,7 +912,7 @@ class MailerTest extends TestCase
         $this->mailer->viewBuilder()
             ->setTemplate('custom_helper')
             ->setLayout('default')
-            ->setHelpers(['Time'], false);
+            ->setHelpers(['Time']);
         $this->mailer->setViewVars(['time' => $timestamp]);
 
         $result = $this->mailer->send();
@@ -921,7 +921,7 @@ class MailerTest extends TestCase
         $this->assertStringContainsString('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 
         $result = $this->mailer->viewBuilder()->getHelpers();
-        $this->assertEquals(['Time'], $result);
+        $this->assertEquals(['Time' => []], $result);
     }
 
     /**

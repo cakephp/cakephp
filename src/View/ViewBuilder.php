@@ -343,7 +343,15 @@ class ViewBuilder implements JsonSerializable
      */
     public function setHelpers(array $helpers)
     {
-        $this->_helpers = $helpers;
+        $this->_helpers = [];
+
+        foreach ($helpers as $helper => $config) {
+            if (is_int($helper)) {
+                $helper = $config;
+                $config = [];
+            }
+            $this->addHelper($helper, $config);
+        }
 
         return $this;
     }

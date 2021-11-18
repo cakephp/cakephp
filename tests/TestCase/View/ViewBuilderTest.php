@@ -219,7 +219,7 @@ class ViewBuilderTest extends TestCase
             ->setTemplate('edit')
             ->setLayout('default')
             ->setTemplatePath('Articles/')
-            ->setHelpers(['Form', 'Html'], false)
+            ->setHelpers(['Form', 'Html'])
             ->setLayoutPath('Admin/')
             ->setTheme('TestTheme')
             ->setPlugin('TestPlugin')
@@ -289,7 +289,7 @@ class ViewBuilderTest extends TestCase
         $builder
             ->setTemplate('default')
             ->setLayout('test')
-            ->setHelpers(['Html'], false)
+            ->setHelpers(['Html'])
             ->setClassName('JsonView');
 
         $result = json_decode(json_encode($builder), true);
@@ -297,7 +297,7 @@ class ViewBuilderTest extends TestCase
         $expected = [
             '_template' => 'default',
             '_layout' => 'test',
-            '_helpers' => ['Html'],
+            '_helpers' => ['Html' => []],
             '_className' => 'JsonView',
             '_autoLayout' => true,
         ];
@@ -317,7 +317,7 @@ class ViewBuilderTest extends TestCase
         $builder
             ->setTemplate('default')
             ->setLayout('test')
-            ->setHelpers(['Html'], false)
+            ->setHelpers(['Html'])
             ->setClassName('JsonView');
 
         $result = json_encode($builder);
@@ -327,7 +327,7 @@ class ViewBuilderTest extends TestCase
 
         $this->assertSame('default', $builder->getTemplate());
         $this->assertSame('test', $builder->getLayout());
-        $this->assertEquals(['Html'], $builder->getHelpers());
+        $this->assertEquals(['Html' => []], $builder->getHelpers());
         $this->assertSame('JsonView', $builder->getClassName());
     }
 
