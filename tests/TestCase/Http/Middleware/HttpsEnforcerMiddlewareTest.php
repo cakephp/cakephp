@@ -25,6 +25,7 @@ use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\Uri;
 use TestApp\Http\TestRequestHandler;
+use UnexpectedValueException;
 
 /**
  * Test for HttpsEnforcerMiddleware
@@ -60,6 +61,57 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $result);
         $this->assertSame('success', (string)$result->getBody());
+    }
+
+    public function testHstsResponse(): void
+    {
+        $uri = new Uri('https://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri);
+
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'success']);
+        });
+
+        $middleware = new HttpsEnforcerMiddleware(['hsts' => ['maxAge' => 63072000]]);
+
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame('max-age=63072000', $result->getHeaderLine('strict-transport-security'));
+    }
+
+    public function testHstsResponseWithDirectives(): void
+    {
+        $uri = new Uri('https://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri);
+
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'success']);
+        });
+
+        $middleware = new HttpsEnforcerMiddleware(['hsts' => ['maxAge' => 63072000, 'includeSubDomains' => true, 'preload' => true]]);
+
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame('max-age=63072000; includeSubDomains; preload', $result->getHeaderLine('strict-transport-security'));
+    }
+
+    public function testHstsResponseInvalidConfig(): void
+    {
+        $uri = new Uri('https://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri);
+
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'success']);
+        });
+
+        $middleware = new HttpsEnforcerMiddleware(['hsts' => true]);
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('The `hsts` config must be an array.');
+        $middleware->process($request, $handler);
     }
 
     public function testRedirect(): void
