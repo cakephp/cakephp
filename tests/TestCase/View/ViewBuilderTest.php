@@ -219,7 +219,7 @@ class ViewBuilderTest extends TestCase
             ->setTemplate('edit')
             ->setLayout('default')
             ->setTemplatePath('Articles/')
-            ->setHelpers(['Form', 'Html'], false)
+            ->setHelpers(['Form', 'Html'])
             ->setLayoutPath('Admin/')
             ->setTheme('TestTheme')
             ->setPlugin('TestPlugin')

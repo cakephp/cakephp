@@ -292,7 +292,7 @@ class DebuggerTest extends TestCase
     public function testExportVar(): void
     {
         $Controller = new Controller();
-        $Controller->viewBuilder()->setHelpers(['Html', 'Form'], false);
+        $Controller->viewBuilder()->setHelpers(['Html', 'Form']);
         $View = $Controller->createView();
         $View->int = 2;
         $View->float = 1.333;
@@ -311,8 +311,12 @@ object(Cake\View\View) id:0 {
   [protected] plugin => null
   [protected] name => ''
   [protected] helpers => [
-    (int) 0 => 'Html',
-    (int) 1 => 'Form'
+    'Html' => [
+      '' => [maximum depth reached]
+    ],
+    'Form' => [
+      '' => [maximum depth reached]
+    ]
   ]
   [protected] templatePath => ''
   [protected] template => ''
