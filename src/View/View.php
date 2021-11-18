@@ -375,7 +375,8 @@ class View implements EventDispatcherInterface
      * @param array<string, mixed> $config
      * @return void
      */
-    protected function addHelper(string $helper, array $config = []): void {
+    protected function addHelper(string $helper, array $config = []): void
+    {
         [$plugin, $name] = pluginSplit($helper);
         if ($plugin) {
             $config = [
