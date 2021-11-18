@@ -22,6 +22,7 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingViewException;
 use Cake\View\ViewBuilder;
+use RuntimeException;
 
 /**
  * View builder test case.
@@ -193,7 +194,7 @@ class ViewBuilderTest extends TestCase
     {
         $builder = new ViewBuilder();
         $builder->addHelper('Form');
-        $builder->addHelpers(['Form' => ['config' => 'value']]);
+        $builder->setHelpers(['Form' => ['config' => 'value']]);
 
         $helpers = $builder->getHelpers();
         $expected = [
@@ -441,14 +442,28 @@ class ViewBuilderTest extends TestCase
         $this->assertSame(['foo' => 'bar'], $helpers['Text']);
     }
 
+    /**
+     * @return void
+     */
+    public function testAddHelperException(): void
+    {
+        $builder = new ViewBuilder();
+        $builder->addHelper('Form', ['some' => 'config']);
+        $builder->addHelper('Text', ['foo' => 'bar']);
+
+        $this->expectException(RuntimeException::class);
+
+        $builder->addHelper('MyPlugin.Form');
+    }
+
     public function testAddHelperPluginOptions(): void
     {
         $builder = new ViewBuilder();
         $builder->addHelper('Form', ['some' => 'config']);
         $builder->addHelper('Text', ['foo' => 'bar']);
 
-        $builder->addHelper('MyPlugin.Form');
-        $builder->addHelper('MyPlugin.Text', ['foo' => 'other']);
+        $builder->setHelper('MyPlugin.Form');
+        $builder->setHelper('MyPlugin.Text', ['foo' => 'other']);
 
         $helpers = $builder->getHelpers();
         $expected = [

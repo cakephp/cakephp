@@ -301,14 +301,44 @@ class ViewBuilder implements JsonSerializable
     }
 
     /**
-     * Adds a helper to use.
+     * Adds a helper to use if no such helper with this name already exists.
      *
      * @param string $helper Helper to use.
      * @param array<string, mixed> $options Options.
      * @return $this
+     * @throws \RuntimeException When a duplicate is found.
      * @since 4.1.0
      */
     public function addHelper(string $helper, array $options = [])
+    {
+        [$plugin, $name] = pluginSplit($helper);
+        if (isset($this->_helpers[$name])) {
+            $message = sprintf('The `%s` alias has already been added as helper. Use `setHelper()` instead.', $name);
+
+            throw new RuntimeException($message);
+        }
+
+        if ($plugin) {
+            $options = [
+                'class' => $helper,
+                'config' => $options,
+            ];
+        }
+
+        $this->_helpers[$name] = $options;
+
+        return $this;
+    }
+
+    /**
+     * Adds a helper to use, overwriting any existing one with that name.
+     *
+     * @param string $helper Helper to use.
+     * @param array<string, mixed> $options Options.
+     * @return $this
+     * @since 4.4.0
+     */
+    public function setHelper(string $helper, array $options = [])
     {
         [$plugin, $name] = pluginSplit($helper);
         if ($plugin) {
@@ -324,10 +354,11 @@ class ViewBuilder implements JsonSerializable
     }
 
     /**
-     * Adds helpers to use by merging with existing ones.
+     * Adds helpers to use if no helper with those names already exists.
      *
      * @param array $helpers Helpers to use.
      * @return $this
+     * @throws \RuntimeException When a duplicate is found.
      * @since 4.3.0
      */
     public function addHelpers(array $helpers)

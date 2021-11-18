@@ -1000,7 +1000,7 @@ class ViewTest extends TestCase
         // HtmlHelper is loaded in TestView::initialize()
         $this->assertEquals(['Html', 'Form', 'Number'], $attached);
 
-        $this->PostsController->viewBuilder()->addHelpers(
+        $this->PostsController->viewBuilder()->setHelpers(
             ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
         );
         $View = $this->PostsController->createView(TestView::class);
