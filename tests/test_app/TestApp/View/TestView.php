@@ -7,7 +7,7 @@ class TestView extends AppView
 {
     public function initialize(): void
     {
-        $this->loadHelper('Html', ['mykey' => 'myval']);
+        $this->addHelper('Html', ['mykey' => 'myval']);
     }
 
     /**

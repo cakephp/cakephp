@@ -360,10 +360,29 @@ class View implements EventDispatcherInterface
      * So this method allows you to manipulate them as required after view instance
      * is constructed.
      *
+     * Helpers can be added using {@link addHelper()} method.
+     *
      * @return void
      */
     public function initialize(): void
     {
+    }
+
+    /**
+     * Allows adding helpers from initialize() hook, overwriting any previously set ones with the same name.
+     *
+     * @param string $helper
+     * @param array<string, mixed> $config
+     * @return void
+     */
+    protected function addHelper(string $helper, array $config = []): void
+    {
+        [$plugin, $name] = pluginSplit($helper);
+        if ($plugin) {
+            $config['className'] = $helper;
+        }
+
+        $this->helpers[$name] = $config;
     }
 
     /**
