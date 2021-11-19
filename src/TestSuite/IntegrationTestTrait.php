@@ -271,6 +271,7 @@ trait IntegrationTestTrait
      *
      * You can call this method multiple times to append into
      * the current state.
+     * Sub-keys like 'headers' will be reset, though.
      *
      * @param array $data The request data to use.
      * @return void
