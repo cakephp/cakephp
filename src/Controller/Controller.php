@@ -18,12 +18,15 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
+use Cake\Datasource\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paginator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -40,7 +43,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use RuntimeException;
 use UnexpectedValueException;
 
 /**
@@ -124,15 +126,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected Response $response;
 
     /**
-     * Settings for pagination.
+     * Pagination settings.
      *
-     * Used to pre-configure pagination preferences for the various
-     * tables your controller will be paginating.
+     * When calling paginate() these settings will be merged with the configuration
+     * you provide. Possible keys:
      *
-     * @var array
-     * @see \Cake\Controller\Component\PaginatorComponent
+     * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
+     * - `limit` - The initial number of items per page. Defaults to 20.
+     * - `page` - The starting page, defaults to 1.
+     * - `allowedParameters` - A list of parameters users are allowed to set using request
+     *   parameters. Modifying this list will allow users to have more influence
+     *   over pagination, be careful with what you permit.
+     * - `paginator` - The paginator class to use. Defaults to `Cake\Datasource\Paginator::class`.
+     *
+     * @var array<string, mixed>
      */
-    public array $paginate = [];
+    protected array $paginate = [];
 
     /**
      * Set to true to automatically render the view
@@ -750,36 +759,44 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Query|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
-     * @param array<string, mixed> $settings The settings/configuration used for pagination.
+     * @param array<string, mixed> $settings The settings/configuration used for pagination. See {@link \Cake\Controller\Controller::$paginate}.
      * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
-     * @throws \RuntimeException When no compatible table object can be found.
+     * @throws \Cake\Http\Exception\NotFoundException When a page out of bounds is requested.
      */
     public function paginate(Table|Query|string|null $object = null, array $settings = []): ResultSet|ResultSetInterface
     {
-        if (is_object($object)) {
-            $table = $object;
-        }
-
         if (is_string($object) || $object === null) {
-            $try = [$object, $this->defaultTable];
-            foreach ($try as $tableName) {
-                if (empty($tableName)) {
-                    continue;
-                }
-                $table = $this->fetchTable($tableName);
-                break;
-            }
+            $object = $this->fetchTable($object);
         }
 
-        $this->loadComponent('Paginator');
-        if (empty($table)) {
-            throw new RuntimeException('Unable to locate an object compatible with paginate.');
-        }
         $settings += $this->paginate;
 
-        /** @psalm-suppress UndefinedThisPropertyFetch */
-        return $this->Paginator->paginate($table, $settings);
+        $paginator = $settings['paginator'] ?? Paginator::class;
+        unset($settings['paginator']);
+        if (is_string($paginator)) {
+            /** @var \Cake\Datasource\PaginatorInterface $paginator */
+            $paginator = new $paginator();
+        }
+
+        try {
+            $results = $paginator->paginate(
+                $object,
+                $this->request->getQueryParams(),
+                $settings
+            );
+        } catch (PageOutOfBoundsException $exception) {
+            // Nothing to do here, NotFoundException will be thrown below.
+        }
+
+        $paging = $paginator->getPagingParams() + (array)$this->request->getAttribute('paging', []);
+        $this->setRequest($this->request->withAttribute('paging', $paging));
+
+        if (isset($results)) {
+            return $results;
+        }
+
+        throw new NotFoundException(null, null, $exception ?? null);
     }
 
     /**
