@@ -315,14 +315,11 @@ class ViewBuilder implements JsonSerializable
         if (isset($this->_helpers[$name])) {
             $message = sprintf('The `%s` alias has already been added as helper. Use `setHelper()` instead.', $name);
 
-            throw new RuntimeException($message);
+            throw new CakeException($message);
         }
 
         if ($plugin) {
-            $options = [
-                'class' => $helper,
-                'config' => $options,
-            ];
+            $options['className'] = $helper;
         }
 
         $this->_helpers[$name] = $options;
