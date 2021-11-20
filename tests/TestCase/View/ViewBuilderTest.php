@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingViewException;
 use Cake\View\ViewBuilder;
-use RuntimeException;
 
 /**
  * View builder test case.
@@ -451,7 +451,7 @@ class ViewBuilderTest extends TestCase
         $builder->addHelper('Form', ['some' => 'config']);
         $builder->addHelper('Text', ['foo' => 'bar']);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
 
         $builder->addHelper('MyPlugin.Form');
     }

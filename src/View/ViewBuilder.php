@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -306,7 +307,7 @@ class ViewBuilder implements JsonSerializable
      * @param string $helper Helper to use.
      * @param array<string, mixed> $options Options.
      * @return $this
-     * @throws \RuntimeException When a duplicate is found.
+     * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      * @since 4.1.0
      */
     public function addHelper(string $helper, array $options = [])
@@ -355,7 +356,7 @@ class ViewBuilder implements JsonSerializable
      *
      * @param array $helpers Helpers to use.
      * @return $this
-     * @throws \RuntimeException When a duplicate is found.
+     * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      * @since 4.3.0
      */
     public function addHelpers(array $helpers)
