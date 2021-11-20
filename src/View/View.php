@@ -379,10 +379,7 @@ class View implements EventDispatcherInterface
     {
         [$plugin, $name] = pluginSplit($helper);
         if ($plugin) {
-            $config = [
-                'class' => $helper,
-                'config' => $config,
-            ];
+            $config['className'] = $helper;
         }
 
         $this->helpers[$name] = $config;
@@ -406,10 +403,7 @@ class View implements EventDispatcherInterface
         }
 
         if ($plugin) {
-            $config = [
-                'class' => $helper,
-                'config' => $config,
-            ];
+            $config['className'] = $helper;
         }
 
         $this->helpers[$name] = $config;
