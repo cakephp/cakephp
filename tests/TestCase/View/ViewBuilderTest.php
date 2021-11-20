@@ -468,14 +468,11 @@ class ViewBuilderTest extends TestCase
         $helpers = $builder->getHelpers();
         $expected = [
             'Form' => [
-                'class' => 'MyPlugin.Form',
-                'config' => [],
+                'className' => 'MyPlugin.Form',
             ],
             'Text' => [
-                'class' => 'MyPlugin.Text',
-                'config' => [
-                    'foo' => 'other',
-                ],
+                'foo' => 'other',
+                'className' => 'MyPlugin.Text',
             ],
         ];
 
