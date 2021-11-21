@@ -2489,6 +2489,26 @@ class RouterTest extends TestCase
         $this->assertSame('/eng/Posts/view/1', $result);
     }
 
+    public function testReverseRouteKeyAndPass(): void
+    {
+        Router::reload();
+        $routes = Router::createRouteBuilder('/');
+        $routes->connect('/articles/{slug}', ['controller' => 'Articles', 'action' => 'view'])->setPass(['slug']);
+
+        $request = new ServerRequest([
+            'url' => '/articles/first-post',
+            'params' => [
+                'lang' => 'eng',
+                'controller' => 'Articles',
+                'action' => 'view',
+                'pass' => ['first-post'],
+                'slug' => 'first-post',
+            ],
+        ]);
+        $result = Router::reverse($request);
+        $this->assertSame('/articles/first-post', $result);
+    }
+
     public function testReverseArrayQuery(): void
     {
         Router::connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
