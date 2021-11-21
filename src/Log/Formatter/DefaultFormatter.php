@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Formatter;
 
+use DateTime;
+
 class DefaultFormatter extends AbstractFormatter
 {
     /**
@@ -43,7 +45,7 @@ class DefaultFormatter extends AbstractFormatter
     public function format($level, string $message, array $context = []): string
     {
         if ($this->_config['includeDate']) {
-            $message = sprintf('%s %s: %s', date($this->_config['dateFormat']), $level, $message);
+            $message = sprintf('%s %s: %s', (new DateTime())->format($this->_config['dateFormat']), $level, $message);
         } else {
             $message = sprintf('%s: %s', $level, $message);
         }
