@@ -657,7 +657,7 @@ class Router
         );
         foreach ($pass as $i => $passedValue) {
             // Remove passed values that are also route keys
-            if (in_array($passedValue, $params)) {
+            if (in_array($passedValue, $params, true)) {
                 unset($pass[$i]);
             }
         }
