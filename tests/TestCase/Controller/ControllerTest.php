@@ -209,6 +209,16 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
     }
 
+    public function testConstructSetDefaultTable()
+    {
+        Configure::write('App.namespace', 'TestApp');
+
+        $controller = new PostsController();
+        $this->assertInstanceOf(PostsTable::class, $controller->fetchTable());
+
+        Configure::write('App.namespace', 'App');
+    }
+
     /**
      * testConstructClassesWithComponents method
      */

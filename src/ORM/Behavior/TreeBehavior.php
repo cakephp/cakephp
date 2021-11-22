@@ -601,12 +601,12 @@ class TreeBehavior extends Behavior
      * Reorders the node without changing its parent.
      *
      * If the node is the first child, or is a top level node with no previous node
-     * this method will return false
+     * this method will return the same node without any changes
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node, or true to move to first position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
-     * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false on failure
+     * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false if `$number` is < 1
      */
     public function moveUp(EntityInterface $node, $number = 1)
     {
@@ -626,7 +626,7 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node, or true to move to first position
-     * @return \Cake\Datasource\EntityInterface $node The node after being moved or false on failure
+     * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
     protected function _moveUp(EntityInterface $node, $number): EntityInterface
@@ -693,12 +693,12 @@ class TreeBehavior extends Behavior
      * Reorders the node without changing the parent.
      *
      * If the node is the last child, or is a top level node with no subsequent node
-     * this method will return false
+     * this method will return the same node without any changes
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node or true to move to last position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
-     * @return \Cake\Datasource\EntityInterface|false the entity after being moved or false on failure
+     * @return \Cake\Datasource\EntityInterface|false the entity after being moved or false if `$number` is < 1
      */
     public function moveDown(EntityInterface $node, $number = 1)
     {
@@ -718,7 +718,7 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node, or true to move to last position
-     * @return \Cake\Datasource\EntityInterface $node The node after being moved or false on failure
+     * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
     protected function _moveDown(EntityInterface $node, $number): EntityInterface

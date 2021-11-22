@@ -75,7 +75,7 @@ class FixtureInjector implements TestListener
                 'You are using the listener based PHPUnit integration. ' .
                 'This fixture system is deprecated, and we recommend you ' .
                 'upgrade to the extension based PHPUnit integration. ' .
-                'See https://book.cakephp.org/4.x/en/appendixes/fixture-upgrade.html',
+                'See https://book.cakephp.org/4/en/appendices/fixture-upgrade.html',
                 0
             );
             $this->_first = $suite;

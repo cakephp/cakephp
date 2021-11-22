@@ -1578,6 +1578,40 @@ class RouteTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testUrlWithEncodedSlash(): void
+    {
+        $route = new Route(
+            '/products/tests/*',
+            ['controller' => 'Products', 'action' => 'test'],
+            ['_urldecode' => false]
+        );
+
+        $result = $route->parse('/products/tests/xx%2Fyy', 'GET');
+        $expected = [
+            'controller' => 'Products',
+            'action' => 'test',
+            'pass' => ['xx%2Fyy'],
+            '_matchedRoute' => '/products/tests/*',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $route = new Route(
+            '/products/view/{slug}',
+            ['controller' => 'Products', 'action' => 'view'],
+            ['_urldecode' => false]
+        );
+
+        $result = $route->parse('/products/view/xx%2Fyy', 'GET');
+        $expected = [
+            'controller' => 'Products',
+            'action' => 'view',
+            'slug' => 'xx%2Fyy',
+            'pass' => [],
+            '_matchedRoute' => '/products/view/{slug}',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * Test getting the static path for a route.
      *

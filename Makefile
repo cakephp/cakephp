@@ -25,7 +25,7 @@ DASH_VERSION=$(shell echo $(VERSION) | sed -e s/\\./-/g)
 # correct tag in that repo.
 # For 3.1.x use 3.1.2
 # For 3.0.x use 3.0.5
-APP_VERSION:=master
+APP_VERSION:=4.x
 
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
