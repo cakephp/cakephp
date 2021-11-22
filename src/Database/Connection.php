@@ -190,7 +190,7 @@ class Connection implements ConnectionInterface
      */
     public function setDriver(DriverInterface|string $driver, array $config = [])
     {
-        deprecationWarning('Setting the driver is deprecated. Use the connection config instead.');
+        deprecationWarning('4.4.0', 'Setting the driver is deprecated. Use the connection config instead.');
 
         $this->_driver = $this->createDriver($driver, $config);
 

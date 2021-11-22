@@ -174,24 +174,14 @@ class ControllerTest extends TestCase
         $request = new ServerRequest();
         $response = new Response();
         $controller = new PostsController($request, $response);
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->fetchTable());
+        $this->assertInstanceOf(PostsTable::class, $controller->fetchTable());
 
         $controller = new AdminPostsController($request, $response);
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->fetchTable());
+        $this->assertInstanceOf(PostsTable::class, $controller->fetchTable());
 
         $request = $request->withParam('plugin', 'TestPlugin');
         $controller = new CommentsController($request, $response);
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->fetchTable());
-    }
-
-    public function testConstructSetDefaultTable()
-    {
-        Configure::write('App.namespace', 'TestApp');
-
-        $controller = new PostsController();
-        $this->assertInstanceOf(PostsTable::class, $controller->fetchTable());
-
-        Configure::write('App.namespace', 'App');
     }
 
     /**
