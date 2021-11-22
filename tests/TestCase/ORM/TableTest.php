@@ -2342,9 +2342,8 @@ class TableTest extends TestCase
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'commit', 'inTransaction'])
-            ->setConstructorArgs([$config])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + $config])
             ->getMock();
-        $connection->setDriver($this->connection->getDriver());
 
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -2375,9 +2374,9 @@ class TableTest extends TestCase
         $this->expectException(PDOException::class);
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
-            ->setConstructorArgs([ConnectionManager::getConfig('test')])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
-        $connection->setDriver(ConnectionManager::get('test')->getDriver());
+
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query', 'getConnection'])
@@ -2415,9 +2414,9 @@ class TableTest extends TestCase
     {
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
-            ->setConstructorArgs([ConnectionManager::getConfig('test')])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
-        $connection->setDriver(ConnectionManager::get('test')->getDriver());
+
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query', 'getConnection', 'exists'])
@@ -5347,7 +5346,7 @@ class TableTest extends TestCase
         return [
             [
                 ['fields' => ['id'], 'cache' => 'default'],
-                'get:test.table_name[10]', 'default',
+                'get-test-table_name-[10]', 'default',
             ],
             [
                 ['fields' => ['id'], 'cache' => 'default', 'key' => 'custom_key'],

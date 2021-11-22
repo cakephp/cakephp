@@ -121,6 +121,7 @@ class Route
      *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
      *   e.g. `*.example.com` matches all subdomains on `example.com`.
      * - '_port` - Define the port if you want this route to only match specific port number.
+     * - '_urldecode' - Set to `false` to disable URL decoding before route parsing.
      *
      * @param string $template Template string with parameter placeholders
      * @param array $defaults Defaults for the route.
@@ -438,7 +439,12 @@ class Route
         $compiledRoute = $this->compile();
         [$url, $ext] = $this->_parseExtension($url);
 
-        if (!preg_match($compiledRoute, urldecode($url), $route)) {
+        $urldecode = $this->options['_urldecode'] ?? true;
+        if ($urldecode) {
+            $url = urldecode($url);
+        }
+
+        if (!preg_match($compiledRoute, $url, $route)) {
             return null;
         }
 
@@ -555,12 +561,13 @@ class Route
     {
         $pass = [];
         $args = explode('/', $args);
+        $urldecode = $this->options['_urldecode'] ?? true;
 
         foreach ($args as $param) {
             if (empty($param) && $param !== '0') {
                 continue;
             }
-            $pass[] = rawurldecode($param);
+            $pass[] = $urldecode ? rawurldecode($param) : $param;
         }
 
         return $pass;

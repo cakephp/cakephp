@@ -26,5 +26,5 @@ class MissingDriverException extends CakeException
     /**
      * @inheritDoc
      */
-    protected string $_messageTemplate = 'Database driver %s could not be found.';
+    protected string $_messageTemplate = 'Could not find driver `%s` for connection `%s`.';
 }

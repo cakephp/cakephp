@@ -314,7 +314,7 @@ class RouteBuilder
      * });
      * ```
      *
-     * The above would generate both resource routes for `/articles`, and `/articles/:article_id/comments`.
+     * The above would generate both resource routes for `/articles`, and `/articles/{article_id}/comments`.
      * You can use the `map` option to connect additional resource methods:
      *
      * ```

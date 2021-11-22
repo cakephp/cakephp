@@ -43,9 +43,12 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(compact('str')));
     }
 
-    public function requiredTyped(float $one, int $two, bool $three)
+    public function requiredTyped(float $one, int $two, bool $three, array $four)
     {
-        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+        return $this->response->withStringBody(json_encode(
+            compact('one', 'two', 'three', 'four'),
+            JSON_PRESERVE_ZERO_FRACTION
+        ));
     }
 
     public function optionalTyped(float $one = 1.0, int $two = 2, bool $three = true)
@@ -53,7 +56,7 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
     }
 
-    public function unsupportedTyped(array $one)
+    public function unsupportedTyped(iterable $one)
     {
         return $this->response->withStringBody(json_encode(compact('one')));
     }

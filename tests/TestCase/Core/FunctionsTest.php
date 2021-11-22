@@ -85,7 +85,7 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabled(): void
     {
         $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function (): void {
             deprecationWarning('5.0.0', 'This is going away', 2);
@@ -119,7 +119,7 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
         $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function (): void {
             deprecationWarning('5.0.0', 'This is going away too');
