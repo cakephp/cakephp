@@ -306,7 +306,6 @@ class ViewBuilder implements JsonSerializable
      * @param string $helper Helper to use.
      * @param array<string, mixed> $options Options.
      * @return $this
-     * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      * @since 4.1.0
      */
     public function addHelper(string $helper, array $options = [])
