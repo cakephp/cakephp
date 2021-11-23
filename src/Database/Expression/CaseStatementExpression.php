@@ -56,7 +56,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
     /**
      * The case value.
      *
-     * @var \Cake\Database\ExpressionInterface|scalar|object|null
+     * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
     protected $value = null;
 
@@ -84,7 +84,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
     /**
      * The else part result value.
      *
-     * @var \Cake\Database\ExpressionInterface|scalar|object|null
+     * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
     protected $else = null;
 
@@ -118,7 +118,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * only be passed if you actually want to create the simple
      * case expression variant!
      *
-     * @param \Cake\Database\ExpressionInterface|scalar|object|null $value The case value.
+     * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
      * @param string|null $type The case value type. If no type is provided, the type will be tried to be inferred
      *  from the value.
      */
