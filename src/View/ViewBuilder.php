@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\App;
-use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -302,7 +301,7 @@ class ViewBuilder implements JsonSerializable
     }
 
     /**
-     * Adds a helper to use if no such helper with this name already exists.
+     * Adds a helper to use, overwriting any existing one with that name.
      *
      * @param string $helper Helper to use.
      * @param array<string, mixed> $options Options.
@@ -311,32 +310,6 @@ class ViewBuilder implements JsonSerializable
      * @since 4.1.0
      */
     public function addHelper(string $helper, array $options = [])
-    {
-        [$plugin, $name] = pluginSplit($helper);
-        if (isset($this->_helpers[$name])) {
-            $message = sprintf('The `%s` alias has already been added as helper. Use `setHelper()` instead.', $name);
-
-            throw new CakeException($message);
-        }
-
-        if ($plugin) {
-            $options['className'] = $helper;
-        }
-
-        $this->_helpers[$name] = $options;
-
-        return $this;
-    }
-
-    /**
-     * Adds a helper to use, overwriting any existing one with that name.
-     *
-     * @param string $helper Helper to use.
-     * @param array<string, mixed> $options Options.
-     * @return $this
-     * @since 4.4.0
-     */
-    public function setHelper(string $helper, array $options = [])
     {
         [$plugin, $name] = pluginSplit($helper);
         if ($plugin) {

@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -442,28 +441,14 @@ class ViewBuilderTest extends TestCase
         $this->assertSame(['foo' => 'bar'], $helpers['Text']);
     }
 
-    /**
-     * @return void
-     */
-    public function testAddHelperException(): void
-    {
-        $builder = new ViewBuilder();
-        $builder->addHelper('Form', ['some' => 'config']);
-        $builder->addHelper('Text', ['foo' => 'bar']);
-
-        $this->expectException(CakeException::class);
-
-        $builder->addHelper('MyPlugin.Form');
-    }
-
     public function testAddHelperPluginOptions(): void
     {
         $builder = new ViewBuilder();
         $builder->addHelper('Form', ['some' => 'config']);
         $builder->addHelper('Text', ['foo' => 'bar']);
 
-        $builder->setHelper('MyPlugin.Form');
-        $builder->setHelper('MyPlugin.Text', ['foo' => 'other']);
+        $builder->addHelper('MyPlugin.Form');
+        $builder->addHelper('MyPlugin.Text', ['foo' => 'other']);
 
         $helpers = $builder->getHelpers();
         $expected = [
