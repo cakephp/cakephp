@@ -21,6 +21,7 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -495,8 +496,6 @@ class ControllerTest extends TestCase
             ],
         ]));
 
-        $this->assertEquals([], $Controller->paginate);
-
         $this->assertNotContains('Paginator', $Controller->viewBuilder()->getHelpers());
         $this->assertArrayNotHasKey('Paginator', $Controller->viewBuilder()->getHelpers());
 
@@ -541,6 +540,18 @@ class ControllerTest extends TestCase
         $results = $Controller->paginate();
 
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+    }
+
+    public function testPaginateException()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $request = new ServerRequest(['url' => 'controller_posts/index?page=2&limit=100']);
+        $response = new Response();
+
+        $Controller = new Controller($request, $response, 'Posts');
+
+        $Controller->paginate();
     }
 
     /**
