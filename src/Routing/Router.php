@@ -859,7 +859,13 @@ class Router
             $params['_matchedRoute'],
             $params['_name']
         );
-        $params = array_merge($params, $pass);
+        foreach ($pass as $i => $passedValue) {
+            // Remove passed values that are also route keys
+            if (in_array($passedValue, $params, true)) {
+                unset($pass[$i]);
+            }
+        }
+        $params = array_merge($params, array_values($pass));
         if (!empty($url)) {
             $params['?'] = $url;
         }
