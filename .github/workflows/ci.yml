@@ -132,7 +132,7 @@ jobs:
 
     - name: Prefer lowest check
       if: matrix.prefer-lowest == 'prefer-lowest'
-      run: composer lowest-setup && composer lowest
+      run: composer lowest-setup && vendor/bin/validate-prefer-lowest -m
 
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
