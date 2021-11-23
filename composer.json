@@ -30,7 +30,7 @@
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
         "laminas/laminas-httphandlerrunner": "^1.1",
-        "league/container": "^4.1.1",
+        "league/container": "^4.2.0",
         "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
@@ -112,6 +112,8 @@
         ],
         "stan-tests": "phpstan.phar analyze -c tests/phpstan.neon",
         "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:~1.0.0 psalm/phar:~4.11.0 && mv composer.backup composer.json",
+        "lowest": "validate-prefer-lowest",
+        "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml"
     },
