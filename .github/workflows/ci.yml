@@ -119,6 +119,10 @@ jobs:
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
 
+    - name: Prefer lowest check
+      if: matrix.prefer-lowest == 'prefer-lowest'
+      run: composer lowest-setup && composer lowest
+
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
       uses: codecov/codecov-action@v1
