@@ -2811,7 +2811,6 @@ class RouterTest extends TestCase
         $request = new ServerRequest([
             'url' => '/articles/first-post',
             'params' => [
-                'lang' => 'eng',
                 'controller' => 'Articles',
                 'action' => 'view',
                 'pass' => ['first-post'],
