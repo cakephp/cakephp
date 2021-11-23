@@ -374,7 +374,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * only be passed if you actually want to create the simple
      * case expression variant!
      *
-     * @param \Cake\Database\ExpressionInterface|scalar|object|null $value The case value.
+     * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The case value.
      * @param string|null $type The case value type. If no type is provided, the type will be tried to be inferred
      *  from the value.
      * @return \Cake\Database\Expression\CaseStatementExpression

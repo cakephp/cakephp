@@ -55,7 +55,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * Then `WHEN` value.
      *
-     * @var \Cake\Database\ExpressionInterface|scalar|object|null
+     * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
     protected $when = null;
 
@@ -69,7 +69,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * The `THEN` value.
      *
-     * @var \Cake\Database\ExpressionInterface|scalar|object|null
+     * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
     protected $then = null;
 
