@@ -131,10 +131,8 @@ jobs:
         fi
 
     - name: Prefer lowest check
-      run: |
-        if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
-          composer lowest-setup && composer lowest
-        fi
+      if: matrix.prefer-lowest == 'prefer-lowest'
+      run: composer lowest-setup && composer lowest
 
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
