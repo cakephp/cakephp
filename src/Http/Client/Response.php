@@ -235,6 +235,7 @@ class Response extends Message implements ResponseInterface
             static::STATUS_FOUND,
             static::STATUS_SEE_OTHER,
             static::STATUS_TEMPORARY_REDIRECT,
+            static::STATUS_PERMANENT_REDIRECT,
         ];
 
         return in_array($this->code, $codes, true) &&
