@@ -110,16 +110,22 @@ jobs:
       if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
       run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
 
+    - name: Set DB_URL
+      id: db-url
+      run: |
+        if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then DB_URL='sqlite:///:memory:'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
+        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
+        echo '::set-output name=DB_URL::$DB_URL'
+
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
       run: |
-        if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
-        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
-        if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
+        export DB_URL=${{ steps.db-url.outputs.DB_URL }}
 
         if [[ ${{ matrix.php-version }} == '8.0' ]]; then
           export CODECOVERAGE=1
@@ -127,6 +133,20 @@ jobs:
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
         else
           vendor/bin/phpunit
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
+        fi
+
+    - name: Run PHPUnit with auto-quoting
+      env:
+        REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+        MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
+      run: |
+        export DB_URL=${{ steps.db-url.outputs.DB_URL }}
+
+        if [[ ${{ matrix.php-version }} == '8.0' ]]; then
+          export CODECOVERAGE=1
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
+        else
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
 
