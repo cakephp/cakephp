@@ -64,7 +64,7 @@ class PaginatorComponent extends Component
             $this->_paginator = new Paginator();
         }
 
-        parent::__construct($registry, $this->_config);
+        parent::__construct($registry, $config);
     }
 
     /**
