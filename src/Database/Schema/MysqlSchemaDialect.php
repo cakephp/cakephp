@@ -39,7 +39,11 @@ class MysqlSchemaDialect extends SchemaDialect
     public function listTablesSql(array $config): array
     {
         return ['SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']) .
-        ((array_key_exists("exclude_views", $config) && $config['exclude_views'] == true) ? " WHERE Table_type = 'FULL TABLE'" : "")
+        (
+            array_key_exists("excludeViews", $config) && $config['excludeViews'] === true
+            ? ' WHERE Table_type = "FULL TABLE"'
+            : ' '
+        )
         , []];
     }
 

@@ -20,6 +20,11 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  * Decorates a schema collection and adds caching
+ *
+ * @method array listTablesOptions(array $options = []) Get the list of tables available in the current connection.
+ *    Allows for an options array which can be used to modify the results.
+ * @method array listTablesExcludeViews() Get the list of tables, excluding any views,
+ *    available in the current connection.
  */
 class CachedCollection implements CollectionInterface
 {
@@ -61,9 +66,26 @@ class CachedCollection implements CollectionInterface
     /**
      * @inheritDoc
      */
-    public function listTables(array $options = []): array
+    public function listTablesOptions(array $options = []): array
     {
-        return $this->collection->listTables($options);
+        return $this->collection->listTablesOptions($options);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function listTablesExcludeViews() : array
+    {
+        return $this->listTablesOptions(['excludeViews' => true]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function listTables() : array
+    {
+        return $this->listTablesOptions([]);
     }
 
     /**

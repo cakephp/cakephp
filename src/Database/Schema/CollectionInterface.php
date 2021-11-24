@@ -29,7 +29,7 @@ interface CollectionInterface
      *
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTables(array $options = []): array;
+    public function listTables(): array;
 
     /**
      * Get the column metadata for a table.

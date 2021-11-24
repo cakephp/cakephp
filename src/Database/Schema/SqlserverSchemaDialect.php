@@ -33,10 +33,14 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function listTablesSql(array $config): array
     {
+        $table_type_sql = "TABLE_TYPE = 'BASE TABLE'";
+        if (!array_key_exists("excludeViews", $config) || $config['excludeViews'] === false) {
+            $table_type_sql .= " OR TABLE_TYPE = 'VIEW'";
+        }
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_SCHEMA = ?
-            AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
+            AND ($table_type_sql)
             ORDER BY TABLE_NAME";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
 

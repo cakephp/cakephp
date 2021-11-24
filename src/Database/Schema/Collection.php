@@ -25,6 +25,11 @@ use PDOException;
  *
  * Used to access information about the tables,
  * and other data in a database.
+ *
+ * @method array listTablesOptions(array $options = []) Get the list of tables available in the current connection.
+ *    Allows for an options array which can be used to modify the results.
+ * @method array listTablesExcludeViews() Get the list of tables, excluding any views,
+ *    available in the current connection.
  */
 class Collection implements CollectionInterface
 {
@@ -54,11 +59,12 @@ class Collection implements CollectionInterface
     }
 
     /**
-     * Get the list of tables available in the current connection.
+     * Get the list of tables available in the current connection. Allows for
+     * an options array which can be used to modify the results.
      *
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTables(array $options = []): array
+    public function listTablesOptions(array $options = []): array
     {
         [$sql, $params] = $this->_dialect->listTablesSql(array_merge($this->_connection->config(), $options));
         $result = [];
@@ -69,6 +75,26 @@ class Collection implements CollectionInterface
         $statement->closeCursor();
 
         return $result;
+    }
+
+    /**
+     * Get the list of tables, excluding any views, available in the current connection.
+     *
+     * @return array<string> The list of tables in the connected database/schema.
+     */
+    public function listTablesExcludeViews() : array
+    {
+        return $this->listTablesOptions(['excludeViews' => true]);
+    }
+
+    /**
+     * Get the list of tables available in the current connection.
+     *
+     * @return array<string> The list of tables in the connected database/schema.
+     */
+    public function listTables() : array
+    {
+        return $this->listTablesOptions([]);
     }
 
     /**
