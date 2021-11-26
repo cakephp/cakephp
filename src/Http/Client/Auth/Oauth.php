@@ -220,6 +220,9 @@ class Oauth
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
+        if ($privateKey === false) {
+            throw new RuntimeException('Could not open privateKey file. Got ' . openssl_error_string());
+        }
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);
         if (PHP_MAJOR_VERSION < 8) {
