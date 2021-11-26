@@ -301,7 +301,7 @@ class ViewBuilder implements JsonSerializable
     }
 
     /**
-     * Adds a helper to use.
+     * Adds a helper to use, overwriting any existing one with that name.
      *
      * @param string $helper Helper to use.
      * @param array<string, mixed> $options Options.
@@ -310,13 +310,18 @@ class ViewBuilder implements JsonSerializable
      */
     public function addHelper(string $helper, array $options = [])
     {
-        $this->_helpers[$helper] = $options;
+        [$plugin, $name] = pluginSplit($helper);
+        if ($plugin) {
+            $options['className'] = $helper;
+        }
+
+        $this->_helpers[$name] = $options;
 
         return $this;
     }
 
     /**
-     * Adds helpers to use by merging with existing ones.
+     * Adds helpers to use, overwriting any existing one with that name.
      *
      * @param array $helpers Helpers to use.
      * @return $this
@@ -336,7 +341,7 @@ class ViewBuilder implements JsonSerializable
     }
 
     /**
-     * Sets the helpers to use.
+     * Sets the helpers to use, resetting the helpers config.
      *
      * @param array $helpers Helpers to use.
      * @return $this
