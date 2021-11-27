@@ -385,7 +385,7 @@ class Oauth
         }
 
         if (strlen($error) > 0) {
-            throw RuntimeException('openssl error: ' . $error);
+            throw new RuntimeException('openssl error: ' . $error);
         }
     }
 }
