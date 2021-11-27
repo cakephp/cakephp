@@ -650,18 +650,29 @@ class Router
         }
         $pass = $params['pass'] ?? [];
 
+        $template = $params['_matchedRoute'] ?? null;
         unset(
             $params['pass'],
             $params['_matchedRoute'],
             $params['_name']
         );
-        foreach ($pass as $i => $passedValue) {
-            // Remove passed values that are also route keys
-            if (in_array($passedValue, $params, true)) {
-                unset($pass[$i]);
+        $route = null;
+        if ($template) {
+            // Locate the route that was used to match this route
+            // so we can access the pass parameter configuration.
+            foreach (static::getRouteCollection()->routes() as $maybe) {
+                if ($maybe->template === $template) {
+                    $route = $maybe;
+                    break;
+                }
             }
         }
-        $params = array_merge($params, array_values($pass));
+        if ($route) {
+            // If we found a route, slice off the number of passed args.
+            $routePass = $route->options['pass'] ?? [];
+            $pass = array_slice($pass, count($routePass));
+        }
+        $params = array_merge($params, $pass);
 
         return $params;
     }
