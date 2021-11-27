@@ -267,14 +267,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Add a component to the controller's registry.
      *
-     * This method will also set the component to a property.
+     * After loading a component it will be be accessible as a property through Controller::__get().
      * For example:
      *
      * ```
      * $this->loadComponent('Authentication.Authentication');
      * ```
      *
-     * Will result in a `Authentication` property being set.
+     * Will result in a `$this->Authentication` being a reference to that component.
      *
      * @param string $name The name of the component to load.
      * @param array<string, mixed> $config The config for the component.
@@ -283,16 +283,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function loadComponent(string $name, array $config = []): Component
     {
-        [, $prop] = pluginSplit($name);
-
-        return $this->{$prop} = $this->components()->load($name, $config);
+        return $this->components()->load($name, $config);
     }
 
     /**
      * Magic accessor for the default table.
      *
      * @param string $name Property name
-     * @return \Cake\ORM\Table|null
+     * @return \Cake\Controller\Component|\Cake\ORM\Table|null
      */
     public function __get(string $name)
     {
@@ -306,6 +304,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             if ($class === $name) {
                 return $this->fetchTable();
             }
+        }
+
+        if ($this->components()->has($name)) {
+            return $this->components()->get($name);
         }
 
         $trace = debug_backtrace();
