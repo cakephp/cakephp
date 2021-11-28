@@ -2502,12 +2502,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Calls a finder method directly and applies it to the passed query,
-     * if no query is passed a new one will be created and returned
+     * Calls a finder method and applies it to the passed query.
      *
-     * @param string $type name of the finder to be called
-     * @param \Cake\ORM\Query $query The query object to apply the finder options to
-     * @param array<string, mixed> $options List of options to pass to the finder
+     * @param string $type Name of the finder to be called.
+     * @param \Cake\ORM\Query $query The query object to apply the finder options to.
+     * @param array<string, mixed> $options List of options to pass to the finder.
      * @return \Cake\ORM\Query
      * @throws \BadMethodCallException
      * @uses findAll()
