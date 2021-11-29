@@ -19,47 +19,34 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Auth\Oauth;
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Oauth test.
  */
 class OauthTest extends TestCase
 {
-    private $privateKeyString = '-----BEGIN RSA PRIVATE KEY-----
-MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALRiMLAh9iimur8V
-A7qVvdqxevEuUkW4K+2KdMXmnQbG9Aa7k7eBjK1S+0LYmVjPKlJGNXHDGuy5Fw/d
-7rjVJ0BLB+ubPK8iA/Tw3hLQgXMRRGRXXCn8ikfuQfjUS1uZSatdLB81mydBETlJ
-hI6GH4twrbDJCR2Bwy/XWXgqgGRzAgMBAAECgYBYWVtleUzavkbrPjy0T5FMou8H
-X9u2AC2ry8vD/l7cqedtwMPp9k7TubgNFo+NGvKsl2ynyprOZR1xjQ7WgrgVB+mm
-uScOM/5HVceFuGRDhYTCObE+y1kxRloNYXnx3ei1zbeYLPCHdhxRYW7T0qcynNmw
-rn05/KO2RLjgQNalsQJBANeA3Q4Nugqy4QBUCEC09SqylT2K9FrrItqL2QKc9v0Z
-zO2uwllCbg0dwpVuYPYXYvikNHHg+aCWF+VXsb9rpPsCQQDWR9TT4ORdzoj+Nccn
-qkMsDmzt0EfNaAOwHOmVJ2RVBspPcxt5iN4HI7HNeG6U5YsFBb+/GZbgfBT3kpNG
-WPTpAkBI+gFhjfJvRw38n3g/+UeAkwMI2TJQS4n8+hid0uus3/zOjDySH3XHCUno
-cn1xOJAyZODBo47E+67R4jV1/gzbAkEAklJaspRPXP877NssM5nAZMU0/O/NGCZ+
-3jPgDUno6WbJn5cqm8MqWhW1xGkImgRk+fkDBquiq4gPiT898jusgQJAd5Zrr6Q8
-AO/0isr/3aa6O6NLQxISLKcPDk2NOccAfS/xOtfOz4sJYM3+Bs4Io9+dZGSDCA54
-Lw03eHTNQghS0A==
------END RSA PRIVATE KEY-----';
+    /**
+     * @var string
+     */
+    private $privateKeyString;
 
-    private $privateKeyStringEnc = '-----BEGIN RSA PRIVATE KEY-----
-Proc-Type: 4,ENCRYPTED
-DEK-Info: DES-CBC,E65DB7AE7A05EF23
+    /**
+     * @var string
+     */
+    private $privateKeyStringEnc;
 
-QCXAQ/Uj1+7uQp0MyDUPlKvW/28PhbT4GxflBYmU6SxKZ2CVFPk0M8RgB6gkJyVv
-mwjo1Ch2Tlt7/VrNfLWGIh1XPhsC3gatv8Wv+g0keWWifaHlhXulgMGREJ7QeJg0
-5THvdFuIs2qQnOzPCAwONjM6yMxPb2qxvwq0UKAL5V/CYVFWS6PYdR25f9ogXxBz
-c3QjvvnhQ7ipNjpjVp/XKYMYnZPCYkNYvRX+BcsWlqYtclO3m+xPG+mPAFs9hnBI
-wHI4yC2fl52giRc7XnSl7NNjun6RpHT/Cn7JDH6ql86pgMO0dw6PDzPf0KY9DCrR
-ldQyzQ8WjN3FU55+En+8zmSnxUu7EbdqZwhVEF+UwfJ7IqJUnHll0aDTUA/qq0dk
-DqtMKIXvRnDVZJqKxHyRvARf8Zp8USsq3cVdlA9PhtcKrs4CbTDL0lJ3eWj1bDS1
-kIHXYo19lBqcS1oX+6TqvEs69oW/aG8UZIONN0Xh5TbxuJMedXD1dexV9oOA9lGR
-cS6Ye0wC7fCdnA6jfAmHFJ5t2qk7FOzcFZwap7m+EWn11z+72GVqz3BDSe5qH2m2
-XOHl59rVtJsZFtjyQEV34IFYyb2qBHHqUUdKwIwT1JOZIq+IdTJxaieIb1mnlmDw
-DDf4Kwr0C9tti1R1IsPaAmjF7eH0PGbDGAB3fJSCXbHf7EXTz1AUdknd2MHXQ7wO
-UBABkD2ETB+EotdHTly5FQt0jwbHfF2najBmezxtEjIygCnDb02Rtuei4HTansBu
-shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
------END RSA PRIVATE KEY-----';
+    /**
+     * Setup
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->privateKeyString = file_get_contents(TEST_APP . DS . 'config' . DS . 'key.pem');
+        $this->privateKeyStringEnc = file_get_contents(TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem');
+    }
 
     public function testExceptionUnknownSigningMethod(): void
     {
@@ -336,11 +323,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = 'tR3+Ty81lMeYAr/Fid0kMTYa/WM=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
-        );
+        $this->assertSignatureFormat($result);
     }
 
     /**
@@ -365,11 +348,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = '2hr/eoFyTSuWc6SfZIvkhpeRHdM=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
-        );
+        $this->assertSignatureFormat($result);
     }
 
     /**
@@ -399,11 +378,29 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
+        $this->assertSignatureFormat($result);
+    }
+
+    public function testRsaSigningInvalidKey(): void
+    {
+        $request = new Request(
+            'http://photos.example.net/photos',
+            'GET',
+            [],
+            ['file' => 'vacaction.jpg', 'size' => 'original']
         );
+
+        $options = [
+            'method' => 'RSA-SHA1',
+            'consumerKey' => 'dpf43f3p2l4k3l03',
+            'nonce' => '13917289812797014437',
+            'timestamp' => '1196666512',
+            'privateKey' => 'not a private key',
+        ];
+        $auth = new Oauth();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('openssl error');
+        $auth->authentication($request, $options);
     }
 
     /**
@@ -433,11 +430,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
-        );
+        $this->assertSignatureFormat($result);
     }
 
     /**
@@ -469,11 +462,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
-        );
+        $this->assertSignatureFormat($result);
     }
 
     /**
@@ -505,11 +494,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
-        );
+        $this->assertSignatureFormat($result);
     }
 
     /**
@@ -543,11 +528,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
-        );
+        $this->assertSignatureFormat($result);
         $expected = 0;
         $this->assertSame($expected, ftell($passphrase));
     }
@@ -583,12 +564,16 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $options);
 
         $result = $request->getHeaderLine('Authorization');
-        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertStringContainsString(
-            'oauth_signature="' . $expected . '"',
-            urldecode($result)
-        );
+        $this->assertSignatureFormat($result);
         $expected = 0;
         $this->assertSame($expected, ftell($passphrase));
+    }
+
+    protected function assertSignatureFormat($result)
+    {
+        $this->assertMatchesRegularExpression(
+            '/oauth_signature="[a-zA-Z0-9\/=+]+"/',
+            urldecode($result)
+        );
     }
 }
