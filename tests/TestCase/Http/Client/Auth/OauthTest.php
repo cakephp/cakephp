@@ -19,6 +19,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Auth\Oauth;
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Oauth test.
@@ -378,6 +379,28 @@ class OauthTest extends TestCase
 
         $result = $request->getHeaderLine('Authorization');
         $this->assertSignatureFormat($result);
+    }
+
+    public function testRsaSigningInvalidKey(): void
+    {
+        $request = new Request(
+            'http://photos.example.net/photos',
+            'GET',
+            [],
+            ['file' => 'vacaction.jpg', 'size' => 'original']
+        );
+
+        $options = [
+            'method' => 'RSA-SHA1',
+            'consumerKey' => 'dpf43f3p2l4k3l03',
+            'nonce' => '13917289812797014437',
+            'timestamp' => '1196666512',
+            'privateKey' => 'not a private key',
+        ];
+        $auth = new Oauth();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('openssl error');
+        $auth->authentication($request, $options);
     }
 
     /**
