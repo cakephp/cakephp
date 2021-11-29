@@ -287,9 +287,12 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
+        $resultNoViews = $schema->listTablesExcludeViews();
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertIsArray($resultNoViews);
+        $this->assertContains('schema_articles', $resultNoViews);
     }
 
     /**
