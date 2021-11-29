@@ -82,7 +82,7 @@ class Collection implements CollectionInterface
      *
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTablesExcludeViews() : array
+    public function listTablesExcludeViews(): array
     {
         return $this->listTablesOptions(['excludeViews' => true]);
     }
@@ -92,7 +92,7 @@ class Collection implements CollectionInterface
      *
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTables() : array
+    public function listTables(): array
     {
         return $this->listTablesOptions([]);
     }

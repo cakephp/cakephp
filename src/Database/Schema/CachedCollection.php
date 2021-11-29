@@ -71,11 +71,10 @@ class CachedCollection implements CollectionInterface
         return $this->collection->listTablesOptions($options);
     }
 
-
     /**
      * @inheritDoc
      */
-    public function listTablesExcludeViews() : array
+    public function listTablesExcludeViews(): array
     {
         return $this->listTablesOptions(['excludeViews' => true]);
     }
@@ -83,7 +82,7 @@ class CachedCollection implements CollectionInterface
     /**
      * @inheritDoc
      */
-    public function listTables() : array
+    public function listTables(): array
     {
         return $this->listTablesOptions([]);
     }
