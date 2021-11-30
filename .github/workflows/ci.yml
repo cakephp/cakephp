@@ -31,6 +31,8 @@ jobs:
             prefer-lowest: 'prefer-lowest'
           - php-version: '8.1'
             db-type: 'sqlite'
+          - php-version: '8.2'
+            db-type: 'sqlite'
 
     services:
       redis:
@@ -98,6 +100,8 @@ jobs:
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
+        elif ${{ matrix.php-version == '8.2' }}; then
+          composer update --ignore-platform-req=php
         else
           composer update
         fi
@@ -129,6 +133,7 @@ jobs:
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
+      continue-on-error: ${{ matrix.php-version == '8.2' }}
 
     - name: Prefer lowest check
       if: matrix.prefer-lowest == 'prefer-lowest'
