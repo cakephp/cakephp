@@ -85,7 +85,7 @@ class SchemacacheBuildCommand extends Command
             'default' => 'default',
         ])->addArgument('name', [
             'help' => 'A specific table you want to refresh cached data for.',
-            'optional' => true,
+            'required' => false,
         ]);
 
         return $parser;

@@ -1260,10 +1260,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function find(string $type = 'all', array $options = []): Query
     {
-        $query = $this->query();
-        $query->select();
-
-        return $this->callFinder($type, $query, $options);
+        return $this->callFinder($type, $this->query()->select(), $options);
     }
 
     /**
@@ -1718,11 +1715,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function updateAll($fields, $conditions): int
     {
-        $query = $this->query();
-        $query->update()
+        $statement = $this->query()
+            ->update()
             ->set($fields)
-            ->where($conditions);
-        $statement = $query->execute();
+            ->where($conditions)
+            ->execute();
         $statement->closeCursor();
 
         return $statement->rowCount();
@@ -1733,10 +1730,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteAll($conditions): int
     {
-        $query = $this->query()
+        $statement = $this->query()
             ->delete()
-            ->where($conditions);
-        $statement = $query->execute();
+            ->where($conditions)
+            ->execute();
         $statement->closeCursor();
 
         return $statement->rowCount();
@@ -2066,15 +2063,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
-        $success = false;
         if (empty($data)) {
-            return $success;
+            return false;
         }
 
         $statement = $this->query()->insert(array_keys($data))
             ->values($data)
             ->execute();
 
+        $success = false;
         if ($statement->rowCount() !== 0) {
             $success = $entity;
             $entity->set($filteredKeys, ['guard' => false]);
@@ -2151,16 +2148,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException($message);
         }
 
-        $query = $this->query();
-        $statement = $query->update()
+        $statement = $this->query()
+            ->update()
             ->set($data)
             ->where($primaryKey)
             ->execute();
 
-        $success = false;
-        if ($statement->errorCode() === '00000') {
-            $success = $entity;
-        }
+        $success = $statement->errorCode() === '00000' ? $entity : false;
         $statement->closeCursor();
 
         return $success;
@@ -2469,15 +2463,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $success;
         }
 
-        $query = $this->query();
-        $conditions = $entity->extract($primaryKey);
-        $statement = $query->delete()
-            ->where($conditions)
+        $statement = $this->query()
+            ->delete()
+            ->where($entity->extract($primaryKey))
             ->execute();
 
-        $success = $statement->rowCount() > 0;
-        if (!$success) {
-            return $success;
+        if ($statement->rowCount() < 1) {
+            return false;
         }
 
         $this->dispatchEvent('Model.afterDelete', [
@@ -2485,7 +2477,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'options' => $options,
         ]);
 
-        return $success;
+        return true;
     }
 
     /**
@@ -2502,12 +2494,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Calls a finder method directly and applies it to the passed query,
-     * if no query is passed a new one will be created and returned
+     * Calls a finder method and applies it to the passed query.
      *
-     * @param string $type name of the finder to be called
-     * @param \Cake\ORM\Query $query The query object to apply the finder options to
-     * @param array<string, mixed> $options List of options to pass to the finder
+     * @param string $type Name of the finder to be called.
+     * @param \Cake\ORM\Query $query The query object to apply the finder options to.
+     * @param array<string, mixed> $options List of options to pass to the finder.
      * @return \Cake\ORM\Query
      * @throws \BadMethodCallException
      * @uses findAll()

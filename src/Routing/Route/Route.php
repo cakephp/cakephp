@@ -425,10 +425,10 @@ class Route
      * Checks to see if the given URL can be parsed by this route.
      *
      * If the route can be parsed an array of parameters will be returned; if not
-     * false will be returned.
+     * `null` will be returned.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The URL to attempt to parse.
-     * @return array|null An array of request parameters, or null on failure.
+     * @return array|null An array of request parameters, or `null` on failure.
      */
     public function parseRequest(ServerRequestInterface $request): ?array
     {
@@ -444,11 +444,11 @@ class Route
      * Checks to see if the given URL can be parsed by this route.
      *
      * If the route can be parsed an array of parameters will be returned; if not
-     * false will be returned. String URLs are parsed if they match a routes regular expression.
+     * `null` will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
-     * @return array|null An array of request parameters, or null on failure.
+     * @return array|null An array of request parameters, or `null` on failure.
      * @throws \InvalidArgumentException When method is not an empty string or in `VALID_METHODS` list.
      */
     public function parse(string $url, string $method): ?array
