@@ -32,7 +32,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $tableTypeSql = '';
         if (array_key_exists('excludeViews', $config) && $config['excludeViews'] === true) {
-            $table_type_sql = " AND table_type = 'BASE TABLE' ";
+            $tableTypeSql = " AND table_type = 'BASE TABLE' ";
         }
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? ' . $tableTypeSql . ' ORDER BY name';

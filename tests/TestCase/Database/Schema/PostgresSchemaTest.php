@@ -48,9 +48,9 @@ class PostgresSchemaTest extends TestCase
     {
         $this->_needsConnection();
 
+        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
-        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
 
         $table = <<<SQL
 CREATE TABLE schema_authors (
@@ -89,12 +89,9 @@ SQL;
         $connection->execute('COMMENT ON COLUMN "schema_articles"."title" IS \'a title\'');
         $connection->execute('CREATE INDEX "author_idx" ON "schema_articles" ("author_id")');
 
-        $connection->execute($table);
-
         $table = <<<SQL
 CREATE VIEW schema_articles_v AS
 SELECT * FROM schema_articles
-)
 SQL;
         $connection->execute($table);
     }

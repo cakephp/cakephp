@@ -47,9 +47,9 @@ class SqlserverSchemaTest extends TestCase
     {
         $this->_needsConnection();
 
+        $connection->execute("IF OBJECT_ID('schema_articles_v', 'V') IS NOT NULL DROP VIEW schema_articles_v");
         $connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
         $connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
-        $connection->execute("IF OBJECT_ID('schema_articles_v', 'V') IS NOT NULL DROP TABLE schema_articles_v");
 
         $table = <<<SQL
 CREATE TABLE schema_authors (

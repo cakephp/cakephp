@@ -120,7 +120,7 @@ class ConnectionHelper
         $connection = ConnectionManager::get($connectionName);
         $collection = $connection->getSchemaCollection();
 
-        $allTables = $collection->listTables();
+        $allTables = $collection->listTablesExcludeViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         $schemas = array_map(function ($table) use ($collection) {
             return $collection->describe($table);
