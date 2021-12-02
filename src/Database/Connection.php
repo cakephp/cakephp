@@ -195,7 +195,7 @@ class Connection implements ConnectionInterface
             $driver = new $className($config);
         }
         if (!$driver->enabled()) {
-            throw new MissingExtensionException(['driver' => get_class($driver)]);
+            throw new MissingExtensionException(['driver' => get_class($driver), 'name' => $config['name']]);
         }
 
         $this->_driver = $driver;
