@@ -49,6 +49,7 @@ class SqlserverSchemaTest extends TestCase
 
         $connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
         $connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
+        $connection->execute("IF OBJECT_ID('schema_articles_v', 'V') IS NOT NULL DROP TABLE schema_articles_v");
 
         $table = <<<SQL
 CREATE TABLE schema_authors (
@@ -82,6 +83,12 @@ CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([
 SQL;
         $connection->execute($table);
         $connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
+
+        $table = <<<SQL
+CREATE VIEW schema_articles_v AS
+SELECT * FROM schema_articles
+SQL;
+        $connection->execute($table);
     }
 
     /**
@@ -341,8 +348,10 @@ SQL;
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertContains('schema_articles_v', $result);
         $this->assertIsArray($resultNoViews);
         $this->assertContains('schema_articles', $resultNoViews);
+        $this->assertNotContains('schema_articles_v', $result);
     }
 
     /**

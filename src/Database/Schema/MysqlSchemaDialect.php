@@ -41,7 +41,7 @@ class MysqlSchemaDialect extends SchemaDialect
         return ['SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']) .
         (
             array_key_exists('excludeViews', $config) && $config['excludeViews'] === true
-            ? ' WHERE Table_type = "FULL TABLE"'
+            ? ' WHERE Table_type = "BASE TABLE"'
             : ' '
         )
         , []];

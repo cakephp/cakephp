@@ -262,6 +262,7 @@ class MysqlSchemaTest extends TestCase
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
         $connection->execute('DROP TABLE IF EXISTS schema_json');
+        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
 
         $table = <<<SQL
             CREATE TABLE schema_authors (
@@ -290,6 +291,12 @@ SQL;
 SQL;
         $connection->execute($table);
 
+        $table = <<<SQL
+            CREATE OR REPLACE VIEW schema_articles_v
+                AS SELECT 1
+SQL;
+        $connection->execute($table);
+
         if ($connection->getDriver()->supports(DriverInterface::FEATURE_JSON)) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
@@ -315,8 +322,10 @@ SQL;
 
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_articles_v', $result);
         $this->assertContains('schema_authors', $result);
         $this->assertIsArray($resultNoViews);
+        $this->assertNotContains('schema_articles_v', $resultNoViews);
         $this->assertContains('schema_articles', $resultNoViews);
     }
 

@@ -50,6 +50,7 @@ class PostgresSchemaTest extends TestCase
 
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
+        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
 
         $table = <<<SQL
 CREATE TABLE schema_authors (
@@ -87,6 +88,15 @@ SQL;
         $connection->execute($table);
         $connection->execute('COMMENT ON COLUMN "schema_articles"."title" IS \'a title\'');
         $connection->execute('CREATE INDEX "author_idx" ON "schema_articles" ("author_id")');
+
+        $connection->execute($table);
+
+        $table = <<<SQL
+CREATE VIEW schema_articles_v AS
+SELECT * FROM schema_articles
+)
+SQL;
+        $connection->execute($table);
     }
 
     /**
@@ -291,8 +301,10 @@ SQL;
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertContains('schema_articles_v', $result);
         $this->assertIsArray($resultNoViews);
         $this->assertContains('schema_articles', $resultNoViews);
+        $this->assertNotContains('schema_articles_v', $resultNoViews);
     }
 
     /**
