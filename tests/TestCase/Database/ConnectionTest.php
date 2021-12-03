@@ -165,12 +165,12 @@ class ConnectionTest extends TestCase
     public function testDisabledDriver(): void
     {
         $this->expectException(MissingExtensionException::class);
-        $this->expectExceptionMessage('Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency');
+        $this->expectExceptionMessage('Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency. Requested by connection "custom_connection_name"');
         $mock = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['enabled'])
             ->setMockClassName('DriverMock')
             ->getMock();
-        $connection = new Connection(['driver' => $mock]);
+        $connection = new Connection(['driver' => $mock, 'name' => 'custom_connection_name']);
     }
 
     /**
