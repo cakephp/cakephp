@@ -368,7 +368,7 @@ class BreadcrumbsHelperTest extends TestCase
     /**
      * Test adding crumbs after a specific one
      */
-    public function testInsertAfterLastItem(): void
+    public function testInsertAfterLastItem()
     {
         $this->breadcrumbs
             ->add('Home', '/')
