@@ -366,6 +366,33 @@ class BreadcrumbsHelperTest extends TestCase
     }
 
     /**
+     * Test adding crumbs after a specific one
+     */
+    public function testInsertAfterLastItem()
+    {
+        $this->breadcrumbs
+            ->add('Home', '/')
+            ->insertAfter('Home', 'Below Home', '/below', ['class' => 'second']);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => [],
+            ],
+            [
+                'title' => 'Below Home',
+                'url' => '/below',
+                'options' => [
+                    'class' => 'second',
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests the render method
      *
      * @return void
