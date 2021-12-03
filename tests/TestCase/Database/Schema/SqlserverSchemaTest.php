@@ -351,7 +351,7 @@ SQL;
         $this->assertContains('schema_articles_v', $result);
         $this->assertIsArray($resultNoViews);
         $this->assertContains('schema_articles', $resultNoViews);
-        $this->assertNotContains('schema_articles_v', $result);
+        $this->assertNotContains('schema_articles_v', $resultNoViews);
     }
 
     /**
