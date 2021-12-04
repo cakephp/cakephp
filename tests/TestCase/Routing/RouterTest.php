@@ -2585,10 +2585,66 @@ class RouterTest extends TestCase
                 'action' => 'view',
                 'pass' => ['first-post'],
                 'slug' => 'first-post',
+                '_matchedRoute' => '/articles/{slug}',
             ],
         ]);
         $result = Router::reverse($request);
         $this->assertSame('/articles/first-post', $result);
+    }
+
+    public function testReverseRouteKeyAndPassDuplicateValues(): void
+    {
+        Router::reload();
+        $routes = Router::createRouteBuilder('/');
+        $routes->connect('/authors/{author_id}/articles/{id}', ['controller' => 'Articles', 'action' => 'view'])
+            ->setPass(['id']);
+
+        $request = new ServerRequest([
+            'url' => '/authors/1/articles/1',
+            'params' => [
+                'controller' => 'Articles',
+                'action' => 'view',
+                'pass' => ['1'],
+                'author_id' => '1',
+                'id' => '1',
+                '_matchedRoute' => '/authors/{author_id}/articles/{id}',
+            ],
+        ]);
+        $result = Router::reverse($request);
+        $this->assertSame('/authors/1/articles/1', $result);
+
+        Router::reload();
+        $routes = Router::createRouteBuilder('/');
+        $routes->connect('/authors/{author_id}/articles/{id}/*', ['controller' => 'Articles', 'action' => 'view'])
+            ->setPass(['id', 'author_id']);
+
+        $request = new ServerRequest([
+            'url' => '/authors/88/articles/11',
+            'params' => [
+                'controller' => 'Articles',
+                'action' => 'view',
+                'pass' => ['11', '88', '99'],
+                'author_id' => '88',
+                'id' => '11',
+                '_matchedRoute' => '/authors/{author_id}/articles/{id}/*',
+            ],
+        ]);
+        $result = Router::reverse($request);
+        $this->assertSame('/authors/88/articles/11/99', $result);
+
+        $request = new ServerRequest([
+            'url' => '/authors/1/articles/1/1',
+            'params' => [
+                'controller' => 'Articles',
+                'action' => 'view',
+                'pass' => ['1', '1', '1'],
+                'author_id' => '1',
+                'id' => '1',
+                '_matchedRoute' => '/authors/{author_id}/articles/{id}/*',
+            ],
+        ]);
+        $result = Router::reverse($request);
+        $this->assertSame('/authors/1/articles/1/1', $result);
     }
 
     public function testReverseArrayQuery(): void

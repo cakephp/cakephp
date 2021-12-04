@@ -31,7 +31,9 @@ use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
+use TestApp\Controller\Component\CustomPaginatorComponent;
 use TestApp\Datasource\CustomPaginator;
+use UnexpectedValueException;
 
 class PaginatorComponentTest extends TestCase
 {
@@ -99,6 +101,12 @@ class PaginatorComponentTest extends TestCase
 
         $component->setPaginator($paginator);
         $this->assertSame($paginator, $component->getPaginator());
+    }
+
+    public function testInvalidDefaultConfig(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        new CustomPaginatorComponent($this->registry);
     }
 
     /**

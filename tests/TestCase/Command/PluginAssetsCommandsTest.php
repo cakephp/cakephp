@@ -116,7 +116,7 @@ class PluginAssetsCommandsTest extends TestCase
             ->addMethods(['in'])
             ->getMock();
         $parser = new ConsoleOptionParser('cake example');
-        $parser->addArgument('name', ['optional' => true]);
+        $parser->addArgument('name', ['required' => false]);
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
 
         $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')

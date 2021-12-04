@@ -220,8 +220,11 @@ class Oauth
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
+        $this->checkSslError();
+
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);
+        $this->checkSslError();
 
         $values['oauth_signature'] = base64_encode($signature);
 
@@ -363,5 +366,22 @@ class Oauth
     protected function _encode(string $value): string
     {
         return str_replace(['%7E', '+'], ['~', ' '], rawurlencode($value));
+    }
+
+    /**
+     * Check for SSL errors and raise if one is encountered.
+     *
+     * @return void
+     */
+    protected function checkSslError(): void
+    {
+        $error = '';
+        while ($text = openssl_error_string()) {
+            $error .= $text;
+        }
+
+        if (strlen($error) > 0) {
+            throw new RuntimeException('openssl error: ' . $error);
+        }
     }
 }

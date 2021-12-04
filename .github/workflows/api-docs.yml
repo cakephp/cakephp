@@ -1,0 +1,29 @@
+---
+name: 'api-docs-deploy'
+
+on:
+  push:
+    tags:
+      - 4.*
+      - 5.*
+  workflow_dispatch:
+
+jobs:
+  trigger-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Cakebot App Token
+        id: app-token
+        uses: getsentry/action-github-app-token@v1
+        with:
+          app_id: ${{ secrets.CAKEBOT_APP_ID }}
+          private_key: ${{ secrets.CAKEBOT_APP_PRIVATE_KEY }}
+
+      - name: Trigger API build
+        run: >
+          curl -XPOST
+          -H 'Authorization: Bearer ${{ steps.app-token.outputs.token }}'
+          -H 'Accept: application/vnd.github.v3+json'
+          -H 'Content-Type: application/json'
+          https://api.github.com/repos/cakephp/cakephp-api-docs/actions/workflows/deploy_2x.yml/dispatches
+          --data '{"ref":"2.x"}'

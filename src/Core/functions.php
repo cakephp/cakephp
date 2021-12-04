@@ -252,10 +252,9 @@ if (!function_exists('triggerWarning')) {
      */
     function triggerWarning(string $message): void
     {
-        $stackFrame = 1;
         $trace = debug_backtrace();
-        if (isset($trace[$stackFrame])) {
-            $frame = $trace[$stackFrame];
+        if (isset($trace[1])) {
+            $frame = $trace[1];
             $frame += ['file' => '[internal]', 'line' => '??'];
             $message = sprintf(
                 '%s - %s, line: %s',

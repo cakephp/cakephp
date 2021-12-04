@@ -71,7 +71,7 @@ class PluginAssetsCopyCommand extends Command
             'Copy plugin assets to app\'s webroot.',
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to copy assets for.',
-            'optional' => true,
+            'required' => false,
         ])->addOption('overwrite', [
             'help' => 'Overwrite existing symlink / folder / files.',
             'default' => false,

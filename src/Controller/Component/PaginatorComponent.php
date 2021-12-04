@@ -23,6 +23,7 @@ use Cake\Datasource\Paginator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\NotFoundException;
 use InvalidArgumentException;
+use UnexpectedValueException;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -39,28 +40,6 @@ use InvalidArgumentException;
 class PaginatorComponent extends Component
 {
     /**
-     * Default pagination settings.
-     *
-     * When calling paginate() these settings will be merged with the configuration
-     * you provide.
-     *
-     * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
-     * - `limit` - The initial number of items per page. Defaults to 20.
-     * - `page` - The starting page, defaults to 1.
-     * - `allowedParameters` - A list of parameters users are allowed to set using request
-     *   parameters. Modifying this list will allow users to have more influence
-     *   over pagination, be careful with what you permit.
-     *
-     * @var array<string, mixed>
-     */
-    protected array $_defaultConfig = [
-        'page' => 1,
-        'limit' => 20,
-        'maxLimit' => 100,
-        'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-    ];
-
-    /**
      * Datasource paginator instance.
      *
      * @var \Cake\Datasource\Paginator
@@ -72,6 +51,10 @@ class PaginatorComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
+        if (!empty($this->_defaultConfig)) {
+            throw new UnexpectedValueException('Default configuration must be set using a custom Paginator class.');
+        }
+
         if (isset($config['paginator'])) {
             if (!$config['paginator'] instanceof Paginator) {
                 throw new InvalidArgumentException('Paginator must be an instance of ' . Paginator::class);
