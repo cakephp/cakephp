@@ -260,7 +260,6 @@ class RequestHandlerComponent extends Component
     public function accepts($type = null)
     {
         $controller = $this->getController();
-        $request = $controller->getRequest();
         /** @var array $accepted */
         $accepted = $controller->getRequest()->accepts();
 
