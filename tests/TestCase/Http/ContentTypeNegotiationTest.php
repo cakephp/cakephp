@@ -118,4 +118,35 @@ class ContentTypeNegotiationTest extends TestCase
             $content->prefersChoice($request, ['image/png', 'text/html'])
         );
     }
+
+    public function testParseAccept()
+    {
+        $content = new ContentTypeNegotiation();
+        $request = new ServerRequest([
+            'url' => '/dashboard',
+            'environment' => [
+                'HTTP_ACCEPT' => 'application/json;q=0.5,application/xml;q=0.6,application/pdf;q=0.3',
+            ],
+        ]);
+        $result = $content->parseAccept($request);
+        $expected = [
+            '0.6' => ['application/xml'],
+            '0.5' => ['application/json'],
+            '0.3' => ['application/pdf'],
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest([
+            'url' => '/dashboard',
+            'environment' => [
+                'HTTP_ACCEPT' => 'application/pdf;q=0.3,application/json;q=0.5,application/xml;q=0.5',
+            ],
+        ]);
+        $result = $content->parseAccept($request);
+        $expected = [
+            '0.5' => ['application/json', 'application/xml'],
+            '0.3' => ['application/pdf'],
+        ];
+        $this->assertEquals($expected, $result, 'Sorting is incorrect.');
+    }
 }

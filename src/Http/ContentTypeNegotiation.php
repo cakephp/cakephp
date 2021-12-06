@@ -20,16 +20,12 @@ class ContentTypeNegotiation
      *
      * You can expect null when the request has no Accept header.
      *
-     * @param Psr\Http\Message\RequestInterface $request
+     * @param \Psr\Http\Message\RequestInterface $request The request to use.
      * @return string|null The prefered type.
      */
     public function prefers(RequestInterface $request): ?string
     {
-        $accept = $request->getHeaderLine('Accept');
-        if (!$accept) {
-            return null;
-        }
-        $parsed = $this->parseAcceptWithQualifier($accept);
+        $parsed = $this->parseAccept($request);
         if (empty($parsed)) {
             return null;
         }
@@ -44,20 +40,16 @@ class ContentTypeNegotiation
      * Choose a content-type from a list of values the application
      * can provide. If there are no matches then `null` will be
      * returned. You can also expect null when the request has
-     * no Accept header.
+     * no `Accept` header.
      *
-     * @param Psr\Http\Message\RequestInterface $request The request to read an `Accept` header from.
+     * @param \Psr\Http\Message\RequestInterface $request The request to use.
      * @param string[] $types The types that the application can respond with for the provided request.
      * @return string|null Either the resolved type or `null` if no decision can be made.
      */
     public function prefersChoice(RequestInterface $request, array $types): ?string
     {
-        $accept = $request->getHeaderLine('Accept');
-        if (!$accept) {
-            return null;
-        }
-        $parsed = $this->parseAcceptWithQualifier($accept);
-        foreach ($parsed as $qual => $acceptTypes) {
+        $parsed = $this->parseAccept($request);
+        foreach ($parsed as $acceptTypes) {
             $common = array_intersect($acceptTypes, $types);
             if ($common) {
                 return $common[0];
@@ -73,12 +65,17 @@ class ContentTypeNegotiation
      * Only qualifiers will be extracted, any other accept extensions will be
      * discarded as they are not frequently used.
      *
-     * @param string $header Header to parse.
+     * @param \Psr\Http\Message\RequestInterface $request The request to get an accept from.
+     * @param string $header The header name to read.
      * @return array
      */
-    protected function parseAcceptWithQualifier(string $header): array
+    public function parseAccept(RequestInterface $request, string $header = 'Accept'): array
     {
+        $header = $request->getHeaderLine($header);
         $accept = [];
+        if (!$header) {
+            return $accept;
+        }
         $headers = explode(',', $header);
         foreach (array_filter($headers) as $value) {
             $prefValue = '1.0';
