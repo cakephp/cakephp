@@ -22,6 +22,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\ContentTypeNegotiation;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -121,7 +122,9 @@ class RequestHandlerComponent extends Component
      */
     protected function _setExtension(ServerRequest $request, Response $response): void
     {
-        $accept = $request->parseAccept();
+        $content = new ContentTypeNegotiation();
+        $accept = $content->parseAccept($request);
+
         if (empty($accept) || current($accept)[0] === 'text/html') {
             return;
         }
@@ -257,6 +260,7 @@ class RequestHandlerComponent extends Component
     public function accepts($type = null)
     {
         $controller = $this->getController();
+        $request = $controller->getRequest();
         /** @var array $accepted */
         $accepted = $controller->getRequest()->accepts();
 
@@ -345,8 +349,10 @@ class RequestHandlerComponent extends Component
     public function prefers($type = null)
     {
         $controller = $this->getController();
+        $request = $controller->getRequest();
+        $content = new ContentTypeNegotiation();
 
-        $acceptRaw = $controller->getRequest()->parseAccept();
+        $acceptRaw = $content->parseAccept($request);
         if (empty($acceptRaw)) {
             return $type ? $type === $this->ext : $this->ext;
         }
