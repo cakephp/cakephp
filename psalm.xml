@@ -44,5 +44,6 @@
         <PropertyNotSetInConstructor errorLevel="suppress"/>
         <UnresolvableInclude errorLevel="suppress"/>
         <UnsafeInstantiation errorLevel="suppress"/>
+        <UndefinedAttributeClass errorLevel="suppress"/>
     </issueHandlers>
 </psalm>
