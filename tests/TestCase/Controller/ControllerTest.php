@@ -809,8 +809,8 @@ class ControllerTest extends TestCase
         $response = new Response();
 
         $controller = new TestController($request, $response);
-        $result = $controller->loadComponent('Paginator');
-        $this->assertInstanceOf('Cake\Controller\Component\PaginatorComponent', $result);
+        $result = $controller->loadComponent('Flash');
+        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
         $this->assertSame($result, $controller->Paginator);
 
         $registry = $controller->components();
@@ -826,13 +826,13 @@ class ControllerTest extends TestCase
         $response = new Response();
 
         $controller = new TestController($request, $response);
-        $this->assertNotEmpty($controller->loadComponent('Paginator'));
-        $this->assertNotEmpty($controller->loadComponent('Paginator'));
+        $this->assertNotEmpty($controller->loadComponent('Flash'));
+        $this->assertNotEmpty($controller->loadComponent('Flash'));
         try {
-            $controller->loadComponent('Paginator', ['bad' => 'settings']);
+            $controller->loadComponent('Flash', ['bad' => 'settings']);
             $this->fail('No exception');
         } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "Paginator" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The "Flash" alias has already been loaded', $e->getMessage());
         }
     }
 

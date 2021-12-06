@@ -87,7 +87,6 @@ use UnexpectedValueException;
  *
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
- * @property \Cake\Controller\Component\PaginatorComponent $Paginator
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @link https://book.cakephp.org/4/en/controllers.html
  */
@@ -754,8 +753,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Handles pagination of records in Table objects.
      *
-     * Will load the referenced Table object, and have the PaginatorComponent
-     * paginate the query using the request date and settings defined in `$this->paginate`.
+     * Will load the referenced Table object and paginate the query using the request date
+     * and settings defined in `$this->paginate`.
      *
      * This method will also make the PaginatorHelper available in the view.
      *
