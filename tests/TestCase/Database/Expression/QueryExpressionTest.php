@@ -201,17 +201,6 @@ class QueryExpressionTest extends TestCase
         );
     }
 
-    /**
-     * Test deprecated adding of case statement.
-     */
-    public function testDeprecatedAddCaseStatement(): void
-    {
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage('QueryExpression::addCase() is deprecated, use case() instead.');
-
-        (new QueryExpression())->addCase([]);
-    }
-
     public function testCaseWithoutValue(): void
     {
         $expression = (new QueryExpression())
