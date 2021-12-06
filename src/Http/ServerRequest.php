@@ -1092,16 +1092,17 @@ class ServerRequest implements ServerRequestInterface
      */
     public function accepts(?string $type = null)
     {
-        $raw = $this->parseAccept();
-        $accept = [];
-        foreach ($raw as $types) {
-            $accept = array_merge($accept, $types);
-        }
-        if ($type === null) {
-            return $accept;
+        $content = new ContentTypeNegotiation();
+        if ($type) {
+            return $content->prefersChoice($this, [$type]) !== null;
         }
 
-        return in_array($type, $accept, true);
+        $accept = [];
+        foreach ($content->parseAccept($this) as $types) {
+            $accept = array_merge($accept, $types);
+        }
+
+        return $accept;
     }
 
     /**
@@ -1112,10 +1113,11 @@ class ServerRequest implements ServerRequestInterface
      * of the accepted content types.
      *
      * @return array An array of `prefValue => [content/types]`
+     * @deprecated 4.4.0 Use accepts() or ContentTypeNegotiation instead.
      */
     public function parseAccept(): array
     {
-        return $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept'));
+        return (new ContentTypeNegotiation())->parseAccept($this);
     }
 
     /**
@@ -1134,7 +1136,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function acceptLanguage(?string $language = null)
     {
-        $raw = $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept-Language'));
+        $raw = (new ContentTypeNegotiation())->parseAccept($this, 'Accept-Language');
         $accept = [];
         foreach ($raw as $languages) {
             foreach ($languages as &$lang) {
@@ -1150,47 +1152,6 @@ class ServerRequest implements ServerRequestInterface
         }
 
         return in_array(strtolower($language), $accept, true);
-    }
-
-    /**
-     * Parse Accept* headers with qualifier options.
-     *
-     * Only qualifiers will be extracted, any other accept extensions will be
-     * discarded as they are not frequently used.
-     *
-     * @param string $header Header to parse.
-     * @return array
-     */
-    protected function _parseAcceptWithQualifier(string $header): array
-    {
-        $accept = [];
-        $headers = explode(',', $header);
-        foreach (array_filter($headers) as $value) {
-            $prefValue = '1.0';
-            $value = trim($value);
-
-            $semiPos = strpos($value, ';');
-            if ($semiPos !== false) {
-                $params = explode(';', $value);
-                $value = trim($params[0]);
-                foreach ($params as $param) {
-                    $qPos = strpos($param, 'q=');
-                    if ($qPos !== false) {
-                        $prefValue = substr($param, $qPos + 2);
-                    }
-                }
-            }
-
-            if (!isset($accept[$prefValue])) {
-                $accept[$prefValue] = [];
-            }
-            if ($prefValue) {
-                $accept[$prefValue][] = $value;
-            }
-        }
-        krsort($accept);
-
-        return $accept;
     }
 
     /**

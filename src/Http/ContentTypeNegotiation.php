@@ -52,7 +52,7 @@ class ContentTypeNegotiation
         foreach ($parsed as $acceptTypes) {
             $common = array_intersect($acceptTypes, $types);
             if ($common) {
-                return $common[0];
+                return array_shift($common);
             }
         }
 
