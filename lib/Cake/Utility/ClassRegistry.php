@@ -130,7 +130,8 @@ class ClassRegistry {
 				}
 
 				if (empty($settings['alias'])) {
-					$settings['alias'] = $class;
+					$fqn = explode('\\', $class);
+					$settings['alias'] = array_pop($fqn);;
 				}
 				$alias = $settings['alias'];
 
