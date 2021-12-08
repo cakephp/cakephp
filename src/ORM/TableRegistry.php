@@ -88,7 +88,7 @@ class TableRegistry
      * @param string $alias The alias name you want to get.
      * @param array<string, mixed> $options The options you want to build the table with.
      * @return \Cake\ORM\Table
-     * @deprecated 3.6.0 Use {@link \Cake\ORM\Locator\TableLocator::get()} instead. Will be removed in 5.0.
+     * @deprecated 3.6.0 Use {@link \Cake\ORM\Locator\LocatorAwareTrait::fetchTable()} instead. Will be removed in 5.0.
      */
     public static function get(string $alias, array $options = []): Table
     {
