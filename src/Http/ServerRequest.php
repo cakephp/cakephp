@@ -1113,7 +1113,7 @@ class ServerRequest implements ServerRequestInterface
      * of the accepted content types.
      *
      * @return array An array of `prefValue => [content/types]`
-     * @deprecated 4.4.0 Use accepts() or ContentTypeNegotiation instead.
+     * @deprecated 4.4.0 Use `accepts()` or `ContentTypeNegotiation` class instead.
      */
     public function parseAccept(): array
     {
