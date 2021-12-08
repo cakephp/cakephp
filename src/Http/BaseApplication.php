@@ -294,6 +294,7 @@ abstract class BaseApplication implements
     /**
      * Invoke the application.
      *
+     * - Add the request to the container, enabling its injection into other services.
      * - Convert the PSR response into CakePHP equivalents.
      * - Create the controller that will handle this request.
      * - Invoke the controller.
@@ -304,6 +305,8 @@ abstract class BaseApplication implements
     public function handle(
         ServerRequestInterface $request
     ): ResponseInterface {
+        $this->getContainer()->add(ServerRequest::class, $request);
+
         if ($this->controllerFactory === null) {
             $this->controllerFactory = new ControllerFactory($this->getContainer());
         }

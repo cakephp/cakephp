@@ -79,10 +79,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             throw $this->missingController($request);
         }
 
-        // If the controller has a container definition
-        // add the request as a service.
+        // Get the controller from the container if defined.
+        // The request is in the container by default.
         if ($this->container->has($className)) {
-            $this->container->add(ServerRequest::class, $request);
             $controller = $this->container->get($className);
         } else {
             $controller = $reflection->newInstance($request);
