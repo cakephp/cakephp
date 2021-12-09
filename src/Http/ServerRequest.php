@@ -1094,7 +1094,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $content = new ContentTypeNegotiation();
         if ($type) {
-            return $content->prefersChoice($this, [$type]) !== null;
+            return $content->preferredType($this, [$type]) !== null;
         }
 
         $accept = [];
@@ -1125,33 +1125,23 @@ class ServerRequest implements ServerRequestInterface
      *
      * Get the list of accepted languages:
      *
-     * ``` \Cake\Http\ServerRequest::acceptLanguage(); ```
+     * ```$request->acceptLanguage();```
      *
      * Check if a specific language is accepted:
      *
-     * ``` \Cake\Http\ServerRequest::acceptLanguage('es-es'); ```
+     * ```$request->acceptLanguage('es-es');```
      *
      * @param string|null $language The language to test.
      * @return array|bool If a $language is provided, a boolean. Otherwise the array of accepted languages.
      */
     public function acceptLanguage(?string $language = null)
     {
-        $raw = (new ContentTypeNegotiation())->parseAccept($this, 'Accept-Language');
-        $accept = [];
-        foreach ($raw as $languages) {
-            foreach ($languages as &$lang) {
-                if (strpos($lang, '_')) {
-                    $lang = str_replace('_', '-', $lang);
-                }
-                $lang = strtolower($lang);
-            }
-            $accept = array_merge($accept, $languages);
-        }
-        if ($language === null) {
-            return $accept;
+        $content = new ContentTypeNegotiation();
+        if ($language !== null) {
+            return $content->acceptLanguage($this, $language);
         }
 
-        return in_array(strtolower($language), $accept, true);
+        return $content->acceptedLanguages($this);
     }
 
     /**

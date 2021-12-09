@@ -9,13 +9,13 @@ use Cake\TestSuite\TestCase;
 
 class ContentTypeNegotiationTest extends TestCase
 {
-    public function testPrefersNoAccept()
+    public function testPreferredTypeNoAccept()
     {
         $request = new ServerRequest([
             'url' => '/dashboard',
         ]);
         $content = new ContentTypeNegotiation();
-        $this->assertNull($content->prefers($request));
+        $this->assertNull($content->preferredType($request));
 
         $request = new ServerRequest([
             'url' => '/dashboard',
@@ -23,10 +23,10 @@ class ContentTypeNegotiationTest extends TestCase
                 'HTTP_ACCEPT' => '',
             ],
         ]);
-        $this->assertNull($content->prefers($request));
+        $this->assertNull($content->preferredType($request));
     }
 
-    public function testPrefersFirstMatch()
+    public function testPreferredTypeFirstMatch()
     {
         $content = new ContentTypeNegotiation();
         $request = new ServerRequest([
@@ -35,7 +35,7 @@ class ContentTypeNegotiationTest extends TestCase
                 'HTTP_ACCEPT' => 'application/json',
             ],
         ]);
-        $this->assertEquals('application/json', $content->prefers($request));
+        $this->assertEquals('application/json', $content->preferredType($request));
 
         $request = new ServerRequest([
             'url' => '/dashboard',
@@ -43,19 +43,20 @@ class ContentTypeNegotiationTest extends TestCase
                 'HTTP_ACCEPT' => 'application/json,application/xml',
             ],
         ]);
-        $this->assertEquals('application/json', $content->prefers($request));
+        $this->assertEquals('application/json', $content->preferredType($request));
     }
 
-    public function testPrefersQualValue()
+    public function testPreferredTypeQualValue()
     {
         $content = new ContentTypeNegotiation();
         $request = new ServerRequest([
             'url' => '/dashboard',
             'environment' => [
-                'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
+                'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,' .
+                    'text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
             ],
         ]);
-        $this->assertEquals('text/xml', $content->prefers($request));
+        $this->assertEquals('text/xml', $content->preferredType($request));
 
         $request = new ServerRequest([
             'url' => '/dashboard',
@@ -63,10 +64,10 @@ class ContentTypeNegotiationTest extends TestCase
                 'HTTP_ACCEPT' => 'text/plain;q=0.8,application/json;q=0.9',
             ],
         ]);
-        $this->assertEquals('application/json', $content->prefers($request));
+        $this->assertEquals('application/json', $content->preferredType($request));
     }
 
-    public function testPrefersChoiceNoMatch()
+    public function testPreferredTypeSimple()
     {
         $content = new ContentTypeNegotiation();
         $request = new ServerRequest([
@@ -75,47 +76,12 @@ class ContentTypeNegotiationTest extends TestCase
                 'HTTP_ACCEPT' => 'application/json',
             ],
         ]);
-        $this->assertNull($content->prefersChoice($request, ['text/html']));
-    }
+        $this->assertNull($content->preferredType($request, ['text/html']));
 
-    public function testPrefersChoiceSimple()
-    {
-        $content = new ContentTypeNegotiation();
-        $request = new ServerRequest([
-            'url' => '/dashboard',
-            'environment' => [
-                'HTTP_ACCEPT' => 'application/json',
-            ],
-        ]);
+        $request = $request->withEnv('HTTP_ACCEPT', 'application/json');
         $this->assertEquals(
             'application/json',
-            $content->prefersChoice($request, ['text/html', 'application/json'])
-        );
-    }
-
-    public function testPrefersChoiceQualValue()
-    {
-        $content = new ContentTypeNegotiation();
-        $request = new ServerRequest([
-            'url' => '/dashboard',
-            'environment' => [
-                'HTTP_ACCEPT' => 'application/json;q=0.5,application/xml;q=0.6,application/pdf;q=0.3',
-            ],
-        ]);
-        $this->assertEquals(
-            'application/json',
-            $content->prefersChoice($request, ['text/html', 'application/json'])
-        );
-        $this->assertEquals(
-            'application/pdf',
-            $content->prefersChoice($request, ['text/html', 'application/pdf'])
-        );
-        $this->assertEquals(
-            'application/json',
-            $content->prefersChoice($request, ['application/json', 'application/pdf'])
-        );
-        $this->assertNull(
-            $content->prefersChoice($request, ['image/png', 'text/html'])
+            $content->preferredType($request, ['text/html', 'application/json'])
         );
     }
 
@@ -136,17 +102,70 @@ class ContentTypeNegotiationTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $request = new ServerRequest([
-            'url' => '/dashboard',
-            'environment' => [
-                'HTTP_ACCEPT' => 'application/pdf;q=0.3,application/json;q=0.5,application/xml;q=0.5',
-            ],
-        ]);
+        $request = $request->withEnv(
+            'HTTP_ACCEPT',
+            'application/pdf;q=0.3,application/json;q=0.5,application/xml;q=0.5'
+        );
         $result = $content->parseAccept($request);
         $expected = [
             '0.5' => ['application/json', 'application/xml'],
             '0.3' => ['application/pdf'],
         ];
         $this->assertEquals($expected, $result, 'Sorting is incorrect.');
+    }
+
+    public function testParseAcceptLanguage()
+    {
+        $content = new ContentTypeNegotiation();
+        $request = new ServerRequest([
+            'url' => '/dashboard',
+            'environment' => [
+                'HTTP_ACCEPT_LANGUAGE' => '',
+            ],
+        ]);
+        $this->assertEmpty($content->parseAcceptLanguage($request));
+
+        $request = $request->withEnv('HTTP_ACCEPT_LANGUAGE', 'es_mx,en_ca');
+        $expected = [
+            '1.0' => ['es_mx', 'en_ca'],
+        ];
+        $this->assertEquals($expected, $content->parseAcceptLanguage($request));
+
+        $request = $request->withEnv('HTTP_ACCEPT_LANGUAGE', 'en-US,en;q=0.8,pt-BR;q=0.6,pt;q=0.4');
+        $expected = [
+            '1.0' => ['en-US'],
+            '0.8' => ['en'],
+            '0.6' => ['pt-BR'],
+            '0.4' => ['pt'],
+        ];
+        $this->assertEquals($expected, $content->parseAcceptLanguage($request));
+    }
+
+    public function testAcceptLanguage()
+    {
+        $content = new ContentTypeNegotiation();
+        $request = new ServerRequest([
+            'url' => '/dashboard',
+            'environment' => [
+                'HTTP_ACCEPT_LANGUAGE' => 'en_US,en_CA',
+            ],
+        ]);
+        $this->assertFalse($content->acceptLanguage($request, 'es-mx'));
+        $this->assertTrue($content->acceptLanguage($request, 'en-ca'));
+        $this->assertTrue($content->acceptLanguage($request, 'en-CA'), 'Input code is lowercased');
+        $this->assertFalse($content->acceptLanguage($request, 'en_CA'), 'Input code not normalized');
+    }
+
+    public function testAcceptedLanguage()
+    {
+        $content = new ContentTypeNegotiation();
+        $request = new ServerRequest([
+            'url' => '/dashboard',
+            'environment' => [
+                'HTTP_ACCEPT_LANGUAGE' => 'pt-BR;q=0.6,en_US,en_CA;q=0.8',
+            ],
+        ]);
+        $expected = ['en-us', 'en-ca', 'pt-br'];
+        $this->assertEquals($expected, $content->acceptedLanguages($request, 'es-mx'));
     }
 }
