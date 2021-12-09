@@ -1167,6 +1167,8 @@ class Validation
      * - an optional query string (get parameters)
      * - an optional fragment (anchor tag) as defined in RFC 3986
      *
+     * Does not allow local network addresses, such as "localhost".
+     *
      * @param mixed $check Value to check
      * @param bool $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
      * @return bool Success
