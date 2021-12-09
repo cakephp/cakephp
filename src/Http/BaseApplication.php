@@ -295,7 +295,6 @@ abstract class BaseApplication implements
      * Invoke the application.
      *
      * - Add the request to the container, enabling its injection into other services.
-     * - Convert the PSR response into CakePHP equivalents.
      * - Create the controller that will handle this request.
      * - Invoke the controller.
      *
