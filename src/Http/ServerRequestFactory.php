@@ -228,7 +228,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      *
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
-     * @return \Psr\Http\Message\UriInterface a constructed Uri
+     * @return \Cake\Http\Uri A constructed Uri
      */
     protected static function marshalUriFromSapi(array $server, array $headers): UriInterface
     {
@@ -248,14 +248,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $uri = $uri->withHost('localhost');
         }
 
-        // Splat on some extra attributes to save
-        // some method calls.
-        /** @psalm-suppress NoInterfaceProperties */
-        $uri->base = $base;
-        /** @psalm-suppress NoInterfaceProperties */
-        $uri->webroot = $webroot;
-
-        return $uri;
+        return Uri::fromLaminas($uri, $base, $webroot);
     }
 
     /**
