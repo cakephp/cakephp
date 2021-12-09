@@ -552,14 +552,10 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _acceptHeaderDetector(array $detect): bool
     {
-        $acceptHeaders = explode(',', (string)$this->getEnv('HTTP_ACCEPT'));
-        foreach ($detect['accept'] as $header) {
-            if (in_array($header, $acceptHeaders, true)) {
-                return true;
-            }
-        }
+        $content = new ContentTypeNegotiation();
+        $accepted = $content->preferredType($this, $detect['accept']);
 
-        return false;
+        return $accepted !== null;
     }
 
     /**
