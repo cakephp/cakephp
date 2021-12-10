@@ -28,6 +28,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
+use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
 use LogicException;
@@ -321,7 +322,11 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getFixtureStrategy(): FixtureStrategyInterface
     {
-        return new TruncateStrategy();
+        if (Configure::read('Test.enableTransactionStrategy', false)) {
+            return new TransactionStrategy();
+        } else {
+            return new TruncateStrategy();
+        }
     }
 
     /**
