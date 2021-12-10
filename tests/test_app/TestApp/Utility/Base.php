@@ -17,9 +17,9 @@ class Base
 
     /**
      * @param string[] $properties An array of properties and the merge strategy for them.
-     * @param array $options The options to use when merging properties.
+     * @param array<string, mixed> $options The options to use when merging properties.
      */
-    public function mergeVars($properties, $options = []): void
+    public function mergeVars(array $properties, array $options = []): void
     {
         $this->_mergeVars($properties, $options);
     }

@@ -33,7 +33,7 @@ class ArticlesTable extends Table
      * Find published
      *
      * @param \Cake\ORM\Query $query The query
-     * @param array $options The options
+     * @param array<string, mixed> $options The options
      */
     public function findPublished($query, array $options = []): Query
     {

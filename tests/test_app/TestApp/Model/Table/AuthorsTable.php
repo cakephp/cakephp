@@ -22,11 +22,20 @@ use Cake\ORM\Table;
  */
 class AuthorsTable extends Table
 {
+    /**
+     * @param array<string, mixed> $config
+     * @return void
+     */
     public function initialize(array $config): void
     {
         $this->hasMany('articles');
     }
 
+    /**
+     * @param \Cake\ORM\Query $query
+     * @param array<string, mixed> $options
+     * @return \Cake\ORM\Query
+     */
     public function findByAuthor(Query $query, array $options = []): Query
     {
         if (isset($options['author_id'])) {
@@ -40,7 +49,7 @@ class AuthorsTable extends Table
      * Finder that applies a formatter to test dirty associations
      *
      * @param \Cake\ORM\Query $query The query
-     * @param array $options The options
+     * @param array<string, mixed> $options The options
      */
     public function findFormatted(Query $query, array $options = []): Query
     {
