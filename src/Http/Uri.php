@@ -1,16 +1,34 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.3.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
 namespace Cake\Http;
 
-use Laminas\Diactoros\Uri as LaminasUri;
+use Psr\Http\Message\UriInterface;
 
 /**
  * The base and webroot properties have piggybacked on the Uri for
  * a long time. To preserve backwards compatibility and avoid dynamic
- * property errors in PHP 8.2 we use this subclass.
+ * property errors in PHP 8.2 we use this implementation that decorates
+ * the Uri from Laminas
+ *
+ * This class is an internal implementation workaround that will be removed in 5.x
+ *
+ * @internal
  */
-class Uri extends LaminasUri
+class Uri implements UriInterface
 {
     /**
      * @var string
@@ -23,43 +41,32 @@ class Uri extends LaminasUri
     private $webroot = '';
 
     /**
-     * Create a subclassed Uri that includes additional CakePHP properties
+     * @var \Psr\Http\Message\UriInterface
+     */
+    private $uri;
+
+    /**
+     * Constructor
      *
-     * @param \Laminas\Diactoros\Uri $uri Uri instance to copy
+     * @param \Psr\Http\Message\Uri $uri Uri instance to decorate
      * @param string $base The base path.
      * @param string $webroot The webroot path.
-     * @return self
      */
-    public static function fromLaminas(LaminasUri $uri, string $base, string $webroot): self
+    public function __construct(UriInterface $uri, string $base, string $webroot)
     {
-        $copy = (new self())
-            ->withScheme($uri->getScheme())
-            ->withHost($uri->getHost())
-            ->withUserInfo($uri->getUserInfo())
-            ->withPort($uri->getPort())
-            ->withPath($uri->getPath())
-            ->withQuery($uri->getQuery())
-            ->withFragment($uri->getFragment());
-
-        $copy->base = $base;
-        $copy->webroot = $webroot;
-
-        return $copy;
+        $this->uri = $uri;
+        $this->base = $base;
+        $this->webroot = $webroot;
     }
 
     /**
-     * Backwards compatible property read
+     * Get the decorated URI
      *
-     * @param string $prop The property to read.
-     * @return string|null
+     * @return \Psr\Http\Message\UriInterface
      */
-    public function __get($prop): ?string
+    public function getUri(): UriInterface
     {
-        if ($prop !== 'base' && $prop !== 'webroot') {
-            return null;
-        }
-
-        return $this->{$prop};
+        return $this->uri;
     }
 
     /**
@@ -80,5 +87,133 @@ class Uri extends LaminasUri
     public function getWebroot(): string
     {
         return $this->webroot;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getScheme()
+    {
+        return $this->uri->getScheme();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAuthority()
+    {
+        return $this->uri->getAuthority();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUserInfo()
+    {
+        return $this->uri->getUserInfo();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHost()
+    {
+        return $this->uri->getHost();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPort()
+    {
+        return $this->uri->getPort();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPath()
+    {
+        return $this->uri->getPath();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getQuery()
+    {
+        return $this->uri->getQuery();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFragment()
+    {
+        return $this->uri->getFragment();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withScheme($scheme)
+    {
+        return $this->uri->withScheme($scheme);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withUserInfo($user, $password = null)
+    {
+        return $this->uri->withUserInfo($user, $password);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withHost($host)
+    {
+        return $this->uri->withHost($host);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withPort($port)
+    {
+        return $this->uri->withPort($port);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withPath($path)
+    {
+        return $this->uri->withPath($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withQuery($query)
+    {
+        return $this->uri->withQuery($query);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withFragment($fragment)
+    {
+        return $this->uri->withFragment($fragment);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __toString()
+    {
+        return $this->uri->__toString();
     }
 }
