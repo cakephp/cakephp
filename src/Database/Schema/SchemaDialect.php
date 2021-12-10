@@ -182,12 +182,30 @@ abstract class SchemaDialect
 
     /**
      * Generate the SQL to list the tables.
-     *
+     * @deprecated
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function listTablesSql(array $config): array;
+
+    /**
+     * Generate the SQL to list the tables, excluding all views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
+     */
+    abstract public function listTablesWithoutViewsSql(array $config): array;
+
+    /**
+     * Generate the SQL to list the tables and views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
+     */
+    abstract public function listTablesAndViewsSql(array $config): array;
 
     /**
      * Generate the SQL to describe a table.

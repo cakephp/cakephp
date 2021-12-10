@@ -29,18 +29,46 @@ class SqlserverSchemaDialect extends SchemaDialect
     public const DEFAULT_SCHEMA_NAME = 'dbo';
 
     /**
+     * @deprecated
      * @inheritDoc
      */
     public function listTablesSql(array $config): array
     {
-        $tableTypeSql = "TABLE_TYPE = 'BASE TABLE'";
-        if (!array_key_exists('excludeViews', $config) || $config['excludeViews'] == false) {
-            $tableTypeSql .= " OR TABLE_TYPE = 'VIEW'";
-        }
+        return $this->listTablesAndViewsSql();
+    }
+
+    /**
+     * Generate the SQL to list the tables and views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
+     */
+    public function listTablesAndViewsSql(array $config): array
+    {
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_SCHEMA = ?
-            AND ($tableTypeSql)
+            AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
+            ORDER BY TABLE_NAME";
+        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
+        return [$sql, [$schema]];
+    }
+
+    /**
+     * Generate the SQL to list the tables, excluding all views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
+     */
+    public function listTablesWithoutViewsSql(array $config): array
+    {
+        $sql = "SELECT TABLE_NAME
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = ?
+            AND (TABLE_TYPE = 'BASE TABLE')
             ORDER BY TABLE_NAME";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
 

@@ -26,10 +26,10 @@ use PDOException;
  * Used to access information about the tables,
  * and other data in a database.
  *
- * @method array listTablesOptions(array $options = []) Get the list of tables available in the current connection.
- *    Allows for an options array which can be used to modify the results.
- * @method array listTablesExcludeViews() Get the list of tables, excluding any views,
- *    available in the current connection.
+ * @method array<string,mixed> listTablesAndViews() Get the list of tables available in the current connection.
+ * This will include any views in the schema.
+ * @method array<string,mixed> listTablesWithoutViews() Get the list of tables available in the current connection.
+ * This will exclude any views in the schema.
  */
 class Collection implements CollectionInterface
 {
@@ -59,14 +59,13 @@ class Collection implements CollectionInterface
     }
 
     /**
-     * Get the list of tables available in the current connection. Allows for
-     * an options array which can be used to modify the results.
+     * Get the list of tables, excluding any views, available in the current connection.
      *
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTablesOptions(array $options = []): array
+    public function listTablesWithoutViews(): array
     {
-        [$sql, $params] = $this->_dialect->listTablesSql(array_merge($this->_connection->config(), $options));
+        [$sql, $params] = $this->_dialect->listTablesWithoutViewsSql($this->_connection->config());
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {
@@ -78,23 +77,30 @@ class Collection implements CollectionInterface
     }
 
     /**
-     * Get the list of tables, excluding any views, available in the current connection.
-     *
+     * Get the list of tables available in the current connection.
+     * @deprecated
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTablesExcludeViews(): array
+    public function listTables(): array
     {
-        return $this->listTablesOptions(['excludeViews' => true]);
+        return $this->listTablesAndViews();
     }
-
     /**
      * Get the list of tables available in the current connection.
      *
      * @return array<string> The list of tables in the connected database/schema.
      */
-    public function listTables(): array
+    public function listTablesAndViews(): array
     {
-        return $this->listTablesOptions([]);
+        [$sql, $params] = $this->_dialect->listTablesAndViewsSql($this->_connection->config());
+        $result = [];
+        $statement = $this->_connection->execute($sql, $params);
+        while ($row = $statement->fetch()) {
+            $result[] = $row[0];
+        }
+        $statement->closeCursor();
+
+        return $result;
     }
 
     /**

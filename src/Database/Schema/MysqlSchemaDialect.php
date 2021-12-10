@@ -34,17 +34,39 @@ class MysqlSchemaDialect extends SchemaDialect
     protected $_driver;
 
     /**
+     * @deprecated
      * @inheritDoc
      */
     public function listTablesSql(array $config): array
     {
-        return ['SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']) .
-        (
-            array_key_exists('excludeViews', $config) && $config['excludeViews'] === true
-            ? ' WHERE Table_type = "BASE TABLE"'
-            : ' '
-        )
+        return $this->listTablesAndViewsSql($config);
+    }
+
+    /**
+     * Generate the SQL to list the tables, excluding all views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
+     */
+    public function listTablesWithoutViewsSql(array $config): array
+    {
+        return [
+            'SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database'])
+            . ' WHERE Table_type LIKE "%TABLE%"'
         , []];
+    }
+
+    /**
+     * Generate the SQL to list the tables and views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
+     */
+    public function listTablesAndViewsSql(array $config): array
+    {
+        return ['SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
     }
 
     /**

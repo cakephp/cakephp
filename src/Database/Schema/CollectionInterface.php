@@ -26,7 +26,7 @@ interface CollectionInterface
 {
     /**
      * Get the list of tables available in the current connection.
-     *
+     * @deprecated
      * @return array<string> The list of tables in the connected database/schema.
      */
     public function listTables(): array;
