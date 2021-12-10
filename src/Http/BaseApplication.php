@@ -305,10 +305,11 @@ abstract class BaseApplication implements
     public function handle(
         ServerRequestInterface $request
     ): ResponseInterface {
-        $this->getContainer()->add(ServerRequest::class, $request);
+        $container = $this->getContainer();
+        $container->add(ServerRequest::class, $request);
 
         if ($this->controllerFactory === null) {
-            $this->controllerFactory = new ControllerFactory($this->getContainer());
+            $this->controllerFactory = new ControllerFactory($container);
         }
 
         if (Router::getRequest() !== $request) {
