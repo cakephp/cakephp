@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use AllowDynamicProperties;
 use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
 use Cake\Console\ConsoleIo;
@@ -30,7 +29,6 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * Includes traits that integrate logging
  * and ORM models to console commands.
  */
-#[AllowDynamicProperties]
 class Command extends BaseCommand
 {
     use LocatorAwareTrait;

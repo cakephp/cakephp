@@ -5,7 +5,6 @@ namespace TestApp\Http\Client\Adapter;
 
 use ArrayAccess;
 use Exception;
-use ReturnTypeWillChange;
 
 class CakeStreamWrapper implements ArrayAccess
 {
@@ -64,7 +63,7 @@ class CakeStreamWrapper implements ArrayAccess
     /**
      * @inheritDoc
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->_data[$offset]);
     }
@@ -72,8 +71,7 @@ class CakeStreamWrapper implements ArrayAccess
     /**
      * @inheritDoc
      */
-    #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->_data[$offset];
     }
@@ -81,7 +79,7 @@ class CakeStreamWrapper implements ArrayAccess
     /**
      * @inheritDoc
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->_data[$offset] = $value;
     }
@@ -89,7 +87,7 @@ class CakeStreamWrapper implements ArrayAccess
     /**
      * @inheritDoc
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->_data[$offset]);
     }

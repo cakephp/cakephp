@@ -10,8 +10,6 @@ parameters:
 		- tests/bootstrap.php
 	paths:
 		- src/
-	ignoreErrors:
-		- '#^Attribute class \w+ does not exist\.$#'
 
 services:
 	-
