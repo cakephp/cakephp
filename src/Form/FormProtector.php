@@ -269,8 +269,8 @@ class FormProtector
     /**
      * Return hash parts for the token generation
      *
-     * @param array $formData Form data.
-     * @return array
+     * @param array<string, array> $formData Form data.
+     * @return array<string, array>
      * @psalm-return array{fields: array, unlockedFields: array}
      */
     protected function extractHashParts(array $formData): array
@@ -422,7 +422,7 @@ class FormProtector
      * Generate validation hash.
      *
      * @param array $fields Fields list.
-     * @param array $unlockedFields Unlocked fields.
+     * @param array<string> $unlockedFields Unlocked fields.
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
      * @return string

@@ -269,7 +269,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *   Defaults to `true`/`'default'`.
      *
      * @param array $data Form data.
-     * @param array $options List of options.
+     * @param array<string, mixed> $options List of options.
      * @return bool False on validation failure, otherwise returns the
      *   result of the `_execute()` method.
      */

@@ -26,9 +26,9 @@ class GreedyCommentsTable extends Table
      * Overload find to cause issues.
      *
      * @param string $type Find type
-     * @param array $options find options
+     * @param array<string, mixed> $options find options
      */
-    public function find(string $type = 'all', $options = []): Query
+    public function find(string $type = 'all', array $options = []): Query
     {
         if (empty($options['conditions'])) {
             $options['conditions'] = [];
