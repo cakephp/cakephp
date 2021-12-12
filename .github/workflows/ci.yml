@@ -261,3 +261,7 @@ jobs:
     - name: Run phpstan for tests
       if: success() || failure()
       run: vendor/bin/phpstan.phar analyse -c tests/phpstan.neon --error-format=github
+
+    - name: Run phpbench
+      if: success() || failure()
+      run: vendor/bin/phpbench run --report=aggregate

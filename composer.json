@@ -59,6 +59,7 @@
         "cakephp/cakephp-codesniffer": "^4.5",
         "mikey179/vfsstream": "^1.6.10",
         "paragonie/csp-builder": "^2.3",
+        "phpbench/phpbench": "^1.2",
         "phpunit/phpunit": "^8.5 || ^9.3"
     },
     "suggest": {
@@ -115,7 +116,8 @@
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
         "test": "phpunit",
-        "test-coverage": "phpunit --coverage-clover=clover.xml"
+        "test-coverage": "phpunit --coverage-clover=clover.xml",
+        "bench": "phpbench run --report=aggregate"
     },
     "support": {
         "issues": "https://github.com/cakephp/cakephp/issues",
