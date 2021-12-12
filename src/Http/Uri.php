@@ -154,7 +154,10 @@ class Uri implements UriInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $scheme Scheme value.
+     * @return \Psr\Http\Message\UriInterface
      */
     public function withScheme($scheme)
     {
@@ -162,7 +165,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $user User value
+     * @param string|null $password Password value.
+     * @return \Psr\Http\Message\UriInterface
      */
     public function withUserInfo($user, $password = null)
     {
@@ -170,7 +177,10 @@ class Uri implements UriInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $host Host value.
+     * @return \Psr\Http\Message\UriInterface
      */
     public function withHost($host)
     {
@@ -178,7 +188,10 @@ class Uri implements UriInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param int $port Port value
+     * @return \Psr\Http\Message\UriInterface
      */
     public function withPort($port)
     {
@@ -186,7 +199,10 @@ class Uri implements UriInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $path Path value
+     * @return \Psr\Http\Message\UriInterface
      */
     public function withPath($path)
     {
@@ -194,7 +210,10 @@ class Uri implements UriInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $query Query value
+     * @return \Psr\Http\Message\UriInterface
      */
     public function withQuery($query)
     {
@@ -202,7 +221,10 @@ class Uri implements UriInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $fragment Fragment value
+     * @return \Psr\Http\Message\UriInterface
      */
     public function withFragment($fragment)
     {
