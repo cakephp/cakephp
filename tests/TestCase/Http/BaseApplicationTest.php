@@ -22,6 +22,7 @@ use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -74,6 +75,7 @@ class BaseApplicationTest extends TestCase
         $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame('Hello Jane', '' . $result->getBody());
+        $this->assertSame($request, $app->getContainer()->get(ServerRequest::class));
     }
 
     /**
