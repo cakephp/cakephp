@@ -121,7 +121,7 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
-        if [[ ${{ matrix.php-version }} == '8.0' ]]; then
+        if [[ ${{ matrix.php-version }} == '8.1' ]]; then
           export CODECOVERAGE=1
           vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
@@ -135,7 +135,7 @@ jobs:
       run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
 
     - name: Submit code coverage
-      if: matrix.php-version == '8.0'
+      if: matrix.php-version == '8.1'
       uses: codecov/codecov-action@v1
 
   testsuite-windows:
