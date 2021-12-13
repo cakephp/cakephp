@@ -287,7 +287,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
         $resultAll = $schema->listTablesAndViews();
-        $resultNoViews = $schema->listTablesExcludeViews();
+        $resultNoViews = $schema->listTablesWithoutViewsSql();
 
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
