@@ -29,6 +29,7 @@ use Cake\Database\Statement\SqliteStatement;
 use Cake\Database\StatementInterface;
 use InvalidArgumentException;
 use PDO;
+use RuntimeException;
 
 /**
  * Class Sqlite
@@ -52,6 +53,8 @@ class Sqlite extends Driver
         'database' => ':memory:',
         'encoding' => 'utf8',
         'mask' => 0644,
+        'cache' => null,
+        'mode' => null,
         'flags' => [],
         'init' => [],
     ];
@@ -132,12 +135,30 @@ class Sqlite extends Driver
             );
         }
 
-        $databaseExists = file_exists($config['database']);
+        $chmodFile = false;
+        if ($config['database'] !== ':memory:' && $config['mode'] !== 'memory') {
+            $chmodFile = !file_exists($config['database']);
+        }
 
-        $dsn = "sqlite:{$config['database']}";
+        $params = [];
+        if ($config['cache']) {
+            $params[] = 'cache=' . $config['cache'];
+        }
+        if ($config['mode']) {
+            $params[] = 'mode=' . $config['mode'];
+        }
+
+        if ($params) {
+            if (PHP_VERSION_ID < 80100) {
+                throw new RuntimeException('SQLite URI support requires PHP 8.1.');
+            }
+            $dsn = 'sqlite:file:' . $config['database'] . '?' . implode('&', $params);
+        } else {
+            $dsn = 'sqlite:' . $config['database'];
+        }
+
         $this->_connect($dsn, $config);
-
-        if (!$databaseExists && $config['database'] !== ':memory:') {
+        if ($chmodFile) {
             // phpcs:disable
             @chmod($config['database'], $config['mask']);
             // phpcs:enable
