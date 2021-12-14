@@ -79,6 +79,7 @@ class UriTest extends TestCase
             $new = $uri->{$method}('value');
             $this->assertNotSame($new, $uri);
             $this->assertNotSame($new, $inner);
+            $this->assertInstanceOf(Uri::class, $new);
         }
     }
 }

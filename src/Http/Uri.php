@@ -154,81 +154,59 @@ class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string $scheme Scheme value.
-     * @return \Psr\Http\Message\UriInterface
+     * @inheritDoc
      */
     public function withScheme($scheme)
     {
-        return $this->uri->withScheme($scheme);
+        return new static($this->uri->withScheme($scheme), $this->base, $this->webroot);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string $user User value
-     * @param string|null $password Password value.
-     * @return \Psr\Http\Message\UriInterface
+     * @inheritDoc
      */
     public function withUserInfo($user, $password = null)
     {
-        return $this->uri->withUserInfo($user, $password);
+        return new static($this->uri->withUserInfo($user, $password), $this->base, $this->webroot);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string $host Host value.
-     * @return \Psr\Http\Message\UriInterface
+     * @inheritDoc
      */
     public function withHost($host)
     {
-        return $this->uri->withHost($host);
+        return new static($this->uri->withHost($host), $this->base, $this->webroot);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param int $port Port value
-     * @return \Psr\Http\Message\UriInterface
+     * @inheritDoc
      */
     public function withPort($port)
     {
-        return $this->uri->withPort($port);
+        return new static($this->uri->withPort($port), $this->base, $this->webroot);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string $path Path value
-     * @return \Psr\Http\Message\UriInterface
+     * @inheritDoc
      */
     public function withPath($path)
     {
-        return $this->uri->withPath($path);
+        return new static($this->uri->withPath($path), $this->base, $this->webroot);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string $query Query value
-     * @return \Psr\Http\Message\UriInterface
+     * @inheritDoc
      */
     public function withQuery($query)
     {
-        return $this->uri->withQuery($query);
+        return new static($this->uri->withQuery($query), $this->base, $this->webroot);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string $fragment Fragment value
-     * @return \Psr\Http\Message\UriInterface
+     * @inheritDoc
      */
     public function withFragment($fragment)
     {
-        return $this->uri->withFragment($fragment);
+        return new static($this->uri->withFragment($fragment), $this->base, $this->webroot);
     }
 
     /**
