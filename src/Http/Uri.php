@@ -48,7 +48,7 @@ class Uri implements UriInterface
     /**
      * Constructor
      *
-     * @param \Psr\Http\Message\Uri $uri Uri instance to decorate
+     * @param \Psr\Http\Message\UriInterface $uri Uri instance to decorate
      * @param string $base The base path.
      * @param string $webroot The webroot path.
      */
