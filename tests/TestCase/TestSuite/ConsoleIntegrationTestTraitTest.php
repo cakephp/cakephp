@@ -115,19 +115,6 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     }
 
     /**
-     * tests exec with missing required argument
-     */
-    public function testExecWithMissingRequiredArg(): void
-    {
-        $this->exec('integration args_and_options');
-
-        $this->assertOutputEmpty();
-        $this->assertErrorContains('Missing required argument');
-        $this->assertErrorContains('`arg` argument is required');
-        $this->assertExitCode(Command::CODE_ERROR);
-    }
-
-    /**
      * tests exec with input
      */
     public function testExecWithInput(): void
