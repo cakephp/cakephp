@@ -24,6 +24,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\ContentTypeNegotiation;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -757,12 +758,57 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($builder->getTemplate() === null) {
             $builder->setTemplate($this->request->getParam('action'));
         }
-
-        $view = $this->createView();
+        $viewClass = $this->chooseViewClass();
+        $view = $this->createView($viewClass);
         $contents = $view->render();
         $this->setResponse($view->getResponse()->withStringBody($contents));
 
         return $this->response;
+    }
+
+    /**
+     * Get the list of View classes this controller can negotiate with.
+     *
+     * Each view class must implement the `getContentType()` hook method
+     * to participate in negotiation.
+     *
+     * @see Cake\Http\ContentTypeNegotiation
+     * @return array<string>
+     */
+    public function getViewClasses(): array
+    {
+        return [];
+    }
+
+    /**
+     * Use the view classes defined on this controller to view
+     * selection based on content-type negotiation.
+     *
+     * TODO: Should this also consider $request->getParam('_ext') as well?
+     *
+     * @return string|null The chosen view class or null for no decision.
+     */
+    protected function chooseViewClass(): ?string
+    {
+        $possibleViewClasses = $this->getViewClasses();
+        if (empty($possibleViewClasses)) {
+            return null;
+        }
+        $typeMap = [];
+        foreach ($possibleViewClasses as $class) {
+            $viewContentType = $class::getContentType();
+            if ($viewContentType && !isset($typeMap[$viewContentType])) {
+                $typeMap[$viewContentType] = $class;
+            }
+        }
+
+        $contentType = new ContentTypeNegotiation();
+        $preferredType = $contentType->preferredType($this->getRequest(), array_keys($typeMap));
+        if (!$preferredType) {
+            return null;
+        }
+
+        return $typeMap[$preferredType];
     }
 
     /**
