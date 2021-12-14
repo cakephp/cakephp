@@ -35,6 +35,11 @@
       <code>$values</code>
     </MissingParamType>
   </file>
+  <file src="src/Controller/Component/RequestHandlerComponent.php">
+    <DeprecatedMethod occurrences="2">
+      <code>prefers</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/Controller/ControllerFactory.php">
     <ArgumentTypeCoercion occurrences="3">
       <code>$request</code>
