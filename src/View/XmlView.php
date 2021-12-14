@@ -75,13 +75,6 @@ class XmlView extends SerializedView
     protected $subDir = 'xml';
 
     /**
-     * Response type.
-     *
-     * @var string
-     */
-    protected $_responseType = 'xml';
-
-    /**
      * Default config options.
      *
      * Use ViewBuilder::setOption()/setOptions() in your controller to set these options.
@@ -101,6 +94,16 @@ class XmlView extends SerializedView
         'xmlOptions' => null,
         'rootNode' => null,
     ];
+
+    /**
+     * Mime-type this view class renders as.
+     *
+     * @return string The JSON content type.
+     */
+    public static function getContentType(): string
+    {
+        return 'application/xml';
+    }
 
     /**
      * @inheritDoc

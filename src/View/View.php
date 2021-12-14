@@ -366,6 +366,16 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Mime-type this view class renders as.
+     *
+     * @return string Either the content type or '' which means no type.
+     */
+    public static function getContentType(): string
+    {
+        return '';
+    }
+
+    /**
      * Gets the request instance.
      *
      * @return \Cake\Http\ServerRequest

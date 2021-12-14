@@ -29,11 +29,12 @@ class AjaxView extends View
     protected $layout = 'ajax';
 
     /**
-     * @inheritDoc
+     * Get content type for this view.
+     *
+     * @return string
      */
-    public function initialize(): void
+    public static function getContentType(): string
     {
-        parent::initialize();
-        $this->setResponse($this->getResponse()->withType('ajax'));
+        return 'text/html';
     }
 }
