@@ -28,6 +28,8 @@ use Throwable;
  * FlashHelper.
  *
  * @method void success(string $message, array $options = []) Set a message using "success" element
+ * @method void info(string $message, array $options = []) Set a message using "info" element
+ * @method void warning(string $message, array $options = []) Set a message using "warning" element
  * @method void error(string $message, array $options = []) Set a message using "error" element
  */
 class FlashComponent extends Component

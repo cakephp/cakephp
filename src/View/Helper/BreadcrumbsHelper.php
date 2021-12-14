@@ -136,8 +136,10 @@ class BreadcrumbsHelper extends Helper
      * Insert a crumb at a specific index.
      *
      * If the index already exists, the new crumb will be inserted,
-     * and the existing element will be shifted one index greater.
-     * If the index is out of bounds, it will throw an exception.
+     * before the existing element, shifting the existing element one index
+     * greater than before.
+     *
+     * If the index is out of bounds, an exception will be thrown.
      *
      * @param int $index The index to insert at.
      * @param string $title Title of the crumb.
@@ -154,7 +156,7 @@ class BreadcrumbsHelper extends Helper
      */
     public function insertAt(int $index, string $title, array|string|null $url = null, array $options = [])
     {
-        if (!isset($this->crumbs[$index])) {
+        if (!isset($this->crumbs[$index]) && $index !== count($this->crumbs)) {
             throw new LogicException(sprintf("No crumb could be found at index '%s'", $index));
         }
 

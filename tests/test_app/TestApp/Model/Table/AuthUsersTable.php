@@ -27,7 +27,7 @@ class AuthUsersTable extends Table
      * Custom finder
      *
      * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to find with
+     * @param array<string, mixed> $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
     public function findAuth(Query $query, array $options): Query
@@ -44,7 +44,7 @@ class AuthUsersTable extends Table
      * Custom finder
      *
      * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to find with
+     * @param array<string, mixed> $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
     public function findUsername(Query $query, array $options): Query

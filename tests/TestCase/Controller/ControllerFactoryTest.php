@@ -269,15 +269,6 @@ class ControllerFactoryTest extends TestCase
      */
     public function testCreateWithContainerDependenciesWithController(): void
     {
-        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
-        $this->container->add(DependenciesController::class)
-            ->addArgument(ServerRequest::class)
-            ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(stdClass::class);
-
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/index',
             'params' => [
@@ -286,6 +277,16 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $this->container->add(ServerRequest::class, $request);
+        $this->container->add(DependenciesController::class)
+            ->addArgument(ServerRequest::class)
+            ->addArgument(null)
+            ->addArgument(null)
+            ->addArgument(null)
+            ->addArgument(null)
+            ->addArgument(stdClass::class);
+
         $controller = $this->factory->create($request);
         $this->assertInstanceOf(DependenciesController::class, $controller);
         $this->assertSame($controller->inject, $this->container->get(stdClass::class));

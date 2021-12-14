@@ -516,6 +516,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testWriteMany(): void
     {
+        $this->skipIf(PHP_VERSION_ID >= 80100, 'php-memcached writeMany() argument parsing is broken with PHP 8.1+');
         $this->_configCache(['duration' => 2]);
         $data = [
             'App.falseTest' => false,

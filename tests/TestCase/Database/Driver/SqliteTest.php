@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
@@ -27,6 +28,13 @@ use PDO;
  */
 class SqliteTest extends TestCase
 {
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        ConnectionManager::drop('test_shared_cache');
+        ConnectionManager::drop('test_shared_cache2');
+    }
+
     /**
      * Test connecting to Sqlite with default configuration
      */
@@ -40,6 +48,8 @@ class SqliteTest extends TestCase
             'persistent' => false,
             'database' => ':memory:',
             'encoding' => 'utf8',
+            'cache' => null,
+            'mode' => null,
             'username' => null,
             'password' => null,
             'flags' => [],
@@ -78,7 +88,7 @@ class SqliteTest extends TestCase
         $dsn = 'sqlite:bar.db';
 
         $expected = $config;
-        $expected += ['username' => null, 'password' => null];
+        $expected += ['username' => null, 'password' => null, 'cache' => null, 'mode' => null];
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_EMULATE_PREPARES => false,
@@ -98,6 +108,36 @@ class SqliteTest extends TestCase
             ->will($this->returnValue($connection));
 
         $driver->connect($config);
+    }
+
+    /**
+     * Tests creating multiple connections to same db.
+     */
+    public function testConnectionSharedCached()
+    {
+        $this->skipIf(PHP_VERSION_ID < 80100 || !extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        ConnectionManager::setConfig('test_shared_cache', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'database' => ':memory:',
+            'cache' => 'shared',
+        ]);
+
+        $connection = ConnectionManager::get('test_shared_cache');
+        $this->assertSame([], $connection->getSchemaCollection()->listTables());
+
+        $connection->query('CREATE TABLE test (test int);');
+        $this->assertSame(['test'], $connection->getSchemaCollection()->listTables());
+
+        ConnectionManager::setConfig('test_shared_cache2', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'database' => ':memory:',
+            'cache' => 'shared',
+        ]);
+        $connection = ConnectionManager::get('test_shared_cache2');
+        $this->assertSame(['test'], $connection->getSchemaCollection()->listTables());
+        $this->assertFileDoesNotExist('file::memory:?cache=shared');
     }
 
     /**
