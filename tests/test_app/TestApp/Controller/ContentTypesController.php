@@ -18,7 +18,7 @@ namespace TestApp\Controller;
 
 use Cake\View\JsonView;
 use Cake\View\XmlView;
-
+use TestApp\View\PlainTextView;
 
 /**
  * ContentTypesController class
@@ -40,5 +40,11 @@ class ContentTypesController extends AppController
         $this->viewClasses = [JsonView::class, XmlView::class];
         $this->set('data', ['hello', 'world']);
         $this->viewBuilder()->setOption('serialize', ['data']);
+    }
+
+    public function plain()
+    {
+        $this->viewClasses = [PlainTextView::class];
+        $this->set('body', 'hello world');
     }
 }

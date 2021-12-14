@@ -758,12 +758,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($builder->getTemplate() === null) {
             $builder->setTemplate($this->request->getParam('action'));
         }
+        // TODO should this only be done if builder->getViewClass() is null?
         $viewClass = $this->chooseViewClass();
         $view = $this->createView($viewClass);
-        $contents = $view->render();
-        $this->setResponse($view->getResponse()->withStringBody($contents));
 
-        return $this->response;
+        $contents = $view->render();
+        $response = $view->getResponse()->withStringBody($contents);
+
+        $viewContentType = $view->getContentType();
+        $responseType = $response->getHeaderLine('Content-Type');
+        if ($viewContentType && ($responseType === '' || substr($responseType, 0, 9) === 'text/html')) {
+            $response = $response->withHeader('Content-Type', $viewContentType);
+        }
+
+        return $this->setResponse($response)->response;
     }
 
     /**

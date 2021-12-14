@@ -306,6 +306,20 @@ class ControllerTest extends TestCase
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
+    public function testRenderViewClassesSetContentTypeHeader()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'text/plain'],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'plain'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->plain();
+        $response = $controller->render();
+        $this->assertSame('text/plain', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('hello world', $response->getBody() . '');
+    }
+
     /**
      * test view rendering changing response
      */
