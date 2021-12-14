@@ -18,7 +18,10 @@ class IntegrationCommand extends Command
 
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->addArgument('arg')
+        $parser
+            ->addArgument('arg', [
+                'required' => true,
+            ])
             ->addOption('opt', [
                 'short' => 'o',
             ]);

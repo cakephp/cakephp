@@ -107,11 +107,23 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      */
     public function testExecWithJsonArg(): void
     {
-        $this->exec("integration args_and_options '{\"key\":\"value\"}'");
+        $this->exec("integration '{\"key\":\"value\"}'");
 
         $this->assertErrorEmpty();
         $this->assertOutputContains('arg: {"key":"value"}');
         $this->assertExitCode(Command::CODE_SUCCESS);
+    }
+
+    /**
+     * tests exec with missing required argument
+     */
+    public function testExecWithMissingRequiredArg(): void
+    {
+        $this->exec('integration');
+
+        $this->assertErrorContains('Missing required argument');
+        $this->assertErrorContains('`arg` argument is required');
+        $this->assertExitCode(Command::CODE_ERROR);
     }
 
     /**
