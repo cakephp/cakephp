@@ -155,7 +155,7 @@ class Sqlite extends Driver
             $dsn = 'sqlite:' . $config['database'];
         }
 
-        $this->_connect($dsn, $config);
+        $this->_connection = $this->_connect($dsn, $config);
         if ($chmodFile) {
             // phpcs:disable
             @chmod($config['database'], $config['mask']);
