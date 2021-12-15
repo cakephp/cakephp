@@ -40,7 +40,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      *
      * @var array<string>
      */
-    protected $validClauseNames = [
+    protected array $validClauseNames = [
         'value',
         'when',
         'else',
@@ -51,56 +51,56 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      *
      * @var bool
      */
-    protected $isSimpleVariant = false;
+    protected bool $isSimpleVariant = false;
 
     /**
      * The case value.
      *
      * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
-    protected $value = null;
+    protected mixed $value = null;
 
     /**
      * The case value type.
      *
      * @var string|null
      */
-    protected $valueType = null;
+    protected ?string $valueType = null;
 
     /**
      * The `WHEN ... THEN ...` expressions.
      *
      * @var array<\Cake\Database\Expression\WhenThenExpression>
      */
-    protected $when = [];
+    protected array $when = [];
 
     /**
      * Buffer that holds values and types for use with `then()`.
      *
      * @var array|null
      */
-    protected $whenBuffer = null;
+    protected ?array $whenBuffer = null;
 
     /**
      * The else part result value.
      *
      * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
-    protected $else = null;
+    protected mixed $else = null;
 
     /**
      * The else part result type.
      *
      * @var string|null
      */
-    protected $elseType = null;
+    protected ?string $elseType = null;
 
     /**
      * The return type.
      *
      * @var string|null
      */
-    protected $returnType = null;
+    protected ?string $returnType = null;
 
     /**
      * Constructor.

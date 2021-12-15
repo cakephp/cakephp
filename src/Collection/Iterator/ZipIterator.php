@@ -50,7 +50,7 @@ class ZipIterator implements CollectionInterface
     /**
      * @var \MultipleIterator
      */
-    protected $multipleIterator;
+    protected MultipleIterator $multipleIterator;
 
     /**
      * The function to use for zipping items together

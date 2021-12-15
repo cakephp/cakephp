@@ -25,7 +25,7 @@ class InvalidParameterException extends CakeException
     /**
      * @var array<string, string>
      */
-    protected $templates = [
+    protected array $templates = [
         'failed_coercion' => 'Unable to coerce "%s" to `%s` for `%s` in action %s::%s().',
         'missing_dependency' => 'Failed to inject dependency from service container for `%s` in action %s::%s().',
         'missing_parameter' => 'Missing passed parameter for `%s` in action %s::%s().',
