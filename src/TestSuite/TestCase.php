@@ -216,7 +216,7 @@ abstract class TestCase extends BaseTestCase
                 if ($code == E_USER_DEPRECATED) {
                     $deprecation = true;
 
-                    return false;
+                    return true;
                 }
                 if ($previousHandler) {
                     return $previousHandler($code, $message, $file, $line, $context);
