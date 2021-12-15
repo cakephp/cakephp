@@ -189,6 +189,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param array $serverParams Array of SAPI parameters with which to seed
      *     the generated request instance.
      * @return \Psr\Http\Message\ServerRequestInterface
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {

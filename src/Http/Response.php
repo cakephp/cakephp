@@ -613,6 +613,7 @@ class Response implements ResponseInterface, Stringable
      *     use the defaults as suggested in the HTTP specification.
      * @return static
      * @throws \InvalidArgumentException For invalid status code arguments.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withStatus($code, $reasonPhrase = ''): static
     {

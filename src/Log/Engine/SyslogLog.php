@@ -97,6 +97,7 @@ class SyslogLog extends BaseLog
      * @param array $context Additional information about the logged message
      * @return void
      * @see \Cake\Log\Log::$_levels
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function log($level, Stringable|string $message, array $context = []): void
     {
