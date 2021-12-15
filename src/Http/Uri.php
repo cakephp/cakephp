@@ -158,7 +158,10 @@ class Uri implements UriInterface
      */
     public function withScheme($scheme)
     {
-        return new static($this->uri->withScheme($scheme), $this->base, $this->webroot);
+        $new = clone $this;
+        $new->uri = $this->uri->withScheme($scheme);
+
+        return $new;
     }
 
     /**
@@ -166,7 +169,10 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null)
     {
-        return new static($this->uri->withUserInfo($user, $password), $this->base, $this->webroot);
+        $new = clone $this;
+        $new->uri = $this->uri->withUserInfo($user, $password);
+
+        return $new;
     }
 
     /**
@@ -174,7 +180,10 @@ class Uri implements UriInterface
      */
     public function withHost($host)
     {
-        return new static($this->uri->withHost($host), $this->base, $this->webroot);
+        $new = clone $this;
+        $new->uri = $this->uri->withHost($host);
+
+        return $new;
     }
 
     /**
@@ -182,7 +191,10 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        return new static($this->uri->withPort($port), $this->base, $this->webroot);
+        $new = clone $this;
+        $new->uri = $this->uri->withPort($port);
+
+        return $new;
     }
 
     /**
@@ -190,7 +202,10 @@ class Uri implements UriInterface
      */
     public function withPath($path)
     {
-        return new static($this->uri->withPath($path), $this->base, $this->webroot);
+        $new = clone $this;
+        $new->uri = $this->uri->withPath($path);
+
+        return $new;
     }
 
     /**
@@ -198,7 +213,10 @@ class Uri implements UriInterface
      */
     public function withQuery($query)
     {
-        return new static($this->uri->withQuery($query), $this->base, $this->webroot);
+        $new = clone $this;
+        $new->uri = $this->uri->withQuery($query);
+
+        return $new;
     }
 
     /**
@@ -206,7 +224,10 @@ class Uri implements UriInterface
      */
     public function withFragment($fragment)
     {
-        return new static($this->uri->withFragment($fragment), $this->base, $this->webroot);
+        $new = clone $this;
+        $new->uri = $this->uri->withFragment($fragment);
+
+        return $new;
     }
 
     /**
