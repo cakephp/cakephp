@@ -46,6 +46,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? AND table_type = \'BASE TABLE\' ORDER BY name';
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
         return [$sql, [$schema]];
     }
 

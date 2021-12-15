@@ -87,7 +87,7 @@ class ConnectionHelper
         $collection = $connection->getSchemaCollection();
 
         $allTables = [];
-        if (method_exists($collection, "listTablesWithoutViews")) {
+        if (method_exists($collection, 'listTablesWithoutViews')) {
             $allTables = $collection->listTablesWithoutViews();
         } else {
             $allTables = $collection->listTables();

@@ -78,6 +78,7 @@ class Collection implements CollectionInterface
 
     /**
      * Get the list of tables available in the current connection.
+     *
      * @deprecated
      * @return array<string> The list of tables in the connected database/schema.
      */
@@ -85,6 +86,7 @@ class Collection implements CollectionInterface
     {
         return $this->listTablesAndViews();
     }
+
     /**
      * Get the list of tables available in the current connection.
      *
