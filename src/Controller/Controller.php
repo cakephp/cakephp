@@ -797,14 +797,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     protected function chooseViewClass(): ?string
     {
-        if ($this->viewBuilder()->getClassName() !== null) {
-            return null;
-        }
-
         $possibleViewClasses = $this->getViewClasses();
         if (empty($possibleViewClasses)) {
             return null;
         }
+        if ($this->viewBuilder()->getClassName() !== null) {
+            return null;
+        }
+
         $typeMap = [];
         foreach ($possibleViewClasses as $class) {
             $viewContentType = $class::getContentType();
@@ -812,9 +812,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 $typeMap[$viewContentType] = $class;
             }
         }
+        $request = $this->getRequest();
 
+        // Prefer the _ext route parameter if it is defined.
+        $ext = $request->getParam('_ext');
+        if ($ext) {
+            $extType = $this->response->getMimeType($ext);
+            if (isset($typeMap[$extType])) {
+                return $typeMap[$extType];
+            }
+        }
+
+        // Use accept header based negotiation.
         $contentType = new ContentTypeNegotiation();
-        $preferredType = $contentType->preferredType($this->getRequest(), array_keys($typeMap));
+        $preferredType = $contentType->preferredType($request, array_keys($typeMap));
         if (!$preferredType) {
             return null;
         }

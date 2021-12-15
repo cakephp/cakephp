@@ -350,6 +350,20 @@ class ControllerTest extends TestCase
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
+    public function testRenderViewClassesUsesExt()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all', '_ext' => 'json'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
+        $this->assertNotEmpty(json_decode($response->getBody() . ''), 'Body should be json');
+    }
+
     /**
      * test view rendering changing response
      */
