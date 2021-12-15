@@ -469,12 +469,7 @@ class RequestHandlerComponent extends Component
         }
         if (is_array($cType)) {
             $cType = $cType[$options['index']] ?? $cType;
-
-            if ($this->prefers($cType)) {
-                $cType = $this->prefers($cType);
-            } else {
-                $cType = $cType[0];
-            }
+            $cType = $this->prefers($cType) ?: $cType[0];
         }
 
         if (!$cType) {
