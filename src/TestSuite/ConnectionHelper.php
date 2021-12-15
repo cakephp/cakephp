@@ -126,7 +126,7 @@ class ConnectionHelper
             return $collection->describe($table);
         }, $tables);
 
-        $this->runWithoutConstraints($connection, function (Connection $connection) use ($schemas) {
+        $this->runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getDriver()->schemaDialect();
             /** @var \Cake\Database\Schema\TableSchema $schema */
             foreach ($schemas as $schema) {
@@ -147,12 +147,12 @@ class ConnectionHelper
     public function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
         if ($connection->getDriver()->supports(DriverInterface::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
-            $connection->disableConstraints(function (Connection $connection) use ($callback) {
+            $connection->disableConstraints(function (Connection $connection) use ($callback): void {
                 $callback($connection);
             });
         } else {
-            $connection->transactional(function (Connection $connection) use ($callback) {
-                $connection->disableConstraints(function (Connection $connection) use ($callback) {
+            $connection->transactional(function (Connection $connection) use ($callback): void {
+                $connection->disableConstraints(function (Connection $connection) use ($callback): void {
                     $callback($connection);
                 });
             });
