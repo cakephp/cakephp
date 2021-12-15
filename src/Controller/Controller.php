@@ -292,7 +292,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $name Property name
      * @return \Cake\Controller\Component|\Cake\ORM\Table|null
      */
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         if (!empty($this->defaultTable)) {
             if (str_contains($this->defaultTable, '\\')) {
@@ -834,6 +834,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function beforeFilter(EventInterface $event)
     {
@@ -846,6 +847,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function beforeRender(EventInterface $event)
     {
@@ -866,6 +868,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function beforeRedirect(EventInterface $event, UriInterface|array|string $url, Response $response)
     {
@@ -877,6 +880,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function afterFilter(EventInterface $event)
     {

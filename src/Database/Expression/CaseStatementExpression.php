@@ -499,7 +499,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * @return \Cake\Database\ExpressionInterface|object|array<\Cake\Database\Expression\WhenThenExpression>|scalar|null
      * @throws \InvalidArgumentException In case the given clause name is invalid.
      */
-    public function clause(string $clause)
+    public function clause(string $clause): mixed
     {
         if (!in_array($clause, $this->validClauseNames, true)) {
             throw new InvalidArgumentException(
