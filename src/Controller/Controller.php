@@ -758,7 +758,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($builder->getTemplate() === null) {
             $builder->setTemplate($this->request->getParam('action'));
         }
-        // TODO should this only be done if builder->getViewClass() is null?
         $viewClass = $this->chooseViewClass();
         $view = $this->createView($viewClass);
 
@@ -798,6 +797,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     protected function chooseViewClass(): ?string
     {
+        if ($this->viewBuilder()->getClassName() !== null) {
+            return null;
+        }
+
         $possibleViewClasses = $this->getViewClasses();
         if (empty($possibleViewClasses)) {
             return null;
