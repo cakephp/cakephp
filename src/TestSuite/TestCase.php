@@ -185,11 +185,11 @@ abstract class TestCase extends BaseTestCase
          * @psalm-suppress InvalidArgument
          */
         $previousHandler = set_error_handler(
-            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation) {
+            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation): bool {
                 if ($code == E_USER_DEPRECATED) {
                     $deprecation = true;
 
-                    return;
+                    return false;
                 }
                 if ($previousHandler) {
                     return $previousHandler($code, $message, $file, $line, $context);

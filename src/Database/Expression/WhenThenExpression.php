@@ -258,7 +258,7 @@ class WhenThenExpression implements ExpressionInterface
      * @return \Cake\Database\ExpressionInterface|object|scalar|null
      * @throws \InvalidArgumentException In case the given clause name is invalid.
      */
-    public function clause(string $clause)
+    public function clause(string $clause): mixed
     {
         if (!in_array($clause, $this->validClauseNames, true)) {
             throw new InvalidArgumentException(
