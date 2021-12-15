@@ -26,6 +26,10 @@ use InvalidArgumentException;
  *
  * This class contains methods that are common across
  * the various SQL dialects.
+ * @method array<string,mixed> listTablesAndViews() Get the list of tables available in the current connection.
+ * This will include any views in the schema.
+ * @method array<string,mixed> listTablesWithoutViews() Get the list of tables available in the current connection.
+ * This will exclude any views in the schema.
  */
 abstract class SchemaDialect
 {
@@ -188,24 +192,6 @@ abstract class SchemaDialect
      * @return array An array of (sql, params) to execute.
      */
     abstract public function listTablesSql(array $config): array;
-
-    /**
-     * Generate the SQL to list the tables, excluding all views.
-     *
-     * @param array<string, mixed> $config The connection configuration to use for
-     *    getting tables from.
-     * @return array An array of (sql, params) to execute.
-     */
-    abstract public function listTablesWithoutViewsSql(array $config): array;
-
-    /**
-     * Generate the SQL to list the tables and views.
-     *
-     * @param array<string, mixed> $config The connection configuration to use for
-     *    getting tables from.
-     * @return array An array of (sql, params) to execute.
-     */
-    abstract public function listTablesAndViewsSql(array $config): array;
 
     /**
      * Generate the SQL to describe a table.
