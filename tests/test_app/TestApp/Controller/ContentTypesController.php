@@ -30,7 +30,7 @@ class ContentTypesController extends AppController
      */
     protected $viewClasses = [];
 
-    public function getViewClasses(): array
+    public function viewClasses(): array
     {
         return $this->viewClasses;
     }

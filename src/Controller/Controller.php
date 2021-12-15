@@ -782,7 +782,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @see Cake\Http\ContentTypeNegotiation
      * @return array<string>
      */
-    public function getViewClasses(): array
+    public function viewClasses(): array
     {
         return [];
     }
@@ -797,7 +797,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     protected function chooseViewClass(): ?string
     {
-        $possibleViewClasses = $this->getViewClasses();
+        $possibleViewClasses = $this->viewClasses();
         if (empty($possibleViewClasses)) {
             return null;
         }
