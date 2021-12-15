@@ -32,6 +32,7 @@ class PDOStatement extends StatementDecorator
      * PDOStatement instance
      *
      * @var \PDOStatement
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $_statement;
 

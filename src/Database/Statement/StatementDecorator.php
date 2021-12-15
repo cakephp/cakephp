@@ -43,6 +43,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * or any other custom implementation.
      *
      * @var \Cake\Database\StatementInterface
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $_statement;
 

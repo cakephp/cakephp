@@ -43,6 +43,7 @@ class BufferedStatement implements Iterator, StatementInterface
      * The decorated statement
      *
      * @var \Cake\Database\StatementInterface
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $statement;
 

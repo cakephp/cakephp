@@ -39,7 +39,7 @@ class WhenThenExpression implements ExpressionInterface
      *
      * @var array<string>
      */
-    protected $validClauseNames = [
+    protected array $validClauseNames = [
         'when',
         'then',
     ];
@@ -50,28 +50,28 @@ class WhenThenExpression implements ExpressionInterface
      *
      * @var \Cake\Database\TypeMap
      */
-    protected $_typeMap;
+    protected TypeMap $_typeMap;
 
     /**
      * Then `WHEN` value.
      *
      * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
-    protected $when = null;
+    protected mixed $when = null;
 
     /**
      * The `WHEN` value type.
      *
      * @var array|string|null
      */
-    protected $whenType = null;
+    protected array|string|null $whenType = null;
 
     /**
      * The `THEN` value.
      *
      * @var \Cake\Database\ExpressionInterface|object|scalar|null
      */
-    protected $then = null;
+    protected mixed $then = null;
 
     /**
      * Whether the `THEN` value has been defined, eg whether `then()`
@@ -79,14 +79,14 @@ class WhenThenExpression implements ExpressionInterface
      *
      * @var bool
      */
-    protected $hasThenBeenDefined = false;
+    protected bool $hasThenBeenDefined = false;
 
     /**
      * The `THEN` result type.
      *
      * @var string|null
      */
-    protected $thenType = null;
+    protected ?string $thenType = null;
 
     /**
      * Constructor.

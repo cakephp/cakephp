@@ -49,7 +49,7 @@ class CspMiddleware implements MiddlewareInterface
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'scriptNonce' => false,
         'styleNonce' => false,
     ];
