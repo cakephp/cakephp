@@ -34,6 +34,7 @@ class CookieSet extends ResponseBase
      *
      * @param mixed $other Expected content
      * @return bool
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function matches($other): bool
     {

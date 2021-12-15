@@ -302,6 +302,7 @@ trait DateFormatTrait
      *
      * @param array<int>|string|int $format Format.
      * @return void
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public static function setToStringFormat($format): void
     {

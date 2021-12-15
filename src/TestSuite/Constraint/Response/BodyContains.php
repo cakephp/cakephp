@@ -47,6 +47,7 @@ class BodyContains extends ResponseBase
      *
      * @param mixed $other Expected type
      * @return bool
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function matches($other): bool
     {

@@ -123,7 +123,7 @@ class WhenThenExpression implements ExpressionInterface
      * neither a string, nor null.
      * @see CaseStatementExpression::when() for a more detailed usage explanation.
      */
-    public function when($when, $type = null)
+    public function when(mixed $when, array|string|null $type = null)
     {
         if (
             !(is_array($when) && !empty($when)) &&
@@ -135,17 +135,6 @@ class WhenThenExpression implements ExpressionInterface
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
                 is_array($when) ? '[]' : get_debug_type($when)
-            ));
-        }
-
-        if (
-            $type !== null &&
-            !is_array($type) &&
-            !is_string($type)
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                'The `$type` argument must be either an array, a string, or `null`, `%s` given.',
-                get_debug_type($type)
             ));
         }
 
@@ -205,7 +194,7 @@ class WhenThenExpression implements ExpressionInterface
      *  result value.
      * @return $this
      */
-    public function then($result, ?string $type = null)
+    public function then(mixed $result, ?string $type = null)
     {
         if (
             $result !== null &&

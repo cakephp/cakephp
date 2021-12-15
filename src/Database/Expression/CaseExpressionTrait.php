@@ -39,7 +39,7 @@ trait CaseExpressionTrait
      * @param mixed $value The value for which to infer the type.
      * @return string|null The abstract type, or `null` if it could not be inferred.
      */
-    protected function inferType($value): ?string
+    protected function inferType(mixed $value): ?string
     {
         $type = null;
 
@@ -83,7 +83,7 @@ trait CaseExpressionTrait
      * @param string|null $type The value type.
      * @return string
      */
-    protected function compileNullableValue(ValueBinder $binder, $value, ?string $type = null): string
+    protected function compileNullableValue(ValueBinder $binder, mixed $value, ?string $type = null): string
     {
         if (
             $type !== null &&

@@ -807,6 +807,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The header you want to get (case-insensitive)
      * @return bool Whether the header is defined.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function hasHeader($name): bool
     {
@@ -825,6 +826,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array<string> An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function getHeader($name): array
     {
@@ -842,6 +844,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The header you want to get (case-insensitive)
      * @return string Header values collapsed into a comma separated string.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function getHeaderLine($name): string
     {
@@ -857,6 +860,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array|string $value The header value
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withHeader($name, $value): static
     {
@@ -877,6 +881,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array|string $value The header value
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withAddedHeader($name, $value): static
     {
@@ -898,6 +903,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The header name to remove.
      * @return static
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withoutHeader($name): static
     {
@@ -933,6 +939,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $method The HTTP method to use.
      * @return static A new instance with the updated method.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withMethod($method): static
     {
@@ -1320,6 +1327,7 @@ class ServerRequest implements ServerRequestInterface
      * @param object|array|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withParsedBody($data): static
     {
@@ -1359,6 +1367,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $version HTTP protocol version
      * @return static
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withProtocolVersion($version): static
     {
@@ -1519,6 +1528,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @param mixed $value The value of the attribute.
      * @return static
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withAttribute($name, $value): static
     {
@@ -1538,6 +1548,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @return static
      * @throws \InvalidArgumentException
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withoutAttribute($name): static
     {
@@ -1558,6 +1569,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @param mixed|null $default The default value if the attribute has not been set.
      * @return mixed
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function getAttribute($name, $default = null): mixed
     {
@@ -1703,6 +1715,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Psr\Http\Message\UriInterface $uri The new request uri
      * @param bool $preserveHost Whether the host should be retained.
      * @return static
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withUri($uri, $preserveHost = false): static
     {
@@ -1738,6 +1751,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $requestTarget The request target.
      * @return static
      * @psalm-suppress MoreSpecificImplementedParamType
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withRequestTarget($requestTarget): static
     {

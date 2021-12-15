@@ -356,7 +356,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *  from the value.
      * @return \Cake\Database\Expression\CaseStatementExpression
      */
-    public function case($value = null, ?string $type = null): CaseStatementExpression
+    public function case(mixed $value = null, ?string $type = null): CaseStatementExpression
     {
         if (func_num_args() > 0) {
             $expression = new CaseStatementExpression($value, $type);

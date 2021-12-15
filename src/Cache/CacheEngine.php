@@ -93,11 +93,11 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * Ensure the validity of the given cache key.
      *
-     * @param string $key Key to check.
+     * @param mixed $key Key to check.
      * @return void
      * @throws \Cake\Cache\InvalidArgumentException When the key is not valid.
      */
-    protected function ensureValidKey($key): void
+    protected function ensureValidKey(mixed $key): void
     {
         if (!is_string($key) || strlen($key) === 0) {
             throw new InvalidArgumentException('A cache key must be a non-empty string.');
@@ -112,15 +112,8 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return void
      * @throws \Cake\Cache\InvalidArgumentException
      */
-    protected function ensureValidType($iterable, string $check = self::CHECK_VALUE): void
+    protected function ensureValidType(iterable $iterable, string $check = self::CHECK_VALUE): void
     {
-        if (!is_iterable($iterable)) {
-            throw new InvalidArgumentException(sprintf(
-                'A cache %s must be either an array or a Traversable.',
-                $check === self::CHECK_VALUE ? 'key set' : 'set'
-            ));
-        }
-
         foreach ($iterable as $key => $value) {
             if ($check === self::CHECK_VALUE) {
                 $this->ensureValidKey($value);

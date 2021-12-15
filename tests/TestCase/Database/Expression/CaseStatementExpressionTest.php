@@ -1929,41 +1929,6 @@ class CaseStatementExpressionTest extends TestCase
             ->then(1);
     }
 
-    public function invalidWhenTypeDataProvider(): array
-    {
-        $res = fopen('data:text/plain,123', 'rb');
-        fclose($res);
-
-        return [
-            [1, 'int'],
-            [1.0, 'float'],
-            [new stdClass(), 'stdClass'],
-            [
-                function () {
-                },
-                'Closure',
-            ],
-            [$res, 'resource (closed)'],
-        ];
-    }
-
-    /**
-     * @dataProvider invalidWhenTypeDataProvider
-     * @param mixed $type The when type.
-     * @param string $typeName The expected error type name.
-     */
-    public function testInvalidWhenType($type, string $typeName): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            "The `\$type` argument must be either an array, a string, or `null`, `$typeName` given."
-        );
-
-        (new CaseStatementExpression())
-            ->when(1, $type)
-            ->then(1);
-    }
-
     public function invalidThenValueDataProvider(): array
     {
         $res = fopen('data:text/plain,123', 'rb');

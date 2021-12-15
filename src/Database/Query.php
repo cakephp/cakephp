@@ -1923,7 +1923,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * @param \Cake\Database\ExpressionInterface|array|string|null $rawExpression A string, array or anything you want wrapped in an expression object
      * @return \Cake\Database\Expression\QueryExpression
      */
-    public function expr($rawExpression = null): QueryExpression
+    public function expr(ExpressionInterface|array|string|null $rawExpression = null): QueryExpression
     {
         $expression = new QueryExpression([], $this->getTypeMap());
 

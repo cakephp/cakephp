@@ -206,7 +206,7 @@ class Connection implements ConnectionInterface
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
      */
-    protected function createDriver($name, array $config): DriverInterface
+    protected function createDriver(DriverInterface|string $name, array $config): DriverInterface
     {
         $driver = $name;
         if (is_string($driver)) {
