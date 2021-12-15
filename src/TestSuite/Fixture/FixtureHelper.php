@@ -131,7 +131,7 @@ class FixtureHelper
      */
     public function insert(array $fixtures): void
     {
-        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
+        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
             if ($connection instanceof Connection) {
                 $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
                 if ($sortedFixtures) {
@@ -140,11 +140,14 @@ class FixtureHelper
                     }
                 } else {
                     $helper = new ConnectionHelper();
-                    $helper->runWithoutConstraints($connection, function (Connection $connection) use ($groupFixtures) {
-                        foreach ($groupFixtures as $fixture) {
-                            $fixture->insert($connection);
+                    $helper->runWithoutConstraints(
+                        $connection,
+                        function (Connection $connection) use ($groupFixtures): void {
+                            foreach ($groupFixtures as $fixture) {
+                                $fixture->insert($connection);
+                            }
                         }
-                    });
+                    );
                 }
             } else {
                 foreach ($groupFixtures as $fixture) {
@@ -163,7 +166,7 @@ class FixtureHelper
      */
     public function truncate(array $fixtures): void
     {
-        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures) {
+        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
             if ($connection instanceof Connection) {
                 $sortedFixtures = null;
                 if ($connection->getDriver()->supports(DriverInterface::FEATURE_TRUNCATE_WITH_CONSTRAINTS)) {
@@ -176,11 +179,14 @@ class FixtureHelper
                     }
                 } else {
                     $helper = new ConnectionHelper();
-                    $helper->runWithoutConstraints($connection, function (Connection $connection) use ($groupFixtures) {
-                        foreach ($groupFixtures as $fixture) {
-                            $fixture->truncate($connection);
+                    $helper->runWithoutConstraints(
+                        $connection,
+                        function (Connection $connection) use ($groupFixtures): void {
+                            foreach ($groupFixtures as $fixture) {
+                                $fixture->truncate($connection);
+                            }
                         }
-                    });
+                    );
                 }
             } else {
                 foreach ($groupFixtures as $fixture) {
