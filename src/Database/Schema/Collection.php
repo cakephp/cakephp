@@ -84,7 +84,15 @@ class Collection implements CollectionInterface
      */
     public function listTables(): array
     {
-        return $this->listTablesAndViews();
+        [$sql, $params] = $this->_dialect->listTablesSql($this->_connection->config());
+        $result = [];
+        $statement = $this->_connection->execute($sql, $params);
+        while ($row = $statement->fetch()) {
+            $result[] = $row[0];
+        }
+        $statement->closeCursor();
+
+        return $result;
     }
 
     /**

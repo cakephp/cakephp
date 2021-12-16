@@ -79,7 +79,7 @@ class CachedCollection implements CollectionInterface
      */
     public function listTables(): array
     {
-        return $this->listTablesAndViews();
+        return $this->collection->listTables();
     }
 
     /**
