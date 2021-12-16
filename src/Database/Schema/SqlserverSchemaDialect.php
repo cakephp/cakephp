@@ -29,12 +29,16 @@ class SqlserverSchemaDialect extends SchemaDialect
     public const DEFAULT_SCHEMA_NAME = 'dbo';
 
     /**
+     * Generate the SQL to list the tables and views.
+     *
      * @deprecated
-     * @inheritDoc
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
      */
     public function listTablesSql(array $config): array
     {
-        return $this->listTablesAndViewsSql();
+        return $this->listTablesAndViewsSql($config);
     }
 
     /**
@@ -42,7 +46,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array An array of (sql, params) to execute.
+     * @return array<mixed> An array of (sql, params) to execute.
      */
     public function listTablesAndViewsSql(array $config): array
     {
@@ -61,7 +65,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array An array of (sql, params) to execute.
+     * @return array<mixed> An array of (sql, params) to execute.
      */
     public function listTablesWithoutViewsSql(array $config): array
     {

@@ -34,8 +34,12 @@ class MysqlSchemaDialect extends SchemaDialect
     protected $_driver;
 
     /**
+     * Generate the SQL to list the tables and views.
+     *
      * @deprecated
-     * @inheritDoc
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array<mixed> An array of (sql, params) to execute.
      */
     public function listTablesSql(array $config): array
     {
@@ -47,7 +51,7 @@ class MysqlSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array An array of (sql, params) to execute.
+     * @return array<mixed> An array of (sql, params) to execute.
      */
     public function listTablesWithoutViewsSql(array $config): array
     {
@@ -62,7 +66,7 @@ class MysqlSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array An array of (sql, params) to execute.
+     * @return array<mixed> An array of (sql, params) to execute.
      */
     public function listTablesAndViewsSql(array $config): array
     {

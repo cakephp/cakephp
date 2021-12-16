@@ -26,9 +26,9 @@ use PDOException;
  * Used to access information about the tables,
  * and other data in a database.
  *
- * @method array<string,mixed> listTablesAndViews() Get the list of tables available in the current connection.
+ * @method array<string> listTablesAndViews() Get the list of tables available in the current connection.
  * This will include any views in the schema.
- * @method array<string,mixed> listTablesWithoutViews() Get the list of tables available in the current connection.
+ * @method array<string> listTablesWithoutViews() Get the list of tables available in the current connection.
  * This will exclude any views in the schema.
  */
 class Collection implements CollectionInterface
