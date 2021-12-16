@@ -292,14 +292,15 @@ SQL;
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
-        $this->assertContains('view_schema_articles', $result);
+        $this->assertNotContains('view_schema_articles', $result);
         $this->assertIsArray($resultNoViews);
         $this->assertContains('schema_articles', $resultNoViews);
         $this->assertNotContains('view_schema_articles', $resultNoViews);
+
         $this->assertIsArray($resultAll);
-        $this->assertContains('schema_articles', $result);
-        $this->assertContains('schema_authors', $result);
-        $this->assertContains('view_schema_articles', $result);
+        $this->assertContains('schema_articles', $resultAll);
+        $this->assertContains('schema_authors', $resultAll);
+        $this->assertContains('view_schema_articles', $resultAll);
     }
 
     /**
