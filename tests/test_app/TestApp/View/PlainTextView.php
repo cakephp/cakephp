@@ -22,7 +22,10 @@ use Cake\View\View;
  */
 class PlainTextView extends View
 {
-    public static function getContentType(): string
+    /**
+     * @inheritDoc
+     */
+    public static function contentType(): string
     {
         return 'text/plain';
     }

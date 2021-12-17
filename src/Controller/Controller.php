@@ -764,12 +764,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $contents = $view->render();
         $response = $view->getResponse()->withStringBody($contents);
 
-        $viewContentType = $view->getContentType();
-        $responseType = $response->getHeaderLine('Content-Type');
-        if ($viewContentType && ($responseType === '' || substr($responseType, 0, 9) === 'text/html')) {
-            $response = $response->withHeader('Content-Type', $viewContentType);
-        }
-
         return $this->setResponse($response)->response;
     }
 
@@ -791,8 +785,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Use the view classes defined on this controller to view
      * selection based on content-type negotiation.
      *
-     * TODO: Should this also consider $request->getParam('_ext') as well?
-     *
      * @return string|null The chosen view class or null for no decision.
      */
     protected function chooseViewClass(): ?string
@@ -807,7 +799,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $typeMap = [];
         foreach ($possibleViewClasses as $class) {
-            $viewContentType = $class::getContentType();
+            $viewContentType = $class::contentType();
             if ($viewContentType && !isset($typeMap[$viewContentType])) {
                 $typeMap[$viewContentType] = $class;
             }

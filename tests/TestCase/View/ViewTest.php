@@ -1810,9 +1810,9 @@ TEXT;
     /**
      * Somewhat pointless, but helps ensure BC for defaults.
      */
-    public function testGetContentType()
+    public function testContentType()
     {
-        $this->assertSame('', $this->View->getContentType());
+        $this->assertSame('', $this->View->contentType());
     }
 
     protected function checkException(string $message): void

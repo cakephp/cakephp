@@ -33,7 +33,7 @@ class AjaxView extends View
      *
      * @return string
      */
-    public static function getContentType(): string
+    public static function contentType(): string
     {
         return 'text/html';
     }

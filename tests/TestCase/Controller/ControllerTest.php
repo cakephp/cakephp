@@ -346,7 +346,7 @@ class ControllerTest extends TestCase
         $controller = new ContentTypesController($request, new Response());
         $controller->plain();
         $response = $controller->render();
-        $this->assertSame('text/plain', $response->getHeaderLine('Content-Type'));
+        $this->assertSame('text/plain; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 

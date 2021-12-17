@@ -29,7 +29,7 @@ abstract class SerializedView extends View
      * Response type.
      *
      * @var string
-     * @deprecated 4.4.0 Implement ``public static getContentType(): string`` instead.
+     * @deprecated 4.4.0 Implement ``public static contentType(): string`` instead.
      */
     protected $_responseType;
 
@@ -55,14 +55,10 @@ abstract class SerializedView extends View
     public function initialize(): void
     {
         parent::initialize();
-        $response = $this->getResponse();
-        $contentType = static::getContentType();
-        if ($contentType) {
-            $response = $response->withType($contentType);
-        } else {
-            $response = $response->withType($this->_responseType);
+        if ($this->_responseType) {
+            $response = $this->getResponse()->withType($this->_responseType);
+            $this->setResponse($response);
         }
-        $this->setResponse($response);
     }
 
     /**
