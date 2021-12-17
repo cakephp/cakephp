@@ -28,6 +28,8 @@ class TestAuthenticate extends BaseAuthenticate
     public $callStack = [];
 
     public $authenticationProvider;
+    
+    public $modifiedUser;
 
     /**
      * @return array<string, mixed>
