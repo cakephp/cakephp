@@ -79,12 +79,12 @@ class Collection implements CollectionInterface
     /**
      * Get the list of tables available in the current connection.
      *
-     * @deprecated
+     * @deprecated in 4.3.2 Use {@link listTablesAndViews()} instead.
      * @return array<string> The list of tables in the connected database/schema.
      */
     public function listTables(): array
     {
-        [$sql, $params] = $this->_dialect->listTablesSql($this->_connection->config());
+        [$sql, $params] = $this->_dialect->listTablesAndViewsSql($this->_connection->config());
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {

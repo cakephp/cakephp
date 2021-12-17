@@ -291,16 +291,17 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-
         $schema = new SchemaCollection($connection);
-        $result = $schema->listTables();
-        $resultAll = $schema->listTablesAndViews();
-        $resultNoViews = $schema->listTablesWithoutViews();
 
+        $result = $schema->listTables();
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_articles_v', $result);
         $this->assertContains('schema_authors', $result);
+
+        $resultAll = $schema->listTablesAndViews();
+        $resultNoViews = $schema->listTablesWithoutViews();
+
         $this->assertIsArray($resultAll);
         $this->assertContains('schema_articles', $resultAll);
         $this->assertContains('schema_articles_v', $resultAll);

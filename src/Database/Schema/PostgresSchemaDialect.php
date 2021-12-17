@@ -28,7 +28,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * Generate the SQL to list the tables and views.
      *
-     * @deprecated
+     * @deprecated 4.3.2 Use {@link listTablesAndViewsSql()} instead.
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
      * @return array An array of (sql, params) to execute.

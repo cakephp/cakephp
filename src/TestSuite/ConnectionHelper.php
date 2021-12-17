@@ -89,8 +89,6 @@ class ConnectionHelper
         $allTables = [];
         if (method_exists($collection, 'listTablesWithoutViews')) {
             $allTables = $collection->listTablesWithoutViews();
-        } else {
-            $allTables = $collection->listTables();
         }
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
