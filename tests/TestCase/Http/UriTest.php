@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
+use Error;
 use Laminas\Diactoros\Uri as LaminasUri;
 
 /**
@@ -32,6 +33,18 @@ class UriTest extends TestCase
 
         $this->assertSame('/base', $uri->getBase());
         $this->assertSame('/base/', $uri->getWebroot());
+    }
+
+    public function testMagicAttributes()
+    {
+        $inner = new LaminasUri('/articles/view/1');
+        $uri = new Uri($inner, '/base', '/base/');
+
+        $this->assertSame('/base', $uri->base);
+        $this->assertSame('/base/', $uri->webroot);
+
+        $this->expectException(Error::class);
+        $uri->uri;
     }
 
     public function testWrappedGetMethods()
