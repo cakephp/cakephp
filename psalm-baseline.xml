@@ -406,4 +406,9 @@
       <code>defaultCurrency</code>
     </DeprecatedMethod>
   </file>
+  <file src="src/View/SerializedView.php">
+    <DeprecatedProperty occurrences="1">
+      <code>$this-&gt;_responseType</code>
+    </DeprecatedProperty>
+  </file>
 </files>

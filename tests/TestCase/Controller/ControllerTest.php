@@ -310,7 +310,7 @@ class ControllerTest extends TestCase
         $controller = new ContentTypesController($request, new Response());
         $controller->all();
         $response = $controller->render();
-        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'),);
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
