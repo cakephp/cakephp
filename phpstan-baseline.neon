@@ -226,16 +226,6 @@ parameters:
 			path: src/Http/Response.php
 
 		-
-			message: "#^Access to an undefined property Psr\\\\Http\\\\Message\\\\UriInterface\\:\\:\\$base\\.$#"
-			count: 2
-			path: src/Http/ServerRequestFactory.php
-
-		-
-			message: "#^Access to an undefined property Psr\\\\Http\\\\Message\\\\UriInterface\\:\\:\\$webroot\\.$#"
-			count: 3
-			path: src/Http/ServerRequestFactory.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Session.php

@@ -206,9 +206,9 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
 
     /**
      * Returns the next row in a result set as an associative array. Calling this function is the same as calling
-     * $statement->fetch(StatementDecorator::FETCH_TYPE_ASSOC). If no results are found false is returned.
+     * $statement->fetch(StatementDecorator::FETCH_TYPE_ASSOC). If no results are found an empty array is returned.
      *
-     * @return array Result array containing columns and values an an associative array or an empty array if no results
+     * @return array
      */
     public function fetchAssoc(): array
     {

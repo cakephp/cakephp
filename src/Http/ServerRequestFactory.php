@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\Configure;
+use Cake\Http\Uri as CakeUri;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -63,21 +64,31 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
 
+        $webroot = '';
+        $base = '';
+        if ($uri instanceof CakeUri) {
+            // Unwrap our shim for base and webroot.
+            // For 5.x we should change the interface on createUri() to return a
+            // tuple of [$uri, $base, $webroot] and remove the wrapper.
+            $webroot = $uri->getWebroot();
+            $base = $uri->getBase();
+            $uri->getUri();
+        }
+
         /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
-            'cookiePath' => $uri->webroot,
+            'cookiePath' => $webroot,
         ];
         $session = Session::create($sessionConfig);
 
-        /** @psalm-suppress NoInterfaceProperties */
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
-            'webroot' => $uri->webroot,
-            'base' => $uri->base,
+            'webroot' => $webroot,
+            'base' => $base,
             'session' => $session,
             'input' => $server['CAKEPHP_INPUT'] ?? null,
         ]);
@@ -229,7 +240,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      *
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
-     * @return \Psr\Http\Message\UriInterface a constructed Uri
+     * @return \Cake\Http\Uri A constructed Uri
      */
     protected static function marshalUriFromSapi(array $server, array $headers): UriInterface
     {
@@ -249,14 +260,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $uri = $uri->withHost('localhost');
         }
 
-        // Splat on some extra attributes to save
-        // some method calls.
-        /** @psalm-suppress NoInterfaceProperties */
-        $uri->base = $base;
-        /** @psalm-suppress NoInterfaceProperties */
-        $uri->webroot = $webroot;
-
-        return $uri;
+        return new CakeUri($uri, $base, $webroot);
     }
 
     /**

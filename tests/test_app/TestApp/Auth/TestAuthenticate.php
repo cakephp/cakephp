@@ -29,6 +29,8 @@ class TestAuthenticate extends BaseAuthenticate
 
     public $authenticationProvider;
 
+    public $modifiedUser;
+
     /**
      * @return array<string, mixed>
      */
