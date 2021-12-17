@@ -58,7 +58,7 @@ use Cake\Log\LogTrait;
  * @link https://book.cakephp.org/4/en/controllers/components.html
  * @see \Cake\Controller\Controller::$components
  */
-#[\AllowDynamicPropeties]
+#[\AllowDynamicProperties]
 class Component implements EventListenerInterface
 {
     use InstanceConfigTrait;
