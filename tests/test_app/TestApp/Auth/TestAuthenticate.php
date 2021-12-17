@@ -28,7 +28,7 @@ class TestAuthenticate extends BaseAuthenticate
     public $callStack = [];
 
     public $authenticationProvider;
-    
+
     public $modifiedUser;
 
     /**
