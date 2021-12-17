@@ -2342,8 +2342,9 @@ class TableTest extends TestCase
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'commit', 'inTransaction'])
-            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + $config])
+            ->setConstructorArgs([$config])
             ->getMock();
+        $connection->setDriver($this->connection->getDriver());
 
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
@@ -2374,9 +2375,9 @@ class TableTest extends TestCase
         $this->expectException(PDOException::class);
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
-            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
+            ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
-
+        $connection->setDriver(ConnectionManager::get('test')->getDriver());
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query', 'getConnection'])
@@ -2414,9 +2415,9 @@ class TableTest extends TestCase
     {
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
-            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
+            ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
-
+        $connection->setDriver(ConnectionManager::get('test')->getDriver());
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query', 'getConnection', 'exists'])

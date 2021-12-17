@@ -22,7 +22,6 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
-use Cake\Http\ContentTypeNegotiation;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -122,9 +121,7 @@ class RequestHandlerComponent extends Component
      */
     protected function _setExtension(ServerRequest $request, Response $response): void
     {
-        $content = new ContentTypeNegotiation();
-        $accept = $content->parseAccept($request);
-
+        $accept = $request->parseAccept();
         if (empty($accept) || current($accept)[0] === 'text/html') {
             return;
         }
@@ -255,7 +252,6 @@ class RequestHandlerComponent extends Component
      *   types the client accepts. If a string is passed, returns true
      *   if the client accepts it. If an array is passed, returns true
      *   if the client accepts one or more elements in the array.
-     * @deprecated 4.4.0 Use ContentTypeNegotiation::prefersChoice() or Controller::getViewClasses() instead.
      */
     public function accepts($type = null)
     {
@@ -343,15 +339,12 @@ class RequestHandlerComponent extends Component
      *    a boolean will be returned if that type is preferred.
      *    If an array of types are provided then the first preferred type is returned.
      *    If no type is provided the first preferred type is returned.
-     * @deprecated 4.4.0 Use Controller::getViewClasses() instead.
      */
     public function prefers($type = null)
     {
         $controller = $this->getController();
-        $request = $controller->getRequest();
-        $content = new ContentTypeNegotiation();
 
-        $acceptRaw = $content->parseAccept($request);
+        $acceptRaw = $controller->getRequest()->parseAccept();
         if (empty($acceptRaw)) {
             return $type ? $type === $this->ext : $this->ext;
         }
@@ -477,7 +470,12 @@ class RequestHandlerComponent extends Component
         }
         if (is_array($cType)) {
             $cType = $cType[$options['index']] ?? $cType;
-            $cType = $this->prefers($cType) ?: $cType[0];
+
+            if ($this->prefers($cType)) {
+                $cType = $this->prefers($cType);
+            } else {
+                $cType = $cType[0];
+            }
         }
 
         if (!$cType) {

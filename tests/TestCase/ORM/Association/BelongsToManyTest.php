@@ -203,7 +203,7 @@ class BelongsToManyTest extends TestCase
     public function testJunctionConnection(): void
     {
         $mock = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['createDriver'])
+            ->onlyMethods(['setDriver'])
             ->setConstructorArgs([['name' => 'other_source']])
             ->getMock();
         ConnectionManager::setConfig('other_source', $mock);

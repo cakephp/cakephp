@@ -22,7 +22,7 @@
         "source": "https://github.com/cakephp/core"
     },
     "require": {
-        "php": ">=7.4.0",
+        "php": ">=7.2.0",
         "cakephp/utility": "^4.0"
     },
     "suggest": {
