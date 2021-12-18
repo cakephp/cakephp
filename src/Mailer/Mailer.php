@@ -131,6 +131,7 @@ use InvalidArgumentException;
  * @method array|string getBody(?string $type = null) Get generated message body as array.
  *   {@see \Cake\Mailer\Message::getBody()}
  */
+#[\AllowDynamicProperties]
 class Mailer implements EventListenerInterface
 {
     use ModelAwareTrait;
