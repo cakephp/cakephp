@@ -71,8 +71,7 @@ class Uri implements UriInterface
         if ($name === 'base' || $name === 'webroot') {
             return $this->{$name};
         }
-
-        throw new Error("Cannot access attribute `{$name}`");
+        throw new Error("Undefined property via __get('{$name}')");
     }
 
     /**

@@ -44,6 +44,7 @@ class UriTest extends TestCase
         $this->assertSame('/base/', $uri->webroot);
 
         $this->expectException(Error::class);
+        $this->expectExceptionMessage('Undefined property via __get');
         $uri->uri;
     }
 
