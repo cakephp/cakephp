@@ -58,6 +58,11 @@ class SecurityComponentTest extends TestCase
     protected $oldSalt;
 
     /**
+     * @var \Cake\Controller\Component\SecurityComponent
+     */
+    protected $Security;
+
+    /**
      * setUp method
      *
      * Initializes environment state.

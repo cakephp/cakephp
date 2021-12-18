@@ -33,7 +33,7 @@ jobs:
           - php-version: '8.1'
             db-type: 'sqlite'
           - php-version: '8.2'
-            db-type: 'sqlite'
+            db-type: 'mysql'
 
     services:
       redis:
