@@ -36,6 +36,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
+use Error;
 use Exception;
 use InvalidArgumentException;
 use PDO;
@@ -135,7 +136,7 @@ class ConnectionTest extends TestCase
     public function testNoDriver(): void
     {
         $this->expectException(MissingDriverException::class);
-        $this->expectExceptionMessage('Database driver  could not be found.');
+        $this->expectExceptionMessage('Could not find driver `` for connection ``.');
         $connection = new Connection([]);
     }
 
@@ -144,8 +145,7 @@ class ConnectionTest extends TestCase
      */
     public function testEmptyDriver(): void
     {
-        $this->expectException(MissingDriverException::class);
-        $this->expectExceptionMessage('Database driver  could not be found.');
+        $this->expectException(Error::class);
         $connection = new Connection(['driver' => false]);
     }
 
@@ -155,7 +155,7 @@ class ConnectionTest extends TestCase
     public function testMissingDriver(): void
     {
         $this->expectException(MissingDriverException::class);
-        $this->expectExceptionMessage('Database driver \Foo\InvalidDriver could not be found.');
+        $this->expectExceptionMessage('Could not find driver `\Foo\InvalidDriver` for connection ``.');
         $connection = new Connection(['driver' => '\Foo\InvalidDriver']);
     }
 
@@ -165,7 +165,10 @@ class ConnectionTest extends TestCase
     public function testDisabledDriver(): void
     {
         $this->expectException(MissingExtensionException::class);
-        $this->expectExceptionMessage('Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency. Requested by connection "custom_connection_name"');
+        $this->expectExceptionMessage(
+            'Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency. ' .
+            'Requested by connection "custom_connection_name"'
+        );
         $mock = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['enabled'])
             ->setMockClassName('DriverMock')
@@ -985,8 +988,10 @@ class ConnectionTest extends TestCase
             ->getMock();
         $connection->enableQueryLogging(true);
 
-        $driver = $this->getMockFormDriver();
-        $connection->setDriver($driver);
+        $this->deprecated(function () use ($connection) {
+            $driver = $this->getMockFormDriver();
+            $connection->setDriver($driver);
+        });
 
         $connection->begin();
         $connection->begin(); //This one will not be logged

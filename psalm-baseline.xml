@@ -109,6 +109,13 @@
       <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
+  <file src="src/Controller/Component/RequestHandlerComponent.php">
+    <DeprecatedMethod occurrences="2">
+      <code>prefers</code>
+      <code>prefers</code>
+      <code>prefers</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/Controller/Controller.php">
     <DeprecatedMethod occurrences="2">
       <code>loadModel</code>

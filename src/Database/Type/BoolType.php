@@ -59,7 +59,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      */
     public function toPHP($value, DriverInterface $driver): ?bool
     {
-        if ($value === null || $value === true || $value === false) {
+        if ($value === null || is_bool($value)) {
             return $value;
         }
 
@@ -76,21 +76,11 @@ class BoolType extends BaseType implements BatchCastingInterface
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {
         foreach ($fields as $field) {
-            if (!isset($values[$field]) || $values[$field] === true || $values[$field] === false) {
+            $value = $values[$field] ?? null;
+            if ($value === null || is_bool($value)) {
                 continue;
             }
 
-            if ($values[$field] === '1') {
-                $values[$field] = true;
-                continue;
-            }
-
-            if ($values[$field] === '0') {
-                $values[$field] = false;
-                continue;
-            }
-
-            $value = $values[$field];
             if (!is_numeric($value)) {
                 $values[$field] = strtolower($value) === 'true';
                 continue;

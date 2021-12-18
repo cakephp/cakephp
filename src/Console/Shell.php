@@ -40,6 +40,7 @@ use RuntimeException;
  * @deprecated 3.6.0 ShellDispatcher and Shell will be removed in 5.0
  * @method int|bool|null|void main(...$args) Main entry method for the shell.
  */
+#[\AllowDynamicProperties]
 class Shell
 {
     use LocatorAwareTrait;

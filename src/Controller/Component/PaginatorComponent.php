@@ -35,6 +35,7 @@ use UnexpectedValueException;
  *
  * @link https://book.cakephp.org/4/en/controllers/components/pagination.html
  * @mixin \Cake\Datasource\Paginator
+ * @deprecated 4.4.0 Use Cake\Datasource\Paginator directly. Will be removed in 6.0.
  */
 class PaginatorComponent extends Component
 {
