@@ -113,7 +113,9 @@ class ModelAwareTraitTest extends TestCase
 
         $stub->modelFactory('Table', function ($name) {
             $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-            $mock->name = $name;
+            $mock->expects($this->any())
+                ->method('getAlias')
+                ->willReturn($name);
 
             return $mock;
         });
@@ -121,11 +123,13 @@ class ModelAwareTraitTest extends TestCase
         $result = $stub->loadModel('Magic', 'Table');
         $this->assertInstanceOf(RepositoryInterface::class, $result);
         $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
-        $this->assertSame('Magic', $stub->Magic->name);
+        $this->assertSame('Magic', $stub->Magic->getAlias());
 
         $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         $mock2 = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-        $mock2->alias = 'Foo';
+        $mock2->expects($this->any())
+            ->method('getAlias')
+            ->willReturn('Foo');
         $locator->expects($this->any())
             ->method('get')
             ->willReturn($mock2);
@@ -133,7 +137,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->modelFactory('MyType', $locator);
         $result = $stub->loadModel('Foo', 'MyType');
         $this->assertInstanceOf(RepositoryInterface::class, $result);
-        $this->assertSame('Foo', $stub->Foo->alias);
+        $this->assertSame('Foo', $stub->Foo->getAlias());
     }
 
     public function testModelFactoryException(): void

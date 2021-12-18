@@ -33,10 +33,10 @@ use Cake\View\View;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
-use PDOException;
 use RuntimeException;
 use TestApp\Controller\ThemePostsController;
 use TestApp\Controller\ViewPostsController;
+use TestApp\Error\Exception\MyPDOException;
 use TestApp\View\Helper\TestBeforeAfterHelper;
 use TestApp\View\Object\TestObjectWithoutToString;
 use TestApp\View\Object\TestObjectWithToString;
@@ -1060,7 +1060,7 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingLayoutArgument(): void
     {
-        $error = new PDOException();
+        $error = new MyPDOException();
         $error->queryString = 'this is sql string';
         $message = 'it works';
         $trace = $error->getTrace();

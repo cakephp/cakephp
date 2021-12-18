@@ -8,6 +8,7 @@ use Cake\Datasource\ModelAwareTrait;
 /**
  * Testing stub.
  */
+#[\AllowDynamicProperties]
 class Stub
 {
     use ModelAwareTrait;

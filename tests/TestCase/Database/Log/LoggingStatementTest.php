@@ -23,7 +23,7 @@ use Cake\Database\StatementInterface;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
-use LogicException;
+use TestApp\Error\Exception\MyPDOException;
 
 /**
  * Tests LoggingStatement class
@@ -55,8 +55,13 @@ class LoggingStatementTest extends TestCase
         $inner->method('execute')->will($this->returnValue(true));
 
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $st = new LoggingStatement($inner, $driver);
-        $st->queryString = 'SELECT bar FROM foo';
+        $st = $this->getMockBuilder(LoggingStatement::class)
+            ->onlyMethods(['__get'])
+            ->setConstructorArgs([$inner, $driver])
+            ->getMock();
+        $st->expects($this->any())
+            ->method('__get')
+            ->willReturn('SELECT bar FROM foo');
         $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->execute();
         $st->fetchAll();
@@ -76,8 +81,13 @@ class LoggingStatementTest extends TestCase
         $inner->method('execute')->will($this->returnValue(true));
 
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $st = new LoggingStatement($inner, $driver);
-        $st->queryString = 'SELECT bar FROM foo WHERE x=:a AND y=:b';
+        $st = $this->getMockBuilder(LoggingStatement::class)
+            ->onlyMethods(['__get'])
+            ->setConstructorArgs([$inner, $driver])
+            ->getMock();
+        $st->expects($this->any())
+            ->method('__get')
+            ->willReturn('SELECT bar FROM foo WHERE x=:a AND y=:b');
         $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->execute(['a' => 1, 'b' => 2]);
         $st->fetchAll();
@@ -102,8 +112,13 @@ class LoggingStatementTest extends TestCase
               ->withConsecutive(['a', 1], ['b', $date]);
 
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $st = new LoggingStatement($inner, $driver);
-        $st->queryString = 'SELECT bar FROM foo WHERE a=:a AND b=:b';
+        $st = $this->getMockBuilder(LoggingStatement::class)
+            ->onlyMethods(['__get'])
+            ->setConstructorArgs([$inner, $driver])
+            ->getMock();
+        $st->expects($this->any())
+            ->method('__get')
+            ->willReturn('SELECT bar FROM foo WHERE a=:a AND b=:b');
         $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->bindValue('a', 1);
         $st->bindValue('b', $date, 'date');
@@ -125,19 +140,24 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithError(): void
     {
-        $exception = new LogicException('This is bad');
+        $exception = new MyPDOException('This is bad');
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
             ->method('execute')
             ->will($this->throwException($exception));
 
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $st = new LoggingStatement($inner, $driver);
-        $st->queryString = 'SELECT bar FROM foo';
+        $st = $this->getMockBuilder(LoggingStatement::class)
+            ->onlyMethods(['__get'])
+            ->setConstructorArgs([$inner, $driver])
+            ->getMock();
+        $st->expects($this->any())
+            ->method('__get')
+            ->willReturn('SELECT bar FROM foo');
         $st->setLogger(new QueryLogger(['connection' => 'test']));
         try {
             $st->execute();
-        } catch (LogicException $e) {
+        } catch (MyPDOException $e) {
             $this->assertSame('This is bad', $e->getMessage());
             $this->assertSame($st->queryString, $e->queryString);
         }

@@ -18,6 +18,8 @@ class CakeStreamWrapper implements ArrayAccess
         ],
     ];
 
+    public $context;
+
     public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
         if ($path === 'http://throw_exception/') {
