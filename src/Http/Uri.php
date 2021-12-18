@@ -33,17 +33,17 @@ class Uri implements UriInterface
     /**
      * @var string
      */
-    private $base = '';
+    private string $base = '';
 
     /**
      * @var string
      */
-    private $webroot = '';
+    private string $webroot = '';
 
     /**
      * @var \Psr\Http\Message\UriInterface
      */
-    private $uri;
+    private UriInterface $uri;
 
     /**
      * Constructor
