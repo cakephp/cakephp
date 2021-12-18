@@ -36,6 +36,7 @@ use ReflectionMethod;
 /**
  * Cell base.
  */
+#[\AllowDynamicProperties]
 abstract class Cell implements EventDispatcherInterface
 {
     use EventDispatcherTrait;
