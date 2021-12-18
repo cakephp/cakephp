@@ -234,18 +234,18 @@ class SqlserverTest extends TestCase
     public function testSelectLimitVersion12(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'getConnection', 'version', 'enabled'])
+            ->onlyMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('version')
             ->will($this->returnValue('12'));
-        $driver->method('enabled')
-            ->will($this->returnValue(true));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
+            ->setConstructorArgs([['log' => false]])
             ->getMock();
+        $connection->method('getDriver')
+            ->will($this->returnValue($driver));
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
@@ -281,19 +281,20 @@ class SqlserverTest extends TestCase
     public function testSelectLimitOldServer(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'getConnection', 'version', 'enabled'])
+            ->onlyMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
             ->method('version')
             ->will($this->returnValue('8'));
-        $driver->method('enabled')
-            ->will($this->returnValue(true));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
+            ->setConstructorArgs([['log' => false]])
             ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
@@ -407,15 +408,16 @@ class SqlserverTest extends TestCase
     public function testInsertUsesOutput(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['_connect', 'getConnection', 'enabled'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->method('enabled')
-            ->will($this->returnValue(true));
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
+            ->setConstructorArgs([['log' => false]])
             ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
         $query = new Query($connection);
         $query->insert(['title'])
             ->into('articles')
@@ -430,19 +432,20 @@ class SqlserverTest extends TestCase
     public function testHavingReplacesAlias(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['connect', 'getConnection', 'version', 'enabled'])
+            ->onlyMethods(['connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
             ->method('version')
             ->will($this->returnValue('8'));
-        $driver->method('enabled')
-            ->will($this->returnValue(true));
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
+            ->setConstructorArgs([['log' => false]])
             ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
 
         $query = new Query($connection);
         $query
@@ -464,19 +467,20 @@ class SqlserverTest extends TestCase
     public function testHavingWhenNoAliasIsUsed(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['connect', 'getConnection', 'version', 'enabled'])
+            ->onlyMethods(['connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
             ->method('version')
             ->will($this->returnValue('8'));
-        $driver->method('enabled')
-            ->will($this->returnValue(true));
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
+            ->setConstructorArgs([['log' => false]])
             ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
 
         $query = new Query($connection);
         $query

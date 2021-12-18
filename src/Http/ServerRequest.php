@@ -552,10 +552,14 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _acceptHeaderDetector(array $detect): bool
     {
-        $content = new ContentTypeNegotiation();
-        $accepted = $content->preferredType($this, $detect['accept']);
+        $acceptHeaders = explode(',', (string)$this->getEnv('HTTP_ACCEPT'));
+        foreach ($detect['accept'] as $header) {
+            if (in_array($header, $acceptHeaders, true)) {
+                return true;
+            }
+        }
 
-        return $accepted !== null;
+        return false;
     }
 
     /**
@@ -1088,17 +1092,16 @@ class ServerRequest implements ServerRequestInterface
      */
     public function accepts(?string $type = null)
     {
-        $content = new ContentTypeNegotiation();
-        if ($type) {
-            return $content->preferredType($this, [$type]) !== null;
-        }
-
+        $raw = $this->parseAccept();
         $accept = [];
-        foreach ($content->parseAccept($this) as $types) {
+        foreach ($raw as $types) {
             $accept = array_merge($accept, $types);
         }
+        if ($type === null) {
+            return $accept;
+        }
 
-        return $accept;
+        return in_array($type, $accept, true);
     }
 
     /**
@@ -1109,11 +1112,10 @@ class ServerRequest implements ServerRequestInterface
      * of the accepted content types.
      *
      * @return array An array of `prefValue => [content/types]`
-     * @deprecated 4.4.0 Use `accepts()` or `ContentTypeNegotiation` class instead.
      */
     public function parseAccept(): array
     {
-        return (new ContentTypeNegotiation())->parseAccept($this);
+        return $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept'));
     }
 
     /**
@@ -1121,23 +1123,74 @@ class ServerRequest implements ServerRequestInterface
      *
      * Get the list of accepted languages:
      *
-     * ```$request->acceptLanguage();```
+     * ``` \Cake\Http\ServerRequest::acceptLanguage(); ```
      *
      * Check if a specific language is accepted:
      *
-     * ```$request->acceptLanguage('es-es');```
+     * ``` \Cake\Http\ServerRequest::acceptLanguage('es-es'); ```
      *
      * @param string|null $language The language to test.
      * @return array|bool If a $language is provided, a boolean. Otherwise the array of accepted languages.
      */
     public function acceptLanguage(?string $language = null)
     {
-        $content = new ContentTypeNegotiation();
-        if ($language !== null) {
-            return $content->acceptLanguage($this, $language);
+        $raw = $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept-Language'));
+        $accept = [];
+        foreach ($raw as $languages) {
+            foreach ($languages as &$lang) {
+                if (strpos($lang, '_')) {
+                    $lang = str_replace('_', '-', $lang);
+                }
+                $lang = strtolower($lang);
+            }
+            $accept = array_merge($accept, $languages);
+        }
+        if ($language === null) {
+            return $accept;
         }
 
-        return $content->acceptedLanguages($this);
+        return in_array(strtolower($language), $accept, true);
+    }
+
+    /**
+     * Parse Accept* headers with qualifier options.
+     *
+     * Only qualifiers will be extracted, any other accept extensions will be
+     * discarded as they are not frequently used.
+     *
+     * @param string $header Header to parse.
+     * @return array
+     */
+    protected function _parseAcceptWithQualifier(string $header): array
+    {
+        $accept = [];
+        $headers = explode(',', $header);
+        foreach (array_filter($headers) as $value) {
+            $prefValue = '1.0';
+            $value = trim($value);
+
+            $semiPos = strpos($value, ';');
+            if ($semiPos !== false) {
+                $params = explode(';', $value);
+                $value = trim($params[0]);
+                foreach ($params as $param) {
+                    $qPos = strpos($param, 'q=');
+                    if ($qPos !== false) {
+                        $prefValue = substr($param, $qPos + 2);
+                    }
+                }
+            }
+
+            if (!isset($accept[$prefValue])) {
+                $accept[$prefValue] = [];
+            }
+            if ($prefValue) {
+                $accept[$prefValue][] = $value;
+            }
+        }
+        krsort($accept);
+
+        return $accept;
     }
 
     /**

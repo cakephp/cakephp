@@ -86,7 +86,6 @@ use UnexpectedValueException;
  * @property \Cake\Controller\Component\AuthComponent $Auth
  * @link https://book.cakephp.org/4/en/controllers.html
  */
-#[\AllowDynamicProperties]
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
     use EventDispatcherTrait;

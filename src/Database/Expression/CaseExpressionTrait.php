@@ -20,7 +20,6 @@ use Cake\Chronos\Date;
 use Cake\Chronos\MutableDate;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\TypedResultInterface;
 use Cake\Database\ValueBinder;
 use DateTimeInterface;
 
@@ -68,8 +67,6 @@ trait CaseExpressionTrait
             $value instanceof IdentifierExpression
         ) {
             $type = $this->_typeMap->type($value->getIdentifier());
-        } elseif ($value instanceof TypedResultInterface) {
-            $type = $value->getReturnType();
         }
 
         return $type;

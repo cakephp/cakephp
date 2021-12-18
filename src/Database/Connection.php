@@ -135,14 +135,11 @@ class Connection implements ConnectionInterface
     {
         $this->_config = $config;
 
-        $driverConfig = array_diff_key($config, array_flip([
-            'name',
-            'driver',
-            'log',
-            'cacheMetaData',
-            'cacheKeyPrefix',
-        ]));
-        $this->_driver = $this->createDriver($config['driver'] ?? '', $driverConfig);
+        $driver = '';
+        if (!empty($config['driver'])) {
+            $driver = $config['driver'];
+        }
+        $this->setDriver($driver, $config);
 
         if (!empty($config['log'])) {
             $this->enableQueryLogging((bool)$config['log']);
@@ -186,43 +183,24 @@ class Connection implements ConnectionInterface
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
      * @return $this
-     * @deprecated 4.4.0 Setting the driver is deprecated. Use the connection config instead.
      */
     public function setDriver($driver, $config = [])
     {
-        deprecationWarning('Setting the driver is deprecated. Use the connection config instead.');
-
-        $this->_driver = $this->createDriver($driver, $config);
-
-        return $this;
-    }
-
-    /**
-     * Creates driver from name, class name or instance.
-     *
-     * @param \Cake\Database\DriverInterface|string $name Driver name, class name or instance.
-     * @param array $config Driver config if $name is not an instance.
-     * @return \Cake\Database\DriverInterface
-     * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
-     * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     */
-    protected function createDriver($name, array $config): DriverInterface
-    {
-        $driver = $name;
         if (is_string($driver)) {
             /** @psalm-var class-string<\Cake\Database\DriverInterface>|null $className */
             $className = App::className($driver, 'Database/Driver');
             if ($className === null) {
-                throw new MissingDriverException(['driver' => $driver, 'connection' => $this->configName()]);
+                throw new MissingDriverException(['driver' => $driver]);
             }
             $driver = new $className($config);
         }
-
         if (!$driver->enabled()) {
-            throw new MissingExtensionException(['driver' => get_class($driver), 'name' => $this->configName()]);
+            throw new MissingExtensionException(['driver' => get_class($driver), 'name' => $config['name']]);
         }
 
-        return $driver;
+        $this->_driver = $driver;
+
+        return $this;
     }
 
     /**
