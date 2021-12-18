@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use AllowDynamicProperties;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Log\LogTrait;
@@ -58,7 +59,7 @@ use Cake\Log\LogTrait;
  * @link https://book.cakephp.org/4/en/controllers/components.html
  * @see \Cake\Controller\Controller::$components
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class Component implements EventListenerInterface
 {
     use InstanceConfigTrait;
