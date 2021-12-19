@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
-use Error;
 use Laminas\Diactoros\Uri as LaminasUri;
+use UnexpectedValueException;
 
 /**
  * Test case for the Uri Shim
@@ -43,7 +43,7 @@ class UriTest extends TestCase
         $this->assertSame('/base', $uri->base);
         $this->assertSame('/base/', $uri->webroot);
 
-        $this->expectException(Error::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Undefined property via __get');
         $uri->uri;
     }

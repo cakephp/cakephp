@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Error;
 use Psr\Http\Message\UriInterface;
+use UnexpectedValueException;
 
 /**
  * The base and webroot properties have piggybacked on the Uri for
@@ -71,7 +71,7 @@ class Uri implements UriInterface
         if ($name === 'base' || $name === 'webroot') {
             return $this->{$name};
         }
-        throw new Error("Undefined property via __get('{$name}')");
+        throw new UnexpectedValueException("Undefined property via __get('{$name}')");
     }
 
     /**
