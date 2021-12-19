@@ -35,6 +35,11 @@ class FlashHelperTest extends TestCase
     protected $View;
 
     /**
+     * @var \Cake\View\Helper\FlashHelper
+     */
+    protected $Flash;
+
+    /**
      * setUp method
      */
     public function setUp(): void

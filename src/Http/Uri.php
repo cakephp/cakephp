@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Psr\Http\Message\UriInterface;
+use UnexpectedValueException;
 
 /**
  * The base and webroot properties have piggybacked on the Uri for
@@ -57,6 +58,20 @@ class Uri implements UriInterface
         $this->uri = $uri;
         $this->base = $base;
         $this->webroot = $webroot;
+    }
+
+    /**
+     * Backwards compatibility shim for previously dynamic properties.
+     *
+     * @param string $name The attribute to read.
+     * @return mixed
+     */
+    public function __get(string $name)
+    {
+        if ($name === 'base' || $name === 'webroot') {
+            return $this->{$name};
+        }
+        throw new UnexpectedValueException("Undefined property via __get('{$name}')");
     }
 
     /**

@@ -71,6 +71,7 @@ use Throwable;
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
  */
+#[\AllowDynamicProperties]
 class View implements EventDispatcherInterface
 {
     use CellTrait {

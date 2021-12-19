@@ -28,9 +28,9 @@ jobs:
             db-type: 'mysql'
             prefer-lowest: 'prefer-lowest'
           - php-version: '8.1'
-            db-type: 'sqlite'
+            db-type: 'mysql'
           - php-version: '8.2'
-            db-type: 'sqlite'
+            db-type: 'mysql'
 
     services:
       redis:

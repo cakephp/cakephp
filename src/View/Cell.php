@@ -36,6 +36,7 @@ use Stringable;
 /**
  * Cell base.
  */
+#[\AllowDynamicProperties]
 abstract class Cell implements EventDispatcherInterface, Stringable
 {
     use EventDispatcherTrait;

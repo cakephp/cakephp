@@ -40,6 +40,7 @@ use Cake\Event\EventListenerInterface;
  * - `afterRenderFile(EventInterface $event, $viewFile, $content)` - Called after any view fragment is rendered.
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  */
+#[\AllowDynamicProperties]
 class Helper implements EventListenerInterface
 {
     use InstanceConfigTrait;

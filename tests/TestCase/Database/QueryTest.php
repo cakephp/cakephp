@@ -3509,23 +3509,41 @@ class QueryTest extends TestCase
             ->where(['created' => '2007-03-18 10:45:23'])
             ->execute()
             ->fetchAll('assoc');
-        $result[0]['m'] = ltrim($result[0]['m'], '0');
-        $result[0]['me'] = ltrim($result[0]['me'], '0');
+
         $result[0]['addDays'] = substr($result[0]['addDays'], 0, 10);
         $result[0]['substractYears'] = substr($result[0]['substractYears'], 0, 10);
-        $expected = [
-            'd' => '18',
-            'm' => '3',
-            'y' => '2007',
-            'de' => '18',
-            'me' => '3',
-            'ye' => '2007',
-            'wd' => '1', // Sunday
-            'dow' => '1',
-            'addDays' => '2007-03-20',
-            'substractYears' => '2005-03-18',
-        ];
-        $this->assertEquals($expected, $result[0]);
+
+        if (PHP_VERSION_ID < 80100) {
+            $result[0]['m'] = ltrim($result[0]['m'], '0');
+            $result[0]['me'] = ltrim($result[0]['me'], '0');
+            $expected = [
+                'd' => '18',
+                'm' => '3',
+                'y' => '2007',
+                'de' => '18',
+                'me' => '3',
+                'ye' => '2007',
+                'wd' => '1', // Sunday
+                'dow' => '1',
+                'addDays' => '2007-03-20',
+                'substractYears' => '2005-03-18',
+            ];
+        } else {
+            $expected = [
+                'd' => 18,
+                'm' => 3,
+                'y' => 2007,
+                'de' => 18,
+                'me' => 3,
+                'ye' => 2007,
+                'wd' => 1, // Sunday
+                'dow' => 1,
+                'addDays' => '2007-03-20',
+                'substractYears' => '2005-03-18',
+            ];
+        }
+
+        $this->assertSame($expected, $result[0]);
     }
 
     /**

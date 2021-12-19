@@ -72,6 +72,11 @@ class FormHelperTest extends TestCase
     protected $Form;
 
     /**
+     * @var \Cake\View\View
+     */
+    protected $View;
+
+    /**
      * setUp method
      */
     public function setUp(): void

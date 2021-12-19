@@ -43,11 +43,11 @@ use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use OutOfBoundsException;
-use PDOException;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
 use TestApp\Error\Exception\MissingWidgetThingException;
+use TestApp\Error\Exception\MyPDOException;
 use TestApp\Error\MyCustomExceptionRenderer;
 use TestApp\Error\TestAppsExceptionRenderer;
 
@@ -919,7 +919,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testPDOException(): void
     {
-        $exception = new PDOException('There was an error in the SQL query');
+        $exception = new MyPDOException('There was an error in the SQL query');
         $exception->queryString = 'SELECT * from poo_query < 5 and :seven';
         $exception->params = ['seven' => 7];
         $ExceptionRenderer = new ExceptionRenderer($exception);
