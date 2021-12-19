@@ -36,6 +36,8 @@ class ArticlesCell extends Cell
      */
     public $counter = 0;
 
+    public $limit = 1;
+
     /**
      * Default cell action.
      */

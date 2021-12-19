@@ -97,9 +97,6 @@ class ControllerTest extends TestCase
     {
         $controller = new Controller();
 
-        $controller->Bar = true;
-        $this->assertTrue($controller->Bar);
-
         $this->expectNotice();
         $this->expectNoticeMessage(sprintf(
             'Undefined property: Controller::$Foo in %s on line %s',

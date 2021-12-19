@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
-use AllowDynamicProperties;
 use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Event\EventDispatcherInterface;
@@ -37,7 +36,6 @@ use Stringable;
 /**
  * Cell base.
  */
-#[AllowDynamicProperties]
 abstract class Cell implements EventDispatcherInterface, Stringable
 {
     use EventDispatcherTrait;
