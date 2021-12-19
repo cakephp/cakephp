@@ -301,13 +301,11 @@ class DebuggerTest extends TestCase
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) id:0 {
-  Html => object(Cake\View\Helper\HtmlHelper) id:1 {}
-  Form => object(Cake\View\Helper\FormHelper) id:2 {}
   int => (int) 2
   float => (float) 1.333
   string => '  '
-  [protected] _helpers => object(Cake\View\HelperRegistry) id:3 {}
-  [protected] Blocks => object(Cake\View\ViewBlock) id:4 {}
+  [protected] _helpers => object(Cake\View\HelperRegistry) id:1 {}
+  [protected] Blocks => object(Cake\View\ViewBlock) id:2 {}
   [protected] plugin => null
   [protected] name => ''
   [protected] helpers => [
@@ -327,8 +325,8 @@ object(Cake\View\View) id:0 {
   [protected] _ext => '.php'
   [protected] subDir => ''
   [protected] theme => null
-  [protected] request => object(Cake\Http\ServerRequest) id:5 {}
-  [protected] response => object(Cake\Http\Response) id:6 {}
+  [protected] request => object(Cake\Http\ServerRequest) id:3 {}
+  [protected] response => object(Cake\Http\Response) id:4 {}
   [protected] elementCache => 'default'
   [protected] _passedVars => [
     (int) 0 => 'viewVars',
@@ -350,7 +348,7 @@ object(Cake\View\View) id:0 {
   [protected] _currentType => ''
   [protected] _stack => []
   [protected] _viewBlockClass => 'Cake\View\ViewBlock'
-  [protected] _eventManager => object(Cake\Event\EventManager) id:7 {}
+  [protected] _eventManager => object(Cake\Event\EventManager) id:5 {}
   [protected] _eventClass => 'Cake\Event\Event'
   [protected] _config => []
   [protected] _configInitialized => true
