@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
+use AllowDynamicProperties;
 use BadMethodCallException;
 use Cake\Core\StaticConfigTrait;
 use Cake\Event\EventListenerInterface;
@@ -129,7 +130,7 @@ use InvalidArgumentException;
  * @method array|string getBody(?string $type = null) Get generated message body as array.
  *   {@see \Cake\Mailer\Message::getBody()}
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class Mailer implements EventListenerInterface
 {
     use LocatorAwareTrait;
