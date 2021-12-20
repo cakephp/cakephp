@@ -66,7 +66,7 @@ class Uri implements UriInterface
      * @param string $name The attribute to read.
      * @return mixed
      */
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         if ($name === 'base' || $name === 'webroot') {
             return $this->{$name};

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
+use AllowDynamicProperties;
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
@@ -71,7 +72,7 @@ use Throwable;
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class View implements EventDispatcherInterface
 {
     use CellTrait {
