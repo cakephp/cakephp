@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
-use AllowDynamicProperties;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
@@ -92,7 +91,6 @@ use UnexpectedValueException;
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @link https://book.cakephp.org/4/en/controllers.html
  */
-#[AllowDynamicProperties]
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
     use EventDispatcherTrait;

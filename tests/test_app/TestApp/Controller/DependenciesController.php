@@ -15,6 +15,8 @@ use stdClass;
  */
 class DependenciesController extends Controller
 {
+    public ?stdClass $inject;
+
     public function __construct(
         ?ServerRequest $request = null,
         ?Response $response = null,
