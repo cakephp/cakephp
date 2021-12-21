@@ -92,9 +92,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      */
     public function __get(string $name): ?Helper
     {
-        if (isset($this->_loaded[$name])) {
-            return $this->_loaded[$name];
-        }
+        // This calls __isset() and loads helper if it isn't already loaded.
         if (isset($this->{$name})) {
             return $this->_loaded[$name];
         }

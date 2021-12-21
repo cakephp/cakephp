@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
-use AllowDynamicProperties;
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
@@ -72,7 +71,6 @@ use Throwable;
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
  */
-#[AllowDynamicProperties]
 class View implements EventDispatcherInterface
 {
     use CellTrait {
@@ -1076,14 +1074,7 @@ class View implements EventDispatcherInterface
      */
     public function __get(string $name): mixed
     {
-        $registry = $this->helpers();
-        if (!isset($registry->{$name})) {
-            return null;
-        }
-
-        $this->{$name} = $registry->{$name};
-
-        return $registry->{$name};
+        return $this->helpers()->{$name};
     }
 
     /**
@@ -1203,10 +1194,7 @@ class View implements EventDispatcherInterface
      */
     public function loadHelper(string $name, array $config = []): Helper
     {
-        [, $class] = pluginSplit($name);
-        $helpers = $this->helpers();
-
-        return $this->{$class} = $helpers->load($name, $config);
+        return $this->helpers()->load($name, $config);
     }
 
     /**
