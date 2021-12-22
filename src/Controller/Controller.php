@@ -793,6 +793,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (empty($possibleViewClasses)) {
             return null;
         }
+        // Controller or component has already made a view class decision.
+        // That decision should overwrite the framework behavior.
         if ($this->viewBuilder()->getClassName() !== null) {
             return null;
         }
