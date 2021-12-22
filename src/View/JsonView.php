@@ -73,13 +73,6 @@ class JsonView extends SerializedView
     protected $subDir = 'json';
 
     /**
-     * Response type.
-     *
-     * @var string
-     */
-    protected $_responseType = 'json';
-
-    /**
      * Default config options.
      *
      * Use ViewBuilder::setOption()/setOptions() in your controller to set these options.
@@ -101,6 +94,16 @@ class JsonView extends SerializedView
         'jsonOptions' => null,
         'jsonp' => null,
     ];
+
+    /**
+     * Mime-type this view class renders as.
+     *
+     * @return string The JSON content type.
+     */
+    public static function contentType(): string
+    {
+        return 'application/json';
+    }
 
     /**
      * Render a JSON view.
