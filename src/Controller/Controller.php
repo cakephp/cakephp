@@ -768,7 +768,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Get the list of View classes this controller can negotiate with.
+     * Get the View classes this controller can perform content negotiation with.
      *
      * Each view class must implement the `getContentType()` hook method
      * to participate in negotiation.
