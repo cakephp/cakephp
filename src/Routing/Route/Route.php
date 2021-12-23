@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Route;
 
+use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -449,13 +450,18 @@ class Route
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
      * @return array|null An array of request parameters, or `null` on failure.
-     * @throws \InvalidArgumentException When method is not an empty string or in `VALID_METHODS` list.
+     * @throws \Cake\Http\Exception\BadRequestException When method is not an empty string and not in `VALID_METHODS` list.
      */
     public function parse(string $url, string $method): ?array
     {
-        if ($method !== '') {
-            $method = $this->normalizeAndValidateMethods($method);
+        try {
+            if ($method !== '') {
+                $method = $this->normalizeAndValidateMethods($method);
+            }
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestException($e->getMessage());
         }
+
         $compiledRoute = $this->compile();
         [$url, $ext] = $this->_parseExtension($url);
 
