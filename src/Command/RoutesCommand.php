@@ -40,7 +40,7 @@ class RoutesCommand extends Command
             $header[] = 'Defaults';
         }
 
-        $output = [];
+        $output = $duplicateRoutesCounter = [];
 
         foreach (Router::routes() as $route) {
             $methods = $route->defaults['_method'] ?? '';
@@ -61,6 +61,12 @@ class RoutesCommand extends Command
             }
 
             $output[] = $item;
+
+            // Count route templates
+            if (!array_key_exists($route->template, $duplicateRoutesCounter)) {
+                $duplicateRoutesCounter[$route->template] = 0;
+            }
+            $duplicateRoutesCounter[$route->template]++;
         }
 
         if ($args->getOption('sort')) {
@@ -73,6 +79,32 @@ class RoutesCommand extends Command
 
         $io->helper('table')->output($output);
         $io->out();
+
+        $duplicateRoutes = [];
+
+        // Check duplicate routes
+        foreach (Router::routes() as $route) {
+            if ($duplicateRoutesCounter[$route->template] > 1) {
+                $methods = $route->defaults['_method'] ?? '';
+
+                $duplicateRoutes[] = [
+                    $route->options['_name'] ?? $route->getName(),
+                    $route->template,
+                    $route->defaults['plugin'] ?? '',
+                    $route->defaults['prefix'] ?? '',
+                    $route->defaults['controller'] ?? '',
+                    $route->defaults['action'] ?? '',
+                    is_string($methods) ? $methods : implode(', ', $route->defaults['_method']),
+                ];
+            }
+        }
+
+        if (!empty($duplicateRoutes)) {
+            array_unshift($duplicateRoutes, $header);
+            $io->warning('The following route collisions were being detected');
+            $io->helper('table')->output($duplicateRoutes);
+            $io->out();
+        }
 
         return static::CODE_SUCCESS;
     }

@@ -285,4 +285,48 @@ class RoutesCommandTest extends TestCase
         $this->assertExitCode(Command::CODE_ERROR);
         $this->assertErrorContains('do not match');
     }
+
+    /**
+     * Test routes duplicate warning
+     */
+    public function testRouteDuplicateWarning(): void
+    {
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect(
+            new Route('/unique-path', [], ['_name' => '_aRoute'])
+        );
+        $builder->connect(
+            new Route('/unique-path', [], ['_name' => '_bRoute'])
+        );
+
+        $this->exec('routes');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>Route name</info>',
+            '<info>URI template</info>',
+            '<info>Plugin</info>',
+            '<info>Prefix</info>',
+            '<info>Controller</info>',
+            '<info>Action</info>',
+            '<info>Method(s)</info>',
+        ]);
+        $this->assertOutputContainsRow([
+            '_aRoute',
+            '/unique-path',
+            '',
+            '',
+            '',
+            '',
+            '',
+        ]);
+        $this->assertOutputContainsRow([
+            '_bRoute',
+            '/unique-path',
+            '',
+            '',
+            '',
+            '',
+            '',
+        ]);
+    }
 }
