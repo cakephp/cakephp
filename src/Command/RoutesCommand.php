@@ -99,7 +99,7 @@ class RoutesCommand extends Command
             }
         }
 
-        if (!empty($duplicateRoutes)) {
+        if ($duplicateRoutes) {
             array_unshift($duplicateRoutes, $header);
             $io->warning('The following route collisions were being detected');
             $io->helper('table')->output($duplicateRoutes);
