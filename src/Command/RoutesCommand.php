@@ -101,7 +101,7 @@ class RoutesCommand extends Command
 
         if ($duplicateRoutes) {
             array_unshift($duplicateRoutes, $header);
-            $io->warning('The following route collisions were being detected');
+            $io->warning('The following route collisions were detected');
             $io->helper('table')->output($duplicateRoutes);
             $io->out();
         }
