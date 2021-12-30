@@ -24,7 +24,7 @@ class PhpError
     /**
      * @var int
      */
-    private $level;
+    private $code;
 
     /**
      * @var string

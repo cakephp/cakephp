@@ -202,6 +202,32 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Test plain text output format.
+     */
+    public function testOutputErrorText(): void
+    {
+        Debugger::setOutputFormat('txt');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'level' => E_NOTICE,
+            'code' => E_NOTICE,
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'description' => 'Error description',
+            'start' => 1,
+        ];
+        $debugger->outputError($data);
+        $result = ob_get_clean();
+
+        $this->assertStringContainsString('notice: 8 :: Error description', $result);
+        $this->assertStringContainsString("on line {$data['line']} of {$data['file']}", $result);
+        $this->assertStringContainsString('Trace:', $result);
+        $this->assertStringContainsString('Cake\Test\TestCase\Error\DebuggerTest::testOutputErrorText()', $result);
+    }
+
+    /**
      * Tests that changes in output formats using Debugger::output() change the templates used.
      */
     public function testAddFormat(): void
