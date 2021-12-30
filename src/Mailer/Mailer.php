@@ -459,7 +459,7 @@ class Mailer implements EventListenerInterface
             $this->viewBuilder()->setVars($config['viewVars']);
             unset($config['viewVars']);
         }
-        if (array_key_exists('autoLayout', $config)) {
+        if (isset($config['autoLayout']) {
             if ($config['autoLayout'] === false) {
                 $this->viewBuilder()->disableAutoLayout();
             }
