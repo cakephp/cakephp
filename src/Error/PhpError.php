@@ -93,7 +93,7 @@ class PhpError
         string $message,
         ?string $file = null,
         ?int $line = null,
-        array $trace = [],
+        array $trace = []
     ) {
         $this->code = $code;
         $this->message = $message;
