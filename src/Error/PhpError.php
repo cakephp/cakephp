@@ -105,7 +105,7 @@ class PhpError
     /**
      * Get the PHP error constant.
      *
-     * @return string
+     * @return int
      */
     public function getCode(): int
     {

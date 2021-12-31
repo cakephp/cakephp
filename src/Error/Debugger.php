@@ -118,7 +118,7 @@ class Debugger
      * an object based system. Having Debugger handle and render errors
      * will be deprecated and the new ErrorTrap system should be used instead.
      *
-     * @array <string, class-string>
+     * @var array<string, class-string>
      */
     protected $renderers = [
         'txt' => TextRenderer::class,
