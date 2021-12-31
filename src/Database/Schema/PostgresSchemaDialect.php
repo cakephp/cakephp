@@ -26,11 +26,45 @@ use Cake\Database\Exception\DatabaseException;
 class PostgresSchemaDialect extends SchemaDialect
 {
     /**
-     * @inheritDoc
+     * Generate the SQL to list the tables and views.
+     *
+     * @deprecated 4.3.3 Use {@link listTablesAndViewsSql()} instead.
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
      */
     public function listTablesSql(array $config): array
     {
-        $sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name';
+        return $this->listTablesAndViewsSql($config);
+    }
+
+    /**
+     * Generate the SQL to list the tables, excluding all views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array<mixed> An array of (sql, params) to execute.
+     */
+    public function listTablesWithoutViewsSql(array $config): array
+    {
+        $sql = 'SELECT table_name as name FROM information_schema.tables
+                WHERE table_schema = ? AND table_type = \'BASE TABLE\' ORDER BY name';
+        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
+        return [$sql, [$schema]];
+    }
+
+    /**
+     * Generate the SQL to list the tables and views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array<mixed> An array of (sql, params) to execute.
+     */
+    public function listTablesAndViewsSql(array $config): array
+    {
+        $sql = 'SELECT table_name as name FROM information_schema.tables
+                WHERE table_schema = ? ORDER BY name';
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
 
         return [$sql, [$schema]];

@@ -47,6 +47,7 @@ class SqlserverSchemaTest extends TestCase
     {
         $this->_needsConnection();
 
+        $connection->execute("IF OBJECT_ID('schema_articles_v', 'V') IS NOT NULL DROP VIEW schema_articles_v");
         $connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
         $connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
 
@@ -82,6 +83,12 @@ CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([
 SQL;
         $connection->execute($table);
         $connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
+
+        $table = <<<SQL
+CREATE VIEW schema_articles_v AS
+SELECT * FROM schema_articles
+SQL;
+        $connection->execute($table);
     }
 
     /**
@@ -334,12 +341,24 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-
         $schema = new SchemaCollection($connection);
+
         $result = $schema->listTables();
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_articles_v', $result);
         $this->assertContains('schema_authors', $result);
+
+        $resultAll = $schema->listTablesAndViews();
+        $resultNoViews = $schema->listTablesWithoutViews();
+
+        $this->assertIsArray($resultAll);
+        $this->assertContains('schema_articles', $resultAll);
+        $this->assertContains('schema_articles_v', $resultAll);
+        $this->assertContains('schema_authors', $resultAll);
+        $this->assertIsArray($resultNoViews);
+        $this->assertNotContains('schema_articles_v', $resultNoViews);
+        $this->assertContains('schema_articles', $resultNoViews);
     }
 
     /**
