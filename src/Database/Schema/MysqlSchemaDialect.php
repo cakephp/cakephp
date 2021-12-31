@@ -56,7 +56,7 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         return [
             'SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database'])
-            . ' WHERE Table_type LIKE "%TABLE%"'
+            . ' WHERE TABLE_TYPE = "BASE TABLE"'
         , []];
     }
 
