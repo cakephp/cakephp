@@ -36,14 +36,13 @@ class MysqlSchemaDialect extends SchemaDialect
     /**
      * Generate the SQL to list the tables and views.
      *
-     * @deprecated 4.3.3 Use {@link listTablesAndViewsSql()} instead.
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
      * @return array<mixed> An array of (sql, params) to execute.
      */
     public function listTablesSql(array $config): array
     {
-        return $this->listTablesAndViewsSql($config);
+        return ['SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
     }
 
     /**
@@ -57,20 +56,8 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         return [
             'SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database'])
-            . ' WHERE Table_type LIKE "%TABLE%"'
+            . ' WHERE TABLE_TYPE = "BASE TABLE"'
         , []];
-    }
-
-    /**
-     * Generate the SQL to list the tables and views.
-     *
-     * @param array<string, mixed> $config The connection configuration to use for
-     *    getting tables from.
-     * @return array<mixed> An array of (sql, params) to execute.
-     */
-    public function listTablesAndViewsSql(array $config): array
-    {
-        return ['SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
     }
 
     /**

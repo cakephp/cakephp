@@ -61,14 +61,6 @@ class CachedCollection implements CollectionInterface
     /**
      * @inheritDoc
      */
-    public function listTablesAndViews(): array
-    {
-        return $this->collection->listTablesAndViews();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function listTablesWithoutViews(): array
     {
         return $this->collection->listTablesWithoutViews();
@@ -79,7 +71,7 @@ class CachedCollection implements CollectionInterface
      */
     public function listTables(): array
     {
-        return $this->collection->listTablesAndViews();
+        return $this->collection->listTables();
     }
 
     /**

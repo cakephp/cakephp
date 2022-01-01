@@ -323,13 +323,7 @@ SQL;
         $this->assertContains('schema_articles_v', $result);
         $this->assertContains('schema_authors', $result);
 
-        $resultAll = $schema->listTablesAndViews();
         $resultNoViews = $schema->listTablesWithoutViews();
-
-        $this->assertIsArray($resultAll);
-        $this->assertContains('schema_articles', $resultAll);
-        $this->assertContains('schema_articles_v', $resultAll);
-        $this->assertContains('schema_authors', $resultAll);
         $this->assertIsArray($resultNoViews);
         $this->assertNotContains('schema_articles_v', $resultNoViews);
         $this->assertContains('schema_articles', $resultNoViews);

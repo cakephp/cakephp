@@ -295,7 +295,7 @@ class FixtureManager
         try {
             $createTables = function (ConnectionInterface $db, array $fixtures) use ($test): void {
                 /** @var array<\Cake\Datasource\FixtureInterface> $fixtures */
-                $tables = $db->getSchemaCollection()->listTablesAndViews();
+                $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 $this->_insertionMap[$configName] = $this->_insertionMap[$configName] ?? [];
 
@@ -467,7 +467,7 @@ class FixtureManager
         }
 
         if (!$this->isFixtureSetup($connection->configName(), $fixture)) {
-            $sources = $connection->getSchemaCollection()->listTablesAndViews();
+            $sources = $connection->getSchemaCollection()->listTables();
             $this->_setupTable($fixture, $connection, $sources, $dropTables);
         }
 

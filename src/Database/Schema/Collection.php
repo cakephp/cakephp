@@ -25,11 +25,6 @@ use PDOException;
  *
  * Used to access information about the tables,
  * and other data in a database.
- *
- * @method array<string> listTablesAndViews() Get the list of tables available in the current connection.
- * This will include any views in the schema.
- * @method array<string> listTablesWithoutViews() Get the list of tables available in the current connection.
- * This will exclude any views in the schema.
  */
 class Collection implements CollectionInterface
 {
@@ -77,32 +72,13 @@ class Collection implements CollectionInterface
     }
 
     /**
-     * Get the list of tables available in the current connection.
+     * Get the list of tables and views available in the current connection.
      *
-     * @deprecated in 4.3.3 Use {@link listTablesAndViews()} instead.
-     * @return array<string> The list of tables in the connected database/schema.
+     * @return array<string> The list of tables and views in the connected database/schema.
      */
     public function listTables(): array
     {
-        [$sql, $params] = $this->_dialect->listTablesAndViewsSql($this->_connection->config());
-        $result = [];
-        $statement = $this->_connection->execute($sql, $params);
-        while ($row = $statement->fetch()) {
-            $result[] = $row[0];
-        }
-        $statement->closeCursor();
-
-        return $result;
-    }
-
-    /**
-     * Get the list of tables available in the current connection.
-     *
-     * @return array<string> The list of tables in the connected database/schema.
-     */
-    public function listTablesAndViews(): array
-    {
-        [$sql, $params] = $this->_dialect->listTablesAndViewsSql($this->_connection->config());
+        [$sql, $params] = $this->_dialect->listTablesSql($this->_connection->config());
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {
