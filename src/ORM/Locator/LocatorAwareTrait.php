@@ -71,16 +71,17 @@ trait LocatorAwareTrait
     /**
      * Convenience method to get a table instance.
      *
-     * @param string|null $alias The alias name you want to get. Should be in CamelCase format.
+     * @template T of \Cake\ORM\Table
+     * @param class-string<T> $alias The alias name you want to get. Should be in CamelCase format.
      *  If `null` then the value of $defaultTable property is used.
      * @param array<string, mixed> $options The options you want to build the table with.
      *   If a table has already been loaded the registry options will be ignored.
-     * @return \Cake\ORM\Table
+     * @return T|\Cake\ORM\Table
      * @throws \Cake\Core\Exception\CakeException If `$alias` argument and `$defaultTable` property both are `null`.
      * @see \Cake\ORM\TableLocator::get()
      * @since 4.3.0
      */
-    public function fetchTable(?string $alias = null, array $options = []): Table
+    public function fetchTable(?string $alias = null, array $options = [])
     {
         $alias = $alias ?? $this->defaultTable;
         if ($alias === null) {
