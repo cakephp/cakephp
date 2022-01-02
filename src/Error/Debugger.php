@@ -121,7 +121,9 @@ class Debugger
      * @var array<string, class-string>
      */
     protected $renderers = [
+        // Backwards compatible alias for text
         'txt' => TextRenderer::class,
+        'text' => TextRenderer::class,
     ];
 
     /**
