@@ -63,7 +63,7 @@ class RoutesCommand extends Command
             $output[] = $item;
 
             // Count route templates
-            if (!array_key_exists($route->template, $duplicateRoutesCounter)) {
+            if (!isset($duplicateRoutesCounter[$this->template])) {
                 $duplicateRoutesCounter[$route->template] = 0;
             }
             $duplicateRoutesCounter[$route->template]++;
