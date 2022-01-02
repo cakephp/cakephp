@@ -52,7 +52,7 @@ class RoutesCommand extends Command
                 $route->defaults['prefix'] ?? '',
                 $route->defaults['controller'] ?? '',
                 $route->defaults['action'] ?? '',
-                is_string($methods) ? $methods : implode(', ', $route->defaults['_method']),
+                is_string($methods) ? $methods : implode(', ', $methods),
             ];
 
             if ($args->getOption('verbose')) {
@@ -63,7 +63,7 @@ class RoutesCommand extends Command
             $output[] = $item;
 
             // Count route templates
-            if (!isset($duplicateRoutesCounter[$this->template])) {
+            if (!isset($duplicateRoutesCounter[$route->template])) {
                 $duplicateRoutesCounter[$route->template] = 0;
             }
             $duplicateRoutesCounter[$route->template]++;
@@ -94,7 +94,7 @@ class RoutesCommand extends Command
                     $route->defaults['prefix'] ?? '',
                     $route->defaults['controller'] ?? '',
                     $route->defaults['action'] ?? '',
-                    is_string($methods) ? $methods : implode(', ', $route->defaults['_method']),
+                    is_string($methods) ? $methods : implode(', ', $methods),
                 ];
             }
         }
