@@ -81,13 +81,14 @@ HTML;
     {
         $selector = $id . '-' . $suffix;
 
+        // phpcs:disable
         return <<<HTML
-<a
-    href="javascript:void(0);"
-    onclick="document.getElementById('{$selector}').style.display = (document.getElementById('{$selector}').style.display == 'none' ? '' : 'none'"
+<a href="javascript:void(0);"
+  onclick="document.getElementById('{$selector}').style.display = (document.getElementById('{$selector}').style.display == 'none' ? '' : 'none'"
 >
     {$text}
 </a>
 HTML;
+        // phpcs:enable
     }
 }
