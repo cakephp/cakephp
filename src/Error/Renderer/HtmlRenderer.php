@@ -43,7 +43,7 @@ class HtmlRenderer implements ErrorRendererInterface
         debug($error);
         $errorMessage = sprintf(
             '<b>%s</b> (%s)',
-            h($error->getLabel()),
+            h(ucfirst($error->getLabel())),
             h($error->getCode())
         );
         $toggle = $this->renderToggle($errorMessage, $id, 'trace');
