@@ -31,6 +31,7 @@ use Cake\Error\Debug\ReferenceNode;
 use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
+use Cake\Error\Renderer\HtmlRenderer;
 use Cake\Error\Renderer\TextRenderer;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
@@ -82,6 +83,7 @@ class Debugger
      */
     protected $_templates = [
         'log' => [
+            // These templates are not actually used, as Debugger::log() is called instead.
             'trace' => '{:reference} - {:path}, line {:line}',
             'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]',
         ],
@@ -121,9 +123,11 @@ class Debugger
      * @var array<string, class-string>
      */
     protected $renderers = [
-        // Backwards compatible alias for text
+        // Backwards compatible alias for text that will be deprecated.
         'txt' => TextRenderer::class,
         'text' => TextRenderer::class,
+        // The html alias currently uses no JS and will be deprecated.
+        'js' => HtmlRenderer::class,
     ];
 
     /**
