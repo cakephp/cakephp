@@ -50,9 +50,10 @@ interface LocatorInterface extends BaseLocatorInterface
     /**
      * Get a table instance from the registry.
      *
-     * @param string $alias The alias name you want to get.
+     * @template T of \Cake\ORM\Table
+     * @param class-string<T>|null|string $alias The alias name you want to get.
      * @param array<string, mixed> $options The options you want to build the table with.
-     * @return \Cake\ORM\Table
+     * @return T|\Cake\ORM\Table
      */
     public function get(string $alias, array $options = []): Table;
 
