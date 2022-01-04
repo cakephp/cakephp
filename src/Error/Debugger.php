@@ -31,6 +31,8 @@ use Cake\Error\Debug\ReferenceNode;
 use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
+use Cake\Error\Renderer\HtmlRenderer;
+use Cake\Error\Renderer\TextRenderer;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -81,6 +83,7 @@ class Debugger
      */
     protected $_templates = [
         'log' => [
+            // These templates are not actually used, as Debugger::log() is called instead.
             'trace' => '{:reference} - {:path}, line {:line}',
             'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]',
         ],
@@ -108,6 +111,23 @@ class Debugger
             'trace' => "Trace:\n{:trace}\n",
             'context' => "Context:\n{:context}\n",
         ],
+    ];
+
+    /**
+     * Mapping for error renderers.
+     *
+     * Error renderers are replacing output formatting with
+     * an object based system. Having Debugger handle and render errors
+     * will be deprecated and the new ErrorTrap system should be used instead.
+     *
+     * @var array<string, class-string>
+     */
+    protected $renderers = [
+        // Backwards compatible alias for text that will be deprecated.
+        'txt' => TextRenderer::class,
+        'text' => TextRenderer::class,
+        // The html alias currently uses no JS and will be deprecated.
+        'js' => HtmlRenderer::class,
     ];
 
     /**
@@ -443,7 +463,7 @@ class Debugger
                 continue;
             }
             if ($options['format'] === 'points' && $trace['file'] !== '[internal]') {
-                $back[] = ['file' => $trace['file'], 'line' => $trace['line']];
+                $back[] = ['file' => $trace['file'], 'line' => $trace['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
                 $back[] = $trace;
             } else {
@@ -922,6 +942,16 @@ class Debugger
         ];
         $data += $defaults;
 
+        $outputFormat = $this->_outputFormat;
+        if (isset($this->renderers[$outputFormat])) {
+            $trace = static::trace(['start' => $data['start'], 'format' => 'points']);
+            $error = new PhpError($data['code'], $data['description'], $data['file'], $data['line'], $trace);
+            $renderer = new $this->renderers[$outputFormat]();
+            echo $renderer->render($error);
+
+            return;
+        }
+
         $files = static::trace(['start' => $data['start'], 'format' => 'points']);
         $code = '';
         $file = null;
@@ -956,7 +986,7 @@ class Debugger
 
         $data['trace'] = $trace;
         $data['id'] = 'cakeErr' . uniqid();
-        $tpl = $this->_templates[$this->_outputFormat] + $this->_templates['base'];
+        $tpl = $this->_templates[$outputFormat] + $this->_templates['base'];
 
         if (isset($tpl['links'])) {
             foreach ($tpl['links'] as $key => $val) {
