@@ -72,7 +72,7 @@ trait LocatorAwareTrait
      * Convenience method to get a table instance.
      *
      * @template T of \Cake\ORM\Table
-     * @param class-string<T>|null|string $alias The alias name you want to get. Should be in CamelCase format.
+     * @param class-string<T>|string|null $alias The alias name you want to get. Should be in CamelCase format.
      *  If `null` then the value of $defaultTable property is used.
      * @param array<string, mixed> $options The options you want to build the table with.
      *   If a table has already been loaded the registry options will be ignored.
