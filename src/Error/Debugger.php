@@ -31,6 +31,7 @@ use Cake\Error\Debug\ReferenceNode;
 use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
+use Cake\Error\ErrorRendererInterface;
 use Cake\Error\Renderer\HtmlRenderer;
 use Cake\Error\Renderer\TextRenderer;
 use Cake\Log\Log;
@@ -918,8 +919,25 @@ class Debugger
         } else {
             $self->_templates[$format] = $strings;
         }
+        unset($self->renderers[$format]);
 
         return $self->_templates[$format];
+    }
+
+    /**
+     * Add a renderer to the current instance.
+     *
+     * @param string $name The alias for the the renderer.
+     * @param string $class The classname of the renderer to use.
+     * @return void
+     */
+    public static function addRenderer(string $name, string $class): void
+    {
+        if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
+            throw new InvalidArgumentException('Invalid renderer class. $class must implement ' . ErrorRendererInterface::class);
+        }
+        $self = Debugger::getInstance();
+        $self->renderers[$name] = $class;
     }
 
     /**
