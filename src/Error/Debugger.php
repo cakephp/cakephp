@@ -31,7 +31,6 @@ use Cake\Error\Debug\ReferenceNode;
 use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
-use Cake\Error\ErrorRendererInterface;
 use Cake\Error\Renderer\HtmlRenderer;
 use Cake\Error\Renderer\TextRenderer;
 use Cake\Log\Log;
