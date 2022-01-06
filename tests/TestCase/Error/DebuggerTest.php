@@ -25,6 +25,7 @@ use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
+use Cake\Error\Renderer\HtmlRenderer;
 use Cake\Form\Form;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -176,6 +177,42 @@ class DebuggerTest extends TestCase
         $result = ob_get_clean();
         $this->assertStringContainsString('&lt;script&gt;', $result);
         $this->assertStringNotContainsString('<script>', $result);
+    }
+
+    /**
+     * Test invalid class and addRenderer()
+     */
+    public function testAddRendererInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Debugger::addRenderer('test', stdClass::class);
+    }
+
+    /**
+     * Test addFormat() overwriting addRenderer()
+     */
+    public function testAddOutputFormatOverwrite(): void
+    {
+        Debugger::addRenderer('test', HtmlRenderer::class);
+        Debugger::addFormat('test', [
+            'error' => '{:description} : {:path}, line {:line}',
+        ]);
+        Debugger::setOutputFormat('test');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'error' => 'Notice',
+            'code' => E_NOTICE,
+            'level' => E_NOTICE,
+            'description' => 'Oh no!',
+            'file' => __FILE__,
+            'line' => __LINE__,
+        ];
+        $debugger->outputError($data);
+        $result = ob_get_clean();
+        $this->assertStringContainsString('Oh no! :', $result);
+        $this->assertStringContainsString(", line {$data['line']}", $result);
     }
 
     /**
