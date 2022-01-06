@@ -927,7 +927,7 @@ class Debugger
      * Add a renderer to the current instance.
      *
      * @param string $name The alias for the the renderer.
-     * @param class-string $class The classname of the renderer to use.
+     * @param class-string<\Cake\Error\ErrorRendererInterface> $class The classname of the renderer to use.
      * @return void
      */
     public static function addRenderer(string $name, string $class): void
