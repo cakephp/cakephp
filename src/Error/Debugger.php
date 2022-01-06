@@ -927,13 +927,15 @@ class Debugger
      * Add a renderer to the current instance.
      *
      * @param string $name The alias for the the renderer.
-     * @param string $class The classname of the renderer to use.
+     * @param class-string $class The classname of the renderer to use.
      * @return void
      */
     public static function addRenderer(string $name, string $class): void
     {
         if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
-            throw new InvalidArgumentException('Invalid renderer class. $class must implement ' . ErrorRendererInterface::class);
+            throw new InvalidArgumentException(
+                'Invalid renderer class. $class must implement ' . ErrorRendererInterface::class
+            );
         }
         $self = Debugger::getInstance();
         $self->renderers[$name] = $class;
