@@ -180,7 +180,16 @@ class DebuggerTest extends TestCase
     }
 
     /**
-     * Test setOutputFormat overwrite
+     * Test invalid class and addRenderer()
+     */
+    public function testAddRendererInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Debugger::addRenderer('test', stdClass::class);
+    }
+
+    /**
+     * Test addFormat() overwriting addRenderer()
      */
     public function testAddOutputFormatOverwrite(): void
     {
