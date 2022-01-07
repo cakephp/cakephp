@@ -26,6 +26,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\ContentTypeNegotiation;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -695,12 +696,73 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($builder->getTemplate() === null) {
             $builder->setTemplate($this->request->getParam('action'));
         }
+        $viewClass = $this->chooseViewClass();
+        $view = $this->createView($viewClass);
 
-        $view = $this->createView();
         $contents = $view->render();
-        $this->setResponse($view->getResponse()->withStringBody($contents));
+        $response = $view->getResponse()->withStringBody($contents);
 
-        return $this->response;
+        return $this->setResponse($response)->response;
+    }
+
+    /**
+     * Get the View classes this controller can perform content negotiation with.
+     *
+     * Each view class must implement the `getContentType()` hook method
+     * to participate in negotiation.
+     *
+     * @see Cake\Http\ContentTypeNegotiation
+     * @return array<string>
+     */
+    public function viewClasses(): array
+    {
+        return [];
+    }
+
+    /**
+     * Use the view classes defined on this controller to view
+     * selection based on content-type negotiation.
+     *
+     * @return string|null The chosen view class or null for no decision.
+     */
+    protected function chooseViewClass(): ?string
+    {
+        $possibleViewClasses = $this->viewClasses();
+        if (empty($possibleViewClasses)) {
+            return null;
+        }
+        // Controller or component has already made a view class decision.
+        // That decision should overwrite the framework behavior.
+        if ($this->viewBuilder()->getClassName() !== null) {
+            return null;
+        }
+
+        $typeMap = [];
+        foreach ($possibleViewClasses as $class) {
+            $viewContentType = $class::contentType();
+            if ($viewContentType && !isset($typeMap[$viewContentType])) {
+                $typeMap[$viewContentType] = $class;
+            }
+        }
+        $request = $this->getRequest();
+
+        // Prefer the _ext route parameter if it is defined.
+        $ext = $request->getParam('_ext');
+        if ($ext) {
+            $extType = $this->response->getMimeType($ext);
+            if (isset($typeMap[$extType])) {
+                return $typeMap[$extType];
+            }
+        }
+
+        // Use accept header based negotiation.
+        $contentType = new ContentTypeNegotiation();
+        $preferredType = $contentType->preferredType($request, array_keys($typeMap));
+        if (!$preferredType) {
+            return null;
+        }
+
+        return $typeMap[$preferredType];
     }
 
     /**

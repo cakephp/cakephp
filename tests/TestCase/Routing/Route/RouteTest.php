@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Core\Configure;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
@@ -1142,6 +1143,24 @@ class RouteTest extends TestCase
         $this->assertSame('Media', $result['controller']);
         $this->assertSame('search', $result['action']);
         $this->assertEquals(['tv', 'shows'], $result['pass']);
+    }
+
+    /**
+     * Test that parse() throws a BadRequestException instead of InvalidArgumentException
+     * for an invalid method.
+     *
+     * @return void
+     */
+    public function testParseException(): void
+    {
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
+
+        $route = new Route(
+            '/{controller}',
+            ['prefix' => 'Admin', 'action' => 'index']
+        );
+        $route->parse('/posts', 'NOPE');
     }
 
     /**

@@ -366,6 +366,36 @@ class View implements EventDispatcherInterface
      */
     public function initialize(): void
     {
+        $this->setContentType();
+    }
+
+    /**
+     * Set the response content-type based on the view's contentType()
+     *
+     * @return void
+     */
+    protected function setContentType(): void
+    {
+        $viewContentType = $this->contentType();
+        if (!$viewContentType) {
+            return;
+        }
+        $response = $this->getResponse();
+        $responseType = $response->getHeaderLine('Content-Type');
+        if ($responseType === '' || substr($responseType, 0, 9) === 'text/html') {
+            $response = $response->withType($viewContentType);
+        }
+        $this->setResponse($response);
+    }
+
+    /**
+     * Mime-type this view class renders as.
+     *
+     * @return string Either the content type or '' which means no type.
+     */
+    public static function contentType(): string
+    {
+        return '';
     }
 
     /**

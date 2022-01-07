@@ -26,11 +26,13 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\View\View;
 use Laminas\Diactoros\Uri;
 use ReflectionFunction;
 use RuntimeException;
 use TestApp\Controller\Admin\PostsController as AdminPostsController;
 use TestApp\Controller\ArticlesController;
+use TestApp\Controller\ContentTypesController;
 use TestApp\Controller\PagesController;
 use TestApp\Controller\PostsController;
 use TestApp\Controller\TestController;
@@ -221,6 +223,108 @@ class ControllerTest extends TestCase
 
         $result = $Controller->render('/element/test_element');
         $this->assertMatchesRegularExpression('/this is the test element/', (string)$result);
+    }
+
+    /**
+     * Test that render() will do content negotiation when supported
+     * by the controller.
+     */
+    public function testRenderViewClassesContentNegotiationMatch()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'application/json'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame('application/json', $response->getHeaderLine('Content-Type'), 'Has correct header');
+        $this->assertNotEmpty(json_decode($response->getBody() . ''), 'Body should be json');
+    }
+
+    /**
+     * Test that render() will do content negotiation when supported
+     * by the controller.
+     */
+    public function testRenderViewClassContentNegotiationMatchLast()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'application/xml'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame(
+            'application/xml; charset=UTF-8',
+            $response->getHeaderLine('Content-Type'),
+            'Has correct header'
+        );
+        $this->assertStringContainsString('<?xml', $response->getBody() . '');
+    }
+
+    public function testRenderViewClassesContentNegotiationNoMatch()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'text/plain'],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('hello world', $response->getBody() . '');
+    }
+
+    /**
+     * Test that render() will skip content-negotiation when a view class is set.
+     */
+    public function testRenderViewClassContentNegotiationSkipWithViewClass()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'application/xml'],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->all();
+        $controller->viewBuilder()->setClassName(View::class);
+        $response = $controller->render();
+        $this->assertSame(
+            'text/html; charset=UTF-8',
+            $response->getHeaderLine('Content-Type'),
+            'Should not be XML response.'
+        );
+        $this->assertStringContainsString('hello world', $response->getBody() . '');
+    }
+
+    public function testRenderViewClassesSetContentTypeHeader()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'text/plain'],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'plain'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->plain();
+        $response = $controller->render();
+        $this->assertSame('text/plain; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('hello world', $response->getBody() . '');
+    }
+
+    public function testRenderViewClassesUsesExt()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all', '_ext' => 'json'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
+        $this->assertNotEmpty(json_decode($response->getBody() . ''), 'Body should be json');
     }
 
     /**

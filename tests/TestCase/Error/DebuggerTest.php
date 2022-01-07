@@ -25,6 +25,7 @@ use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
+use Cake\Error\Renderer\HtmlRenderer;
 use Cake\Form\Form;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -179,6 +180,42 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Test invalid class and addRenderer()
+     */
+    public function testAddRendererInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Debugger::addRenderer('test', stdClass::class);
+    }
+
+    /**
+     * Test addFormat() overwriting addRenderer()
+     */
+    public function testAddOutputFormatOverwrite(): void
+    {
+        Debugger::addRenderer('test', HtmlRenderer::class);
+        Debugger::addFormat('test', [
+            'error' => '{:description} : {:path}, line {:line}',
+        ]);
+        Debugger::setOutputFormat('test');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'error' => 'Notice',
+            'code' => E_NOTICE,
+            'level' => E_NOTICE,
+            'description' => 'Oh no!',
+            'file' => __FILE__,
+            'line' => __LINE__,
+        ];
+        $debugger->outputError($data);
+        $result = ob_get_clean();
+        $this->assertStringContainsString('Oh no! :', $result);
+        $this->assertStringContainsString(", line {$data['line']}", $result);
+    }
+
+    /**
      * Tests that the correct line is being highlighted.
      */
     public function testOutputErrorLineHighlight(): void
@@ -198,7 +235,70 @@ class DebuggerTest extends TestCase
         $debugger->outputError($data);
         $result = ob_get_clean();
 
-        $this->assertMatchesRegularExpression('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
+        $this->assertMatchesRegularExpression('#^\<span class\="code\-highlight"\>.*__LINE__.*\</span\>$#m', $result);
+    }
+
+    /**
+     * Test plain text output format.
+     */
+    public function testOutputErrorText(): void
+    {
+        Debugger::setOutputFormat('txt');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'level' => E_NOTICE,
+            'code' => E_NOTICE,
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'description' => 'Error description',
+            'start' => 1,
+        ];
+        $debugger->outputError($data);
+        $result = ob_get_clean();
+
+        $this->assertStringContainsString('notice: 8 :: Error description', $result);
+        $this->assertStringContainsString("on line {$data['line']} of {$data['file']}", $result);
+        $this->assertStringContainsString('Trace:', $result);
+        $this->assertStringContainsString('Cake\Test\TestCase\Error\DebuggerTest::testOutputErrorText()', $result);
+        $this->assertStringContainsString('[main]', $result);
+    }
+
+    /**
+     * Test log output format.
+     */
+    public function testOutputErrorLog(): void
+    {
+        Debugger::setOutputFormat('log');
+        Log::setConfig('array', ['engine' => 'Array']);
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'level' => E_NOTICE,
+            'code' => E_NOTICE,
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'description' => 'Error description',
+            'start' => 1,
+        ];
+        $debugger->outputError($data);
+        $output = ob_get_clean();
+        /** @var \Cake\Log\Engine\ArrayLog $logger */
+        $logger = Log::engine('array');
+        $logs = $logger->read();
+
+        $this->assertSame('', $output);
+        $this->assertCount(1, $logs);
+        // This is silly but that's how it works currently.
+        $this->assertStringContainsString("debug: \nCake\Error\Debugger::outputError()", $logs[0]);
+
+        $this->assertStringContainsString("'file' => '{$data['file']}'", $logs[0]);
+        $this->assertStringContainsString("'line' => (int) {$data['line']}", $logs[0]);
+        $this->assertStringContainsString("'trace' => ", $logs[0]);
+        $this->assertStringContainsString("'description' => 'Error description'", $logs[0]);
+        $this->assertStringContainsString('DebuggerTest::testOutputErrorLog()', $logs[0]);
     }
 
     /**

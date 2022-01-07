@@ -319,7 +319,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
             return;
         }
 
-        $anonymousParams = is_int(key($params)) ? true : false;
+        $anonymousParams = is_int(key($params));
         $offset = 1;
         foreach ($params as $index => $value) {
             $type = $types[$index] ?? null;

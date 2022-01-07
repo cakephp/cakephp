@@ -1808,6 +1808,14 @@ TEXT;
         $this->assertSame('TestPlugin', $this->View->getPlugin());
     }
 
+    /**
+     * Somewhat pointless, but helps ensure BC for defaults.
+     */
+    public function testContentType()
+    {
+        $this->assertSame('', $this->View->contentType());
+    }
+
     protected function checkException(string $message): void
     {
         $this->expectException(Error::class);

@@ -86,7 +86,12 @@ class ConnectionHelper
         $connection = ConnectionManager::get($connectionName);
         $collection = $connection->getSchemaCollection();
 
-        $allTables = $collection->listTables();
+        if (method_exists($collection, 'listTablesWithoutViews')) {
+            $allTables = $collection->listTablesWithoutViews();
+        } else {
+            $allTables = $collection->listTables();
+        }
+
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         $schemas = array_map(function ($table) use ($collection) {
             return $collection->describe($table);
@@ -120,7 +125,7 @@ class ConnectionHelper
         $connection = ConnectionManager::get($connectionName);
         $collection = $connection->getSchemaCollection();
 
-        $allTables = $collection->listTables();
+        $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         $schemas = array_map(function ($table) use ($collection) {
             return $collection->describe($table);

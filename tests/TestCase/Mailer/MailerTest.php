@@ -282,6 +282,7 @@ class MailerTest extends TestCase
             'transport' => 'debug',
             'theme' => 'TestTheme',
             'helpers' => ['Html', 'Form'],
+            'autoLayout' => false,
         ];
         Mailer::setConfig('test', $config);
         $this->mailer->setProfile('test');
@@ -303,6 +304,8 @@ class MailerTest extends TestCase
 
         $result = $this->mailer->viewBuilder()->getHelpers();
         $this->assertEquals(['Html' => [], 'Form' => []], $result);
+
+        $this->assertFalse($this->mailer->viewBuilder()->isAutoLayoutEnabled());
 
         Mailer::drop('test');
     }

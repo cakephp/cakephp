@@ -403,8 +403,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
             }
 
             return $this->_outputMessageSafe('error500');
-        } catch (Throwable $e) {
-            return $this->_outputMessageSafe('error500');
+        } catch (Throwable $outer) {
+            try {
+                return $this->_outputMessageSafe('error500');
+            } catch (Throwable $inner) {
+                throw $outer;
+            }
         }
     }
 

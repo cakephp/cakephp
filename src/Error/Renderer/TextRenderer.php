@@ -11,30 +11,34 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0
+ * @since         4.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View;
+namespace Cake\Error\Renderer;
+
+use Cake\Error\ErrorRendererInterface;
+use Cake\Error\PhpError;
 
 /**
- * A view class that is used for AJAX responses.
- * Currently, only switches the default layout and sets the response type - which just maps to
- * text/html by default.
+ * Plain text error rendering with a stack trace.
+ *
+ * Useful in CLI and log file contexts.
  */
-class AjaxView extends View
+class TextRenderer implements ErrorRendererInterface
 {
     /**
      * @inheritDoc
      */
-    protected string $layout = 'ajax';
-
-    /**
-     * Get content type for this view.
-     *
-     * @return string
-     */
-    public static function contentType(): string
+    public function render(PhpError $error): string
     {
-        return 'text/html';
+        return sprintf(
+            "%s: %s :: %s on line %s of %s\nTrace:\n%s",
+            $error->getLabel(),
+            $error->getCode(),
+            $error->getMessage(),
+            $error->getLine(),
+            $error->getFile(),
+            $error->getTraceAsString(),
+        );
     }
 }
