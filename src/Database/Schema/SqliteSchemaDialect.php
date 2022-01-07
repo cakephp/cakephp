@@ -152,9 +152,30 @@ class SqliteSchemaDialect extends SchemaDialect
     }
 
     /**
-     * @inheritDoc
+     * Generate the SQL to list the tables and views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
      */
     public function listTablesSql(array $config): array
+    {
+        return [
+            'SELECT name FROM sqlite_master ' .
+            'WHERE (type="table" OR type="view") ' .
+            'AND name != "sqlite_sequence" ORDER BY name',
+            [],
+        ];
+    }
+
+    /**
+     * Generate the SQL to list the tables, excluding all views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array<mixed> An array of (sql, params) to execute.
+     */
+    public function listTablesWithoutViewsSql(array $config): array
     {
         return [
             'SELECT name FROM sqlite_master WHERE type="table" ' .

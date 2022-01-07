@@ -26,6 +26,8 @@ use InvalidArgumentException;
  *
  * This class contains methods that are common across
  * the various SQL dialects.
+ *
+ * @method array<mixed> listTablesWithoutViewsSql(array $config) Generate the SQL to list the tables, excluding all views.
  */
 abstract class SchemaDialect
 {

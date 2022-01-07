@@ -54,9 +54,27 @@ class Collection implements CollectionInterface
     }
 
     /**
-     * Get the list of tables available in the current connection.
+     * Get the list of tables, excluding any views, available in the current connection.
      *
      * @return array<string> The list of tables in the connected database/schema.
+     */
+    public function listTablesWithoutViews(): array
+    {
+        [$sql, $params] = $this->_dialect->listTablesWithoutViewsSql($this->_connection->config());
+        $result = [];
+        $statement = $this->_connection->execute($sql, $params);
+        while ($row = $statement->fetch()) {
+            $result[] = $row[0];
+        }
+        $statement->closeCursor();
+
+        return $result;
+    }
+
+    /**
+     * Get the list of tables and views available in the current connection.
+     *
+     * @return array<string> The list of tables and views in the connected database/schema.
      */
     public function listTables(): array
     {
