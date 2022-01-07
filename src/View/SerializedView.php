@@ -31,7 +31,7 @@ abstract class SerializedView extends View
      * @var string
      * @deprecated 4.4.0 Implement ``public static contentType(): string`` instead.
      */
-    protected string $_responseType;
+    protected string $_responseType = '';
 
     /**
      * Default config options.
