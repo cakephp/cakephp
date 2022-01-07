@@ -24,34 +24,34 @@ class PhpError
     /**
      * @var int
      */
-    private $code;
+    private int $code;
 
     /**
      * @var string
      */
-    private $message;
+    private string $message;
 
     /**
      * @var string|null
      */
-    private $file;
+    private ?string $file;
 
     /**
      * @var int|null
      */
-    private $line;
+    private ?int $line;
 
     /**
      * Stack trace data. Each item should have a `reference`, `file` and `line` keys.
      *
      * @var array<array<string, int>>
      */
-    private $trace;
+    private array $trace;
 
     /**
      * @var array<int, string>
      */
-    private $levelMap = [
+    private array $levelMap = [
         E_PARSE => 'error',
         E_ERROR => 'error',
         E_CORE_ERROR => 'error',
@@ -71,7 +71,7 @@ class PhpError
     /**
      * @var array<string, int>
      */
-    private $logMap = [
+    private array $logMap = [
         'error' => LOG_ERR,
         'warning' => LOG_WARNING,
         'notice' => LOG_NOTICE,

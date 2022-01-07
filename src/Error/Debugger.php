@@ -122,7 +122,7 @@ class Debugger
      *
      * @var array<string, class-string>
      */
-    protected $renderers = [
+    protected array $renderers = [
         // Backwards compatible alias for text that will be deprecated.
         'txt' => TextRenderer::class,
         'text' => TextRenderer::class,
