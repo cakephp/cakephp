@@ -702,11 +702,6 @@ class Route
         }
         unset($url['_method'], $url['[method]'], $defaults['_method']);
 
-        // Missing defaults is a fail.
-        if (array_diff_key($defaults, $url) !== []) {
-            return null;
-        }
-
         // Defaults with different values are a fail.
         if (array_intersect_key($url, $defaults) != $defaults) {
             return null;
