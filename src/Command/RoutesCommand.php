@@ -40,10 +40,10 @@ class RoutesCommand extends Command
             $header[] = 'Defaults';
         }
 
-        $routeCollection = Router::routes();
+        $availableRoutes = Router::routes();
         $output = $duplicateRoutesCounter = [];
 
-        foreach ($routeCollection as $route) {
+        foreach ($availableRoutes as $route) {
             $methods = $route->defaults['_method'] ?? '';
 
             $item = [
@@ -82,8 +82,7 @@ class RoutesCommand extends Command
 
         $duplicateRoutes = [];
 
-        // Check duplicate routes
-        foreach ($routeCollection as $route) {
+        foreach ($availableRoutes as $route) {
             if ($duplicateRoutesCounter[$route->template] > 1) {
                 $methods = $route->defaults['_method'] ?? '';
 
