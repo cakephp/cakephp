@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error\ErrorRendererInterface;
 use Cake\Error\Renderer\ConsoleRenderer;
 use Cake\Error\Renderer\HtmlRenderer;
 use Closure;
