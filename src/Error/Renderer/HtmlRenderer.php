@@ -30,7 +30,7 @@ class HtmlRenderer implements ErrorRendererInterface
     /**
      * @inheritDoc
      */
-    public function output(string $out): void
+    public function write(string $out): void
     {
         // Output to stdout which is the server response.
         echo $out;

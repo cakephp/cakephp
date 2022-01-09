@@ -29,7 +29,7 @@ class TextRenderer implements ErrorRendererInterface
     /**
      * @inheritDoc
      */
-    public function output(string $out): void
+    public function write(string $out): void
     {
         echo $out;
     }

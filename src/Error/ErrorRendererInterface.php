@@ -33,10 +33,10 @@ interface ErrorRendererInterface
     public function render(PhpError $error): string;
 
     /**
-     * Output to the renderers output stream
+     * Write output to the renderer's output stream
      *
      * @param string $out The content to output.
      * @return void
      */
-    public function output(string $out): void;
+    public function write(string $out): void;
 }

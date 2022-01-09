@@ -125,8 +125,10 @@ class ErrorTrap
             foreach ($this->callbacks as $callback) {
                 $callback($error);
             }
-            $renderer->output($renderer->render($error));
+            $renderer->write($renderer->render($error));
         } catch (Exception $e) {
+            $logger->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
+
             return false;
         }
 
