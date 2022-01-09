@@ -30,6 +30,15 @@ class HtmlRenderer implements ErrorRendererInterface
     /**
      * @inheritDoc
      */
+    public function output(string $out): void
+    {
+        // Output to stdout which is the server response.
+        echo $out;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function render(PhpError $error): string
     {
         $id = 'cakeErr' . uniqid();

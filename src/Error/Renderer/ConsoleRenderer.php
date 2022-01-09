@@ -22,16 +22,17 @@ use Cake\Error\PhpError;
 /**
  * Plain text error rendering with a stack trace.
  *
- * Useful in CLI environments.
+ * Writes to STDERR for console environments
  */
-class TextRenderer implements ErrorRendererInterface
+class ConsoleRenderer implements ErrorRendererInterface
 {
     /**
      * @inheritDoc
      */
     public function output(string $out): void
     {
-        echo $out;
+        // Write to stderr which is useful in console environments.
+        fwrite(STDERR, $out);
     }
 
     /**

@@ -5,9 +5,10 @@ namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ErrorRendererInterface;
+use Cake\Error\Renderer\ConsoleRenderer;
 use Cake\Error\Renderer\HtmlRenderer;
-use Cake\Error\Renderer\TextRenderer;
 use Closure;
+use Exception;
 use InvalidArgumentException;
 use LogicException;
 
@@ -35,6 +36,11 @@ class ErrorTrap
         'extraFatalErrorMemory' => 4 * 1024,
         'trace' => false,
     ];
+
+    /**
+     * @var array<\Closure>
+     */
+    protected $callbacks = [];
 
     /**
      * @var bool
@@ -66,7 +72,7 @@ class ErrorTrap
             return $config;
         }
 
-        return PHP_SAPI === 'cli' ? TextRenderer::class : HtmlRenderer::class;
+        return PHP_SAPI === 'cli' ? ConsoleRenderer::class : HtmlRenderer::class;
     }
 
     /**
@@ -79,6 +85,53 @@ class ErrorTrap
      */
     public function register(): void
     {
+        $this->registered = true;
+
+        $level = $this->_config['errorLevel'] ?? -1;
+        error_reporting($level);
+        set_error_handler([$this, 'handleError'], $level);
+    }
+
+    /**
+     * Handle an error from PHP set_error_handler
+     *
+     * Will use the configured renderer to generate output
+     * and output it.
+     *
+     * @param int $code Code of error
+     * @param string $description Error description
+     * @param string|null $file File on which error occurred
+     * @param int|null $line Line that triggered the error
+     * @return bool True if error was handled
+     */
+    public function handleError(
+        int $code,
+        string $description,
+        ?string $file = null,
+        ?int $line = null
+    ): bool {
+        if (!(error_reporting() & $code)) {
+            return false;
+        }
+        $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
+        $error = new PhpError($code, $description, $file, $line, $trace);
+
+        $renderer = $this->renderer();
+        $logger = $this->logger();
+
+        try {
+            // Log first incase rendering or callbacks fail.
+            $logger->logMessage($error->getLabel(), $error->getMessage());
+
+            foreach ($this->callbacks as $callback) {
+                $callback($error);
+            }
+            $renderer->output($renderer->render($error));
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -145,7 +198,7 @@ class ErrorTrap
      * When the logger is constructed it will be passed
      * the current options array.
      *
-     * @param int $level The PHP error reporting value to use.
+     * @param class-string<\Cake\Error\ErrorLoggerInterface> $class The logging class to use.
      * @return $this
      */
     public function setLogger(string $class)
@@ -174,6 +227,8 @@ class ErrorTrap
      */
     public function addCallback(Closure $closure)
     {
+        $this->callbacks[] = $closure;
+
         return $this;
     }
 }

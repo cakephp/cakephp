@@ -18,13 +18,23 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Error\ErrorLogger;
 use Cake\Error\ErrorTrap;
+use Cake\Error\PhpError;
 use Cake\Error\Renderer\HtmlRenderer;
+use Cake\Error\Renderer\TextRenderer;
+use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
 
 class ErrorTrapTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Log::drop('test_error');
+    }
+
     public function testSetErrorRendererInvalid()
     {
         $trap = new ErrorTrap();
@@ -51,5 +61,53 @@ class ErrorTrapTest extends TestCase
         $trap = new ErrorTrap();
         $trap->setLogger(ErrorLogger::class);
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
+    }
+
+    public function testRegisterAndRendering()
+    {
+        $trap = new ErrorTrap();
+        $trap->setErrorRenderer(TextRenderer::class);
+        $trap->register();
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        $output = ob_get_clean();
+        restore_error_handler();
+
+        $this->assertStringContainsString('Oh no it was bad', $output);
+    }
+
+    public function testRegisterAndLogging()
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ErrorTrap();
+        $trap->register();
+        $trap->setErrorRenderer(TextRenderer::class);
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        $output = ob_get_clean();
+        restore_error_handler();
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+    }
+
+    public function testAddCallback()
+    {
+        $trap = new ErrorTrap();
+        $trap->register();
+        $trap->setErrorRenderer(TextRenderer::class);
+        $trap->addCallback(function (PhpError $error) {
+            $this->assertEquals(E_USER_NOTICE, $error->getCode());
+            $this->assertStringContainsString('Oh no it was bad', $error->getMessage());
+        });
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        $out = ob_get_clean();
+        restore_error_handler();
+        $this->assertNotEmpty($out);
     }
 }

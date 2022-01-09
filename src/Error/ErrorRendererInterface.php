@@ -31,4 +31,12 @@ interface ErrorRendererInterface
      * @return string The output to be echoed.
      */
     public function render(PhpError $error): string;
+
+    /**
+     * Output to the renderers output stream
+     *
+     * @param string $out The content to output.
+     * @return void
+     */
+    public function output(string $out): void;
 }
