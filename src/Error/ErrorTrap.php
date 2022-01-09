@@ -62,7 +62,7 @@ class ErrorTrap
     /**
      * Choose an error renderer based on config or the SAPI
      *
-     * @return class-string<\Cake\Error\ErrorLoggerInterface>
+     * @return class-string<\Cake\Error\ErrorRendererInterface>
      */
     protected function chooseErrorRenderer(): string
     {
@@ -71,6 +71,7 @@ class ErrorTrap
             return $config;
         }
 
+        /** @var class-string<\Cake\Error\ErrorRendererInterface> */
         return PHP_SAPI === 'cli' ? ConsoleRenderer::class : HtmlRenderer::class;
     }
 
@@ -144,7 +145,10 @@ class ErrorTrap
     {
         $class = $this->getConfig('errorRenderer');
 
-        return new $class($this->_config);
+        /** @var \Cake\Error\ErrorRendererInterface $instance */
+        $instance = new $class($this->_config);
+
+        return $instance;
     }
 
     /**
@@ -156,7 +160,10 @@ class ErrorTrap
     {
         $class = $this->getConfig('logger');
 
-        return new $class($this->_config);
+        /** @var \Cake\Error\ErrorLoggerInterface $instance */
+        $instance = new $class($this->_config);
+
+        return $instance;
     }
 
     /**

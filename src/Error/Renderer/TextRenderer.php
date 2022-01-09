@@ -44,8 +44,8 @@ class TextRenderer implements ErrorRendererInterface
             $error->getLabel(),
             $error->getCode(),
             $error->getMessage(),
-            $error->getLine(),
-            $error->getFile(),
+            $error->getLine() ?? '',
+            $error->getFile() ?? '',
             $error->getTraceAsString(),
         );
     }

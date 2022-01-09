@@ -42,14 +42,14 @@ class HtmlRenderer implements ErrorRendererInterface
     public function render(PhpError $error): string
     {
         $id = 'cakeErr' . uniqid();
+        $file = $error->getFile();
 
         // Some of the error data is not HTML safe so we escape everything.
         $description = h($error->getMessage());
-        $path = h($error->getFile());
-        $line = h($error->getLine());
+        $path = h($file);
         $trace = h($error->getTraceAsString());
+        $line = $error->getLine();
 
-        debug($error);
         $errorMessage = sprintf(
             '<b>%s</b> (%s)',
             h(ucfirst($error->getLabel())),
@@ -57,7 +57,11 @@ class HtmlRenderer implements ErrorRendererInterface
         );
         $toggle = $this->renderToggle($errorMessage, $id, 'trace');
         $codeToggle = $this->renderToggle('Code', $id, 'code');
-        $excerpt = Debugger::excerpt($error->getFile(), $error->getLine(), 1);
+
+        $excerpt = [];
+        if ($file && $line) {
+            $excerpt = Debugger::excerpt($file, $line, 1);
+        }
         $code = implode("\n", $excerpt);
 
         $html = <<<HTML
