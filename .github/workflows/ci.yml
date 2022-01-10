@@ -264,4 +264,4 @@ jobs:
 
     - name: Run phpbench
       if: success() || failure()
-      run: vendor/bin/phpbench run --report=aggregate
+      run: vendor/bin/phpbench run --report=aggregate --progress=plain
