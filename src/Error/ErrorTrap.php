@@ -24,6 +24,9 @@ class ErrorTrap
     use InstanceConfigTrait;
 
     /**
+     * See the `Error` key in you `config/app.php`
+     * for details on the keys and their values.
+     *
      * @var array
      */
     protected $_defaultConfig = [
@@ -37,11 +40,20 @@ class ErrorTrap
     ];
 
     /**
+     * A list of handling callbacks.
+     *
+     * Callbacks are invoked for each error that is handled.
+     * Callbacks are invoked in the order they are attached.
+     *
      * @var array<\Closure>
      */
     protected $callbacks = [];
 
     /**
+     * Whether or not this error trap has been registered
+     * as the default error handler. Even when true, this
+     * error handler may no longer be the active error handler.
+     *
      * @var bool
      */
     protected $registered = false;
@@ -49,7 +61,7 @@ class ErrorTrap
     /**
      * Constructor
      *
-     * @param array $options An options array.
+     * @param array $options An options array. See $_defaultConfig.
      */
     public function __construct(array $options = [])
     {
