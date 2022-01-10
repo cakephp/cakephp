@@ -7,24 +7,13 @@ use Cake\Routing\Route\Route;
 
 class RoutingBench
 {
-    protected Route $route;
-
-    public function __construct()
-    {
-    }
-
-    public function setUpCompile()
-    {
-        $this->route = new Route('/{controller}/{action}/*');
-    }
-
     /**
-     * @BeforeMethods("setUpCompile")
+     * @Warmup(1)
      * @Revs(500)
      * @Iterations(5)
      */
     public function benchCompile()
     {
-        $this->route->compile();
+        (new Route('/{controller}/{action}/*'))->compile();
     }
 }
