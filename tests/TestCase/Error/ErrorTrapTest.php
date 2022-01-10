@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ErrorTrap;
 use Cake\Error\PhpError;
+use Cake\Error\Renderer\ConsoleRenderer;
 use Cake\Error\Renderer\HtmlRenderer;
 use Cake\Error\Renderer\TextRenderer;
 use Cake\Log\Log;
@@ -40,6 +41,12 @@ class ErrorTrapTest extends TestCase
         $trap = new ErrorTrap();
         $this->expectException(InvalidArgumentException::class);
         $trap->setErrorRenderer(stdClass::class);
+    }
+
+    public function testErrorRendererFallback()
+    {
+        $trap = new ErrorTrap(['errorRenderer' => null]);
+        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer());
     }
 
     public function testSetErrorRenderer()
