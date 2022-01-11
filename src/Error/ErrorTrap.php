@@ -27,7 +27,7 @@ class ErrorTrap
      * See the `Error` key in you `config/app.php`
      * for details on the keys and their values.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'errorLevel' => E_ALL,
@@ -61,7 +61,7 @@ class ErrorTrap
     /**
      * Constructor
      *
-     * @param array $options An options array. See $_defaultConfig.
+     * @param array<string, mixed> $options An options array. See $_defaultConfig.
      */
     public function __construct(array $options = [])
     {
