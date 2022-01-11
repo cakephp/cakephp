@@ -56,17 +56,17 @@ class ErrorTrapTest extends TestCase
         $this->assertInstanceOf(HtmlRenderer::class, $trap->renderer());
     }
 
-    public function testSetLoggerInvalid()
+    public function testSetLoggerClassInvalid()
     {
         $trap = new ErrorTrap();
         $this->expectException(InvalidArgumentException::class);
-        $trap->setLogger(stdClass::class);
+        $trap->setLoggerClass(stdClass::class);
     }
 
-    public function testSetLogger()
+    public function testSetLoggerClass()
     {
         $trap = new ErrorTrap();
-        $trap->setLogger(ErrorLogger::class);
+        $trap->setLoggerClass(ErrorLogger::class);
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
     }
 

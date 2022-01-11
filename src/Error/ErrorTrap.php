@@ -67,7 +67,7 @@ class ErrorTrap
     {
         $this->setConfig($options);
         $this->setErrorRenderer($this->chooseErrorRenderer());
-        $this->setLogger($this->getConfig('logger'));
+        $this->setLoggerClass($this->getConfig('logger'));
         $this->setLevel($this->getConfig('errorLevel'));
     }
 
@@ -221,7 +221,7 @@ class ErrorTrap
      * @param class-string<\Cake\Error\ErrorLoggerInterface> $class The logging class to use.
      * @return $this
      */
-    public function setLogger(string $class)
+    public function setLoggerClass(string $class)
     {
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
