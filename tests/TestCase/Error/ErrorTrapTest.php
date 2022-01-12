@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error;
 
+use Cake\Core\Configure;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ErrorTrap;
 use Cake\Error\PhpError;
@@ -94,11 +95,28 @@ class ErrorTrapTest extends TestCase
 
         ob_start();
         trigger_error('Oh no it was bad', E_USER_NOTICE);
-        $output = ob_get_clean();
+        ob_get_clean();
         restore_error_handler();
 
         $logs = Log::engine('test_error')->read();
         $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+    }
+
+    public function testRegisterNoOutputDebug()
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        Configure::write('debug', false);
+        $trap = new ErrorTrap();
+        $trap->register();
+        $trap->setErrorRenderer(TextRenderer::class);
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        $output = ob_get_clean();
+        restore_error_handler();
+        $this->assertSame('', $output);
     }
 
     public function testAddCallback()

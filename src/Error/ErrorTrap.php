@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Error;
 
+use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Renderer\ConsoleRenderer;
 use Cake\Error\Renderer\HtmlRenderer;
@@ -21,7 +22,9 @@ use LogicException;
  */
 class ErrorTrap
 {
-    use InstanceConfigTrait;
+    use InstanceConfigTrait {
+        getConfig as private _getConfig;
+    }
 
     /**
      * See the `Error` key in you `config/app.php`
@@ -67,8 +70,8 @@ class ErrorTrap
     {
         $this->setConfig($options);
         $this->setErrorRenderer($this->chooseErrorRenderer());
-        $this->setLoggerClass($this->getConfig('logger'));
-        $this->setLevel($this->getConfig('errorLevel'));
+        $this->setLoggerClass($this->_getConfig('logger'));
+        $this->setLevel($this->_getConfig('errorLevel'));
     }
 
     /**
@@ -78,7 +81,7 @@ class ErrorTrap
      */
     protected function chooseErrorRenderer(): string
     {
-        $config = $this->getConfig('errorRenderer');
+        $config = $this->_getConfig('errorRenderer');
         if ($config !== null) {
             return $config;
         }
@@ -92,6 +95,9 @@ class ErrorTrap
      *
      * This will replace the existing error handler, and the
      * previous error handler will be discarded.
+     *
+     * This method will also set the global error level
+     * via error_reporting().
      *
      * @return void
      */
@@ -125,6 +131,7 @@ class ErrorTrap
         if (!(error_reporting() & $code)) {
             return false;
         }
+        $debug = Configure::read('debug');
         $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
@@ -138,7 +145,7 @@ class ErrorTrap
             foreach ($this->callbacks as $callback) {
                 $callback($error);
             }
-            $renderer->write($renderer->render($error));
+            $renderer->write($renderer->render($error, $debug));
         } catch (Exception $e) {
             $logger->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
 
@@ -155,7 +162,7 @@ class ErrorTrap
      */
     public function renderer(): ErrorRendererInterface
     {
-        $class = $this->getConfig('errorRenderer');
+        $class = $this->_getConfig('errorRenderer');
 
         /** @var \Cake\Error\ErrorRendererInterface $instance */
         $instance = new $class($this->_config);
@@ -170,7 +177,7 @@ class ErrorTrap
      */
     public function logger(): ErrorLoggerInterface
     {
-        $class = $this->getConfig('logger');
+        $class = $this->_getConfig('logger');
 
         /** @var \Cake\Error\ErrorLoggerInterface $instance */
         $instance = new $class($this->_config);

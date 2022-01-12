@@ -38,7 +38,7 @@ class ConsoleRenderer implements ErrorRendererInterface
     /**
      * @inheritDoc
      */
-    public function render(PhpError $error): string
+    public function render(PhpError $error, bool $debug): string
     {
         return sprintf(
             "%s: %s :: %s on line %s of %s\nTrace:\n%s",

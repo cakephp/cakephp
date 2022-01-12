@@ -39,8 +39,11 @@ class HtmlRenderer implements ErrorRendererInterface
     /**
      * @inheritDoc
      */
-    public function render(PhpError $error): string
+    public function render(PhpError $error, bool $debug): string
     {
+        if (!$debug) {
+            return '';
+        }
         $id = 'cakeErr' . uniqid();
         $file = $error->getFile();
 

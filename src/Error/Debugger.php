@@ -966,7 +966,7 @@ class Debugger
             $trace = static::trace(['start' => $data['start'], 'format' => 'points']);
             $error = new PhpError($data['code'], $data['description'], $data['file'], $data['line'], $trace);
             $renderer = new $this->renderers[$outputFormat]();
-            echo $renderer->render($error);
+            echo $renderer->render($error, Configure::read('debug'));
 
             return;
         }
