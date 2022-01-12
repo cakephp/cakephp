@@ -42,6 +42,7 @@ class TextRenderer implements ErrorRendererInterface
         if (!$debug) {
             return '';
         }
+
         return sprintf(
             "%s: %s :: %s on line %s of %s\nTrace:\n%s",
             $error->getLabel(),
