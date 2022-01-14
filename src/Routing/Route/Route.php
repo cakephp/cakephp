@@ -319,24 +319,8 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
-            preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-        } else {
-            $hasMatches = preg_match_all(
-                '/:([a-z0-9-_]+(?<![-_]))/i',
-                $route,
-                $namedElements,
-                PREG_OFFSET_CAPTURE | PREG_SET_ORDER
-            );
-            $this->braceKeys = false;
-            if ($hasMatches) {
-                deprecationWarning(
-                    '4.4.0',
-                    'Colon prefixed route placeholders like `:foo` are deprecated.'
-                    . ' Use braced placeholders like `{foo}` instead.'
-                );
-            }
-        }
+        preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+
         foreach ($namedElements as $matchArray) {
             // Placeholder name, e.g. "foo"
             $name = $matchArray[1][0];
