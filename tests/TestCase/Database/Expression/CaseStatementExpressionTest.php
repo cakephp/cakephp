@@ -801,35 +801,6 @@ class CaseStatementExpressionTest extends TestCase
         );
     }
 
-    public function testSqlInjectionViaUntypedWhenArrayValueIsPossible(): void
-    {
-        $expression = (new CaseStatementExpression())
-            ->when(['1 THEN 1 END; DELETE * FROM foo; --' => '123'])
-            ->then(1);
-
-        $valueBinder = new ValueBinder();
-        $sql = $expression->sql($valueBinder);
-        $this->assertSame(
-            'CASE WHEN 1 THEN 1 END; DELETE * FROM foo; -- :c0 THEN :c1 ELSE NULL END',
-            $sql
-        );
-        $this->assertSame(
-            [
-                ':c0' => [
-                    'value' => '123',
-                    'type' => null,
-                    'placeholder' => 'c0',
-                ],
-                ':c1' => [
-                    'value' => 1,
-                    'type' => 'integer',
-                    'placeholder' => 'c1',
-                ],
-            ],
-            $valueBinder->bindings()
-        );
-    }
-
     public function testSqlInjectionViaTypedThenValueIsNotPossible(): void
     {
         $expression = (new CaseStatementExpression(1))

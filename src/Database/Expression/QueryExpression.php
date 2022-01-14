@@ -699,38 +699,27 @@ class QueryExpression implements ExpressionInterface, Countable
      * generating the placeholders and replacing the values by them, while storing
      * the value elsewhere for future binding.
      *
-     * @param string $field The value from which the actual field and operator will
+     * @param string $condition The value from which the actual field and operator will
      * be extracted.
      * @param mixed $value The value to be bound to a placeholder for the field
      * @return \Cake\Database\ExpressionInterface
      * @throws \InvalidArgumentException If operator is invalid or missing on NULL usage.
      */
-    protected function _parseCondition(string $field, mixed $value): ExpressionInterface|string
+    protected function _parseCondition(string $condition, mixed $value): ExpressionInterface|string
     {
-        $field = trim($field);
+        $expression = trim($condition);
         $operator = '=';
-        $expression = $field;
-
-        $spaces = substr_count($field, ' ');
-        // Handle operators with a space in them like `is not` and `not like`
-        if ($spaces > 1) {
-            $parts = explode(' ', $field);
-            if (preg_match('/(is not|not \w+)$/i', $field)) {
-                $last = array_pop($parts);
-                $second = array_pop($parts);
-                array_push($parts, strtolower("{$second} {$last}"));
-            }
-            $operator = array_pop($parts);
-            $expression = implode(' ', $parts);
-        } elseif ($spaces == 1) {
-            $parts = explode(' ', $field, 2);
-            [$expression, $operator] = $parts;
-            $operator = strtolower(trim($operator));
+        if (
+            strpos($expression, ' ') !== false &&
+            preg_match('/^(.*?)\s+([^)"`\]\']+)$/', $condition, $matches)
+        ) {
+            $expression = $matches[1];
+            $operator = strtoupper($matches[2]);
         }
-        $type = $this->getTypeMap()->type($expression);
 
+        $type = $this->getTypeMap()->type($expression);
         $typeMultiple = (is_string($type) && str_contains($type, '[]'));
-        if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
+        if (in_array($operator, ['IN', 'NOT IN']) || $typeMultiple) {
             $type = $type ?: 'string';
             if (!$typeMultiple) {
                 $type .= '[]';
@@ -744,7 +733,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $value = $value instanceof ExpressionInterface ? $value : (array)$value;
         }
 
-        if ($operator === 'is' && $value === null) {
+        if ($operator === 'IS' && $value === null) {
             return new UnaryExpression(
                 'IS NULL',
                 new IdentifierExpression($expression),
@@ -752,7 +741,7 @@ class QueryExpression implements ExpressionInterface, Countable
             );
         }
 
-        if ($operator === 'is not' && $value === null) {
+        if ($operator === 'IS NOT' && $value === null) {
             return new UnaryExpression(
                 'IS NOT NULL',
                 new IdentifierExpression($expression),
@@ -760,11 +749,11 @@ class QueryExpression implements ExpressionInterface, Countable
             );
         }
 
-        if ($operator === 'is' && $value !== null) {
+        if ($operator === 'IS' && $value !== null) {
             $operator = '=';
         }
 
-        if ($operator === 'is not' && $value !== null) {
+        if ($operator === 'IS NOT' && $value !== null) {
             $operator = '!=';
         }
 

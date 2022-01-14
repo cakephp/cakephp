@@ -1561,7 +1561,7 @@ class QueryTest extends TestCase
 
         $sql = $query->sql();
         $this->assertQuotedQuery(
-            'SELECT <id> FROM <articles> WHERE <id> in \\(:c0,:c1\\)',
+            'SELECT <id> FROM <articles> WHERE <id> IN \\(:c0,:c1\\)',
             $sql,
             !$this->autoQuote
         );
@@ -1602,7 +1602,7 @@ class QueryTest extends TestCase
             ->whereNotInList('id', [1, 3]);
 
         $this->assertQuotedQuery(
-            'SELECT <id> FROM <articles> WHERE <id> not in \\(:c0,:c1\\)',
+            'SELECT <id> FROM <articles> WHERE <id> NOT IN \\(:c0,:c1\\)',
             $query->sql(),
             !$this->autoQuote
         );
@@ -1643,7 +1643,7 @@ class QueryTest extends TestCase
             ->whereNotInListOrNull('id', [1, 3]);
 
         $this->assertQuotedQuery(
-            'SELECT <id> FROM <articles> WHERE \\(<id> not in \\(:c0,:c1\\) OR \\(<id>\\) IS NULL\\)',
+            'SELECT <id> FROM <articles> WHERE \\(<id> NOT IN \\(:c0,:c1\\) OR \\(<id>\\) IS NULL\\)',
             $query->sql(),
             !$this->autoQuote
         );
@@ -2791,7 +2791,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'DELETE FROM <authors> WHERE \(' .
                 '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> not in \(:c1,:c2\) AND \(' .
+                    '<name> NOT IN \(:c1,:c2\) AND \(' .
                         '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
                     '\)' .
                 '\)' .
@@ -3026,7 +3026,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <authors> SET <name> = :c0 WHERE \(' .
                 '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> not in \(:c2,:c3\) AND \(' .
+                    '<name> NOT IN \(:c2,:c3\) AND \(' .
                         '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
                     '\)' .
                 '\)' .
