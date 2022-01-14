@@ -10,7 +10,6 @@ use Cake\Error\Renderer\HtmlRenderer;
 use Closure;
 use Exception;
 use InvalidArgumentException;
-use LogicException;
 
 /**
  * Entry point to CakePHP's error handling.
