@@ -37,44 +37,55 @@ class ErrorTrapTest extends TestCase
         Log::drop('test_error');
     }
 
-    public function testSetErrorRendererInvalid()
+    public function testConfigRendererInvalid()
     {
-        $trap = new ErrorTrap();
+        $trap = new ErrorTrap(['errorRenderer' => stdClass::class]);
         $this->expectException(InvalidArgumentException::class);
-        $trap->setErrorRenderer(stdClass::class);
+        $trap->renderer();
     }
 
-    public function testErrorRendererFallback()
+    public function testConfigErrorRendererFallback()
     {
         $trap = new ErrorTrap(['errorRenderer' => null]);
         $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer());
     }
 
-    public function testSetErrorRenderer()
+    public function testConfigErrorRenderer()
     {
-        $trap = new ErrorTrap();
-        $trap->setErrorRenderer(HtmlRenderer::class);
+        $trap = new ErrorTrap(['errorRenderer' => HtmlRenderer::class]);
         $this->assertInstanceOf(HtmlRenderer::class, $trap->renderer());
     }
 
-    public function testSetLoggerClassInvalid()
+    public function testConfigRendererHandleUnsafeOverwrite()
     {
         $trap = new ErrorTrap();
-        $this->expectException(InvalidArgumentException::class);
-        $trap->setLoggerClass(stdClass::class);
+        $trap->setConfig('errorRenderer', null);
+        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer());
     }
 
-    public function testSetLoggerClass()
+    public function testLoggerConfigInvalid()
+    {
+        $trap = new ErrorTrap(['logger' => stdClass::class]);
+        $this->expectException(InvalidArgumentException::class);
+        $trap->logger();
+    }
+
+    public function testLoggerConfig()
+    {
+        $trap = new ErrorTrap(['logger' => ErrorLogger::class]);
+        $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
+    }
+
+    public function testLoggerHandleUnsafeOverwrite()
     {
         $trap = new ErrorTrap();
-        $trap->setLoggerClass(ErrorLogger::class);
+        $trap->setConfig('logger', null);
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
     }
 
     public function testRegisterAndRendering()
     {
-        $trap = new ErrorTrap();
-        $trap->setErrorRenderer(TextRenderer::class);
+        $trap = new ErrorTrap(['errorRenderer' => TextRenderer::class]);
         $trap->register();
         ob_start();
         trigger_error('Oh no it was bad', E_USER_NOTICE);
@@ -89,9 +100,10 @@ class ErrorTrapTest extends TestCase
         Log::setConfig('test_error', [
             'className' => 'Array',
         ]);
-        $trap = new ErrorTrap();
+        $trap = new ErrorTrap([
+            'errorRenderer' => TextRenderer::class,
+        ]);
         $trap->register();
-        $trap->setErrorRenderer(TextRenderer::class);
 
         ob_start();
         trigger_error('Oh no it was bad', E_USER_NOTICE);
@@ -108,9 +120,8 @@ class ErrorTrapTest extends TestCase
             'className' => 'Array',
         ]);
         Configure::write('debug', false);
-        $trap = new ErrorTrap();
+        $trap = new ErrorTrap(['errorRenderer' => TextRenderer::class]);
         $trap->register();
-        $trap->setErrorRenderer(TextRenderer::class);
 
         ob_start();
         trigger_error('Oh no it was bad', E_USER_NOTICE);
@@ -121,9 +132,8 @@ class ErrorTrapTest extends TestCase
 
     public function testAddCallback()
     {
-        $trap = new ErrorTrap();
+        $trap = new ErrorTrap(['errorRenderer' => TextRenderer::class]);
         $trap->register();
-        $trap->setErrorRenderer(TextRenderer::class);
         $trap->addCallback(function (PhpError $error) {
             $this->assertEquals(E_USER_NOTICE, $error->getCode());
             $this->assertStringContainsString('Oh no it was bad', $error->getMessage());

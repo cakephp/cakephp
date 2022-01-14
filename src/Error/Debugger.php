@@ -963,6 +963,7 @@ class Debugger
 
         $outputFormat = $this->_outputFormat;
         if (isset($this->renderers[$outputFormat])) {
+            /** @var array $trace */
             $trace = static::trace(['start' => $data['start'], 'format' => 'points']);
             $error = new PhpError($data['code'], $data['description'], $data['file'], $data['line'], $trace);
             $renderer = new $this->renderers[$outputFormat]();

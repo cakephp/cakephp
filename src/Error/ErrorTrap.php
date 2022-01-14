@@ -53,15 +53,6 @@ class ErrorTrap
     protected $callbacks = [];
 
     /**
-     * Whether or not this error trap has been registered
-     * as the default error handler. Even when true, this
-     * error handler may no longer be the active error handler.
-     *
-     * @var bool
-     */
-    protected $registered = false;
-
-    /**
      * Constructor
      *
      * @param array<string, mixed> $options An options array. See $_defaultConfig.
@@ -69,9 +60,9 @@ class ErrorTrap
     public function __construct(array $options = [])
     {
         $this->setConfig($options);
-        $this->setErrorRenderer($this->chooseErrorRenderer());
-        $this->setLoggerClass($this->_getConfig('logger'));
-        $this->setLevel($this->_getConfig('errorLevel'));
+        if ($this->_getConfig('errorRenderer') === null) {
+            $this->setConfig('errorRenderer', $this->chooseErrorRenderer());
+        }
     }
 
     /**
@@ -103,8 +94,6 @@ class ErrorTrap
      */
     public function register(): void
     {
-        $this->registered = true;
-
         $level = $this->_config['errorLevel'] ?? -1;
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
@@ -132,6 +121,7 @@ class ErrorTrap
             return false;
         }
         $debug = Configure::read('debug');
+        /** @var array $trace */
         $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
@@ -163,6 +153,14 @@ class ErrorTrap
     public function renderer(): ErrorRendererInterface
     {
         $class = $this->_getConfig('errorRenderer');
+        if (!$class) {
+            $class = $this->chooseErrorRenderer();
+        }
+        if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
+            throw new InvalidArgumentException(
+                "Cannot use {$class} as an error renderer. It must implement \Cake\Error\ErrorRendererInterface."
+            );
+        }
 
         /** @var \Cake\Error\ErrorRendererInterface $instance */
         $instance = new $class($this->_config);
@@ -178,66 +176,19 @@ class ErrorTrap
     public function logger(): ErrorLoggerInterface
     {
         $class = $this->_getConfig('logger');
-
-        /** @var \Cake\Error\ErrorLoggerInterface $instance */
-        $instance = new $class($this->_config);
-
-        return $instance;
-    }
-
-    /**
-     * Change the error renderer
-     *
-     * @param class-string<\Cake\Error\ErrorRendererInterface> $class The class to use as a renderer.
-     * @return $this
-     */
-    public function setErrorRenderer(string $class)
-    {
-        if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
-            throw new InvalidArgumentException(
-                "Cannot use {$class} as an error renderer. It must implement \Cake\Error\ErrorRendererInterface."
-            );
+        if (!$class) {
+            $class = $this->_defaultConfig['logger'];
         }
-        $this->setConfig('errorRenderer', $class);
-
-        return $this;
-    }
-
-    /**
-     * Set the PHP error reporting level
-     *
-     * @param int $level The PHP error reporting value to use.
-     * @return $this
-     */
-    public function setLevel(int $level)
-    {
-        if ($this->registered) {
-            throw new LogicException('Cannot change level after an ErrorTrap has been registered.');
-        }
-        $this->setConfig('level', $level);
-
-        return $this;
-    }
-
-    /**
-     * Set the Error logging implementation
-     *
-     * When the logger is constructed it will be passed
-     * the current options array.
-     *
-     * @param class-string<\Cake\Error\ErrorLoggerInterface> $class The logging class to use.
-     * @return $this
-     */
-    public function setLoggerClass(string $class)
-    {
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an error renderer. It must implement \Cake\Error\ErrorLoggerInterface."
             );
         }
-        $this->setConfig('logger', $class);
 
-        return $this;
+        /** @var \Cake\Error\ErrorLoggerInterface $instance */
+        $instance = new $class($this->_config);
+
+        return $instance;
     }
 
     /**
