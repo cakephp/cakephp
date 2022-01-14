@@ -28,7 +28,16 @@ interface ErrorRendererInterface
      * Render output for the provided error.
      *
      * @param \Cake\Error\PhpError $error The error to be rendered.
+     * @param bool $debug Whether or not the application is in debug mode.
      * @return string The output to be echoed.
      */
-    public function render(PhpError $error): string;
+    public function render(PhpError $error, bool $debug): string;
+
+    /**
+     * Write output to the renderer's output stream
+     *
+     * @param string $out The content to output.
+     * @return void
+     */
+    public function write(string $out): void;
 }
