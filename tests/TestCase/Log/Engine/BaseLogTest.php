@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Log\Engine;
 
 use ArrayObject;
-use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\Http\Response;
 use Cake\ORM\Entity;
@@ -81,7 +80,6 @@ class BaseLogTest extends TestCase
             'obj' => function (): void {
             },
             'to-string' => new Response(['body' => 'response body']),
-            'to-array' => new TypeMap(['my-type']),
         ];
         $this->logger->log(
             LogLevel::INFO,
@@ -118,13 +116,6 @@ class BaseLogTest extends TestCase
             $context
         );
         $this->assertSame('no placeholder holders', $this->logger->getMessage());
-
-        $this->logger->log(
-            LogLevel::INFO,
-            '{to-array}',
-            $context
-        );
-        $this->assertSame('["my-type"]', $this->logger->getMessage());
 
         $this->logger->log(
             LogLevel::INFO,

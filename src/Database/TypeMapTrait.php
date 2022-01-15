@@ -57,33 +57,27 @@ trait TypeMapTrait
     }
 
     /**
-     * Overwrite the default type mappings for fields
-     * in the implementing object.
+     * Sets types for names or aliases.
      *
-     * This method is useful if you need to set type mappings that are shared across
-     * multiple functions/expressions in a query.
+     * If a field is already mapped, it is replaced.
      *
-     * To add a default without overwriting existing ones
-     * use `getTypeMap()->addDefaults()`
-     *
-     * @param array<string, string> $types The array of types to set.
+     * @param array<string, string> $types Map of fields to types
      * @return $this
-     * @see \Cake\Database\TypeMap::setDefaults()
      */
-    public function setDefaultTypes(array $types)
+    public function setTypes(array $types)
     {
-        $this->getTypeMap()->setDefaults($types);
+        $this->getTypeMap()->setTypes($types);
 
         return $this;
     }
 
     /**
-     * Gets default types of current type map.
+     * Gets map of fields to types.
      *
      * @return array<string, string>
      */
-    public function getDefaultTypes(): array
+    public function getTypes(): array
     {
-        return $this->getTypeMap()->getDefaults();
+        return $this->getTypeMap()->getTypes();
     }
 }

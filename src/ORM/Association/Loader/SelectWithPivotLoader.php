@@ -127,7 +127,7 @@ class SelectWithPivotLoader extends SelectLoader
             'includeFields' => false,
             'propertyPath' => $this->junctionProperty,
         ]);
-        $query->getTypeMap()->addDefaults($types);
+        $query->setTypes($types);
 
         return $query;
     }

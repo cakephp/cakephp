@@ -17,118 +17,47 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 /**
- * Implements default and single-use mappings for columns to their associated types
+ * Maps fields to types.
  */
 class TypeMap
 {
     /**
-     * Associative array with the default fields and the related types this query might contain.
-     *
-     * Used to avoid repetition when calling multiple functions inside this class that
-     * may require a custom type for a specific field.
-     *
-     * @var array<string, string>
+     * @var array<string>
      */
-    protected array $_defaults = [];
+    protected array $_types;
 
     /**
-     * Associative array with the fields and the related types that override defaults this query might contain
-     *
-     * Used to avoid repetition when calling multiple functions inside this class that
-     * may require a custom type for a specific field.
-     *
-     * @var array<string, string>
+     * @param array<string> $types Map of fields to types
      */
-    protected array $_types = [];
-
-    /**
-     * Creates an instance with the given defaults
-     *
-     * @param array<string, string> $defaults The defaults to use.
-     */
-    public function __construct(array $defaults = [])
+    public function __construct(array $types = [])
     {
-        $this->setDefaults($defaults);
+        $this->_types = $types;
     }
 
     /**
-     * Configures a map of fields and associated type.
+     * Sets types for fields.
      *
-     * These values will be used as the default mapping of types for every function
-     * in this instance that supports a `$types` param.
+     * If a field is already mapped, the type is replaced.
      *
-     * This method is useful when you want to avoid repeating type definitions
-     * as setting types overwrites the last set of types.
-     *
-     * ### Example
-     *
+     * Example:
      * ```
-     * $query->setDefaults(['created' => 'datetime', 'is_visible' => 'boolean']);
+     * $typeMap->setTypes(['id' => 'integer']);
      * ```
      *
-     * This method will replace all the existing default mappings with the ones provided.
-     * To add into the mappings use `addDefaults()`.
-     *
-     * @param array<string, string> $defaults Associative array where keys are field names and values
-     * are the correspondent type.
-     * @return $this
-     */
-    public function setDefaults(array $defaults)
-    {
-        $this->_defaults = $defaults;
-
-        return $this;
-    }
-
-    /**
-     * Returns the currently configured types.
-     *
-     * @return array<string, string>
-     */
-    public function getDefaults(): array
-    {
-        return $this->_defaults;
-    }
-
-    /**
-     * Add additional default types into the type map.
-     *
-     * If a key already exists it will not be overwritten.
-     *
-     * @param array<string, string> $types The additional types to add.
-     * @return void
-     */
-    public function addDefaults(array $types): void
-    {
-        $this->_defaults += $types;
-    }
-
-    /**
-     * Sets a map of fields and their associated types for single-use.
-     *
-     * ### Example
-     *
-     * ```
-     * $query->setTypes(['created' => 'time']);
-     * ```
-     *
-     * This method will replace all the existing type maps with the ones provided.
-     *
-     * @param array<string, string> $types Associative array where keys are field names and values
-     * are the correspondent type.
+     * @param array<string> $types Map of fields to types
      * @return $this
      */
     public function setTypes(array $types)
     {
-        $this->_types = $types;
+        $this->_types = array_merge($this->_types, $types);
 
         return $this;
     }
 
     /**
-     * Gets a map of fields and their associated types for single-use.
+     * Gets map of fields to types.
      *
-     * @return array<string, string>
+     * @return array<string>
      */
     public function getTypes(): array
     {
@@ -136,25 +65,13 @@ class TypeMap
     }
 
     /**
-     * Returns the type of the given column. If there is no single use type is configured,
-     * the column type will be looked for inside the default mapping. If neither exist,
-     * null will be returned.
+     * Returns type for a specific field or null if not set.
      *
-     * @param string|int $column The type for a given column
+     * @param string|int $field Field name to map
      * @return string|null
      */
-    public function type(string|int $column): ?string
+    public function type(string|int $field): ?string
     {
-        return $this->_types[$column] ?? $this->_defaults[$column] ?? null;
-    }
-
-    /**
-     * Returns an array of all types mapped types
-     *
-     * @return array<string, string>
-     */
-    public function toArray(): array
-    {
-        return $this->_types + $this->_defaults;
+        return $this->_types[$field] ?? null;
     }
 }

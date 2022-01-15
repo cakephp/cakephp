@@ -94,7 +94,7 @@ class LazyEagerLoader
                     return $exp->in($source->aliasField($primaryKey), $keys->toList());
                 }
 
-                $types = array_intersect_key($q->getDefaultTypes(), array_flip($primaryKey));
+                $types = array_intersect_key($q->getTypes(), array_flip($primaryKey));
                 $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
 
                 return new TupleComparison($primaryKey, $keys->toList(), $types, 'IN');

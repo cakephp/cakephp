@@ -349,10 +349,10 @@ class SelectLoader
         string $operator
     ): TupleComparison {
         $types = [];
-        $defaults = $query->getDefaultTypes();
+        $queryTypes = $query->getTypes();
         foreach ($keys as $k) {
-            if (isset($defaults[$k])) {
-                $types[] = $defaults[$k];
+            if (isset($queryTypes[$k])) {
+                $types[] = $queryTypes[$k];
             }
         }
 

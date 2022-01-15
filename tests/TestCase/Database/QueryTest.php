@@ -3628,32 +3628,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that default types are passed to functions accepting a $types param
-     */
-    public function testDefaultTypes(): void
-    {
-        $query = new Query($this->connection);
-        $this->assertEquals([], $query->getDefaultTypes());
-        $types = ['id' => 'integer', 'created' => 'datetime'];
-        $this->assertSame($query, $query->setDefaultTypes($types));
-        $this->assertSame($types, $query->getDefaultTypes());
-
-        $results = $query->select(['id', 'comment'])
-            ->from('comments')
-            ->where(['created >=' => new DateTime('2007-03-18 10:55:00')])
-            ->execute();
-        $expected = [['id' => '6', 'comment' => 'Second Comment for Second Article']];
-        $this->assertEquals($expected, $results->fetchAll('assoc'));
-
-        // Now test default can be overridden
-        $types = ['created' => 'date'];
-        $results = $query
-            ->where(['created >=' => new DateTime('2007-03-18 10:50:00')], $types, true)
-            ->execute();
-        $this->assertCount(6, $results, 'All 6 rows should match.');
-    }
-
-    /**
      * Tests parameter binding
      */
     public function testBind(): void
@@ -3919,7 +3893,7 @@ class QueryTest extends TestCase
     {
         $query = (new Query($this->connection))->select('*')
             ->from('articles')
-            ->setDefaultTypes(['id' => 'integer'])
+            ->setTypes(['id' => 'integer'])
             ->where(['id' => '1']);
 
         $expected = [
@@ -3928,7 +3902,7 @@ class QueryTest extends TestCase
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0'],
             ],
-            'defaultTypes' => ['id' => 'integer'],
+            'types' => ['id' => 'integer'],
             'decorators' => 0,
             'executed' => false,
         ];
@@ -3942,7 +3916,7 @@ class QueryTest extends TestCase
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0'],
             ],
-            'defaultTypes' => ['id' => 'integer'],
+            'types' => ['id' => 'integer'],
             'decorators' => 0,
             'executed' => true,
         ];
@@ -4606,7 +4580,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select('id')
             ->from('comments')
-            ->setDefaultTypes(['created' => 'datetime'])
+            ->setTypes(['created' => 'datetime'])
             ->where(function ($expr) {
                 $from = new DateTime('2007-03-18 10:45:00');
                 $to = new DateTime('2007-03-18 10:48:00');

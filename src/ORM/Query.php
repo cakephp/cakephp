@@ -272,13 +272,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function addDefaultTypes(Table $table)
     {
-        $alias = $table->getAlias();
-        $map = $table->getSchema()->typeMap();
         $fields = [];
-        foreach ($map as $f => $type) {
+        $alias = $table->getAlias();
+        foreach ($table->getSchema()->typeMap() as $f => $type) {
             $fields[$f] = $fields[$alias . '.' . $f] = $fields[$alias . '__' . $f] = $type;
         }
-        $this->getTypeMap()->addDefaults($fields);
+        $this->setTypes($fields);
 
         return $this;
     }
@@ -1196,7 +1195,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     protected function _addDefaultSelectTypes(): void
     {
-        $typeMap = $this->getTypeMap()->getDefaults();
+        $typeMap = $this->getTypes();
         $select = $this->clause('select');
         $types = [];
 
@@ -1213,7 +1212,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 $types[$alias] = $typeMap[$value];
             }
         }
-        $this->getSelectTypeMap()->addDefaults($types);
+        $this->getSelectTypeMap()->setTypes($types);
     }
 
     /**

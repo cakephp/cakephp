@@ -2551,7 +2551,7 @@ class QueryTest extends TestCase
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => $query->getValueBinder()->bindings(),
-            'defaultTypes' => [
+            'types' => [
                 'authors__id' => 'integer',
                 'authors.id' => 'integer',
                 'id' => 'integer',

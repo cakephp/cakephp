@@ -2312,7 +2312,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
         $typeMap = $this->getSelectTypeMap();
         $driver = $this->getConnection()->getDriver();
 
-        if ($this->typeCastEnabled && $typeMap->toArray()) {
+        if ($this->typeCastEnabled && $typeMap->getTypes()) {
             $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));
         }
 
@@ -2455,7 +2455,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $sql,
             'params' => $params,
-            'defaultTypes' => $this->getDefaultTypes(),
+            'types' => $this->getTypes(),
             'decorators' => count($this->_resultDecorators),
             'executed' => $this->_iterator ? true : false,
         ];

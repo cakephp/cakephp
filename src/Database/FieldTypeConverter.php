@@ -66,7 +66,6 @@ class FieldTypeConverter
     public function __construct(TypeMap $typeMap, DriverInterface $driver)
     {
         $this->_driver = $driver;
-        $map = $typeMap->toArray();
         $types = TypeFactory::buildAll();
 
         $simpleMap = $batchingMap = [];
@@ -85,7 +84,7 @@ class FieldTypeConverter
             $simpleMap[$k] = $type;
         }
 
-        foreach ($map as $field => $type) {
+        foreach ($typeMap->getTypes() as $field => $type) {
             if (isset($simpleMap[$type])) {
                 $simpleResult[$field] = $simpleMap[$type];
                 continue;

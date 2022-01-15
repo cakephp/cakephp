@@ -69,7 +69,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->select('id')
             ->from('ordered_uuid_items')
             ->order('id')
-            ->setDefaultTypes(['id' => 'ordered_uuid']);
+            ->setTypes(['id' => 'ordered_uuid']);
 
         $query->setSelectTypeMap($query->getTypeMap());
         $results = $query->execute()->fetchAll('assoc');

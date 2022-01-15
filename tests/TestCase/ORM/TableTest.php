@@ -3537,7 +3537,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression();
-        $expected->getTypeMap()->setDefaults($this->usersTypeMap->toArray());
+        $expected->getTypeMap()->setTypes($this->usersTypeMap->getTypes());
         $expected->add(
             ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
         );
