@@ -41,6 +41,58 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
+     * Tests conditions with multi-word operators.
+     *
+     * @return void
+     */
+    public function testMultiWordOperators(): void
+    {
+        $expr = new QueryExpression(['FUNC(Users.first + Users.last) is not' => 'me']);
+        $this->assertSame('FUNC(Users.first + Users.last) != :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['FUNC(Users.name + Users.id) not similar to' => 'pattern']);
+        $this->assertSame('FUNC(Users.name + Users.id) NOT SIMILAR TO :c0', $expr->sql(new ValueBinder()));
+    }
+
+    /**
+     * Tests conditions with symbol operators.
+     *
+     * @return void
+     */
+    public function testSymbolOperators(): void
+    {
+        $expr = new QueryExpression(['Users.name =' => 'pattern']);
+        $this->assertSame('Users.name = :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name !=' => 'pattern']);
+        $this->assertSame('Users.name != :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name <>' => 'pattern']);
+        $this->assertSame('Users.name <> :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name >=' => 'pattern']);
+        $this->assertSame('Users.name >= :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name <=' => 'pattern']);
+        $this->assertSame('Users.name <= :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name !~' => 'pattern']);
+        $this->assertSame('Users.name !~ :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name *' => 'pattern']);
+        $this->assertSame('Users.name * :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name -' => 'pattern']);
+        $this->assertSame('Users.name - :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name \\' => 'pattern']);
+        $this->assertSame('Users.name \\ :c0', $expr->sql(new ValueBinder()));
+
+        $expr = new QueryExpression(['Users.name @>' => 'pattern']);
+        $this->assertSame('Users.name @> :c0', $expr->sql(new ValueBinder()));
+    }
+
+    /**
      * Test and() and or() calls work transparently
      */
     public function testAndOrCalls(): void
