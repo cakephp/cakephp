@@ -180,7 +180,7 @@ class ErrorTrap
         }
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
-                "Cannot use {$class} as an error renderer. It must implement \Cake\Error\ErrorLoggerInterface."
+                "Cannot use {$class} as an error logger. It must implement \Cake\Error\ErrorLoggerInterface."
             );
         }
 
