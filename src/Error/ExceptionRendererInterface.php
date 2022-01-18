@@ -20,13 +20,16 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Interface ExceptionRendererInterface
+ *
+ * @method render(): ResponseInterface|string Render the exception to a string or Http Response.
+ * @method write(\Psr\Http\Message\ResponseInterface|string $output): void Write the output to the output stream.
  */
 interface ExceptionRendererInterface
 {
     /**
      * Renders the response for the exception.
      *
-     * @return \Cake\Http\Response The response to be sent.
+     * @return \Psr\Http\Message\ResponseInterface The response to be sent.
      */
     public function render(): ResponseInterface;
 }
