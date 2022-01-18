@@ -125,8 +125,11 @@ class EntityContext implements ContextInterface
         $table = $this->_context['table'];
         /** @var \Cake\Datasource\EntityInterface|iterable $entity */
         $entity = $this->_context['entity'];
+
+        $this->_isCollection = is_iterable($entity);
+
         if (empty($table)) {
-            if (is_iterable($entity)) {
+            if ($this->_isCollection) {
                 foreach ($entity as $e) {
                     $entity = $e;
                     break;
@@ -152,10 +155,6 @@ class EntityContext implements ContextInterface
                 'Unable to find table class for current entity.'
             );
         }
-        $this->_isCollection = (
-            is_array($entity) ||
-            $entity instanceof Traversable
-        );
 
         $alias = $this->_rootName = $table->getAlias();
         $this->_tables[$alias] = $table;
