@@ -5,10 +5,11 @@ namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ResponseEmitter;
-use Cake\Http\ServerRequestFactory;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Closure;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 /**
@@ -34,6 +35,8 @@ class ExceptionTrap
      */
     protected $_defaultConfig = [
         'exceptionRenderer' => ExceptionRenderer::class,
+        // Used by ConsoleExceptionRenderer (coming soon)
+        'stderr' => null,
         'logger' => ErrorLogger::class,
         'log' => true,
         'trace' => false,
@@ -71,9 +74,9 @@ class ExceptionTrap
         $class = $this->_getConfig('exceptionRenderer');
 
         if (is_string($class)) {
-            if (in_array(ExceptionRendererInterface::class, class_implements($class))) {
+            if (!in_array(ExceptionRendererInterface::class, class_implements($class))) {
                 throw new InvalidArgumentException(
-                    "Cannot use {$class} as`ExceptionRendererInterface` as an `exceptionRenderer`. " .
+                    "Cannot use {$class} as an `exceptionRenderer`. " .
                     'It must implement ' . ExceptionRendererInterface::class
                 );
             }
@@ -159,15 +162,49 @@ class ExceptionTrap
      */
     public function handleException(Throwable $exception): void
     {
+        $request = Router::getRequest();
+
+        $this->logException($exception, $request);
+        foreach ($this->callbacks as $callback) {
+            $callback($exception);
+        }
+
         try {
-            $renderer = $this->renderer(
-                $exception,
-            );
-            $response = $renderer->render();
+            $response = $this->renderException($exception, $request);
             $this->sendResponse($response);
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
         }
+    }
+
+
+    /**
+     * Render an exception
+     *
+     * @param \Throwable $exception Exception instance.
+     * @return \Psr\Http\Message\ResponseInterface|string An HTTP response or a string.
+     */
+    public function renderException(Throwable $exception)
+    {
+        $renderer = $this->renderer($exception);
+
+        return $renderer->render();
+    }
+
+    /**
+     * Log an exception.
+     *
+     * Primarily a public function to ensure consistency between global exception handling
+     * and the ErrorHandlerMiddleware
+     *
+     * @param \Throwable $exception The exception to log
+     * @param \Cake\Http\ServerRequest|null $request The optional request
+     * @return void
+     */
+    public function logException(Throwable $exception, ?ServerRequest $request = null): void
+    {
+        $logger = $this->logger();
+        $logger->log($exception, $request);
     }
 
     /**

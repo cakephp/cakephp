@@ -5,8 +5,8 @@ namespace Cake\Error;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error\Renderer\ConsoleRenderer;
-use Cake\Error\Renderer\HtmlRenderer;
+use Cake\Error\Renderer\ConsoleErrorRenderer;
+use Cake\Error\Renderer\HtmlErrorRenderer;
 use Closure;
 use Exception;
 use InvalidArgumentException;
@@ -77,7 +77,7 @@ class ErrorTrap
         }
 
         /** @var class-string<\Cake\Error\ErrorRendererInterface> */
-        return PHP_SAPI === 'cli' ? ConsoleRenderer::class : HtmlRenderer::class;
+        return PHP_SAPI === 'cli' ? ConsoleErrorRenderer::class : HtmlErrorRenderer::class;
     }
 
     /**
