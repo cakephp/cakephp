@@ -16,12 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error;
 
-use Cake\Core\Configure;
 use Cake\Error\ErrorLogger;
-use Cake\Error\ExceptionTrap;
-use Cake\Error\PhpError;
 use Cake\Error\ExceptionRenderer;
-use Cake\Error\ExceptionRendererInterface;
+use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;

@@ -44,7 +44,9 @@ class TextExceptionRenderer
     }
 
     /**
-     * @inheritDoc
+     * Render an exception into a plain text message.
+     *
+     * @return string
      */
     public function render()
     {
@@ -52,8 +54,8 @@ class TextExceptionRenderer
             "%s : %s on line %s of %s\nTrace:\n%s",
             $this->error->getCode(),
             $this->error->getMessage(),
-            $this->error->getLine() ?? '',
-            $this->error->getFile() ?? '',
+            $this->error->getLine(),
+            $this->error->getFile(),
             $this->error->getTraceAsString(),
         );
     }

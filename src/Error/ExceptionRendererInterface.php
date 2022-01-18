@@ -21,8 +21,8 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Interface ExceptionRendererInterface
  *
- * @method render(): ResponseInterface|string Render the exception to a string or Http Response.
- * @method write(\Psr\Http\Message\ResponseInterface|string $output): void Write the output to the output stream.
+ * @method \Psr\Http\Message\ResponseInterface|string render() Render the exception to a string or Http Response.
+ * @method void write(\Psr\Http\Message\ResponseInterface|string $output) Write the output to the output stream.
  */
 interface ExceptionRendererInterface
 {
