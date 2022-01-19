@@ -123,9 +123,7 @@ class Debugger
      * @var array<string, class-string>
      */
     protected $renderers = [
-        // Backwards compatible alias for text that will be deprecated.
         'txt' => TextErrorRenderer::class,
-        'text' => TextErrorRenderer::class,
         // The html alias currently uses no JS and will be deprecated.
         'js' => HtmlErrorRenderer::class,
     ];
