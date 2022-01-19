@@ -18,6 +18,13 @@ use Throwable;
  * handler to handle fatal errors. When exceptions are trapped
  * they are 'rendered' using the defined renderers and logged
  * if logging is enabled.
+ *
+ * Exceptions will be logged, then call attached callbacks
+ * and finally render an error page using the configured
+ * `exceptionRenderer`.
+ *
+ * If undefined, an ExceptionRenderer will be selected
+ * based on the current SAPI (CLI or Web).
  */
 class ExceptionTrap
 {
@@ -147,6 +154,7 @@ class ExceptionTrap
     public function register(): void
     {
         set_exception_handler([$this, 'handleException']);
+        // TODO handle fatal errors.
     }
 
     /**
@@ -195,6 +203,10 @@ class ExceptionTrap
 
     /**
      * Trigger an error that occurred during rendering an exception.
+     *
+     * By triggering an E_USER_ERROR we can end up in the default
+     * exception handling which will log the rendering failure,
+     * and hopefully render an error page.
      *
      * @param \Throwable $exception Exception to log
      * @return void

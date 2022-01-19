@@ -23,7 +23,7 @@ use Throwable;
  *
  * Useful in CI or plain text environments.
  *
- * @todo 5.0 Implement \Cake\Error\ErrorRendererInterface. This implementation can't implement
+ * @todo 5.0 Implement \Cake\Error\ExceptionRendererInterface. This implementation can't implement
  *  the concrete interface because the return types are not compatible.
  */
 class TextExceptionRenderer
@@ -46,7 +46,7 @@ class TextExceptionRenderer
     /**
      * Render an exception into a plain text message.
      *
-     * @return string
+     * @return \Psr\Http\Message\ResponseInterface|string
      */
     public function render()
     {
