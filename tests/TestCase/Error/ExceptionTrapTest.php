@@ -58,6 +58,15 @@ class ExceptionTrapTest extends TestCase
         $this->assertInstanceOf(ExceptionRenderer::class, $trap->renderer($error));
     }
 
+    public function testConfigExceptionRendererFactory()
+    {
+        $trap = new ExceptionTrap(['exceptionRenderer' => function ($err, $req) {
+            return new ExceptionRenderer($err, $req);
+        }]);
+        $error = new InvalidArgumentException('nope');
+        $this->assertInstanceOf(ExceptionRenderer::class, $trap->renderer($error));
+    }
+
     public function testConfigRendererHandleUnsafeOverwrite()
     {
         $this->markTestIncomplete();
