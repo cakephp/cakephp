@@ -111,6 +111,30 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('ExceptionTrapTest', $out);
     }
 
+    /**
+     * Test integration with HTML exception rendering
+     *
+     * Run in a separate process because HTML output writes headers.
+     *
+     * @runInSeparateProcess
+     */
+    public function testRenderExceptionHtml()
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ExceptionRenderer::class,
+        ]);
+        $error = new InvalidArgumentException('nope');
+
+        ob_start();
+        $trap->handleException($error);
+        $out = ob_get_clean();
+
+        $this->assertStringContainsString('<!DOCTYPE', $out);
+        $this->assertStringContainsString('<html', $out);
+        $this->assertStringContainsString('nope', $out);
+        $this->assertStringContainsString('ExceptionTrapTest', $out);
+    }
+
     public function testLogException()
     {
         Log::setConfig('test_error', [
