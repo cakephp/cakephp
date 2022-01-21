@@ -116,6 +116,7 @@ class ExceptionTrapTest extends TestCase
      *
      * Run in a separate process because HTML output writes headers.
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      */
     public function testRenderExceptionHtml()
