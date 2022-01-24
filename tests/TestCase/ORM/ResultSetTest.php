@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -84,23 +83,6 @@ class ResultSetTest extends TestCase
             $second[] = $result;
         }
         $this->assertEquals($first, $second);
-    }
-
-    /**
-     * Test that streaming results cannot be rewound
-     */
-    public function testRewindStreaming(): void
-    {
-        $query = $this->table->find('all')->enableBufferedResults(false);
-        $results = $query->all();
-        $first = $second = [];
-        foreach ($results as $result) {
-            $first[] = $result;
-        }
-        $this->expectException(DatabaseException::class);
-        foreach ($results as $result) {
-            $second[] = $result;
-        }
     }
 
     /**
@@ -350,10 +332,8 @@ class ResultSetTest extends TestCase
 
         $row = ['Other__field' => 'test'];
         $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
-        $statement->method('fetch')
-            ->will($this->onConsecutiveCalls($row, $row));
-        $statement->method('rowCount')
-            ->will($this->returnValue(1));
+        $statement->method('fetchAll')
+            ->will($this->returnValue([$row]));
 
         $result = new ResultSet($query, $statement);
 
