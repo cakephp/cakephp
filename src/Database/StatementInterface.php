@@ -168,22 +168,14 @@ interface StatementInterface extends Traversable
      * ### Example:
      *
      * ```
-     *  $statement = $connection->prepare('SELECT id, title from articles');
+     *  $statement = $connection->prepare('UPDATE articles SET foo = 1');
      *  $statement->execute();
-     *  print_r($statement->rowCount()); // will show 1
+     *  print_r($statement->rowCount());
      * ```
      *
      * @return int
      */
     public function rowCount(): int;
-
-    /**
-     * Statements can be passed as argument for count()
-     * to return the number for affected rows from last execution
-     *
-     * @return int
-     */
-    public function count(): int;
 
     /**
      * Binds a set of values to statement object with corresponding type

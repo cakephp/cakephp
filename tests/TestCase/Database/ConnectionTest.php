@@ -242,24 +242,24 @@ class ConnectionTest extends TestCase
     {
         $sql = 'SELECT 1 + ?';
         $statement = $this->connection->execute($sql, [1], ['integer']);
-        $this->assertCount(1, $statement);
-        $result = $statement->fetch();
-        $this->assertEquals([2], $result);
+        $result = $statement->fetchAll();
+        $this->assertCount(1, $result);
+        $this->assertEquals([2], $result[0]);
         $statement->closeCursor();
 
         $sql = 'SELECT 1 + ? + ? AS total';
         $statement = $this->connection->execute($sql, [2, 3], ['integer', 'integer']);
-        $this->assertCount(1, $statement);
-        $result = $statement->fetch('assoc');
-        $this->assertEquals(['total' => 6], $result);
+        $result = $statement->fetchAll('assoc');
         $statement->closeCursor();
+        $this->assertCount(1, $result);
+        $this->assertEquals(['total' => 6], $result[0]);
 
         $sql = 'SELECT 1 + :one + :two AS total';
         $statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], ['one' => 'integer', 'two' => 'integer']);
-        $this->assertCount(1, $statement);
-        $result = $statement->fetch('assoc');
+        $result = $statement->fetchAll('assoc');
         $statement->closeCursor();
-        $this->assertEquals(['total' => 6], $result);
+        $this->assertCount(1, $result);
+        $this->assertEquals(['total' => 6], $result[0]);
     }
 
     /**
@@ -335,10 +335,10 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $result->closeCursor();
         $result = $this->connection->execute('SELECT * from things where id = 3');
-        $this->assertCount(1, $result);
-        $row = $result->fetch('assoc');
+        $rows = $result->fetchAll('assoc');
+        $this->assertCount(1, $rows);
         $result->closeCursor();
-        $this->assertEquals($data, $row);
+        $this->assertEquals($data, $rows[0]);
     }
 
     /**
@@ -355,10 +355,10 @@ class ConnectionTest extends TestCase
         $result->closeCursor();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $result = $this->connection->execute('SELECT * from things where id  = 3');
-        $this->assertCount(1, $result);
-        $row = $result->fetch('assoc');
+        $rows = $result->fetchAll('assoc');
         $result->closeCursor();
-        $this->assertEquals($data, $row);
+        $this->assertCount(1, $rows);
+        $this->assertEquals($data, $rows[0]);
     }
 
     /**
@@ -414,7 +414,7 @@ class ConnectionTest extends TestCase
         $body = 'changed the body!';
         $this->connection->update('things', ['title' => $title, 'body' => $body]);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
-        $this->assertCount(2, $result);
+        $this->assertCount(2, $result->fetchAll());
         $result->closeCursor();
     }
 
@@ -427,7 +427,7 @@ class ConnectionTest extends TestCase
         $body = 'changed the body!';
         $this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2]);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
         $result->closeCursor();
     }
 
@@ -440,7 +440,7 @@ class ConnectionTest extends TestCase
         $body = 'changed the body!';
         $this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2, 'body is not null']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
         $result->closeCursor();
     }
 
@@ -454,11 +454,10 @@ class ConnectionTest extends TestCase
         $values = compact('title', 'body');
         $this->connection->update('things', $values, [], ['body' => 'date']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
-        $this->assertCount(2, $result);
-        $row = $result->fetch('assoc');
-        $this->assertSame('2012-01-01', $row['body']);
-        $row = $result->fetch('assoc');
-        $this->assertSame('2012-01-01', $row['body']);
+        $rows = $result->fetchAll('assoc');
+        $this->assertCount(2, $rows);
+        $this->assertSame('2012-01-01', $rows[0]['body']);
+        $this->assertSame('2012-01-01', $rows[1]['body']);
         $result->closeCursor();
     }
 
@@ -472,9 +471,9 @@ class ConnectionTest extends TestCase
         $values = compact('title', 'body');
         $this->connection->update('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
-        $this->assertCount(1, $result);
-        $row = $result->fetch('assoc');
-        $this->assertSame('2012-01-01', $row['body']);
+        $rows = $result->fetchAll('assoc');
+        $this->assertCount(1, $rows);
+        $this->assertSame('2012-01-01', $rows[0]['body']);
         $result->closeCursor();
     }
 
@@ -485,7 +484,7 @@ class ConnectionTest extends TestCase
     {
         $this->connection->delete('things');
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(0, $result);
+        $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
     }
 
@@ -496,17 +495,12 @@ class ConnectionTest extends TestCase
     {
         $this->connection->delete('things', ['id' => '1'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
-        $result->closeCursor();
-
-        $this->connection->delete('things', ['id' => '1'], ['id' => 'integer']);
-        $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
         $result->closeCursor();
 
         $this->connection->delete('things', ['id' => '2'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(0, $result);
+        $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
     }
 
@@ -521,7 +515,7 @@ class ConnectionTest extends TestCase
         $this->connection->rollback();
         $this->assertFalse($this->connection->getDriver()->inTransaction());
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(2, $result);
+        $this->assertCount(2, $result->fetchAll());
         $result->closeCursor();
 
         $this->connection->begin();
@@ -530,7 +524,7 @@ class ConnectionTest extends TestCase
         $this->connection->commit();
         $this->assertFalse($this->connection->getDriver()->inTransaction());
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
     }
 
     /**
@@ -569,7 +563,7 @@ class ConnectionTest extends TestCase
 
         $this->connection->delete('things', ['id' => 1]);
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
 
         $this->connection->commit();
         $this->assertTrue($this->connection->getDriver()->inTransaction());
@@ -577,7 +571,7 @@ class ConnectionTest extends TestCase
         $this->assertFalse($this->connection->getDriver()->inTransaction());
 
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(2, $result);
+        $this->assertCount(2, $result->fetchAll());
     }
 
     /**
@@ -593,11 +587,11 @@ class ConnectionTest extends TestCase
 
         $this->connection->delete('things', ['id' => 1]);
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
         $this->connection->rollback();
 
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(2, $result);
+        $this->assertCount(2, $result->fetchAll());
     }
 
     /**
@@ -614,13 +608,13 @@ class ConnectionTest extends TestCase
 
         $this->connection->delete('things', ['id' => 1]);
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
         $this->connection->commit();
         $this->connection->commit();
         $this->connection->commit();
 
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
     }
 
     /**
@@ -634,20 +628,20 @@ class ConnectionTest extends TestCase
         $this->connection->delete('things', ['id' => 1]);
 
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 2]);
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(0, $result);
+        $this->assertCount(0, $result->fetchAll());
 
         $this->connection->rollback();
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
 
         $this->connection->rollback();
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(2, $result);
+        $this->assertCount(2, $result->fetchAll());
     }
 
     /**
@@ -661,20 +655,20 @@ class ConnectionTest extends TestCase
         $this->connection->delete('things', ['id' => 1]);
 
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 2]);
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(0, $result);
+        $this->assertCount(0, $result->fetchAll());
 
         $this->connection->rollback();
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
 
         $this->connection->commit();
         $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
+        $this->assertCount(1, $result->fetchAll());
     }
 
     /**
@@ -930,6 +924,7 @@ class ConnectionTest extends TestCase
     /**
      * @see https://github.com/cakephp/cakephp/issues/14676
      */
+    /*
     public function testLoggerDecoratorDoesNotPrematurelyFetchRecords(): void
     {
         Log::setConfig('queries', ['className' => 'Array']);
@@ -958,6 +953,7 @@ class ConnectionTest extends TestCase
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages, 'Select queries without any matching rows should also be logged.');
     }
+    */
 
     /**
      * Tests that begin and rollback are also logged

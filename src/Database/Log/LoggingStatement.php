@@ -83,39 +83,9 @@ class LoggingStatement extends StatementDecorator
             throw $e;
         }
 
-        if (preg_match('/^(?!SELECT)/i', $this->queryString)) {
-            $this->rowCount();
-        }
+        $this->rowCount();
 
         return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fetch(string|int $type = self::FETCH_TYPE_NUM): stdClass|array|false
-    {
-        $record = parent::fetch($type);
-
-        if ($this->loggedQuery) {
-            $this->rowCount();
-        }
-
-        return $record;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array|false
-    {
-        $results = parent::fetchAll($type);
-
-        if ($this->loggedQuery) {
-            $this->rowCount();
-        }
-
-        return $results;
     }
 
     /**

@@ -34,7 +34,7 @@ use RuntimeException;
  *
  * @property-read string $queryString
  */
-class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
+class StatementDecorator implements StatementInterface, IteratorAggregate
 {
     use TypeConverterTrait;
 
@@ -258,9 +258,9 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * ### Example:
      *
      * ```
-     * $statement = $connection->prepare('SELECT id, title from articles');
+     * $statement = $connection->prepare('UPDATE articles SET foo = 1');
      * $statement->execute();
-     * print_r($statement->rowCount()); // will show 1
+     * print_r($statement->rowCount());
      * ```
      *
      * @return int
@@ -293,17 +293,6 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
         }
 
         return $this->_statement;
-    }
-
-    /**
-     * Statements can be passed as argument for count() to return the number
-     * for affected rows from last execution.
-     *
-     * @return int
-     */
-    public function count(): int
-    {
-        return $this->rowCount();
     }
 
     /**
