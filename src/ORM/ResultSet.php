@@ -19,7 +19,6 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\DriverInterface;
-use Cake\Database\Exception\DatabaseException;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
@@ -160,6 +159,12 @@ class ResultSet implements ResultSetInterface
         $statement->closeCursor();
     }
 
+    /**
+     * Fetch results.
+     *
+     * @param \Cake\Database\StatementInterface $statement The statement to fetch from.
+     * @return void
+     */
     protected function fetchResults(StatementInterface $statement): void
     {
         $results = $statement->fetchAll('assoc');

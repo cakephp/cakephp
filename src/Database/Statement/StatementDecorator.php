@@ -19,7 +19,6 @@ namespace Cake\Database\Statement;
 use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
-use Countable;
 use IteratorAggregate;
 use RuntimeException;
 

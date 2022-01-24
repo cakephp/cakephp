@@ -19,7 +19,6 @@ namespace Cake\Database\Log;
 use Cake\Database\Statement\StatementDecorator;
 use Exception;
 use Psr\Log\LoggerInterface;
-use stdClass;
 
 /**
  * Statement decorator used to
