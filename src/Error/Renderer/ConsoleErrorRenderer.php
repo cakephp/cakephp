@@ -24,7 +24,7 @@ use Cake\Error\PhpError;
  *
  * Writes to STDERR for console environments
  */
-class ConsoleRenderer implements ErrorRendererInterface
+class ConsoleErrorRenderer implements ErrorRendererInterface
 {
     /**
      * @inheritDoc

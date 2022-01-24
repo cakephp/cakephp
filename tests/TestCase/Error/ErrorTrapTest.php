@@ -20,9 +20,9 @@ use Cake\Core\Configure;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ErrorTrap;
 use Cake\Error\PhpError;
-use Cake\Error\Renderer\ConsoleRenderer;
-use Cake\Error\Renderer\HtmlRenderer;
-use Cake\Error\Renderer\TextRenderer;
+use Cake\Error\Renderer\ConsoleErrorRenderer;
+use Cake\Error\Renderer\HtmlErrorRenderer;
+use Cake\Error\Renderer\TextErrorRenderer;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -47,20 +47,20 @@ class ErrorTrapTest extends TestCase
     public function testConfigErrorRendererFallback()
     {
         $trap = new ErrorTrap(['errorRenderer' => null]);
-        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer());
+        $this->assertInstanceOf(ConsoleErrorRenderer::class, $trap->renderer());
     }
 
     public function testConfigErrorRenderer()
     {
-        $trap = new ErrorTrap(['errorRenderer' => HtmlRenderer::class]);
-        $this->assertInstanceOf(HtmlRenderer::class, $trap->renderer());
+        $trap = new ErrorTrap(['errorRenderer' => HtmlErrorRenderer::class]);
+        $this->assertInstanceOf(HtmlErrorRenderer::class, $trap->renderer());
     }
 
     public function testConfigRendererHandleUnsafeOverwrite()
     {
         $trap = new ErrorTrap();
         $trap->setConfig('errorRenderer', null);
-        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer());
+        $this->assertInstanceOf(ConsoleErrorRenderer::class, $trap->renderer());
     }
 
     public function testLoggerConfigInvalid()
@@ -85,7 +85,7 @@ class ErrorTrapTest extends TestCase
 
     public function testRegisterAndRendering()
     {
-        $trap = new ErrorTrap(['errorRenderer' => TextRenderer::class]);
+        $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
         ob_start();
         trigger_error('Oh no it was bad', E_USER_NOTICE);
@@ -101,7 +101,7 @@ class ErrorTrapTest extends TestCase
             'className' => 'Array',
         ]);
         $trap = new ErrorTrap([
-            'errorRenderer' => TextRenderer::class,
+            'errorRenderer' => TextErrorRenderer::class,
         ]);
         $trap->register();
 
@@ -120,7 +120,7 @@ class ErrorTrapTest extends TestCase
             'className' => 'Array',
         ]);
         Configure::write('debug', false);
-        $trap = new ErrorTrap(['errorRenderer' => TextRenderer::class]);
+        $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
 
         ob_start();
@@ -132,7 +132,7 @@ class ErrorTrapTest extends TestCase
 
     public function testAddCallback()
     {
-        $trap = new ErrorTrap(['errorRenderer' => TextRenderer::class]);
+        $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
         $trap->addCallback(function (PhpError $error) {
             $this->assertEquals(E_USER_NOTICE, $error->getCode());

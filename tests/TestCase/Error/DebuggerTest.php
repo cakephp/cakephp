@@ -25,7 +25,7 @@ use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
-use Cake\Error\Renderer\HtmlRenderer;
+use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Form\Form;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -193,7 +193,7 @@ class DebuggerTest extends TestCase
      */
     public function testAddOutputFormatOverwrite(): void
     {
-        Debugger::addRenderer('test', HtmlRenderer::class);
+        Debugger::addRenderer('test', HtmlErrorRenderer::class);
         Debugger::addFormat('test', [
             'error' => '{:description} : {:path}, line {:line}',
         ]);

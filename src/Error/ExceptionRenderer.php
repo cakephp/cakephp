@@ -31,6 +31,7 @@ use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
+use Cake\Http\ResponseEmitter;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Exception\MissingRouteException;
@@ -279,6 +280,24 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $this->controller->setResponse($response);
 
         return $this->_outputMessage($template);
+    }
+
+    /**
+     * Emit the response content
+     *
+     * @param \Psr\Http\Message\ResponseInterface|string $output The response to output.
+     * @return void
+     */
+    public function write($output): void
+    {
+        if (is_string($output)) {
+            echo $output;
+
+            return;
+        }
+
+        $emitter = new ResponseEmitter();
+        $emitter->emit($output);
     }
 
     /**

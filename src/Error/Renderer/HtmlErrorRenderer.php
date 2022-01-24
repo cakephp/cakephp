@@ -25,7 +25,7 @@ use Cake\Error\PhpError;
  *
  * Default output renderer for non CLI SAPI.
  */
-class HtmlRenderer implements ErrorRendererInterface
+class HtmlErrorRenderer implements ErrorRendererInterface
 {
     /**
      * @inheritDoc
