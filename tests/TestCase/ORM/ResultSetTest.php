@@ -335,7 +335,7 @@ class ResultSetTest extends TestCase
         $statement->method('fetchAll')
             ->will($this->returnValue([$row]));
 
-        $result = new ResultSet($query, $statement);
+        $result = new ResultSet($query, $statement->fetchAll());
 
         $result->valid();
         $this->assertNotEmpty($result->current());

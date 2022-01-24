@@ -19,7 +19,6 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\DriverInterface;
-use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use SplFixedArray;
@@ -141,9 +140,9 @@ class ResultSet implements ResultSetInterface
      * Constructor
      *
      * @param \Cake\ORM\Query $query Query from where results come
-     * @param \Cake\Database\StatementInterface $statement The statement to fetch from
+     * @param array $results Results array.
      */
-    public function __construct(Query $query, StatementInterface $statement)
+    public function __construct(Query $query, array $results)
     {
         $repository = $query->getRepository();
         $this->_driver = $query->getConnection()->getDriver();
@@ -155,28 +154,8 @@ class ResultSet implements ResultSetInterface
         $this->_calculateColumnMap($query);
         $this->_autoFields = $query->isAutoFieldsEnabled();
 
-        $this->fetchResults($statement);
-        $statement->closeCursor();
-    }
-
-    /**
-     * Fetch results.
-     *
-     * @param \Cake\Database\StatementInterface $statement The statement to fetch from.
-     * @return void
-     */
-    protected function fetchResults(StatementInterface $statement): void
-    {
-        $results = $statement->fetchAll('assoc');
-        if ($results === false) {
-            $this->_results = new SplFixedArray();
-
-            return;
-        }
-
-        $this->_count = count($results);
-        $this->_results = new SplFixedArray($this->_count);
-        foreach ($results as $i => $row) {
+        $this->__unserialize($results);
+        foreach ($this->_results as $i => $row) {
             $this->_results[$i] = $this->_groupResult($row);
         }
     }
