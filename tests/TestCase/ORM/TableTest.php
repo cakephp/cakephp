@@ -2862,8 +2862,7 @@ class TableTest extends TestCase
         $this->assertTrue($result);
 
         $query = $table->find('all', $conditions);
-        $results = $query->execute();
-        $this->assertCount(0, $results, 'Find should fail.');
+        $this->assertCount(0, $query->all(), 'Find should fail.');
     }
 
     /**
@@ -2957,7 +2956,7 @@ class TableTest extends TestCase
 
         $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all')->where(['author_id' => $entity->id]);
-        $this->assertCount(2, $query->execute(), 'Should find rows.');
+        $this->assertCount(2, $query->all(), 'Should find rows.');
     }
 
     /**
