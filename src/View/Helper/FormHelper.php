@@ -1508,7 +1508,7 @@ class FormHelper extends Helper
                 'name' => $options['name'],
                 'value' => $options['hiddenField'] !== true
                     && $options['hiddenField'] !== '_split'
-                    ? $options['hiddenField'] : '0',
+                    ? (string)$options['hiddenField'] : '0',
                 'form' => $options['form'] ?? null,
                 'secure' => false,
             ];
@@ -1537,8 +1537,8 @@ class FormHelper extends Helper
      * - `label` - Either `false` to disable label around the widget or an array of attributes for
      *    the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where widget
      *    is checked
-     * - `hiddenField` - boolean|string. Set to false to not include a hidden input with a value of ''. 
-     *    Can also be a string to set the value of the hidden input. This is useful for creating 
+     * - `hiddenField` - boolean|string. Set to false to not include a hidden input with a value of ''.
+     *    Can also be a string to set the value of the hidden input. This is useful for creating
      *    radio sets that are non-continuous.
      * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons. Use an array of
      *   values to disable specific radio buttons.
@@ -1565,7 +1565,7 @@ class FormHelper extends Helper
         $hidden = '';
         if ($hiddenField !== false && is_scalar($hiddenField)) {
             $hidden = $this->hidden($fieldName, [
-                'value' => $hiddenField === true ? '' : $hiddenField,
+                'value' => $hiddenField === true ? '' : (string)$hiddenField,
                 'form' => $attributes['form'] ?? null,
                 'name' => $attributes['name'],
             ]);
