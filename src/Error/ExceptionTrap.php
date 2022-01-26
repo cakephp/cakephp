@@ -153,7 +153,7 @@ class ExceptionTrap
     public function register(): void
     {
         set_exception_handler([$this, 'handleException']);
-        // TODO handle fatal errors.
+        register_shutdown_function([$this, 'handleShutdown']);
     }
 
     /**
@@ -182,6 +182,83 @@ class ExceptionTrap
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
         }
+    }
+
+    /**
+     * Shutdown handler
+     *
+     * Convert fatal errors into exceptions that we can render.
+     *
+     * @return void
+     */
+    public function handleShutdown(): void
+    {
+        $megabytes = $this->_config['extraFatalErrorMemory'] ?? 4;
+        if ($megabytes > 0) {
+            $this->increaseMemoryLimit($megabytes * 1024);
+        }
+        $error = error_get_last();
+        if (!is_array($error)) {
+            return;
+        }
+        $fatals = [
+            E_USER_ERROR,
+            E_ERROR,
+            E_PARSE,
+        ];
+        if (!in_array($error['type'], $fatals, true)) {
+            return;
+        }
+        $this->handleFatalError(
+            $error['type'],
+            $error['message'],
+            $error['file'],
+            $error['line']
+        );
+    }
+
+    /**
+     * Increases the PHP "memory_limit" ini setting by the specified amount
+     * in kilobytes
+     *
+     * @param int $additionalKb Number in kilobytes
+     * @return void
+     */
+    public function increaseMemoryLimit(int $additionalKb): void
+    {
+        $limit = ini_get('memory_limit');
+        if ($limit === false || $limit === '' || $limit === '-1') {
+            return;
+        }
+        $limit = trim($limit);
+        $units = strtoupper(substr($limit, -1));
+        $current = (int)substr($limit, 0, -1);
+        if ($units === 'M') {
+            $current *= 1024;
+            $units = 'K';
+        }
+        if ($units === 'G') {
+            $current = $current * 1024 * 1024;
+            $units = 'K';
+        }
+
+        if ($units === 'K') {
+            ini_set('memory_limit', ceil($current + $additionalKb) . 'K');
+        }
+    }
+
+    /**
+     * Display/Log a fatal error.
+     *
+     * @param int $code Code of error
+     * @param string $description Error description
+     * @param string $file File on which error occurred
+     * @param int $line Line that triggered the error
+     * @return void
+     */
+    public function handleFatalError(int $code, string $description, string $file, int $line): void
+    {
+        $this->handleException(new FatalErrorException('Fatal Error: ' . $description, 500, $file, $line));
     }
 
     /**
