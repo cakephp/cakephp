@@ -4590,6 +4590,16 @@ class FormHelperTest extends TestCase
             '/label',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->radio('title', ['option A'], ['hiddenField' => '']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '']],
+            'label' => ['for' => 'title-0'],
+            ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
+            'option A',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -5096,6 +5106,28 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden', 'name' => 'User[get_spam]',
                 'value' => '1',
+            ]],
+            ['input' => [
+                'type' => 'checkbox', 'name' => 'User[get_spam]',
+                'value' => '0', 'id' => 'user-get-spam',
+            ]],
+            'Get Spam',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('User.get_spam', [
+            'type' => 'checkbox',
+            'value' => '0',
+            'hiddenField' => '',
+        ]);
+        $expected = [
+            'div' => ['class' => 'input checkbox'],
+            'label' => ['for' => 'user-get-spam'],
+            ['input' => [
+                'type' => 'hidden', 'name' => 'User[get_spam]',
+                'value' => '',
             ]],
             ['input' => [
                 'type' => 'checkbox', 'name' => 'User[get_spam]',
@@ -5803,6 +5835,22 @@ class FormHelperTest extends TestCase
                 'name' => 'UserForm[something]',
                 'value' => '1',
             ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->checkbox('UserForm.something', [
+            'value' => 'Y',
+            'hiddenField' => '',
+        ]);
+        $expected = [
+            ['input' => [
+                'type' => 'hidden', 'name' => 'UserForm[something]',
+                'value' => '',
+            ]],
+            ['input' => [
+                'type' => 'checkbox', 'name' => 'UserForm[something]',
+                'value' => 'Y',
+            ]],
         ];
         $this->assertHtml($expected, $result);
 
