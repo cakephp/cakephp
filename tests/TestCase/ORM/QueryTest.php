@@ -25,7 +25,6 @@ use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
@@ -854,10 +853,7 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection, $this->table);
 
-        $stmt = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $stmt->method('rowCount')
-            ->will($this->returnValue(9));
-        $results = new ResultSet($query, $stmt);
+        $results = new ResultSet($query, []);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
     }
@@ -1817,9 +1813,7 @@ class QueryTest extends TestCase
             ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
-        $resultSet = $this->getMockBuilder('Cake\ORM\ResultSet')
-            ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
-            ->getMock();
+        $resultSet = new ResultSet($query, []);
 
         $query->expects($this->never())
             ->method('execute');

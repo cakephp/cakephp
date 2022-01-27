@@ -19,8 +19,6 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\DriverInterface;
-use Cake\Database\Exception\DatabaseException;
-use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use SplFixedArray;
@@ -34,13 +32,6 @@ use SplFixedArray;
 class ResultSet implements ResultSetInterface
 {
     use CollectionTrait;
-
-    /**
-     * Database statement holding the results
-     *
-     * @var \Cake\Database\StatementInterface|null
-     */
-    protected ?StatementInterface $_statement = null;
 
     /**
      * Points to the next record number that should be fetched
@@ -104,9 +95,9 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var \SplFixedArray|array
+     * @var \SplFixedArray
      */
-    protected SplFixedArray|array $_results = [];
+    protected SplFixedArray $_results;
 
     /**
      * Whether to hydrate results into objects or not
@@ -130,18 +121,11 @@ class ResultSet implements ResultSetInterface
     protected string $_entityClass;
 
     /**
-     * Whether to buffer results fetched from the statement
-     *
-     * @var bool
-     */
-    protected bool $_useBuffering = true;
-
-    /**
      * Holds the count of records in this result set
      *
-     * @var int|null
+     * @var int
      */
-    protected ?int $_count = null;
+    protected int $_count = 0;
 
     /**
      * The Database driver object.
@@ -156,25 +140,23 @@ class ResultSet implements ResultSetInterface
      * Constructor
      *
      * @param \Cake\ORM\Query $query Query from where results come
-     * @param \Cake\Database\StatementInterface $statement The statement to fetch from
+     * @param array $results Results array.
      */
-    public function __construct(Query $query, StatementInterface $statement)
+    public function __construct(Query $query, array $results)
     {
         $repository = $query->getRepository();
-        $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
         $this->_defaultTable = $repository;
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->getEntityClass();
-        $this->_useBuffering = $query->isBufferedResultsEnabled();
         $this->_defaultAlias = $this->_defaultTable->getAlias();
         $this->_calculateColumnMap($query);
         $this->_autoFields = $query->isAutoFieldsEnabled();
 
-        if ($this->_useBuffering) {
-            $count = $this->count();
-            $this->_results = new SplFixedArray($count);
+        $this->__unserialize($results);
+        foreach ($this->_results as $i => $row) {
+            $this->_results[$i] = $this->_groupResult($row);
         }
     }
 
@@ -224,16 +206,6 @@ class ResultSet implements ResultSetInterface
      */
     public function rewind(): void
     {
-        if ($this->_index === 0) {
-            return;
-        }
-
-        if (!$this->_useBuffering) {
-            $msg = 'You cannot rewind an un-buffered ResultSet. '
-                . 'Use Query::bufferResults() to get a buffered ResultSet.';
-            throw new DatabaseException($msg);
-        }
-
         $this->_index = 0;
     }
 
@@ -246,48 +218,23 @@ class ResultSet implements ResultSetInterface
      */
     public function valid(): bool
     {
-        if ($this->_useBuffering) {
-            $valid = $this->_index < $this->_count;
-            if ($valid && $this->_results[$this->_index] !== null) {
-                $this->_current = $this->_results[$this->_index];
+        if ($this->_index < $this->_count) {
+            $this->_current = $this->_results[$this->_index];
 
-                return true;
-            }
-            if (!$valid) {
-                return $valid;
-            }
+            return true;
         }
 
-        $current = $this->_fetchResult();
-        $valid = $current !== false;
-        if ($valid) {
-            $this->_current = $current;
-        }
-
-        if ($valid && $this->_useBuffering) {
-            $this->_results[$this->_index] = $this->_current;
-        }
-        if (!$valid && $this->_statement !== null) {
-            $this->_statement->closeCursor();
-        }
-
-        return $valid;
+        return false;
     }
 
     /**
      * Get the first record from a result set.
-     *
-     * This method will also close the underlying statement cursor.
      *
      * @return object|array|null
      */
     public function first(): object|array|null
     {
         foreach ($this as $result) {
-            if ($this->_statement !== null && !$this->_useBuffering) {
-                $this->_statement->closeCursor();
-            }
-
             return $result;
         }
 
@@ -301,21 +248,7 @@ class ResultSet implements ResultSetInterface
      */
     public function __serialize(): array
     {
-        if (!$this->_useBuffering) {
-            $msg = 'You cannot serialize an un-buffered ResultSet. '
-                . 'Use Query::bufferResults() to get a buffered ResultSet.';
-            throw new DatabaseException($msg);
-        }
-
-        while ($this->valid()) {
-            $this->next();
-        }
-
-        if ($this->_results instanceof SplFixedArray) {
-            return $this->_results->toArray();
-        }
-
-        return $this->_results;
+        return $this->_results->toArray();
     }
 
     /**
@@ -327,7 +260,6 @@ class ResultSet implements ResultSetInterface
     public function __unserialize(array $data): void
     {
         $this->_results = SplFixedArray::fromArray($data);
-        $this->_useBuffering = true;
         $this->_count = $this->_results->count();
     }
 
@@ -340,19 +272,6 @@ class ResultSet implements ResultSetInterface
      */
     public function count(): int
     {
-        if ($this->_count !== null) {
-            return $this->_count;
-        }
-        if ($this->_statement !== null) {
-            return $this->_count = $this->_statement->rowCount();
-        }
-
-        if ($this->_results instanceof SplFixedArray) {
-            $this->_count = $this->_results->count();
-        } else {
-            $this->_count = count($this->_results);
-        }
-
         return $this->_count;
     }
 
@@ -408,26 +327,6 @@ class ResultSet implements ResultSetInterface
         }
 
         $this->_map = $map;
-    }
-
-    /**
-     * Helper function to fetch the next result from the statement or
-     * seeded results.
-     *
-     * @return mixed
-     */
-    protected function _fetchResult(): mixed
-    {
-        if ($this->_statement === null) {
-            return false;
-        }
-
-        $row = $this->_statement->fetch('assoc');
-        if ($row === false) {
-            return $row;
-        }
-
-        return $this->_groupResult($row);
     }
 
     /**

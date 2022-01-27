@@ -163,27 +163,12 @@ interface StatementInterface extends Traversable
     public function fetchColumn(int $position): mixed;
 
     /**
-     * Returns the number of rows affected by this SQL statement
-     *
-     * ### Example:
-     *
-     * ```
-     *  $statement = $connection->prepare('SELECT id, title from articles');
-     *  $statement->execute();
-     *  print_r($statement->rowCount()); // will show 1
-     * ```
+     * Returns the number of rows affected by this SQL statement for INSERT,
+     * UPDATE and DELETE queries.
      *
      * @return int
      */
     public function rowCount(): int;
-
-    /**
-     * Statements can be passed as argument for count()
-     * to return the number for affected rows from last execution
-     *
-     * @return int
-     */
-    public function count(): int;
 
     /**
      * Binds a set of values to statement object with corresponding type

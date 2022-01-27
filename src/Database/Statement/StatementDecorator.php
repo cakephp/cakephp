@@ -19,7 +19,6 @@ namespace Cake\Database\Statement;
 use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
-use Countable;
 use IteratorAggregate;
 use RuntimeException;
 
@@ -34,7 +33,7 @@ use RuntimeException;
  *
  * @property-read string $queryString
  */
-class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
+class StatementDecorator implements StatementInterface, IteratorAggregate
 {
     use TypeConverterTrait;
 
@@ -253,15 +252,8 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     }
 
     /**
-     * Returns the number of rows affected by this SQL statement.
-     *
-     * ### Example:
-     *
-     * ```
-     * $statement = $connection->prepare('SELECT id, title from articles');
-     * $statement->execute();
-     * print_r($statement->rowCount()); // will show 1
-     * ```
+     * Returns the number of rows affected by this SQL statement for INSERT,
+     * UPDATE and DELETE queries.
      *
      * @return int
      */
@@ -293,17 +285,6 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
         }
 
         return $this->_statement;
-    }
-
-    /**
-     * Statements can be passed as argument for count() to return the number
-     * for affected rows from last execution.
-     *
-     * @return int
-     */
-    public function count(): int
-    {
-        return $this->rowCount();
     }
 
     /**

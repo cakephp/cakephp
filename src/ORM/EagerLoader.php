@@ -633,8 +633,12 @@ class EagerLoader
         $driver = $query->getConnection()->getDriver();
         [$collected, $statement] = $this->_collectKeys($external, $query, $statement);
 
+        // TODO: The EagerLoader will have to be updated to use the rows fetched by
+        // StatementInterface::fetchAll() instead of relying on StatementInterface::rowCount()
+        // to get the rows count.
+
         // No records found, skip trying to attach associations.
-        if (empty($collected) && $statement->count() === 0) {
+        if (empty($collected) && $statement->rowCount() === 0) {
             return $statement;
         }
 

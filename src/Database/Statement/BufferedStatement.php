@@ -168,17 +168,6 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * Statements can be passed as argument for count() to return the number
-     * for affected rows from last execution.
-     *
-     * @return int
-     */
-    public function count(): int
-    {
-        return $this->rowCount();
-    }
-
-    /**
      * @inheritDoc
      */
     public function bind(array $params, array $types): void
