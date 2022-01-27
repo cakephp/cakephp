@@ -95,7 +95,7 @@ class Number
     {
         $formatter = static::formatter(['precision' => $precision, 'places' => $precision] + $options);
 
-        return $formatter->format($value);
+        return $formatter->format((float)$value);
     }
 
     /**

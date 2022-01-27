@@ -236,6 +236,8 @@ class EntityContextTest extends TestCase
 
         $result = $context->error('1.body');
         $this->assertEquals(['Not long enough'], $result);
+
+        $this->assertNull($context->val('0'));
     }
 
     /**

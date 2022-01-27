@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\DriverInterface;
 use Cake\Database\Schema\TableSchema;
@@ -25,6 +26,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\TestSuite\ConnectionHelper;
 use Closure;
+use PDOException;
 use UnexpectedValueException;
 
 /**
@@ -135,26 +137,44 @@ class FixtureHelper
             if ($connection instanceof Connection) {
                 $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
                 if ($sortedFixtures) {
-                    foreach ($sortedFixtures as $fixture) {
-                        $fixture->insert($connection);
-                    }
+                    $this->insertConnection($connection, $sortedFixtures);
                 } else {
                     $helper = new ConnectionHelper();
                     $helper->runWithoutConstraints(
                         $connection,
                         function (Connection $connection) use ($groupFixtures): void {
-                            foreach ($groupFixtures as $fixture) {
-                                $fixture->insert($connection);
-                            }
+                            $this->insertConnection($connection, $groupFixtures);
                         }
                     );
                 }
             } else {
-                foreach ($groupFixtures as $fixture) {
-                    $fixture->insert($connection);
-                }
+                $this->insertConnection($connection, $groupFixtures);
             }
         }, $fixtures);
+    }
+
+    /**
+     * Inserts all fixtures for a connection and provides friendly errors for bad data.
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection Fixture connection
+     * @param array<\Cake\Datasource\FixtureInterface> $fixtures Connection fixtures
+     * @return void
+     */
+    protected function insertConnection(ConnectionInterface $connection, array $fixtures): void
+    {
+        foreach ($fixtures as $fixture) {
+            try {
+                $fixture->insert($connection);
+            } catch (PDOException $exception) {
+                $message = sprintf(
+                    'Unable to insert rows for table `%s`.'
+                        . " Fixture records might have invalid data or unknown contraints.\n%s",
+                    $fixture->sourceName(),
+                    $exception->getMessage()
+                );
+                throw new CakeException($message);
+            }
+        }
     }
 
     /**
@@ -174,26 +194,44 @@ class FixtureHelper
                 }
 
                 if ($sortedFixtures !== null) {
-                    foreach (array_reverse($sortedFixtures) as $fixture) {
-                        $fixture->truncate($connection);
-                    }
+                    $this->truncateConnection($connection, array_reverse($sortedFixtures));
                 } else {
                     $helper = new ConnectionHelper();
                     $helper->runWithoutConstraints(
                         $connection,
                         function (Connection $connection) use ($groupFixtures): void {
-                            foreach ($groupFixtures as $fixture) {
-                                $fixture->truncate($connection);
-                            }
+                            $this->truncateConnection($connection, $groupFixtures);
                         }
                     );
                 }
             } else {
-                foreach ($groupFixtures as $fixture) {
-                    $fixture->truncate($connection);
-                }
+                $this->truncateConnection($connection, $groupFixtures);
             }
         }, $fixtures);
+    }
+
+    /**
+     * Truncates all fixtures for a connection and provides friendly errors for bad data.
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection Fixture connection
+     * @param array<\Cake\Datasource\FixtureInterface> $fixtures Connection fixtures
+     * @return void
+     */
+    protected function truncateConnection(ConnectionInterface $connection, array $fixtures): void
+    {
+        foreach ($fixtures as $fixture) {
+            try {
+                $fixture->truncate($connection);
+            } catch (PDOException $exception) {
+                $message = sprintf(
+                    'Unable to truncate table `%s`.'
+                        . " Fixture records might have invalid data or unknown contraints.\n%s",
+                    $fixture->sourceName(),
+                    $exception->getMessage()
+                );
+                throw new CakeException($message);
+            }
+        }
     }
 
     /**

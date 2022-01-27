@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Test\Fixture\ArticlesFixture;
 use Cake\TestSuite\Fixture\FixtureHelper;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Test\Fixture\ArticlesFixture as CompanyArticlesFixture;
+use PDOException;
 use TestApp\Test\Fixture\ArticlesFixture as AppArticlesFixture;
 use TestPlugin\Test\Fixture\ArticlesFixture as PluginArticlesFixture;
 use TestPlugin\Test\Fixture\Blog\CommentsFixture as PluginCommentsFixture;
@@ -131,6 +133,31 @@ class FixtureHelperTest extends TestCase
     }
 
     /**
+     * Tests handling PDO errors when inserting rows.
+     */
+    public function testInsertFixturesException(): void
+    {
+        $fixture = $this->getMockBuilder(TestFixture::class)->getMock();
+        $fixture->expects($this->once())
+            ->method('connection')
+            ->will($this->returnValue('test'));
+        $fixture->expects($this->once())
+            ->method('insert')
+            ->will($this->throwException(new PDOException('Missing key')));
+
+        $helper = $this->getMockBuilder(FixtureHelper::class)
+            ->onlyMethods(['sortByConstraint'])
+            ->getMock();
+        $helper->expects($this->any())
+            ->method('sortByConstraint')
+            ->will($this->returnValue([$fixture]));
+
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unable to insert rows for table ``');
+        $helper->insert([$fixture]);
+    }
+
+    /**
      * Tests truncating fixtures.
      */
     public function testTruncateFixtures(): void
@@ -148,5 +175,30 @@ class FixtureHelperTest extends TestCase
         $rows = $connection->newQuery()->select('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
+    }
+
+    /**
+     * Tests handling PDO errors when trucating rows.
+     */
+    public function testTruncateFixturesException(): void
+    {
+        $fixture = $this->getMockBuilder(TestFixture::class)->getMock();
+        $fixture->expects($this->once())
+            ->method('connection')
+            ->will($this->returnValue('test'));
+        $fixture->expects($this->once())
+            ->method('truncate')
+            ->will($this->throwException(new PDOException('Missing key')));
+
+        $helper = $this->getMockBuilder(FixtureHelper::class)
+            ->onlyMethods(['sortByConstraint'])
+            ->getMock();
+        $helper->expects($this->any())
+            ->method('sortByConstraint')
+            ->will($this->returnValue([$fixture]));
+
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unable to truncate table ``');
+        $helper->truncate([$fixture]);
     }
 }

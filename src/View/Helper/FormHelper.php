@@ -1480,8 +1480,8 @@ class FormHelper extends Helper
      *
      * - `value` - the value of the checkbox
      * - `checked` - boolean indicate that this checkbox is checked.
-     * - `hiddenField` - boolean to indicate if you want the results of checkbox() to include
-     *    a hidden input with a value of ''.
+     * - `hiddenField` - boolean|string. Set to false to disable a hidden input from
+     *    being generated. Passing a string will define the hidden input value.
      * - `disabled` - create a disabled input.
      * - `default` - Set the default value for the checkbox. This allows you to start checkboxes
      *    as checked, without having to check the POST data. A matching POST data value, will overwrite
@@ -1503,12 +1503,12 @@ class FormHelper extends Helper
         $options['value'] = $value;
 
         $output = '';
-        if ($options['hiddenField']) {
+        if ($options['hiddenField'] !== false && is_scalar($options['hiddenField'])) {
             $hiddenOptions = [
                 'name' => $options['name'],
                 'value' => $options['hiddenField'] !== true
                     && $options['hiddenField'] !== '_split'
-                    ? $options['hiddenField'] : '0',
+                    ? (string)$options['hiddenField'] : '0',
                 'form' => $options['form'] ?? null,
                 'secure' => false,
             ];
@@ -1537,8 +1537,9 @@ class FormHelper extends Helper
      * - `label` - Either `false` to disable label around the widget or an array of attributes for
      *    the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where widget
      *    is checked
-     * - `hiddenField` - boolean to indicate if you want the results of radio() to include
-     *    a hidden input with a value of ''. This is useful for creating radio sets that are non-continuous.
+     * - `hiddenField` - boolean|string. Set to false to not include a hidden input with a value of ''.
+     *    Can also be a string to set the value of the hidden input. This is useful for creating
+     *    radio sets that are non-continuous.
      * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons. Use an array of
      *   values to disable specific radio buttons.
      * - `empty` - Set to `true` to create an input with the value '' as the first option. When `true`
@@ -1562,9 +1563,9 @@ class FormHelper extends Helper
         $radio = $this->widget('radio', $attributes);
 
         $hidden = '';
-        if ($hiddenField) {
+        if ($hiddenField !== false && is_scalar($hiddenField)) {
             $hidden = $this->hidden($fieldName, [
-                'value' => $hiddenField === true ? '' : $hiddenField,
+                'value' => $hiddenField === true ? '' : (string)$hiddenField,
                 'form' => $attributes['form'] ?? null,
                 'name' => $attributes['name'],
             ]);
