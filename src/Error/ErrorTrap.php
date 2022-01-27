@@ -31,7 +31,7 @@ class ErrorTrap
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'errorLevel' => E_ALL,
         'ignoredDeprecationPaths' => [],
         'log' => true,
@@ -49,7 +49,7 @@ class ErrorTrap
      *
      * @var array<\Closure>
      */
-    protected $callbacks = [];
+    protected array $callbacks = [];
 
     /**
      * Constructor

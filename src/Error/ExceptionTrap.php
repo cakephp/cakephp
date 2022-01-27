@@ -38,7 +38,7 @@ class ExceptionTrap
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'exceptionRenderer' => ExceptionRenderer::class,
         'logger' => ErrorLogger::class,
         // Used by ConsoleExceptionRenderer (coming soon)
@@ -55,7 +55,7 @@ class ExceptionTrap
      *
      * @var array<\Closure>
      */
-    protected $callbacks = [];
+    protected array $callbacks = [];
 
     /**
      * Constructor
@@ -73,7 +73,7 @@ class ExceptionTrap
      * @param \Throwable $exception Exception to render
      * @return \Cake\Error\ExceptionRendererInterface
      */
-    public function renderer(Throwable $exception)
+    public function renderer(Throwable $exception): ExceptionRendererInterface
     {
         // The return of this method is not defined because
         // the desired interface has bad types that will be changing in 5.x

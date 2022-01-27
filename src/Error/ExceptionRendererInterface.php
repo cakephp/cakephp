@@ -20,9 +20,6 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Interface ExceptionRendererInterface
- *
- * @method \Psr\Http\Message\ResponseInterface|string render() Render the exception to a string or Http Response.
- * @method void write(\Psr\Http\Message\ResponseInterface|string $output) Write the output to the output stream.
  */
 interface ExceptionRendererInterface
 {
@@ -31,5 +28,13 @@ interface ExceptionRendererInterface
      *
      * @return \Psr\Http\Message\ResponseInterface The response to be sent.
      */
-    public function render(): ResponseInterface;
+    public function render(): ResponseInterface|string;
+
+    /**
+     * Write the output to the output stream.
+     *
+     * @param \Psr\Http\Message\ResponseInterface|string $output Response instance or string for output.
+     * @return void
+     */
+    public function write(ResponseInterface|string $output): void;
 }

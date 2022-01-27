@@ -282,7 +282,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @param \Psr\Http\Message\ResponseInterface|string $output The response to output.
      * @return void
      */
-    public function write($output): void
+    public function write(ResponseInterface|string $output): void
     {
         if (is_string($output)) {
             echo $output;
