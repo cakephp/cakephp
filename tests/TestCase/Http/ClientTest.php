@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
@@ -1157,42 +1156,5 @@ class ClientTest extends TestCase
         $this->expectExceptionMessage('Match callback must');
 
         $client->post('http://example.com/path');
-    }
-
-    /**
-     * Check that auth adapters can be used without a set App.namespace
-     * config value.
-     */
-    public function testNoNameSpace()
-    {
-        Configure::write('App.namespace', null);
-
-        $response = new Response();
-
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $headers = [
-            'Authorization' => 'Basic ' . base64_encode('mark:secret'),
-        ];
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
-                $this->assertSame(Request::METHOD_GET, $request->getMethod());
-                $this->assertSame('http://cakephp.org/', '' . $request->getUri());
-                $this->assertSame($headers['Authorization'], $request->getHeaderLine('Authorization'));
-
-                return true;
-            }))
-            ->will($this->returnValue([$response]));
-
-        $http = new Client([
-            'host' => 'cakephp.org',
-            'adapter' => $mock,
-        ]);
-        $result = $http->get('/', [], [
-            'auth' => ['username' => 'mark', 'password' => 'secret'],
-        ]);
-        $this->assertSame($result, $response);
     }
 }
