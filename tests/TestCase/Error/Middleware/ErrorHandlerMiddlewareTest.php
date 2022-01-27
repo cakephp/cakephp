@@ -93,7 +93,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
             $this->assertInstanceOf('LogicException', $exception);
             $response = new Response();
             $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->onlyMethods(['render'])
                 ->getMock();
             $mock->expects($this->once())
                 ->method('render')
@@ -318,7 +317,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $factory = function ($exception) {
             $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->onlyMethods(['render'])
                 ->getMock();
             $mock->expects($this->once())
                 ->method('render')

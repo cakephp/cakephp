@@ -16,22 +16,21 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Renderer;
 
+use Cake\Error\ExceptionRendererInterface;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 /**
  * Plain text exception rendering with a stack trace.
  *
  * Useful in CI or plain text environments.
- *
- * @todo 5.0 Implement \Cake\Error\ExceptionRendererInterface. This implementation can't implement
- *  the concrete interface because the return types are not compatible.
  */
-class TextExceptionRenderer
+class TextExceptionRenderer implements ExceptionRendererInterface
 {
     /**
      * @var \Throwable
      */
-    private $error;
+    protected Throwable $error;
 
     /**
      * Constructor.
@@ -48,7 +47,7 @@ class TextExceptionRenderer
      *
      * @return \Psr\Http\Message\ResponseInterface|string
      */
-    public function render()
+    public function render(): ResponseInterface|string
     {
         return sprintf(
             "%s : %s on line %s of %s\nTrace:\n%s",
@@ -63,10 +62,10 @@ class TextExceptionRenderer
     /**
      * Write output to stdout.
      *
-     * @param string $output The output to print.
+     * @param \Psr\Http\Message\ResponseInterface|string $output The output to print.
      * @return void
      */
-    public function write($output): void
+    public function write(ResponseInterface|string $output): void
     {
         echo $output;
     }
