@@ -74,6 +74,17 @@ class AppTest extends TestCase
     }
 
     /**
+     * @link https://github.com/cakephp/cakephp/issues/16258
+     */
+    public function testClassNameWithAppNamespaceUnset(): void
+    {
+        Configure::delete('App.namespace');
+
+        $result = App::className('Mysql', 'Database/Driver');
+        $this->assertSame(Mysql::class, $result);
+    }
+
+    /**
      * testShortName
      *
      * @param string $class Class name

@@ -22,22 +22,31 @@ use Cake\Error\PhpError;
 /**
  * Plain text error rendering with a stack trace.
  *
- * Useful in CLI and log file contexts.
+ * Writes to STDERR for console environments
  */
-class TextRenderer implements ErrorRendererInterface
+class ConsoleErrorRenderer implements ErrorRendererInterface
 {
     /**
      * @inheritDoc
      */
-    public function render(PhpError $error): string
+    public function write(string $out): void
+    {
+        // Write to stderr which is useful in console environments.
+        fwrite(STDERR, $out);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(PhpError $error, bool $debug): string
     {
         return sprintf(
             "%s: %s :: %s on line %s of %s\nTrace:\n%s",
             $error->getLabel(),
             $error->getCode(),
             $error->getMessage(),
-            $error->getLine(),
-            $error->getFile(),
+            $error->getLine() ?? '',
+            $error->getFile() ?? '',
             $error->getTraceAsString(),
         );
     }

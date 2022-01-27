@@ -121,7 +121,7 @@ class PhpError
     {
         $label = $this->getLabel();
 
-        return $this->logMap[$label] ?? 'error';
+        return $this->logMap[$label] ?? LOG_ERR;
     }
 
     /**

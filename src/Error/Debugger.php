@@ -31,8 +31,8 @@ use Cake\Error\Debug\ReferenceNode;
 use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
-use Cake\Error\Renderer\HtmlRenderer;
-use Cake\Error\Renderer\TextRenderer;
+use Cake\Error\Renderer\HtmlErrorRenderer;
+use Cake\Error\Renderer\TextErrorRenderer;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -123,11 +123,9 @@ class Debugger
      * @var array<string, class-string>
      */
     protected array $renderers = [
-        // Backwards compatible alias for text that will be deprecated.
-        'txt' => TextRenderer::class,
-        'text' => TextRenderer::class,
-        // The html alias currently uses no JS and will be deprecated.
-        'js' => HtmlRenderer::class,
+        'txt' => TextErrorRenderer::class,
+        // The html alias ycurrently uses no JS and will be deprecated.
+        'js' => HtmlErrorRenderer::class,
     ];
 
     /**
@@ -962,10 +960,11 @@ class Debugger
 
         $outputFormat = $this->_outputFormat;
         if (isset($this->renderers[$outputFormat])) {
+            /** @var array $trace */
             $trace = static::trace(['start' => $data['start'], 'format' => 'points']);
             $error = new PhpError($data['code'], $data['description'], $data['file'], $data['line'], $trace);
             $renderer = new $this->renderers[$outputFormat]();
-            echo $renderer->render($error);
+            echo $renderer->render($error, Configure::read('debug'));
 
             return;
         }
