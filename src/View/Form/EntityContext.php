@@ -123,13 +123,14 @@ class EntityContext implements ContextInterface
     {
         /** @var \Cake\ORM\Table|null $table */
         $table = $this->_context['table'];
-        /** @var \Cake\Datasource\EntityInterface|iterable $entity */
+        /** @var \Cake\Datasource\EntityInterface|iterable<\Cake\Datasource\EntityInterface|array> $entity */
         $entity = $this->_context['entity'];
 
         $this->_isCollection = is_iterable($entity);
 
         if (empty($table)) {
             if ($this->_isCollection) {
+                /** @var iterable<\Cake\Datasource\EntityInterface|array> $entity */
                 foreach ($entity as $e) {
                     $entity = $e;
                     break;
@@ -141,6 +142,7 @@ class EntityContext implements ContextInterface
                 /** @psalm-suppress PossiblyInvalidMethodCall */
                 $table = $entity->getSource();
             }
+            /** @psalm-suppress PossiblyInvalidArgument */
             if (!$table && $isEntity && get_class($entity) !== Entity::class) {
                 [, $entityClass] = namespaceSplit(get_class($entity));
                 $table = Inflector::pluralize($entityClass);

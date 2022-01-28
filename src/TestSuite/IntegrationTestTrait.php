@@ -1363,6 +1363,7 @@ trait IntegrationTestTrait
      */
     protected function getSession(): TestSession
     {
+        /** @psalm-suppress InvalidScalarArgument */
         return new TestSession($_SESSION);
     }
 }
