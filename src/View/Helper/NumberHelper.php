@@ -146,7 +146,7 @@ class NumberHelper extends Helper
      * - `after` - The string to place after decimal numbers, e.g. ']'
      * - `escape` - Whether to escape html in resulting string
      *
-     * @param string|float $number A floating point number.
+     * @param string|int|float $number A floating point number.
      * @param array<string, mixed> $options An array with options.
      * @return string Formatted number
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#formatting-numbers
