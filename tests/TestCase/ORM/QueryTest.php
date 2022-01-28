@@ -1177,8 +1177,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select(['id']);
 
-        $first = $query->enableHydration(false)
-            ->enableBufferedResults(false)->first();
+        $first = $query->enableHydration(false)->first();
 
         $this->assertEquals(['id' => 1], $first);
     }
@@ -2530,7 +2529,6 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $query = $table->find()
             ->where(['id > ' => 1])
-            ->enableBufferedResults(false)
             ->enableHydration(false)
             ->matching('articles')
             ->applyOptions(['foo' => 'bar'])
@@ -2570,7 +2568,6 @@ class QueryTest extends TestCase
             'decorators' => 0,
             'executed' => false,
             'hydrate' => false,
-            'buffered' => false,
             'formatters' => 1,
             'mapReducers' => 1,
             'contain' => [],

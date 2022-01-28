@@ -17,11 +17,8 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\Query;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
-use Cake\Database\Statement\MysqlStatement;
-use Cake\Database\StatementInterface;
 use PDO;
 
 /**
@@ -176,30 +173,6 @@ class Mysql extends Driver
     public function enabled(): bool
     {
         return in_array('mysql', PDO::getAvailableDrivers(), true);
-    }
-
-    /**
-     * Prepares a sql statement to be executed
-     *
-     * @param \Cake\Database\Query|string $query The query to prepare.
-     * @return \Cake\Database\StatementInterface
-     */
-    public function prepare(Query|string $query): StatementInterface
-    {
-        $this->connect();
-        $isObject = $query instanceof Query;
-        /**
-         * @psalm-suppress PossiblyInvalidMethodCall
-         * @psalm-suppress PossiblyInvalidArgument
-         */
-        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
-        $result = new MysqlStatement($statement, $this);
-        /** @psalm-suppress PossiblyInvalidMethodCall */
-        if ($isObject && $query->isBufferedResultsEnabled() === false) {
-            $result->bufferResults(false);
-        }
-
-        return $result;
     }
 
     /**

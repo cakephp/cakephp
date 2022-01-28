@@ -1334,7 +1334,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         return parent::__debugInfo() + [
             'hydrate' => $this->_hydrate,
-            'buffered' => $this->_useBufferedResults,
             'formatters' => count($this->_formatters),
             'mapReducers' => count($this->_mapReduce),
             'contain' => $eagerLoader->getContain(),
@@ -1407,7 +1406,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->_applyDecorators($result);
 
-        if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
+        if (!($result instanceof ResultSet)) {
             $class = $this->_decoratorClass();
             $result = new $class($result->buffered());
         }

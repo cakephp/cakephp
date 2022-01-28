@@ -24,7 +24,6 @@ use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\SqliteCompiler;
-use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use Cake\Database\StatementInterface;
 use InvalidArgumentException;
@@ -188,19 +187,9 @@ class Sqlite extends Driver
     public function prepare(Query|string $query): StatementInterface
     {
         $this->connect();
-        $isObject = $query instanceof Query;
-        /**
-         * @psalm-suppress PossiblyInvalidMethodCall
-         * @psalm-suppress PossiblyInvalidArgument
-         */
-        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
-        $result = new SqliteStatement(new PDOStatement($statement, $this), $this);
-        /** @psalm-suppress PossiblyInvalidMethodCall */
-        if ($isObject && $query->isBufferedResultsEnabled() === false) {
-            $result->bufferResults(false);
-        }
+        $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
 
-        return $result;
+        return new SqliteStatement($statement, $this);
     }
 
     /**
