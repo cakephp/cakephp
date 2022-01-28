@@ -16,9 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
-use Cake\Database\Statement\BufferedStatement;
-use Cake\Database\Statement\CallbackStatement;
-use Cake\Database\StatementInterface;
 use Closure;
 use InvalidArgumentException;
 
@@ -618,29 +615,23 @@ class EagerLoader
      *
      * @param \Cake\ORM\Query $query The query for which to eager load external
      * associations
-     * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
-     * @return \Cake\Database\StatementInterface statement modified statement with extra loaders
+     * @param array $results Results array.
+     * @return array
      * @throws \RuntimeException
      */
-    public function loadExternal(Query $query, StatementInterface $statement): StatementInterface
+    public function loadExternal(Query $query, array $results): array
     {
+        if (empty($results)) {
+            return $results;
+        }
+
         $table = $query->getRepository();
         $external = $this->externalAssociations($table);
         if (empty($external)) {
-            return $statement;
+            return $results;
         }
 
-        $driver = $query->getConnection()->getDriver();
-        [$collected, $statement] = $this->_collectKeys($external, $query, $statement);
-
-        // TODO: The EagerLoader will have to be updated to use the rows fetched by
-        // StatementInterface::fetchAll() instead of relying on StatementInterface::rowCount()
-        // to get the rows count.
-
-        // No records found, skip trying to attach associations.
-        if (empty($collected) && $statement->rowCount() === 0) {
-            return $statement;
-        }
+        $collected = $this->_collectKeys($external, $query, $results);
 
         foreach ($external as $meta) {
             $contain = $meta->associations();
@@ -670,7 +661,7 @@ class EagerLoader
             }
 
             $keys = $collected[$path][$alias] ?? null;
-            $f = $instance->eagerLoader(
+            $callback = $instance->eagerLoader(
                 $config + [
                     'query' => $query,
                     'contain' => $contain,
@@ -678,10 +669,10 @@ class EagerLoader
                     'nestKey' => $meta->aliasPath(),
                 ]
             );
-            $statement = new CallbackStatement($statement, $driver, $f);
+            $results = array_map($callback, $results);
         }
 
-        return $statement;
+        return $results;
     }
 
     /**
@@ -783,10 +774,10 @@ class EagerLoader
      *
      * @param array<\Cake\ORM\EagerLoadable> $external the list of external associations to be loaded
      * @param \Cake\ORM\Query $query The query from which the results where generated
-     * @param \Cake\Database\StatementInterface $statement The statement to work on
+     * @param array $results Results array.
      * @return array
      */
-    protected function _collectKeys(array $external, Query $query, StatementInterface $statement): array
+    protected function _collectKeys(array $external, Query $query, array $results): array
     {
         $collectKeys = [];
         foreach ($external as $meta) {
@@ -809,28 +800,24 @@ class EagerLoader
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
         if (empty($collectKeys)) {
-            return [[], $statement];
+            return [];
         }
 
-        if (!($statement instanceof BufferedStatement)) {
-            $statement = new BufferedStatement($statement, $query->getConnection()->getDriver());
-        }
-
-        return [$this->_groupKeys($statement, $collectKeys), $statement];
+        return $this->_groupKeys($results, $collectKeys);
     }
 
     /**
      * Helper function used to iterate a statement and extract the columns
      * defined in $collectKeys
      *
-     * @param \Cake\Database\Statement\BufferedStatement $statement The statement to read from.
+     * @param array $results Results array.
      * @param array<string, array> $collectKeys The keys to collect
      * @return array
      */
-    protected function _groupKeys(BufferedStatement $statement, array $collectKeys): array
+    protected function _groupKeys(array $results, array $collectKeys): array
     {
         $keys = [];
-        foreach (($statement->fetchAll('assoc') ?: []) as $result) {
+        foreach ($results as $result) {
             foreach ($collectKeys as $nestKey => $parts) {
                 if ($parts[2] === true) {
                     // Missed joins will have null in the results.
@@ -857,7 +844,6 @@ class EagerLoader
                 $keys[$nestKey][$parts[0]][implode(';', $collected)] = $collected;
             }
         }
-        $statement->rewind();
 
         return $keys;
     }
