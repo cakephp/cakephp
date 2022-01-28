@@ -171,14 +171,6 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     protected ?FunctionsBuilder $_functionsBuilder = null;
 
     /**
-     * Boolean for tracking whether buffered results
-     * are enabled.
-     *
-     * @var bool
-     */
-    protected bool $_useBufferedResults = true;
-
-    /**
      * The Type map for fields in the select clause
      *
      * @var \Cake\Database\TypeMap|null
@@ -2166,60 +2158,6 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
         $this->_valueBinder = $binder;
 
         return $this;
-    }
-
-    /**
-     * Enables/Disables buffered results.
-     *
-     * When enabled the results returned by this Query will be
-     * buffered. This enables you to iterate a result set multiple times, or
-     * both cache and iterate it.
-     *
-     * When disabled it will consume less memory as fetched results are not
-     * remembered for future iterations.
-     *
-     * @param bool $enable Whether to enable buffering
-     * @return $this
-     */
-    public function enableBufferedResults(bool $enable = true)
-    {
-        $this->_dirty();
-        $this->_useBufferedResults = $enable;
-
-        return $this;
-    }
-
-    /**
-     * Disables buffered results.
-     *
-     * Disabling buffering will consume less memory as fetched results are not
-     * remembered for future iterations.
-     *
-     * @return $this
-     */
-    public function disableBufferedResults()
-    {
-        $this->_dirty();
-        $this->_useBufferedResults = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns whether buffered results are enabled/disabled.
-     *
-     * When enabled the results returned by this Query will be
-     * buffered. This enables you to iterate a result set multiple times, or
-     * both cache and iterate it.
-     *
-     * When disabled it will consume less memory as fetched results are not
-     * remembered for future iterations.
-     *
-     * @return bool
-     */
-    public function isBufferedResultsEnabled(): bool
-    {
-        return $this->_useBufferedResults;
     }
 
     /**

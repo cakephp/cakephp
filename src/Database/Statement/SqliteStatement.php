@@ -21,26 +21,8 @@ namespace Cake\Database\Statement;
  *
  * @internal
  */
-class SqliteStatement extends StatementDecorator
+class SqliteStatement extends PDOStatement
 {
-    use BufferResultsTrait;
-
-    /**
-     * @inheritDoc
-     */
-    public function execute(?array $params = null): bool
-    {
-        if ($this->_statement instanceof BufferedStatement) {
-            $this->_statement = $this->_statement->getInnerStatement();
-        }
-
-        if ($this->_bufferResults) {
-            $this->_statement = new BufferedStatement($this->_statement, $this->_driver);
-        }
-
-        return $this->_statement->execute($params);
-    }
-
     /**
      * Returns the number of rows returned of affected by last execution
      *

@@ -17,12 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Engine\NullEngine;
-use Cake\Collection\Collection;
 use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
-use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
@@ -272,30 +270,6 @@ class ConnectionTest extends TestCase
         $result = $statement->fetch();
         $statement->closeCursor();
         $this->assertTrue((bool)$result[0]);
-    }
-
-    /**
-     * test executing a buffered query interacts with Collection well.
-     */
-    public function testBufferedStatementCollectionWrappingStatement(): void
-    {
-        $this->skipIf(
-            !($this->connection->getDriver() instanceof Sqlite),
-            'Only required for SQLite driver which does not support buffered results natively'
-        );
-
-        $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
-
-        $collection = new Collection($statement);
-        $result = $collection->extract('id')->toArray();
-        $this->assertEquals(['1', '2'], $result);
-
-        // Check iteration after extraction
-        $result = [];
-        foreach ($collection as $v) {
-            $result[] = $v['id'];
-        }
-        $this->assertEquals(['1', '2'], $result);
     }
 
     /**

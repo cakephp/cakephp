@@ -431,7 +431,6 @@ class ResultSetTest extends TestCase
         $this->assertCount(0, $messages);
 
         $results = $this->table->find('all')
-            ->enableBufferedResults()
             ->where(['id' => 0])
             ->all();
 
