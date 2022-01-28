@@ -19,9 +19,9 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\App;
-use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\Routing\Router;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Throwable;
@@ -200,10 +200,10 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Method that can be easily stubbed in testing.
      *
-     * @param \Cake\Http\Response|string $response Either the message or response object.
+     * @param \Psr\Http\Message\ResponseInterface|string $response Either the message or response object.
      * @return void
      */
-    protected function _sendResponse(Response|string $response): void
+    protected function _sendResponse(ResponseInterface|string $response): void
     {
         if (is_string($response)) {
             echo $response;

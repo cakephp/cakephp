@@ -26,7 +26,15 @@ interface ExceptionRendererInterface
     /**
      * Renders the response for the exception.
      *
-     * @return \Cake\Http\Response The response to be sent.
+     * @return \Psr\Http\Message\ResponseInterface The response to be sent.
      */
-    public function render(): ResponseInterface;
+    public function render(): ResponseInterface|string;
+
+    /**
+     * Write the output to the output stream.
+     *
+     * @param \Psr\Http\Message\ResponseInterface|string $output Response instance or string for output.
+     * @return void
+     */
+    public function write(ResponseInterface|string $output): void;
 }
