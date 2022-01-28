@@ -110,6 +110,7 @@ class Security
      */
     public static function randomBytes(int $length): string
     {
+        /** @psalm-suppress ArgumentTypeCoercion */
         return random_bytes($length);
     }
 

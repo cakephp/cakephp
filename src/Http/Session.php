@@ -481,6 +481,7 @@ class Session
         }
         $value = $this->read($name);
         if ($value !== null) {
+            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
 
@@ -545,6 +546,7 @@ class Session
     public function delete(string $name): void
     {
         if ($this->check($name)) {
+            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
     }

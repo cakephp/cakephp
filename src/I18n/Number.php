@@ -159,7 +159,7 @@ class Number
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
-     * @param string|float $value A floating point number.
+     * @param string|int|float $value A floating point number.
      * @param array<string, mixed> $options An array with options.
      * @return string Formatted number
      */

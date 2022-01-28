@@ -28,6 +28,7 @@
             <errorLevel type="suppress">
                 <referencedClass name="Memcached"/>
                 <referencedClass name="Redis"/>
+                <referencedClass name="RedisException"/>
             </errorLevel>
         </UndefinedClass>
         <UndefinedDocblockClass>
