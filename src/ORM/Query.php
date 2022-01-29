@@ -1118,8 +1118,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
     /**
      * Executes this query and returns a ResultSet object containing the results.
-     * This will also setup the correct statement class in order to eager load deep
-     * associations.
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
