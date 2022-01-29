@@ -1131,7 +1131,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return new $decorator($this->_results);
         }
 
+<<<<<<< Updated upstream
         $statement = $this->getEagerLoader()->loadExternal($this, $this->execute());
+=======
+        $results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
+        $results = $this->getEagerLoader()->loadExternal($this, $results);
+        $resultset = new ResultSet($this, $results);
+>>>>>>> Stashed changes
 
         return new ResultSet($this, $statement);
     }

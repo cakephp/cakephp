@@ -238,15 +238,13 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchAll($type = self::FETCH_TYPE_NUM): array|false
+    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array
     {
         if ($this->_allFetched) {
             return $this->buffer;
         }
         $results = $this->statement->fetchAll($type);
-        if ($results !== false) {
-            $this->buffer = array_merge($this->buffer, $results);
-        }
+        $this->buffer = array_merge($this->buffer, $results);
         $this->_allFetched = true;
         $this->statement->closeCursor();
 

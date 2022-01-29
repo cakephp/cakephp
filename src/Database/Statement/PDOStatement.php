@@ -150,11 +150,11 @@ class PDOStatement extends StatementDecorator
      *  print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * ```
      *
-     * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array|false list of all results from database for this statement, false on failure
+     * @param string|int $type `num` for fetching columns as positional keys or `assoc` for column names as keys.
+     * @return array List of all results from database for this statement.
      * @psalm-assert string $type
      */
-    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): array|false
+    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): array
     {
         if ($type === static::FETCH_TYPE_NUM) {
             return $this->_statement->fetchAll(PDO::FETCH_NUM);

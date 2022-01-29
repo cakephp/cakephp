@@ -149,10 +149,10 @@ interface StatementInterface extends Traversable
      *  print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * ```
      *
-     * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array|false list of all results from database for this statement or false on failure.
+     * @param string|int $type `num` for fetching columns as positional keys or `assoc` for column names as keys.
+     * @return array List of all results from database for this statement.
      */
-    public function fetchAll(string|int $type = 'num'): array|false;
+    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array;
 
     /**
      * Returns the value of the result at position.

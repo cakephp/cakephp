@@ -244,10 +244,10 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * ```
      *
-     * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array|false List of all results from database for this statement. False on failure.
+     * @param string|int $type `num` for fetching columns as positional keys or `assoc` for column names as keys.
+     * @return array List of all results from database for this statement.
      */
-    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array|false
+    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array
     {
         return $this->_statement->fetchAll($type);
     }
