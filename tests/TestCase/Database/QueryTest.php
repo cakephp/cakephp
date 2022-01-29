@@ -4125,9 +4125,11 @@ class QueryTest extends TestCase
             ->select(['name'])
             ->from(['authors'])
             ->where(['name IS NOT' => 'larry'])
-            ->execute();
-        $this->assertCount(3, $results->fetchAll());
-        $this->assertNotEquals(['name' => 'larry'], $results->fetch('assoc'));
+            ->execute()
+            ->fetchAll('assoc');
+
+        $this->assertCount(3, $results);
+        $this->assertNotEquals(['name' => 'larry'], $results[0]);
     }
 
     /**
@@ -4930,7 +4932,6 @@ class QueryTest extends TestCase
             ])
             ->from('profiles')
             ->limit(1)
-            ->enableBufferedResults(false)
             ->execute();
         $results = $stmt->fetch(StatementDecorator::FETCH_TYPE_OBJ);
         $stmt->closeCursor();
