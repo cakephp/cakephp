@@ -18,7 +18,6 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
-use Cake\Database\DriverInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use SplFixedArray;
@@ -26,8 +25,7 @@ use SplFixedArray;
 /**
  * Represents the results obtained after executing a query for a specific table
  * This object is responsible for correctly nesting result keys reported from
- * the query, casting each field to the correct type and executing the extra
- * queries required for eager loading external associations.
+ * the query and hydrating entities.
  */
 class ResultSet implements ResultSetInterface
 {
@@ -77,8 +75,7 @@ class ResultSet implements ResultSetInterface
     protected array $_containMap = [];
 
     /**
-     * Map of fields that are fetched from the statement with
-     * their type and the table they belong to
+     * Map of fields that are fetched with their type and the table they belong to.
      *
      * @var array
      */
@@ -100,7 +97,7 @@ class ResultSet implements ResultSetInterface
     protected SplFixedArray $_results;
 
     /**
-     * Whether to hydrate results into objects or not
+     * Whether to hydrate results into entities.
      *
      * @var bool
      */
@@ -114,7 +111,7 @@ class ResultSet implements ResultSetInterface
     protected ?bool $_autoFields = null;
 
     /**
-     * The fully namespaced name of the class to use for hydrating results
+     * The fully namespaced name of the class to use for hydrating results.
      *
      * @var string
      */
@@ -128,31 +125,22 @@ class ResultSet implements ResultSetInterface
     protected int $_count = 0;
 
     /**
-     * The Database driver object.
-     *
-     * Cached in a property to avoid multiple calls to the same function.
-     *
-     * @var \Cake\Database\DriverInterface
-     */
-    protected DriverInterface $_driver;
-
-    /**
      * Constructor
      *
-     * @param \Cake\ORM\Query $query Query from where results come
+     * @param \Cake\ORM\Query $query Query from where results came.
      * @param array $results Results array.
      */
     public function __construct(Query $query, array $results)
     {
-        $repository = $query->getRepository();
-        $this->_driver = $query->getConnection()->getDriver();
-        $this->_defaultTable = $repository;
-        $this->_calculateAssociationMap($query);
+        $this->_defaultTable = $query->getRepository();
         $this->_hydrate = $query->isHydrationEnabled();
-        $this->_entityClass = $repository->getEntityClass();
-        $this->_defaultAlias = $this->_defaultTable->getAlias();
-        $this->_calculateColumnMap($query);
         $this->_autoFields = $query->isAutoFieldsEnabled();
+
+        $this->_entityClass = $this->_defaultTable->getEntityClass();
+        $this->_defaultAlias = $this->_defaultTable->getAlias();
+
+        $this->_calculateAssociationMap($query);
+        $this->_calculateColumnMap($query);
 
         $this->__unserialize($results);
         foreach ($this->_results as $i => $row) {
@@ -161,7 +149,7 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Returns the current record in the result iterator
+     * Returns the current record in the result iterator.
      *
      * Part of Iterator interface.
      *
@@ -173,7 +161,7 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Returns the key of the current record in the iterator
+     * Returns the key of the current record in the iterator.
      *
      * Part of Iterator interface.
      *
@@ -185,7 +173,7 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Advances the iterator pointer to the next record
+     * Advances the iterator pointer to the next record.
      *
      * Part of Iterator interface.
      *
@@ -201,7 +189,6 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @throws \Cake\Database\Exception\DatabaseException
      * @return void
      */
     public function rewind(): void
@@ -210,7 +197,7 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Whether there are more results to be fetched from the iterator
+     * Whether there are more results to be fetched from the iterator.
      *
      * Part of Iterator interface.
      *
@@ -230,9 +217,9 @@ class ResultSet implements ResultSetInterface
     /**
      * Get the first record from a result set.
      *
-     * @return object|array|null
+     * @return \Cake\Datasource\EntityInterface|array|null
      */
-    public function first(): object|array|null
+    public function first(): EntityInterface|array|null
     {
         foreach ($this as $result) {
             return $result;
@@ -276,10 +263,9 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Calculates the list of associations that should get eager loaded
-     * when fetching each record
+     * Calculates the list of associations that where eager loaded for this query.
      *
-     * @param \Cake\ORM\Query $query The query from where to derive the associations
+     * @param \Cake\ORM\Query $query The query from where to derive the associations.
      * @return void
      */
     protected function _calculateAssociationMap(Query $query): void
@@ -297,10 +283,10 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Creates a map of row keys out of the query select clause that can be
+     * Creates a map of row keys out of the query's select clause that can be
      * used to hydrate nested result sets more quickly.
      *
-     * @param \Cake\ORM\Query $query The query from where to derive the column map
+     * @param \Cake\ORM\Query $query The query from where to derive the column map.
      * @return void
      */
     protected function _calculateColumnMap(Query $query): void
@@ -330,10 +316,12 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Correctly nests results keys including those coming from associations
+     * Correctly nests results keys including those coming from associations.
      *
-     * @param array $row Array containing columns and values or false if there is no results
-     * @return \Cake\Datasource\EntityInterface|array Results
+     * Hyrate row array into entity if hydration is enabled.
+     *
+     * @param array $row Array containing columns and values.
+     * @return \Cake\Datasource\EntityInterface|array
      */
     protected function _groupResult(array $row): EntityInterface|array
     {
