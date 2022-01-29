@@ -268,4 +268,14 @@ class ExceptionTrapTest extends TestCase
         $result = Text::parseFileSize(ini_get('memory_limit'), false);
         $this->assertWithinRange($initialBytes + (4 * 1024 * 1024), $result, 1024);
     }
+
+    public function testSingleton()
+    {
+        $trap = new ExceptionTrap();
+        $trap->register();
+        $this->assertSame($trap, ExceptionTrap::instance());
+
+        $trap->unregister();
+        $this->assertNull(ExceptionTrap::instance());
+    }
 }

@@ -58,6 +58,23 @@ class ExceptionTrap
     protected $callbacks = [];
 
     /**
+     * The currently registered global exception handler
+     *
+     * This is best effort as we can't know if/when another
+     * exception handler is registered.
+     *
+     * @var \Cake\Error\ExceptionTrap
+     */
+    protected static $registeredTrap = null;
+
+    /**
+     * Track if this trap was removed from the global handler.
+     *
+     * @var bool
+     */
+    protected $disabled = false;
+
+    /**
      * Constructor
      *
      * @param array<string, mixed> $options An options array. See $_defaultConfig.
@@ -154,6 +171,37 @@ class ExceptionTrap
     {
         set_exception_handler([$this, 'handleException']);
         register_shutdown_function([$this, 'handleShutdown']);
+        static::$registeredTrap = $this;
+    }
+
+    /**
+     * Remove this instance from the singleton
+     *
+     * If this instance is not currently the registered singleton
+     * nothing happens.
+     *
+     * @return void
+     */
+    public function unregister(): void
+    {
+        if (static::$registeredTrap == $this) {
+            $this->disabled = true;
+            static::$registeredTrap  = null;
+        }
+    }
+
+    /**
+     * Get the registered global instance if set.
+     *
+     * Keep in mind that the global state contained here
+     * is mutable and the object returned by this method
+     * could be a stale value.
+     *
+     * @return \Cake\Exception\ExceptionTrap|null The global instance or null.
+     */
+    public static function instance(): ?self
+    {
+        return static::$registeredTrap ;
     }
 
     /**
@@ -169,6 +217,9 @@ class ExceptionTrap
      */
     public function handleException(Throwable $exception): void
     {
+        if ($this->disabled) {
+            return;
+        }
         $request = Router::getRequest();
 
         $this->logException($exception, $request);
@@ -193,6 +244,9 @@ class ExceptionTrap
      */
     public function handleShutdown(): void
     {
+        if ($this->disabled) {
+            return;
+        }
         $megabytes = $this->_config['extraFatalErrorMemory'] ?? 4;
         if ($megabytes > 0) {
             $this->increaseMemoryLimit($megabytes * 1024);
