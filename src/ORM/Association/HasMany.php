@@ -19,6 +19,7 @@ namespace Cake\ORM\Association;
 use Cake\Collection\Collection;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association;
@@ -39,9 +40,9 @@ class HasMany extends Association
     /**
      * Order in which target records should be returned
      *
-     * @var mixed
+     * @var \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
-    protected mixed $_sort = null;
+    protected ExpressionInterface|Closure|array|string|null $_sort = null;
 
     /**
      * The type of join to be used when adding the association to a query
@@ -601,10 +602,11 @@ class HasMany extends Association
     /**
      * Sets the sort order in which target records should be returned.
      *
-     * @param mixed $sort A find() compatible order clause
+     * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort
+     *  A find() compatible order clause
      * @return $this
      */
-    public function setSort(mixed $sort)
+    public function setSort(ExpressionInterface|Closure|array|string $sort)
     {
         $this->_sort = $sort;
 
@@ -614,9 +616,9 @@ class HasMany extends Association
     /**
      * Gets the sort order in which target records should be returned.
      *
-     * @return mixed
+     * @return \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
-    public function getSort(): mixed
+    public function getSort(): ExpressionInterface|Closure|array|string|null
     {
         return $this->_sort;
     }

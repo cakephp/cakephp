@@ -155,9 +155,9 @@ class BelongsToMany extends Association
     /**
      * Order in which target records should be returned
      *
-     * @var mixed
+     * @var \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
-    protected mixed $_sort = null;
+    protected ExpressionInterface|Closure|array|string|null $_sort = null;
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
@@ -213,7 +213,8 @@ class BelongsToMany extends Association
     /**
      * Sets the sort order in which target records should be returned.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $sort A find() compatible order clause
+     * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort
+     *  A find() compatible order clause
      * @return $this
      */
     public function setSort(ExpressionInterface|Closure|array|string $sort)
@@ -226,7 +227,7 @@ class BelongsToMany extends Association
     /**
      * Gets the sort order in which target records should be returned.
      *
-     * @return \Cake\Database\ExpressionInterface|\Closure|array|string|null
+     * @return \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
     public function getSort(): ExpressionInterface|Closure|array|string|null
     {

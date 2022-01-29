@@ -18,6 +18,7 @@ namespace Cake\ORM\Association\Loader;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
@@ -91,9 +92,9 @@ class SelectLoader
     /**
      * The sorting options for loading the association
      *
-     * @var array|string|null
+     * @var \Cake\Database\ExpressionInterface|\Closure|array|string|null
      */
-    protected array|string|null $sort = null;
+    protected ExpressionInterface|Closure|array|string|null $sort = null;
 
     /**
      * Copies the options array to properties in this class. The keys in the array correspond

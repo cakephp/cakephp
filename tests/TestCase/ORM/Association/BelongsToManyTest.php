@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Connection;
+use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -125,8 +126,22 @@ class BelongsToManyTest extends TestCase
     {
         $assoc = new BelongsToMany('Test');
         $this->assertNull($assoc->getSort());
+
+        $assoc->setSort('id ASC');
+        $this->assertSame('id ASC', $assoc->getSort());
+
         $assoc->setSort(['id' => 'ASC']);
-        $this->assertEquals(['id' => 'ASC'], $assoc->getSort());
+        $this->assertSame(['id' => 'ASC'], $assoc->getSort());
+
+        $closure = function () {
+            return ['id' => 'ASC'];
+        };
+        $assoc->setSort($closure);
+        $this->assertSame($closure, $assoc->getSort());
+
+        $expression = new OrderClauseExpression('id', 'ASC');
+        $assoc->setSort($expression);
+        $this->assertSame($expression, $assoc->getSort());
     }
 
     /**

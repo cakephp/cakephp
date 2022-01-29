@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
@@ -157,8 +158,22 @@ class HasManyTest extends TestCase
     {
         $assoc = new HasMany('Test');
         $this->assertNull($assoc->getSort());
+
+        $assoc->setSort('id ASC');
+        $this->assertSame('id ASC', $assoc->getSort());
+
         $assoc->setSort(['id' => 'ASC']);
-        $this->assertEquals(['id' => 'ASC'], $assoc->getSort());
+        $this->assertSame(['id' => 'ASC'], $assoc->getSort());
+
+        $closure = function () {
+            return ['id' => 'ASC'];
+        };
+        $assoc->setSort($closure);
+        $this->assertSame($closure, $assoc->getSort());
+
+        $expression = new OrderClauseExpression('id', 'ASC');
+        $assoc->setSort($expression);
+        $this->assertSame($expression, $assoc->getSort());
     }
 
     /**
