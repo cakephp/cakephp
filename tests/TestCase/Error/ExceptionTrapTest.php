@@ -22,17 +22,30 @@ use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Text;
 use InvalidArgumentException;
 use stdClass;
 use Throwable;
 
 class ExceptionTrapTest extends TestCase
 {
+    /**
+     * @var string
+     */
+    private $memoryLimit;
+
     public function setUp(): void
     {
         parent::setUp();
+        $this->memoryLimit = ini_get('memory_limit');
 
         Log::drop('test_error');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        ini_set('memory_limit', $this->memoryLimit);
     }
 
     public function testConfigRendererInvalid()
@@ -177,6 +190,19 @@ class ExceptionTrapTest extends TestCase
         $this->assertEmpty($out);
     }
 
+    public function testHandleFatalShutdownNoError()
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => TextExceptionRenderer::class,
+        ]);
+        error_clear_last();
+        ob_start();
+        $trap->handleShutdown();
+        $out = ob_get_clean();
+
+        $this->assertSame('', $out);
+    }
+
     public function testHandleFatalErrorText()
     {
         $trap = new ExceptionTrap([
@@ -213,5 +239,34 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('<html', $out);
         $this->assertStringContainsString('Something bad', $out);
         $this->assertStringContainsString(__FILE__, $out);
+    }
+
+    /**
+     * Data provider for memory limit increase
+     */
+    public static function initialMemoryProvider(): array
+    {
+        return [
+            ['256M'],
+            ['1G'],
+        ];
+    }
+
+    /**
+    * @dataProvider initialMemoryProvider
+    */
+    public function testIncreaseMemoryLimit($initial)
+    {
+        ini_set('memory_limit', $initial);
+        $this->assertEquals($initial, ini_get('memory_limit'));
+
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => TextExceptionRenderer::class,
+        ]);
+        $trap->increaseMemoryLimit(4 * 1024);
+        $initialBytes = Text::parseFileSize($initial, false);
+        $result = Text::parseFileSize(ini_get('memory_limit'), false);
+        $this->assertWithinRange($initialBytes + (4 * 1024 * 1024), $result, 1024);
+
     }
 }
