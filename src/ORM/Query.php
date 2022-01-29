@@ -1131,14 +1131,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
-        if ($results === false) {
-            $results = [];
-        } else {
-            $results = $this->getEagerLoader()->loadExternal($this, $results);
-        }
-        $resultset = new ResultSet($this, $results);
+        $results = $this->getEagerLoader()->loadExternal($this, $results);
 
-        return $resultset;
+        return new ResultSet($this, $results);
     }
 
     /**
