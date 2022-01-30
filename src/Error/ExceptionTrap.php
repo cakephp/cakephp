@@ -78,9 +78,11 @@ class ExceptionTrap
         // The return of this method is not defined because
         // the desired interface has bad types that will be changing in 5.x
         $request = Router::getRequest();
+        /** @var class-string|callable $class */
         $class = $this->_getConfig('exceptionRenderer');
 
         if (is_string($class)) {
+            /** @var class-string $class */
             if (!(method_exists($class, 'render') && method_exists($class, 'write'))) {
                 throw new InvalidArgumentException(
                     "Cannot use {$class} as an `exceptionRenderer`. " .
@@ -94,10 +96,7 @@ class ExceptionTrap
             return $instance;
         }
 
-        /** @var callable $factory */
-        $factory = $class;
-
-        return $factory($exception, $request);
+        return $class($exception, $request);
     }
 
     /**

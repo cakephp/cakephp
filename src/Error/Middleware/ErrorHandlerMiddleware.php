@@ -145,6 +145,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
         try {
             $errorHandler->logException($exception, $request);
+            /** @var \Psr\Http\Message\ResponseInterface $response*/
             $response = $renderer->render();
         } catch (Throwable $internalException) {
             $errorHandler->logException($internalException, $request);
