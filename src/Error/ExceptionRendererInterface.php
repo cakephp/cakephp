@@ -26,7 +26,7 @@ interface ExceptionRendererInterface
     /**
      * Renders the response for the exception.
      *
-     * @return \Psr\Http\Message\ResponseInterface The response to be sent.
+     * @return \Psr\Http\Message\ResponseInterface|string The response to be sent.
      */
     public function render(): ResponseInterface|string;
 

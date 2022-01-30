@@ -116,12 +116,7 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
-			message: "#^Property Cake\\\\Core\\\\ObjectRegistry\\<TObject\\>\\:\\:\\$_loaded \\(array\\<TObject\\>\\) does not accept array\\<object\\|TObject\\>\\.$#"
+			message: "#^PHPDoc tag @param for parameter \\$class with type string\\|TObject is not subtype of native type object\\|string\\.$#"
 			count: 1
 			path: src/Core/ObjectRegistry.php
 
@@ -137,6 +132,11 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag @return with type TObject\\|null is not subtype of native type object\\|null\\.$#"
+			count: 1
+			path: src/Core/ObjectRegistry.php
+
+		-
+			message: "#^Property Cake\\\\Core\\\\ObjectRegistry\\<TObject\\>\\:\\:\\$_loaded \\(array\\<TObject\\>\\) does not accept array\\<object\\|TObject\\>\\.$#"
 			count: 1
 			path: src/Core/ObjectRegistry.php
 
