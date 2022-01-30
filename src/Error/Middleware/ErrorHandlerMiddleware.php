@@ -118,7 +118,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
-     * @return \Psr\Http\Message\ResponseInterface A response.
+     * @return \Psr\Http\Message\ResponseInterface A response
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -136,7 +136,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @param \Throwable $exception The exception to handle.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
@@ -145,8 +145,11 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
         try {
             $errorHandler->logException($exception, $request);
-            /** @var \Psr\Http\Message\ResponseInterface $response*/
+            /** @var \Psr\Http\Message\ResponseInterface|string $response */
             $response = $renderer->render();
+            if (is_string($response)) {
+                return new Response(['body' => $response, 'status' => 500]);
+            }
         } catch (Throwable $internalException) {
             $errorHandler->logException($internalException, $request);
             $response = $this->handleInternalError();
@@ -177,9 +180,10 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     protected function handleInternalError(): ResponseInterface
     {
-        $response = new Response(['body' => 'An Internal Server Error Occurred']);
-
-        return $response->withStatus(500);
+        return new Response([
+            'body' => 'An Internal Server Error Occurred',
+            'status' => 500,
+        ]);
     }
 
     /**

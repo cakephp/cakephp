@@ -253,8 +253,8 @@ class ExceptionTrapTest extends TestCase
     }
 
     /**
-    * @dataProvider initialMemoryProvider
-    */
+     * @dataProvider initialMemoryProvider
+     */
     public function testIncreaseMemoryLimit($initial)
     {
         ini_set('memory_limit', $initial);
@@ -267,6 +267,5 @@ class ExceptionTrapTest extends TestCase
         $initialBytes = Text::parseFileSize($initial, false);
         $result = Text::parseFileSize(ini_get('memory_limit'), false);
         $this->assertWithinRange($initialBytes + (4 * 1024 * 1024), $result, 1024);
-
     }
 }
