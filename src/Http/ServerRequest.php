@@ -1122,21 +1122,6 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * Parse the HTTP_ACCEPT header and return a sorted array with content types
-     * as the keys, and pref values as the values.
-     *
-     * Generally you want to use {@link \Cake\Http\ServerRequest::accepts()} to get a simple list
-     * of the accepted content types.
-     *
-     * @return array An array of `prefValue => [content/types]`
-     * @deprecated 4.4.0 Use `accepts()` or `ContentTypeNegotiation` class instead.
-     */
-    public function parseAccept(): array
-    {
-        return (new ContentTypeNegotiation())->parseAccept($this);
-    }
-
-    /**
      * Get the languages accepted by the client, or check if a specific language is accepted.
      *
      * Get the list of accepted languages:

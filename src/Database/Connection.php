@@ -178,26 +178,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Sets the driver instance. If a string is passed it will be treated
-     * as a class name and will be instantiated.
-     *
-     * @param \Cake\Database\DriverInterface|string $driver The driver instance to use.
-     * @param array<string, mixed> $config Config for a new driver.
-     * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
-     * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     * @return $this
-     * @deprecated 4.4.0 Setting the driver is deprecated. Use the connection config instead.
-     */
-    public function setDriver(DriverInterface|string $driver, array $config = [])
-    {
-        deprecationWarning('4.4.0', 'Setting the driver is deprecated. Use the connection config instead.');
-
-        $this->_driver = $this->createDriver($driver, $config);
-
-        return $this;
-    }
-
-    /**
      * Creates driver from name, class name or instance.
      *
      * @param \Cake\Database\DriverInterface|string $name Driver name, class name or instance.

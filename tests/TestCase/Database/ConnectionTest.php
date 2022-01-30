@@ -966,17 +966,10 @@ class ConnectionTest extends TestCase
     {
         Log::setConfig('queries', ['className' => 'Array']);
 
-        $connection = $this
-            ->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->enableQueryLogging(true);
-
-        $this->deprecated(function () use ($connection) {
-            $driver = $this->getMockFormDriver();
-            $connection->setDriver($driver);
-        });
+        $connection = new Connection([
+            'driver' => $this->getMockFormDriver(),
+            'log' => true,
+        ]);
 
         $connection->begin();
         $connection->begin(); //This one will not be logged
