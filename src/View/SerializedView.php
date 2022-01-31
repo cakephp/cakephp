@@ -26,14 +26,6 @@ use TypeError;
 abstract class SerializedView extends View
 {
     /**
-     * Response type.
-     *
-     * @var string
-     * @deprecated 4.4.0 Implement ``public static contentType(): string`` instead.
-     */
-    protected string $_responseType = '';
-
-    /**
      * Default config options.
      *
      * Use ViewBuilder::setOption()/setOptions() in your controlle to set these options.
@@ -48,18 +40,6 @@ abstract class SerializedView extends View
     protected array $_defaultConfig = [
         'serialize' => null,
     ];
-
-    /**
-     * @inheritDoc
-     */
-    public function initialize(): void
-    {
-        parent::initialize();
-        if ($this->_responseType) {
-            $response = $this->getResponse()->withType($this->_responseType);
-            $this->setResponse($response);
-        }
-    }
 
     /**
      * Load helpers only if serialization is disabled.
