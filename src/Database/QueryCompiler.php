@@ -59,7 +59,6 @@ class QueryCompiler
      * The list of query clauses to traverse for generating an UPDATE statement
      *
      * @var array<string>
-     * @deprecated Not used.
      */
     protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
