@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Engine\FileEngine;
-use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverInterface;
@@ -28,6 +27,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
@@ -856,6 +856,9 @@ class QueryTest extends TestCase
         $results = new ResultSet($query, []);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
+
+        $query->setResult([]);
+        $this->assertInstanceOf(ResultSetDecorator::class, $query->all());
     }
 
     /**
@@ -1180,26 +1183,6 @@ class QueryTest extends TestCase
         $first = $query->enableHydration(false)->first();
 
         $this->assertEquals(['id' => 1], $first);
-    }
-
-    /**
-     * Test to show that when results bufferring is enabled if ResultSet gets
-     * decorated by ResultSetDecorator it gets wrapped in a BufferedIterator instance.
-     */
-    public function testBufferedDecoratedResultSet(): void
-    {
-        $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($this->connection, $table);
-        $query
-            ->select(['id'])
-            // This causes ResultSet to be decorated by a ResultSetDecorator instance
-            ->formatResults(function ($results) {
-                return $results;
-            });
-
-        $results = $query->all();
-
-        $this->assertInstanceOf(BufferedIterator::class, $results->getInnerIterator());
     }
 
     /**

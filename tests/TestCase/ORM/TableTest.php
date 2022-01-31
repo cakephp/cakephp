@@ -29,6 +29,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
@@ -617,7 +618,10 @@ class TableTest extends TestCase
             }
         );
 
-        $query = $table->find('all');
+        $query = $table->find('all')
+            ->formatResults(function (ResultSetDecorator $results) {
+                return $results;
+            });
         $query->limit(1);
         $this->assertEquals($expected, $query->all()->toArray());
     }
