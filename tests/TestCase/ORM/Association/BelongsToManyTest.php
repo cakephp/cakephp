@@ -145,6 +145,39 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that sorting works using the accepted types for `setSort()`.
+     */
+    public function testSorting(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $assoc = $articles->belongsToMany('Tags');
+
+        $field = 'Tags.id';
+        $driver = $articles->getConnection()->getDriver();
+        if ($driver->isAutoQuotingEnabled()) {
+            $field = $driver->quoteIdentifier($field);
+        }
+
+        $assoc->setSort("$field DESC");
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
+
+        $assoc->setSort(['Tags.id' => 'DESC']);
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
+
+        $assoc->setSort(function () {
+            return ['Tags.id' => 'DESC'];
+        });
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
+
+        $assoc->setSort(new OrderClauseExpression('Tags.id', 'DESC'));
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
+    }
+
+    /**
      * Tests requiresKeys() method
      */
     public function testRequiresKeys(): void

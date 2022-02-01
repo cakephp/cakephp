@@ -177,6 +177,39 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Tests that sorting works using the accepted types for `setSort()`.
+     */
+    public function testSorting(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $assoc = $authors->hasMany('Articles');
+
+        $field = 'Articles.id';
+        $driver = $authors->getConnection()->getDriver();
+        if ($driver->isAutoQuotingEnabled()) {
+            $field = $driver->quoteIdentifier($field);
+        }
+
+        $assoc->setSort("$field DESC");
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
+
+        $assoc->setSort(['Articles.id' => 'DESC']);
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
+
+        $assoc->setSort(function () {
+            return ['Articles.id' => 'DESC'];
+        });
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
+
+        $assoc->setSort(new OrderClauseExpression('Articles.id', 'DESC'));
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
+    }
+
+    /**
      * Tests requiresKeys() method
      */
     public function testRequiresKeys(): void
