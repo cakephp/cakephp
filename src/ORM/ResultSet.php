@@ -18,9 +18,6 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
-use Cake\Database\DriverInterface;
-use Cake\Database\Exception\DatabaseException;
-use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use SplFixedArray;
@@ -28,19 +25,11 @@ use SplFixedArray;
 /**
  * Represents the results obtained after executing a query for a specific table
  * This object is responsible for correctly nesting result keys reported from
- * the query, casting each field to the correct type and executing the extra
- * queries required for eager loading external associations.
+ * the query and hydrating entities.
  */
 class ResultSet implements ResultSetInterface
 {
     use CollectionTrait;
-
-    /**
-     * Database statement holding the results
-     *
-     * @var \Cake\Database\StatementInterface|null
-     */
-    protected ?StatementInterface $_statement = null;
 
     /**
      * Points to the next record number that should be fetched
@@ -86,8 +75,7 @@ class ResultSet implements ResultSetInterface
     protected array $_containMap = [];
 
     /**
-     * Map of fields that are fetched from the statement with
-     * their type and the table they belong to
+     * Map of fields that are fetched with their type and the table they belong to.
      *
      * @var array
      */
@@ -104,12 +92,12 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var \SplFixedArray|array
+     * @var \SplFixedArray
      */
-    protected SplFixedArray|array $_results = [];
+    protected SplFixedArray $_results;
 
     /**
-     * Whether to hydrate results into objects or not
+     * Whether to hydrate results into entities.
      *
      * @var bool
      */
@@ -123,63 +111,45 @@ class ResultSet implements ResultSetInterface
     protected ?bool $_autoFields = null;
 
     /**
-     * The fully namespaced name of the class to use for hydrating results
+     * The fully namespaced name of the class to use for hydrating results.
      *
      * @var string
      */
     protected string $_entityClass;
 
     /**
-     * Whether to buffer results fetched from the statement
-     *
-     * @var bool
-     */
-    protected bool $_useBuffering = true;
-
-    /**
      * Holds the count of records in this result set
      *
-     * @var int|null
+     * @var int
      */
-    protected ?int $_count = null;
-
-    /**
-     * The Database driver object.
-     *
-     * Cached in a property to avoid multiple calls to the same function.
-     *
-     * @var \Cake\Database\DriverInterface
-     */
-    protected DriverInterface $_driver;
+    protected int $_count = 0;
 
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Query $query Query from where results come
-     * @param \Cake\Database\StatementInterface $statement The statement to fetch from
+     * @param \Cake\ORM\Query $query Query from where results came.
+     * @param array $results Results array.
      */
-    public function __construct(Query $query, StatementInterface $statement)
+    public function __construct(Query $query, array $results)
     {
-        $repository = $query->getRepository();
-        $this->_statement = $statement;
-        $this->_driver = $query->getConnection()->getDriver();
-        $this->_defaultTable = $repository;
-        $this->_calculateAssociationMap($query);
+        $this->_defaultTable = $query->getRepository();
         $this->_hydrate = $query->isHydrationEnabled();
-        $this->_entityClass = $repository->getEntityClass();
-        $this->_useBuffering = $query->isBufferedResultsEnabled();
-        $this->_defaultAlias = $this->_defaultTable->getAlias();
-        $this->_calculateColumnMap($query);
         $this->_autoFields = $query->isAutoFieldsEnabled();
 
-        if ($this->_useBuffering) {
-            $count = $this->count();
-            $this->_results = new SplFixedArray($count);
+        $this->_entityClass = $this->_defaultTable->getEntityClass();
+        $this->_defaultAlias = $this->_defaultTable->getAlias();
+
+        $this->_calculateAssociationMap($query);
+        $this->_calculateColumnMap($query);
+
+        $this->__unserialize($results);
+        foreach ($this->_results as $i => $row) {
+            $this->_results[$i] = $this->_groupResult($row);
         }
     }
 
     /**
-     * Returns the current record in the result iterator
+     * Returns the current record in the result iterator.
      *
      * Part of Iterator interface.
      *
@@ -191,7 +161,7 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Returns the key of the current record in the iterator
+     * Returns the key of the current record in the iterator.
      *
      * Part of Iterator interface.
      *
@@ -203,7 +173,7 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Advances the iterator pointer to the next record
+     * Advances the iterator pointer to the next record.
      *
      * Part of Iterator interface.
      *
@@ -219,26 +189,15 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @throws \Cake\Database\Exception\DatabaseException
      * @return void
      */
     public function rewind(): void
     {
-        if ($this->_index === 0) {
-            return;
-        }
-
-        if (!$this->_useBuffering) {
-            $msg = 'You cannot rewind an un-buffered ResultSet. '
-                . 'Use Query::bufferResults() to get a buffered ResultSet.';
-            throw new DatabaseException($msg);
-        }
-
         $this->_index = 0;
     }
 
     /**
-     * Whether there are more results to be fetched from the iterator
+     * Whether there are more results to be fetched from the iterator.
      *
      * Part of Iterator interface.
      *
@@ -246,48 +205,23 @@ class ResultSet implements ResultSetInterface
      */
     public function valid(): bool
     {
-        if ($this->_useBuffering) {
-            $valid = $this->_index < $this->_count;
-            if ($valid && $this->_results[$this->_index] !== null) {
-                $this->_current = $this->_results[$this->_index];
+        if ($this->_index < $this->_count) {
+            $this->_current = $this->_results[$this->_index];
 
-                return true;
-            }
-            if (!$valid) {
-                return $valid;
-            }
+            return true;
         }
 
-        $current = $this->_fetchResult();
-        $valid = $current !== false;
-        if ($valid) {
-            $this->_current = $current;
-        }
-
-        if ($valid && $this->_useBuffering) {
-            $this->_results[$this->_index] = $this->_current;
-        }
-        if (!$valid && $this->_statement !== null) {
-            $this->_statement->closeCursor();
-        }
-
-        return $valid;
+        return false;
     }
 
     /**
      * Get the first record from a result set.
      *
-     * This method will also close the underlying statement cursor.
-     *
-     * @return object|array|null
+     * @return \Cake\Datasource\EntityInterface|array|null
      */
-    public function first(): object|array|null
+    public function first(): EntityInterface|array|null
     {
         foreach ($this as $result) {
-            if ($this->_statement !== null && !$this->_useBuffering) {
-                $this->_statement->closeCursor();
-            }
-
             return $result;
         }
 
@@ -301,21 +235,7 @@ class ResultSet implements ResultSetInterface
      */
     public function __serialize(): array
     {
-        if (!$this->_useBuffering) {
-            $msg = 'You cannot serialize an un-buffered ResultSet. '
-                . 'Use Query::bufferResults() to get a buffered ResultSet.';
-            throw new DatabaseException($msg);
-        }
-
-        while ($this->valid()) {
-            $this->next();
-        }
-
-        if ($this->_results instanceof SplFixedArray) {
-            return $this->_results->toArray();
-        }
-
-        return $this->_results;
+        return $this->_results->toArray();
     }
 
     /**
@@ -327,7 +247,6 @@ class ResultSet implements ResultSetInterface
     public function __unserialize(array $data): void
     {
         $this->_results = SplFixedArray::fromArray($data);
-        $this->_useBuffering = true;
         $this->_count = $this->_results->count();
     }
 
@@ -340,27 +259,13 @@ class ResultSet implements ResultSetInterface
      */
     public function count(): int
     {
-        if ($this->_count !== null) {
-            return $this->_count;
-        }
-        if ($this->_statement !== null) {
-            return $this->_count = $this->_statement->rowCount();
-        }
-
-        if ($this->_results instanceof SplFixedArray) {
-            $this->_count = $this->_results->count();
-        } else {
-            $this->_count = count($this->_results);
-        }
-
         return $this->_count;
     }
 
     /**
-     * Calculates the list of associations that should get eager loaded
-     * when fetching each record
+     * Calculates the list of associations that where eager loaded for this query.
      *
-     * @param \Cake\ORM\Query $query The query from where to derive the associations
+     * @param \Cake\ORM\Query $query The query from where to derive the associations.
      * @return void
      */
     protected function _calculateAssociationMap(Query $query): void
@@ -378,10 +283,10 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Creates a map of row keys out of the query select clause that can be
+     * Creates a map of row keys out of the query's select clause that can be
      * used to hydrate nested result sets more quickly.
      *
-     * @param \Cake\ORM\Query $query The query from where to derive the column map
+     * @param \Cake\ORM\Query $query The query from where to derive the column map.
      * @return void
      */
     protected function _calculateColumnMap(Query $query): void
@@ -411,30 +316,12 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Helper function to fetch the next result from the statement or
-     * seeded results.
+     * Correctly nests results keys including those coming from associations.
      *
-     * @return mixed
-     */
-    protected function _fetchResult(): mixed
-    {
-        if ($this->_statement === null) {
-            return false;
-        }
-
-        $row = $this->_statement->fetch('assoc');
-        if ($row === false) {
-            return $row;
-        }
-
-        return $this->_groupResult($row);
-    }
-
-    /**
-     * Correctly nests results keys including those coming from associations
+     * Hyrate row array into entity if hydration is enabled.
      *
-     * @param array $row Array containing columns and values or false if there is no results
-     * @return \Cake\Datasource\EntityInterface|array Results
+     * @param array $row Array containing columns and values.
+     * @return \Cake\Datasource\EntityInterface|array
      */
     protected function _groupResult(array $row): EntityInterface|array
     {

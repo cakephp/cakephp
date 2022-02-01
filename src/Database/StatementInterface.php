@@ -149,10 +149,10 @@ interface StatementInterface extends Traversable
      *  print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * ```
      *
-     * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array|false list of all results from database for this statement or false on failure.
+     * @param string|int $type `num` for fetching columns as positional keys or `assoc` for column names as keys.
+     * @return array List of all results from database for this statement.
      */
-    public function fetchAll(string|int $type = 'num'): array|false;
+    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array;
 
     /**
      * Returns the value of the result at position.
@@ -163,27 +163,12 @@ interface StatementInterface extends Traversable
     public function fetchColumn(int $position): mixed;
 
     /**
-     * Returns the number of rows affected by this SQL statement
-     *
-     * ### Example:
-     *
-     * ```
-     *  $statement = $connection->prepare('SELECT id, title from articles');
-     *  $statement->execute();
-     *  print_r($statement->rowCount()); // will show 1
-     * ```
+     * Returns the number of rows affected by this SQL statement for INSERT,
+     * UPDATE and DELETE queries.
      *
      * @return int
      */
     public function rowCount(): int;
-
-    /**
-     * Statements can be passed as argument for count()
-     * to return the number for affected rows from last execution
-     *
-     * @return int
-     */
-    public function count(): int;
 
     /**
      * Binds a set of values to statement object with corresponding type

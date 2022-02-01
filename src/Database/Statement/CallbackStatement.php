@@ -68,10 +68,10 @@ class CallbackStatement extends StatementDecorator
      *
      * Each row in the result will be processed by the callback when it is not `false.
      */
-    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): array|false
+    public function fetchAll(string|int $type = parent::FETCH_TYPE_NUM): array
     {
         $results = $this->_statement->fetchAll($type);
 
-        return $results !== false ? array_map($this->_callback, $results) : false;
+        return array_map($this->_callback, $results);
     }
 }

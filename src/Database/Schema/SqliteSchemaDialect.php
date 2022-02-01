@@ -634,7 +634,7 @@ class SqliteSchemaDialect extends SchemaDialect
             'SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"'
         );
         $result->execute();
-        $this->_hasSequences = (bool)$result->rowCount();
+        $this->_hasSequences = (bool)$result->fetch();
         $result->closeCursor();
 
         return $this->_hasSequences;

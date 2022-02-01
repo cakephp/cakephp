@@ -191,10 +191,6 @@ class Sqlserver extends Driver
         $this->connect();
 
         $sql = $query;
-        $options = [
-            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
-        ];
         if ($query instanceof Query) {
             $sql = $query->sql();
             if (count($query->getValueBinder()->bindings()) > 2100) {
@@ -205,14 +201,16 @@ class Sqlserver extends Driver
                     'If using an Association, try changing the `strategy` from select to subquery.'
                 );
             }
-
-            if (!$query->isBufferedResultsEnabled()) {
-                $options = [];
-            }
         }
 
         /** @psalm-suppress PossiblyInvalidArgument */
-        $statement = $this->_connection->prepare($sql, $options);
+        $statement = $this->_connection->prepare(
+            $sql,
+            [
+                PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+            ]
+        );
 
         return new SqlserverStatement($statement, $this);
     }

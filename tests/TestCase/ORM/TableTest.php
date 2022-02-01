@@ -29,6 +29,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
@@ -617,7 +618,10 @@ class TableTest extends TestCase
             }
         );
 
-        $query = $table->find('all');
+        $query = $table->find('all')
+            ->formatResults(function (ResultSetDecorator $results) {
+                return $results;
+            });
         $query->limit(1);
         $this->assertEquals($expected, $query->all()->toArray());
     }
@@ -2862,8 +2866,7 @@ class TableTest extends TestCase
         $this->assertTrue($result);
 
         $query = $table->find('all', $conditions);
-        $results = $query->execute();
-        $this->assertCount(0, $results, 'Find should fail.');
+        $this->assertCount(0, $query->all(), 'Find should fail.');
     }
 
     /**
@@ -2957,7 +2960,7 @@ class TableTest extends TestCase
 
         $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all')->where(['author_id' => $entity->id]);
-        $this->assertCount(2, $query->execute(), 'Should find rows.');
+        $this->assertCount(2, $query->all(), 'Should find rows.');
     }
 
     /**

@@ -53,9 +53,9 @@ class MapReduce implements IteratorAggregate
     /**
      * Holds the original data that needs to be processed
      *
-     * @var \Traversable
+     * @var iterable
      */
-    protected Traversable $_data;
+    protected iterable $_data;
 
     /**
      * A callable that will be executed for each record in the original data
@@ -105,7 +105,7 @@ class MapReduce implements IteratorAggregate
      *  ['odd' => [1, 3, 5], 'even' => [2, 4]]
      * ```
      *
-     * @param \Traversable $data the original data to be processed
+     * @param iterable $data The original data to be processed.
      * @param callable $mapper the mapper callback. This function will receive 3 arguments.
      * The first one is the current value, second the current results key and third is
      * this class instance so you can call the result emitters.
@@ -114,7 +114,7 @@ class MapReduce implements IteratorAggregate
      * of the bucket that was created during the mapping phase and third one is an
      * instance of this class.
      */
-    public function __construct(Traversable $data, callable $mapper, ?callable $reducer = null)
+    public function __construct(iterable $data, callable $mapper, ?callable $reducer = null)
     {
         $this->_data = $data;
         $this->_mapper = $mapper;

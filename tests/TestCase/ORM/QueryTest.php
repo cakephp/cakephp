@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Engine\FileEngine;
-use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverInterface;
@@ -25,10 +24,10 @@ use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
@@ -854,12 +853,12 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection, $this->table);
 
-        $stmt = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $stmt->method('rowCount')
-            ->will($this->returnValue(9));
-        $results = new ResultSet($query, $stmt);
+        $results = new ResultSet($query, []);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
+
+        $query->setResult([]);
+        $this->assertInstanceOf(ResultSetDecorator::class, $query->all());
     }
 
     /**
@@ -1181,30 +1180,9 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select(['id']);
 
-        $first = $query->enableHydration(false)
-            ->enableBufferedResults(false)->first();
+        $first = $query->enableHydration(false)->first();
 
         $this->assertEquals(['id' => 1], $first);
-    }
-
-    /**
-     * Test to show that when results bufferring is enabled if ResultSet gets
-     * decorated by ResultSetDecorator it gets wrapped in a BufferedIterator instance.
-     */
-    public function testBufferedDecoratedResultSet(): void
-    {
-        $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($this->connection, $table);
-        $query
-            ->select(['id'])
-            // This causes ResultSet to be decorated by a ResultSetDecorator instance
-            ->formatResults(function ($results) {
-                return $results;
-            });
-
-        $results = $query->all();
-
-        $this->assertInstanceOf(BufferedIterator::class, $results->getInnerIterator());
     }
 
     /**
@@ -1817,9 +1795,7 @@ class QueryTest extends TestCase
             ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
-        $resultSet = $this->getMockBuilder('Cake\ORM\ResultSet')
-            ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
-            ->getMock();
+        $resultSet = new ResultSet($query, []);
 
         $query->expects($this->never())
             ->method('execute');
@@ -2536,7 +2512,6 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $query = $table->find()
             ->where(['id > ' => 1])
-            ->enableBufferedResults(false)
             ->enableHydration(false)
             ->matching('articles')
             ->applyOptions(['foo' => 'bar'])
@@ -2576,7 +2551,6 @@ class QueryTest extends TestCase
             'decorators' => 0,
             'executed' => false,
             'hydrate' => false,
-            'buffered' => false,
             'formatters' => 1,
             'mapReducers' => 1,
             'contain' => [],

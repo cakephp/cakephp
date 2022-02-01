@@ -20,6 +20,7 @@ use ArrayObject;
 use Cake\Database\Connection;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\StatementInterface;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -30,7 +31,6 @@ use Cake\Datasource\ResultSetInterface;
 use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
-use Traversable;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -45,7 +45,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     use QueryTrait {
         cache as private _cache;
         all as private _all;
-        _decorateResults as private _applyDecorators;
     }
 
     /**
@@ -1116,24 +1115,21 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Executes this query and returns a ResultSet object containing the results.
-     * This will also setup the correct statement class in order to eager load deep
-     * associations.
+     * Executes this query and returns an iterable containing the results.
      *
-     * @return \Cake\Datasource\ResultSetInterface
+     * @return iterable
      */
-    protected function _execute(): ResultSetInterface
+    protected function _execute(): iterable
     {
         $this->triggerBeforeFind();
         if ($this->_results) {
-            $decorator = $this->_decoratorClass();
-
-            return new $decorator($this->_results);
+            return $this->_results;
         }
 
-        $statement = $this->getEagerLoader()->loadExternal($this, $this->execute());
+        $results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
+        $results = $this->getEagerLoader()->loadExternal($this, $results);
 
-        return new ResultSet($this, $statement);
+        return new ResultSet($this, $results);
     }
 
     /**
@@ -1327,7 +1323,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         return parent::__debugInfo() + [
             'hydrate' => $this->_hydrate,
-            'buffered' => $this->_useBufferedResults,
             'formatters' => count($this->_formatters),
             'mapReducers' => count($this->_mapReduce),
             'contain' => $eagerLoader->getContain(),
@@ -1388,23 +1383,5 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function isAutoFieldsEnabled(): ?bool
     {
         return $this->_autoFields;
-    }
-
-    /**
-     * Decorates the results iterator with MapReduce routines and formatters
-     *
-     * @param \Traversable $result Original results
-     * @return \Cake\Datasource\ResultSetInterface
-     */
-    protected function _decorateResults(Traversable $result): ResultSetInterface
-    {
-        $result = $this->_applyDecorators($result);
-
-        if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
-            $class = $this->_decoratorClass();
-            $result = new $class($result->buffered());
-        }
-
-        return $result;
     }
 }
