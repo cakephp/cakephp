@@ -31,7 +31,6 @@ use Cake\Datasource\ResultSetInterface;
 use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
-use Traversable;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -46,7 +45,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     use QueryTrait {
         cache as private _cache;
         all as private _all;
-        _decorateResults as private _applyDecorators;
     }
 
     /**
@@ -1117,17 +1115,15 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Executes this query and returns a ResultSet object containing the results.
+     * Executes this query and returns an iterable containing the results.
      *
-     * @return \Cake\Datasource\ResultSetInterface
+     * @return iterable
      */
-    protected function _execute(): ResultSetInterface
+    protected function _execute(): iterable
     {
         $this->triggerBeforeFind();
         if ($this->_results) {
-            $decorator = $this->_decoratorClass();
-
-            return new $decorator($this->_results);
+            return $this->_results;
         }
 
         $results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
@@ -1387,23 +1383,5 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function isAutoFieldsEnabled(): ?bool
     {
         return $this->_autoFields;
-    }
-
-    /**
-     * Decorates the results iterator with MapReduce routines and formatters
-     *
-     * @param \Traversable $result Original results
-     * @return \Cake\Datasource\ResultSetInterface
-     */
-    protected function _decorateResults(Traversable $result): ResultSetInterface
-    {
-        $result = $this->_applyDecorators($result);
-
-        if (!($result instanceof ResultSet)) {
-            $class = $this->_decoratorClass();
-            $result = new $class($result->buffered());
-        }
-
-        return $result;
     }
 }

@@ -276,6 +276,10 @@ trait QueryTrait
     public function all(): ResultSetInterface
     {
         if ($this->_results !== null) {
+            if (!($this->_results instanceof ResultSetInterface)) {
+                $this->_results = $this->_decorateResults($this->_results);
+            }
+
             return $this->_results;
         }
 
@@ -546,35 +550,41 @@ trait QueryTrait
     abstract public function applyOptions(array $options);
 
     /**
-     * Executes this query and returns a traversable object containing the results
+     * Executes this query and returns an iterable containing the results
      *
-     * @return \Cake\Datasource\ResultSetInterface
+     * @return iterable
      */
-    abstract protected function _execute(): ResultSetInterface;
+    abstract protected function _execute(): iterable;
 
     /**
      * Decorates the results iterator with MapReduce routines and formatters
      *
-     * @param \Traversable $result Original results
+     * @param iterable $result Original results
      * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _decorateResults(Traversable $result): ResultSetInterface
+    protected function _decorateResults(iterable $result): ResultSetInterface
     {
         $decorator = $this->_decoratorClass();
-        foreach ($this->_mapReduce as $functions) {
-            $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
-        }
 
         if (!empty($this->_mapReduce)) {
+            foreach ($this->_mapReduce as $functions) {
+                $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
+            }
             $result = new $decorator($result);
         }
 
-        foreach ($this->_formatters as $formatter) {
-            $result = $formatter($result, $this);
+        if (!($result instanceof ResultSetInterface)) {
+            $result = new $decorator($result);
         }
 
-        if (!empty($this->_formatters) && !($result instanceof $decorator)) {
-            $result = new $decorator($result);
+        if (!empty($this->_formatters)) {
+            foreach ($this->_formatters as $formatter) {
+                $result = $formatter($result, $this);
+            }
+
+            if (!($result instanceof ResultSetInterface)) {
+                $result = new $decorator($result);
+            }
         }
 
         return $result;
