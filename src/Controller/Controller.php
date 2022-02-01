@@ -20,6 +20,8 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
+use Cake\Datasource\QueryInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -32,9 +34,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Query;
-use Cake\ORM\ResultSet;
-use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use Closure;
@@ -821,25 +820,27 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * This method will also make the PaginatorHelper available in the view.
      *
-     * @param \Cake\ORM\Table|\Cake\ORM\Query|string|null $object Table to paginate
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array<string, mixed> $settings The settings/configuration used for pagination. See {@link \Cake\Controller\Controller::$paginate}.
-     * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results
+     * @return \Cake\Datasource\ResultSetInterface Query results.
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
      * @throws \Cake\Http\Exception\NotFoundException When a page out of bounds is requested.
      */
-    public function paginate(Table|Query|string|null $object = null, array $settings = []): ResultSet|ResultSetInterface
-    {
-        if (is_string($object) || $object === null) {
+    public function paginate(
+        RepositoryInterface|QueryInterface|string|null $object = null,
+        array $settings = []
+    ): ResultSetInterface {
+        if (!is_object($object)) {
             $object = $this->fetchTable($object);
         }
 
         $settings += $this->paginate;
 
+        /** @var class-string<\Cake\Datasource\PaginatorInterface> $paginator */
         $paginator = $settings['paginator'] ?? Paginator::class;
         unset($settings['paginator']);
         if (is_string($paginator)) {
-            /** @var \Cake\Datasource\PaginatorInterface $paginator */
             $paginator = new $paginator();
         }
 
