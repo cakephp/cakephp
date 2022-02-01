@@ -67,6 +67,21 @@ class FixtureHelperTest extends TestCase
     }
 
     /**
+     * Tests that possible table instances used in the fixture loading mechanism
+     * do not remain in the table locator.
+     */
+    public function testLoadFixturesDoesNotPolluteTheTableLocator(): void
+    {
+        (new FixtureHelper())->loadFixtures([
+            'core.Articles',
+            'plugin.TestPlugin.Blog/Comments',
+        ]);
+
+        $this->assertFalse($this->getTableLocator()->exists('Articles'));
+        $this->assertFalse($this->getTableLocator()->exists('Comments'));
+    }
+
+    /**
      * Tests loading missing fixtures.
      */
     public function testLoadMissingFixtures(): void
