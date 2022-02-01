@@ -39,6 +39,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      * @throws \InvalidArgumentException
+     * @throws \JsonException
      */
     public function toDatabase(mixed $value, DriverInterface $driver): ?string
     {
@@ -50,7 +51,7 @@ class JsonType extends BaseType implements BatchCastingInterface
             return null;
         }
 
-        return json_encode($value, $this->_encodingOptions);
+        return json_encode($value, JSON_THROW_ON_ERROR | $this->_encodingOptions);
     }
 
     /**

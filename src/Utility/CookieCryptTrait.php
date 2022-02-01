@@ -160,7 +160,7 @@ trait CookieCryptTrait
      */
     protected function _implode(array $array): string
     {
-        return json_encode($array);
+        return json_encode($array, JSON_THROW_ON_ERROR);
     }
 
     /**

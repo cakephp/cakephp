@@ -283,6 +283,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function loadComponent(string $name, array $config = []): Component
     {
+        /** @var \Cake\Controller\Component */
         return $this->components()->load($name, $config);
     }
 
@@ -307,6 +308,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->components()->has($name)) {
+            /** @var \Cake\Controller\Component */
             return $this->components()->get($name);
         }
 

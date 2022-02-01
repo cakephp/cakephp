@@ -119,7 +119,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Replaces placeholders in message string with context values.
      *
-     * @param \Stringable|string $message Formatted message
+     * @param \Stringable|string $message Formatted message.
      * @param array $context Context for placeholder values.
      * @return string
      */
@@ -142,6 +142,7 @@ abstract class BaseLog extends AbstractLogger
 
         $placeholders = array_intersect($matches[1], array_keys($context));
         $replacements = [];
+        $jsonFlags = JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE;
 
         foreach ($placeholders as $key) {
             $value = $context[$key];
@@ -152,17 +153,17 @@ abstract class BaseLog extends AbstractLogger
             }
 
             if (is_array($value)) {
-                $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+                $replacements['{' . $key . '}'] = json_encode($value, $jsonFlags);
                 continue;
             }
 
             if ($value instanceof JsonSerializable) {
-                $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+                $replacements['{' . $key . '}'] = json_encode($value, $jsonFlags);
                 continue;
             }
 
             if ($value instanceof ArrayObject) {
-                $replacements['{' . $key . '}'] = json_encode($value->getArrayCopy(), JSON_UNESCAPED_UNICODE);
+                $replacements['{' . $key . '}'] = json_encode($value->getArrayCopy(), $jsonFlags);
                 continue;
             }
 
@@ -173,7 +174,7 @@ abstract class BaseLog extends AbstractLogger
 
             if (is_object($value)) {
                 if (method_exists($value, 'toArray')) {
-                    $replacements['{' . $key . '}'] = json_encode($value->toArray(), JSON_UNESCAPED_UNICODE);
+                    $replacements['{' . $key . '}'] = json_encode($value->toArray(), $jsonFlags);
                     continue;
                 }
 
@@ -188,7 +189,7 @@ abstract class BaseLog extends AbstractLogger
                 }
 
                 if (method_exists($value, '__debugInfo')) {
-                    $replacements['{' . $key . '}'] = json_encode($value->__debugInfo(), JSON_UNESCAPED_UNICODE);
+                    $replacements['{' . $key . '}'] = json_encode($value->__debugInfo(), $jsonFlags);
                     continue;
                 }
             }

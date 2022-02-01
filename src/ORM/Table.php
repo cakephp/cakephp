@@ -863,6 +863,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
+        /** @var \Cake\ORM\Behavior $behavior */
         $behavior = $this->_behaviors->get($name);
 
         return $behavior;
@@ -1535,7 +1536,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     'get-%s-%s-%s',
                     $this->getConnection()->configName(),
                     $this->getTable(),
-                    json_encode($primaryKey)
+                    json_encode($primaryKey, JSON_THROW_ON_ERROR)
                 );
             }
             $query->cache($cacheKey, $cacheConfig);

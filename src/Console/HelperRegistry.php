@@ -92,6 +92,7 @@ class HelperRegistry extends ObjectRegistry
      * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\Console\Helper The constructed helper class.
      * @psalm-suppress MoreSpecificImplementedParamType
+     * @psalm-param \Cake\Console\Helper|class-string<\Cake\Console\Helper> $class
      */
     protected function _create(object|string $class, string $alias, array $config): Helper
     {
@@ -99,7 +100,6 @@ class HelperRegistry extends ObjectRegistry
             return $class;
         }
 
-        /** @var \Cake\Console\Helper */
         return new $class($this->_io, $config);
     }
 }

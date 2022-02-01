@@ -229,12 +229,20 @@ class PluginCollection implements Iterator, Countable
      * @param array<string, mixed> $config Configuration options for the plugin.
      * @return \Cake\Core\PluginInterface
      * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
+     * @throws \InvalidArgumentException When class name cannot be found.
+     * @psalm-param class-string<\Cake\Core\PluginInterface>|string $name
      */
     public function create(string $name, array $config = []): PluginInterface
     {
         if (str_contains($name, '\\')) {
-            /** @var \Cake\Core\PluginInterface */
-            return new $name($config);
+            if (!class_exists($name)) {
+                throw new InvalidArgumentException('Class not exists: ' . $name);
+            }
+
+            /** @var \Cake\Core\PluginInterface $plugin */
+            $plugin = new $name($config);
+
+            return $plugin;
         }
 
         $config += ['name' => $name];

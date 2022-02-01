@@ -43,6 +43,7 @@ class RoutesCheckCommand extends Command
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
+     * @throws \JsonException
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -63,7 +64,7 @@ class RoutesCheckCommand extends Command
 
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
-                [$name, $url, json_encode($route)],
+                [$name, $url, json_encode($route, JSON_THROW_ON_ERROR)],
             ];
             $io->helper('table')->output($output);
             $io->out();

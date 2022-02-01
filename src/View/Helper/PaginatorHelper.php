@@ -681,6 +681,7 @@ class PaginatorHelper extends Helper
             return $this->_defaultModel;
         }
 
+        /** @var array<string, mixed> $params */
         $params = $this->_View->getRequest()->getAttribute('paging');
         if (!$params) {
             return null;

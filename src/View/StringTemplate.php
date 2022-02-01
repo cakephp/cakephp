@@ -340,13 +340,13 @@ class StringTemplate
      * Adds a class and returns a unique list either in array or space separated
      *
      * @param mixed $input The array or string to add the class to
-     * @param array<string>|string|bool|null $newClass the new class or classes to add
+     * @param array<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
      * @return array<string>|string|null
      */
     public function addClass(
         mixed $input,
-        array|string|bool|null $newClass,
+        array|string|false|null $newClass,
         string $useIndex = 'class'
     ): array|string|null {
         // NOOP

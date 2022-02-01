@@ -963,6 +963,7 @@ class Debugger
             /** @var array $trace */
             $trace = static::trace(['start' => $data['start'], 'format' => 'points']);
             $error = new PhpError($data['code'], $data['description'], $data['file'], $data['line'], $trace);
+            /** @var \Cake\Error\ErrorRendererInterface $renderer */
             $renderer = new $this->renderers[$outputFormat]();
             echo $renderer->render($error, Configure::read('debug'));
 

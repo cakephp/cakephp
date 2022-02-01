@@ -58,7 +58,7 @@ class PDOStatement extends StatementDecorator
     {
         if ($property === 'queryString') {
             /** @psalm-suppress NoInterfaceProperties */
-            return $this->_statement->queryString ?? null;
+            return $this->_statement->queryString;
         }
 
         throw new RuntimeException("Cannot access undefined property `$property`.");

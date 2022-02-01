@@ -125,7 +125,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param array<string, mixed> $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
      * @psalm-suppress MoreSpecificImplementedParamType
-     * @psalm-param class-string $class
+     * @psalm-param \Cake\Controller\Component|class-string<\Cake\Controller\Component> $class
      */
     protected function _create(object|string $class, string $alias, array $config): Component
     {

@@ -172,7 +172,7 @@ class Security
             static::$_instance = $instance;
         }
         if (isset(static::$_instance)) {
-            /** @psalm-suppress LessSpecificReturnStatement */
+            /** @var \Cake\Utility\Crypto\OpenSsl */
             return static::$_instance;
         }
         throw new InvalidArgumentException(

@@ -187,6 +187,10 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         $subcommand = $args->getArgument('subcommand');
 
         $options = [];
+        /**
+         * @var string $key
+         * @var \Cake\Console\BaseCommand|class-string $value
+         */
         foreach ($this->commands as $key => $value) {
             $parts = explode(' ', $key);
             if ($parts[0] !== $name) {
@@ -202,6 +206,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             // Handle class strings
             if (is_string($value)) {
                 $reflection = new ReflectionClass($value);
+                /** @var \Cake\Console\BaseCommand $value */
                 $value = $reflection->newInstance();
             }
             $parser = $value->getOptionParser();

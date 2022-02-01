@@ -306,8 +306,10 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     protected function _create(array $options): Table
     {
-        /** @var \Cake\ORM\Table */
-        return new $options['className']($options);
+        /** @var class-string<\Cake\ORM\Table> $class */
+        $class = $options['className'];
+
+        return new $class($options);
     }
 
     /**
