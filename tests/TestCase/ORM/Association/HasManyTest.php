@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
@@ -156,8 +157,55 @@ class HasManyTest extends TestCase
     {
         $assoc = new HasMany('Test');
         $this->assertNull($assoc->getSort());
+
+        $assoc->setSort('id ASC');
+        $this->assertSame('id ASC', $assoc->getSort());
+
         $assoc->setSort(['id' => 'ASC']);
-        $this->assertEquals(['id' => 'ASC'], $assoc->getSort());
+        $this->assertSame(['id' => 'ASC'], $assoc->getSort());
+
+        $closure = function () {
+            return ['id' => 'ASC'];
+        };
+        $assoc->setSort($closure);
+        $this->assertSame($closure, $assoc->getSort());
+
+        $expression = new OrderClauseExpression('id', 'ASC');
+        $assoc->setSort($expression);
+        $this->assertSame($expression, $assoc->getSort());
+    }
+
+    /**
+     * Tests that sorting works using the accepted types for `setSort()`.
+     */
+    public function testSorting(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $assoc = $authors->hasMany('Articles');
+
+        $field = 'Articles.id';
+        $driver = $authors->getConnection()->getDriver();
+        if ($driver->isAutoQuotingEnabled()) {
+            $field = $driver->quoteIdentifier($field);
+        }
+
+        $assoc->setSort("$field DESC");
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
+
+        $assoc->setSort(['Articles.id' => 'DESC']);
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
+
+        $assoc->setSort(function () {
+            return ['Articles.id' => 'DESC'];
+        });
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
+
+        $assoc->setSort(new OrderClauseExpression('Articles.id', 'DESC'));
+        $result = $authors->get(1, ['contain' => 'Articles']);
+        $this->assertSame([3, 1], array_column($result['articles'], 'id'));
     }
 
     /**
