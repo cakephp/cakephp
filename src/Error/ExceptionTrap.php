@@ -58,6 +58,23 @@ class ExceptionTrap
     protected $callbacks = [];
 
     /**
+     * The currently registered global exception handler
+     *
+     * This is best effort as we can't know if/when another
+     * exception handler is registered.
+     *
+     * @var \Cake\Error\ExceptionTrap|null
+     */
+    protected static $registeredTrap = null;
+
+    /**
+     * Track if this trap was removed from the global handler.
+     *
+     * @var bool
+     */
+    protected $disabled = false;
+
+    /**
      * Constructor
      *
      * @param array<string, mixed> $options An options array. See $_defaultConfig.
@@ -153,7 +170,38 @@ class ExceptionTrap
     public function register(): void
     {
         set_exception_handler([$this, 'handleException']);
-        // TODO handle fatal errors.
+        register_shutdown_function([$this, 'handleShutdown']);
+        static::$registeredTrap = $this;
+    }
+
+    /**
+     * Remove this instance from the singleton
+     *
+     * If this instance is not currently the registered singleton
+     * nothing happens.
+     *
+     * @return void
+     */
+    public function unregister(): void
+    {
+        if (static::$registeredTrap == $this) {
+            $this->disabled = true;
+            static::$registeredTrap = null;
+        }
+    }
+
+    /**
+     * Get the registered global instance if set.
+     *
+     * Keep in mind that the global state contained here
+     * is mutable and the object returned by this method
+     * could be a stale value.
+     *
+     * @return \Cake\Error\ExceptionTrap|null The global instance or null.
+     */
+    public static function instance(): ?self
+    {
+        return static::$registeredTrap;
     }
 
     /**
@@ -169,6 +217,9 @@ class ExceptionTrap
      */
     public function handleException(Throwable $exception): void
     {
+        if ($this->disabled) {
+            return;
+        }
         $request = Router::getRequest();
 
         $this->logException($exception, $request);
@@ -182,6 +233,86 @@ class ExceptionTrap
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
         }
+    }
+
+    /**
+     * Shutdown handler
+     *
+     * Convert fatal errors into exceptions that we can render.
+     *
+     * @return void
+     */
+    public function handleShutdown(): void
+    {
+        if ($this->disabled) {
+            return;
+        }
+        $megabytes = $this->_config['extraFatalErrorMemory'] ?? 4;
+        if ($megabytes > 0) {
+            $this->increaseMemoryLimit($megabytes * 1024);
+        }
+        $error = error_get_last();
+        if (!is_array($error)) {
+            return;
+        }
+        $fatals = [
+            E_USER_ERROR,
+            E_ERROR,
+            E_PARSE,
+        ];
+        if (!in_array($error['type'], $fatals, true)) {
+            return;
+        }
+        $this->handleFatalError(
+            $error['type'],
+            $error['message'],
+            $error['file'],
+            $error['line']
+        );
+    }
+
+    /**
+     * Increases the PHP "memory_limit" ini setting by the specified amount
+     * in kilobytes
+     *
+     * @param int $additionalKb Number in kilobytes
+     * @return void
+     */
+    public function increaseMemoryLimit(int $additionalKb): void
+    {
+        $limit = ini_get('memory_limit');
+        if ($limit === false || $limit === '' || $limit === '-1') {
+            return;
+        }
+        $limit = trim($limit);
+        $units = strtoupper(substr($limit, -1));
+        $current = (int)substr($limit, 0, -1);
+        if ($units === 'M') {
+            $current *= 1024;
+            $units = 'K';
+        }
+        if ($units === 'G') {
+            $current = $current * 1024 * 1024;
+            $units = 'K';
+        }
+
+        if ($units === 'K') {
+            ini_set('memory_limit', ceil($current + $additionalKb) . 'K');
+        }
+    }
+
+    /**
+     * Display/Log a fatal error.
+     *
+     * @param int $code Code of error
+     * @param string $description Error description
+     * @param string $file File on which error occurred
+     * @param int $line Line that triggered the error
+     * @return void
+     */
+    public function handleFatalError(int $code, string $description, string $file, int $line): void
+    {
+        $this->handleException(new FatalErrorException('Fatal Error: ' . $description, 500, $file, $line));
     }
 
     /**
