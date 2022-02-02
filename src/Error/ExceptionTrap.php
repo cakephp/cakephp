@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Closure;
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -88,13 +88,13 @@ class ExceptionTrap
      * Get an instance of the renderer.
      *
      * @param \Throwable $exception Exception to render
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request if possible.
      * @return \Cake\Error\ExceptionRendererInterface
      */
-    public function renderer(Throwable $exception)
+    public function renderer(Throwable $exception, $request = null)
     {
-        // The return of this method is not defined because
-        // the desired interface has bad types that will be changing in 5.x
-        $request = Router::getRequest();
+        $request = $request ?? Router::getRequest();
+
         /** @var class-string|callable $class */
         $class = $this->_getConfig('exceptionRenderer');
 
@@ -223,15 +223,26 @@ class ExceptionTrap
         $request = Router::getRequest();
 
         $this->logException($exception, $request);
-        foreach ($this->callbacks as $callback) {
-            $callback($exception);
-        }
+        $this->applyCallbacks($exception);
 
         try {
             $renderer = $this->renderer($exception);
             $renderer->write($renderer->render());
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
+        }
+    }
+
+    /**
+     * Apply callbacks to an exception.
+     *
+     * @param \Throwable $exception Exception instance.
+     * @return void
+     */
+    public function applyCallbacks(Throwable $exception): void
+    {
+        foreach ($this->callbacks as $callback) {
+            $callback($exception);
         }
     }
 
@@ -322,10 +333,10 @@ class ExceptionTrap
      * and the ErrorHandlerMiddleware
      *
      * @param \Throwable $exception The exception to log
-     * @param \Cake\Http\ServerRequest|null $request The optional request
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The optional request
      * @return void
      */
-    public function logException(Throwable $exception, ?ServerRequest $request = null): void
+    public function logException(Throwable $exception, ?ServerRequestInterface $request = null): void
     {
         $logger = $this->logger();
         $logger->log($exception, $request);
