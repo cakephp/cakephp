@@ -38,7 +38,18 @@ use Cake\Utility\Inflector;
  * It can also check for HTTP caching headers like `Last-Modified`, `If-Modified-Since`
  * etc. and return a response accordingly.
  *
+ * ## Replacing Deprecated methods
+ *
+ * - Replace `accepts()` with `$this->request->accepts()`.
+ * - Replace `requestedWith()` with a custom request detector.
+ *   eg. `$this->request->is('json')`
+ * - Replace `prefers()` with `ContentTypeNegotiation` or the negotiation features
+ *   on `Controller`.
+ * - Replace `renderAs()` with controller content negotiation features on `Controller`.
+ * - Replace `checkHttpCache` option with `CheckHttpCacheComponent`.
+ *
  * @link https://book.cakephp.org/4/en/controllers/components/request-handling.html
+ * @deprecated 4.4.0 Use altenative methods listed above.
  */
 class RequestHandlerComponent extends Component
 {
