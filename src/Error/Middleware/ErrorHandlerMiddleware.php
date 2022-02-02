@@ -74,14 +74,14 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @var \Cake\Error\ErrorHandler|null
      */
-    protected $errorHandler;
+    protected $errorHandler = null;
 
     /**
      * ExceptionTrap instance
      *
      * @var \Cake\Error\ExceptionTrap|null
      */
-    protected $exceptionTrap;
+    protected $exceptionTrap = null;
 
     /**
      * Constructor
