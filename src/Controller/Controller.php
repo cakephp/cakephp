@@ -851,17 +851,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 $settings
             );
         } catch (PageOutOfBoundsException $exception) {
-            // Nothing to do here, NotFoundException will be thrown below.
+            throw new NotFoundException(null, null, $exception);
         }
 
         $paging = $paginator->getPagingParams() + (array)$this->request->getAttribute('paging', []);
         $this->setRequest($this->request->withAttribute('paging', $paging));
 
-        if (isset($results)) {
-            return $results;
-        }
-
-        throw new NotFoundException(null, null, $exception ?? null);
+        return $results;
     }
 
     /**
