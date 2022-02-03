@@ -25,22 +25,4 @@ use Countable;
  */
 class ResultSetDecorator extends Collection implements ResultSetInterface
 {
-    /**
-     * Make this object countable.
-     *
-     * Part of the Countable interface. Calling this method
-     * will convert the underlying traversable object into an array and
-     * get the count of the underlying data.
-     *
-     * @return int
-     */
-    public function count(): int
-    {
-        $iterator = $this->getInnerIterator();
-        if ($iterator instanceof Countable) {
-            return $iterator->count();
-        }
-
-        return count($this->toArray());
-    }
 }
