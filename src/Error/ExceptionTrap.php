@@ -14,7 +14,7 @@ use Throwable;
  * Entry point to CakePHP's exception handling.
  *
  * Using the `register()` method you can attach an ExceptionTrap to PHP's default exception handler and register
- * a shutdown handler to handle fatal errors. 
+ * a shutdown handler to handle fatal errors.
  *
  * When exceptions are trapped the `Exception.handled` event is triggered.
  * Then exceptions are logged (if enabled) and finally 'rendered' using the defined renderer.
