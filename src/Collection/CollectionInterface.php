@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Collection;
 
+use Countable;
 use Iterator;
 use JsonSerializable;
 use const SORT_NUMERIC;
@@ -25,7 +26,7 @@ use const SORT_NUMERIC;
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
  */
-interface CollectionInterface extends Iterator, JsonSerializable
+interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {
     /**
      * Applies a callback to the elements in this collection.

@@ -20,8 +20,8 @@ use Cake\Collection\CollectionInterface;
 use Countable;
 
 /**
- * Describes how a collection of datasource results should look like
+ * Describes how a collection of datasource results should look like.
  */
-interface ResultSetInterface extends CollectionInterface, Countable
+interface ResultSetInterface extends CollectionInterface
 {
 }

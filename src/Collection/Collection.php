@@ -68,22 +68,6 @@ class Collection extends IteratorIterator implements CollectionInterface
      *
      * @return int
      */
-    public function count(): int
-    {
-        $traversable = $this->optimizeUnwrap();
-
-        if (is_array($traversable)) {
-            return count($traversable);
-        }
-
-        return iterator_count($traversable);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return int
-     */
     public function countKeys(): int
     {
         return count($this->toArray());
