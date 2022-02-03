@@ -58,7 +58,7 @@ class RoutesCheckCommand extends Command
                 }
             }
 
-            unset($route['_matchedRoute']);
+            unset($route['_route'], $route['_matchedRoute']);
             ksort($route);
 
             $output = [
