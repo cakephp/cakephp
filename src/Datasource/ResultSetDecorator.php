@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
-use Countable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
