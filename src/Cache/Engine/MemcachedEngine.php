@@ -134,11 +134,6 @@ class MemcachedEngine extends CacheEngine
             $this->_config['servers'] = [$this->_config['servers']];
         }
 
-        /** @psalm-suppress RedundantPropertyInitializationCheck */
-        if (isset($this->_Memcached)) {
-            return true;
-        }
-
         if ($this->_config['persistent']) {
             $this->_Memcached = new Memcached($this->_config['persistent']);
         } else {

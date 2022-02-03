@@ -26,11 +26,6 @@ parameters:
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
-			message: "#^Property Cake\\\\Cache\\\\Engine\\\\MemcachedEngine\\:\\:\\$_Memcached \\(Memcached\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
 			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
 			count: 2
 			path: src/Collection/Collection.php
