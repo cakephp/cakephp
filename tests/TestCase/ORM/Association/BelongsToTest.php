@@ -105,6 +105,29 @@ class BelongsToTest extends TestCase
     }
 
     /**
+     * Tests that the default foreign key condition generation can be disabled.
+     */
+    public function testDisableForeignKey(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $assoc = $table
+            ->belongsTo('Authors')
+            ->setForeignKey('author_id');
+
+        $article = $table->find()->contain(['Authors'])->orderAsc('Articles.id')->first();
+        $this->assertSame('mariano', $article->author->name);
+
+        $assoc
+            ->setForeignKey(false)
+            ->setConditions([
+                'Authors.name' => 'larry',
+            ]);
+
+        $article = $table->find()->contain(['Authors'])->orderAsc('Articles.id')->first();
+        $this->assertSame('larry', $article->author->name);
+    }
+
+    /**
      * Test that foreignKey generation ignores database names in target table.
      */
     public function testForeignKeyIgnoreDatabaseName(): void

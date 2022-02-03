@@ -77,6 +77,29 @@ class HasOneTest extends TestCase
     }
 
     /**
+     * Tests that the default foreign key condition generation can be disabled.
+     */
+    public function testDisableForeignKey(): void
+    {
+        $table = $this->getTableLocator()->get('Users');
+        $assoc = $table
+            ->hasOne('Profiles')
+            ->setForeignKey('user_id');
+
+        $user = $table->find()->contain(['Profiles'])->orderAsc('Users.id')->first();
+        $this->assertSame('mariano', $user->profile->first_name);
+
+        $assoc
+            ->setForeignKey(false)
+            ->setConditions([
+                'Profiles.first_name' => 'larry',
+            ]);
+
+        $user = $table->find()->contain(['Profiles'])->orderAsc('Users.id')->first();
+        $this->assertSame('larry', $user->profile->first_name);
+    }
+
+    /**
      * Tests that the association reports it can be joined
      */
     public function testCanBeJoined(): void
