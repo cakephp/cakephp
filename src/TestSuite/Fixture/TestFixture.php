@@ -140,6 +140,10 @@ class TestFixture implements FixtureInterface
             $name = Inflector::camelize($this->table);
             $ormTable = $this->fetchTable($name, ['connection' => $db]);
 
+            // Remove the fetched table from the locator to avoid conflicts
+            // with test cases that need to (re)configure the alias.
+            $this->getTableLocator()->remove($name);
+
             /** @var \Cake\Database\Schema\TableSchema $schema */
             $schema = $ormTable->getSchema();
             $this->_schema = $schema;

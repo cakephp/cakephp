@@ -74,20 +74,25 @@ class TestFixtureTest extends TestCase
     }
 
     /**
-     * Tests init with a table that doesn't exist throws exception.
+     * Tests that trying to reflect with a table that doesn't exist throws an exception.
      */
-    public function testInitMissingTable(): void
+    public function testReflectionMissingTable(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`. The table does not exist.');
-        $fixture = new LettersFixture();
-        $fixture->init();
+        $this->expectExceptionMessage(
+            sprintf(
+                'Cannot describe schema for table `letters` for fixture `%s`. The table does not exist.',
+                LettersFixture::class
+            ),
+        );
+
+        new LettersFixture();
     }
 
     /**
-     * Tests init will reflect schema for table.
+     * Tests schema reflection.
      */
-    public function testInitReflection(): void
+    public function testReflection(): void
     {
         $db = ConnectionManager::get('test');
         $table = new TableSchema('letters', [
@@ -102,20 +107,19 @@ class TestFixtureTest extends TestCase
         }
 
         $fixture = new LettersFixture();
-        $fixture->init();
         $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
     }
 
     /**
-     * test schema reflection without $import or $fields will reflect the schema
+     * Tests that schema reflection picks up dynamically configured column types.
      */
-    public function testInitReflectSchemaCustomTypes(): void
+    public function testReflectionWithDynamicTypes(): void
     {
         $db = ConnectionManager::get('test');
         $table = new TableSchema('letters', [
             'id' => ['type' => 'integer'],
             'letter' => ['type' => 'string', 'length' => 1],
-            'complex_field' => ['type' => 'json'],
+            'complex_field' => ['type' => 'text'],
         ]);
         $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
         $sql = $table->createSql($db);
@@ -128,7 +132,6 @@ class TestFixtureTest extends TestCase
         $table->getSchema()->setColumnType('complex_field', 'json');
 
         $fixture = new LettersFixture();
-        $fixture->init();
         $fixtureSchema = $fixture->getTableSchema();
         $this->assertSame(['id', 'letter', 'complex_field'], $fixtureSchema->columns());
         $this->assertSame('json', $fixtureSchema->getColumnType('complex_field'));
