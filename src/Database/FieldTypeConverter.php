@@ -22,6 +22,8 @@ use Cake\Database\Type\OptionalConvertInterface;
 /**
  * A callable class to be used for processing each of the rows in a statement
  * result, so that the values are converted to the right PHP types.
+ *
+ * @internal
  */
 class FieldTypeConverter
 {
@@ -117,11 +119,15 @@ class FieldTypeConverter
      * Converts each of the fields in the array that are present in the type map
      * using the corresponding Type class.
      *
-     * @param array $row The array with the fields to be casted
-     * @return array
+     * @param mixed $row The array with the fields to be casted
+     * @return mixed
      */
-    public function __invoke(array $row): array
+    public function __invoke(mixed $row): mixed
     {
+        if (!is_array($row)) {
+            return $row;
+        }
+
         if (!empty($this->_typeMap)) {
             foreach ($this->_typeMap as $field => $type) {
                 $row[$field] = $type->toPHP($row[$field], $this->_driver);

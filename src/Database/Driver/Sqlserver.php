@@ -54,6 +54,11 @@ class Sqlserver extends Driver
     ];
 
     /**
+     * @inheritDoc
+     */
+    protected const STATEMENT_CLASS = SqlserverStatement::class;
+
+    /**
      * Base configuration settings for Sqlserver driver
      *
      * @var array<string, mixed>
@@ -174,10 +179,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Prepares a sql statement to be executed
-     *
-     * @param \Cake\Database\Query|string $query The query to prepare.
-     * @return \Cake\Database\StatementInterface
+     * @inheritDoc
      */
     public function prepare(Query|string $query): StatementInterface
     {
@@ -205,7 +207,13 @@ class Sqlserver extends Driver
             ]
         );
 
-        return new SqlserverStatement($statement, $this);
+        $typeMap = null;
+        if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === Query::TYPE_SELECT) {
+            $typeMap = $query->getSelectTypeMap();
+        }
+
+        /** @var \Cake\Database\StatementInterface */
+        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
     }
 
     /**

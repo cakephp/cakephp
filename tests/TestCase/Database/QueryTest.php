@@ -29,7 +29,6 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
@@ -113,13 +112,13 @@ class QueryTest extends TestCase
         $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new Query($this->connection);
         $result = $query->select('1 + 1')->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $this->assertEquals([2], $result->fetch());
         $result->closeCursor();
 
         //This new field should be appended
         $result = $query->select(['1 + 3'])->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $this->assertEquals([2, 4], $result->fetch());
         $result->closeCursor();
 
@@ -2683,22 +2682,23 @@ class QueryTest extends TestCase
 
                 return $row;
             })
-            ->execute();
+            ->all();
 
-        while ($row = $result->fetch('assoc')) {
+        foreach ($result as $row) {
             $this->assertEquals($row['id'] + 1, $row['modified_id']);
         }
 
-        $result = $query->decorateResults(function ($row) {
-            $row['modified_id']--;
+        $result = $query
+            ->decorateResults(function ($row) {
+                $row['modified_id']--;
 
-            return $row;
-        })->execute();
+                return $row;
+            })
+            ->all();
 
-        while ($row = $result->fetch('assoc')) {
+        foreach ($result as $row) {
             $this->assertEquals($row['id'], $row['modified_id']);
         }
-        $result->closeCursor();
 
         $result = $query
             ->decorateResults(function ($row) {
@@ -2706,19 +2706,18 @@ class QueryTest extends TestCase
 
                 return $row;
             }, true)
-            ->execute();
+            ->all();
 
-        while ($row = $result->fetch('assoc')) {
+        foreach ($result as $row) {
             $this->assertSame('bar', $row['foo']);
             $this->assertArrayNotHasKey('modified_id', $row);
         }
 
-        $results = $query->decorateResults(null, true)->execute();
-        while ($row = $results->fetch('assoc')) {
+        $result = $query->decorateResults(null, true)->all();
+        foreach ($result as $row) {
             $this->assertArrayNotHasKey('foo', $row);
             $this->assertArrayNotHasKey('modified_id', $row);
         }
-        $results->closeCursor();
     }
 
     /**
@@ -2736,7 +2735,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
 
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
         $result->closeCursor();
     }
@@ -2756,7 +2755,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, !$this->autoQuote);
 
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
         $result->closeCursor();
     }
@@ -2775,7 +2774,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
 
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
         $result->closeCursor();
     }
@@ -4565,24 +4564,18 @@ class QueryTest extends TestCase
     public function testSymmetricJsonType(): void
     {
         $query = new Query($this->connection);
-        $insert = $query
-            ->insert(['comment', 'article_id', 'user_id'], ['comment' => 'json'])
-            ->into('comments')
-            ->values([
-                'comment' => ['a' => 'b', 'c' => true],
-                'article_id' => 1,
-                'user_id' => 1,
-            ])
-            ->execute();
-
-        $id = $insert->lastInsertId('comments', 'id');
-        $insert->closeCursor();
+        $update = $query
+            ->update('comments')
+            ->set('comment', ['a' => 'b', 'c' => true], 'json')
+            ->where(['id' => 1])
+            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
+        $query->execute()->closeCursor();
 
         $query = new Query($this->connection);
         $query
             ->select(['comment'])
             ->from('comments')
-            ->where(['id' => $id])
+            ->where(['id' => 1])
             ->getSelectTypeMap()->setTypes(['comment' => 'json']);
 
         $result = $query->execute();
@@ -4933,7 +4926,7 @@ class QueryTest extends TestCase
             ->from('profiles')
             ->limit(1)
             ->execute();
-        $results = $stmt->fetch(StatementDecorator::FETCH_TYPE_OBJ);
+        $results = $stmt->fetch('obj');
         $stmt->closeCursor();
 
         $this->assertInstanceOf(stdClass::class, $results);

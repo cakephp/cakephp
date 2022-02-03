@@ -24,7 +24,6 @@ use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggedQuery;
-use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
@@ -280,9 +279,8 @@ class Connection implements ConnectionInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($query) {
             $statement = $this->_driver->prepare($query);
-
             if ($this->_logQueries) {
-                $statement = $this->_newLogger($statement);
+                $statement->setLogger($this->getLogger());
             }
 
             return $statement;
@@ -905,21 +903,6 @@ class Connection implements ConnectionInterface
         $query = new LoggedQuery();
         $query->query = $sql;
         $this->getLogger()->debug((string)$query, ['query' => $query]);
-    }
-
-    /**
-     * Returns a new statement object that will log the activity
-     * for the passed original statement instance.
-     *
-     * @param \Cake\Database\StatementInterface $statement the instance to be decorated
-     * @return \Cake\Database\Log\LoggingStatement
-     */
-    protected function _newLogger(StatementInterface $statement): LoggingStatement
-    {
-        $log = new LoggingStatement($statement, $this->_driver);
-        $log->setLogger($this->getLogger());
-
-        return $log;
     }
 
     /**

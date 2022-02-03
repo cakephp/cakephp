@@ -23,7 +23,7 @@ use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Database\Statement\PDOStatement;
+use Cake\Database\Statement\Statement;
 use Closure;
 use InvalidArgumentException;
 use PDO;
@@ -44,6 +44,11 @@ abstract class Driver implements DriverInterface
      * @var array<int>  DB-specific error codes that allow connect retry
      */
     protected const RETRY_ERROR_CODES = [];
+
+    /**
+     * @var class-string<\Cake\Database\Statement\Statement>
+     */
+    protected const STATEMENT_CLASS = Statement::class;
 
     /**
      * Instance of PDO.
@@ -210,7 +215,13 @@ abstract class Driver implements DriverInterface
         $this->connect();
         $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
 
-        return new PDOStatement($statement, $this);
+        $typeMap = null;
+        if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === Query::TYPE_SELECT) {
+            $typeMap = $query->getSelectTypeMap();
+        }
+
+        /** @var \Cake\Database\StatementInterface */
+        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
     }
 
     /**

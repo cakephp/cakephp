@@ -19,13 +19,11 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\SqliteCompiler;
 use Cake\Database\Statement\SqliteStatement;
-use Cake\Database\StatementInterface;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
@@ -37,6 +35,11 @@ class Sqlite extends Driver
 {
     use SqlDialectTrait;
     use TupleComparisonTranslatorTrait;
+
+    /**
+     * @inheritDoc
+     */
+    protected const STATEMENT_CLASS = SqliteStatement::class;
 
     /**
      * Base configuration settings for Sqlite driver
@@ -169,20 +172,6 @@ class Sqlite extends Driver
     public function enabled(): bool
     {
         return in_array('sqlite', PDO::getAvailableDrivers(), true);
-    }
-
-    /**
-     * Prepares a sql statement to be executed
-     *
-     * @param \Cake\Database\Query|string $query The query to prepare.
-     * @return \Cake\Database\StatementInterface
-     */
-    public function prepare(Query|string $query): StatementInterface
-    {
-        $this->connect();
-        $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
-
-        return new SqliteStatement($statement, $this);
     }
 
     /**

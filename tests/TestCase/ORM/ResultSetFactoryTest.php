@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\ORM\ResultSetFactory;
@@ -178,7 +179,7 @@ class ResultSetFactoryTest extends TestCase
         $query->disableAutoFields();
 
         $row = ['Other__field' => 'test'];
-        $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->method('fetchAll')
             ->will($this->returnValue([$row]));
 

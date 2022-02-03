@@ -21,32 +21,46 @@ namespace Cake\Database\Statement;
  *
  * @internal
  */
-class SqliteStatement extends PDOStatement
+class SqliteStatement extends Statement
 {
     /**
-     * Returns the number of rows returned of affected by last execution
-     *
-     * @return int
+     * @var int|null
+     */
+    protected ?int $affectedRows = null;
+
+    /**
+     * @inheritDoc
+     */
+    public function execute(?array $params = null): bool
+    {
+        $this->affectedRows = null;
+
+        return parent::execute($params);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function rowCount(): int
     {
-        /** @psalm-suppress NoInterfaceProperties */
+        if ($this->affectedRows !== null) {
+            return $this->affectedRows;
+        }
+
         if (
-            $this->_statement->queryString &&
-            preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)
+            $this->statement->queryString &&
+            preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->statement->queryString)
         ) {
             $changes = $this->_driver->prepare('SELECT CHANGES()');
             $changes->execute();
             $row = $changes->fetch();
             $changes->closeCursor();
 
-            if (!$row) {
-                return 0;
-            }
-
-            return (int)$row[0];
+            $this->affectedRows = $row ? (int)$row[0] : 0;
+        } else {
+            $this->affectedRows = parent::rowCount();
         }
 
-        return parent::rowCount();
+        return $this->affectedRows;
     }
 }

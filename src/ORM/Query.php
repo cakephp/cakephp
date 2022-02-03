@@ -20,7 +20,6 @@ use ArrayObject;
 use Cake\Database\Connection;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
-use Cake\Database\StatementInterface;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -1064,7 +1063,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function cache($key, $config = 'default')
     {
-        if ($this->_type !== 'select') {
+        if ($this->_type !== self::TYPE_SELECT) {
             throw new RuntimeException('You cannot cache the results of non-select queries.');
         }
 
@@ -1079,7 +1078,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function all(): ResultSetInterface
     {
-        if ($this->_type !== 'select') {
+        if ($this->_type !== self::TYPE_SELECT) {
             throw new RuntimeException(
                 'You cannot call all() on a non-select query. Use execute() instead.'
             );
@@ -1097,7 +1096,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function triggerBeforeFind(): void
     {
-        if (!$this->_beforeFindFired && $this->_type === 'select') {
+        if (!$this->_beforeFindFired && $this->_type === self::TYPE_SELECT) {
             $this->_beforeFindFired = true;
 
             $repository = $this->getRepository();
@@ -1133,7 +1132,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return $this->_results;
         }
 
-        $results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
+        $results = parent::all();
+        if (!is_array($results)) {
+            $results = iterator_to_array($results);
+        }
         $results = $this->getEagerLoader()->loadExternal($this, $results);
 
         return $this->resultSetFactory()->createResultSet($this, $results);
@@ -1167,7 +1169,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     protected function _transformQuery(): void
     {
-        if (!$this->_dirty || $this->_type !== 'select') {
+        if (!$this->_dirty || $this->_type !== self::TYPE_SELECT) {
             return;
         }
 

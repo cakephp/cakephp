@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use ArrayIterator;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -24,7 +25,6 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Expression\WindowExpression;
-use Cake\Database\Statement\CallbackStatement;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -56,6 +56,26 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * @var string
      */
     public const JOIN_TYPE_RIGHT = 'RIGHT';
+
+    /**
+     * @var string
+     */
+    public const TYPE_SELECT = 'select';
+
+    /**
+     * @var string
+     */
+    public const TYPE_INSERT = 'insert';
+
+    /**
+     * @var string
+     */
+    public const TYPE_UPDATE = 'update';
+
+    /**
+     * @var string
+     */
+    public const TYPE_DELETE = 'delete';
 
     /**
      * Connection instance to be used to execute this query.
@@ -149,11 +169,16 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     protected array $_resultDecorators = [];
 
     /**
-     * Statement object resulting from executing this query.
-     *
      * @var \Cake\Database\StatementInterface|null
      */
-    protected ?StatementInterface $_iterator = null;
+    protected ?StatementInterface $_statement = null;
+
+    /**
+     * Result set from exeuted SELCT query.
+     *
+     * @var iterable|null
+     */
+    protected ?iterable $_results = null;
 
     /**
      * The object responsible for generating query placeholders and temporarily store values
@@ -241,11 +266,36 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function execute(): StatementInterface
     {
-        $statement = $this->_connection->run($this);
-        $this->_iterator = $this->_decorateStatement($statement);
+        $this->_statement = $this->_connection->run($this);
         $this->_dirty = false;
 
-        return $this->_iterator;
+        return $this->_statement;
+    }
+
+    /**
+     * Executes query and returns set of decorated results.
+     *
+     * @return iterable
+     * @thows \RuntimeException When query is not a SELECT query.
+     */
+    public function all(): iterable
+    {
+        if ($this->_type !== Query::TYPE_SELECT) {
+            throw new RuntimeException(
+                '`all()` supports SELECT queries only. Use `execute()` to run all other queries.'
+            );
+        }
+
+        $this->_results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
+        if ($this->_resultDecorators) {
+            foreach ($this->_results as &$row) {
+                foreach ($this->_resultDecorators as $decorator) {
+                    $row = $decorator($row);
+                }
+            }
+        }
+
+        return $this->_results;
     }
 
     /**
@@ -1951,19 +2001,20 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     /**
      * Executes this query and returns a results iterator. This function is required
      * for implementing the IteratorAggregate interface and allows the query to be
-     * iterated without having to call execute() manually, thus making it look like
+     * iterated without having to call all() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Database\StatementInterface
-     * @psalm-suppress ImplementedReturnTypeMismatch
+     * @return \Traversable
      */
     public function getIterator(): Traversable
     {
-        if ($this->_iterator === null || $this->_dirty) {
-            $this->_iterator = $this->execute();
+        $results = $this->_results;
+        if ($results === null || $this->_dirty) {
+            $results = $this->all();
         }
 
-        return $this->_iterator;
+        /** @var array $results */
+        return new ArrayIterator($results);
     }
 
     /**
@@ -2038,6 +2089,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function decorateResults(?callable $callback, bool $overwrite = false)
     {
+        $this->_dirty();
         if ($overwrite) {
             $this->_resultDecorators = [];
         }
@@ -2239,29 +2291,6 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     }
 
     /**
-     * Auxiliary function used to wrap the original statement from the driver with
-     * any registered callbacks.
-     *
-     * @param \Cake\Database\StatementInterface $statement to be decorated
-     * @return \Cake\Database\Statement\CallbackStatement|\Cake\Database\StatementInterface
-     */
-    protected function _decorateStatement(StatementInterface $statement): CallbackStatement|StatementInterface
-    {
-        $typeMap = $this->getSelectTypeMap();
-        $driver = $this->getConnection()->getDriver();
-
-        if ($this->typeCastEnabled && $typeMap->toArray()) {
-            $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));
-        }
-
-        foreach ($this->_resultDecorators as $f) {
-            $statement = new CallbackStatement($statement, $driver, $f);
-        }
-
-        return $statement;
-    }
-
-    /**
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
@@ -2310,7 +2339,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     {
         $this->_dirty = true;
 
-        if ($this->_iterator && $this->_valueBinder) {
+        if ($this->_statement && $this->_valueBinder) {
             $this->getValueBinder()->reset();
         }
     }
@@ -2322,7 +2351,8 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function __clone()
     {
-        $this->_iterator = null;
+        $this->_statement = null;
+        $this->_results = null;
         if ($this->_valueBinder !== null) {
             $this->_valueBinder = clone $this->_valueBinder;
         }
@@ -2395,7 +2425,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             'params' => $params,
             'defaultTypes' => $this->getDefaultTypes(),
             'decorators' => count($this->_resultDecorators),
-            'executed' => $this->_iterator ? true : false,
+            'executed' => $this->_statement ? true : false,
         ];
     }
 }
