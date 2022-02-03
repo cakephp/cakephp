@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
-use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -13,21 +13,17 @@ use Throwable;
 /**
  * Entry point to CakePHP's exception handling.
  *
- * Using the `register()` method you can attach an ExceptionTrap
- * to PHP's default exception handler and register a shutdown
- * handler to handle fatal errors. When exceptions are trapped
- * they are 'rendered' using the defined renderers and logged
- * if logging is enabled.
+ * Using the `register()` method you can attach an ExceptionTrap to PHP's default exception handler and register
+ * a shutdown handler to handle fatal errors. 
  *
- * Exceptions will be logged, then call attached callbacks
- * and finally render an error page using the configured
- * `exceptionRenderer`.
+ * When exceptions are trapped the `Exception.handled` event is triggered.
+ * Then exceptions are logged (if enabled) and finally 'rendered' using the defined renderer.
  *
- * If undefined, an ExceptionRenderer will be selected
- * based on the current SAPI (CLI or Web).
+ * If undefined, an ExceptionRenderer will be selected based on the current SAPI (CLI or Web).
  */
 class ExceptionTrap
 {
+    use EventDispatcherTrait;
     use InstanceConfigTrait {
         getConfig as private _getConfig;
     }
@@ -141,25 +137,6 @@ class ExceptionTrap
     }
 
     /**
-     * Add a callback to be invoked when an error is handled.
-     *
-     * Your callback should habe the following signature:
-     *
-     * ```
-     * function (\Throwable $error): void
-     * ```
-     *
-     * @param \Closure $closure The Closure to be invoked when an error is handledd.
-     * @return $this
-     */
-    public function addCallback(Closure $closure)
-    {
-        $this->callbacks[] = $closure;
-
-        return $this;
-    }
-
-    /**
      * Attach this ExceptionTrap to PHP's default exception handler.
      *
      * This will replace the existing exception handler, and the
@@ -223,26 +200,12 @@ class ExceptionTrap
         $request = Router::getRequest();
 
         $this->logException($exception, $request);
-        $this->applyCallbacks($exception);
 
         try {
             $renderer = $this->renderer($exception);
             $renderer->write($renderer->render());
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
-        }
-    }
-
-    /**
-     * Apply callbacks to an exception.
-     *
-     * @param \Throwable $exception Exception instance.
-     * @return void
-     */
-    public function applyCallbacks(Throwable $exception): void
-    {
-        foreach ($this->callbacks as $callback) {
-            $callback($exception);
         }
     }
 
@@ -330,7 +293,9 @@ class ExceptionTrap
      * Log an exception.
      *
      * Primarily a public function to ensure consistency between global exception handling
-     * and the ErrorHandlerMiddleware
+     * and the ErrorHandlerMiddleware.
+     *
+     * After logging, the `Exception.handled` event is triggered.
      *
      * @param \Throwable $exception The exception to log
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The optional request
@@ -340,6 +305,7 @@ class ExceptionTrap
     {
         $logger = $this->logger();
         $logger->log($exception, $request);
+        $this->dispatchEvent('Exception.handled', ['exception' => $exception]);
     }
 
     /**

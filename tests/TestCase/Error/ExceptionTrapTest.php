@@ -162,10 +162,10 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('nope', $logs[0]);
     }
 
-    public function testAddCallback()
+    public function testEventTriggered()
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->addCallback(function (Throwable $error) {
+        $trap->getEventManager()->on('Exception.handled', function ($event, Throwable $error) {
             $this->assertEquals(100, $error->getCode());
             $this->assertStringContainsString('nope', $error->getMessage());
         });

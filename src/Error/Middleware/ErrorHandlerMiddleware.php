@@ -156,7 +156,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         if ($this->errorHandler === null) {
             $errorHandler = $this->getExceptionTrap();
             $errorHandler->logException($exception, $request);
-            $errorHandler->applyCallbacks($exception);
 
             $renderer = $errorHandler->renderer($exception, $request);
         } else {
