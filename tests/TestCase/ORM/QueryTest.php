@@ -853,7 +853,7 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection, $this->table);
 
-        $results = new ResultSet($query, []);
+        $results = new ResultSet([]);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
 
@@ -1795,7 +1795,7 @@ class QueryTest extends TestCase
             ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
-        $resultSet = new ResultSet($query, []);
+        $resultSet = new ResultSet([]);
 
         $query->expects($this->never())
             ->method('execute');
