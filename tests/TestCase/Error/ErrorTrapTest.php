@@ -130,11 +130,11 @@ class ErrorTrapTest extends TestCase
         $this->assertSame('', $output);
     }
 
-    public function testAddCallback()
+    public function testEventTriggered()
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        $trap->addCallback(function (PhpError $error) {
+        $trap->getEventManager()->on('Error.handled', function ($event, PhpError $error) {
             $this->assertEquals(E_USER_NOTICE, $error->getCode());
             $this->assertStringContainsString('Oh no it was bad', $error->getMessage());
         });

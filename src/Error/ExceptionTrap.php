@@ -4,30 +4,26 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\ServerRequest;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
-use Closure;
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
  * Entry point to CakePHP's exception handling.
  *
- * Using the `register()` method you can attach an ExceptionTrap
- * to PHP's default exception handler and register a shutdown
- * handler to handle fatal errors. When exceptions are trapped
- * they are 'rendered' using the defined renderers and logged
- * if logging is enabled.
+ * Using the `register()` method you can attach an ExceptionTrap to PHP's default exception handler and register
+ * a shutdown handler to handle fatal errors.
  *
- * Exceptions will be logged, then call attached callbacks
- * and finally render an error page using the configured
- * `exceptionRenderer`.
+ * When exceptions are trapped the `Exception.handled` event is triggered.
+ * Then exceptions are logged (if enabled) and finally 'rendered' using the defined renderer.
  *
- * If undefined, an ExceptionRenderer will be selected
- * based on the current SAPI (CLI or Web).
+ * If undefined, an ExceptionRenderer will be selected based on the current SAPI (CLI or Web).
  */
 class ExceptionTrap
 {
+    use EventDispatcherTrait;
     use InstanceConfigTrait {
         getConfig as private _getConfig;
     }
@@ -88,13 +84,13 @@ class ExceptionTrap
      * Get an instance of the renderer.
      *
      * @param \Throwable $exception Exception to render
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request if possible.
      * @return \Cake\Error\ExceptionRendererInterface
      */
-    public function renderer(Throwable $exception)
+    public function renderer(Throwable $exception, $request = null)
     {
-        // The return of this method is not defined because
-        // the desired interface has bad types that will be changing in 5.x
-        $request = Router::getRequest();
+        $request = $request ?? Router::getRequest();
+
         /** @var class-string|callable $class */
         $class = $this->_getConfig('exceptionRenderer');
 
@@ -138,25 +134,6 @@ class ExceptionTrap
         $instance = new $class($this->_config);
 
         return $instance;
-    }
-
-    /**
-     * Add a callback to be invoked when an error is handled.
-     *
-     * Your callback should habe the following signature:
-     *
-     * ```
-     * function (\Throwable $error): void
-     * ```
-     *
-     * @param \Closure $closure The Closure to be invoked when an error is handledd.
-     * @return $this
-     */
-    public function addCallback(Closure $closure)
-    {
-        $this->callbacks[] = $closure;
-
-        return $this;
     }
 
     /**
@@ -223,9 +200,6 @@ class ExceptionTrap
         $request = Router::getRequest();
 
         $this->logException($exception, $request);
-        foreach ($this->callbacks as $callback) {
-            $callback($exception);
-        }
 
         try {
             $renderer = $this->renderer($exception);
@@ -319,16 +293,19 @@ class ExceptionTrap
      * Log an exception.
      *
      * Primarily a public function to ensure consistency between global exception handling
-     * and the ErrorHandlerMiddleware
+     * and the ErrorHandlerMiddleware.
+     *
+     * After logging, the `Exception.handled` event is triggered.
      *
      * @param \Throwable $exception The exception to log
-     * @param \Cake\Http\ServerRequest|null $request The optional request
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The optional request
      * @return void
      */
-    public function logException(Throwable $exception, ?ServerRequest $request = null): void
+    public function logException(Throwable $exception, ?ServerRequestInterface $request = null): void
     {
         $logger = $this->logger();
         $logger->log($exception, $request);
+        $this->dispatchEvent('Exception.handled', ['exception' => $exception]);
     }
 
     /**
