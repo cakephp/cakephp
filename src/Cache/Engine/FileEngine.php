@@ -465,6 +465,7 @@ class FileEngine extends CacheEngine
             $directoryIterator,
             RecursiveIteratorIterator::CHILD_FIRST
         );
+        /** @var array<SplFileInfo> $filtered */
         $filtered = new CallbackFilterIterator(
             $contents,
             function (SplFileInfo $current) use ($group, $prefix) {
