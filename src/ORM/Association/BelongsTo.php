@@ -56,6 +56,20 @@ class BelongsTo extends Association
     }
 
     /**
+     * Sets the name of the field representing the foreign key to the target table.
+     *
+     * @param array<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
+     *  no join conditions will be generated automatically.
+     * @return $this
+     */
+    public function setForeignKey(array|string|false $key)
+    {
+        $this->_foreignKey = $key;
+
+        return $this;
+    }
+
+    /**
      * Handle cascading deletes.
      *
      * BelongsTo associations are never cleared in a cascading delete scenario.
