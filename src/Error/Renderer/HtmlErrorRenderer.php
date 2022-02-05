@@ -68,18 +68,14 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         $code = implode("\n", $excerpt);
 
         $html = <<<HTML
-<pre class="cake-error">
+<div class="cake-error">
     {$toggle}: {$description} [in <b>{$path}</b>, line <b>{$line}</b>]
-    <div id="{:id}-trace" class="cake-stack-trace" style="display: none;">
+    <div id="{$id}-trace" class="cake-stack-trace" style="display: none;">
         {$codeToggle}
-        <pre id="{$id}-code" class="cake-code-dump" style="display: none;">
-            {$code}
-        </pre>
-        <div class="cake-trace">
-            {$trace}
-        </div>
+        <pre id="{$id}-code" class="cake-code-dump" style="display: none;">{$code}</pre>
+        <pre class="cake-trace">{$trace}</pre>
     </div>
-</pre>
+</div>
 HTML;
 
         return $html;
@@ -100,7 +96,7 @@ HTML;
         // phpcs:disable
         return <<<HTML
 <a href="javascript:void(0);"
-  onclick="document.getElementById('{$selector}').style.display = (document.getElementById('{$selector}').style.display == 'none' ? '' : 'none'"
+  onclick="document.getElementById('{$selector}').style.display = (document.getElementById('{$selector}').style.display == 'none' ? '' : 'none')"
 >
     {$text}
 </a>
