@@ -121,7 +121,7 @@ class ErrorHandlerTest extends TestCase
         $wrong = $wrong + 1;
         $result = ob_get_clean();
 
-        $this->assertMatchesRegularExpression('/<pre class="cake-error">/', $result);
+        $this->assertMatchesRegularExpression('/<div class="cake-error">/', $result);
         if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
             $this->assertMatchesRegularExpression('/<b>Notice<\/b>/', $result);
             $this->assertMatchesRegularExpression('/variable:\s+wrong/', $result);

@@ -460,7 +460,7 @@ class Debugger
             if (in_array($signature, $options['exclude'], true)) {
                 continue;
             }
-            if ($options['format'] === 'points' && $trace['file'] !== '[internal]') {
+            if ($options['format'] === 'points') {
                 $back[] = ['file' => $trace['file'], 'line' => $trace['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
                 $back[] = $trace;
