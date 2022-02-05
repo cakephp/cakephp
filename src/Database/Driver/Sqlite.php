@@ -59,13 +59,6 @@ class Sqlite extends Driver
     ];
 
     /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\SqliteSchemaDialect|null
-     */
-    protected ?SqliteSchemaDialect $_schemaDialect = null;
-
-    /**
      * Whether the connected server supports window functions.
      *
      * @var bool|null
@@ -234,11 +227,11 @@ class Sqlite extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new SqliteSchemaDialect($this);
+        if (isset($this->_schemaDialect)) {
+            return $this->_schemaDialect;
         }
 
-        return $this->_schemaDialect;
+        return $this->_schemaDialect = new SqliteSchemaDialect($this);
     }
 
     /**

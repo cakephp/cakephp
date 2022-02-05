@@ -59,13 +59,6 @@ class Postgres extends Driver
     ];
 
     /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\PostgresSchemaDialect|null
-     */
-    protected ?PostgresSchemaDialect $_schemaDialect = null;
-
-    /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
@@ -132,11 +125,11 @@ class Postgres extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new PostgresSchemaDialect($this);
+        if (isset($this->_schemaDialect)) {
+            return $this->_schemaDialect;
         }
 
-        return $this->_schemaDialect;
+        return $this->_schemaDialect = new PostgresSchemaDialect($this);
     }
 
     /**

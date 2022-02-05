@@ -90,6 +90,13 @@ abstract class Driver implements DriverInterface
     protected int $connectRetries = 0;
 
     /**
+     * The schema dialect for this driver
+     *
+     * @var \Cake\Database\Schema\SchemaDialect
+     */
+    protected SchemaDialect $_schemaDialect;
+
+    /**
      * Constructor
      *
      * @param array<string, mixed> $config The configuration for the driver.
