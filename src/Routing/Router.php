@@ -643,7 +643,9 @@ class Router
      */
     public static function reverseToArray($params): array
     {
+        $route = null;
         if ($params instanceof ServerRequest) {
+            $route = $params->getAttribute('route');
             $queryString = $params->getQueryParams();
             $params = $params->getAttribute('params');
             $params['?'] = $queryString;
@@ -656,8 +658,7 @@ class Router
             $params['_matchedRoute'],
             $params['_name']
         );
-        $route = null;
-        if ($template) {
+        if (!$route && $template) {
             // Locate the route that was used to match this route
             // so we can access the pass parameter configuration.
             foreach (static::getRouteCollection()->routes() as $maybe) {

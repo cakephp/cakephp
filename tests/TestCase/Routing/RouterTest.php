@@ -2713,7 +2713,8 @@ class RouterTest extends TestCase
 
     public function testReverseToArrayRequestQuery(): void
     {
-        Router::connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
+        $builder = Router::createRouteBuilder('/');
+        $route = $builder->connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
         $request = new ServerRequest([
             'url' => '/eng/posts/view/1',
             'params' => [
@@ -2734,6 +2735,12 @@ class RouterTest extends TestCase
                 'test' => 'value',
             ],
         ];
+        $this->assertEquals($expected, $actual);
+
+        $request = $request->withAttribute('route', $route)
+            ->withQueryParams(['x' => 'y']);
+        $expected['?'] = ['x' => 'y'];
+        $actual = Router::reverseToArray($request);
         $this->assertEquals($expected, $actual);
     }
 
