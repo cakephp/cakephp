@@ -98,9 +98,9 @@ class Cache
     /**
      * Cache Registry used for creating and using cache adapters.
      *
-     * @var \Cake\Cache\CacheRegistry|null
+     * @var \Cake\Cache\CacheRegistry
      */
-    protected static ?CacheRegistry $_registry = null;
+    protected static CacheRegistry $_registry;
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
@@ -109,11 +109,11 @@ class Cache
      */
     public static function getRegistry(): CacheRegistry
     {
-        if (static::$_registry === null) {
-            static::$_registry = new CacheRegistry();
+        if (isset(static::$_registry)) {
+            return static::$_registry;
         }
 
-        return static::$_registry;
+        return static::$_registry = new CacheRegistry();
     }
 
     /**

@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer\Transport;
 
+use Cake\Error\Debugger;
 use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
-use ReflectionProperty;
 use TestApp\Mailer\Transport\SmtpTestTransport;
 
 /**
@@ -861,10 +861,7 @@ class SmtpTransportTest extends TestCase
         $smtpTransport->connect();
 
         $result = unserialize(serialize($smtpTransport));
-
-        $reflect = new ReflectionProperty($result, '_socket');
-        $reflect->setAccessible(true);
-        $this->assertNull($reflect->getValue($result));
+        $this->assertStringContainsString('[protected] _socket => [uninitialized]', Debugger::exportVar($result));
         $this->assertFalse($result->connected());
     }
 }
