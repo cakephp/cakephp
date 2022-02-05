@@ -78,13 +78,6 @@ class Sqlserver extends Driver
     ];
 
     /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\SqlserverSchemaDialect|null
-     */
-    protected ?SqlserverSchemaDialect $_schemaDialect = null;
-
-    /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
@@ -281,11 +274,11 @@ class Sqlserver extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new SqlserverSchemaDialect($this);
+        if (isset($this->_schemaDialect)) {
+            return $this->_schemaDialect;
         }
 
-        return $this->_schemaDialect;
+        return $this->_schemaDialect = new SqlserverSchemaDialect($this);
     }
 
     /**

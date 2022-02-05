@@ -66,13 +66,6 @@ class Mysql extends Driver
     ];
 
     /**
-     * The schema dialect for this driver
-     *
-     * @var \Cake\Database\Schema\MysqlSchemaDialect|null
-     */
-    protected ?MysqlSchemaDialect $_schemaDialect = null;
-
-    /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
@@ -180,11 +173,11 @@ class Mysql extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new MysqlSchemaDialect($this);
+        if (isset($this->_schemaDialect)) {
+            return $this->_schemaDialect;
         }
 
-        return $this->_schemaDialect;
+        return $this->_schemaDialect = new MysqlSchemaDialect($this);
     }
 
     /**
