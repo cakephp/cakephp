@@ -29,8 +29,6 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\Statement\StatementDecorator;
-use Cake\Database\StatementInterface;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -113,13 +111,13 @@ class QueryTest extends TestCase
         $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new Query($this->connection);
         $result = $query->select('1 + 1')->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertEquals([2], $result->fetch());
         $result->closeCursor();
 
         //This new field should be appended
         $result = $query->select(['1 + 3'])->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertEquals([2, 4], $result->fetch());
         $result->closeCursor();
 
@@ -2736,7 +2734,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
 
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
         $result->closeCursor();
     }
@@ -2756,7 +2754,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, !$this->autoQuote);
 
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
         $result->closeCursor();
     }
@@ -2775,7 +2773,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
 
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
         $result->closeCursor();
     }
@@ -4137,7 +4135,7 @@ class QueryTest extends TestCase
      */
     public function testRowCountAndClose(): void
     {
-        $statementMock = $this->getMockBuilder(StatementInterface::class)
+        $statementMock = $this->getMockBuilder(Statement::class)
             ->onlyMethods(['rowCount', 'closeCursor'])
             ->getMockForAbstractClass();
 
@@ -4933,7 +4931,7 @@ class QueryTest extends TestCase
             ->from('profiles')
             ->limit(1)
             ->execute();
-        $results = $stmt->fetch(StatementDecorator::FETCH_TYPE_OBJ);
+        $results = $stmt->fetch('obj');
         $stmt->closeCursor();
 
         $this->assertInstanceOf(stdClass::class, $results);

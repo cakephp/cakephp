@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Schema\TableSchema;
-use Cake\Database\StatementInterface;
+use Cake\Database\Statement;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\Test\Fixture\ArticlesFixture;
@@ -178,7 +178,7 @@ class TestFixtureTest extends TestCase
             )
             ->will($this->returnSelf());
 
-        $statement = $this->createMock(StatementInterface::class);
+        $statement = $this->createMock(Statement::class);
         $statement->expects($this->once())->method('closeCursor');
 
         $query->expects($this->once())

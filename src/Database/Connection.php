@@ -24,7 +24,6 @@ use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggedQuery;
-use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
@@ -274,18 +273,12 @@ class Connection implements ConnectionInterface
      * Prepares a SQL statement to be executed.
      *
      * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
-     * @return \Cake\Database\StatementInterface
+     * @return \Cake\Database\Statement
      */
-    public function prepare(Query|string $query): StatementInterface
+    public function prepare(Query|string $query): Statement
     {
         return $this->getDisconnectRetry()->run(function () use ($query) {
-            $statement = $this->_driver->prepare($query);
-
-            if ($this->_logQueries) {
-                $statement = $this->_newLogger($statement);
-            }
-
-            return $statement;
+            return $this->_driver->prepare($query, $this->_logQueries ? $this->getLogger() : null);
         });
     }
 
@@ -296,9 +289,9 @@ class Connection implements ConnectionInterface
      * @param string $sql SQL to be executed and interpolated with $params
      * @param array $params list or associative array of params to be interpolated in $sql as values
      * @param array $types list or associative array of types to be used for casting values in query
-     * @return \Cake\Database\StatementInterface executed statement
+     * @return \Cake\Database\Statement executed statement
      */
-    public function execute(string $sql, array $params = [], array $types = []): StatementInterface
+    public function execute(string $sql, array $params = [], array $types = []): Statement
     {
         return $this->getDisconnectRetry()->run(function () use ($sql, $params, $types) {
             $statement = $this->prepare($sql);
@@ -329,9 +322,9 @@ class Connection implements ConnectionInterface
      * dialect and returns the executed Statement object.
      *
      * @param \Cake\Database\Query $query The query to be executed
-     * @return \Cake\Database\StatementInterface executed statement
+     * @return \Cake\Database\Statement executed statement
      */
-    public function run(Query $query): StatementInterface
+    public function run(Query $query): Statement
     {
         return $this->getDisconnectRetry()->run(function () use ($query) {
             $statement = $this->prepare($query);
@@ -346,9 +339,9 @@ class Connection implements ConnectionInterface
      * Executes a SQL statement and returns the Statement object as result.
      *
      * @param string $sql The SQL query to execute.
-     * @return \Cake\Database\StatementInterface
+     * @return \Cake\Database\Statement
      */
-    public function query(string $sql): StatementInterface
+    public function query(string $sql): Statement
     {
         return $this->getDisconnectRetry()->run(function () use ($sql) {
             $statement = $this->prepare($sql);
@@ -409,9 +402,9 @@ class Connection implements ConnectionInterface
      * @param string $table the table to insert values in
      * @param array $values values to be inserted
      * @param array<string, string> $types list of associative array containing the types to be used for casting
-     * @return \Cake\Database\StatementInterface
+     * @return \Cake\Database\Statement
      */
-    public function insert(string $table, array $values, array $types = []): StatementInterface
+    public function insert(string $table, array $values, array $types = []): Statement
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $values, $types) {
             $columns = array_keys($values);
@@ -430,9 +423,9 @@ class Connection implements ConnectionInterface
      * @param array $values values to be updated
      * @param array $conditions conditions to be set for update statement
      * @param array $types list of associative array containing the types to be used for casting
-     * @return \Cake\Database\StatementInterface
+     * @return \Cake\Database\Statement
      */
-    public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
+    public function update(string $table, array $values, array $conditions = [], array $types = []): Statement
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $values, $conditions, $types) {
             return $this->newQuery()->update($table)
@@ -448,9 +441,9 @@ class Connection implements ConnectionInterface
      * @param string $table the table to delete rows from
      * @param array $conditions conditions to be set for delete statement
      * @param array $types list of associative array containing the types to be used for casting
-     * @return \Cake\Database\StatementInterface
+     * @return \Cake\Database\Statement
      */
-    public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
+    public function delete(string $table, array $conditions = [], array $types = []): Statement
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $conditions, $types) {
             return $this->newQuery()->delete($table)
@@ -905,21 +898,6 @@ class Connection implements ConnectionInterface
         $query = new LoggedQuery();
         $query->query = $sql;
         $this->getLogger()->debug((string)$query, ['query' => $query]);
-    }
-
-    /**
-     * Returns a new statement object that will log the activity
-     * for the passed original statement instance.
-     *
-     * @param \Cake\Database\StatementInterface $statement the instance to be decorated
-     * @return \Cake\Database\Log\LoggingStatement
-     */
-    protected function _newLogger(StatementInterface $statement): LoggingStatement
-    {
-        $log = new LoggingStatement($statement, $this->_driver);
-        $log->setLogger($this->getLogger());
-
-        return $log;
     }
 
     /**

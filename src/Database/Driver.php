@@ -23,11 +23,11 @@ use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Database\Statement\PDOStatement;
 use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Represents a database driver containing all specificities for
@@ -198,12 +198,17 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function prepare(Query|string $query): StatementInterface
+    public function prepare(Query|string $query, ?LoggerInterface $logger = null): Statement
     {
         $this->connect();
         $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
 
-        return new PDOStatement($statement, $this);
+        $typeMap = null;
+        if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === 'select') {
+            $typeMap = $query->getSelectTypeMap();
+        }
+
+        return new Statement($this, $statement, $typeMap, $logger);
     }
 
     /**

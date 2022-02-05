@@ -16,37 +16,36 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
+use Cake\Database\Statement;
+
 /**
  * Statement class meant to be used by an Sqlite driver
  *
  * @internal
  */
-class SqliteStatement extends PDOStatement
+class SqliteStatement extends Statement
 {
+    protected ?int $affectedRows = null;
+
     /**
-     * Returns the number of rows returned of affected by last execution
-     *
-     * @return int
+     * @inheritDoc
      */
     public function rowCount(): int
     {
-        /** @psalm-suppress NoInterfaceProperties */
-        if (
-            $this->_statement->queryString &&
-            preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)
-        ) {
-            $changes = $this->_driver->prepare('SELECT CHANGES()');
-            $changes->execute();
-            $row = $changes->fetch();
-            $changes->closeCursor();
-
-            if (!$row) {
-                return 0;
-            }
-
-            return (int)$row[0];
+        if ($this->affectedRows !== null) {
+            return $this->affectedRows;
         }
 
-        return parent::rowCount();
+        if ($this->typeConverter) {
+            // Use default implementation for select queries
+            return parent::rowCount();
+        }
+
+        $changesQuery = $this->driver->prepare('SELECT CHANGES()');
+        $changesQuery->execute();
+        $result = $changesQuery->fetch(PDO::FETCH_NUM);
+        $changesQuery->closeCursor();
+
+        return $this->affectedRows = $result ? (int)$result[0] : 0;
     }
 }

@@ -17,12 +17,11 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Log\LoggedQuery;
-use Closure;
 use InvalidArgumentException;
 use PDO;
+use PDOException;
 use PDOStatement;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 class Statement
 {
@@ -31,32 +30,29 @@ class Statement
         matchTypes as protected;
     }
 
-    protected const MODES = ['assoc' => PDO::FETCH_ASSOC, 'num' => PDO::FETCH_NUM, 'obj' => PDO::FETCH_OBJ];
-
     protected DriverInterface $driver;
 
     protected PDOStatement $statement;
 
-    protected string $type;
+    protected ?FieldTypeConverter $typeConverter;
 
     protected ?LoggerInterface $logger;
 
-    protected ?LoggedQuery $query;
-
     /**
+     * @param \Cake\Database\DriverInterface $driver Database driver
      * @param \PDOStatement $statement PDO statement
-     * @param string $type Query type: select, insert, update, delete
-     * @param \Cake\Database\Log\LoggedQuery $query Query to log after execution
+     * @param \Cake\Database\TypeMap|null $typeMap Results type map
+     * @param \Psr\Log\LoggerInterface|null $logger Query logger
      */
     public function __construct(
         DriverInterface $driver,
         PDOStatement $statement,
-        string $type,
+        ?TypeMap $typeMap = null,
         ?LoggerInterface $logger = null
     ) {
         $this->driver = $driver;
         $this->statement = $statement;
-        $this->type = $type;
+        $this->typeConverter = $typeMap !== null ? new FieldTypeConverter($typeMap, $driver) : null;
         $this->logger = $logger;
     }
 
@@ -141,18 +137,35 @@ class Statement
      */
     public function execute(?array $params = null): bool
     {
-        $result = $this->statement->execute($params);
-        if ($result && $this->logger) {
-            // TODO: log-results
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->driver = $this->driver;
+        $loggedQuery->query = $this->statement->queryString;
+
+        try {
+            $start = microtime(true);
+            $result = $this->statement->execute($params);
+            $loggedQuery->took = (microtime(true) - $start) * 1000;
+            $loggedQuery->numRows = $this->rowCount();
+        } catch (PDOException $e) {
+            $loggedQuery->error = $e;
+        } finally {
+        }
+
+        if ($this->logger) {
+            $this->logger->debug((string)$loggedQuery, ['query' => $loggedQuery]);
+        }
+
+        if ($loggedQuery->error) {
+            throw $loggedQuery->error;
         }
 
         return $result;
     }
 
     /**
-     * Closes a cursor in the database, freeing up any resources and memory
-     * allocated to it. In most cases you don't need to call this method, as it is
-     * automatically called after fetching all results from the result set.
+     * Closes the cursor, enabling the statement to be executed again.
+     *
+     * This behaves the same as `PDOStatement::closeCursor()`.
      *
      * @return void
      */
@@ -166,23 +179,21 @@ class Statement
      *
      * This behaves the same as `PDOStatement::fetch()`.
      *
-     * @param int $mode Fetch mode. PDO::FETCH_* constant or name.
+     * @param string|int $mode PDO::FETCH_* constant or fetch mode name.
+     *   Valid names are 'assoc', 'num' or 'obj'.
      * @return mixed
+     * @throws \InvalidArgumentException
      */
-    public function fetch(string|int $mode = 'num'): mixed
+    public function fetch(string|int $mode = PDO::FETCH_NUM): mixed
     {
-        $mode = static::MODES[$mode] ?? $mode;
-        if (is_string($mode)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid named fetch mode `%s` requested. Must be one of %s.',
-                $mode,
-                array_keys(static::MODES)
-            ));
-        }
-
+        $mode = $this->convertMode($mode);
         $row = $this->statement->fetch($mode);
         if ($row === false) {
             return false;
+        }
+
+        if ($this->typeConverter !== null && $mode === PDO::FETCH_ASSOC) {
+            return $this->typeConverter($row);
         }
 
         return $row;
@@ -222,19 +233,44 @@ class Statement
      *
      * This behaves the same as `PDOStatement::fetchAll()`.
      *
-     * @param string|int $mode Fetch mode. PDO::FETCH_TYPE_* constant or name.
+     * @param string|int $mode PDO::FETCH_* constant or fetch mode name.
+     *   Valid names are 'assoc', 'num' or 'obj'.
      * @return array|false
+     * @throws \InvalidArgumentException
      */
     public function fetchAll(string|int $mode = PDO::FETCH_NUM): array
     {
-        $mode = static::MODES[$mode] ?? $mode;
-        if (is_string($mode)) {
-            throw new InvalidArgumentException('Invalid named fetch mode `%s` requested.', $mode);
-        }
-
+        $mode = $this->convertMode($mode);
         $rows = $this->statement->fetchAll($mode);
 
+        if ($this->typeConverter !== null && $mode === PDO::FETCH_ASSOC) {
+            return array_map($this->typeConverter, $rows);
+        }
+
         return $rows;
+    }
+
+    /**
+     * Converts mode name to PDO constant.
+     *
+     * @param string|int $mode Mode name or PDO constant
+     * @return int
+     * @throws \InvalidArgumentException
+     */
+    protected function convertMode(string|int $mode): int
+    {
+        if (is_int($mode)) {
+            // We don't try to validate the PDO constants
+            return $mode;
+        }
+
+        static $MODES = ['assoc' => PDO::FETCH_ASSOC, 'num' => PDO::FETCH_NUM, 'obj' => PDO::FETCH_OBJ];
+        $mode = $MODES[$mode] ?? null;
+        if ($mode !== null) {
+            return $mode;
+        }
+
+        throw new InvalidArgumentException("Invalid fetch mode requested. Expected 'assoc', 'num' or 'obj'.");
     }
 
     /**
@@ -247,6 +283,10 @@ class Statement
      */
     public function rowCount(): int
     {
+        if ($this->typeConverter !== null) {
+            return 0;
+        }
+
         return $this->statement->rowCount();
     }
 

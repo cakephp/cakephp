@@ -20,7 +20,6 @@ use ArrayObject;
 use Cake\Database\Connection;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
-use Cake\Database\StatementInterface;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -1126,7 +1125,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return $this->_results;
         }
 
-        $results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
+        $results = $this->execute()->fetchAll('assoc');
         $results = $this->getEagerLoader()->loadExternal($this, $results);
 
         return new ResultSet($this, $results);

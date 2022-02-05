@@ -26,10 +26,9 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
-use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Schema\CachedCollection;
-use Cake\Database\StatementInterface;
+use Cake\Database\Statement;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -223,12 +222,12 @@ class ConnectionTest extends TestCase
     {
         $sql = 'SELECT 1 + 1';
         $result = $this->connection->prepare($sql);
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertEquals($sql, $result->queryString);
 
         $query = $this->connection->newQuery()->select('1 + 1');
         $result = $this->connection->prepare($query);
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
         $this->assertMatchesRegularExpression($sql, $result->queryString);
     }
@@ -306,7 +305,7 @@ class ConnectionTest extends TestCase
             $data,
             ['id' => 'integer', 'title' => 'string', 'body' => 'string']
         );
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $result->closeCursor();
         $result = $this->connection->execute('SELECT * from things where id = 3');
         $rows = $result->fetchAll('assoc');
@@ -327,7 +326,7 @@ class ConnectionTest extends TestCase
             ['integer', 'string', 'string']
         );
         $result->closeCursor();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $result = $this->connection->execute('SELECT * from things where id  = 3');
         $rows = $result->fetchAll('assoc');
         $result->closeCursor();
@@ -853,23 +852,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * Tests that statements are decorated with a logger when logQueries is set to true
-     */
-    public function testLoggerDecorator(): void
-    {
-        $logger = new QueryLogger();
-        $this->connection->enableQueryLogging(true);
-        $this->connection->setLogger($logger);
-        $st = $this->connection->prepare('SELECT 1');
-        $this->assertInstanceOf(LoggingStatement::class, $st);
-        $this->assertSame($logger, $st->getLogger());
-
-        $this->connection->enableQueryLogging(false);
-        $st = $this->connection->prepare('SELECT 1');
-        $this->assertNotInstanceOf('Cake\Database\Log\LoggingStatement', $st);
-    }
-
-    /**
      * test enableQueryLogging method
      */
     public function testEnableQueryLogging(): void
@@ -1222,7 +1204,7 @@ class ConnectionTest extends TestCase
             ));
 
         $res = $conn->query('SELECT 1');
-        $this->assertInstanceOf(StatementInterface::class, $res);
+        $this->assertInstanceOf(Statement::class, $res);
     }
 
     /**

@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\Database\Log;
 use Cake\Database\DriverInterface;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
-use Cake\Database\StatementInterface;
+use Cake\Database\Statement;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
@@ -50,7 +50,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteNoParams(): void
     {
-        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $inner = $this->getMockBuilder(Statement::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(3));
         $inner->method('execute')->will($this->returnValue(true));
 
@@ -76,7 +76,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithParams(): void
     {
-        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $inner = $this->getMockBuilder(Statement::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
         $inner->method('execute')->will($this->returnValue(true));
 
@@ -102,7 +102,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithBinding(): void
     {
-        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $inner = $this->getMockBuilder(Statement::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
         $inner->method('execute')->will($this->returnValue(true));
 
@@ -141,7 +141,7 @@ class LoggingStatementTest extends TestCase
     public function testExecuteWithError(): void
     {
         $exception = new MyPDOException('This is bad');
-        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $inner = $this->getMockBuilder(Statement::class)->getMock();
         $inner->expects($this->once())
             ->method('execute')
             ->will($this->throwException($exception));
@@ -174,7 +174,7 @@ class LoggingStatementTest extends TestCase
     {
         $logger = new QueryLogger(['connection' => 'test']);
         $st = new LoggingStatement(
-            $this->getMockBuilder(StatementInterface::class)->getMock(),
+            $this->getMockBuilder(Statement::class)->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()
         );
 

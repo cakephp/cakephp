@@ -24,6 +24,7 @@ use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Statement;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
@@ -1689,7 +1690,7 @@ class QueryTest extends TestCase
             ->set(['title' => 'First'])
             ->execute();
 
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertGreaterThan(0, $result->rowCount());
     }
 
@@ -1708,7 +1709,7 @@ class QueryTest extends TestCase
             ->andWhere(['authors.name' => 'mariano'])
             ->execute();
 
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertGreaterThan(0, $result->rowCount());
     }
 
@@ -1727,7 +1728,7 @@ class QueryTest extends TestCase
 
         $result->closeCursor();
 
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertEquals(2, $result->rowCount());
     }
 
@@ -1743,7 +1744,7 @@ class QueryTest extends TestCase
             ->where(['id >=' => 1])
             ->execute();
 
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(Statement::class, $result);
         $this->assertGreaterThan(0, $result->rowCount());
     }
 

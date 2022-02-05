@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
+use Cake\Database\Statement;
 use PDO;
 
 /**
@@ -23,7 +24,7 @@ use PDO;
  *
  * @internal
  */
-class SqlserverStatement extends PDOStatement
+class SqlserverStatement extends Statement
 {
     /**
      * {@inheritDoc}

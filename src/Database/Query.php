@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use ArrayIterator;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -24,7 +25,6 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Expression\WindowExpression;
-use Cake\Database\Statement\CallbackStatement;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -149,11 +149,11 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     protected array $_resultDecorators = [];
 
     /**
-     * Statement object resulting from executing this query.
+     * Result set from exeuted SELCT query.
      *
-     * @var \Cake\Database\StatementInterface|null
+     * @var \ArrayIterator|null
      */
-    protected ?StatementInterface $_iterator = null;
+    protected ?ArrayIterator $results = null;
 
     /**
      * The object responsible for generating query placeholders and temporarily store values
@@ -237,15 +237,39 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * This method can be overridden in query subclasses to decorate behavior
      * around query execution.
      *
-     * @return \Cake\Database\StatementInterface
+     * @return \Cake\Database\Statement
      */
-    public function execute(): StatementInterface
+    public function execute(): Statement
     {
-        $statement = $this->_connection->run($this);
-        $this->_iterator = $this->_decorateStatement($statement);
         $this->_dirty = false;
 
-        return $this->_iterator;
+        return $this->_connection->run($this);
+    }
+
+    /**
+     * Executes query and returns entire result set.
+     *
+     * @return iterable
+     * @thows \RuntimeException When query is not a SELECT query.
+     */
+    public function all(): iterable
+    {
+        if ($this->_type !== 'select') {
+            throw new RuntimeException(
+                '`all()` supports SELECT queries only. Use `execute()` to run INSERT, UPDATE or DELETE queries.'
+            );
+        }
+
+        $results = $this->execute()->fetchAll('assoc');
+        if ($this->_resultDecorators) {
+            foreach ($this->results as &$row) {
+                foreach ($this->_resultDecorators as $decorator) {
+                    $row = $decorator($row);
+                }
+            }
+        }
+
+        return $this->results = new ArrayIterator($results);
     }
 
     /**
@@ -1951,19 +1975,18 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     /**
      * Executes this query and returns a results iterator. This function is required
      * for implementing the IteratorAggregate interface and allows the query to be
-     * iterated without having to call execute() manually, thus making it look like
+     * iterated without having to call all() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Database\StatementInterface
-     * @psalm-suppress ImplementedReturnTypeMismatch
+     * @return \Traversable
      */
     public function getIterator(): Traversable
     {
-        if ($this->_iterator === null || $this->_dirty) {
-            $this->_iterator = $this->execute();
+        if ($this->results === null || $this->_dirty) {
+            $this->all();
         }
 
-        return $this->_iterator;
+        return $this->results;
     }
 
     /**
@@ -2236,29 +2259,6 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     public function isResultsCastingEnabled(): bool
     {
         return $this->typeCastEnabled;
-    }
-
-    /**
-     * Auxiliary function used to wrap the original statement from the driver with
-     * any registered callbacks.
-     *
-     * @param \Cake\Database\StatementInterface $statement to be decorated
-     * @return \Cake\Database\Statement\CallbackStatement|\Cake\Database\StatementInterface
-     */
-    protected function _decorateStatement(StatementInterface $statement): CallbackStatement|StatementInterface
-    {
-        $typeMap = $this->getSelectTypeMap();
-        $driver = $this->getConnection()->getDriver();
-
-        if ($this->typeCastEnabled && $typeMap->toArray()) {
-            $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));
-        }
-
-        foreach ($this->_resultDecorators as $f) {
-            $statement = new CallbackStatement($statement, $driver, $f);
-        }
-
-        return $statement;
     }
 
     /**

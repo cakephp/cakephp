@@ -146,21 +146,6 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
-			count: 1
-			path: src/Database/Log/LoggingStatement.php
-
-		-
-			message: "#^PHPDoc type PDOStatement of property Cake\\\\Database\\\\Statement\\\\PDOStatement\\:\\:\\$_statement is not covariant with PHPDoc type Cake\\\\Database\\\\StatementInterface of overridden property Cake\\\\Database\\\\Statement\\\\StatementDecorator\\:\\:\\$_statement\\.$#"
-			count: 1
-			path: src/Database/Statement/PDOStatement.php
-
-		-
-			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) on left side of \\?\\? is not nullable\\.$#"
-			count: 1
-			path: src/Database/Statement/PDOStatement.php
-
-		-
 			message: "#^Cannot unset offset 'args' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
 			count: 1
 			path: src/Error/Debugger.php

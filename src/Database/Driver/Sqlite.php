@@ -24,10 +24,11 @@ use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\SqliteCompiler;
+use Cake\Database\Statement;
 use Cake\Database\Statement\SqliteStatement;
-use Cake\Database\StatementInterface;
 use InvalidArgumentException;
 use PDO;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -179,17 +180,19 @@ class Sqlite extends Driver
     }
 
     /**
-     * Prepares a sql statement to be executed
-     *
-     * @param \Cake\Database\Query|string $query The query to prepare.
-     * @return \Cake\Database\StatementInterface
+     * @inheritDoc
      */
-    public function prepare(Query|string $query): StatementInterface
+    public function prepare(Query|string $query, ?LoggerInterface $logger = null): Statement
     {
         $this->connect();
         $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
 
-        return new SqliteStatement($statement, $this);
+        $typeMap = null;
+        if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === 'select') {
+            $typeMap = $query->getSelectTypeMap();
+        }
+
+        return new SqliteStatement($this, $statement, $typeMap, $logger);
     }
 
     /**

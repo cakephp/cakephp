@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\Fixture;
 
-use Cake\Database\StatementInterface;
+use Cake\Database\Statement;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\FixtureInterface;
 
@@ -37,7 +37,7 @@ class OtherArticlesFixture implements FixtureInterface
         return true;
     }
 
-    public function insert(ConnectionInterface $connection): StatementInterface|bool
+    public function insert(ConnectionInterface $connection): Statement|bool
     {
         return true;
     }

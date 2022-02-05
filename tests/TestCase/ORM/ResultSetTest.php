@@ -331,7 +331,7 @@ class ResultSetTest extends TestCase
         $query->disableAutoFields();
 
         $row = ['Other__field' => 'test'];
-        $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
+        $statement = $this->getMockBuilder(Statement::class)->getMock();
         $statement->method('fetchAll')
             ->will($this->returnValue([$row]));
 

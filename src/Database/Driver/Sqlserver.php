@@ -28,10 +28,11 @@ use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\SqlserverCompiler;
+use Cake\Database\Statement;
 use Cake\Database\Statement\SqlserverStatement;
-use Cake\Database\StatementInterface;
 use InvalidArgumentException;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 /**
  * SQLServer driver.
@@ -181,12 +182,9 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Prepares a sql statement to be executed
-     *
-     * @param \Cake\Database\Query|string $query The query to prepare.
-     * @return \Cake\Database\StatementInterface
+     * @inheritDoc
      */
-    public function prepare(Query|string $query): StatementInterface
+    public function prepare(Query|string $query, ?LoggerInterface $logger = null): Statement
     {
         $this->connect();
 
@@ -212,7 +210,12 @@ class Sqlserver extends Driver
             ]
         );
 
-        return new SqlserverStatement($statement, $this);
+        $typeMap = null;
+        if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === 'select') {
+            $typeMap = $query->getSelectTypeMap();
+        }
+
+        return new SqlserverStatement($this, $statement, $typeMap, $logger);
     }
 
     /**

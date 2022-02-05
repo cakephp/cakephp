@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Statement;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
@@ -144,7 +145,7 @@ class ValueBinderTest extends TestCase
     public function testAttachTo(): void
     {
         $valueBinder = new ValueBinder();
-        $statementMock = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')
+        $statementMock = $this->getMockBuilder(Statement::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['bindValue'])
             ->getMock();

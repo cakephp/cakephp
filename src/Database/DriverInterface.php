@@ -20,6 +20,7 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 /**
  * Interface for database driver.
@@ -108,9 +109,10 @@ interface DriverInterface
      * Prepares a sql statement to be executed.
      *
      * @param \Cake\Database\Query|string $query The query to turn into a prepared statement.
-     * @return \Cake\Database\StatementInterface
+     * @param \Psr\Log\LoggerInterface|null $logger Query logger
+     * @return \Cake\Database\Statement
      */
-    public function prepare(Query|string $query): StatementInterface;
+    public function prepare(Query|string $query, ?LoggerInterface $logger = null): Statement;
 
     /**
      * Starts a transaction.
