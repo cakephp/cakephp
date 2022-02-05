@@ -263,6 +263,22 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function countKeys(): int
+    {
+        return $this->_count;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEmpty(): bool
+    {
+        return !$this->_count;
+    }
+
+    /**
      * Calculates the list of associations that where eager loaded for this query.
      *
      * @param \Cake\ORM\Query $query The query from where to derive the associations.
