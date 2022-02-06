@@ -172,8 +172,13 @@ class RouteBuilderTest extends TestCase
             'pass' => [],
             '_matchedRoute' => '/articles',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/articles'));
-        $this->assertEquals($expected, $this->collection->parse('/articles/'));
+        $result = $this->collection->parse('/articles');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/articles/');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -200,7 +205,9 @@ class RouteBuilderTest extends TestCase
             'plugin' => null,
             '_matchedRoute' => '/my-articles/view',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/my-articles/view'));
+        $result = $this->collection->parse('/my-articles/view');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
@@ -222,7 +229,9 @@ class RouteBuilderTest extends TestCase
             'action' => 'index',
             '_matchedRoute' => '/admin/bookmarks',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/admin/bookmarks'));
+        $result = $this->collection->parse('/admin/bookmarks');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
@@ -243,7 +252,9 @@ class RouteBuilderTest extends TestCase
             'action' => 'view',
             '_matchedRoute' => '/blog/articles/view',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/blog/articles/view'));
+        $result = $this->collection->parse('/blog/articles/view');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
@@ -265,7 +276,9 @@ class RouteBuilderTest extends TestCase
             'action' => 'view',
             '_matchedRoute' => '/admin/blog/articles/view',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/admin/blog/articles/view'));
+        $result = $this->collection->parse('/admin/blog/articles/view');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
