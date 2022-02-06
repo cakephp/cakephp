@@ -29,9 +29,9 @@ class TransportFactory
     /**
      * Transport Registry used for creating and using transport instances.
      *
-     * @var \Cake\Mailer\TransportRegistry|null
+     * @var \Cake\Mailer\TransportRegistry
      */
-    protected static ?TransportRegistry $_registry = null;
+    protected static TransportRegistry $_registry;
 
     /**
      * An array mapping url schemes to fully qualified Transport class names
@@ -52,11 +52,11 @@ class TransportFactory
      */
     public static function getRegistry(): TransportRegistry
     {
-        if (static::$_registry === null) {
-            static::$_registry = new TransportRegistry();
+        if (isset(static::$_registry)) {
+            return static::$_registry;
         }
 
-        return static::$_registry;
+        return static::$_registry = new TransportRegistry();
     }
 
     /**

@@ -40,9 +40,9 @@ class FileEngine extends CacheEngine
     /**
      * Instance of SplFileObject class
      *
-     * @var \SplFileObject|null
+     * @var \SplFileObject
      */
-    protected ?SplFileObject $_File = null;
+    protected SplFileObject $_File;
 
     /**
      * The default config used unless overridden by runtime configuration
@@ -132,11 +132,9 @@ class FileEngine extends CacheEngine
         $contents = implode([$expires, PHP_EOL, $value, PHP_EOL]);
 
         if ($this->_config['lock']) {
-            /** @psalm-suppress PossiblyNullReference */
             $this->_File->flock(LOCK_EX);
         }
 
-        /** @psalm-suppress PossiblyNullReference */
         $this->_File->rewind();
         $success = $this->_File->ftruncate(0) &&
             $this->_File->fwrite($contents) &&
@@ -145,7 +143,7 @@ class FileEngine extends CacheEngine
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_UN);
         }
-        $this->_File = null;
+        unset($this->_File);
 
         return $success;
     }
@@ -167,11 +165,9 @@ class FileEngine extends CacheEngine
         }
 
         if ($this->_config['lock']) {
-            /** @psalm-suppress PossiblyNullReference */
             $this->_File->flock(LOCK_SH);
         }
 
-        /** @psalm-suppress PossiblyNullReference */
         $this->_File->rewind();
         $time = time();
         $cachetime = (int)$this->_File->current();
@@ -220,9 +216,8 @@ class FileEngine extends CacheEngine
             return false;
         }
 
-        /** @psalm-suppress PossiblyNullReference */
         $path = $this->_File->getRealPath();
-        $this->_File = null;
+        unset($this->_File);
 
         // phpcs:disable
         return @unlink($path);
@@ -239,7 +234,7 @@ class FileEngine extends CacheEngine
         if (!$this->_init) {
             return false;
         }
-        $this->_File = null;
+        unset($this->_File);
 
         $this->_clearDirectory($this->_config['path']);
 
@@ -376,8 +371,9 @@ class FileEngine extends CacheEngine
         if (!$createKey && !$path->isFile()) {
             return false;
         }
+        /** @psalm-suppress TypeDoesNotContainType */
         if (
-            empty($this->_File) ||
+            !isset($this->_File) ||
             $this->_File->getBasename() !== $key ||
             $this->_File->valid() === false
         ) {
@@ -456,7 +452,7 @@ class FileEngine extends CacheEngine
      */
     public function clearGroup(string $group): bool
     {
-        $this->_File = null;
+        unset($this->_File);
 
         $prefix = (string)$this->_config['prefix'];
 
