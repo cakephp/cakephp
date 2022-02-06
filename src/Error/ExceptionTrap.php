@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
 use InvalidArgumentException;
@@ -35,9 +36,8 @@ class ExceptionTrap
      * @var array<string, mixed>
      */
     protected $_defaultConfig = [
-        'exceptionRenderer' => ExceptionRenderer::class,
+        'exceptionRenderer' => null,
         'logger' => ErrorLogger::class,
-        // Used by ConsoleExceptionRenderer (coming soon)
         'stderr' => null,
         'log' => true,
         'trace' => false,
@@ -78,6 +78,9 @@ class ExceptionTrap
     public function __construct(array $options = [])
     {
         $this->setConfig($options);
+        if ($this->_getConfig('exceptionRenderer') === null) {
+            $this->setConfig('exceptionRenderer', $this->chooseRenderer());
+        }
     }
 
     /**
@@ -93,6 +96,9 @@ class ExceptionTrap
 
         /** @var class-string|callable $class */
         $class = $this->_getConfig('exceptionRenderer');
+        if (!$class) {
+            $class = $this->chooseRenderer();
+        }
 
         if (is_string($class)) {
             /** @var class-string $class */
@@ -104,12 +110,23 @@ class ExceptionTrap
             }
 
             /** @var \Cake\Error\ExceptionRendererInterface $instance */
-            $instance = new $class($exception, $request);
+            $instance = new $class($exception, $request, $this->_config);
 
             return $instance;
         }
 
         return $class($exception, $request);
+    }
+
+    /**
+     * Choose an exception renderer based on config or the SAPI
+     *
+     * @return class-string<\Cake\Error\ExceptionRendererInterface>
+     */
+    protected function chooseRenderer(): string
+    {
+        /** @var class-string<\Cake\Error\ExceptionRendererInterface> */
+        return PHP_SAPI === 'cli' ? ConsoleExceptionRenderer::class : ExceptionRenderer::class;
     }
 
     /**

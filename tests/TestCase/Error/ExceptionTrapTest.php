@@ -19,9 +19,11 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
+use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\Utility\Text;
 use InvalidArgumentException;
 use stdClass;
@@ -58,10 +60,10 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigExceptionRendererFallback()
     {
-        $this->markTestIncomplete();
-        $trap = new ExceptionTrap(['exceptionRenderer' => null]);
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap(['exceptionRenderer' => null, 'stderr' => $output]);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testConfigExceptionRenderer()
@@ -82,11 +84,11 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigRendererHandleUnsafeOverwrite()
     {
-        $this->markTestIncomplete();
-        $trap = new ExceptionTrap();
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap(['stderr' => $output]);
         $trap->setConfig('exceptionRenderer', null);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testLoggerConfigInvalid()
@@ -122,6 +124,23 @@ class ExceptionTrapTest extends TestCase
 
         $this->assertStringContainsString('nope', $out);
         $this->assertStringContainsString('ExceptionTrapTest', $out);
+    }
+
+    public function testHandleExceptionConsoleRendering()
+    {
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ConsoleExceptionRenderer::class,
+            'stderr' => $output,
+        ]);
+        $error = new InvalidArgumentException('nope');
+
+        $trap->handleException($error);
+        $out = $output->messages();
+
+        $this->assertStringContainsString('nope', $out[0]);
+        $this->assertStringContainsString('<info>Trace:</info>', $out[0]);
+        $this->assertStringContainsString('->testHandleExceptionConsoleRendering()', $out[0]);
     }
 
     /**
