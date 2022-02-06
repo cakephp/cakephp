@@ -567,6 +567,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
+        /** @var array<string, \Cake\ORM\Entity> $translations */
         $translations = (array)$entity->get('_translations');
 
         if (empty($translations) && !$entity->isDirty('_translations')) {
