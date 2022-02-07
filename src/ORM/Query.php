@@ -131,6 +131,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected ?int $_resultsCount = null;
 
     /**
+     * Resultset factory
+     *
+     * @var \Cake\ORM\ResultSetFactory
+     */
+    protected ResultSetFactory $resultSetFactory;
+
+    /**
      * Constructor
      *
      * @param \Cake\Database\Connection $connection The connection object
@@ -1129,7 +1136,21 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
         $results = $this->getEagerLoader()->loadExternal($this, $results);
 
-        return new ResultSet($this, $results);
+        return $this->resultSetFactory()->createResultSet($this, $results);
+    }
+
+    /**
+     * Get resultset factory.
+     *
+     * @return \Cake\ORM\ResultSetFactory
+     */
+    protected function resultSetFactory(): ResultSetFactory
+    {
+        if (isset($this->resultSetFactory)) {
+            return $this->resultSetFactory;
+        }
+
+        return $this->resultSetFactory = new ResultSetFactory();
     }
 
     /**
