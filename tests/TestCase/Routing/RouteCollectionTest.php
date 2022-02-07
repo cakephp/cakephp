@@ -83,6 +83,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
 
         $result = $this->collection->parse('/b/');
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'index',
@@ -94,6 +95,7 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->collection->parse('/b/the-thing?one=two');
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'view',
@@ -107,6 +109,7 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->collection->parse('/b/media/search');
+        unset($result['_route']);
         $expected = [
             'key' => 'value',
             'pass' => [],
@@ -118,6 +121,7 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->collection->parse('/b/media/search/thing');
+        unset($result['_route']);
         $expected = [
             'key' => 'value',
             'pass' => ['thing'],
@@ -140,6 +144,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
 
         $result = $this->collection->parse('/b/');
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'index',
@@ -151,6 +156,7 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->collection->parse('/b/the-thing?one=two');
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'view',
@@ -164,6 +170,7 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->collection->parse('/b/media/search');
+        unset($result['_route']);
         $expected = [
             'key' => 'value',
             'pass' => [],
@@ -176,6 +183,7 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->collection->parse('/b/media/search/thing');
+        unset($result['_route']);
         $expected = [
             'key' => 'value',
             'pass' => ['thing'],
@@ -198,6 +206,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/ден/{day}-{month}', ['controller' => 'Events', 'action' => 'index']);
         $url = '/%D0%B4%D0%B5%D0%BD/15-%D0%BE%D0%BA%D1%82%D0%BE%D0%BC%D0%B2%D1%80%D0%B8?test=foo';
         $result = $this->collection->parse($url);
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'plugin' => null,
@@ -212,6 +221,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => $url]);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $this->assertEquals($expected, $result);
     }
 
@@ -227,6 +237,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/{controller}/{action}', [], ['routeClass' => 'InflectedRoute']);
 
         $result = $this->collection->parse('/articles/add');
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'add',
@@ -273,6 +284,7 @@ class RouteCollectionTest extends TestCase
             ],
         ]);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'index',
@@ -289,6 +301,7 @@ class RouteCollectionTest extends TestCase
             ],
         ]);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $this->assertEquals($expected, $result, 'Should match, domain is a matching subdomain');
 
         $request = new ServerRequest([
@@ -356,6 +369,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => '/b/']);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'index',
@@ -368,6 +382,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => '/b/media/search']);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $expected = [
             'key' => 'value',
             'pass' => [],
@@ -380,6 +395,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => '/b/media/search/thing']);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $expected = [
             'key' => 'value',
             'pass' => ['thing'],
@@ -392,6 +408,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => '/b/the-thing?one=two']);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $expected = [
             'controller' => 'Articles',
             'action' => 'view',
@@ -415,6 +432,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => '/b/alta/confirmaci%C3%B3n']);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $expected = [
             'controller' => 'Media',
             'action' => 'confirm',
@@ -426,6 +444,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => '/b/alta/confirmación']);
         $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
         $this->assertEquals($expected, $result);
     }
 

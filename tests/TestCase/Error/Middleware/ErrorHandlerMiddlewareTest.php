@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRendererInterface;
+use Cake\Error\ExceptionTrap;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
@@ -116,6 +117,22 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
+        $handler = new TestRequestHandler(function (): void {
+            throw new NotFoundException('whoops');
+        });
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertSame(404, $result->getStatusCode());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
+    }
+
+    /**
+     * Test rendering an error page with an exception trap
+     */
+    public function testHandleExceptionWithExceptionTrap(): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $middleware = new ErrorHandlerMiddleware(new ExceptionTrap());
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('whoops');
         });

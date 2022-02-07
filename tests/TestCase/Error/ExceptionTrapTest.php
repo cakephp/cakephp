@@ -22,17 +22,30 @@ use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Text;
 use InvalidArgumentException;
 use stdClass;
 use Throwable;
 
 class ExceptionTrapTest extends TestCase
 {
+    /**
+     * @var string
+     */
+    private $memoryLimit;
+
     public function setUp(): void
     {
         parent::setUp();
+        $this->memoryLimit = ini_get('memory_limit');
 
         Log::drop('test_error');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        ini_set('memory_limit', $this->memoryLimit);
     }
 
     public function testConfigRendererInvalid()
@@ -96,7 +109,7 @@ class ExceptionTrapTest extends TestCase
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
     }
 
-    public function testRenderExceptionText()
+    public function testHandleExceptionText()
     {
         $trap = new ExceptionTrap([
             'exceptionRenderer' => TextExceptionRenderer::class,
@@ -119,7 +132,7 @@ class ExceptionTrapTest extends TestCase
      * @preserveGlobalState disabled
      * @runInSeparateProcess
      */
-    public function testRenderExceptionHtml()
+    public function testHandleExceptionHtmlRendering()
     {
         $trap = new ExceptionTrap([
             'exceptionRenderer' => ExceptionRenderer::class,
@@ -149,10 +162,10 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('nope', $logs[0]);
     }
 
-    public function testAddCallback()
+    public function testEventTriggered()
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->addCallback(function (Throwable $error) {
+        $trap->getEventManager()->on('Exception.handled', function ($event, Throwable $error) {
             $this->assertEquals(100, $error->getCode());
             $this->assertStringContainsString('nope', $error->getMessage());
         });
@@ -163,5 +176,106 @@ class ExceptionTrapTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertNotEmpty($out);
+    }
+
+    public function testHandleShutdownNoOp()
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => TextExceptionRenderer::class,
+        ]);
+        ob_start();
+        $trap->handleShutdown();
+        $out = ob_get_clean();
+
+        $this->assertEmpty($out);
+    }
+
+    public function testHandleFatalShutdownNoError()
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => TextExceptionRenderer::class,
+        ]);
+        error_clear_last();
+        ob_start();
+        $trap->handleShutdown();
+        $out = ob_get_clean();
+
+        $this->assertSame('', $out);
+    }
+
+    public function testHandleFatalErrorText()
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => TextExceptionRenderer::class,
+        ]);
+        ob_start();
+        $trap->handleFatalError(E_USER_ERROR, 'Something bad', __FILE__, __LINE__);
+        $out = ob_get_clean();
+
+        $this->assertStringContainsString('500 : Fatal Error', $out);
+        $this->assertStringContainsString('Something bad', $out);
+        $this->assertStringContainsString(__FILE__, $out);
+    }
+
+    /**
+     * Test integration with HTML rendering for fatal errors
+     *
+     * Run in a separate process because HTML output writes headers.
+     *
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
+    public function testHandleFatalErrorHtmlRendering()
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ExceptionRenderer::class,
+        ]);
+
+        ob_start();
+        $trap->handleFatalError(E_USER_ERROR, 'Something bad', __FILE__, __LINE__);
+        $out = ob_get_clean();
+
+        $this->assertStringContainsString('<!DOCTYPE', $out);
+        $this->assertStringContainsString('<html', $out);
+        $this->assertStringContainsString('Something bad', $out);
+        $this->assertStringContainsString(__FILE__, $out);
+    }
+
+    /**
+     * Data provider for memory limit increase
+     */
+    public static function initialMemoryProvider(): array
+    {
+        return [
+            ['256M'],
+            ['1G'],
+        ];
+    }
+
+    /**
+     * @dataProvider initialMemoryProvider
+     */
+    public function testIncreaseMemoryLimit($initial)
+    {
+        ini_set('memory_limit', $initial);
+        $this->assertEquals($initial, ini_get('memory_limit'));
+
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => TextExceptionRenderer::class,
+        ]);
+        $trap->increaseMemoryLimit(4 * 1024);
+        $initialBytes = Text::parseFileSize($initial, false);
+        $result = Text::parseFileSize(ini_get('memory_limit'), false);
+        $this->assertWithinRange($initialBytes + (4 * 1024 * 1024), $result, 1024);
+    }
+
+    public function testSingleton()
+    {
+        $trap = new ExceptionTrap();
+        $trap->register();
+        $this->assertSame($trap, ExceptionTrap::instance());
+
+        $trap->unregister();
+        $this->assertNull(ExceptionTrap::instance());
     }
 }

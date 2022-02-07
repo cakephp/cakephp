@@ -179,6 +179,7 @@ class RouterTest extends TestCase
             ->connect('/{controller}', ['action' => 'index', '_method' => ['GET', 'POST']]);
 
         $result = Router::parseRequest($this->makeRequest('/Posts', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'plugin' => null,
@@ -190,6 +191,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/Posts', 'POST'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'plugin' => null,
@@ -411,9 +413,11 @@ class RouterTest extends TestCase
             '_matchedRoute' => '/*',
         ];
         $result = Router::parseRequest($this->makeRequest('/0', 'GET'));
+        unset($result['_route']);
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('0', 'GET'));
+        unset($result['_route']);
         $this->assertEquals($expected, $result);
     }
 
@@ -1246,6 +1250,7 @@ class RouterTest extends TestCase
             ['value', 'somevalue', 'othervalue']
         );
         $result = Router::parseRequest($this->makeRequest('/posts/2007/08/01/title-of-post-here', 'GET'));
+        unset($result['_route']);
         $expected = [
             'value' => '2007',
             'somevalue' => '08',
@@ -1266,6 +1271,7 @@ class RouterTest extends TestCase
             ['year' => $Year, 'month' => $Month, 'day' => $Day]
         );
         $result = Router::parseRequest($this->makeRequest('/posts/2007/08/01/title-of-post-here', 'GET'));
+        unset($result['_route']);
         $expected = [
             'year' => '2007',
             'month' => '08',
@@ -1286,6 +1292,7 @@ class RouterTest extends TestCase
             ['year' => $Year, 'month' => $Month, 'day' => $Day]
         );
         $result = Router::parseRequest($this->makeRequest('/posts/01/2007/08/title-of-post-here', 'GET'));
+        unset($result['_route']);
         $expected = [
             'day' => '01',
             'year' => '2007',
@@ -1306,6 +1313,7 @@ class RouterTest extends TestCase
             ['year' => $Year, 'month' => $Month, 'day' => $Day]
         );
         $result = Router::parseRequest($this->makeRequest('/posts/08/01/2007/title-of-post-here', 'GET'));
+        unset($result['_route']);
         $expected = [
             'month' => '08',
             'day' => '01',
@@ -1325,6 +1333,7 @@ class RouterTest extends TestCase
             ['controller' => 'Posts', 'action' => 'view']
         );
         $result = Router::parseRequest($this->makeRequest('/posts/2007/08/01/title-of-post-here', 'GET'));
+        unset($result['_route']);
         $expected = [
             'year' => '2007',
             'month' => '08',
@@ -1340,6 +1349,7 @@ class RouterTest extends TestCase
         Router::reload();
         $routes = Router::createRouteBuilder('/', ['routeClass' => 'InflectedRoute'])->fallbacks();
         $result = Router::parseRequest($this->makeRequest('/pages/display/home', 'GET'));
+        unset($result['_route']);
         $expected = [
             'plugin' => null,
             'pass' => ['home'],
@@ -1350,15 +1360,18 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('pages/display/home/', 'GET'));
+        unset($result['_route']);
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('pages/display/home', 'GET'));
+        unset($result['_route']);
         $this->assertEquals($expected, $result);
 
         Router::reload();
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/page/*', ['controller' => 'Test']);
         $result = Router::parseRequest($this->makeRequest('/page/my-page', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['my-page'],
             'plugin' => null,
@@ -1376,6 +1389,7 @@ class RouterTest extends TestCase
             ['language' => '[a-z]{3}']
         );
         $result = Router::parseRequest($this->makeRequest('/eng/contact', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'language' => 'eng',
@@ -1395,6 +1409,7 @@ class RouterTest extends TestCase
         );
 
         $result = Router::parseRequest($this->makeRequest('/forestillinger/10/2007/min-forestilling', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['min-forestilling'],
             'plugin' => 'Shows',
@@ -1411,6 +1426,7 @@ class RouterTest extends TestCase
         $routes->connect('/{controller}/{action}/*');
         $routes->connect('/', ['plugin' => 'pages', 'controller' => 'Pages', 'action' => 'display']);
         $result = Router::parseRequest($this->makeRequest('/', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'controller' => 'Pages',
@@ -1421,6 +1437,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/Posts/edit/0', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [0],
             'controller' => 'Posts',
@@ -1438,6 +1455,7 @@ class RouterTest extends TestCase
             ['pass' => ['id', 'url_title'], 'id' => '[\d]+']
         );
         $result = Router::parseRequest($this->makeRequest('/Posts/5:sample-post-title', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['5', 'sample-post-title'],
             'id' => '5',
@@ -1457,6 +1475,7 @@ class RouterTest extends TestCase
             ['pass' => ['id', 'url_title'], 'id' => '[\d]+']
         );
         $result = Router::parseRequest($this->makeRequest('/Posts/5:sample-post-title/other/params/4', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['5', 'sample-post-title', 'other', 'params', '4'],
             'id' => 5,
@@ -1472,6 +1491,7 @@ class RouterTest extends TestCase
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/posts/view/*', ['controller' => 'Posts', 'action' => 'view']);
         $result = Router::parseRequest($this->makeRequest('/posts/view/10?id=123&tab=abc', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [10],
             'plugin' => null,
@@ -1490,6 +1510,7 @@ class RouterTest extends TestCase
             ['pass' => ['id', 'url_title'], 'id' => $UUID]
         );
         $result = Router::parseRequest($this->makeRequest('/posts/sample-post-title-(uuid:47fc97a9-019c-41d1-a058-1fa3cbdd56cb)', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['47fc97a9-019c-41d1-a058-1fa3cbdd56cb', 'sample-post-title'],
             'id' => '47fc97a9-019c-41d1-a058-1fa3cbdd56cb',
@@ -1505,6 +1526,7 @@ class RouterTest extends TestCase
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/posts/view/*', ['controller' => 'Posts', 'action' => 'view']);
         $result = Router::parseRequest($this->makeRequest('/posts/view/foo:bar/routing:fun', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['foo:bar', 'routing:fun'],
             'plugin' => null,
@@ -1524,6 +1546,7 @@ class RouterTest extends TestCase
         $routes->connect('/articles/{action}/*', ['controller' => 'Articles']);
         $request = new ServerRequest(['url' => '/articles/view/1']);
         $result = Router::parseRequest($request);
+        unset($result['_route']);
         $expected = [
             'pass' => ['1'],
             'plugin' => null,
@@ -1546,6 +1569,7 @@ class RouterTest extends TestCase
             ['category_id' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}']
         );
         $result = Router::parseRequest($this->makeRequest('/subjects/add/4795d601-19c8-49a6-930e-06a8b01d17b7', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'category_id' => '4795d601-19c8-49a6-930e-06a8b01d17b7',
@@ -1570,6 +1594,7 @@ class RouterTest extends TestCase
         );
 
         $result = Router::parseRequest($this->makeRequest('/some_extra/page/this_is_the_slug', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'plugin' => null,
@@ -1582,6 +1607,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/page/this_is_the_slug', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'plugin' => null,
@@ -1739,6 +1765,7 @@ class RouterTest extends TestCase
         Router::createRouteBuilder('/', ['routeClass' => 'InflectedRoute'])->fallbacks();
 
         $result = Router::parseRequest($this->makeRequest('/posts.rss', 'GET'));
+        unset($result['_route']);
         $expected = [
             'plugin' => null,
             'controller' => 'Posts',
@@ -1750,6 +1777,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/posts/view/1.rss', 'GET'));
+        unset($result['_route']);
         $expected = [
             'plugin' => null,
             'controller' => 'Posts',
@@ -1761,6 +1789,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/posts/view/1.rss?query=test', 'GET'));
+        unset($result['_route']);
         $expected['?'] = ['query' => 'test'];
         $this->assertEquals($expected, $result);
 
@@ -1769,6 +1798,7 @@ class RouterTest extends TestCase
         Router::createRouteBuilder('/', ['routeClass' => 'InflectedRoute'])->fallbacks();
 
         $result = Router::parseRequest($this->makeRequest('/posts.xml', 'GET'));
+        unset($result['_route']);
         $expected = [
             'plugin' => null,
             'controller' => 'Posts',
@@ -1780,6 +1810,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/posts.atom?hello=goodbye', 'GET'));
+        unset($result['_route']);
         $expected = [
             'plugin' => null,
             'controller' => 'Posts.atom',
@@ -1794,6 +1825,7 @@ class RouterTest extends TestCase
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/controller/action', ['controller' => 'Controller', 'action' => 'action', '_ext' => 'rss']);
         $result = Router::parseRequest($this->makeRequest('/controller/action', 'GET'));
+        unset($result['_route']);
         $expected = [
             'controller' => 'Controller',
             'action' => 'action',
@@ -1808,6 +1840,7 @@ class RouterTest extends TestCase
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/controller/action', ['controller' => 'Controller', 'action' => 'action', '_ext' => 'rss']);
         $result = Router::parseRequest($this->makeRequest('/controller/action', 'GET'));
+        unset($result['_route']);
         $expected = [
             'controller' => 'Controller',
             'action' => 'action',
@@ -1823,6 +1856,7 @@ class RouterTest extends TestCase
         Router::extensions('rss', false);
         $routes->connect('/controller/action', ['controller' => 'Controller', 'action' => 'action', '_ext' => 'rss']);
         $result = Router::parseRequest($this->makeRequest('/controller/action', 'GET'));
+        unset($result['_route']);
         $expected = [
             'controller' => 'Controller',
             'action' => 'action',
@@ -2078,6 +2112,7 @@ class RouterTest extends TestCase
         $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
 
         $result = Router::parseRequest($this->makeRequest('/', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['home'],
             'plugin' => null,
@@ -2088,6 +2123,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/pages/home/', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['home'],
             'plugin' => null,
@@ -2102,6 +2138,7 @@ class RouterTest extends TestCase
         $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
         $result = Router::parseRequest($this->makeRequest('/', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => ['home'],
             'plugin' => null,
@@ -2116,6 +2153,7 @@ class RouterTest extends TestCase
         $routes->connect('/', ['controller' => 'Posts', 'action' => 'index']);
         $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
         $result = Router::parseRequest($this->makeRequest('/pages/contact/', 'GET'));
+        unset($result['_route']);
 
         $expected = [
             'pass' => ['contact'],
@@ -2171,6 +2209,7 @@ class RouterTest extends TestCase
         );
 
         $result = Router::parseRequest($this->makeRequest('/blog/other', 'GET'));
+        unset($result['_route']);
         $expected = [
             'plugin' => null,
             'controller' => 'BlogPosts',
@@ -2328,6 +2367,7 @@ class RouterTest extends TestCase
         Router::setRequest($request);
 
         $result = Router::parseRequest($this->makeRequest('/admin/Posts/', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'prefix' => 'Admin',
@@ -2339,6 +2379,7 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Router::parseRequest($this->makeRequest('/admin/Posts', 'GET'));
+        unset($result['_route']);
         $this->assertEquals($expected, $result);
 
         $result = Router::url(['prefix' => 'Admin', 'controller' => 'Posts']);
@@ -2361,6 +2402,7 @@ class RouterTest extends TestCase
         Router::setRequest($request);
 
         $result = Router::parseRequest($this->makeRequest('/members/Posts/index', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'prefix' => 'Members',
@@ -2465,6 +2507,7 @@ class RouterTest extends TestCase
         $routes->connect('/{locale}/{controller}/{action}/*', [], ['locale' => 'dan|eng']);
 
         $result = Router::parseRequest($this->makeRequest('/eng/Test/testAction', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'locale' => 'eng',
@@ -2519,6 +2562,7 @@ class RouterTest extends TestCase
             ['routeClass' => 'PluginShortRoute', 'slug' => '[a-z_-]+']
         );
         $result = Router::parseRequest($this->makeRequest('/the-best', 'GET'));
+        unset($result['_route']);
         $expected = [
             'plugin' => 'TestPlugin',
             'controller' => 'TestPlugin',
@@ -2753,8 +2797,8 @@ class RouterTest extends TestCase
 
     public function testReverseToArrayRequestQuery(): void
     {
-        $routes = Router::createRouteBuilder('/');
-        $routes->connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
+        $builder = Router::createRouteBuilder('/');
+        $route = $builder->connect('/{lang}/{controller}/{action}/*', [], ['lang' => '[a-z]{3}']);
         $request = new ServerRequest([
             'url' => '/eng/posts/view/1',
             'params' => [
@@ -2775,6 +2819,12 @@ class RouterTest extends TestCase
                 'test' => 'value',
             ],
         ];
+        $this->assertEquals($expected, $actual);
+
+        $request = $request->withAttribute('route', $route)
+            ->withQueryParams(['x' => 'y']);
+        $expected['?'] = ['x' => 'y'];
+        $actual = Router::reverseToArray($request);
         $this->assertEquals($expected, $actual);
     }
 
@@ -2870,6 +2920,7 @@ class RouterTest extends TestCase
         $this->assertSame('/blog/actions/', $result);
 
         $result = $route->parseRequest($this->makeRequest('/blog/other', 'GET'));
+        unset($result['_route']);
         $expected = [
             'controller' => 'BlogPosts',
             'action' => 'other',
@@ -3146,6 +3197,7 @@ class RouterTest extends TestCase
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/admin/articles/view', 'Admin/Articles::view');
         $result = Router::parseRequest($this->makeRequest('/admin/articles/view', 'GET'));
+        unset($result['_route']);
         $expected = [
             'pass' => [],
             'prefix' => 'Admin',

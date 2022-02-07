@@ -7,20 +7,22 @@ use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Renderer\ConsoleErrorRenderer;
 use Cake\Error\Renderer\HtmlErrorRenderer;
-use Closure;
+use Cake\Event\EventDispatcherTrait;
 use Exception;
 use InvalidArgumentException;
 
 /**
  * Entry point to CakePHP's error handling.
  *
- * Using the `register()` method you can attach an ErrorTrap
- * to PHP's default error handler. When errors are trapped
- * they are 'rendered' using the defined renderers and logged
- * if logging is enabled.
+ * Using the `register()` method you can attach an ErrorTrap to PHP's default error handler.
+ *
+ * When errors are trapped, errors are logged (if logging is enabled). Then the `Error.handled` event is triggered.
+ * Finally, errors are 'rendered' using the defined renderer. If no error renderer is defined in configuration
+ * one of the default implementations will be chosen based on the PHP SAPI.
  */
 class ErrorTrap
 {
+    use EventDispatcherTrait;
     use InstanceConfigTrait {
         getConfig as private _getConfig;
     }
@@ -40,16 +42,6 @@ class ErrorTrap
         'extraFatalErrorMemory' => 4 * 1024,
         'trace' => false,
     ];
-
-    /**
-     * A list of handling callbacks.
-     *
-     * Callbacks are invoked for each error that is handled.
-     * Callbacks are invoked in the order they are attached.
-     *
-     * @var array<\Closure>
-     */
-    protected array $callbacks = [];
 
     /**
      * Constructor
@@ -104,6 +96,9 @@ class ErrorTrap
      * Will use the configured renderer to generate output
      * and output it.
      *
+     * This method will dispatch the `Error.handled` event which can be listened
+     * to on the global event manager.
+     *
      * @param int $code Code of error
      * @param string $description Error description
      * @param string|null $file File on which error occurred
@@ -128,12 +123,9 @@ class ErrorTrap
         $logger = $this->logger();
 
         try {
-            // Log first incase rendering or callbacks fail.
+            // Log first incase rendering or event listeners fail
             $logger->logMessage($error->getLabel(), $error->getMessage());
-
-            foreach ($this->callbacks as $callback) {
-                $callback($error);
-            }
+            $this->dispatchEvent('Error.handled', ['error' => $error]);
             $renderer->write($renderer->render($error, $debug));
         } catch (Exception $e) {
             $logger->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
@@ -188,24 +180,5 @@ class ErrorTrap
         $instance = new $class($this->_config);
 
         return $instance;
-    }
-
-    /**
-     * Add a callback to be invoked when an error is handled.
-     *
-     * Your callback should habe the following signature:
-     *
-     * ```
-     * function (\Cake\Error\PhpError $error): void
-     * ```
-     *
-     * @param \Closure $closure The Closure to be invoked when an error is handledd.
-     * @return $this
-     */
-    public function addCallback(Closure $closure)
-    {
-        $this->callbacks[] = $closure;
-
-        return $this;
     }
 }

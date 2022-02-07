@@ -4,30 +4,26 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\ServerRequest;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
-use Closure;
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
  * Entry point to CakePHP's exception handling.
  *
- * Using the `register()` method you can attach an ExceptionTrap
- * to PHP's default exception handler and register a shutdown
- * handler to handle fatal errors. When exceptions are trapped
- * they are 'rendered' using the defined renderers and logged
- * if logging is enabled.
+ * Using the `register()` method you can attach an ExceptionTrap to PHP's default exception handler and register
+ * a shutdown handler to handle fatal errors.
  *
- * Exceptions will be logged, then call attached callbacks
- * and finally render an error page using the configured
- * `exceptionRenderer`.
+ * When exceptions are trapped the `Exception.handled` event is triggered.
+ * Then exceptions are logged (if enabled) and finally 'rendered' using the defined renderer.
  *
- * If undefined, an ExceptionRenderer will be selected
- * based on the current SAPI (CLI or Web).
+ * If undefined, an ExceptionRenderer will be selected based on the current SAPI (CLI or Web).
  */
 class ExceptionTrap
 {
+    use EventDispatcherTrait;
     use InstanceConfigTrait {
         getConfig as private _getConfig;
     }
@@ -58,6 +54,23 @@ class ExceptionTrap
     protected array $callbacks = [];
 
     /**
+     * The currently registered global exception handler
+     *
+     * This is best effort as we can't know if/when another
+     * exception handler is registered.
+     *
+     * @var \Cake\Error\ExceptionTrap|null
+     */
+    protected static ?ExceptionTrap $registeredTrap = null;
+
+    /**
+     * Track if this trap was removed from the global handler.
+     *
+     * @var bool
+     */
+    protected bool $disabled = false;
+
+    /**
      * Constructor
      *
      * @param array<string, mixed> $options An options array. See $_defaultConfig.
@@ -71,13 +84,13 @@ class ExceptionTrap
      * Get an instance of the renderer.
      *
      * @param \Throwable $exception Exception to render
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request if possible.
      * @return \Cake\Error\ExceptionRendererInterface
      */
-    public function renderer(Throwable $exception): ExceptionRendererInterface
+    public function renderer(Throwable $exception, ?ServerRequestInterface $request = null): ExceptionRendererInterface
     {
-        // The return of this method is not defined because
-        // the desired interface has bad types that will be changing in 5.x
-        $request = Router::getRequest();
+        $request = $request ?? Router::getRequest();
+
         /** @var callable|class-string $class */
         $class = $this->_getConfig('exceptionRenderer');
 
@@ -124,25 +137,6 @@ class ExceptionTrap
     }
 
     /**
-     * Add a callback to be invoked when an error is handled.
-     *
-     * Your callback should habe the following signature:
-     *
-     * ```
-     * function (\Throwable $error): void
-     * ```
-     *
-     * @param \Closure $closure The Closure to be invoked when an error is handledd.
-     * @return $this
-     */
-    public function addCallback(Closure $closure)
-    {
-        $this->callbacks[] = $closure;
-
-        return $this;
-    }
-
-    /**
      * Attach this ExceptionTrap to PHP's default exception handler.
      *
      * This will replace the existing exception handler, and the
@@ -153,7 +147,38 @@ class ExceptionTrap
     public function register(): void
     {
         set_exception_handler([$this, 'handleException']);
-        // TODO handle fatal errors.
+        register_shutdown_function([$this, 'handleShutdown']);
+        static::$registeredTrap = $this;
+    }
+
+    /**
+     * Remove this instance from the singleton
+     *
+     * If this instance is not currently the registered singleton
+     * nothing happens.
+     *
+     * @return void
+     */
+    public function unregister(): void
+    {
+        if (static::$registeredTrap == $this) {
+            $this->disabled = true;
+            static::$registeredTrap = null;
+        }
+    }
+
+    /**
+     * Get the registered global instance if set.
+     *
+     * Keep in mind that the global state contained here
+     * is mutable and the object returned by this method
+     * could be a stale value.
+     *
+     * @return \Cake\Error\ExceptionTrap|null The global instance or null.
+     */
+    public static function instance(): ?self
+    {
+        return static::$registeredTrap;
     }
 
     /**
@@ -169,12 +194,12 @@ class ExceptionTrap
      */
     public function handleException(Throwable $exception): void
     {
+        if ($this->disabled) {
+            return;
+        }
         $request = Router::getRequest();
 
         $this->logException($exception, $request);
-        foreach ($this->callbacks as $callback) {
-            $callback($exception);
-        }
 
         try {
             $renderer = $this->renderer($exception);
@@ -185,19 +210,102 @@ class ExceptionTrap
     }
 
     /**
+     * Shutdown handler
+     *
+     * Convert fatal errors into exceptions that we can render.
+     *
+     * @return void
+     */
+    public function handleShutdown(): void
+    {
+        if ($this->disabled) {
+            return;
+        }
+        $megabytes = $this->_config['extraFatalErrorMemory'] ?? 4;
+        if ($megabytes > 0) {
+            $this->increaseMemoryLimit($megabytes * 1024);
+        }
+        $error = error_get_last();
+        if (!is_array($error)) {
+            return;
+        }
+        $fatals = [
+            E_USER_ERROR,
+            E_ERROR,
+            E_PARSE,
+        ];
+        if (!in_array($error['type'], $fatals, true)) {
+            return;
+        }
+        $this->handleFatalError(
+            $error['type'],
+            $error['message'],
+            $error['file'],
+            $error['line']
+        );
+    }
+
+    /**
+     * Increases the PHP "memory_limit" ini setting by the specified amount
+     * in kilobytes
+     *
+     * @param int $additionalKb Number in kilobytes
+     * @return void
+     */
+    public function increaseMemoryLimit(int $additionalKb): void
+    {
+        $limit = ini_get('memory_limit');
+        if ($limit === false || $limit === '' || $limit === '-1') {
+            return;
+        }
+        $limit = trim($limit);
+        $units = strtoupper(substr($limit, -1));
+        $current = (int)substr($limit, 0, -1);
+        if ($units === 'M') {
+            $current *= 1024;
+            $units = 'K';
+        }
+        if ($units === 'G') {
+            $current = $current * 1024 * 1024;
+            $units = 'K';
+        }
+
+        if ($units === 'K') {
+            ini_set('memory_limit', ceil($current + $additionalKb) . 'K');
+        }
+    }
+
+    /**
+     * Display/Log a fatal error.
+     *
+     * @param int $code Code of error
+     * @param string $description Error description
+     * @param string $file File on which error occurred
+     * @param int $line Line that triggered the error
+     * @return void
+     */
+    public function handleFatalError(int $code, string $description, string $file, int $line): void
+    {
+        $this->handleException(new FatalErrorException('Fatal Error: ' . $description, 500, $file, $line));
+    }
+
+    /**
      * Log an exception.
      *
      * Primarily a public function to ensure consistency between global exception handling
-     * and the ErrorHandlerMiddleware
+     * and the ErrorHandlerMiddleware.
+     *
+     * After logging, the `Exception.handled` event is triggered.
      *
      * @param \Throwable $exception The exception to log
-     * @param \Cake\Http\ServerRequest|null $request The optional request
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The optional request
      * @return void
      */
-    public function logException(Throwable $exception, ?ServerRequest $request = null): void
+    public function logException(Throwable $exception, ?ServerRequestInterface $request = null): void
     {
         $logger = $this->logger();
         $logger->log($exception, $request);
+        $this->dispatchEvent('Exception.handled', ['exception' => $exception]);
     }
 
     /**

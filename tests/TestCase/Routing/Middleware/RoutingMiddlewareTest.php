@@ -23,6 +23,7 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
@@ -111,6 +112,22 @@ class RoutingMiddlewareTest extends TestCase
                 '_matchedRoute' => '/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+
+            return new Response();
+        });
+        $middleware = new RoutingMiddleware($this->app());
+        $middleware->process($request, $handler);
+    }
+
+    /**
+     * Test that Router sets matched routes instance.
+     */
+    public function testRouterSetRoute(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
+        $handler = new TestRequestHandler(function ($req) {
+            $this->assertInstanceOf(Route::class, $req->getAttribute('route'));
+            $this->assertSame('/articles', $req->getAttribute('route')->staticPath());
 
             return new Response();
         });

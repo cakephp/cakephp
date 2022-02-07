@@ -39,6 +39,8 @@ use Cake\Utility\Inflector;
  * etc. and return a response accordingly.
  *
  * @link https://book.cakephp.org/4/en/controllers/components/request-handling.html
+ * @deprecated 4.4.0 See the 4.4 migration guide for how to upgrade.
+ *   https://book.cakephp.org/4/en/appendices/4-4-migration-guide.html#requesthandlercomponent
  */
 class RequestHandlerComponent extends Component
 {

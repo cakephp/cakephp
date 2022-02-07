@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
+use Cake\Error\ExceptionTrap;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -75,13 +76,20 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected ?ErrorHandler $errorHandler = null;
 
     /**
+     * ExceptionTrap instance
+     *
+     * @var \Cake\Error\ExceptionTrap|null
+     */
+    protected ?ExceptionTrap $exceptionTrap = null;
+
+    /**
      * Constructor
      *
-     * @param \Cake\Error\ErrorHandler|array $errorHandler The error handler instance
+     * @param \Cake\Error\ErrorHandler|\Cake\Error\ExceptionTrap|array $errorHandler The error handler instance
      *  or config array.
      * @throws \InvalidArgumentException
      */
-    public function __construct(ErrorHandler|array $errorHandler = [])
+    public function __construct(ErrorHandler|ExceptionTrap|array $errorHandler = [])
     {
         if (Configure::read('debug')) {
             ini_set('zend.exception_ignore_args', '0');
@@ -92,8 +100,13 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
             return;
         }
+        if ($errorHandler instanceof ErrorHandler) {
+            $this->errorHandler = $errorHandler;
 
-        $this->errorHandler = $errorHandler;
+            return;
+        }
+
+        $this->exceptionTrap = $errorHandler;
     }
 
     /**
@@ -101,7 +114,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
-     * @return \Psr\Http\Message\ResponseInterface A response.
+     * @return \Psr\Http\Message\ResponseInterface A response
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -119,23 +132,35 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @param \Throwable $exception The exception to handle.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
-        $errorHandler = $this->getErrorHandler();
-        $renderer = $errorHandler->getRenderer($exception, $request);
-
-        try {
+        if ($this->errorHandler === null) {
+            $errorHandler = $this->getExceptionTrap();
             $errorHandler->logException($exception, $request);
-            /** @var \Psr\Http\Message\ResponseInterface $response*/
-            $response = $renderer->render();
-        } catch (Throwable $internalException) {
-            $errorHandler->logException($internalException, $request);
-            $response = $this->handleInternalError();
+
+            $renderer = $errorHandler->renderer($exception, $request);
+        } else {
+            $errorHandler = $this->getErrorHandler();
+            $errorHandler->logException($exception, $request);
+
+            $renderer = $errorHandler->getRenderer($exception, $request);
         }
 
-        return $response;
+        try {
+            /** @var \Psr\Http\Message\ResponseInterface|string $response */
+            $response = $renderer->render();
+            if (is_string($response)) {
+                return new Response(['body' => $response, 'status' => 500]);
+            }
+
+            return $response;
+        } catch (Throwable $internalException) {
+            $errorHandler->logException($internalException, $request);
+
+            return $this->handleInternalError();
+        }
     }
 
     /**
@@ -160,9 +185,10 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     protected function handleInternalError(): ResponseInterface
     {
-        $response = new Response(['body' => 'An Internal Server Error Occurred']);
-
-        return $response->withStatus(500);
+        return new Response([
+            'body' => 'An Internal Server Error Occurred',
+            'status' => 500,
+        ]);
     }
 
     /**
@@ -179,5 +205,21 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         }
 
         return $this->errorHandler;
+    }
+
+    /**
+     * Get a exception trap instance
+     *
+     * @return \Cake\Error\ExceptionTrap The exception trap.
+     */
+    protected function getExceptionTrap(): ExceptionTrap
+    {
+        if ($this->exceptionTrap === null) {
+            /** @var class-string<\Cake\Error\ExceptionTrap> $className */
+            $className = App::className('ExceptionTrap', 'Error');
+            $this->exceptionTrap = new $className($this->getConfig());
+        }
+
+        return $this->exceptionTrap;
     }
 }

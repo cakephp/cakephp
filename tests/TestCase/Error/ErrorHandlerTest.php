@@ -121,11 +121,16 @@ class ErrorHandlerTest extends TestCase
         $wrong = $wrong + 1;
         $result = ob_get_clean();
 
-        $this->assertMatchesRegularExpression('/<pre class="cake-error">/', $result);
-        $this->assertMatchesRegularExpression('/<b>Warning<\/b>/', $result);
-        $this->assertMatchesRegularExpression('/variable \$wrong/', $result);
+        $this->assertMatchesRegularExpression('/<div class="cake-error">/', $result);
+        if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
+            $this->assertMatchesRegularExpression('/<b>Notice<\/b>/', $result);
+            $this->assertMatchesRegularExpression('/variable:\s+wrong/', $result);
+        } else {
+            $this->assertMatchesRegularExpression('/<b>Warning<\/b>/', $result);
+            $this->assertMatchesRegularExpression('/variable \$wrong/', $result);
+        }
         $this->assertStringContainsString(
-            'ErrorHandlerTest.php, line ' . (__LINE__ - 7),
+            'ErrorHandlerTest.php, line ' . (__LINE__ - 12),
             $result,
             'Should contain file and line reference'
         );

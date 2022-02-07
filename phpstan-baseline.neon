@@ -136,11 +136,6 @@ parameters:
 			path: src/Core/ObjectRegistry.php
 
 		-
-			message: "#^Property Cake\\\\Core\\\\ObjectRegistry\\<TObject\\>\\:\\:\\$_loaded \\(array\\<TObject\\>\\) does not accept array\\<object\\|TObject\\>\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
