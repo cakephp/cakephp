@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Error\Renderer;
 
 use Cake\Console\ConsoleOutput;
-use Throwable;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * Plain text exception rendering with a stack trace.
