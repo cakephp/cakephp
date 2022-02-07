@@ -181,11 +181,6 @@ parameters:
 			path: src/Core/ObjectRegistry.php
 
 		-
-			message: "#^Property Cake\\\\Core\\\\ObjectRegistry\\<TObject\\>\\:\\:\\$_loaded \\(array\\<TObject\\>\\) does not accept array\\<object\\|TObject\\>\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
 			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
 			count: 2
 			path: src/Database/Driver.php
