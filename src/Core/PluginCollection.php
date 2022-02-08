@@ -236,7 +236,7 @@ class PluginCollection implements Iterator, Countable
     {
         if (str_contains($name, '\\')) {
             if (!class_exists($name)) {
-                throw new InvalidArgumentException('Class not exists: ' . $name);
+                throw new InvalidArgumentException("Class `{$name}` does not exist.");
             }
 
             /** @var \Cake\Core\PluginInterface $plugin */
