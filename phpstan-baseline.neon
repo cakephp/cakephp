@@ -580,3 +580,8 @@ parameters:
 			count: 1
 			path: src/View/Helper/TimeHelper.php
 
+		-
+			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			count: 1
+			path: src/Error/Renderer/ConsoleExceptionRenderer.php
+

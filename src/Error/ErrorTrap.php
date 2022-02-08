@@ -51,9 +51,6 @@ class ErrorTrap
     public function __construct(array $options = [])
     {
         $this->setConfig($options);
-        if ($this->_getConfig('errorRenderer') === null) {
-            $this->setConfig('errorRenderer', $this->chooseErrorRenderer());
-        }
     }
 
     /**
