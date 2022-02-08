@@ -23,7 +23,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Throwable;
 
-
 /**
  * Base error handler that provides logic common to the CLI + web
  * error/exception handlers.
