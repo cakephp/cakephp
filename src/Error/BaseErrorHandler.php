@@ -23,6 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Throwable;
 
+
 /**
  * Base error handler that provides logic common to the CLI + web
  * error/exception handlers.
@@ -88,6 +89,12 @@ abstract class BaseErrorHandler
      */
     public function register(): void
     {
+        deprecationWarning(
+            'Use of `BaseErrorHandler` and subclasses are deprecated. ' .
+            'Upgrade to the new `ErrorTrap` and `ExceptionTrap` subsystem. ' .
+            'See https://book.cakephp.org/4/en/appendices/4-4-migration-guide.html'
+        );
+
         $level = $this->_config['errorLevel'] ?? -1;
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
