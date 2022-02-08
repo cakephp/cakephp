@@ -78,9 +78,6 @@ class ExceptionTrap
     public function __construct(array $options = [])
     {
         $this->setConfig($options);
-        if ($this->_getConfig('exceptionRenderer') === null) {
-            $this->setConfig('exceptionRenderer', $this->chooseRenderer());
-        }
     }
 
     /**
