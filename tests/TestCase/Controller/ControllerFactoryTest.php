@@ -246,7 +246,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Test create() injecting dependcies on defined controllers.
+     * Test create() injecting dependencies on defined controllers.
      */
     public function testCreateWithContainerDependenciesNoController(): void
     {
@@ -265,7 +265,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Test create() injecting dependcies on defined controllers.
+     * Test create() injecting dependencies on defined controllers.
      */
     public function testCreateWithContainerDependenciesWithController(): void
     {
@@ -439,7 +439,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Ensure that a controllers startup process can emit a response
+     * Test invoke passing basic typed data from pass parameters.
      */
     public function testInvokeInjectParametersOptionalWithPassedParameters(): void
     {
@@ -461,6 +461,33 @@ class ControllerFactoryTest extends TestCase
         $this->assertSame($data->any, 'one');
         $this->assertSame($data->str, 'two');
         $this->assertSame('value', $data->dep->key);
+    }
+
+    /**
+     * Test invoke() injecting dependencies that exist in passed params as objects.
+     * The accepted types of `params.pass` was never enforced and userland code has
+     * creative uses of this previously unspecified behavior.
+     */
+    public function testCreateWithContainerDependenciesWithObjectRouteParam(): void
+    {
+        $inject = new stdClass();
+        $inject->id = uniqid();
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredDep',
+                'pass' => [$inject],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $data = json_decode((string)$response->getBody());
+        $this->assertNotNull($data);
+        $this->assertEquals($data->dep->id, $inject->id);
     }
 
     /**
