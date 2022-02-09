@@ -530,7 +530,9 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Failed to inject dependency from service container for `dep` in action Dependencies::requiredDep()');
+        $this->expectExceptionMessage(
+            'Failed to inject dependency from service container for parameter `dep` with type `stdClass` in action Dependencies::requiredDep()'
+        );
         $this->factory->invoke($controller);
     }
 

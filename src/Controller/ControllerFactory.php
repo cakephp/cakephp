@@ -197,6 +197,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                 throw new InvalidParameterException([
                     'template' => 'missing_dependency',
                     'parameter' => $parameter->getName(),
+                    'type' => $typeName,
                     'controller' => $this->controller->getName(),
                     'action' => $this->controller->getRequest()->getParam('action'),
                     'prefix' => $this->controller->getRequest()->getParam('prefix'),
