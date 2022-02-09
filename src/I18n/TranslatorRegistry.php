@@ -201,6 +201,7 @@ class TranslatorRegistry
         $keyName = str_replace('/', '.', $name);
         $key = "translations.{$keyName}.{$locale}";
         $translator = $this->_cacher->get($key);
+        gc_collect_cycles();
         if (!$translator || !$translator->getPackage()) {
             $translator = $this->_getTranslator($name, $locale);
             $this->_cacher->set($key, $translator);
