@@ -145,6 +145,7 @@ class TranslatorRegistry extends TranslatorLocator
 
         $key = "translations.$name.$locale";
         $translator = $this->_cacher->read($key);
+        gc_collect_cycles();
         if (!$translator || !$translator->getPackage()) {
             $translator = $this->_getTranslator($name, $locale);
             $this->_cacher->write($key, $translator);
