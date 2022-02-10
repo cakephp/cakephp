@@ -139,7 +139,7 @@ class PaginatorComponentTest extends TestCase
         $settings = ['limit' => 1, 'maxLimit' => 10];
         $this->Paginator->paginate($this->Post, $settings);
         $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(1, $params['Posts']['page'], 'XSS exploit opened');
+        $this->assertSame(1, $params['Posts']['currentPage'], 'XSS exploit opened');
     }
 
     /**
@@ -693,7 +693,7 @@ class PaginatorComponentTest extends TestCase
         );
         $this->assertSame(
             1,
-            $params['PaginatorPosts']['page'],
+            $params['PaginatorPosts']['currentPage'],
             'Page number should not be 0'
         );
         $this->assertSame(
@@ -721,7 +721,7 @@ class PaginatorComponentTest extends TestCase
         $params = $this->controller->getRequest()->getAttribute('paging');
         $this->assertSame(
             1,
-            $params['PaginatorPosts']['page'],
+            $params['PaginatorPosts']['currentPage'],
             'Page number should not be 0'
         );
 
@@ -1093,8 +1093,8 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(4, $result['PaginatorPosts']['current']);
         $this->assertSame(4, $result['PaginatorPosts']['count']);
+        $this->assertSame(4, $result['PaginatorPosts']['totalCount']);
 
         $settings = ['finder' => 'published'];
         $result = $this->Paginator->paginate($table, $settings);
@@ -1102,8 +1102,8 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(3, $result['PaginatorPosts']['current']);
         $this->assertSame(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
 
         $settings = ['finder' => 'published', 'limit' => 2, 'page' => 2];
         $result = $this->Paginator->paginate($table, $settings);
@@ -1111,8 +1111,8 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['Third Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(1, $result['PaginatorPosts']['current']);
-        $this->assertSame(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(1, $result['PaginatorPosts']['count']);
+        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
         $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
 
         $settings = ['finder' => 'published', 'limit' => 2];
@@ -1121,11 +1121,11 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(2, $result['PaginatorPosts']['current']);
-        $this->assertSame(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(2, $result['PaginatorPosts']['count']);
+        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
         $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
-        $this->assertTrue($result['PaginatorPosts']['nextPage']);
-        $this->assertFalse($result['PaginatorPosts']['prevPage']);
+        $this->assertTrue($result['PaginatorPosts']['hasNextPage']);
+        $this->assertFalse($result['PaginatorPosts']['hasPrevPage']);
         $this->assertSame(2, $result['PaginatorPosts']['perPage']);
         $this->assertNull($result['PaginatorPosts']['limit']);
     }
@@ -1154,11 +1154,11 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(2, $result['PaginatorPosts']['current']);
-        $this->assertSame(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(2, $result['PaginatorPosts']['count']);
+        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
         $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
-        $this->assertTrue($result['PaginatorPosts']['nextPage']);
-        $this->assertFalse($result['PaginatorPosts']['prevPage']);
+        $this->assertTrue($result['PaginatorPosts']['hasNextPage']);
+        $this->assertFalse($result['PaginatorPosts']['hasPrevPage']);
     }
 
     /**

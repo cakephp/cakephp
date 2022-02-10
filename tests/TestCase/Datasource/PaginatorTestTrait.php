@@ -74,9 +74,9 @@ trait PaginatorTestTrait
 
         $params = ['page' => '1 " onclick="alert(\'xss\');">'];
         $settings = ['limit' => 1, 'maxLimit' => 10];
-        $this->Paginator->paginate($this->Post, $params, $settings);
-        $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertSame(1, $pagingParams['Posts']['page'], 'XSS exploit opened');
+        $result = $this->Paginator->paginate($this->Post, $params, $settings);
+        $pagingParams = $result->pagingParams();
+        $this->assertSame(1, $pagingParams['currentPage'], 'XSS exploit opened');
     }
 
     /**
@@ -221,12 +221,12 @@ trait PaginatorTestTrait
                 'sort' => null,
             ]);
 
-        $this->Paginator->paginate($table, [], $settings);
+        $result = $this->Paginator->paginate($table, [], $settings);
 
-        $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertNull($pagingParams['PaginatorPosts']['direction']);
-        $this->assertFalse($pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertFalse($pagingParams['PaginatorPosts']['directionDefault']);
+        $pagingParams = $result->pagingParams();
+        $this->assertNull($pagingParams['direction']);
+        $this->assertFalse($pagingParams['sortDefault']);
+        $this->assertFalse($pagingParams['directionDefault']);
     }
 
     /**
@@ -257,10 +257,10 @@ trait PaginatorTestTrait
                 'sort' => 'PaginatorPosts.id',
             ]);
 
-        $this->Paginator->paginate($table, [], $settings);
-        $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals('PaginatorPosts.id', $pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertEquals('DESC', $pagingParams['PaginatorPosts']['directionDefault']);
+        $result = $this->Paginator->paginate($table, [], $settings);
+        $pagingParams = $result->pagingParams();
+        $this->assertEquals('PaginatorPosts.id', $pagingParams['sortDefault']);
+        $this->assertEquals('DESC', $pagingParams['directionDefault']);
     }
 
     /**
@@ -587,10 +587,10 @@ trait PaginatorTestTrait
             'sort' => 'id',
             'direction' => 'herp',
         ];
-        $this->Paginator->paginate($table, $params);
-        $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals('id', $pagingParams['PaginatorPosts']['sort']);
-        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+        $this->assertEquals('id', $pagingParams['sort']);
+        $this->assertEquals('asc', $pagingParams['direction']);
     }
 
     /**
@@ -642,11 +642,11 @@ trait PaginatorTestTrait
             ],
             'sortableFields' => ['id'],
         ];
-        $this->Paginator->paginate($table, [], $options);
-        $pagingParams = $this->Paginator->getPagingParams();
+        $result = $this->Paginator->paginate($table, [], $options);
+        $pagingParams = $result->pagingParams();
 
-        $this->assertEquals('id', $pagingParams['PaginatorPosts']['sort']);
-        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
+        $this->assertEquals('id', $pagingParams['sort']);
+        $this->assertEquals('asc', $pagingParams['direction']);
     }
 
     /**
@@ -683,14 +683,14 @@ trait PaginatorTestTrait
             'direction' => 'asc',
         ];
 
-        $this->Paginator->paginate($table, $queryParams, $options);
-        $pagingParams = $this->Paginator->getPagingParams();
+        $result = $this->Paginator->paginate($table, $queryParams, $options);
+        $pagingParams = $result->pagingParams();
 
-        $this->assertEquals('title', $pagingParams['PaginatorPosts']['sort']);
-        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
+        $this->assertEquals('title', $pagingParams['sort']);
+        $this->assertEquals('asc', $pagingParams['direction']);
 
-        $this->assertEquals('Articles.title', $pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertEquals('desc', $pagingParams['PaginatorPosts']['directionDefault']);
+        $this->assertEquals('Articles.title', $pagingParams['sortDefault']);
+        $this->assertEquals('desc', $pagingParams['directionDefault']);
     }
 
     /**
@@ -726,9 +726,9 @@ trait PaginatorTestTrait
         $options = [
             'sortableFields' => ['id'],
         ];
-        $this->Paginator->paginate($table, $params, $options);
-        $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals('id', $pagingParams['PaginatorPosts']['sort']);
+        $result = $this->Paginator->paginate($table, $params, $options);
+        $pagingParams = $result->pagingParams();
+        $this->assertEquals('id', $pagingParams['sort']);
     }
 
     /**
@@ -765,7 +765,7 @@ trait PaginatorTestTrait
     {
         $this->expectException(PageOutOfBoundsException::class);
         $params = [
-            'page' => '3000000000000000000000000',
+            'page' => '3000000000000000000',
         ];
 
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -1110,18 +1110,18 @@ trait PaginatorTestTrait
         $params = [
             'limit' => '1000',
         ];
-        $this->Paginator->paginate($table, $params, $settings);
-        $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals(100, $pagingParams['PaginatorPosts']['limit']);
-        $this->assertEquals(100, $pagingParams['PaginatorPosts']['perPage']);
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+        $this->assertEquals(100, $pagingParams['limit']);
+        $this->assertEquals(100, $pagingParams['perPage']);
 
         $params = [
             'limit' => '10',
         ];
-        $this->Paginator->paginate($table, $params, $settings);
-        $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals(10, $pagingParams['PaginatorPosts']['limit']);
-        $this->assertEquals(10, $pagingParams['PaginatorPosts']['perPage']);
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+        $this->assertEquals(10, $pagingParams['limit']);
+        $this->assertEquals(10, $pagingParams['perPage']);
     }
 
     /**

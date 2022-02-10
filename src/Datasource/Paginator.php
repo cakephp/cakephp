@@ -19,6 +19,8 @@ namespace Cake\Datasource;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
+use Cake\Pager\PaginationInterface;
+use Cake\Pager\PaginatorInterface;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -155,46 +157,50 @@ class Paginator implements PaginatorInterface
      * /dashboard?articles[page]=1&tags[page]=2
      * ```
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The repository or query
+     * @param mixed $target The repository or query
      *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Datasource\ResultSetInterface Query results
+     * @return \Cake\Pager\PaginationInterface
      * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
      */
     public function paginate(
-        RepositoryInterface|QueryInterface $object,
+        mixed $target,
         array $params = [],
         array $settings = []
-    ): ResultSetInterface {
+    ): PaginationInterface {
         $query = null;
-        if ($object instanceof QueryInterface) {
-            $query = $object;
-            $object = $query->getRepository();
-            if ($object === null) {
+        if ($target instanceof QueryInterface) {
+            $query = $target;
+            $target = $query->getRepository();
+            if ($target === null) {
                 throw new CakeException('No repository set for query.');
             }
         }
 
-        $data = $this->extractData($object, $params, $settings);
-        $query = $this->getQuery($object, $query, $data);
+        if (!($target instanceof RepositoryInterface)) {
+            throw new CakeException('Pagination targe must be a QueryInterface or ResultSetInterface instance.');
+        }
+
+        $data = $this->extractData($target, $params, $settings);
+        $query = $this->getQuery($target, $query, $data);
 
         $cleanQuery = clone $query;
         $results = $query->all();
-        $data['numResults'] = count($results);
-        $data['count'] = $this->getCount($cleanQuery, $data);
+        $data['count'] = count($results);
+        $data['totalCount'] = $this->getCount($cleanQuery, $data);
 
         $pagingParams = $this->buildParams($data);
-        $alias = $object->getAlias();
+        $alias = $target->getAlias();
         $this->_pagingParams = [$alias => $pagingParams];
-        if ($pagingParams['requestedPage'] > $pagingParams['page']) {
+        if ($pagingParams['requestedPage'] > $pagingParams['currentPage']) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $pagingParams['requestedPage'],
                 'pagingParams' => $this->_pagingParams,
             ]);
         }
 
-        return $results;
+        return new PaginatedResultSet($results, $pagingParams);
     }
 
     /**
@@ -262,11 +268,9 @@ class Paginator implements PaginatorInterface
     {
         $limit = $data['options']['limit'];
 
-        $paging = [
-            'count' => $data['count'],
-            'current' => $data['numResults'],
+        $paging = $data + [
             'perPage' => $limit,
-            'page' => $data['options']['page'],
+            'currentPage' => $data['options']['page'],
             'requestedPage' => $data['options']['page'],
         ];
 
@@ -293,17 +297,17 @@ class Paginator implements PaginatorInterface
      */
     protected function addPageCountParams(array $params, array $data): array
     {
-        $page = $params['page'];
-        $pageCount = 0;
+        $page = $params['currentPage'];
+        $pageCount = null;
 
-        if ($params['count'] !== null) {
-            $pageCount = max((int)ceil($params['count'] / $params['perPage']), 1);
+        if ($params['totalCount'] !== null) {
+            $pageCount = max((int)ceil($params['totalCount'] / $params['perPage']), 1);
             $page = min($page, $pageCount);
-        } elseif ($params['current'] === 0 && $params['requestedPage'] > 1) {
+        } elseif ($params['count'] === 0 && $params['requestedPage'] > 1) {
             $page = 1;
         }
 
-        $params['page'] = $page;
+        $params['currentPage'] = $page;
         $params['pageCount'] = $pageCount;
 
         return $params;
@@ -320,13 +324,13 @@ class Paginator implements PaginatorInterface
     {
         $start = $end = 0;
 
-        if ($params['current'] > 0) {
-            $start = (($params['page'] - 1) * $params['perPage']) + 1;
-            $end = $start + $params['current'] - 1;
+        if ($params['count'] > 0) {
+            $start = (($params['currentPage'] - 1) * $params['perPage']) + 1;
+            $end = $start + $params['count'] - 1;
         }
 
-        $params['start'] = $start;
-        $params['end'] = $end;
+        $params['startPage'] = $start;
+        $params['endPage'] = $end;
 
         return $params;
     }
@@ -340,11 +344,11 @@ class Paginator implements PaginatorInterface
      */
     protected function addPrevNextParams(array $params, array $data): array
     {
-        $params['prevPage'] = $params['page'] > 1;
-        if ($params['count'] === null) {
-            $params['nextPage'] = true;
+        $params['hasPrevPage'] = $params['currentPage'] > 1;
+        if ($params['totalCount'] === null) {
+            $params['hasNextPage'] = true;
         } else {
-            $params['nextPage'] = $params['count'] > $params['page'] * $params['perPage'];
+            $params['hasNextPage'] = $params['totalCount'] > $params['currentPage'] * $params['perPage'];
         }
 
         return $params;

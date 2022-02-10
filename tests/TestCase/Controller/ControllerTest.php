@@ -24,6 +24,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Pager\PaginationInterface;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
@@ -601,29 +602,29 @@ class ControllerTest extends TestCase
         $this->assertArrayNotHasKey('Paginator', $Controller->viewBuilder()->getHelpers());
 
         $results = $Controller->paginate('Posts');
-        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertInstanceOf(PaginationInterface::class, $results);
         $this->assertCount(3, $results);
 
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'));
-        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertInstanceOf(PaginationInterface::class, $results);
         $this->assertCount(3, $results);
 
         $paging = $Controller->getRequest()->getAttribute('paging');
-        $this->assertSame($paging['Posts']['page'], 1);
+        $this->assertSame($paging['Posts']['currentPage'], 1);
         $this->assertSame($paging['Posts']['pageCount'], 1);
-        $this->assertFalse($paging['Posts']['prevPage']);
-        $this->assertFalse($paging['Posts']['nextPage']);
+        $this->assertFalse($paging['Posts']['hasPrevPage']);
+        $this->assertFalse($paging['Posts']['hasNextPage']);
         $this->assertNull($paging['Posts']['scope']);
 
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
-        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertInstanceOf(PaginationInterface::class, $results);
         $this->assertCount(1, $results);
 
         $paging = $Controller->getRequest()->getAttribute('paging');
-        $this->assertSame($paging['Posts']['page'], 2);
+        $this->assertSame($paging['Posts']['currentPage'], 2);
         $this->assertSame($paging['Posts']['pageCount'], 2);
-        $this->assertTrue($paging['Posts']['prevPage']);
-        $this->assertFalse($paging['Posts']['nextPage']);
+        $this->assertTrue($paging['Posts']['hasPrevPage']);
+        $this->assertFalse($paging['Posts']['hasNextPage']);
         $this->assertSame($paging['Posts']['scope'], 'posts');
     }
 
@@ -640,7 +641,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, $response, 'Posts');
         $results = $Controller->paginate();
 
-        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertInstanceOf(PaginationInterface::class, $results);
     }
 
     public function testPaginateException()
