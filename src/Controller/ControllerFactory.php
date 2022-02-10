@@ -174,8 +174,16 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
             // Check for dependency injection for classes
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
-                if ($this->container->has($type->getName())) {
-                    $resolved[] = $this->container->get($type->getName());
+                $typeName = $type->getName();
+                if ($this->container->has($typeName)) {
+                    $resolved[] = $this->container->get($typeName);
+                    continue;
+                }
+
+                // Use passedParams as a source of typed dependencies.
+                // The accepted types for passedParams was never defined and userland code relies on that.
+                if ($passedParams && is_object($passedParams[0]) && $passedParams[0] instanceof $typeName) {
+                    $resolved[] = array_shift($passedParams);
                     continue;
                 }
 
@@ -189,6 +197,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                 throw new InvalidParameterException([
                     'template' => 'missing_dependency',
                     'parameter' => $parameter->getName(),
+                    'type' => $typeName,
                     'controller' => $this->controller->getName(),
                     'action' => $this->controller->getRequest()->getParam('action'),
                     'prefix' => $this->controller->getRequest()->getParam('prefix'),
