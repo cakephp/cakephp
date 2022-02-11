@@ -204,6 +204,7 @@ class Filesystem
         );
 
         $result = true;
+        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             $isWindowsLink = DIRECTORY_SEPARATOR === '\\' && $fileInfo->getType() === 'link';
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {
@@ -247,6 +248,7 @@ class Filesystem
         $iterator = new FilesystemIterator($source);
 
         $result = true;
+        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             if ($fileInfo->isDir()) {
                 $result = $result && $this->copyDir(

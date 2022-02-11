@@ -153,8 +153,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
                 $failure = sprintf(
                     ' The `%s` key has a value of `%s` but previously had a value of `%s`',
                     $key,
-                    json_encode($value),
-                    json_encode($existingConfig[$key])
+                    json_encode($value, JSON_THROW_ON_ERROR),
+                    json_encode($existingConfig[$key], JSON_THROW_ON_ERROR)
                 );
                 break;
             }

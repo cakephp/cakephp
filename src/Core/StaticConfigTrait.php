@@ -85,6 +85,9 @@ trait StaticConfigTrait
 
             return;
         }
+        if (!is_string($key)) {
+            throw new LogicException('If config is not null, key must be a string.');
+        }
 
         if (isset(static::$_config[$key])) {
             /** @psalm-suppress PossiblyInvalidArgument */

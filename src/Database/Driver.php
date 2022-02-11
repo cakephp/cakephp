@@ -436,9 +436,9 @@ abstract class Driver implements DriverInterface
      */
     public function newTableSchema(string $table, array $columns = []): TableSchemaInterface
     {
+        /** @var class-string<\Cake\Database\Schema\TableSchemaInterface> $className */
         $className = $this->_config['tableSchema'] ?? TableSchema::class;
 
-        /** @var \Cake\Database\Schema\TableSchemaInterface */
         return new $className($table, $columns);
     }
 

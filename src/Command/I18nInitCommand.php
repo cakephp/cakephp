@@ -23,6 +23,7 @@ use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use DirectoryIterator;
+use RuntimeException;
 
 /**
  * Command for interactive I18N management.
@@ -71,15 +72,20 @@ class I18nInitCommand extends Command
 
         $count = 0;
         $iterator = new DirectoryIterator($sourceFolder);
-        foreach ($iterator as $fileinfo) {
-            if (!$fileinfo->isFile()) {
+        /** @var \SplFileInfo $fileInfo */
+        foreach ($iterator as $fileInfo) {
+            if (!$fileInfo->isFile()) {
                 continue;
             }
-            $filename = $fileinfo->getFilename();
-            $newFilename = $fileinfo->getBasename('.pot');
+            $filename = $fileInfo->getFilename();
+            $newFilename = $fileInfo->getBasename('.pot');
             $newFilename .= '.po';
 
-            $io->createFile($targetFolder . $newFilename, file_get_contents($sourceFolder . $filename));
+            $content = file_get_contents($sourceFolder . $filename);
+            if ($content === false) {
+                throw new RuntimeException(sprintf('Cannot read file content of %s', $sourceFolder . $filename));
+            }
+            $io->createFile($targetFolder . $newFilename, $content);
             $count++;
         }
 

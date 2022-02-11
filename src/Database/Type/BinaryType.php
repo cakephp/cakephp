@@ -56,7 +56,7 @@ class BinaryType extends BaseType
             return null;
         }
         if (is_string($value)) {
-            return fopen('data:text/plain;base64,' . base64_encode($value), 'rb');
+            return fopen('data:text/plain;base64,' . base64_encode($value), 'rb') ?: null;
         }
         if (is_resource($value)) {
             return $value;

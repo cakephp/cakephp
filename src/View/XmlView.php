@@ -19,6 +19,7 @@ namespace Cake\View;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
+use Cake\View\Exception\SerializationFailureException;
 
 /**
  * A view class that is used for creating XML responses.
@@ -146,6 +147,14 @@ class XmlView extends SerializedView
             $options['pretty'] = true;
         }
 
-        return Xml::fromArray($data, $options)->saveXML();
+        /** @var string|false $result */
+        $result = Xml::fromArray($data, $options)->saveXML();
+        if ($result === false) {
+            throw new SerializationFailureException(
+                'XML serialization of View data failed.'
+            );
+        }
+
+        return $result;
     }
 }

@@ -780,7 +780,7 @@ class Cookie implements CookieInterface
      */
     protected function _flatten(array $array): string
     {
-        return json_encode($array);
+        return json_encode($array, JSON_THROW_ON_ERROR);
     }
 
     /**

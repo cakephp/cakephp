@@ -1224,6 +1224,7 @@ class View implements EventDispatcherInterface
      */
     public function loadHelper(string $name, array $config = []): Helper
     {
+        /** @var \Cake\View\Helper */
         return $this->helpers()->load($name, $config);
     }
 

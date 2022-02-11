@@ -73,8 +73,10 @@ class TransportRegistry extends ObjectRegistry
             return $class;
         }
 
-        /** @var \Cake\Mailer\AbstractTransport */
-        return new $class($config);
+        /** @var \Cake\Mailer\AbstractTransport $object */
+        $object = new $class($config);
+
+        return $object;
     }
 
     /**

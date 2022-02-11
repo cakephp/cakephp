@@ -151,11 +151,6 @@ parameters:
 			path: src/Database/Statement/PDOStatement.php
 
 		-
-			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) on left side of \\?\\? is not nullable\\.$#"
-			count: 1
-			path: src/Database/Statement/PDOStatement.php
-
-		-
 			message: "#^Cannot unset offset 'args' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
 			count: 1
 			path: src/Error/Debugger.php

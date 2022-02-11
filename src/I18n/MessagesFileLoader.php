@@ -122,7 +122,9 @@ class MessagesFileLoader
             throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
         }
 
-        $messages = (new $class())->parse($file);
+        /** @var \Cake\I18n\Parser\MoFileParser|\Cake\I18n\Parser\PoFileParser $object */
+        $object = new $class();
+        $messages = $object->parse($file);
         $package = new Package('default');
         $package->setMessages($messages);
 

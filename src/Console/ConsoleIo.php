@@ -585,6 +585,7 @@ class ConsoleIo
     {
         $name = ucfirst($name);
 
+        /** @var \Cake\Console\Helper */
         return $this->_helpers->load($name, $config);
     }
 
