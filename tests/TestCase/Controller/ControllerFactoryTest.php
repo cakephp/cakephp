@@ -490,6 +490,25 @@ class ControllerFactoryTest extends TestCase
         $this->assertEquals($data->dep->id, $inject->id);
     }
 
+    public function testCreateWithNonStringScalarRouteParam(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/required_typed',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => [1.1, 2, true, ['foo' => 'bar']],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $expected = ['one' => 1.1, 'two' => 2, 'three' => true, 'four' => ['foo' => 'bar']];
+        $data = json_decode((string)$response->getBody(), true);
+        $this->assertSame($expected, $data);
+    }
+
     /**
      * Ensure that a controllers startup process can emit a response
      */
