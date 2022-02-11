@@ -742,6 +742,23 @@ class ControllerFactoryTest extends TestCase
 
         $this->assertNotNull($data);
         $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => ['8', '9']], $data);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1.0', '02', '0', ''],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertNotNull($data);
+        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => []], $data);
     }
 
     /**
