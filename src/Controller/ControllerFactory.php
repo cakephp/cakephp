@@ -273,7 +273,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             case 'bool':
                 return $argument === '0' ? false : ($argument === '1' ? true : null);
             case 'array':
-                return explode(',', $argument);
+                return $argument === '' ? [] : explode(',', $argument);
         }
 
         return null;
