@@ -208,7 +208,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             // Use any passed params as positional arguments
             if ($passedParams) {
                 $argument = array_shift($passedParams);
-                if ($type instanceof ReflectionNamedType) {
+                if (is_string($argument) && $type instanceof ReflectionNamedType) {
                     $typedArgument = $this->coerceStringToType($argument, $type);
 
                     if ($typedArgument === null) {
