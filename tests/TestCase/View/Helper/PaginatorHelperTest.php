@@ -17,8 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Datasource\PaginatedResultSet;
 use Cake\Http\ServerRequest;
 use Cake\I18n\I18n;
+use Cake\ORM\ResultSet;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -41,6 +43,11 @@ class PaginatorHelperTest extends TestCase
     protected $Paginator;
 
     /**
+     * @var \Cake\Datasource\PaginatedResultSet
+     */
+    protected $paginatedResult;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -55,18 +62,16 @@ class PaginatorHelperTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $request = $request->withAttribute('paging', [
-            'Article' => [
-                'page' => 1,
-                'current' => 9,
-                'count' => 62,
-                'prevPage' => false,
-                'nextPage' => true,
-                'pageCount' => 7,
-                'sort' => null,
-                'direction' => null,
-                'limit' => null,
-            ],
+        $this->paginatedResult = new PaginatedResultSet(new ResultSet([]), [
+            'currentPage' => 1,
+            'count' => 9,
+            'totalCount' => 62,
+            'hasPrevPage' => false,
+            'hasNextPage' => true,
+            'pageCount' => 7,
+            // 'sort' => null,
+            // 'direction' => null,
+            // 'limit' => null,
         ]);
         $this->View = new View($request);
         $this->Paginator = new PaginatorHelper($this->View);

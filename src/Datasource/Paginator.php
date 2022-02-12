@@ -52,13 +52,6 @@ class Paginator implements PaginatorInterface
     ];
 
     /**
-     * Paging params after pagination operation is done.
-     *
-     * @var array
-     */
-    protected array $_pagingParams = [];
-
-    /**
      * Handles automatic pagination of model records.
      *
      * ### Configuring pagination
@@ -191,12 +184,11 @@ class Paginator implements PaginatorInterface
         $data['totalCount'] = $this->getCount($cleanQuery, $data);
 
         $pagingParams = $this->buildParams($data);
-        $alias = $target->getAlias();
-        $this->_pagingParams = [$alias => $pagingParams];
+        $pagingParams['alias'] = $target->getAlias();
         if ($pagingParams['requestedPage'] > $pagingParams['currentPage']) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $pagingParams['requestedPage'],
-                'pagingParams' => $this->_pagingParams,
+                'pagingParams' => $pagingParams,
             ]);
         }
 
@@ -401,16 +393,6 @@ class Paginator implements PaginatorInterface
         }
 
         return [$type, $options];
-    }
-
-    /**
-     * Get paging params after pagination operation.
-     *
-     * @return array
-     */
-    public function getPagingParams(): array
-    {
-        return $this->_pagingParams;
     }
 
     /**

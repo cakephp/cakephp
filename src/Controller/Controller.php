@@ -841,10 +841,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         /** @var class-string<\Cake\Pager\PaginatorInterface> $paginator */
         $paginator = $settings['paginator'] ?? Paginator::class;
+        $paginator = new $paginator();
         unset($settings['paginator']);
-        if (is_string($paginator)) {
-            $paginator = new $paginator();
-        }
 
         try {
             $results = $paginator->paginate(
@@ -855,9 +853,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         } catch (PageOutOfBoundsException $exception) {
             throw new NotFoundException(null, null, $exception);
         }
-
-        $paging = $paginator->getPagingParams() + (array)$this->request->getAttribute('paging', []);
-        $this->setRequest($this->request->withAttribute('paging', $paging));
 
         return $results;
     }

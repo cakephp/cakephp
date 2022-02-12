@@ -137,9 +137,8 @@ class PaginatorComponentTest extends TestCase
 
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams(['page' => '1 " onclick="alert(\'xss\');">']));
         $settings = ['limit' => 1, 'maxLimit' => 10];
-        $this->Paginator->paginate($this->Post, $settings);
-        $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(1, $params['Posts']['currentPage'], 'XSS exploit opened');
+        $result = $this->Paginator->paginate($this->Post, $settings);
+        $this->assertSame(1, $result->currentPage(), 'XSS exploit opened');
     }
 
     /**
@@ -204,27 +203,6 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * testRequestParamsSetting
-     *
-     * @see https://github.com/cakephp/cakephp/issues/11655
-     */
-    public function testRequestParamsSetting(): void
-    {
-        $settings = [
-            'PaginatorPosts' => [
-                'limit' => 10,
-            ],
-        ];
-
-        $table = $this->getTableLocator()->get('PaginatorPosts');
-
-        $this->Paginator->paginate($table, $settings);
-        $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertArrayHasKey('PaginatorPosts', $params);
-        $this->assertArrayNotHasKey(0, $params);
-    }
-
-    /**
      * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
      */
     public function testPaginateCustomFinder(): void
@@ -244,9 +222,8 @@ class PaginatorComponentTest extends TestCase
             ->method('findPopular')
             ->will($this->returnValue($query));
 
-        $this->Paginator->paginate($table, $settings);
-        $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame('popular', $params['PaginatorPosts']['finder']);
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertSame('popular', $result->pagingParam('finder'));
     }
 
     /**
@@ -333,10 +310,9 @@ class PaginatorComponentTest extends TestCase
                 'sort' => 'PaginatorPosts.id',
             ]);
 
-        $this->Paginator->paginate($table, $settings);
-        $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame('PaginatorPosts.id', $params['PaginatorPosts']['sortDefault']);
-        $this->assertSame('DESC', $params['PaginatorPosts']['directionDefault']);
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertSame('PaginatorPosts.id', $result->pagingParam('sortDefault'));
+        $this->assertSame('DESC', $result->pagingParam('directionDefault'));
     }
 
     /**
@@ -650,10 +626,9 @@ class PaginatorComponentTest extends TestCase
             'sort' => 'id',
             'direction' => 'herp',
         ]));
-        $this->Paginator->paginate($table);
-        $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame('id', $params['PaginatorPosts']['sort']);
-        $this->assertSame('asc', $params['PaginatorPosts']['direction']);
+        $result = $this->Paginator->paginate($table);
+        $this->assertSame('id', $result->pagingParam('sort'));
+        $this->assertSame('asc', $result->pagingParam('direction'));
     }
 
     /**
@@ -683,22 +658,20 @@ class PaginatorComponentTest extends TestCase
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $table->deleteAll('1=1');
 
-        $this->Paginator->paginate($table);
-
-        $params = $this->controller->getRequest()->getAttribute('paging');
+        $result = $this->Paginator->paginate($table);
         $this->assertSame(
             0,
-            $params['PaginatorPosts']['count'],
+            $result->count(),
             'Count should be 0'
         );
         $this->assertSame(
             1,
-            $params['PaginatorPosts']['currentPage'],
+            $result->currentPage(),
             'Page number should not be 0'
         );
         $this->assertSame(
             1,
-            $params['PaginatorPosts']['pageCount'],
+            $result->pageCount(),
             'Page count number should not be 0'
         );
     }
@@ -718,10 +691,9 @@ class PaginatorComponentTest extends TestCase
         } catch (NotFoundException $e) {
         }
 
-        $params = $this->controller->getRequest()->getAttribute('paging');
         $this->assertSame(
             1,
-            $params['PaginatorPosts']['currentPage'],
+            $e->getPrevious()->getAttributes()['pagingParams']['currentPage'],
             'Page number should not be 0'
         );
 
@@ -747,10 +719,9 @@ class PaginatorComponentTest extends TestCase
         } catch (NotFoundException $e) {
         }
 
-        $params = $this->controller->getRequest()->getAttribute('paging');
         $this->assertSame(
             3,
-            $params['PaginatorPosts']['pageCount'],
+            $e->getPrevious()->getAttributes()['pagingParams']['pageCount'],
             'Page count number should not be 0'
         );
 
@@ -1055,18 +1026,16 @@ class PaginatorComponentTest extends TestCase
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'limit' => '1000',
         ]));
-        $this->Paginator->paginate($table, $settings);
-        $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(100, $params['PaginatorPosts']['limit']);
-        $this->assertSame(100, $params['PaginatorPosts']['perPage']);
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertSame(100, $result->pagingParam('limit'));
+        $this->assertSame(100, $result->perPage());
 
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'limit' => '10',
         ]));
-        $this->Paginator->paginate($table, $settings);
-        $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(10, $params['PaginatorPosts']['limit']);
-        $this->assertSame(10, $params['PaginatorPosts']['perPage']);
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertSame(10, $result->pagingParam('limit'));
+        $this->assertSame(10, $result->perPage());
     }
 
     /**
@@ -1092,42 +1061,38 @@ class PaginatorComponentTest extends TestCase
         $this->assertCount(4, $result, '4 rows should come back');
         $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
-        $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(4, $result['PaginatorPosts']['count']);
-        $this->assertSame(4, $result['PaginatorPosts']['totalCount']);
+        $this->assertSame(4, $result->count());
+        $this->assertSame(4, $result->totalCount());
 
         $settings = ['finder' => 'published'];
         $result = $this->Paginator->paginate($table, $settings);
         $this->assertCount(3, $result, '3 rows should come back');
         $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
-        $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(3, $result['PaginatorPosts']['count']);
-        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
+        $this->assertSame(3, $result->count());
+        $this->assertSame(3, $result->totalCount());
 
         $settings = ['finder' => 'published', 'limit' => 2, 'page' => 2];
         $result = $this->Paginator->paginate($table, $settings);
         $this->assertCount(1, $result, '1 rows should come back');
         $this->assertEquals(['Third Post'], $titleExtractor($result));
 
-        $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(1, $result['PaginatorPosts']['count']);
-        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
-        $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
+        $this->assertSame(1, $result->count());
+        $this->assertSame(3, $result->totalCount());
+        $this->assertSame(2, $result->pageCount());
 
         $settings = ['finder' => 'published', 'limit' => 2];
         $result = $this->Paginator->paginate($table, $settings);
         $this->assertCount(2, $result, '2 rows should come back');
         $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
 
-        $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(2, $result['PaginatorPosts']['count']);
-        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
-        $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
-        $this->assertTrue($result['PaginatorPosts']['hasNextPage']);
-        $this->assertFalse($result['PaginatorPosts']['hasPrevPage']);
-        $this->assertSame(2, $result['PaginatorPosts']['perPage']);
-        $this->assertNull($result['PaginatorPosts']['limit']);
+        $this->assertSame(2, $result->count());
+        $this->assertSame(3, $result->totalCount());
+        $this->assertSame(2, $result->pageCount());
+        $this->assertTrue($result->hasNextPage());
+        $this->assertFalse($result->hasPrevPage());
+        $this->assertSame(2, $result->perPage());
+        $this->assertNull($result->pagingParam('limit'));
     }
 
     /**
@@ -1153,12 +1118,11 @@ class PaginatorComponentTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(2, $result['PaginatorPosts']['count']);
-        $this->assertSame(3, $result['PaginatorPosts']['totalCount']);
-        $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
-        $this->assertTrue($result['PaginatorPosts']['hasNextPage']);
-        $this->assertFalse($result['PaginatorPosts']['hasPrevPage']);
+        $this->assertSame(2, $results->count());
+        $this->assertSame(3, $results->totalCount());
+        $this->assertSame(2, $results->pageCount());
+        $this->assertTrue($results->hasNextPage());
+        $this->assertFalse($results->hasPrevPage());
     }
 
     /**

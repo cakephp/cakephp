@@ -610,22 +610,22 @@ class ControllerTest extends TestCase
         $this->assertCount(3, $results);
 
         $paging = $Controller->getRequest()->getAttribute('paging');
-        $this->assertSame($paging['Posts']['currentPage'], 1);
-        $this->assertSame($paging['Posts']['pageCount'], 1);
-        $this->assertFalse($paging['Posts']['hasPrevPage']);
-        $this->assertFalse($paging['Posts']['hasNextPage']);
-        $this->assertNull($paging['Posts']['scope']);
+        $this->assertSame($results->currentPage(), 1);
+        $this->assertSame($results->pageCount(), 1);
+        $this->assertFalse($results->hasPrevPage());
+        $this->assertFalse($results->hasPrevPage());
+        $this->assertNull($results->pagingParam('scope'));
 
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
         $this->assertInstanceOf(PaginationInterface::class, $results);
         $this->assertCount(1, $results);
 
         $paging = $Controller->getRequest()->getAttribute('paging');
-        $this->assertSame($paging['Posts']['currentPage'], 2);
-        $this->assertSame($paging['Posts']['pageCount'], 2);
-        $this->assertTrue($paging['Posts']['hasPrevPage']);
-        $this->assertFalse($paging['Posts']['hasNextPage']);
-        $this->assertSame($paging['Posts']['scope'], 'posts');
+        $this->assertSame($results->currentPage(), 2);
+        $this->assertSame($results->pageCount(), 2);
+        $this->assertTrue($results->hasPrevPage());
+        $this->assertFalse($results->hasNextPage());
+        $this->assertSame($results->pagingParam('scope'), 'posts');
     }
 
     /**

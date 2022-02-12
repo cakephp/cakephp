@@ -186,11 +186,7 @@ class PaginatorComponent extends Component
                 $request->getQueryParams(),
                 $settings
             );
-
-            $this->_setPagingParams();
         } catch (PageOutOfBoundsException $e) {
-            $this->_setPagingParams();
-
             throw new NotFoundException(null, null, $e);
         }
 
@@ -244,20 +240,6 @@ class PaginatorComponent extends Component
     public function getPaginator(): Paginator
     {
         return $this->_paginator;
-    }
-
-    /**
-     * Set paging params to request instance.
-     *
-     * @return void
-     */
-    protected function _setPagingParams(): void
-    {
-        $controller = $this->getController();
-        $request = $controller->getRequest();
-        $paging = $this->_paginator->getPagingParams() + (array)$request->getAttribute('paging', []);
-
-        $controller->setRequest($request->withAttribute('paging', $paging));
     }
 
     /**

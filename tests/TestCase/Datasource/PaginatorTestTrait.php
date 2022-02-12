@@ -748,13 +748,9 @@ trait PaginatorTestTrait
                 $exception->getMessage()
             );
 
-            $this->assertSame(
-                [
-                    'requestedPage' => 3000,
-                    'pagingParams' => $this->Paginator->getPagingParams(),
-                ],
-                $exception->getAttributes()
-            );
+            $attributes = $exception->getAttributes();
+            $this->assertSame(3000, $attributes['requestedPage']);
+            $this->assertArrayHasKey('pagingParams', $attributes);
         }
     }
 
