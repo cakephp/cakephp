@@ -109,6 +109,7 @@ class Sqlite extends Driver
      */
     protected $featureVersions = [
         'cte' => '3.8.3',
+        'returning' => '3.35.0',
         'window' => '3.28.0',
     ];
 
@@ -270,6 +271,20 @@ class Sqlite extends Driver
     public function newCompiler(): QueryCompiler
     {
         return new SqliteCompiler();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _insertQueryTranslator(Query $query): Query
+    {
+        if (version_compare($this->version(), $this->featureVersions['returning'], '>=')) {
+            if (!$query->clause('epilog')) {
+                $query->epilog('RETURNING *');
+            }
+        }
+
+        return $query;
     }
 
     /**
