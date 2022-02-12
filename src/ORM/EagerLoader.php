@@ -613,16 +613,12 @@ class EagerLoader
      *
      * @param \Cake\ORM\Query $query The query for which to eager load external.
      * associations.
-     * @param array $results Results array.
-     * @return array
+     * @param iterable $results Query results
+     * @return iterable
      * @throws \RuntimeException
      */
-    public function loadExternal(Query $query, array $results): array
+    public function loadExternal(Query $query, iterable $results): iterable
     {
-        if (empty($results)) {
-            return $results;
-        }
-
         $table = $query->getRepository();
         $external = $this->externalAssociations($table);
         if (empty($external)) {
@@ -667,7 +663,12 @@ class EagerLoader
                     'nestKey' => $meta->aliasPath(),
                 ]
             );
-            $results = array_map($callback, $results);
+
+            $hydrated = [];
+            foreach ($results as $key => $row) {
+                $hydrated[$key] = $callback($row);
+            }
+            $results = $hydrated;
         }
 
         return $results;
@@ -772,10 +773,10 @@ class EagerLoader
      *
      * @param array<\Cake\ORM\EagerLoadable> $external The list of external associations to be loaded.
      * @param \Cake\ORM\Query $query The query from which the results where generated.
-     * @param array $results Results array.
+     * @param iterable $results Query results
      * @return array
      */
-    protected function _collectKeys(array $external, Query $query, array $results): array
+    protected function _collectKeys(array $external, Query $query, iterable $results): array
     {
         $collectKeys = [];
         foreach ($external as $meta) {
@@ -808,11 +809,11 @@ class EagerLoader
      * Helper function used to iterate a statement and extract the columns
      * defined in $collectKeys.
      *
-     * @param array $results Results array.
+     * @param iterable $results Query results
      * @param array<string, array> $collectKeys The keys to collect.
      * @return array
      */
-    protected function _groupKeys(array $results, array $collectKeys): array
+    protected function _groupKeys(iterable $results, array $collectKeys): array
     {
         $keys = [];
         foreach ($results as $result) {

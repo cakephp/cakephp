@@ -31,17 +31,18 @@ class ResultSetFactory
      * Constructor
      *
      * @param \Cake\ORM\Query $query Query from where results came.
-     * @param array $results Results array.
+     * @param iterable $results Results array.
      */
-    public function createResultSet(Query $query, array $results): ResultSet
+    public function createResultSet(Query $query, iterable $results): ResultSet
     {
         $data = $this->collectData($query);
 
+        $grouped = [];
         foreach ($results as $i => $row) {
-            $results[$i] = $this->groupResult($row, $data);
+            $grouped[$i] = $this->groupResult($row, $data);
         }
 
-        return new ResultSet($results);
+        return new ResultSet($grouped);
     }
 
     /**
