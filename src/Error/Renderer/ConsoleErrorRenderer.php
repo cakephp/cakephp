@@ -30,7 +30,7 @@ class ConsoleErrorRenderer implements ErrorRendererInterface
     /**
      * @var \Cake\Console\ConsoleOutput
      */
-    private $output;
+    protected $output;
 
     /**
      * Constructor.
