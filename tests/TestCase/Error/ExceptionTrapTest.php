@@ -21,6 +21,7 @@ use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Log\Log;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
@@ -126,7 +127,7 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('ExceptionTrapTest', $out);
     }
 
-    public function testHandleExceptionConsoleRendering()
+    public function testHandleExceptionConsoleRenderingNoStack()
     {
         $output = new ConsoleOutput();
         $trap = new ExceptionTrap([
@@ -139,8 +140,42 @@ class ExceptionTrapTest extends TestCase
         $out = $output->messages();
 
         $this->assertStringContainsString('nope', $out[0]);
-        $this->assertStringContainsString('<info>Trace:</info>', $out[0]);
-        $this->assertStringContainsString('->testHandleExceptionConsoleRendering()', $out[0]);
+        $this->assertStringNotContainsString('Stack', $out[0]);
+    }
+
+    public function testHandleExceptionConsoleRenderingWithStack()
+    {
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ConsoleExceptionRenderer::class,
+            'stderr' => $output,
+            'trace' => true,
+        ]);
+        $error = new InvalidArgumentException('nope');
+
+        $trap->handleException($error);
+        $out = $output->messages();
+
+        $this->assertStringContainsString('nope', $out[0]);
+        $this->assertStringContainsString('Stack', $out[0]);
+        $this->assertStringContainsString('->testHandleExceptionConsoleRenderingWithStack', $out[0]);
+    }
+
+    public function testHandleExceptionConsoleWithAttributes()
+    {
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ConsoleExceptionRenderer::class,
+            'stderr' => $output,
+        ]);
+        $error = new MissingControllerException(['name' => 'Articles']);
+
+        $trap->handleException($error);
+        $out = $output->messages();
+
+        $this->assertStringContainsString('Controller class Articles', $out[0]);
+        $this->assertStringContainsString('Exception Attributes', $out[0]);
+        $this->assertStringContainsString('Articles', $out[0]);
     }
 
     /**

@@ -101,10 +101,8 @@ class ErrorTrapTest extends TestCase
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
         try {
-            ob_start();
             trigger_error('Oh no it was bad', E_USER_ERROR);
-            $output = ob_get_clean();
-            $this->assertEmpty($output);
+            $this->fail('Should raise a fatal error');
         } catch (FatalErrorException $e) {
             $this->assertEquals('Oh no it was bad', $e->getMessage());
             $this->assertEquals(E_USER_ERROR, $e->getCode());

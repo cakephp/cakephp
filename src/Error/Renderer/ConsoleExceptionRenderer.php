@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Renderer;
 
+use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Console\ConsoleOutput;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -41,6 +43,11 @@ class ConsoleExceptionRenderer
     private $output;
 
     /**
+     * @var bool
+     */
+    private $trace;
+
+    /**
      * Constructor.
      *
      * @param \Throwable $error The error to render.
@@ -51,6 +58,7 @@ class ConsoleExceptionRenderer
     {
         $this->error = $error;
         $this->output = $config['stderr'] ?? new ConsoleOutput('php://stderr');
+        $this->trace = $config['trace'] ?? true;
     }
 
     /**
@@ -60,14 +68,35 @@ class ConsoleExceptionRenderer
      */
     public function render()
     {
-        return sprintf(
-            "<error>%s : %s</error> on line %s of %s\n<info>Trace:</info>\n%s",
-            $this->error->getCode(),
+        $out = [];
+        $out[] = sprintf(
+            '<error>[%s] %s</error> in %s on line %s',
+            get_class($this->error),
             $this->error->getMessage(),
-            $this->error->getLine(),
             $this->error->getFile(),
-            $this->error->getTraceAsString(),
+            $this->error->getLine()
         );
+
+        $debug = Configure::read('debug');
+        if ($debug && $this->error instanceof CakeException) {
+            $attributes = $this->error->getAttributes();
+            if ($attributes) {
+                $out[] = '';
+                $out[] = '<info>Exception Attributes</info>';
+                $out[] = '';
+                $out[] = var_export($this->error->getAttributes(), true);
+            }
+        }
+
+        if ($this->trace) {
+            /** @var array $trace */
+            $out[] = '';
+            $out[] = '<info>Stack Trace:</info>';
+            $out[] = '';
+            $out[] = $this->error->getTraceAsString();
+            $out[] = '';
+        }
+        return join("\n", $out);
     }
 
     /**
