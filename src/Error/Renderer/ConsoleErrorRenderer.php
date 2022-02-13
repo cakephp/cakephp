@@ -16,23 +16,38 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Renderer;
 
+use Cake\Console\ConsoleOutput;
 use Cake\Error\ErrorRendererInterface;
 use Cake\Error\PhpError;
 
 /**
  * Plain text error rendering with a stack trace.
  *
- * Writes to STDERR for console environments
+ * Writes to STDERR via a Cake\Console\ConsoleOutput instance for console environments
  */
 class ConsoleErrorRenderer implements ErrorRendererInterface
 {
+    /**
+     * @var \Cake\Console\ConsoleOutput
+     */
+    private $output;
+
+    /**
+     * Constructor.
+     *
+     * @param array $config Error handling configuration.
+     */
+    public function __construct(array $config)
+    {
+        $this->output = $config['stderr'] ?? new ConsoleOutput('php://stderr');
+    }
+
     /**
      * @inheritDoc
      */
     public function write(string $out): void
     {
-        // Write to stderr which is useful in console environments.
-        fwrite(STDERR, $out);
+        $this->output->write($out);
     }
 
     /**
@@ -41,7 +56,7 @@ class ConsoleErrorRenderer implements ErrorRendererInterface
     public function render(PhpError $error, bool $debug): string
     {
         return sprintf(
-            "%s: %s :: %s on line %s of %s\nTrace:\n%s",
+            "<error>%s: %s :: %s</error> on line %s of %s\n<info>Trace:</info>\n%s",
             $error->getLabel(),
             $error->getCode(),
             $error->getMessage(),
