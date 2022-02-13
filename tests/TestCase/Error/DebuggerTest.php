@@ -391,19 +391,28 @@ class DebuggerTest extends TestCase
      */
     public function testExportVar(): void
     {
+        $std = new stdClass();
+        $std->int = 2;
+        $std->float = 1.333;
+        $std->string = '  ';
+
+        $result = Debugger::exportVar($std);
+        $expected = <<<TEXT
+object(stdClass) id:0 {
+  int => (int) 2
+  float => (float) 1.333
+  string => '  '
+}
+TEXT;
+        $this->assertTextEquals($expected, $result);
+
         $Controller = new Controller();
         $Controller->viewBuilder()->setHelpers(['Html', 'Form']);
         $View = $Controller->createView();
-        $View->int = 2;
-        $View->float = 1.333;
-        $View->string = '  ';
 
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) id:0 {
-  int => (int) 2
-  float => (float) 1.333
-  string => '  '
   [protected] _helpers => object(Cake\View\HelperRegistry) id:1 {}
   [protected] Blocks => object(Cake\View\ViewBlock) id:2 {}
   [protected] plugin => null
