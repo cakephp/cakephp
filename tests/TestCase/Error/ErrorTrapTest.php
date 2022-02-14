@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Core\Configure;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ErrorTrap;
+use Cake\Error\FatalErrorException;
 use Cake\Error\PhpError;
 use Cake\Error\Renderer\ConsoleErrorRenderer;
 use Cake\Error\Renderer\HtmlErrorRenderer;
@@ -93,6 +94,21 @@ class ErrorTrapTest extends TestCase
         restore_error_handler();
 
         $this->assertStringContainsString('Oh no it was bad', $output);
+    }
+
+    public function testRegisterAndHandleFatalUserError()
+    {
+        $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
+        $trap->register();
+        try {
+            trigger_error('Oh no it was bad', E_USER_ERROR);
+            $this->fail('Should raise a fatal error');
+        } catch (FatalErrorException $e) {
+            $this->assertEquals('Oh no it was bad', $e->getMessage());
+            $this->assertEquals(E_USER_ERROR, $e->getCode());
+        } finally {
+            restore_error_handler();
+        }
     }
 
     public function testRegisterAndLogging()
