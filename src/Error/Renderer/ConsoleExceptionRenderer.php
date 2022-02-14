@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Renderer;
 
+use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
-use Cake\Console\ConsoleOutput;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -89,13 +89,13 @@ class ConsoleExceptionRenderer
         }
 
         if ($this->trace) {
-            /** @var array $trace */
             $out[] = '';
             $out[] = '<info>Stack Trace:</info>';
             $out[] = '';
             $out[] = $this->error->getTraceAsString();
             $out[] = '';
         }
+
         return join("\n", $out);
     }
 
