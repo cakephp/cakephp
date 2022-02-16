@@ -205,41 +205,14 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Gets the current key by which the recordset is sorted
-     *
-     * @param array<string, mixed> $options Options for pagination links.
-     * @return string|null The name of the key by which the recordset is being sorted, or
-     *  null if the results are not currently sorted.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-sort-links
-     */
-    public function sortKey(array $options = []): ?string
-    {
-        if (empty($options)) {
-            $options = $this->params();
-        }
-
-        return $options['sort'] ?? null;
-    }
-
-    /**
      * Gets the current direction the recordset is sorted
      *
-     * @param array<string, mixed> $options Options for pagination links.
      * @return string The direction by which the recordset is being sorted, or
      *  null if the results are not currently sorted.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-sort-links
      */
-    public function sortDir(array $options = []): string
+    protected function sortDir(): string
     {
-        $dir = null;
-
-        if (empty($options)) {
-            $options = $this->params();
-        }
-
-        if (!empty($options['direction'])) {
-            $dir = strtolower($options['direction']);
-        }
+        $dir = strtolower((string)$this->param('direction'));
 
         if ($dir === 'desc') {
             return 'desc';
@@ -425,7 +398,7 @@ class PaginatorHelper extends Helper
         $locked = $options['lock'] ?? false;
         unset($options['lock']);
 
-        $sortKey = (string)$this->sortKey();
+        $sortKey = (string)$this->param('sort');
         $alias = $this->param('alias');
         [$table, $field] = explode('.', $key . '.');
         if (!$field) {
