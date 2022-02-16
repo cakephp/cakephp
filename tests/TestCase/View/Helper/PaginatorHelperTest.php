@@ -2705,6 +2705,8 @@ class PaginatorHelperTest extends TestCase
      */
     public function testLimitControl(): void
     {
+        $this->setPaginatedResult(['perPage' => 10]);
+
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
@@ -2806,6 +2808,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequest($request);
         $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 10]);
 
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [

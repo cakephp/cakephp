@@ -262,10 +262,9 @@ class PaginatorHelper extends Helper
 
             return $out;
         }
-        $paging = $this->params();
 
         $url = $this->generateUrl(
-            ['page' => $paging['currentPage'] + $options['step']],
+            ['page' => $this->paginated()->currentPage() + $options['step']],
             $options['url']
         );
 
@@ -310,13 +309,12 @@ class PaginatorHelper extends Helper
         $options += $defaults;
         $options['step'] = -1;
 
-        $enabled = $this->hasPrev();
         $templates = [
             'active' => 'prevActive',
             'disabled' => 'prevDisabled',
         ];
 
-        return $this->_toggledLink($title, $enabled, $options, $templates);
+        return $this->_toggledLink($title, $this->hasPrev(), $options, $templates);
     }
 
     /**
@@ -348,13 +346,12 @@ class PaginatorHelper extends Helper
         $options += $defaults;
         $options['step'] = 1;
 
-        $enabled = $this->hasNext();
         $templates = [
             'active' => 'nextActive',
             'disabled' => 'nextDisabled',
         ];
 
-        return $this->_toggledLink($title, $enabled, $options, $templates);
+        return $this->_toggledLink($title, $this->hasNext(), $options, $templates);
     }
 
     /**
@@ -1138,20 +1135,14 @@ class PaginatorHelper extends Helper
      */
     public function limitControl(array $limits = [], ?int $default = null, array $options = []): string
     {
+        $default = $default ?? $this->paginated()->perPage();
+        $limits = $limits ?: [
+            '20' => '20',
+            '50' => '50',
+            '100' => '100',
+        ];
+
         $out = $this->Form->create(null, ['type' => 'get']);
-
-        if (empty($default)) {
-            $default = $this->param('perPage');
-        }
-
-        if (empty($limits)) {
-            $limits = [
-                '20' => '20',
-                '50' => '50',
-                '100' => '100',
-            ];
-        }
-
         $out .= $this->Form->control('limit', $options + [
                 'type' => 'select',
                 'label' => __('View'),
