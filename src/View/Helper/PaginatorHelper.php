@@ -605,12 +605,10 @@ class PaginatorHelper extends Helper
      *   set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing the
      *   following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}`
      *   and any custom content you would like.
-     * @param array<string, mixed> $options Options for the counter string. See #options for list of keys.
-     *   If string it will be used as format.
      * @return string Counter string.
      * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-a-page-counter
      */
-    public function counter(string $format = 'pages', array $options = []): string
+    public function counter(string $format = 'pages'): string
     {
         $paging = $this->params();
         if (!$paging['pageCount']) {
