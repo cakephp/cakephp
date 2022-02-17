@@ -70,10 +70,8 @@ class LogEngineRegistry extends ObjectRegistry
     protected function _create(callable|object|string $class, string $alias, array $config): LoggerInterface
     {
         if (is_string($class)) {
-            /** @var \Psr\Log\LoggerInterface $object */
-            $object = new $class($config);
-
-            return $object;
+            /** @var class-string<\Psr\Log\LoggerInterface> $class */
+            return new $class($config);
         }
 
         if (is_callable($class)) {
