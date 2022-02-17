@@ -17,14 +17,17 @@ declare(strict_types=1);
 namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
+use Cake\Cache\InvalidArgumentException;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
+use Cake\Routing\Exception\FailedRouteCacheException;
 use Cake\Routing\Exception\RedirectException as DeprecatedRedirectException;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
+use Exception;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -94,9 +97,21 @@ class RoutingMiddleware implements MiddlewareInterface
     protected function buildRouteCollection(): RouteCollection
     {
         if (Cache::enabled() && $this->cacheConfig !== null) {
-            return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
-                return $this->prepareRouteCollection();
-            }, $this->cacheConfig);
+            try {
+                return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
+                    return $this->prepareRouteCollection();
+                }, $this->cacheConfig);
+            } catch (InvalidArgumentException $e) {
+                throw $e;
+            } catch (Exception $e) {
+                throw new FailedRouteCacheException(
+                    'Unable to cache route collection. Cached routes must be serializable. Check for route-specific
+                    middleware or other unserializable settings in your routes. The original exception message can
+                    show what type of object failed to serialize.',
+                    null,
+                    $e
+                );
+            }
         }
 
         return $this->prepareRouteCollection();
