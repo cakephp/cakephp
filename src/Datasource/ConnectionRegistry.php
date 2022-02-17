@@ -79,10 +79,8 @@ class ConnectionRegistry extends ObjectRegistry
         if (is_string($class)) {
             unset($config['className']);
 
-            /** @var \Cake\Datasource\ConnectionInterface $connection */
-            $connection = new $class($config);
-
-            return $connection;
+            /** @var class-string<\Cake\Datasource\ConnectionInterface> $class */
+            return new $class($config);
         }
 
         if ($class instanceof Closure) {
