@@ -166,6 +166,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $parsedBody = Hash::merge($parsedBody, $files);
         } else {
             // Make a flat map that can be inserted into body for BC.
+            /** @var array<\Laminas\Diactoros\UploadedFile> $fileMap */
             $fileMap = Hash::flatten($files);
             foreach ($fileMap as $key => $file) {
                 $error = $file->getError();

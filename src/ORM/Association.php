@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
@@ -974,7 +975,14 @@ abstract class Association
 
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
-        $query->formatResults(function ($results, $query) use ($formatters, $property, $propertyPath) {
+        $query->formatResults(function (
+            CollectionInterface $results,
+            Query $query
+        ) use (
+            $formatters,
+            $property,
+            $propertyPath
+        ) {
             $extracted = [];
             foreach ($results as $result) {
                 foreach ($propertyPath as $propertyPathItem) {
@@ -991,10 +999,9 @@ abstract class Association
                 $extracted = new ResultSetDecorator($callable($extracted, $query));
             }
 
-            /** @var \Cake\Collection\CollectionInterface $results */
             $results = $results->insert($property, $extracted);
             if ($query->isHydrationEnabled()) {
-                $results = $results->map(function ($result) {
+                $results = $results->map(function (EntityInterface $result) {
                     $result->clean();
 
                     return $result;

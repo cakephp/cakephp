@@ -729,11 +729,15 @@ class EntityContext implements ContextInterface
     {
         $parts = explode('.', $field);
         try {
+            /**
+             * @var \Cake\Datasource\EntityInterface|null $entity
+             * @var array<string> $remainingParts
+             */
             [$entity, $remainingParts] = $this->leafEntity($parts);
         } catch (RuntimeException) {
             return [];
         }
-        if (count($remainingParts) === 0) {
+        if ($entity instanceof EntityInterface && count($remainingParts) === 0) {
             return $entity->getErrors();
         }
 

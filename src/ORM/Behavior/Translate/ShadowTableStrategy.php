@@ -249,6 +249,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     protected function iterateClause(Query $query, string $name = '', array $config = []): bool
     {
+        /** @var \Cake\Database\Expression\QueryExpression|null $clause */
         $clause = $query->clause($name);
         if (!$clause || !$clause->count()) {
             return false;
@@ -295,6 +296,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     protected function traverseClause(Query $query, string $name = '', array $config = []): bool
     {
+        /** @var \Cake\Database\Expression\QueryExpression|null $clause */
         $clause = $query->clause($name);
         if (!$clause || !$clause->count()) {
             return false;
@@ -537,7 +539,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         return $results->map(function ($row) {
             $translations = (array)$row['_i18n'];
-            if (empty($translations) && $row->get('_translations')) {
+            if (empty($translations) && $row instanceof EntityInterface && $row->get('_translations')) {
                 return $row;
             }
 

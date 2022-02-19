@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
+use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConnectionHelper;
@@ -114,7 +115,7 @@ class SchemaLoader
          * @var \Cake\Database\Connection $connection
          */
         $connection = ConnectionManager::get($connectionName);
-        $connection->disableConstraints(function ($connection) use ($tables): void {
+        $connection->disableConstraints(function (Connection $connection) use ($tables): void {
             foreach ($tables as $table) {
                 $schema = new TableSchema($table['table'], $table['columns']);
                 if (isset($table['indexes'])) {

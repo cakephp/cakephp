@@ -80,7 +80,7 @@ class TransactionFixtureStrategy implements FixtureStrategyInterface
      */
     public function teardownTest(): void
     {
-        $this->helper->runPerConnection(function ($connection): void {
+        $this->helper->runPerConnection(function (Connection $connection): void {
             if ($connection->inTransaction()) {
                 $connection->rollback(true);
             }

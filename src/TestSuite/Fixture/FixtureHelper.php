@@ -276,6 +276,7 @@ class FixtureHelper
      */
     protected function getForeignReferences(Connection $connection, FixtureInterface $fixture): array
     {
+        /** @var array<string, \Cake\Database\Schema\TableSchemaInterface> $schemas */
         static $schemas = [];
 
         // Get and cache off the schema since TestFixture generates a fake schema based on $fields

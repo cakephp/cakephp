@@ -955,6 +955,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if (!$complex && $this->_valueBinder !== null) {
+            /** @var \Cake\Database\Expression\QueryExpression|null $order */
             $order = $this->clause('order');
             $complex = $order === null ? false : $order->hasNestedExpression();
         }

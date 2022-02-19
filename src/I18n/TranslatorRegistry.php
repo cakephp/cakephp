@@ -200,8 +200,9 @@ class TranslatorRegistry
         // Cache keys cannot contain / if they go to file engine.
         $keyName = str_replace('/', '.', $name);
         $key = "translations.{$keyName}.{$locale}";
+        /** @var \Cake\I18n\Translator|null $translator */
         $translator = $this->_cacher->get($key);
-        if (!$translator || !$translator->getPackage()) {
+        if (!$translator) {
             $translator = $this->_getTranslator($name, $locale);
             $this->_cacher->set($key, $translator);
         }

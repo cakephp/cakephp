@@ -229,6 +229,7 @@ trait SqlDialectTrait
             );
         }
 
+        /** @var \Cake\Database\ExpressionInterface|null $conditions */
         $conditions = $query->clause('where');
         if ($conditions) {
             $conditions->traverse(function ($expression) {

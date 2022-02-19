@@ -611,8 +611,10 @@ class Router
     {
         $route = null;
         if ($params instanceof ServerRequest) {
+            /** @var \Cake\Routing\Route\Route|null $route */
             $route = $params->getAttribute('route');
             $queryString = $params->getQueryParams();
+            /** @var array<string, mixed> $params */
             $params = $params->getAttribute('params');
             $params['?'] = $queryString;
         }

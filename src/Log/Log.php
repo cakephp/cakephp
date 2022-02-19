@@ -366,6 +366,7 @@ class Log
 
         $registry = static::getRegistry();
         foreach ($registry->loaded() as $streamName) {
+            /** @var \Psr\Log\LoggerInterface $logger */
             $logger = $registry->{$streamName};
             $levels = $scopes = null;
 

@@ -1265,6 +1265,7 @@ class BelongsToMany extends Association
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
+        /** @var array<string> $keys */
         $keys = array_merge($foreignKey, $assocForeignKey);
         $deletes = $indexed = $present = [];
 
@@ -1275,6 +1276,7 @@ class BelongsToMany extends Association
             $present[$i] = array_values($entity->extract($assocForeignKey));
         }
 
+        /** @var \Cake\Datasource\EntityInterface $result */
         foreach ($existing as $result) {
             $fields = $result->extract($keys);
             $found = false;
