@@ -133,8 +133,7 @@ trait QueryTrait
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Datasource\ResultSetInterface
-     * @psalm-suppress ImplementedReturnTypeMismatch
+     * @return \Traversable
      */
     public function getIterator(): Traversable
     {

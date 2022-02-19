@@ -47,11 +47,6 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Database/Statement/PDOStatement.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$_statement</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>

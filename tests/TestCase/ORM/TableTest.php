@@ -2246,7 +2246,7 @@ class TableTest extends TestCase
             ->onlyMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
-        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $data = new Entity([
             'username' => 'superuser',
             'created' => new DateTime('2013-10-10 00:00'),
@@ -2437,7 +2437,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())
             ->method('rowCount')
             ->will($this->returnValue(0));
@@ -2612,7 +2612,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));

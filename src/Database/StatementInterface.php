@@ -16,34 +16,32 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Traversable;
+use PDO;
+use Psr\Log\LoggerInterface;
 
-/**
- * Represents a database statement. Concrete implementations
- * can either use PDOStatement or a native driver
- *
- * @property-read string $queryString
- */
-interface StatementInterface extends Traversable
+interface StatementInterface
 {
     /**
-     * Used to designate that numeric indexes be returned in a result when calling fetch methods
+     * Maps to PDO::FETCH_NUM.
      *
      * @var string
+     * @link https://www.php.net/manual/en/pdo.constants.php
      */
     public const FETCH_TYPE_NUM = 'num';
 
     /**
-     * Used to designate that an associated array be returned in a result when calling fetch methods
+     * Maps to PDO::FETCH_ASSOC.
      *
      * @var string
+     * @link https://www.php.net/manual/en/pdo.constants.php
      */
     public const FETCH_TYPE_ASSOC = 'assoc';
 
     /**
-     * Used to designate that a stdClass object be returned in a result when calling fetch methods
+     * Maps to PDO::FETCH_OBJ.
      *
      * @var string
+     * @link https://www.php.net/manual/en/pdo.constants.php
      */
     public const FETCH_TYPE_OBJ = 'obj';
 
@@ -52,7 +50,7 @@ interface StatementInterface extends Traversable
      * positional variables you need to start with index one, if using named params then
      * just use the name in any order.
      *
-     * It is not allowed to combine positional and named variables in the same statement
+     * It is not allowed to combine positional and named variables in the same statement.
      *
      * ### Examples:
      *
@@ -64,47 +62,47 @@ interface StatementInterface extends Traversable
      *
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
-     * @param string|int|null $type name of configured Type class, or PDO type constant.
+     * @param string|int|null $type name of configured Type class
      * @return void
      */
     public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void;
 
     /**
-     * Closes a cursor in the database, freeing up any resources and memory
-     * allocated to it. In most cases you don't need to call this method, as it is
-     * automatically called after fetching all results from the result set.
+     * Closes the cursor, enabling the statement to be executed again.
+     *
+     * This behaves the same as `PDOStatement::closeCursor()`.
      *
      * @return void
      */
     public function closeCursor(): void;
 
     /**
-     * Returns the number of columns this statement's results will contain
+     * Returns the number of columns in the result set.
      *
-     * ### Example:
-     *
-     * ```
-     *  $statement = $connection->prepare('SELECT id, title from articles');
-     *  $statement->execute();
-     *  echo $statement->columnCount(); // outputs 2
-     * ```
+     * This behaves the same as `PDOStatement::columnCount()`.
      *
      * @return int
+     * @link https://php.net/manual/en/pdostatement.columncount.php
      */
     public function columnCount(): int;
 
     /**
-     * Returns the error code for the last error that occurred when executing this statement
+     * Fetch the SQLSTATE associated with the last operation on the statement handle.
      *
-     * @return string|int
+     * This behaves the same as `PDOStatement::errorCode()`.
+     *
+     * @return string
+     * @link https://www.php.net/manual/en/pdostatement.errorcode.php
      */
-    public function errorCode(): string|int;
+    public function errorCode(): string;
 
     /**
-     * Returns the error information for the last error that occurred when executing
-     * this statement
+     * Fetch extended error information associated with the last operation on the statement handle.
+     *
+     * This behaves the same as `PDOStatement::errorInfo()`.
      *
      * @return array
+     * @link https://www.php.net/manual/en/pdostatement.errorinfo.php
      */
     public function errorInfo(): array;
 
@@ -112,7 +110,7 @@ interface StatementInterface extends Traversable
      * Executes the statement by sending the SQL query to the database. It can optionally
      * take an array or arguments to be bound to the query variables. Please note
      * that binding parameters from this method will not perform any custom type conversion
-     * as it would normally happen when calling `bindValue`
+     * as it would normally happen when calling `bindValue`.
      *
      * @param array|null $params list of values to be bound to query
      * @return bool true on success, false otherwise
@@ -120,58 +118,68 @@ interface StatementInterface extends Traversable
     public function execute(?array $params = null): bool;
 
     /**
-     * Returns the next row for the result set after executing this statement.
-     * Rows can be fetched to contain columns as names or positions. If no
-     * rows are left in result set, this method will return false
+     * Fetches the next row from a result set
+     * and converts fields to types based on TypeMap.
      *
-     * ### Example:
+     * This behaves the same as `PDOStatement::fetch()`.
      *
-     * ```
-     *  $statement = $connection->prepare('SELECT id, title from articles');
-     *  $statement->execute();
-     *  print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
-     * ```
-     *
-     * @param string|int $type 'num' for positional columns, assoc for named columns, or PDO fetch mode constants.
-     * @return mixed Result array containing columns and values or false if no results
-     * are left
+     * @param string|int $mode PDO::FETCH_* constant or fetch mode name.
+     *   Valid names are 'assoc', 'num' or 'obj'.
+     * @return mixed
+     * @throws \InvalidArgumentException
+     * @link https://www.php.net/manual/en/pdo.constants.php
      */
-    public function fetch(string|int $type = 'num'): mixed;
+    public function fetch(string|int $mode = PDO::FETCH_NUM): mixed;
 
     /**
-     * Returns an array with all rows resulting from executing this statement
+     * Fetches the remaining rows from a result set
+     * and converts fields to types based on TypeMap.
      *
-     * ### Example:
+     * This behaves the same as `PDOStatement::fetchAll()`.
      *
-     * ```
-     *  $statement = $connection->prepare('SELECT id, title from articles');
-     *  $statement->execute();
-     *  print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
-     * ```
-     *
-     * @param string|int $type `num` for fetching columns as positional keys or `assoc` for column names as keys.
-     * @return array List of all results from database for this statement.
+     * @param string|int $mode PDO::FETCH_* constant or fetch mode name.
+     *   Valid names are 'assoc', 'num' or 'obj'.
+     * @return array
+     * @throws \InvalidArgumentException
+     * @link https://www.php.net/manual/en/pdo.constants.php
      */
-    public function fetchAll(string|int $type = self::FETCH_TYPE_NUM): array;
+    public function fetchAll(string|int $mode = PDO::FETCH_NUM): array;
 
     /**
-     * Returns the value of the result at position.
+     * Fetches the next row from a result set using PDO::FETCH_NUM
+     * and converts fields to types based on TypeMap.
      *
-     * @param int $position The numeric position of the column to retrieve in the result
-     * @return mixed Returns the specific value of the column designated at $position
+     * This behaves the same as `PDOStatement::fetch()` except only
+     * a specific column from the row is returned.
+     *
+     * @param int $position Column index in result row.
+     * @return mixed
      */
     public function fetchColumn(int $position): mixed;
 
     /**
-     * Returns the number of rows affected by this SQL statement for INSERT,
-     * UPDATE and DELETE queries.
+     * Fetches the next row from a result set using PDO::FETCH_ASSOC
+     * and converts fields to types based on TypeMap.
+     *
+     * This behaves the same as `PDOStatement::fetch()` except an
+     * empty array is returned instead of false.
+     *
+     * @return array
+     */
+    public function fetchAssoc(): array;
+
+    /**
+     * Returns the number of rows affected by the last SQL statement.
+     *
+     * This behaves the same as `PDOStatement::rowCount()`.
      *
      * @return int
+     * @link https://www.php.net/manual/en/pdostatement.rowcount.php
      */
     public function rowCount(): int;
 
     /**
-     * Binds a set of values to statement object with corresponding type
+     * Binds a set of values to statement object with corresponding type.
      *
      * @param array $params list of values to be bound
      * @param array $types list of types to be used, keys should match those in $params
@@ -180,11 +188,19 @@ interface StatementInterface extends Traversable
     public function bind(array $params, array $types): void;
 
     /**
-     * Returns the latest primary inserted using this statement
+     * Returns the latest primary inserted using this statement.
      *
      * @param string|null $table table name or sequence to get last insert value from
      * @param string|null $column the name of the column representing the primary key
      * @return string|int
      */
     public function lastInsertId(?string $table = null, ?string $column = null): string|int;
+
+    /**
+     * Sets query logger to use when calling execute().
+     *
+     * @param \Psr\Log\LoggerInterface $logger Query logger
+     * @return $this
+     */
+    public function setLogger(LoggerInterface $logger);
 }
