@@ -2720,6 +2720,42 @@ class QueryTest extends TestCase
         }
     }
 
+    public function testGetIterator(): void
+    {
+        $query = new Query($this->connection);
+
+        $query
+            ->select(['id', 'title'])
+            ->from('articles')
+            ->decorateResults(function ($row) {
+                $row['generated'] = 'test';
+
+                return $row;
+            });
+
+        $count = 0;
+        foreach ($query as $row) {
+            ++$count;
+            $this->assertArrayHasKey('generated', $row);
+            $this->assertSame('test', $row['generated']);
+        }
+        $this->assertSame(3, $count);
+
+        $this->connection->execute('DELETE FROM articles WHERE author_id = 3')->closeCursor();
+
+        // Mark query as dirty
+        $query->select(['id'], true);
+
+        // Verify all() is called again
+        $count = 0;
+        foreach ($query as $row) {
+            ++$count;
+            $this->assertArrayHasKey('generated', $row);
+            $this->assertSame('test', $row['generated']);
+        }
+        $this->assertSame(2, $count);
+    }
+
     /**
      * Test a basic delete using from()
      */

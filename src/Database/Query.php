@@ -266,6 +266,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function execute(): StatementInterface
     {
+        $this->_statement = $this->_results = null;
         $this->_statement = $this->_connection->run($this);
         $this->_dirty = false;
 
@@ -2013,8 +2014,11 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             $results = $this->all();
         }
 
-        /** @var array $results */
-        return new ArrayIterator($results);
+        if (is_array($results)) {
+            return new ArrayIterator($results);
+        }
+
+        return $results;
     }
 
     /**
