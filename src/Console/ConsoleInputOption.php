@@ -77,6 +77,13 @@ class ConsoleInputOption
     protected $_choices;
 
     /**
+     * The prompt string
+     *
+     * @var string|null
+     */
+    protected $prompt;
+
+    /**
      * Is the option required.
      *
      * @var bool
@@ -94,6 +101,7 @@ class ConsoleInputOption
      * @param array<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
+     * @param string|null $prompt The prompt string.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
@@ -104,7 +112,8 @@ class ConsoleInputOption
         $default = null,
         array $choices = [],
         bool $multiple = false,
-        bool $required = false
+        bool $required = false,
+        ?string $prompt = null
     ) {
         $this->_name = $name;
         $this->_short = $short;
@@ -113,6 +122,7 @@ class ConsoleInputOption
         $this->_choices = $choices;
         $this->_multiple = $multiple;
         $this->required = $required;
+        $this->prompt = $prompt;
 
         if ($isBoolean) {
             $this->_default = (bool)$default;
@@ -264,6 +274,34 @@ class ConsoleInputOption
         }
 
         return true;
+    }
+
+    /**
+     * Does this option have a prompt set?
+     *
+     * @return bool
+     */
+    public function hasPrompt(): bool
+    {
+        return $this->prompt !== null && $this->prompt !== '';
+    }
+
+    /**
+     * Collect input from the user
+     *
+     * @param \Cake\Console\ConsoleIo $io A ConsoleIo used to ask questions.
+     * @return null|string
+     */
+    public function promptForInput(ConsoleIo $io): ?string
+    {
+        if (!$this->prompt) {
+            return null;
+        }
+        if ($this->_choices) {
+            return $io->askChoice($this->prompt, $this->_choices);
+        }
+
+        return $io->ask($this->prompt);
     }
 
     /**

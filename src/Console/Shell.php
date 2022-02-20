@@ -469,7 +469,7 @@ class Shell
         $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         $this->OptionParser = $this->getOptionParser();
         try {
-            [$this->params, $this->args] = $this->OptionParser->parse($argv);
+            [$this->params, $this->args] = $this->OptionParser->parse($argv, $this->_io);
         } catch (ConsoleException $e) {
             $this->err('Error: ' . $e->getMessage());
 

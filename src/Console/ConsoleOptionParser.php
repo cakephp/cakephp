@@ -426,6 +426,7 @@ class ConsoleOptionParser
                 'multiple' => false,
                 'choices' => [],
                 'required' => false,
+                'prompt' => null,
             ];
             $options += $defaults;
             $option = new ConsoleInputOption(
@@ -436,7 +437,8 @@ class ConsoleOptionParser
                 $options['default'],
                 $options['choices'],
                 $options['multiple'],
-                $options['required']
+                $options['required'],
+                $options['prompt']
             );
         }
         $this->_options[$name] = $option;
@@ -677,10 +679,11 @@ class ConsoleOptionParser
      * to parse the $argv
      *
      * @param array $argv Array of args (argv) to parse.
+     * @param \Cake\Console\ConsoleIo|null $io A ConsoleIo instance or null. If null prompt options will error.
      * @return array [$params, $args]
      * @throws \Cake\Console\Exception\ConsoleException When an invalid parameter is encountered.
      */
-    public function parse(array $argv): array
+    public function parse(array $argv, ?ConsoleIo $io): array
     {
         $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         if (isset($this->_subcommands[$command])) {
@@ -688,7 +691,7 @@ class ConsoleOptionParser
         }
         if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
             /** @psalm-suppress PossiblyNullReference */
-            return $this->_subcommands[$command]->parser()->parse($argv);
+            return $this->_subcommands[$command]->parser()->parse($argv, $io);
         }
         $params = $args = [];
         $this->_tokens = $argv;
@@ -722,11 +725,18 @@ class ConsoleOptionParser
             $isBoolean = $option->isBoolean();
             $default = $option->defaultValue();
 
-            if ($default !== null && !isset($params[$name]) && !$isBoolean) {
+            $useDefault = !isset($params[$name]);
+            if ($default !== null && $useDefault && !$isBoolean) {
                 $params[$name] = $default;
             }
-            if ($isBoolean && !isset($params[$name])) {
+            if ($isBoolean && $useDefault) {
                 $params[$name] = false;
+            }
+            if ($useDefault && $option->hasPrompt() && $io) {
+                $value = $option->promptForInput($io);
+                if ($value !== null) {
+                    $params[$name] = $value;
+                }
             }
             if ($option->isRequired() && !isset($params[$name])) {
                 throw new ConsoleException(

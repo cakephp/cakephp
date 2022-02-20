@@ -153,7 +153,7 @@ abstract class BaseCommand implements CommandInterface
 
         $parser = $this->getOptionParser();
         try {
-            [$options, $arguments] = $parser->parse($argv);
+            [$options, $arguments] = $parser->parse($argv, $io);
             $args = new Arguments(
                 $arguments,
                 $options,
