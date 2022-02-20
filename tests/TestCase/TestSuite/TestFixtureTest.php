@@ -185,7 +185,7 @@ class TestFixtureTest extends TestCase
             ->method('execute')
             ->will($this->returnValue($statement));
 
-        $this->assertSame($statement, $fixture->insert($db));
+        $this->assertSame(true, $fixture->insert($db));
     }
 
     /**
