@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\Database\StatementInterface;
-
 /**
  * Defines the interface that testing fixtures use.
  */
@@ -30,10 +28,9 @@ interface FixtureInterface
      *
      * @param \Cake\Datasource\ConnectionInterface $connection An instance of the connection
      *   into which the records will be inserted.
-     * @return \Cake\Database\StatementInterface|bool on success or if there are no records to insert,
-     *  or false on failure.
+     * @return bool
      */
-    public function insert(ConnectionInterface $connection): StatementInterface|bool;
+    public function insert(ConnectionInterface $connection): bool;
 
     /**
      * Truncates the current fixture.

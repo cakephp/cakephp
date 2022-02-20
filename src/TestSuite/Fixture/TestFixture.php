@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
-use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -160,7 +159,7 @@ class TestFixture implements FixtureInterface
     /**
      * @inheritDoc
      */
-    public function insert(ConnectionInterface $connection): StatementInterface|bool
+    public function insert(ConnectionInterface $connection): bool
     {
         if (!empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
@@ -174,8 +173,6 @@ class TestFixture implements FixtureInterface
             }
             $statement = $query->execute();
             $statement->closeCursor();
-
-            return $statement;
         }
 
         return true;
