@@ -188,7 +188,7 @@ class DateTimeWidget extends BasicWidget
 
         try {
             if ($value instanceof DateTimeInterface) {
-                /** @var \DateTime $dateTime */
+                /** @var \DateTime|\DateTimeImmutable $dateTime */
                 $dateTime = clone $value;
             } elseif (is_string($value) && !is_numeric($value)) {
                 $dateTime = new DateTime($value);
@@ -207,7 +207,6 @@ class DateTimeWidget extends BasicWidget
                 $timezone = new DateTimeZone($timezone);
             }
 
-            /** @psalm-suppress PossiblyUndefinedMethod */
             $dateTime = $dateTime->setTimezone($timezone);
         }
 
