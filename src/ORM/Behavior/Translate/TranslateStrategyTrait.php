@@ -151,7 +151,7 @@ trait TranslateStrategyTrait
         }
 
         return [
-            '_translations' => function ($value, $entity) use ($marshaller, $options) {
+            '_translations' => function ($value, EntityInterface $entity) use ($marshaller, $options) {
                 if (!is_array($value)) {
                     return null;
                 }

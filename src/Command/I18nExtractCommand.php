@@ -147,8 +147,6 @@ class I18nExtractCommand extends Command
             if (strtoupper($response) === 'Q') {
                 $io->err('Extract Aborted');
                 $this->abort();
-
-                return;
             }
             if (strtoupper($response) === 'D' && count($this->_paths)) {
                 $io->out();

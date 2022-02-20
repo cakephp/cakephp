@@ -63,7 +63,7 @@ class SqlserverCompiler extends QueryCompiler
      * it constructs the CTE definitions list without generating the `RECURSIVE`
      * keyword that is neither required nor valid.
      *
-     * @param array $parts List of CTEs to be transformed to string
+     * @param array<\Cake\Database\Expression\CommonTableExpression> $parts List of CTEs to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string

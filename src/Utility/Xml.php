@@ -387,9 +387,11 @@ class Xml
         ];
 
         $value = $data['value'];
+        /** @var \DOMDocument $dom */
         $dom = $data['dom'];
         $key = $data['key'];
         $format = $data['format'];
+        /** @var \DOMElement $node */
         $node = $data['node'];
 
         $childNS = $childValue = null;

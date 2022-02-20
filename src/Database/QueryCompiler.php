@@ -162,7 +162,7 @@ class QueryCompiler
      * it constructs the CTE definitions list and generates the `RECURSIVE`
      * keyword when required.
      *
-     * @param array $parts List of CTEs to be transformed to string
+     * @param array<\Cake\Database\Expression\CommonTableExpression> $parts List of CTEs to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string

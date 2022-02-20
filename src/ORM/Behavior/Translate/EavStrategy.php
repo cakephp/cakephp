@@ -173,9 +173,10 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $conditions = function ($field, $locale, $query, $select) {
-            return function ($q) use ($field, $locale, $query, $select) {
-                $q->where([$q->getRepository()->aliasField('locale') => $locale]);
+        $conditions = function (string $field, string $locale, Query $query, array $select) {
+            return function (Query $q) use ($field, $locale, $query, $select) {
+                $table = $q->getRepository();
+                $q->where([$table->aliasField('locale') => $locale]);
 
                 if (
                     $query->isAutoFieldsEnabled() ||
@@ -299,6 +300,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $modified = [];
+        /** @var \Cake\Datasource\EntityInterface $translation */
         foreach ($preexistent as $field => $translation) {
             $translation->set('content', $values[$field]);
             $modified[$field] = $translation;
@@ -439,6 +441,7 @@ class EavStrategy implements TranslateStrategyInterface
      */
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
+        /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
         $translations = (array)$entity->get('_translations');
 
         if (empty($translations) && !$entity->isDirty('_translations')) {

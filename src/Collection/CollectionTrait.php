@@ -839,7 +839,7 @@ trait CollectionTrait
      */
     public function chunk(int $chunkSize): CollectionInterface
     {
-        return $this->map(function ($v, $k, $iterator) use ($chunkSize) {
+        return $this->map(function ($v, $k, Iterator $iterator) use ($chunkSize) {
             $values = [$v];
             for ($i = 1; $i < $chunkSize; $i++) {
                 $iterator->next();
@@ -858,7 +858,7 @@ trait CollectionTrait
      */
     public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface
     {
-        return $this->map(function ($v, $k, $iterator) use ($chunkSize, $keepKeys) {
+        return $this->map(function ($v, $k, Iterator $iterator) use ($chunkSize, $keepKeys) {
             $key = 0;
             if ($keepKeys) {
                 $key = $k;
