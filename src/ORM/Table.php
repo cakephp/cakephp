@@ -2265,13 +2265,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         try {
             $this->getConnection()
                 ->transactional(function () use ($entities, $options, &$isNew, &$failed) {
+                    // Cache array cast since options are the same for each entity
+                    $options = (array)$options;
                     /**
                      * @var string $key
                      * @var \Cake\Datasource\EntityInterface $entity
                      */
                     foreach ($entities as $key => $entity) {
                         $isNew[$key] = $entity->isNew();
-                        if ($this->save($entity, (array)$options) === false) {
+                        if ($this->save($entity, $options) === false) {
                             $failed = $entity;
 
                             return false;
