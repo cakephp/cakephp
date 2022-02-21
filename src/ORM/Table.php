@@ -2240,8 +2240,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         ResultSetInterface|array $entities,
         SaveOptionsBuilder|array $options = []
     ): ResultSetInterface|array {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         $options = new ArrayObject(
-            (array)$options + [
+            $options + [
                 'atomic' => true,
                 'checkRules' => true,
                 '_primary' => true,
