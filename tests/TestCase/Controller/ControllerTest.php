@@ -24,7 +24,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Pager\PaginationInterface;
+use Cake\Paging\PaginationInterface;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;

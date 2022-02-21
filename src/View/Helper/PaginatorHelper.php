@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Exception\CakeException;
-use Cake\Pager\PaginationInterface;
+use Cake\Paging\PaginationInterface;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -93,7 +93,7 @@ class PaginatorHelper extends Helper
     /**
      * Paginated results
      *
-     * @var \Cake\Pager\PaginationInterface
+     * @var \Cake\Paging\PaginationInterface
      */
     protected PaginationInterface $paginated;
 
@@ -118,7 +118,7 @@ class PaginatorHelper extends Helper
     /**
      * Set paginated results.
      *
-     * @param \Cake\Pager\PaginationInterface $paginated Instance to use.
+     * @param \Cake\Paging\PaginationInterface $paginated Instance to use.
      * @param array $options Options array.
      * @return void
      */
@@ -131,7 +131,7 @@ class PaginatorHelper extends Helper
     /**
      * Get pagination instance.
      *
-     * @return \Cake\Pager\PaginationInterface
+     * @return \Cake\Paging\PaginationInterface
      */
     protected function paginated(): PaginationInterface
     {

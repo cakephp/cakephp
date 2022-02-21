@@ -21,7 +21,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Pager\PaginationInterface;
+use Cake\Paging\PaginationInterface;
 use InvalidArgumentException;
 use UnexpectedValueException;
 
@@ -173,7 +173,7 @@ class PaginatorComponent extends Component
      *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object Table or query to paginate.
      * @param array<string, mixed> $settings The settings/configuration used for pagination.
-     * @return \Cake\Pager\PaginationInterface
+     * @return \Cake\Paging\PaginationInterface
      * @throws \Cake\Http\Exception\NotFoundException
      */
     public function paginate(object $object, array $settings = []): PaginationInterface

@@ -33,7 +33,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Pager\PaginationInterface;
+use Cake\Paging\PaginationInterface;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use Closure;
@@ -825,7 +825,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array<string, mixed> $settings The settings/configuration used for pagination. See {@link \Cake\Controller\Controller::$paginate}.
-     * @return \Cake\Pager\PaginationInterface
+     * @return \Cake\Paging\PaginationInterface
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
      * @throws \Cake\Http\Exception\NotFoundException When a page out of bounds is requested.
      */
@@ -839,7 +839,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $settings += $this->paginate;
 
-        /** @var class-string<\Cake\Pager\PaginatorInterface> $paginator */
+        /** @var class-string<\Cake\Paging\PaginatorInterface> $paginator */
         $paginator = $settings['paginator'] ?? Paginator::class;
         $paginator = new $paginator();
         unset($settings['paginator']);

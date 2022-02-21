@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\Pager\PaginationInterface;
+use Cake\Paging\PaginationInterface;
 use IteratorIterator;
 
 /**
