@@ -276,6 +276,8 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     /**
      * Executes query and returns set of decorated results.
      *
+     * The results are cached until the query is modified and marked dirty.
+     *
      * @return iterable
      * @thows \RuntimeException When query is not a SELECT query.
      */
@@ -287,11 +289,13 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             );
         }
 
-        $this->_results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
-        if ($this->_resultDecorators) {
-            foreach ($this->_results as &$row) {
-                foreach ($this->_resultDecorators as $decorator) {
-                    $row = $decorator($row);
+        if ($this->_results === null || $this->_dirty) {
+            $this->_results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
+            if ($this->_resultDecorators) {
+                foreach ($this->_results as &$row) {
+                    foreach ($this->_resultDecorators as $decorator) {
+                        $row = $decorator($row);
+                    }
                 }
             }
         }
@@ -2009,11 +2013,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function getIterator(): Traversable
     {
-        $results = $this->_results;
-        if ($results === null || $this->_dirty) {
-            $results = $this->all();
-        }
-
+        $results = $this->all();
         if (is_array($results)) {
             return new ArrayIterator($results);
         }
