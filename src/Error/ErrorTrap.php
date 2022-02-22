@@ -16,7 +16,7 @@ use InvalidArgumentException;
  *
  * Using the `register()` method you can attach an ErrorTrap to PHP's default error handler.
  *
- * When errors are trapped, errors are logged (if logging is enabled). Then the `Error.handled` event is triggered.
+ * When errors are trapped, errors are logged (if logging is enabled). Then the `Error.beforeRender` event is triggered.
  * Finally, errors are 'rendered' using the defined renderer. If no error renderer is defined in configuration
  * one of the default implementations will be chosen based on the PHP SAPI.
  */
@@ -93,7 +93,7 @@ class ErrorTrap
      * Will use the configured renderer to generate output
      * and output it.
      *
-     * This method will dispatch the `Error.handled` event which can be listened
+     * This method will dispatch the `Error.beforeRender` event which can be listened
      * to on the global event manager.
      *
      * @param int $code Code of error
@@ -126,7 +126,7 @@ class ErrorTrap
         try {
             // Log first incase rendering or event listeners fail
             $logger->logMessage($error->getLabel(), $error->getMessage());
-            $event = $this->dispatchEvent('Error.handled', ['error' => $error]);
+            $event = $this->dispatchEvent('Error.beforeRender', ['error' => $error]);
             if ($event->isStopped()) {
                 return true;
             }

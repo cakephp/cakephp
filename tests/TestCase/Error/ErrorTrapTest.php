@@ -150,7 +150,7 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        $trap->getEventManager()->on('Error.handled', function ($event, PhpError $error) {
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
             $this->assertEquals(E_USER_NOTICE, $error->getCode());
             $this->assertStringContainsString('Oh no it was bad', $error->getMessage());
         });
@@ -160,5 +160,22 @@ class ErrorTrapTest extends TestCase
         $out = ob_get_clean();
         restore_error_handler();
         $this->assertNotEmpty($out);
+    }
+
+    public function testEventTriggeredAbortRender()
+    {
+        $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
+        $trap->register();
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
+            $this->assertEquals(E_USER_NOTICE, $error->getCode());
+            $this->assertStringContainsString('Oh no it was bad', $error->getMessage());
+            $event->stopPropagation();
+        });
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        $out = ob_get_clean();
+        restore_error_handler();
+        $this->assertSame('', $out);
     }
 }
