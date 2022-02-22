@@ -22,7 +22,7 @@ use Throwable;
  *
  * Stopping the `Exception.beforeRender` event has no effect, as we always need to render
  * a response to an exception and custom renderers should be used if you want to replace or
- * skip rendering an exception..
+ * skip rendering an exception.
  *
  * If undefined, an ExceptionRenderer will be selected based on the current SAPI (CLI or Web).
  */
