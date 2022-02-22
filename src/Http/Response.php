@@ -991,10 +991,15 @@ class Response implements ResponseInterface, Stringable
      *
      * *Warning* This method mutates the response in-place and should be avoided.
      *
+     * @deprecated 4.4.0 Use `withNotModified()` instead.
      * @return void
      */
     public function notModified(): void
     {
+        deprecationWarning(
+            'The `notModified()` method is deprecated. ' .
+            'Use `withNotModified() instead, and remember immutability of with* methods.'
+        );
         $this->_createStream();
         $this->_setStatus(304);
 
@@ -1193,19 +1198,16 @@ class Response implements ResponseInterface, Stringable
     /**
      * Checks whether a response has not been modified according to the 'If-None-Match'
      * (Etags) and 'If-Modified-Since' (last modification date) request
-     * headers. If the response is detected to be not modified, it
-     * is marked as so accordingly so the client can be informed of that.
+     * headers.
      *
-     * In order to mark a response as not modified, you need to set at least
-     * the Last-Modified etag response header before calling this method. Otherwise
-     * a comparison will not be possible.
-     *
-     * *Warning* This method mutates the response in-place and should be avoided.
+     * In order to interact with this method you must mark responses as not modified.
+     * You need to set at least one of the `Last-Modified` or `Etag` response headers
+     * before calling this method. Otherwise a comparison will not be possible.
      *
      * @param \Cake\Http\ServerRequest $request Request object
-     * @return bool Whether the response was marked as not modified or not.
+     * @return bool Whether the response is 'modified' based on cache headers.
      */
-    public function checkNotModified(ServerRequest $request): bool
+    public function isNotModified(ServerRequest $request): bool
     {
         $etags = preg_split('/\s*,\s*/', $request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
         $responseTag = $this->getHeaderLine('Etag');
@@ -1222,12 +1224,39 @@ class Response implements ResponseInterface, Stringable
         if ($etagMatches === null && $timeMatches === null) {
             return false;
         }
-        $notModified = $etagMatches !== false && $timeMatches !== false;
-        if ($notModified) {
+
+        return $etagMatches !== false && $timeMatches !== false;
+    }
+
+    /**
+     * Checks whether a response has not been modified according to the 'If-None-Match'
+     * (Etags) and 'If-Modified-Since' (last modification date) request
+     * headers. If the response is detected to be not modified, it
+     * is marked as so accordingly so the client can be informed of that.
+     *
+     * In order to mark a response as not modified, you need to set at least
+     * the Last-Modified etag response header before calling this method. Otherwise
+     * a comparison will not be possible.
+     *
+     * *Warning* This method mutates the response in-place and should be avoided.
+     *
+     * @param \Cake\Http\ServerRequest $request Request object
+     * @return bool Whether the response was marked as not modified or not.
+     * @deprecated 4.4.0 Use `isNotModified()` and `withNotModified()` instead.
+     */
+    public function checkNotModified(ServerRequest $request): bool
+    {
+        deprecationWarning(
+            'The `checkNotModified()` method is deprecated. ' .
+            'Use `isNotModified() instead and `withNoModified()` instead.'
+        );
+        if ($this->isNotModified($request)) {
             $this->notModified();
+
+            return true;
         }
 
-        return $notModified;
+        return false;
     }
 
     /**

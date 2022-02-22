@@ -1871,6 +1871,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         SaveOptionsBuilder|array $options = []
     ): EntityInterface|false {
         if ($options instanceof SaveOptionsBuilder) {
+            deprecationWarning('4.4.0', 'SaveOptionsBuilder is deprecated. Use a normal array for options instead.');
             $options = $options->toArray();
         }
 
@@ -2241,6 +2242,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         SaveOptionsBuilder|array $options = []
     ): ResultSetInterface|array {
         if ($options instanceof SaveOptionsBuilder) {
+            deprecationWarning('4.4.0', 'SaveOptionsBuilder is deprecated. Use a normal array for options instead.');
             $options = $options->toArray();
         }
 

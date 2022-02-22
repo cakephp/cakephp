@@ -141,6 +141,31 @@ class SqliteTest extends TestCase
     }
 
     /**
+     * Tests that insert queries get a "RETURNING *" string at the end
+     */
+    public function testInsertReturning(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Sqlite || version_compare($driver->version(), '3.35.0', '<'));
+
+        $query = ConnectionManager::get('test')->newQuery()
+            ->insert(['id', 'title'])
+            ->into('articles')
+            ->values([1, 'foo']);
+        $translator = $driver->queryTranslator('insert');
+        $query = $translator($query);
+        $this->assertSame('RETURNING *', $query->clause('epilog'));
+
+        $query = ConnectionManager::get('test')->newQuery()
+            ->insert(['id', 'title'])
+            ->into('articles')
+            ->values([1, 'foo'])
+            ->epilog('CUSTOM EPILOG');
+        $query = $translator($query);
+        $this->assertSame('CUSTOM EPILOG', $query->clause('epilog'));
+    }
+
+    /**
      * Data provider for schemaValue()
      *
      * @return array

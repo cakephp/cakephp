@@ -583,8 +583,9 @@ class ResponseTest extends TestCase
             ->withLength(100)
             ->withModified('now');
 
-        $response->notModified();
-
+        $this->deprecated(function () use ($response) {
+            $response->notModified();
+        });
         $this->assertFalse($response->hasHeader('Content-Length'));
         $this->assertFalse($response->hasHeader('Modified'));
         $this->assertEmpty((string)$response->getBody());
@@ -629,8 +630,12 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response = $response->withEtag('something')
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
+        $this->assertTrue($response->isNotModified($request));
+
+        $this->deprecated(function () use ($response, $request) {
+            $this->assertTrue($response->checkNotModified($request));
+            $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
+        });
     }
 
     /**
@@ -644,8 +649,12 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response = $response->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
+        $this->assertTrue($response->isNotModified($request));
+
+        $this->deprecated(function () use ($request, $response) {
+            $this->assertTrue($response->checkNotModified($request));
+            $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
+        });
     }
 
     /**
@@ -661,8 +670,12 @@ class ResponseTest extends TestCase
         $response = $response->withModified('2012-01-01 00:00:00')
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Length'), 'etags match, should be unmodified');
+        $this->assertTrue($response->isNotModified($request));
+
+        $this->deprecated(function () use ($request, $response) {
+            $this->assertTrue($response->checkNotModified($request));
+            $this->assertFalse($response->hasHeader('Content-Length'), 'etags match, should be unmodified');
+        });
     }
 
     /**
@@ -678,8 +691,12 @@ class ResponseTest extends TestCase
         $response = $response->withModified('2012-01-01 00:00:01')
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertFalse($response->checkNotModified($request));
-        $this->assertTrue($response->hasHeader('Content-Length'), 'timestamp in response is newer');
+        $this->assertFalse($response->isNotModified($request));
+
+        $this->deprecated(function () use ($request, $response) {
+            $this->assertFalse($response->checkNotModified($request));
+            $this->assertTrue($response->hasHeader('Content-Length'), 'timestamp in response is newer');
+        });
     }
 
     /**
@@ -695,8 +712,11 @@ class ResponseTest extends TestCase
         $response = $response->withModified('2012-01-01 00:00:00')
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertFalse($response->checkNotModified($request));
-        $this->assertTrue($response->hasHeader('Content-Length'), 'etags do not match');
+        $this->assertFalse($response->isNotModified($request));
+        $this->deprecated(function () use ($request, $response) {
+            $this->assertFalse($response->checkNotModified($request));
+            $this->assertTrue($response->hasHeader('Content-Length'), 'etags do not match');
+        });
     }
 
     /**
@@ -710,8 +730,12 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response = $response->withModified('2012-01-01 00:00:00')
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Length'), 'modified time matches');
+        $this->assertTrue($response->isNotModified($request));
+
+        $this->deprecated(function () use ($request, $response) {
+            $this->assertTrue($response->checkNotModified($request));
+            $this->assertFalse($response->hasHeader('Content-Length'), 'modified time matches');
+        });
     }
 
     /**
@@ -723,8 +747,12 @@ class ResponseTest extends TestCase
         $request = $request->withHeader('If-None-Match', 'W/"something", "other"')
             ->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
         $response = new Response();
-        $this->assertFalse($response->checkNotModified($request));
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertFalse($response->isNotModified($request));
+
+        $this->deprecated(function () use ($request, $response) {
+            $this->assertFalse($response->checkNotModified($request));
+            $this->assertSame(200, $response->getStatusCode());
+        });
     }
 
     /**

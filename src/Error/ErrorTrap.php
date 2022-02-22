@@ -51,9 +51,6 @@ class ErrorTrap
     public function __construct(array $options = [])
     {
         $this->setConfig($options);
-        if ($this->_getConfig('errorRenderer') === null) {
-            $this->setConfig('errorRenderer', $this->chooseErrorRenderer());
-        }
     }
 
     /**
@@ -114,11 +111,15 @@ class ErrorTrap
         if (!(error_reporting() & $code)) {
             return false;
         }
-        $debug = Configure::read('debug');
+        if ($code === E_USER_ERROR || $code === E_ERROR || $code === E_PARSE) {
+            throw new FatalErrorException($description, $code, $file, $line);
+        }
+
         /** @var array $trace */
         $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
+        $debug = Configure::read('debug');
         $renderer = $this->renderer();
         $logger = $this->logger();
 

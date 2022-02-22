@@ -19,8 +19,11 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
+use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Log\Log;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
@@ -58,10 +61,10 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigExceptionRendererFallback()
     {
-        $this->markTestIncomplete();
-        $trap = new ExceptionTrap(['exceptionRenderer' => null]);
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap(['exceptionRenderer' => null, 'stderr' => $output]);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testConfigExceptionRenderer()
@@ -82,11 +85,11 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigRendererHandleUnsafeOverwrite()
     {
-        $this->markTestIncomplete();
-        $trap = new ExceptionTrap();
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap(['stderr' => $output]);
         $trap->setConfig('exceptionRenderer', null);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ConsoleRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testLoggerConfigInvalid()
@@ -122,6 +125,57 @@ class ExceptionTrapTest extends TestCase
 
         $this->assertStringContainsString('nope', $out);
         $this->assertStringContainsString('ExceptionTrapTest', $out);
+    }
+
+    public function testHandleExceptionConsoleRenderingNoStack()
+    {
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ConsoleExceptionRenderer::class,
+            'stderr' => $output,
+        ]);
+        $error = new InvalidArgumentException('nope');
+
+        $trap->handleException($error);
+        $out = $output->messages();
+
+        $this->assertStringContainsString('nope', $out[0]);
+        $this->assertStringNotContainsString('Stack', $out[0]);
+    }
+
+    public function testHandleExceptionConsoleRenderingWithStack()
+    {
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ConsoleExceptionRenderer::class,
+            'stderr' => $output,
+            'trace' => true,
+        ]);
+        $error = new InvalidArgumentException('nope');
+
+        $trap->handleException($error);
+        $out = $output->messages();
+
+        $this->assertStringContainsString('nope', $out[0]);
+        $this->assertStringContainsString('Stack', $out[0]);
+        $this->assertStringContainsString('->testHandleExceptionConsoleRenderingWithStack', $out[0]);
+    }
+
+    public function testHandleExceptionConsoleWithAttributes()
+    {
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ConsoleExceptionRenderer::class,
+            'stderr' => $output,
+        ]);
+        $error = new MissingControllerException(['name' => 'Articles']);
+
+        $trap->handleException($error);
+        $out = $output->messages();
+
+        $this->assertStringContainsString('Controller class Articles', $out[0]);
+        $this->assertStringContainsString('Exception Attributes', $out[0]);
+        $this->assertStringContainsString('Articles', $out[0]);
     }
 
     /**

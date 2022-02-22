@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Error\Middleware;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
+use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -132,7 +133,9 @@ class ErrorHandlerMiddlewareTest extends TestCase
     public function testHandleExceptionWithExceptionTrap(): void
     {
         $request = ServerRequestFactory::fromGlobals();
-        $middleware = new ErrorHandlerMiddleware(new ExceptionTrap());
+        $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
+            'exceptionRenderer' => ExceptionRenderer::class,
+        ]));
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('whoops');
         });

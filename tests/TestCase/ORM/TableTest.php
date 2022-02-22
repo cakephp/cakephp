@@ -3936,7 +3936,9 @@ class TableTest extends TestCase
             ],
         ]);
 
-        $articles->save($entity, $optionBuilder);
+        $this->deprecated(function () use ($articles, $entity, $optionBuilder) {
+            $articles->save($entity, $optionBuilder);
+        });
         $this->assertFalse($entity->isNew());
         $this->assertSame('test save options', $entity->title);
         $this->assertNotEmpty($entity->id);
@@ -3954,7 +3956,9 @@ class TableTest extends TestCase
             'associated' => [],
         ]);
 
-        $articles->save($entity, $optionBuilder);
+        $this->deprecated(function () use ($articles, $entity, $optionBuilder) {
+            $articles->save($entity, $optionBuilder);
+        });
         $this->assertFalse($entity->isNew());
         $this->assertSame('test save options 2', $entity->title);
         $this->assertNotEmpty($entity->id);
