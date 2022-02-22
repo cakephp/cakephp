@@ -683,7 +683,7 @@ class ConsoleOptionParser
      * @return array [$params, $args]
      * @throws \Cake\Console\Exception\ConsoleException When an invalid parameter is encountered.
      */
-    public function parse(array $argv, ?ConsoleIo $io): array
+    public function parse(array $argv, ?ConsoleIo $io = null): array
     {
         $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         if (isset($this->_subcommands[$command])) {
@@ -732,7 +732,13 @@ class ConsoleOptionParser
             if ($isBoolean && $useDefault) {
                 $params[$name] = false;
             }
-            if ($useDefault && $option->hasPrompt() && $io) {
+            if ($useDefault && $option->hasPrompt()) {
+                if (!$io) {
+                    throw new ConsoleException(
+                        'Cannot use interactive option prompts without a ConsoleIo instance. ' .
+                        'Please provide a `$io` parameter to `parse()`.'
+                    );
+                }
                 $value = $option->promptForInput($io);
                 if ($value !== null) {
                     $params[$name] = $value;

@@ -361,6 +361,19 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test adding an option and prompting and optional options
      */
+    public function testAddOptionWithPromptNoIo(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'prompt' => 'What is your favorite?',
+        ]);
+        $this->expectException(ConsoleException::class);
+        $parser->parse([]);
+    }
+
+    /**
+     * test adding an option and prompting and optional options
+     */
     public function testAddOptionWithPrompt(): void
     {
         $parser = new ConsoleOptionParser('test', false);
