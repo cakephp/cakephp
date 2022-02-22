@@ -19,6 +19,7 @@ namespace Cake\Error\Renderer;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\Error\ExceptionRendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -26,11 +27,8 @@ use Throwable;
  * Plain text exception rendering with a stack trace.
  *
  * Useful in CI or plain text environments.
- *
- * @todo 5.0 Implement \Cake\Error\ExceptionRendererInterface. This implementation can't implement
- *  the concrete interface because the return types are not compatible.
  */
-class ConsoleExceptionRenderer
+class ConsoleExceptionRenderer implements ExceptionRendererInterface
 {
     /**
      * @var \Throwable
