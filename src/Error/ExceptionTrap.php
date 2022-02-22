@@ -35,7 +35,7 @@ class ExceptionTrap
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'exceptionRenderer' => null,
         'logger' => ErrorLogger::class,
         'stderr' => null,

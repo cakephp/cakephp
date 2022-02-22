@@ -20,6 +20,7 @@ use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Error\ExceptionRendererInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -33,17 +34,17 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
     /**
      * @var \Throwable
      */
-    private $error;
+    private Throwable $error;
 
     /**
      * @var \Cake\Console\ConsoleOutput
      */
-    private $output;
+    private ConsoleOutput $output;
 
     /**
      * @var bool
      */
-    private $trace;
+    private bool $trace;
 
     /**
      * Constructor.
@@ -64,7 +65,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
      *
      * @return \Psr\Http\Message\ResponseInterface|string
      */
-    public function render()
+    public function render(): ResponseInterface|string
     {
         $out = [];
         $out[] = sprintf(
@@ -100,11 +101,13 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
     /**
      * Write output to the output stream
      *
-     * @param string $output The output to print.
+     * @param \Psr\Http\Message\ResponseInterface|string $output The output to print.
      * @return void
      */
-    public function write($output): void
+    public function write(ResponseInterface|string $output): void
     {
-        $this->output->write($output);
+        if (is_string($output)) {
+            $this->output->write($output);
+        }
     }
 }
