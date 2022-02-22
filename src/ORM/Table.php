@@ -1843,6 +1843,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function save(EntityInterface $entity, $options = [])
     {
         if ($options instanceof SaveOptionsBuilder) {
+            deprecationWarning('SaveOptionsBuilder is deprecated. Use a normal array for options instead.');
             $options = $options->toArray();
         }
 
@@ -2208,6 +2209,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _saveMany(iterable $entities, $options = []): iterable
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            deprecationWarning('SaveOptionsBuilder is deprecated. Use a normal array for options instead.');
+            $options = $options->toArray();
+        }
+
         $options = new ArrayObject(
             (array)$options + [
                 'atomic' => true,
