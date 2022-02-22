@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use ArrayAccess;
 use Closure;
 
 /**
@@ -148,10 +147,10 @@ interface RepositoryInterface
      * of any error.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \ArrayAccess|array $options The options to use when saving.
+     * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      */
-    public function save(EntityInterface $entity, ArrayAccess|array $options = []): EntityInterface|false;
+    public function save(EntityInterface $entity, array $options = []): EntityInterface|false;
 
     /**
      * Delete a single entity.
@@ -160,10 +159,10 @@ interface RepositoryInterface
      * based on the 'dependent' option used when defining the association.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param \ArrayAccess|array $options The options for the delete.
+     * @param array $options The options for the delete.
      * @return bool success
      */
-    public function delete(EntityInterface $entity, ArrayAccess|array $options = []): bool;
+    public function delete(EntityInterface $entity, array $options = []): bool;
 
     /**
      * This creates a new entity object.
