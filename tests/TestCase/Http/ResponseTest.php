@@ -573,26 +573,6 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Tests that the response is able to be marked as not modified
-     */
-    public function testNotModified(): void
-    {
-        $response = new Response();
-        $response = $response->withStringBody('something')
-            ->withStatus(200)
-            ->withLength(100)
-            ->withModified('now');
-
-        $this->deprecated(function () use ($response) {
-            $response->notModified();
-        });
-        $this->assertFalse($response->hasHeader('Content-Length'));
-        $this->assertFalse($response->hasHeader('Modified'));
-        $this->assertEmpty((string)$response->getBody());
-        $this->assertSame(304, $response->getStatusCode());
-    }
-
-    /**
      * Tests withNotModified()
      */
     public function testWithNotModified(): void
@@ -631,11 +611,6 @@ class ResponseTest extends TestCase
         $response = $response->withEtag('something')
             ->withHeader('Content-Length', 99);
         $this->assertTrue($response->isNotModified($request));
-
-        $this->deprecated(function () use ($response, $request) {
-            $this->assertTrue($response->checkNotModified($request));
-            $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
-        });
     }
 
     /**
@@ -650,11 +625,6 @@ class ResponseTest extends TestCase
         $response = $response->withEtag('something', true)
             ->withHeader('Content-Length', 99);
         $this->assertTrue($response->isNotModified($request));
-
-        $this->deprecated(function () use ($request, $response) {
-            $this->assertTrue($response->checkNotModified($request));
-            $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
-        });
     }
 
     /**
@@ -671,11 +641,6 @@ class ResponseTest extends TestCase
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
         $this->assertTrue($response->isNotModified($request));
-
-        $this->deprecated(function () use ($request, $response) {
-            $this->assertTrue($response->checkNotModified($request));
-            $this->assertFalse($response->hasHeader('Content-Length'), 'etags match, should be unmodified');
-        });
     }
 
     /**
@@ -692,11 +657,6 @@ class ResponseTest extends TestCase
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
         $this->assertFalse($response->isNotModified($request));
-
-        $this->deprecated(function () use ($request, $response) {
-            $this->assertFalse($response->checkNotModified($request));
-            $this->assertTrue($response->hasHeader('Content-Length'), 'timestamp in response is newer');
-        });
     }
 
     /**
@@ -713,10 +673,6 @@ class ResponseTest extends TestCase
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
         $this->assertFalse($response->isNotModified($request));
-        $this->deprecated(function () use ($request, $response) {
-            $this->assertFalse($response->checkNotModified($request));
-            $this->assertTrue($response->hasHeader('Content-Length'), 'etags do not match');
-        });
     }
 
     /**
@@ -731,11 +687,6 @@ class ResponseTest extends TestCase
         $response = $response->withModified('2012-01-01 00:00:00')
             ->withHeader('Content-Length', 99);
         $this->assertTrue($response->isNotModified($request));
-
-        $this->deprecated(function () use ($request, $response) {
-            $this->assertTrue($response->checkNotModified($request));
-            $this->assertFalse($response->hasHeader('Content-Length'), 'modified time matches');
-        });
     }
 
     /**
@@ -748,11 +699,6 @@ class ResponseTest extends TestCase
             ->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
         $response = new Response();
         $this->assertFalse($response->isNotModified($request));
-
-        $this->deprecated(function () use ($request, $response) {
-            $this->assertFalse($response->checkNotModified($request));
-            $this->assertSame(200, $response->getStatusCode());
-        });
     }
 
     /**
