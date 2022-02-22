@@ -52,11 +52,6 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Http/Response.php">
-    <DeprecatedMethod occurrences="1">
-      <code>notModified</code>
-    </DeprecatedMethod>
-  </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$request</code>
