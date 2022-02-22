@@ -2720,6 +2720,48 @@ class QueryTest extends TestCase
         }
     }
 
+    public function testAll(): void
+    {
+        $query = new Query($this->connection);
+
+        $query
+            ->select(['id', 'title'])
+            ->from('articles')
+            ->decorateResults(function ($row) {
+                $row['generated'] = 'test';
+
+                return $row;
+            })
+            ->all();
+
+        $count = 0;
+        foreach ($query->all() as $row) {
+            ++$count;
+            $this->assertArrayHasKey('generated', $row);
+            $this->assertSame('test', $row['generated']);
+        }
+        $this->assertSame(3, $count);
+
+        $this->connection->execute('DELETE FROM articles WHERE author_id = 3')->closeCursor();
+
+        // Verify results are cached when query not marked dirty
+        $count = 0;
+        foreach ($query->all() as $row) {
+            ++$count;
+        }
+        $this->assertSame(3, $count);
+
+        // Mark query as dirty
+        $query->select(['id'], true);
+
+        // Verify query is run again
+        $count = 0;
+        foreach ($query->all() as $row) {
+            ++$count;
+        }
+        $this->assertSame(2, $count);
+    }
+
     public function testGetIterator(): void
     {
         $query = new Query($this->connection);
