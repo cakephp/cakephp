@@ -52,13 +52,18 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Http/Response.php">
+    <DeprecatedMethod occurrences="1">
+      <code>notModified</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/ORM/Table.php">
     <DeprecatedClass occurrences="6">
       <code>SaveOptionsBuilder</code>
       <code>\Cake\ORM\SaveOptionsBuilder</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
+      <code>\Cake\ORM\SaveOptionsBuilder|array</code>
+      <code>\Cake\ORM\SaveOptionsBuilder|array</code>
+      <code>\Cake\ORM\SaveOptionsBuilder|array</code>
       <code>new SaveOptionsBuilder($this, $options)</code>
     </DeprecatedClass>
   </file>

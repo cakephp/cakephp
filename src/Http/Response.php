@@ -997,6 +997,7 @@ class Response implements ResponseInterface, Stringable
     public function notModified(): void
     {
         deprecationWarning(
+            '4.4.0',
             'The `notModified()` method is deprecated. ' .
             'Use `withNotModified() instead, and remember immutability of with* methods.'
         );
@@ -1247,6 +1248,7 @@ class Response implements ResponseInterface, Stringable
     public function checkNotModified(ServerRequest $request): bool
     {
         deprecationWarning(
+            '4.4.0',
             'The `checkNotModified()` method is deprecated. ' .
             'Use `isNotModified() instead and `withNoModified()` instead.'
         );
