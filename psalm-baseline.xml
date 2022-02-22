@@ -57,16 +57,6 @@
       <code>notModified</code>
     </DeprecatedMethod>
   </file>
-  <file src="src/ORM/Table.php">
-    <DeprecatedClass occurrences="6">
-      <code>SaveOptionsBuilder</code>
-      <code>\Cake\ORM\SaveOptionsBuilder</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|array</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|array</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|array</code>
-      <code>new SaveOptionsBuilder($this, $options)</code>
-    </DeprecatedClass>
-  </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$request</code>

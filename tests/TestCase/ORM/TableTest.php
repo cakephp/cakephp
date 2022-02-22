@@ -44,7 +44,6 @@ use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
-use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -3911,62 +3910,6 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test that a save call takes a SaveOptionBuilder object as well.
-     *
-     * @group save
-     */
-    public function testSaveWithOptionBuilder(): void
-    {
-        $articles = new Table([
-            'table' => 'articles',
-            'connection' => $this->connection,
-        ]);
-        $articles->belongsTo('Authors');
-
-        $optionBuilder = new SaveOptionsBuilder($articles, [
-            'associated' => [
-                'Authors',
-            ],
-        ]);
-
-        $entity = $articles->newEntity([
-            'title' => 'test save options',
-            'author' => [
-                'name' => 'author name',
-            ],
-        ]);
-
-        $this->deprecated(function () use ($articles, $entity, $optionBuilder) {
-            $articles->save($entity, $optionBuilder);
-        });
-        $this->assertFalse($entity->isNew());
-        $this->assertSame('test save options', $entity->title);
-        $this->assertNotEmpty($entity->id);
-        $this->assertNotEmpty($entity->author->id);
-        $this->assertSame('author name', $entity->author->name);
-
-        $entity = $articles->newEntity([
-            'title' => 'test save options 2',
-            'author' => [
-                'name' => 'author name',
-            ],
-        ]);
-
-        $optionBuilder = new SaveOptionsBuilder($articles, [
-            'associated' => [],
-        ]);
-
-        $this->deprecated(function () use ($articles, $entity, $optionBuilder) {
-            $articles->save($entity, $optionBuilder);
-        });
-        $this->assertFalse($entity->isNew());
-        $this->assertSame('test save options 2', $entity->title);
-        $this->assertNotEmpty($entity->id);
-        $this->assertEmpty($entity->author->id);
-        $this->assertTrue($entity->author->isNew());
-    }
-
-    /**
      * Tests that saving a persisted and clean entity will is a no-op
      *
      * @group save
@@ -6408,16 +6351,6 @@ class TableTest extends TestCase
         } catch (PersistenceFailedException $e) {
             $this->assertSame($entity, $e->getEntity());
         }
-    }
-
-    /**
-     * Test getting the save options builder.
-     */
-    public function getSaveOptionsBuilder(): void
-    {
-        $table = $this->getTableLocator()->get('Authors');
-        $result = $table->getSaveOptionsBuilder();
-        $this->assertInstanceOf('Cake\ORM\SaveOptionsBuilder', $result);
     }
 
     /**

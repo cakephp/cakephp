@@ -1862,19 +1862,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \Cake\ORM\SaveOptionsBuilder|array $options The options to use when saving.
+     * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
     public function save(
         EntityInterface $entity,
-        SaveOptionsBuilder|array $options = []
+        array $options = []
     ): EntityInterface|false {
-        if ($options instanceof SaveOptionsBuilder) {
-            deprecationWarning('4.4.0', 'SaveOptionsBuilder is deprecated. Use a normal array for options instead.');
-            $options = $options->toArray();
-        }
-
         $options = new ArrayObject($options + [
             'atomic' => true,
             'associated' => true,
@@ -2197,13 +2192,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param \Cake\ORM\SaveOptionsBuilder|array $options Options used when calling Table::save() for each entity.
+     * @param array $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface>|false False on failure, entities list on success.
      * @throws \Exception
      */
     public function saveMany(
         ResultSetInterface|array $entities,
-        SaveOptionsBuilder|array $options = []
+        array $options = []
     ): ResultSetInterface|array|false {
         try {
             return $this->_saveMany($entities, $options);
@@ -2232,20 +2227,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param \Cake\ORM\SaveOptionsBuilder|array $options Options used when calling Table::save() for each entity.
+     * @param array $options Options used when calling Table::save() for each entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      * @throws \Exception If an entity couldn't be saved.
      * @return \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> Entities list.
      */
     protected function _saveMany(
         ResultSetInterface|array $entities,
-        SaveOptionsBuilder|array $options = []
+        array $options = []
     ): ResultSetInterface|array {
-        if ($options instanceof SaveOptionsBuilder) {
-            deprecationWarning('4.4.0', 'SaveOptionsBuilder is deprecated. Use a normal array for options instead.');
-            $options = $options->toArray();
-        }
-
         $options = new ArrayObject(
             $options + [
                 'atomic' => true,
@@ -3051,17 +3041,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         return $rules;
-    }
-
-    /**
-     * Gets a SaveOptionsBuilder instance.
-     *
-     * @param array<string, mixed> $options Options to parse by the builder.
-     * @return \Cake\ORM\SaveOptionsBuilder
-     */
-    public function getSaveOptionsBuilder(array $options = []): SaveOptionsBuilder
-    {
-        return new SaveOptionsBuilder($this, $options);
     }
 
     /**
