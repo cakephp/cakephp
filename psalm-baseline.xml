@@ -273,6 +273,16 @@
       <code>$instances</code>
     </NonInvariantDocblockPropertyType>
   </file>
+  <file src="src/ORM/Table.php">
+    <DeprecatedClass occurrences="6">
+      <code>SaveOptionsBuilder</code>
+      <code>\Cake\ORM\SaveOptionsBuilder</code>
+      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
+      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
+      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
+      <code>new SaveOptionsBuilder($this, $options)</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/ORM/Query.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$this-&gt;_repository</code>

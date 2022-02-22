@@ -26,6 +26,7 @@ use RuntimeException;
  * you to avoid mistakes by validating the options as you build them.
  *
  * @see \Cake\Datasource\RulesChecker
+ * @deprecated 4.4.4 Use an array of options instead.
  */
 class SaveOptionsBuilder extends ArrayObject
 {
