@@ -206,6 +206,11 @@
       <code>$this-&gt;data</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Http/Response.php">
+    <DeprecatedMethod occurrences="1">
+      <code>notModified</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/I18n/DateFormatTrait.php">
     <DeprecatedClass occurrences="5">
       <code>$time-&gt;timezone($timezone)</code>

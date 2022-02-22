@@ -219,14 +219,10 @@ class RequestHandlerComponent extends Component
             $response = $response->withCharset(Configure::read('App.encoding'));
         }
 
-        if (
-            $this->_config['checkHttpCache'] &&
-            $response->checkNotModified($controller->getRequest())
-        ) {
-            $controller->setResponse($response);
+        $request = $controller->getRequest();
+        if ($this->_config['checkHttpCache'] && $response->isNotModified($request)) {
+            $response = $response->withNotModified();
             $event->stopPropagation();
-
-            return;
         }
 
         $controller->setResponse($response);
