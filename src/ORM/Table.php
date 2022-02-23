@@ -3020,6 +3020,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param array<string, mixed> $options Options to parse by the builder.
      * @return \Cake\ORM\SaveOptionsBuilder
+     * @deprecated 4.4.0 Use a normal array for options instead.
      */
     public function getSaveOptionsBuilder(array $options = []): SaveOptionsBuilder
     {
