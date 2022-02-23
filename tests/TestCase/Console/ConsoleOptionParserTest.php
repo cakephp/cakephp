@@ -695,13 +695,26 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test that no exception is triggered when help is being generated
+     * test that no exception is triggered for required arguments when help is being generated
      */
-    public function testHelpNoExceptionWhenGettingHelp(): void
+    public function testHelpNoExceptionForRequiredArgumentsWhenGettingHelp(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
+
+        $result = $parser->parse(['--help']);
+        $this->assertTrue($result[0]['help']);
+    }
+
+    /**
+     * test that no exception is triggered for required options when help is being generated
+     */
+    public function testHelpNoExceptionForRequiredOptionsWhenGettingHelp(): void
+    {
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addOption('test', ['help' => 'A test option.'])
+            ->addOption('model', ['help' => 'The model to make.', 'required' => true]);
 
         $result = $parser->parse(['--help']);
         $this->assertTrue($result[0]['help']);

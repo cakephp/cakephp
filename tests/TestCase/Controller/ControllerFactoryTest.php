@@ -246,7 +246,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Test create() injecting dependcies on defined controllers.
+     * Test create() injecting dependencies on defined controllers.
      */
     public function testCreateWithContainerDependenciesNoController(): void
     {
@@ -265,7 +265,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Test create() injecting dependcies on defined controllers.
+     * Test create() injecting dependencies on defined controllers.
      */
     public function testCreateWithContainerDependenciesWithController(): void
     {
@@ -440,7 +440,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Ensure that a controllers startup process can emit a response
+     * Test invoke passing basic typed data from pass parameters.
      */
     public function testInvokeInjectParametersOptionalWithPassedParameters(): void
     {
@@ -462,6 +462,52 @@ class ControllerFactoryTest extends TestCase
         $this->assertSame($data->any, 'one');
         $this->assertSame($data->str, 'two');
         $this->assertSame('value', $data->dep->key);
+    }
+
+    /**
+     * Test invoke() injecting dependencies that exist in passed params as objects.
+     * The accepted types of `params.pass` was never enforced and userland code has
+     * creative uses of this previously unspecified behavior.
+     */
+    public function testCreateWithContainerDependenciesWithObjectRouteParam(): void
+    {
+        $inject = new stdClass();
+        $inject->id = uniqid();
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredDep',
+                'pass' => [$inject],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $data = json_decode((string)$response->getBody());
+        $this->assertNotNull($data);
+        $this->assertEquals($data->dep->id, $inject->id);
+    }
+
+    public function testCreateWithNonStringScalarRouteParam(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/required_typed',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => [1.1, 2, true, ['foo' => 'bar']],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $expected = ['one' => 1.1, 'two' => 2, 'three' => true, 'four' => ['foo' => 'bar']];
+        $data = json_decode((string)$response->getBody(), true);
+        $this->assertSame($expected, $data);
     }
 
     /**
@@ -504,7 +550,9 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Failed to inject dependency from service container for `dep` in action Dependencies::requiredDep()');
+        $this->expectExceptionMessage(
+            'Failed to inject dependency from service container for parameter `dep` with type `stdClass` in action Dependencies::requiredDep()'
+        );
         $this->factory->invoke($controller);
     }
 
@@ -695,6 +743,23 @@ class ControllerFactoryTest extends TestCase
 
         $this->assertNotNull($data);
         $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => ['8', '9']], $data);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1.0', '02', '0', ''],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertNotNull($data);
+        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => []], $data);
     }
 
     /**

@@ -173,8 +173,16 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
             // Check for dependency injection for classes
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
-                if ($this->container->has($type->getName())) {
-                    $resolved[] = $this->container->get($type->getName());
+                $typeName = $type->getName();
+                if ($this->container->has($typeName)) {
+                    $resolved[] = $this->container->get($typeName);
+                    continue;
+                }
+
+                // Use passedParams as a source of typed dependencies.
+                // The accepted types for passedParams was never defined and userland code relies on that.
+                if ($passedParams && is_object($passedParams[0]) && $passedParams[0] instanceof $typeName) {
+                    $resolved[] = array_shift($passedParams);
                     continue;
                 }
 
@@ -188,6 +196,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                 throw new InvalidParameterException([
                     'template' => 'missing_dependency',
                     'parameter' => $parameter->getName(),
+                    'type' => $typeName,
                     'controller' => $this->controller->getName(),
                     'action' => $this->controller->getRequest()->getParam('action'),
                     'prefix' => $this->controller->getRequest()->getParam('prefix'),
@@ -198,7 +207,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             // Use any passed params as positional arguments
             if ($passedParams) {
                 $argument = array_shift($passedParams);
-                if ($type instanceof ReflectionNamedType) {
+                if (is_string($argument) && $type instanceof ReflectionNamedType) {
                     $typedArgument = $this->coerceStringToType($argument, $type);
 
                     if ($typedArgument === null) {
@@ -263,7 +272,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             case 'bool':
                 return $argument === '0' ? false : ($argument === '1' ? true : null);
             case 'array':
-                return explode(',', $argument);
+                return $argument === '' ? [] : explode(',', $argument);
         }
 
         return null;
