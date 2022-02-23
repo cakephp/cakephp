@@ -202,6 +202,11 @@ class TranslatorRegistry
         $key = "translations.{$keyName}.{$locale}";
         /** @var \Cake\I18n\Translator|null $translator */
         $translator = $this->_cacher->get($key);
+
+        // PHP <8.1 does not correctly garbage collect strings created
+        // by unserialized arrays.
+        gc_collect_cycles();
+
         if (!$translator) {
             $translator = $this->_getTranslator($name, $locale);
             $this->_cacher->set($key, $translator);

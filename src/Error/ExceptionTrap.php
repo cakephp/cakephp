@@ -17,8 +17,12 @@ use Throwable;
  * Using the `register()` method you can attach an ExceptionTrap to PHP's default exception handler and register
  * a shutdown handler to handle fatal errors.
  *
- * When exceptions are trapped the `Exception.handled` event is triggered.
+ * When exceptions are trapped the `Exception.beforeRender` event is triggered.
  * Then exceptions are logged (if enabled) and finally 'rendered' using the defined renderer.
+ *
+ * Stopping the `Exception.beforeRender` event has no effect, as we always need to render
+ * a response to an exception and custom renderers should be used if you want to replace or
+ * skip rendering an exception.
  *
  * If undefined, an ExceptionRenderer will be selected based on the current SAPI (CLI or Web).
  */
@@ -309,7 +313,7 @@ class ExceptionTrap
      * Primarily a public function to ensure consistency between global exception handling
      * and the ErrorHandlerMiddleware.
      *
-     * After logging, the `Exception.handled` event is triggered.
+     * After logging, the `Exception.beforeRender` event is triggered.
      *
      * @param \Throwable $exception The exception to log
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The optional request
@@ -319,7 +323,7 @@ class ExceptionTrap
     {
         $logger = $this->logger();
         $logger->log($exception, $request);
-        $this->dispatchEvent('Exception.handled', ['exception' => $exception]);
+        $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);
     }
 
     /**
