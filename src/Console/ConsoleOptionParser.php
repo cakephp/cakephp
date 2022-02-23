@@ -705,8 +705,13 @@ class ConsoleOptionParser
                 $args = $this->_parseArg($token, $args);
             }
         }
+
+        if (isset($params['help'])) {
+            return [$params, $args];
+        }
+
         foreach ($this->_args as $i => $arg) {
-            if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
+            if ($arg->isRequired() && !isset($args[$i])) {
                 throw new ConsoleException(
                     sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
                 );
