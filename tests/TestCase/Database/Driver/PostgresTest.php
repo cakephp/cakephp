@@ -34,7 +34,7 @@ class PostgresTest extends TestCase
     public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['_connect'])
+            ->onlyMethods(['createPDO'])
             ->getMock();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
         $expected = [
@@ -76,7 +76,7 @@ class PostgresTest extends TestCase
                 ['SET search_path TO public']
             );
 
-        $driver->expects($this->once())->method('_connect')
+        $driver->expects($this->once())->method('createPDO')
             ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
@@ -102,7 +102,7 @@ class PostgresTest extends TestCase
             'init' => ['Execute this', 'this too'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['_connect'])
+            ->onlyMethods(['createPDO'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
@@ -136,7 +136,7 @@ class PostgresTest extends TestCase
                 ['SET timezone = Antarctica']
             );
 
-        $driver->expects($this->once())->method('_connect')
+        $driver->expects($this->once())->method('createPDO')
             ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
@@ -149,7 +149,7 @@ class PostgresTest extends TestCase
     public function testInsertReturning(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['createPDO', 'getPdo'])
             ->setConstructorArgs([[]])
             ->getMock();
         $connection = $this
@@ -181,7 +181,7 @@ class PostgresTest extends TestCase
     public function testHavingReplacesAlias(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['connect', 'getConnection', 'version', 'enabled'])
+            ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')
@@ -212,7 +212,7 @@ class PostgresTest extends TestCase
     public function testHavingWhenNoAliasIsUsed(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['connect', 'getConnection', 'version', 'enabled'])
+            ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')

@@ -112,7 +112,7 @@ class Mysql extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->_connection)) {
+        if (isset($this->pdo)) {
             return;
         }
         $config = $this->_config;
@@ -149,11 +149,11 @@ class Mysql extends Driver
             $dsn .= ";charset={$config['encoding']}";
         }
 
-        $this->_connection = $this->_connect($dsn, $config);
+        $this->pdo = $this->createPDO($dsn, $config);
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->_connection->exec($command);
+                $this->pdo->exec($command);
             }
         }
     }
@@ -243,8 +243,7 @@ class Mysql extends Driver
     public function version(): string
     {
         if ($this->_version === null) {
-            $this->connect();
-            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+            $this->_version = (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
 
             if (str_contains($this->_version, 'MariaDB')) {
                 $this->serverType = static::SERVER_TYPE_MARIADB;

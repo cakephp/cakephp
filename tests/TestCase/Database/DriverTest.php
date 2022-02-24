@@ -56,7 +56,7 @@ class DriverTest extends TestCase
             true,
             true,
             true,
-            ['_connect']
+            ['createPDO']
         );
     }
 
@@ -141,7 +141,7 @@ class DriverTest extends TestCase
             ->will($this->returnValue('string'));
 
         $this->driver->expects($this->any())
-            ->method('_connect')
+            ->method('createPDO')
             ->willReturn($connection);
 
         $this->driver->schemaValue($value);
@@ -163,7 +163,7 @@ class DriverTest extends TestCase
             ->willReturn('all-the-bears');
 
         $this->driver->expects($this->any())
-            ->method('_connect')
+            ->method('createPDO')
             ->willReturn($connection);
 
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
@@ -187,7 +187,7 @@ class DriverTest extends TestCase
             ->willReturn(new PDOStatement());
 
         $this->driver->expects($this->any())
-            ->method('_connect')
+            ->method('createPDO')
             ->willReturn($connection);
 
         $this->driver->connect();
@@ -289,10 +289,9 @@ class DriverTest extends TestCase
      */
     public function testDestructor(): void
     {
-        $this->driver->disconnect();
+        $this->driver->__destruct();
 
-        $this->expectException(MissingConnectionException::class);
-        $this->driver->getConnection();
+        $this->assertFalse($this->driver->__debugInfo()['connected']);
     }
 
     /**

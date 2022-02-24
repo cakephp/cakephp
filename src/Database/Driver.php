@@ -53,9 +53,9 @@ abstract class Driver implements DriverInterface
     /**
      * Instance of PDO.
      *
-     * @var \PDO
+     * @var \PDO|null
      */
-    protected PDO $_connection;
+    protected ?PDO $pdo = null;
 
     /**
      * Configuration data.
@@ -128,7 +128,7 @@ abstract class Driver implements DriverInterface
      * @param array<string, mixed> $config configuration to be used for creating connection
      * @return \PDO
      */
-    protected function _connect(string $dsn, array $config): PDO
+    protected function createPDO(string $dsn, array $config): PDO
     {
         $action = function () use ($dsn, $config): PDO {
             return new PDO(
@@ -166,7 +166,7 @@ abstract class Driver implements DriverInterface
      */
     public function disconnect(): void
     {
-        unset($this->_connection);
+        $this->pdo = null;
         $this->_version = null;
     }
 
@@ -178,8 +178,7 @@ abstract class Driver implements DriverInterface
     public function version(): string
     {
         if ($this->_version === null) {
-            $this->connect();
-            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+            $this->_version = (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
         }
 
         return $this->_version;
@@ -190,16 +189,14 @@ abstract class Driver implements DriverInterface
      *
      * @return \PDO
      */
-    public function getConnection(): PDO
+    public function getPdo(): PDO
     {
-        if (!isset($this->_connection)) {
-            throw new MissingConnectionException([
-                'driver' => App::shortName(static::class, 'Database/Driver'),
-                'reason' => 'Unknown',
-            ]);
+        if ($this->pdo === null) {
+            $this->connect();
         }
 
-        return $this->_connection;
+        /** @var \PDO */
+        return $this->pdo;
     }
 
     /**
@@ -212,8 +209,7 @@ abstract class Driver implements DriverInterface
      */
     public function prepare(Query|string $query): StatementInterface
     {
-        $this->connect();
-        $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
+        $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
 
         $typeMap = null;
         if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === Query::TYPE_SELECT) {
@@ -229,12 +225,11 @@ abstract class Driver implements DriverInterface
      */
     public function beginTransaction(): bool
     {
-        $this->connect();
-        if ($this->_connection->inTransaction()) {
+        if ($this->getPdo()->inTransaction()) {
             return true;
         }
 
-        return $this->_connection->beginTransaction();
+        return $this->getPdo()->beginTransaction();
     }
 
     /**
@@ -242,12 +237,11 @@ abstract class Driver implements DriverInterface
      */
     public function commitTransaction(): bool
     {
-        $this->connect();
-        if (!$this->_connection->inTransaction()) {
+        if (!$this->getPdo()->inTransaction()) {
             return false;
         }
 
-        return $this->_connection->commit();
+        return $this->getPdo()->commit();
     }
 
     /**
@@ -255,12 +249,11 @@ abstract class Driver implements DriverInterface
      */
     public function rollbackTransaction(): bool
     {
-        $this->connect();
-        if (!$this->_connection->inTransaction()) {
+        if (!$this->getPdo()->inTransaction()) {
             return false;
         }
 
-        return $this->_connection->rollBack();
+        return $this->getPdo()->rollBack();
     }
 
     /**
@@ -270,9 +263,7 @@ abstract class Driver implements DriverInterface
      */
     public function inTransaction(): bool
     {
-        $this->connect();
-
-        return $this->_connection->inTransaction();
+        return $this->getPdo()->inTransaction();
     }
 
     /**
@@ -280,9 +271,7 @@ abstract class Driver implements DriverInterface
      */
     public function quote($value, $type = PDO::PARAM_STR): string
     {
-        $this->connect();
-
-        return $this->_connection->quote((string)$value, $type);
+        return $this->getPdo()->quote((string)$value, $type);
     }
 
     /**
@@ -333,9 +322,7 @@ abstract class Driver implements DriverInterface
             return (string)$value;
         }
 
-        $this->connect();
-
-        return $this->_connection->quote((string)$value, PDO::PARAM_STR);
+        return $this->getPdo()->quote((string)$value, PDO::PARAM_STR);
     }
 
     /**
@@ -351,9 +338,7 @@ abstract class Driver implements DriverInterface
      */
     public function lastInsertId(?string $table = null): string
     {
-        $this->connect();
-
-        return $this->_connection->lastInsertId($table);
+        return $this->getPdo()->lastInsertId($table);
     }
 
     /**
@@ -361,9 +346,9 @@ abstract class Driver implements DriverInterface
      */
     public function isConnected(): bool
     {
-        if (isset($this->_connection)) {
+        if (isset($this->pdo)) {
             try {
-                $connected = (bool)$this->_connection->query('SELECT 1');
+                $connected = (bool)$this->pdo->query('SELECT 1');
             } catch (PDOException $e) {
                 $connected = false;
             }
@@ -469,7 +454,7 @@ abstract class Driver implements DriverInterface
      */
     public function __destruct()
     {
-        unset($this->_connection);
+        $this->pdo = null;
     }
 
     /**
@@ -481,7 +466,7 @@ abstract class Driver implements DriverInterface
     public function __debugInfo(): array
     {
         return [
-            'connected' => !isset($this->_connection),
+            'connected' => $this->pdo !== null,
         ];
     }
 }

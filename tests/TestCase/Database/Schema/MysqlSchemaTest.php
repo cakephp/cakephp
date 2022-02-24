@@ -1102,7 +1102,7 @@ SQL;
         $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->getConnection()
+        $driver->getPdo()
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.6.0'));
@@ -1170,7 +1170,7 @@ SQL;
             ->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->getConnection()
+        $driver->getPdo()
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.7.0'));
@@ -1382,11 +1382,11 @@ SQL;
             }));
 
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['_connect'])
+            ->onlyMethods(['createPDO'])
             ->getMock();
 
         $driver->expects($this->any())
-            ->method('_connect')
+            ->method('createPDO')
             ->willReturn($mock);
 
         $driver->connect();

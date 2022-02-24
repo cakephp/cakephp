@@ -91,11 +91,11 @@ interface DriverInterface
     public function disconnect(): void;
 
     /**
-     * Returns correct connection resource or object that is internally used.
+     * Returns the PDO instance that is internally used.
      *
      * @return \PDO Connection object used internally.
      */
-    public function getConnection(): PDO;
+    public function getPdo(): PDO;
 
     /**
      * Returns whether php is able to use this driver for connecting to database.

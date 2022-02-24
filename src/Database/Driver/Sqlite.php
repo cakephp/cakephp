@@ -114,7 +114,7 @@ class Sqlite extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->_connection)) {
+        if (isset($this->pdo)) {
             return;
         }
         $config = $this->_config;
@@ -152,7 +152,7 @@ class Sqlite extends Driver
             $dsn = 'sqlite:' . $config['database'];
         }
 
-        $this->_connection = $this->_connect($dsn, $config);
+        $this->pdo = $this->createPDO($dsn, $config);
         if ($chmodFile) {
             // phpcs:disable
             @chmod($config['database'], $config['mask']);
@@ -161,7 +161,7 @@ class Sqlite extends Driver
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->_connection->exec($command);
+                $this->pdo->exec($command);
             }
         }
     }

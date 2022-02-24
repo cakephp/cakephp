@@ -725,7 +725,7 @@ class CompositeKeysTest extends TestCase
         if ($driver instanceof Sqlserver) {
             $this->markTestSkipped('Sqlserver does not support the requirements of this test.');
         } elseif ($driver instanceof Sqlite) {
-            $serverVersion = $driver->getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION);
+            $serverVersion = $driver->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
             if (version_compare($serverVersion, '3.15.0', '<')) {
                 $this->markTestSkipped("Sqlite ($serverVersion) does not support the requirements of this test.");
             }
