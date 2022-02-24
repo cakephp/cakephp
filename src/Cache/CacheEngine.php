@@ -198,14 +198,14 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     {
         $this->ensureValidType($keys);
 
+        $result = true;
         foreach ($keys as $key) {
-            $result = $this->delete($key);
-            if ($result === false) {
-                return false;
+            if (!$this->delete($key)) {
+                $result = false;
             }
         }
 
-        return true;
+        return $result;
     }
 
     /**

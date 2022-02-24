@@ -675,6 +675,25 @@ class CacheTest extends TestCase
     }
 
     /**
+     * testDeleteMany partial failure
+     */
+    public function testDeleteManyPartialFailure(): void
+    {
+        $this->_configCache();
+        $data = [
+            'App.exists' => 'yes',
+            'App.exists2' => 'yes',
+        ];
+        Cache::writeMany($data, 'tests');
+
+        $result = Cache::deleteMany(['App.exists', 'App.noExists', 'App.exists2'], 'tests');
+        $this->assertFalse($result);
+
+        $this->assertNull(Cache::read('App.exists', 'tests'));
+        $this->assertNull(Cache::read('App.exists2', 'tests'));
+    }
+
+    /**
      * Test that failed writes cause errors to be triggered.
      */
     public function testWriteTriggerError(): void
