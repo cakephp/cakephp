@@ -187,7 +187,11 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     }
 
     /**
-     * Deletes multiple cache items in a single operation.
+     * Deletes multiple cache items as a list
+     *
+     * This is a best effort attempt. If deleting an item would
+     * create an error it will be ignored, and all items will
+     * be attempted.
      *
      * @param iterable $keys A list of string-based keys to be deleted.
      * @return bool True if the items were successfully removed. False if there was an error.
