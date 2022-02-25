@@ -277,31 +277,23 @@ class ConsoleInputOption
     }
 
     /**
-     * Does this option have a prompt set?
+     * Get the list of choices this option has.
      *
-     * @return bool
+     * @return array
      */
-    public function hasPrompt(): bool
+    public function choices(): array
     {
-        return $this->prompt !== null && $this->prompt !== '';
+        return $this->_choices;
     }
 
     /**
-     * Collect input from the user
+     * Get the prompt string
      *
-     * @param \Cake\Console\ConsoleIo $io A ConsoleIo used to ask questions.
-     * @return null|string
+     * @return string
      */
-    public function promptForInput(ConsoleIo $io): ?string
+    public function prompt(): string
     {
-        if (!$this->prompt) {
-            return null;
-        }
-        if ($this->_choices) {
-            return $io->askChoice($this->prompt, $this->_choices);
-        }
-
-        return $io->ask($this->prompt);
+        return (string)$this->prompt;
     }
 
     /**

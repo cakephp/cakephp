@@ -732,17 +732,21 @@ class ConsoleOptionParser
             if ($isBoolean && $useDefault) {
                 $params[$name] = false;
             }
-            if ($useDefault && $option->hasPrompt()) {
+            $prompt = $option->prompt();
+            if ($useDefault && $prompt) {
                 if (!$io) {
                     throw new ConsoleException(
                         'Cannot use interactive option prompts without a ConsoleIo instance. ' .
                         'Please provide a `$io` parameter to `parse()`.'
                     );
                 }
-                $value = $option->promptForInput($io);
-                if ($value !== null) {
-                    $params[$name] = $value;
+                $choices = $option->choices();
+                if ($choices) {
+                    $value = $io->askChoice($prompt, $choices);
+                } else {
+                    $value = $io->ask($prompt);
                 }
+                $params[$name] = $value;
             }
             if ($option->isRequired() && !isset($params[$name])) {
                 throw new ConsoleException(
