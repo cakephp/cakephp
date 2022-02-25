@@ -65,6 +65,11 @@ class ErrorLogger implements ErrorLoggerInterface
         if (!empty($context['trace'])) {
             $message .= "\nTrace:\n" . $context['trace'] . "\n";
         }
+        $logMap = [
+            'strict' => LOG_NOTICE,
+            'deprecated' => LOG_NOTICE,
+        ];
+        $level = $logMap[$level] ?? $level;
 
         return Log::write($level, $message);
     }
