@@ -70,7 +70,7 @@ class ConnectionTest extends TestCase
     protected $logState;
 
     /**
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $connection;
 
@@ -213,20 +213,6 @@ class ConnectionTest extends TestCase
             $e->getMessage()
         );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
-    }
-
-    /**
-     * Tests creation of prepared statements
-     */
-    public function testPrepare(): void
-    {
-        $sql = 'SELECT 1 + 1';
-        $result = $this->connection->prepare($sql);
-        $this->assertInstanceOf(StatementInterface::class, $result);
-
-        $query = $this->connection->newQuery()->select('1 + 1');
-        $result = $this->connection->prepare($query);
-        $this->assertInstanceOf(StatementInterface::class, $result);
     }
 
     /**
@@ -1183,7 +1169,7 @@ class ConnectionTest extends TestCase
     public function testAutomaticReconnect(): void
     {
         $conn = clone $this->connection;
-        $statement = $conn->query('SELECT 1');
+        $statement = $conn->execute('SELECT 1');
         $statement->execute();
         $statement->closeCursor();
 
@@ -1200,7 +1186,7 @@ class ConnectionTest extends TestCase
                 $this->returnValue($statement)
             ));
 
-        $res = $conn->query('SELECT 1');
+        $res = $conn->execute('SELECT 1');
         $this->assertInstanceOf(StatementInterface::class, $res);
     }
 
@@ -1211,7 +1197,7 @@ class ConnectionTest extends TestCase
     public function testNoAutomaticReconnect(): void
     {
         $conn = clone $this->connection;
-        $statement = $conn->query('SELECT 1');
+        $statement = $conn->execute('SELECT 1');
         $statement->execute();
         $statement->closeCursor();
 
@@ -1228,7 +1214,7 @@ class ConnectionTest extends TestCase
             ->will($this->throwException(new Exception('server gone away')));
 
         try {
-            $conn->query('SELECT 1');
+            $conn->execute('SELECT 1');
         } catch (Exception $e) {
         }
         $this->assertInstanceOf(Exception::class, $e ?? null);

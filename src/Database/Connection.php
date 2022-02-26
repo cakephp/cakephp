@@ -275,16 +275,14 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare(Query|string $query): StatementInterface
+    protected function prepare(Query|string $query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($query) {
-            $statement = $this->_driver->prepare($query);
-            if ($this->_logQueries) {
-                $statement->setLogger($this->getLogger());
-            }
+        $statement = $this->_driver->prepare($query);
+        if ($this->_logQueries) {
+            $statement->setLogger($this->getLogger());
+        }
 
-            return $statement;
-        });
+        return $statement;
     }
 
     /**
@@ -310,19 +308,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Compiles a Query object into a SQL string according to the dialect for this
-     * connection's driver
-     *
-     * @param \Cake\Database\Query $query The query to be compiled
-     * @param \Cake\Database\ValueBinder $binder Value binder
-     * @return string
-     */
-    public function compileQuery(Query $query, ValueBinder $binder): string
-    {
-        return $this->getDriver()->compileQuery($query, $binder)[1];
-    }
-
-    /**
      * Executes the provided query after compiling it for the specific driver
      * dialect and returns the executed Statement object.
      *
@@ -334,22 +319,6 @@ class Connection implements ConnectionInterface
         return $this->getDisconnectRetry()->run(function () use ($query) {
             $statement = $this->prepare($query);
             $query->getValueBinder()->attachTo($statement);
-            $statement->execute();
-
-            return $statement;
-        });
-    }
-
-    /**
-     * Executes a SQL statement and returns the Statement object as result.
-     *
-     * @param string $sql The SQL query to execute.
-     * @return \Cake\Database\StatementInterface
-     */
-    public function query(string $sql): StatementInterface
-    {
-        return $this->getDisconnectRetry()->run(function () use ($sql) {
-            $statement = $this->prepare($sql);
             $statement->execute();
 
             return $statement;
