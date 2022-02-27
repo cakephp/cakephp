@@ -393,6 +393,24 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test adding an option and default values
+     */
+    public function testAddOptionWithPromptAndDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'prompt' => 'What is your favorite?',
+            'default' => 'blue'
+        ]);
+        $out = new ConsoleOutput();
+        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput([]));
+
+        $result = $parser->parse([], $io);
+        $this->assertEquals(['color' => 'blue', 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
      * test adding an option and prompting with cli data
      */
     public function testAddOptionWithPromptAndProvidedValue(): void

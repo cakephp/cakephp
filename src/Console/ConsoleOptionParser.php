@@ -733,7 +733,7 @@ class ConsoleOptionParser
                 $params[$name] = false;
             }
             $prompt = $option->prompt();
-            if ($useDefault && $prompt) {
+            if (!isset($params[$name]) && $prompt) {
                 if (!$io) {
                     throw new ConsoleException(
                         'Cannot use interactive option prompts without a ConsoleIo instance. ' .
