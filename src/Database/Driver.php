@@ -19,6 +19,7 @@ namespace Cake\Database;
 use Cake\Core\App;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -28,6 +29,7 @@ use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Represents a database driver containing all specificities for
@@ -100,6 +102,13 @@ abstract class Driver implements DriverInterface
      * @var \Cake\Database\Schema\SchemaDialect
      */
     protected SchemaDialect $_schemaDialect;
+
+    /**
+     * Logger instance.
+     *
+     * @var \Psr\Log\LoggerInterface|null
+     */
+    protected ?LoggerInterface $logger = null;
 
     /**
      * Constructor
@@ -214,6 +223,73 @@ abstract class Driver implements DriverInterface
      * @inheritDoc
      */
     abstract public function enabled(): bool;
+
+    /**
+     * @inheritDoc
+     */
+    public function execute(string $sql, array $params = [], array $types = []): StatementInterface
+    {
+        $statement = $this->prepare($sql);
+        if (!empty($params)) {
+            $statement->bind($params, $types);
+        }
+        $this->executeStatement($statement);
+
+        return $statement;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function run(Query $query): StatementInterface
+    {
+        $statement = $this->prepare($query);
+        $query->getValueBinder()->attachTo($statement);
+        $this->executeStatement($statement);
+
+        return $statement;
+    }
+
+    /**
+     * Execute the statement and log the query string.
+     *
+     * @param \Cake\Database\StatementInterface $statement Statement to execute.
+     * @return void
+     */
+    protected function executeStatement(StatementInterface $statement): void
+    {
+        if ($this->logger === null) {
+            $statement->execute();
+
+            return;
+        }
+
+        $exception = null;
+        $took = 0.0;
+
+        try {
+            $start = microtime(true);
+            $statement->execute();
+            $took = (float)number_format((microtime(true) - $start) * 1000, 1);
+        } catch (PDOException $e) {
+            $exception = $e;
+        }
+
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->driver = $this;
+        $loggedQuery->query = $statement->queryString();
+        $loggedQuery->params = $statement->getBoundParams();
+        $loggedQuery->error = $exception;
+        if (!$exception) {
+            $loggedQuery->numRows = $statement->rowCount();
+            $loggedQuery->took = $took;
+        }
+        $this->logger->debug((string)$loggedQuery, ['query' => $loggedQuery]);
+
+        if ($exception) {
+            throw $exception;
+        }
+    }
 
     /**
      * @inheritDoc
@@ -458,6 +534,14 @@ abstract class Driver implements DriverInterface
     public function getMaxAliasLength(): ?int
     {
         return static::MAX_ALIAS_LENGTH;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLogger(?LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 
     /**

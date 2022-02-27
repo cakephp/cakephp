@@ -270,22 +270,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Prepares a SQL statement to be executed.
-     *
-     * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
-     * @return \Cake\Database\StatementInterface
-     */
-    protected function prepare(Query|string $query): StatementInterface
-    {
-        $statement = $this->_driver->prepare($query);
-        if ($this->_logQueries) {
-            $statement->setLogger($this->getLogger());
-        }
-
-        return $statement;
-    }
-
-    /**
      * Executes a query using $params for interpolating values and $types as a hint for each
      * those params.
      *
@@ -296,15 +280,7 @@ class Connection implements ConnectionInterface
      */
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($sql, $params, $types) {
-            $statement = $this->prepare($sql);
-            if (!empty($params)) {
-                $statement->bind($params, $types);
-            }
-            $statement->execute();
-
-            return $statement;
-        });
+        return $this->getDisconnectRetry()->run(fn () => $this->_driver->execute($sql, $params, $types));
     }
 
     /**
@@ -316,13 +292,7 @@ class Connection implements ConnectionInterface
      */
     public function run(Query $query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($query) {
-            $statement = $this->prepare($query);
-            $query->getValueBinder()->attachTo($statement);
-            $statement->execute();
-
-            return $statement;
-        });
+        return $this->getDisconnectRetry()->run(fn () => $this->_driver->run($query));
     }
 
     /**
@@ -803,6 +773,7 @@ class Connection implements ConnectionInterface
     public function enableQueryLogging(bool $enable = true)
     {
         $this->_logQueries = $enable;
+        $this->_driver->setLogger($this->getLogger());
 
         return $this;
     }
@@ -815,6 +786,7 @@ class Connection implements ConnectionInterface
     public function disableQueryLogging()
     {
         $this->_logQueries = false;
+        $this->_driver->setLogger(null);
 
         return $this;
     }
@@ -838,6 +810,9 @@ class Connection implements ConnectionInterface
     public function setLogger(LoggerInterface $logger): void
     {
         $this->_logger = $logger;
+        if ($this->_logQueries) {
+            $this->_driver->setLogger($this->_logger);
+        }
     }
 
     /**

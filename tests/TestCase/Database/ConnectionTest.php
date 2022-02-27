@@ -1180,7 +1180,7 @@ class ConnectionTest extends TestCase
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
-            ->method('prepare')
+            ->method('execute')
             ->will($this->onConsecutiveCalls(
                 $this->throwException(new Exception('server gone away')),
                 $this->returnValue($statement)
@@ -1210,7 +1210,7 @@ class ConnectionTest extends TestCase
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())
-            ->method('prepare')
+            ->method('execute')
             ->will($this->throwException(new Exception('server gone away')));
 
         try {

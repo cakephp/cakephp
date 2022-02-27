@@ -20,14 +20,19 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Statement\Statement;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use DateTime;
 use Exception;
 use PDO;
+use PDOException;
 use PDOStatement;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
@@ -49,6 +54,11 @@ class DriverTest extends TestCase
     {
         parent::setUp();
 
+        Log::setConfig('queries', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
+
         $this->driver = $this->getMockForAbstractClass(
             StubDriver::class,
             [],
@@ -56,8 +66,14 @@ class DriverTest extends TestCase
             true,
             true,
             true,
-            ['createPdo']
+            ['createPdo', 'prepare']
         );
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        Log::drop('queries');
     }
 
     /**
@@ -309,5 +325,96 @@ class DriverTest extends TestCase
             ['0', '0'],
             ['42', '42'],
         ];
+    }
+
+    /**
+     * Tests that queries are logged when executed without params
+     */
+    public function testExecuteNoParams(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->will($this->returnValue('SELECT bar FROM foo'));
+        $statement->method('rowCount')->will($this->returnValue(3));
+        $statement->method('execute')->will($this->returnValue(true));
+
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+
+        $this->driver->execute('SELECT bar FROM foo');
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+    }
+
+    /**
+     * Tests that queries are logged when executed with bound params
+     */
+    public function testExecuteWithBinding(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->method('rowCount')->will($this->returnValue(3));
+        $statement->method('execute')->will($this->returnValue(true));
+        $statement->expects($this->any())->method('queryString')->will($this->returnValue('SELECT bar FROM foo WHERE a=:a AND b=:b'));
+
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        $this->driver->execute(
+            'SELECT bar FROM foo WHERE a=:a AND b=:b',
+            [
+                'a' => 1,
+                'b' => new DateTime('2013-01-01'),
+            ],
+            ['b' => 'date']
+        );
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+    }
+
+    /**
+     * Tests that queries are logged despite database errors
+     */
+    public function testExecuteWithError(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->will($this->returnValue('SELECT bar FROM foo'));
+        $statement->method('rowCount')->will($this->returnValue(0));
+        $statement->method('execute')->will($this->throwException(new PDOException()));
+
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        try {
+            $this->driver->execute('SELECT foo FROM bar');
+        } catch (PDOException $e) {
+        }
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
     }
 }

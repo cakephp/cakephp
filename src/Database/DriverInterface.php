@@ -19,6 +19,7 @@ namespace Cake\Database;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
+use Psr\Log\LoggerInterface;
 
 /**
  * Interface for database driver.
@@ -103,6 +104,26 @@ interface DriverInterface
      * @return \Cake\Database\StatementInterface
      */
     public function prepare(Query|string $query): StatementInterface;
+
+    /**
+     * Executes a query using $params for interpolating values and $types as a hint for each
+     * those params.
+     *
+     * @param string $sql SQL to be executed and interpolated with $params
+     * @param array $params List or associative array of params to be interpolated in $sql as values.
+     * @param array $types List or associative array of types to be used for casting values in query.
+     * @return \Cake\Database\StatementInterface Executed statement
+     */
+    public function execute(string $sql, array $params = [], array $types = []): StatementInterface;
+
+    /**
+     * Executes the provided query after compiling it for the specific driver
+     * dialect and returns the executed Statement object.
+     *
+     * @param \Cake\Database\Query $query The query to be executed.
+     * @return \Cake\Database\StatementInterface Executed statement
+     */
+    public function run(Query $query): StatementInterface;
 
     /**
      * Starts a transaction.
@@ -302,4 +323,12 @@ interface DriverInterface
      * @return int|null
      */
     public function getMaxAliasLength(): ?int;
+
+    /**
+     * Set logger instance.
+     *
+     * @param \Psr\Log\LoggerInterface|null $logger Logger instance.
+     * @return void
+     */
+    public function setLogger(?LoggerInterface $logger): void;
 }
