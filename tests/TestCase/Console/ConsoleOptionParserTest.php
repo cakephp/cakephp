@@ -398,16 +398,13 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionWithPromptAndDefault(): void
     {
         $parser = new ConsoleOptionParser('test', false);
+
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('You cannot set both `prompt` and `default`');
         $parser->addOption('color', [
             'prompt' => 'What is your favorite?',
-            'default' => 'blue'
+            'default' => 'blue',
         ]);
-        $out = new ConsoleOutput();
-        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput([]));
-
-        $result = $parser->parse([], $io);
-        $this->assertEquals(['color' => 'blue', 'help' => false], $result[0]);
-        $this->assertCount(0, $out->messages());
     }
 
     /**
