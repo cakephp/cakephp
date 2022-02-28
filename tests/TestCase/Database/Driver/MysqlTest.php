@@ -43,7 +43,7 @@ class MysqlTest extends TestCase
     public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['createPdo', 'getPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
@@ -68,11 +68,11 @@ class MysqlTest extends TestCase
             ->addMethods(['exec'])
             ->getMock();
 
-        $driver->expects($this->once())->method('_connect')
+        $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
 
         $driver->expects($this->any())
-            ->method('getConnection')
+            ->method('getPdo')
             ->will($this->returnValue($connection));
         $driver->connect([]);
     }
@@ -98,7 +98,7 @@ class MysqlTest extends TestCase
             ],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->onlyMethods(['_connect'])
+            ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar';
@@ -119,7 +119,7 @@ class MysqlTest extends TestCase
             ->method('exec')
             ->withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]);
 
-        $driver->expects($this->once())->method('_connect')
+        $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
             ->will($this->returnValue($connection));
         $driver->connect($config);
@@ -186,11 +186,11 @@ class MysqlTest extends TestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['_connect'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
 
         $driver->expects($this->once())
-            ->method('_connect')
+            ->method('createPdo')
             ->willReturn($connection);
 
         $result = $driver->version();

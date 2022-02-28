@@ -77,7 +77,7 @@ class Postgres extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->_connection)) {
+        if (isset($this->pdo)) {
             return;
         }
         $config = $this->_config;
@@ -92,7 +92,7 @@ class Postgres extends Driver
             $dsn = "pgsql:dbname={$config['database']}";
         }
 
-        $this->_connection = $this->_connect($dsn, $config);
+        $this->pdo = $this->createPdo($dsn, $config);
         if (!empty($config['encoding'])) {
             $this->setEncoding($config['encoding']);
         }
@@ -102,11 +102,11 @@ class Postgres extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            $config['init'][] = sprintf('SET timezone = %s', $this->_connection->quote($config['timezone']));
+            $config['init'][] = sprintf('SET timezone = %s', $this->pdo->quote($config['timezone']));
         }
 
         foreach ($config['init'] as $command) {
-            $this->_connection->exec($command);
+            $this->pdo->exec($command);
         }
     }
 
@@ -140,8 +140,8 @@ class Postgres extends Driver
      */
     public function setEncoding(string $encoding): void
     {
-        $this->connect();
-        $this->_connection->exec('SET NAMES ' . $this->_connection->quote($encoding));
+        $pdo = $this->getPdo();
+        $pdo->exec('SET NAMES ' . $pdo->quote($encoding));
     }
 
     /**
@@ -153,8 +153,8 @@ class Postgres extends Driver
      */
     public function setSchema(string $schema): void
     {
-        $this->connect();
-        $this->_connection->exec('SET search_path TO ' . $this->_connection->quote($schema));
+        $pdo = $this->getPdo();
+        $pdo->exec('SET search_path TO ' . $pdo->quote($schema));
     }
 
     /**

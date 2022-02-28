@@ -30,6 +30,8 @@ use PDO;
  */
 class SqliteSchemaTest extends TestCase
 {
+    protected PDO $pdo;
+
     /**
      * Helper method for skipping tests that need a real connection.
      */
@@ -1040,7 +1042,7 @@ SQL;
         $statement = $this->getMockBuilder('\PDOStatement')
             ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
             ->getMock();
-        $driver->getConnection()->expects($this->once())
+        $this->pdo->expects($this->once())
             ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
@@ -1071,8 +1073,7 @@ SQL;
         $statement = $this->getMockBuilder('\PDOStatement')
             ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
             ->getMock();
-        $driver->getConnection()
-            ->expects($this->once())
+        $this->pdo->expects($this->once())
             ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
@@ -1094,23 +1095,23 @@ SQL;
     {
         $this->_needsConnection();
 
-        $mock = $this->getMockBuilder(PDO::class)
+        $this->pdo = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote', 'prepare'])
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->expects($this->any())
+        $this->pdo->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));
 
         $driver = $this->getMockBuilder(Sqlite::class)
-            ->onlyMethods(['_connect'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
 
         $driver->expects($this->any())
-            ->method('_connect')
-            ->willReturn($mock);
+            ->method('createPdo')
+            ->willReturn($this->pdo);
 
         $driver->connect();
 

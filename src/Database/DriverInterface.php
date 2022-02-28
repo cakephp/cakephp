@@ -19,7 +19,6 @@ namespace Cake\Database;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
-use PDO;
 
 /**
  * Interface for database driver.
@@ -89,13 +88,6 @@ interface DriverInterface
      * @return void
      */
     public function disconnect(): void;
-
-    /**
-     * Returns correct connection resource or object that is internally used.
-     *
-     * @return \PDO Connection object used internally.
-     */
-    public function getConnection(): PDO;
 
     /**
      * Returns whether php is able to use this driver for connecting to database.

@@ -109,7 +109,7 @@ class Sqlserver extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->_connection)) {
+        if (isset($this->pdo)) {
             return;
         }
         $config = $this->_config;
@@ -150,20 +150,20 @@ class Sqlserver extends Driver
             $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
         }
 
-        $this->_connection = $this->_connect($dsn, $config);
+        $this->pdo = $this->createPdo($dsn, $config);
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->_connection->exec($command);
+                $this->pdo->exec($command);
             }
         }
         if (!empty($config['settings']) && is_array($config['settings'])) {
             foreach ($config['settings'] as $key => $value) {
-                $this->_connection->exec("SET {$key} {$value}");
+                $this->pdo->exec("SET {$key} {$value}");
             }
         }
         if (!empty($config['attributes']) && is_array($config['attributes'])) {
             foreach ($config['attributes'] as $key => $value) {
-                $this->_connection->setAttribute($key, $value);
+                $this->pdo->setAttribute($key, $value);
             }
         }
     }
@@ -183,8 +183,6 @@ class Sqlserver extends Driver
      */
     public function prepare(Query|string $query): StatementInterface
     {
-        $this->connect();
-
         $sql = $query;
         if ($query instanceof Query) {
             $sql = $query->sql();
@@ -199,7 +197,7 @@ class Sqlserver extends Driver
         }
 
         /** @psalm-suppress PossiblyInvalidArgument */
-        $statement = $this->_connection->prepare(
+        $statement = $this->getPdo()->prepare(
             $sql,
             [
                 PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
@@ -269,9 +267,7 @@ class Sqlserver extends Driver
                 return true;
 
             case static::FEATURE_QUOTE:
-                $this->connect();
-
-                return $this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
+                return $this->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
         }
 
         return parent::supports($feature);

@@ -1370,11 +1370,11 @@ SQL;
             }));
 
         $driver = $this->getMockBuilder(Postgres::class)
-            ->onlyMethods(['_connect'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
 
         $driver->expects($this->any())
-            ->method('_connect')
+            ->method('createPdo')
             ->willReturn($mock);
 
         $driver->connect();
