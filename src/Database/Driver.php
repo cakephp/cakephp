@@ -185,11 +185,11 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Get the internal PDO connection instance.
+     * Get the PDO connection instance.
      *
      * @return \PDO
      */
-    public function getPdo(): PDO
+    protected function getPdo(): PDO
     {
         if ($this->pdo === null) {
             $this->connect();
@@ -197,6 +197,17 @@ abstract class Driver implements DriverInterface
 
         /** @var \PDO */
         return $this->pdo;
+    }
+
+    /**
+     * Execute the SQL query using the internal PDO instance.
+     *
+     * @param string $sql SQL query.
+     * @return int|false
+     */
+    public function exec(string $sql): int|false
+    {
+        return $this->getPdo()->exec($sql);
     }
 
     /**

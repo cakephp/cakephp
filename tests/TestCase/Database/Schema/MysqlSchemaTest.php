@@ -31,6 +31,8 @@ use PDO;
  */
 class MysqlSchemaTest extends TestCase
 {
+    protected PDO $pdo;
+
     /**
      * Helper method for skipping tests that need a real connection.
      */
@@ -1102,7 +1104,7 @@ SQL;
         $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->getPdo()
+        $this->pdo
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.6.0'));
@@ -1170,7 +1172,7 @@ SQL;
             ->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->getPdo()
+        $this->pdo
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.7.0'));
@@ -1370,12 +1372,12 @@ SQL;
     {
         $this->_needsConnection();
 
-        $mock = $this->getMockBuilder(PDO::class)
+        $this->pdo = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote', 'getAttribute'])
             ->addMethods(['quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->expects($this->any())
+            $this->pdo->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
@@ -1387,7 +1389,7 @@ SQL;
 
         $driver->expects($this->any())
             ->method('createPDO')
-            ->willReturn($mock);
+            ->willReturn($this->pdo);
 
         $driver->connect();
 
