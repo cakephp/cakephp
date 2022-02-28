@@ -417,7 +417,7 @@ class ConsoleOptionParserTest extends TestCase
             'prompt' => 'What is your favorite?',
         ]);
         $out = new ConsoleOutput();
-        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput(['red']));
+        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput([]));
 
         $result = $parser->parse(['--color', 'blue'], $io);
         $this->assertEquals(['color' => 'blue', 'help' => false], $result[0]);
