@@ -41,7 +41,7 @@ class SqliteTest extends TestCase
     public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
-            ->onlyMethods(['createPDO'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'sqlite::memory:';
         $expected = [
@@ -62,7 +62,7 @@ class SqliteTest extends TestCase
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        $driver->expects($this->once())->method('createPDO')
+        $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
         $driver->connect([]);
     }
@@ -82,7 +82,7 @@ class SqliteTest extends TestCase
             'mask' => 0666,
         ];
         $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
-            ->onlyMethods(['createPDO'])
+            ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlite:bar.db';
@@ -103,7 +103,7 @@ class SqliteTest extends TestCase
             ->method('exec')
             ->withConsecutive(['Execute this'], ['this too']);
 
-        $driver->expects($this->once())->method('createPDO')
+        $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
@@ -206,11 +206,11 @@ class SqliteTest extends TestCase
             }));
 
         $driver = $this->getMockBuilder(Sqlite::class)
-            ->onlyMethods(['createPDO'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
 
         $driver->expects($this->any())
-            ->method('createPDO')
+            ->method('createPdo')
             ->willReturn($mock);
 
         $this->assertEquals($expected, $driver->schemaValue($input));

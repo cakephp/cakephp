@@ -152,7 +152,7 @@ class Sqlite extends Driver
             $dsn = 'sqlite:' . $config['database'];
         }
 
-        $this->pdo = $this->createPDO($dsn, $config);
+        $this->pdo = $this->createPdo($dsn, $config);
         if ($chmodFile) {
             // phpcs:disable
             @chmod($config['database'], $config['mask']);

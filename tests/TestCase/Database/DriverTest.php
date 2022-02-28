@@ -56,7 +56,7 @@ class DriverTest extends TestCase
             true,
             true,
             true,
-            ['createPDO']
+            ['createPdo']
         );
     }
 
@@ -141,7 +141,7 @@ class DriverTest extends TestCase
             ->will($this->returnValue('string'));
 
         $this->driver->expects($this->any())
-            ->method('createPDO')
+            ->method('createPdo')
             ->willReturn($connection);
 
         $this->driver->schemaValue($value);
@@ -163,7 +163,7 @@ class DriverTest extends TestCase
             ->willReturn('all-the-bears');
 
         $this->driver->expects($this->any())
-            ->method('createPDO')
+            ->method('createPdo')
             ->willReturn($connection);
 
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
@@ -187,7 +187,7 @@ class DriverTest extends TestCase
             ->willReturn(new PDOStatement());
 
         $this->driver->expects($this->any())
-            ->method('createPDO')
+            ->method('createPdo')
             ->willReturn($connection);
 
         $this->driver->connect();

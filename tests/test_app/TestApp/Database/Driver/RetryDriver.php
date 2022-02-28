@@ -34,7 +34,7 @@ class RetryDriver extends Sqlserver
         $testConfig = ConnectionManager::get('test')->config() + $this->_baseConfig;
         $dsn = "sqlsrv:Server={$testConfig['host']};Database={$testConfig['database']}";
 
-        $this->pdo = $this->createPDO($dsn, ['username' => 'invalid', 'password' => '', 'flags' => []]);
+        $this->pdo = $this->createPdo($dsn, ['username' => 'invalid', 'password' => '', 'flags' => []]);
     }
 
     public function getConnectRetries(): int

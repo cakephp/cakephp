@@ -21,6 +21,6 @@ abstract class StubDriver extends Driver
 {
     public function connect(): void
     {
-        $this->pdo = $this->createPDO('', []);
+        $this->pdo = $this->createPdo('', []);
     }
 }

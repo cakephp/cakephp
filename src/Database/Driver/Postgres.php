@@ -92,7 +92,7 @@ class Postgres extends Driver
             $dsn = "pgsql:dbname={$config['database']}";
         }
 
-        $this->pdo = $this->createPDO($dsn, $config);
+        $this->pdo = $this->createPdo($dsn, $config);
         if (!empty($config['encoding'])) {
             $this->setEncoding($config['encoding']);
         }

@@ -101,11 +101,11 @@ class SqlserverTest extends TestCase
     public function testDnsString($constructorArgs, $dnsString): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['createPDO'])
+            ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
 
-        $driver->method('createPDO')
+        $driver->method('createPdo')
             ->with($this->callback(function ($dns) use ($dnsString) {
                 $this->assertSame($dns, $dnsString);
 
@@ -132,7 +132,7 @@ class SqlserverTest extends TestCase
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['createPDO', 'getPdo'])
+            ->onlyMethods(['createPdo', 'getPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
@@ -171,7 +171,7 @@ class SqlserverTest extends TestCase
                 ['SET config2 value2']
             );
 
-        $driver->expects($this->once())->method('createPDO')
+        $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
             ->will($this->returnValue($connection));
 
@@ -228,7 +228,7 @@ class SqlserverTest extends TestCase
     public function testSelectLimitVersion12(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['createPDO', 'getPdo', 'version', 'enabled'])
+            ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('version')
@@ -275,7 +275,7 @@ class SqlserverTest extends TestCase
     public function testSelectLimitOldServer(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['createPDO', 'getPdo', 'version', 'enabled'])
+            ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
@@ -401,7 +401,7 @@ class SqlserverTest extends TestCase
     public function testInsertUsesOutput(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->onlyMethods(['createPDO', 'getPdo', 'enabled'])
+            ->onlyMethods(['createPdo', 'getPdo', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')

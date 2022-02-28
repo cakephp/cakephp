@@ -1384,11 +1384,11 @@ SQL;
             }));
 
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['createPDO'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
 
         $driver->expects($this->any())
-            ->method('createPDO')
+            ->method('createPdo')
             ->willReturn($this->pdo);
 
         $driver->connect();

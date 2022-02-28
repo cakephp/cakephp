@@ -1106,11 +1106,11 @@ SQL;
             }));
 
         $driver = $this->getMockBuilder(Sqlite::class)
-            ->onlyMethods(['createPDO'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
 
         $driver->expects($this->any())
-            ->method('createPDO')
+            ->method('createPdo')
             ->willReturn($this->pdo);
 
         $driver->connect();

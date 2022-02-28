@@ -150,7 +150,7 @@ class Sqlserver extends Driver
             $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
         }
 
-        $this->pdo = $this->createPDO($dsn, $config);
+        $this->pdo = $this->createPdo($dsn, $config);
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
                 $this->pdo->exec($command);

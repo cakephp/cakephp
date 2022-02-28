@@ -149,7 +149,7 @@ class Mysql extends Driver
             $dsn .= ";charset={$config['encoding']}";
         }
 
-        $this->pdo = $this->createPDO($dsn, $config);
+        $this->pdo = $this->createPdo($dsn, $config);
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {

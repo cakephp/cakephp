@@ -128,7 +128,7 @@ abstract class Driver implements DriverInterface
      * @param array<string, mixed> $config configuration to be used for creating connection
      * @return \PDO
      */
-    protected function createPDO(string $dsn, array $config): PDO
+    protected function createPdo(string $dsn, array $config): PDO
     {
         $action = function () use ($dsn, $config): PDO {
             return new PDO(
