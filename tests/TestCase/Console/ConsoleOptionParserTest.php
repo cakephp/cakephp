@@ -388,7 +388,7 @@ class ConsoleOptionParserTest extends TestCase
         $messages = $out->messages();
 
         $this->assertCount(1, $messages);
-        $expected = '<question>What is your favorite?</question>' . PHP_EOL . '> ';
+        $expected = "<question>What is your favorite?</question>\n> ";
         $this->assertEquals($expected, $messages[0]);
     }
 
@@ -442,7 +442,7 @@ class ConsoleOptionParserTest extends TestCase
         $messages = $out->messages();
 
         $this->assertCount(1, $messages);
-        $expected = '<question>What is your favorite?</question>' . PHP_EOL . '> ';
+        $expected = "<question>What is your favorite?</question>\n> ";
         $this->assertEquals($expected, $messages[0]);
     }
 
@@ -465,7 +465,7 @@ class ConsoleOptionParserTest extends TestCase
         $messages = $out->messages();
 
         $this->assertCount(2, $messages);
-        $expected = '<question>What is your favorite?</question> (red/green/blue) ' . PHP_EOL . '> ';
+        $expected = "<question>What is your favorite?</question> (red/green/blue) \n> ";
         $this->assertEquals($expected, $messages[0]);
         $this->assertEquals($expected, $messages[1]);
     }
