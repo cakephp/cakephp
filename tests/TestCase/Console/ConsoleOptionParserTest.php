@@ -19,9 +19,12 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleInputArgument;
 use Cake\Console\ConsoleInputOption;
 use Cake\Console\ConsoleInputSubcommand;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\MissingOptionException;
+use Cake\TestSuite\Stub\ConsoleInput;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use LogicException;
 
@@ -30,6 +33,17 @@ use LogicException;
  */
 class ConsoleOptionParserTest extends TestCase
 {
+    /**
+     * @var \Cake\Console\ConsoleIo
+     */
+    private $io;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->io = new ConsoleIo(new ConsoleOutput(), new ConsoleOutput(), new ConsoleInput([]));
+    }
+
     /**
      * test setting the console description
      */
@@ -92,7 +106,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('test', [
             'short' => 't',
         ]);
-        $result = $parser->parse(['--test', 'value']);
+        $result = $parser->parse(['--test', 'value'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Long parameter did not parse out');
     }
 
@@ -103,7 +117,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('count', []);
-        $result = $parser->parse(['--count', '0']);
+        $result = $parser->parse(['--count', '0'], $this->io);
         $this->assertEquals(['count' => '0', 'help' => false], $result[0], 'Zero parameter did not parse out');
     }
 
@@ -114,7 +128,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption(new ConsoleInputOption('test', 't'));
-        $result = $parser->parse(['--test=value']);
+        $result = $parser->parse(['--test=value'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Long parameter did not parse out');
     }
 
@@ -127,7 +141,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('test', [
             'short' => 't',
         ]);
-        $result = $parser->parse(['--test=value']);
+        $result = $parser->parse(['--test=value'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Long parameter did not parse out');
     }
 
@@ -141,9 +155,9 @@ class ConsoleOptionParserTest extends TestCase
             ->addOption('test', [
                 'default' => 'default value',
             ])
-            ->addOption('no-default', [
-            ]);
-        $result = $parser->parse(['--test']);
+            ->addOption('no-default', []);
+
+        $result = $parser->parse(['--test'], $this->io);
         $this->assertSame(
             ['test' => 'default value', 'help' => false],
             $result[0],
@@ -154,7 +168,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('test', [
             'default' => 'default value',
         ]);
-        $result = $parser->parse([]);
+        $result = $parser->parse([], $this->io);
         $this->assertEquals(['test' => 'default value', 'help' => false], $result[0], 'Default value did not parse out');
     }
 
@@ -167,7 +181,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('test', [
             'short' => 't',
         ]);
-        $result = $parser->parse(['-t', 'value']);
+        $result = $parser->parse(['-t', 'value'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Short parameter did not parse out');
     }
 
@@ -181,7 +195,7 @@ class ConsoleOptionParserTest extends TestCase
             'multiple' => true,
             'short' => 's',
         ]);
-        $result = $parser->parse(['-s', 'mysql', '-s', 'postgres']);
+        $result = $parser->parse(['-s', 'mysql', '-s', 'postgres'], $this->io);
         $this->assertEquals(
             [
                 'source' => ['mysql', 'postgres'],
@@ -213,11 +227,11 @@ class ConsoleOptionParserTest extends TestCase
             'boolean' => true,
         ]);
 
-        $result = $parser->parse(['--test', 'value']);
+        $result = $parser->parse(['--test', 'value'], $this->io);
         $expected = [['test' => true, 'help' => false], ['value']];
         $this->assertEquals($expected, $result);
 
-        $result = $parser->parse(['value']);
+        $result = $parser->parse(['value'], $this->io);
         $expected = [['test' => false, 'help' => false], ['value']];
         $this->assertEquals($expected, $result);
     }
@@ -232,11 +246,11 @@ class ConsoleOptionParserTest extends TestCase
             ->addOption('file', ['short' => 'f', 'boolean' => true])
             ->addOption('output', ['short' => 'o', 'boolean' => true]);
 
-        $result = $parser->parse(['-o', '-t', '-f']);
+        $result = $parser->parse(['-o', '-t', '-f'], $this->io);
         $expected = ['file' => true, 'test' => true, 'output' => true, 'help' => false];
         $this->assertEquals($expected, $result[0], 'Short parameter did not parse out');
 
-        $result = $parser->parse(['-otf']);
+        $result = $parser->parse(['-otf'], $this->io);
         $this->assertEquals($expected, $result[0], 'Short parameter did not parse out');
     }
 
@@ -250,7 +264,7 @@ class ConsoleOptionParserTest extends TestCase
             ->addOption('connection')
             ->addOption('table', ['short' => 't', 'default' => true]);
 
-        $result = $parser->parse(['--test', 'value', '-t', '--connection', 'postgres']);
+        $result = $parser->parse(['--test', 'value', '-t', '--connection', 'postgres'], $this->io);
         $expected = ['test' => 'value', 'table' => true, 'connection' => 'postgres', 'help' => false];
         $this->assertEquals($expected, $result[0], 'multiple options did not parse');
     }
@@ -263,7 +277,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('source', ['short' => 's', 'multiple' => true]);
 
-        $result = $parser->parse(['--source', 'mysql', '-s', 'postgres']);
+        $result = $parser->parse(['--source', 'mysql', '-s', 'postgres'], $this->io);
         $expected = [
             'source' => [
                 'mysql',
@@ -285,7 +299,7 @@ class ConsoleOptionParserTest extends TestCase
             ->addOption('name')
             ->addOption('export', ['boolean' => true]);
 
-        $result = $parser->parse(['--export', '--source', 'mysql', '--name', 'annual-report', '--source', 'postgres']);
+        $result = $parser->parse(['--export', '--source', 'mysql', '--name', 'annual-report', '--source', 'postgres'], $this->io);
         $expected = [
             'export' => true,
             'source' => [
@@ -312,13 +326,13 @@ class ConsoleOptionParserTest extends TestCase
             ->addOption('no-default', [
                 'required' => true,
             ]);
-        $result = $parser->parse(['--test', '--no-default', 'value']);
+        $result = $parser->parse(['--test', '--no-default', 'value'], $this->io);
         $this->assertSame(
             ['test' => 'default value', 'no-default' => 'value', 'help' => false],
             $result[0]
         );
 
-        $result = $parser->parse(['--no-default', 'value']);
+        $result = $parser->parse(['--no-default', 'value'], $this->io);
         $this->assertSame(
             ['no-default' => 'value', 'help' => false, 'test' => 'default value'],
             $result[0]
@@ -341,7 +355,119 @@ class ConsoleOptionParserTest extends TestCase
             ]);
 
         $this->expectException(ConsoleException::class);
-        $parser->parse(['--test']);
+        $parser->parse(['--test'], $this->io);
+    }
+
+    /**
+     * test adding an option and prompting and optional options
+     */
+    public function testAddOptionWithPromptNoIo(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'prompt' => 'What is your favorite?',
+        ]);
+        $this->expectException(ConsoleException::class);
+        $parser->parse([]);
+    }
+
+    /**
+     * test adding an option and prompting and optional options
+     */
+    public function testAddOptionWithPrompt(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'prompt' => 'What is your favorite?',
+        ]);
+        $out = new ConsoleOutput();
+        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput(['red']));
+
+        $result = $parser->parse([], $io);
+        $this->assertEquals(['color' => 'red', 'help' => false], $result[0]);
+        $messages = $out->messages();
+
+        $this->assertCount(1, $messages);
+        $expected = "<question>What is your favorite?</question>\n> ";
+        $this->assertEquals($expected, $messages[0]);
+    }
+
+    /**
+     * test adding an option and default values
+     */
+    public function testAddOptionWithPromptAndDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('You cannot set both `prompt` and `default`');
+        $parser->addOption('color', [
+            'prompt' => 'What is your favorite?',
+            'default' => 'blue',
+        ]);
+    }
+
+    /**
+     * test adding an option and prompting with cli data
+     */
+    public function testAddOptionWithPromptAndProvidedValue(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'prompt' => 'What is your favorite?',
+        ]);
+        $out = new ConsoleOutput();
+        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput([]));
+
+        $result = $parser->parse(['--color', 'blue'], $io);
+        $this->assertEquals(['color' => 'blue', 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test adding an option and prompting and required options
+     */
+    public function testAddOptionWithPromptAndRequired(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'required' => true,
+            'prompt' => 'What is your favorite?',
+        ]);
+        $out = new ConsoleOutput();
+        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput(['red']));
+
+        $result = $parser->parse([], $io);
+        $this->assertEquals(['color' => 'red', 'help' => false], $result[0]);
+        $messages = $out->messages();
+
+        $this->assertCount(1, $messages);
+        $expected = "<question>What is your favorite?</question>\n> ";
+        $this->assertEquals($expected, $messages[0]);
+    }
+
+    /**
+     * test adding an option and prompting for additional values.
+     */
+    public function testAddOptionWithPromptAndOptions(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'required' => true,
+            'prompt' => 'What is your favorite?',
+            'choices' => ['red', 'green', 'blue'],
+        ]);
+        $out = new ConsoleOutput();
+        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput(['purple', 'red']));
+
+        $result = $parser->parse([], $io);
+        $this->assertEquals(['color' => 'red', 'help' => false], $result[0]);
+        $messages = $out->messages();
+
+        $this->assertCount(2, $messages);
+        $expected = "<question>What is your favorite?</question> (red/green/blue) \n> ";
+        $this->assertEquals($expected, $messages[0]);
+        $this->assertEquals($expected, $messages[1]);
     }
 
     /**
@@ -369,7 +495,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('no-commit', ['boolean' => true])
             ->addOption('table', ['short' => 't']);
 
-        $result = $parser->parse(['--table', 'posts', '--no-commit', 'arg1', 'arg2']);
+        $result = $parser->parse(['--table', 'posts', '--no-commit', 'arg1', 'arg2'], $this->io);
         $expected = [['table' => 'posts', 'no-commit' => true, 'help' => false], ['arg1', 'arg2']];
         $this->assertEquals($expected, $result, 'Boolean option did not parse correctly.');
     }
@@ -383,7 +509,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('no-commit', ['boolean' => true]);
 
         try {
-            $parser->parse(['--he', 'other']);
+            $parser->parse(['--he', 'other'], $this->io);
         } catch (MissingOptionException $e) {
             $this->assertStringContainsString(
                 "Unknown option `he`.\n" .
@@ -408,7 +534,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('clear', ['boolean' => true, 'short' => 'c']);
 
         try {
-            $parser->parse(['-f']);
+            $parser->parse(['-f'], $this->io);
         } catch (MissingOptionException $e) {
             $this->assertStringContainsString('Unknown short option `f`.', $e->getFullMessage());
         }
@@ -423,11 +549,11 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('name', ['choices' => ['mark', 'jose']]);
 
-        $result = $parser->parse(['--name', 'mark']);
+        $result = $parser->parse(['--name', 'mark'], $this->io);
         $expected = ['name' => 'mark', 'help' => false];
         $this->assertEquals($expected, $result[0], 'Got the correct value.');
 
-        $result = $parser->parse(['--name', 'jimmy']);
+        $result = $parser->parse(['--name', 'jimmy'], $this->io);
     }
 
     /**
@@ -439,7 +565,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('name')
             ->addOption('age');
 
-        $result = $parser->parse(['--name', '-foo', '--age', 'old']);
+        $result = $parser->parse(['--name', '-foo', '--age', 'old'], $this->io);
         $expected = ['name' => '-foo', 'age' => 'old', 'help' => false];
         $this->assertEquals($expected, $result[0], 'Option values starting with "-" are broken.');
     }
@@ -512,10 +638,10 @@ class ConsoleOptionParserTest extends TestCase
             ->addArgument('other');
 
         $expected = ['one', 'two'];
-        $result = $parser->parse($expected);
+        $result = $parser->parse($expected, $this->io);
         $this->assertEquals($expected, $result[1], 'Arguments are not as expected');
 
-        $result = $parser->parse(['one', 'two', 'three']);
+        $result = $parser->parse(['one', 'two', 'three'], $this->io);
     }
 
     /**
@@ -526,7 +652,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
 
         $expected = ['one', 'two', 0, 'after', 'zero'];
-        $result = $parser->parse($expected);
+        $result = $parser->parse($expected, $this->io);
         $this->assertEquals($expected, $result[1], 'Arguments are not as expected');
     }
 
@@ -540,7 +666,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addArgument('name', ['required' => true])
             ->addArgument('other', ['required' => true]);
 
-        $parser->parse(['one']);
+        $parser->parse(['one'], $this->io);
     }
 
     /**
@@ -565,11 +691,11 @@ class ConsoleOptionParserTest extends TestCase
             ->addArgument('alias', ['choices' => ['cowboy', 'samurai']])
             ->addArgument('weapon', ['choices' => ['gun', 'sword']]);
 
-        $result = $parser->parse(['mark', 'samurai', 'sword']);
+        $result = $parser->parse(['mark', 'samurai', 'sword'], $this->io);
         $expected = ['mark', 'samurai', 'sword'];
         $this->assertEquals($expected, $result[1], 'Got the correct value.');
 
-        $result = $parser->parse(['jose', 'coder']);
+        $result = $parser->parse(['jose', 'coder'], $this->io);
     }
 
     /**
@@ -628,7 +754,7 @@ class ConsoleOptionParserTest extends TestCase
             'default' => 'default',
         ])->addArgument('name', ['required' => false]);
 
-        $result = $parser->parse(['build']);
+        $result = $parser->parse(['build'], $this->io);
         $this->assertSame('default', $result[0]['connection']);
 
         $result = $parser->subcommands();
@@ -703,7 +829,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
 
-        $result = $parser->parse(['--help']);
+        $result = $parser->parse(['--help'], $this->io);
         $this->assertTrue($result[0]['help']);
     }
 
@@ -1010,7 +1136,7 @@ TEXT;
                 ],
             ]);
 
-        $result = $parser->parse(['sub', '--secondary', '--fourth', '4', 'c']);
+        $result = $parser->parse(['sub', '--secondary', '--fourth', '4', 'c'], $this->io);
         $expected = [[
             'secondary' => true,
             'fourth' => '4',
