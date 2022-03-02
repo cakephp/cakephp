@@ -227,13 +227,14 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $query = $this->_scope($this->_table->query())
+            $this->_scope($this->_table->query())
                 ->delete()
-                ->where(fn(QueryExpression $exp) => $exp
-                    ->gte($config['leftField'], $left + 1)
-                    ->lte($config['leftField'], $right - 1));
-            $statement = $query->execute();
-            $statement->closeCursor();
+                ->where(
+                    fn (QueryExpression $exp) => $exp
+                        ->gte($config['leftField'], $left + 1)
+                        ->lte($config['leftField'], $right - 1)
+                )
+                ->execute();
         }
 
         $this->_sync($diff, '-', "> {$right}");
@@ -907,9 +908,8 @@ class TreeBehavior extends Behavior
 
             $query->update()
                 ->set($exp->eq($field, $movement))
-                ->where($where);
-
-            $query->execute()->closeCursor();
+                ->where($where)
+                ->execute();
         }
     }
 

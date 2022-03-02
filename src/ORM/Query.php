@@ -968,7 +968,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $result = $statement->fetch('assoc');
-        $statement->closeCursor();
 
         if ($result === false) {
             return 0;

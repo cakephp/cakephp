@@ -54,7 +54,6 @@ class SqliteStatement extends Statement
             $changes = $this->_driver->prepare('SELECT CHANGES()');
             $changes->execute();
             $row = $changes->fetch();
-            $changes->closeCursor();
 
             $this->affectedRows = $row ? (int)$row[0] : 0;
         } else {

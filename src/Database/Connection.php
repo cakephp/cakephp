@@ -510,7 +510,7 @@ class Connection implements ConnectionInterface
      */
     public function createSavePoint(string|int $name): void
     {
-        $this->execute($this->_driver->savePointSQL($name))->closeCursor();
+        $this->execute($this->_driver->savePointSQL($name));
     }
 
     /**
@@ -523,7 +523,7 @@ class Connection implements ConnectionInterface
     {
         $sql = $this->_driver->releaseSavePointSQL($name);
         if ($sql) {
-            $this->execute($sql)->closeCursor();
+            $this->execute($sql);
         }
     }
 
@@ -535,7 +535,7 @@ class Connection implements ConnectionInterface
      */
     public function rollbackSavepoint(string|int $name): void
     {
-        $this->execute($this->_driver->rollbackSavePointSQL($name))->closeCursor();
+        $this->execute($this->_driver->rollbackSavePointSQL($name));
     }
 
     /**
@@ -546,7 +546,7 @@ class Connection implements ConnectionInterface
     public function disableForeignKeys(): void
     {
         $this->getDisconnectRetry()->run(function (): void {
-            $this->execute($this->_driver->disableForeignKeySQL())->closeCursor();
+            $this->execute($this->_driver->disableForeignKeySQL());
         });
     }
 
@@ -558,7 +558,7 @@ class Connection implements ConnectionInterface
     public function enableForeignKeys(): void
     {
         $this->getDisconnectRetry()->run(function (): void {
-            $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
+            $this->execute($this->_driver->enableForeignKeySQL());
         });
     }
 

@@ -171,8 +171,7 @@ class TestFixture implements FixtureInterface
             foreach ($values as $row) {
                 $query->values($row);
             }
-            $statement = $query->execute();
-            $statement->closeCursor();
+            $query->execute();
         }
 
         return true;
@@ -212,7 +211,7 @@ class TestFixture implements FixtureInterface
         /** @var \Cake\Database\Connection $connection */
         $sql = $this->_schema->truncateSql($connection);
         foreach ($sql as $stmt) {
-            $connection->execute($stmt)->closeCursor();
+            $connection->execute($stmt);
         }
 
         return true;

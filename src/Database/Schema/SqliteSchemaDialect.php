@@ -294,7 +294,6 @@ class SqliteSchemaDialect extends SchemaDialect
         foreach ($statement->fetchAll('assoc') as $column) {
             $columns[] = $column['name'];
         }
-        $statement->closeCursor();
         if ($row['unique']) {
             $schema->addConstraint($row['name'], [
                 'type' => TableSchema::CONSTRAINT_UNIQUE,
@@ -635,7 +634,6 @@ class SqliteSchemaDialect extends SchemaDialect
         );
         $result->execute();
         $this->_hasSequences = (bool)$result->fetch();
-        $result->closeCursor();
 
         return $this->_hasSequences;
     }

@@ -66,7 +66,6 @@ class Collection implements CollectionInterface
         while ($row = $statement->fetch()) {
             $result[] = $row[0];
         }
-        $statement->closeCursor();
 
         return $result;
     }
@@ -84,7 +83,6 @@ class Collection implements CollectionInterface
         while ($row = $statement->fetch()) {
             $result[] = $row[0];
         }
-        $statement->closeCursor();
 
         return $result;
     }
@@ -163,6 +161,5 @@ class Collection implements CollectionInterface
         foreach ($statement->fetchAll('assoc') as $row) {
             $this->_dialect->{$convertMethod}($schema, $row);
         }
-        $statement->closeCursor();
     }
 }
