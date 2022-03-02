@@ -21,7 +21,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectWithPivotLoader;
 use Cake\ORM\Query;
@@ -1188,27 +1187,28 @@ class BelongsToMany extends Association
 
                 $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
                 $junctionPrimaryKey = (array)$junction->getPrimaryKey();
-                $keys = array_combine($foreignKey, $prefixedForeignKey);
+
+                $keys = $matchesConditions = [];
                 foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
-                    $keys[$key] = $junction->aliasField($key);
+                    $aliased = $junction->aliasField($key);
+                    $keys[$key] = $aliased;
+                    $matchesConditions[$aliased] = new IdentifierExpression('matches.' . $key);
                 }
 
-                $existing = $this->_appendJunctionJoin($this->find())
-                    ->select($junction)
-                    ->where(array_combine($prefixedForeignKey, $primaryValue))
-                    ->formatResults(function (ResultSetInterface $results) use ($junction) {
-                        $junctionEntity = $junction->getEntityClass();
-                        $junctionAlias = $junction->getAlias();
+                // Use association to create row selection
+                // with finders & association conditions.
+                $matches = $this->_appendJunctionJoin($this->find())
+                    ->select($keys)
+                    ->where(array_combine($prefixedForeignKey, $primaryValue));
 
-                        // Extract data for the junction entity and map the result
-                        // into junction entity instances so that delete callbacks work correctly.
-                        return $results->map(function ($item) use ($junctionEntity, $junctionAlias) {
-                            return new $junctionEntity(
-                                $item[$junctionAlias],
-                                ['markNew' => false, 'markClean' => true]
-                            );
-                        });
-                    });
+                // Create a subquery join to ensure we get
+                // the correct entity passed to callbacks.
+                $existing = $junction->query()
+                    ->from(['matches' => $matches])
+                    ->innerJoin(
+                        [$junction->getAlias() => $junction->getTable()],
+                        $matchesConditions
+                    );
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);
