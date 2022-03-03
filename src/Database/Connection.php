@@ -23,15 +23,12 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
-use Cake\Database\Log\LoggedQuery;
-use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
-use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 use Throwable;
@@ -81,20 +78,6 @@ class Connection implements ConnectionInterface
     protected bool $_useSavePoints = false;
 
     /**
-     * Whether to log queries generated during this connection.
-     *
-     * @var bool
-     */
-    protected bool $_logQueries = false;
-
-    /**
-     * Logger object instance.
-     *
-     * @var \Psr\Log\LoggerInterface|null
-     */
-    protected ?LoggerInterface $_logger = null;
-
-    /**
      * Cacher object instance.
      *
      * @var \Psr\SimpleCache\CacheInterface|null
@@ -137,15 +120,10 @@ class Connection implements ConnectionInterface
         $driverConfig = array_diff_key($config, array_flip([
             'name',
             'driver',
-            'log',
             'cacheMetaData',
             'cacheKeyPrefix',
         ]));
         $this->_driver = $this->createDriver($config['driver'] ?? '', $driverConfig);
-
-        if (!empty($config['log'])) {
-            $this->enableQueryLogging((bool)$config['log']);
-        }
     }
 
     /**
@@ -404,10 +382,6 @@ class Connection implements ConnectionInterface
     public function begin(): void
     {
         if (!$this->_transactionStarted) {
-            if ($this->_logQueries) {
-                $this->log('BEGIN');
-            }
-
             $this->getDisconnectRetry()->run(function (): void {
                 $this->_driver->beginTransaction();
             });
@@ -446,9 +420,6 @@ class Connection implements ConnectionInterface
 
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
-            if ($this->_logQueries) {
-                $this->log('COMMIT');
-            }
 
             return $this->_driver->commitTransaction();
         }
@@ -482,9 +453,6 @@ class Connection implements ConnectionInterface
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
-            if ($this->_logQueries) {
-                $this->log('ROLLBACK');
-            }
             $this->_driver->rollbackTransaction();
 
             return true;
@@ -765,91 +733,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Enable/disable query logging
-     *
-     * @param bool $enable Enable/disable query logging
-     * @return $this
-     */
-    public function enableQueryLogging(bool $enable = true)
-    {
-        $this->_logQueries = $enable;
-        $this->_driver->setLogger($this->getLogger());
-
-        return $this;
-    }
-
-    /**
-     * Disable query logging
-     *
-     * @return $this
-     */
-    public function disableQueryLogging()
-    {
-        $this->_logQueries = false;
-        $this->_driver->setLogger(null);
-
-        return $this;
-    }
-
-    /**
-     * Check if query logging is enabled.
-     *
-     * @return bool
-     */
-    public function isQueryLoggingEnabled(): bool
-    {
-        return $this->_logQueries;
-    }
-
-    /**
-     * Sets a logger
-     *
-     * @param \Psr\Log\LoggerInterface $logger Logger object
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger): void
-    {
-        $this->_logger = $logger;
-        if ($this->_logQueries) {
-            $this->_driver->setLogger($this->_logger);
-        }
-    }
-
-    /**
-     * Gets the logger object
-     *
-     * @return \Psr\Log\LoggerInterface logger instance
-     */
-    public function getLogger(): LoggerInterface
-    {
-        if ($this->_logger !== null) {
-            return $this->_logger;
-        }
-
-        if (!class_exists(QueryLogger::class)) {
-            throw new RuntimeException(
-                'For logging you must either set a logger using Connection::setLogger()' .
-                ' or require the cakephp/log package in your composer config.'
-            );
-        }
-
-        return $this->_logger = new QueryLogger(['connection' => $this->configName()]);
-    }
-
-    /**
-     * Logs a Query string using the configured logger object.
-     *
-     * @param string $sql string to be logged
-     * @return void
-     */
-    public function log(string $sql): void
-    {
-        $query = new LoggedQuery();
-        $query->query = $sql;
-        $this->getLogger()->debug((string)$query, ['query' => $query]);
-    }
-
-    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
@@ -873,8 +756,6 @@ class Connection implements ConnectionInterface
             'transactionLevel' => $this->_transactionLevel,
             'transactionStarted' => $this->_transactionStarted,
             'useSavePoints' => $this->_useSavePoints,
-            'logQueries' => $this->_logQueries,
-            'logger' => $this->_logger,
         ];
     }
 }

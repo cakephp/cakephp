@@ -217,12 +217,10 @@ class ResultSetFactoryTest extends TestCase
     {
         Log::setConfig('queries', ['className' => 'Array']);
 
-        $defaultLogger = $this->connection->getLogger();
-        $queryLogging = $this->connection->isQueryLoggingEnabled();
+        $defaultLogger = $this->connection->getDriver()->getLogger();
 
         $logger = new QueryLogger();
-        $this->connection->setLogger($logger);
-        $this->connection->enableQueryLogging(true);
+        $this->connection->getDriver()->setLogger($logger);
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(0, $messages);
@@ -237,8 +235,9 @@ class ResultSetFactoryTest extends TestCase
         $message = array_pop($messages);
         $this->assertStringContainsString('SELECT', $message);
 
-        $this->connection->setLogger($defaultLogger);
-        $this->connection->enableQueryLogging($queryLogging);
+        if ($defaultLogger) {
+            $this->connection->getDriver()->setLogger();
+        }
         Log::reset();
     }
 }

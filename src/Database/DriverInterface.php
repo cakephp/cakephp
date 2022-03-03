@@ -19,12 +19,13 @@ namespace Cake\Database;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
 /**
  * Interface for database driver.
  */
-interface DriverInterface
+interface DriverInterface extends LoggerAwareInterface
 {
     /**
      * Common Table Expressions (with clause) support.
@@ -325,10 +326,9 @@ interface DriverInterface
     public function getMaxAliasLength(): ?int;
 
     /**
-     * Set logger instance.
+     * Gets the the logger instance.
      *
-     * @param \Psr\Log\LoggerInterface|null $logger Logger instance.
-     * @return void
+     * @return \Psr\Log\LoggerInterface|null Logger instance if set.
      */
-    public function setLogger(?LoggerInterface $logger): void;
+    public function getLogger(): ?LoggerInterface;
 }

@@ -417,4 +417,95 @@ class DriverTest extends TestCase
         $this->assertCount(1, $messages);
         $this->assertMatchesRegularExpression('/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
     }
+
+    public function testGetLoggerDefault(): void
+    {
+        $driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['createPdo', 'prepare']
+        );
+        $this->assertNull($driver->getLogger());
+
+        $driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [['log' => true]],
+            '',
+            true,
+            true,
+            true,
+            ['createPdo']
+        );
+
+        $logger = $driver->getLogger();
+        $this->assertInstanceOf(QueryLogger::class, $logger);
+    }
+
+    public function testGetAndSetLogger(): void
+    {
+        $logger = new QueryLogger();
+        $this->driver->setLogger($logger);
+        $this->assertSame($logger, $this->driver->getLogger());
+    }
+
+    public function testLogTransaction(): void
+    {
+        $pdo = $this->getMockBuilder(PDO::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['beginTransaction', 'commit', 'rollback', 'inTransaction'])
+            ->getMock();
+        $pdo
+            ->expects($this->any())
+            ->method('beginTransaction')
+            ->willReturn(true);
+        $pdo
+            ->expects($this->any())
+            ->method('commit')
+            ->willReturn(true);
+        $pdo
+            ->expects($this->any())
+            ->method('rollBack')
+            ->willReturn(true);
+        $pdo->expects($this->exactly(5))
+            ->method('inTransaction')
+            ->will($this->onConsecutiveCalls(
+                false,
+                true,
+                true,
+                false,
+                true,
+            ));
+
+        $driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [['log' => true]],
+            '',
+            true,
+            true,
+            true,
+            ['getPdo']
+        );
+
+        $driver->expects($this->any())
+            ->method('getPdo')
+            ->willReturn($pdo);
+
+        $driver->beginTransaction();
+        $driver->beginTransaction(); //This one will not be logged
+        $driver->rollbackTransaction();
+
+        $driver->beginTransaction();
+        $driver->commitTransaction();
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(4, $messages);
+        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= duration=0 rows=0 ROLLBACK', $messages[1]);
+        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[2]);
+        $this->assertSame('debug: connection= duration=0 rows=0 COMMIT', $messages[3]);
+    }
 }

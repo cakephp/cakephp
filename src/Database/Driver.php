@@ -17,9 +17,11 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Log\LoggedQuery;
+use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -29,6 +31,7 @@ use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -37,6 +40,8 @@ use Psr\Log\LoggerInterface;
  */
 abstract class Driver implements DriverInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var int|null Maximum alias length or null if no limit
      */
@@ -104,13 +109,6 @@ abstract class Driver implements DriverInterface
     protected SchemaDialect $_schemaDialect;
 
     /**
-     * Logger instance.
-     *
-     * @var \Psr\Log\LoggerInterface|null
-     */
-    protected ?LoggerInterface $logger = null;
-
-    /**
      * Constructor
      *
      * @param array<string, mixed> $config The configuration for the driver.
@@ -123,10 +121,13 @@ abstract class Driver implements DriverInterface
                 'Please pass "username" instead of "login" for connecting to the database'
             );
         }
-        $config += $this->_baseConfig;
+        $config += $this->_baseConfig + ['log' => false];
         $this->_config = $config;
         if (!empty($config['quoteIdentifiers'])) {
             $this->enableAutoQuoting();
+        }
+        if ($config['log'] !== false) {
+            $this->logger = $this->createLogger($config['log'] === true ? null : $config['log']);
         }
     }
 
@@ -316,6 +317,8 @@ abstract class Driver implements DriverInterface
             return true;
         }
 
+        $this->logSql('BEGIN');
+
         return $this->getPdo()->beginTransaction();
     }
 
@@ -328,6 +331,8 @@ abstract class Driver implements DriverInterface
             return false;
         }
 
+        $this->logSql('COMMIT');
+
         return $this->getPdo()->commit();
     }
 
@@ -339,6 +344,8 @@ abstract class Driver implements DriverInterface
         if (!$this->getPdo()->inTransaction()) {
             return false;
         }
+
+        $this->logSql('ROLLBACK');
 
         return $this->getPdo()->rollBack();
     }
@@ -539,9 +546,58 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function setLogger(?LoggerInterface $logger): void
+    public function getLogger(): ?LoggerInterface
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * Create logger instance.
+     *
+     * @param string|null $className Logger's class name
+     * @return \Psr\Log\LoggerInterface
+     */
+    protected function createLogger(?string $className): LoggerInterface
+    {
+        if ($className === null) {
+            $className = QueryLogger::class;
+        }
+
+        /** @var class-string<\Psr\Log\LoggerInterface>|null $className */
+        $className = App::className($className, 'Cake/Log', 'Log');
+        if ($className === null) {
+            throw new CakeException(
+                'For logging you must either set the `log` config to a FQCN which implemnts Psr\Log\LoggerInterface' .
+                ' or require the cakephp/log package in your composer config.'
+            );
+        }
+
+        return new $className();
+    }
+
+    /**
+     * Logs a query string using the configured logger object.
+     *
+     * @param string $sql String to be logged.
+     * @return void
+     */
+    protected function logSql(string $sql): void
+    {
+        if ($this->logger === null) {
+            return;
+        }
+
+        $query = new LoggedQuery();
+        $query->query = $sql;
+        $this->logger->debug((string)$query, ['query' => $query]);
     }
 
     /**

@@ -19,6 +19,7 @@ use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\TestCase;
+use Psr\Log\LoggerInterface;
 use TestApp\Database\Driver\TestDriver;
 
 class ConnectionHelperTest extends TestCase
@@ -44,9 +45,9 @@ class ConnectionHelperTest extends TestCase
     {
         $connection = new Connection(['driver' => TestDriver::class]);
         ConnectionManager::setConfig('query_logging', $connection);
-        $this->assertFalse($connection->isQueryLoggingEnabled());
+        $this->assertNull($connection->getDriver()->getLogger());
 
         (new ConnectionHelper())->enableQueryLogging(['query_logging']);
-        $this->assertTrue($connection->isQueryLoggingEnabled());
+        $this->assertInstanceOf(LoggerInterface::class, $connection->getDriver()->getLogger());
     }
 }

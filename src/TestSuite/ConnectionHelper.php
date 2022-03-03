@@ -17,6 +17,7 @@ namespace Cake\TestSuite;
 
 use Cake\Database\Connection;
 use Cake\Database\DriverInterface;
+use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Closure;
 
@@ -67,8 +68,8 @@ class ConnectionHelper
         $connections = $connections ?? ConnectionManager::configured();
         foreach ($connections as $connection) {
             $connection = ConnectionManager::get($connection);
-            if ($connection instanceof Connection) {
-                $connection->enableQueryLogging();
+            if ($connection instanceof Connection && $connection->getDriver()->getLogger() === null) {
+                $connection->getDriver()->setLogger(new QueryLogger());
             }
         }
     }
