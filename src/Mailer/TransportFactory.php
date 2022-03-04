@@ -93,6 +93,7 @@ class TransportFactory
             );
         }
 
+        /** @phpstan-ignore-next-line */
         static::getRegistry()->load($name, static::$_config[$name]);
     }
 
