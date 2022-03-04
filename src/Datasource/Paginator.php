@@ -19,7 +19,7 @@ namespace Cake\Datasource;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Paging\PaginationInterface;
+use Cake\Paging\PaginatedInterface;
 use Cake\Paging\PaginatorInterface;
 
 /**
@@ -154,14 +154,14 @@ class Paginator implements PaginatorInterface
      *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Paging\PaginationInterface
+     * @return \Cake\Paging\PaginatedInterface
      * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
      */
     public function paginate(
         mixed $target,
         array $params = [],
         array $settings = []
-    ): PaginationInterface {
+    ): PaginatedInterface {
         $query = null;
         if ($target instanceof QueryInterface) {
             $query = $target;

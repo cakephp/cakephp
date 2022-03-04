@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Exception\CakeException;
-use Cake\Paging\PaginationInterface;
+use Cake\Paging\PaginatedInterface;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -93,9 +93,9 @@ class PaginatorHelper extends Helper
     /**
      * Paginated results
      *
-     * @var \Cake\Paging\PaginationInterface
+     * @var \Cake\Paging\PaginatedInterface
      */
-    protected PaginationInterface $paginated;
+    protected PaginatedInterface $paginated;
 
     /**
      * Constructor. Overridden to merge passed args with URL options.
@@ -118,11 +118,11 @@ class PaginatorHelper extends Helper
     /**
      * Set paginated results.
      *
-     * @param \Cake\Paging\PaginationInterface $paginated Instance to use.
+     * @param \Cake\Paging\PaginatedInterface $paginated Instance to use.
      * @param array $options Options array.
      * @return void
      */
-    public function setPagination(PaginationInterface $paginated, array $options = []): void
+    public function setPagination(PaginatedInterface $paginated, array $options = []): void
     {
         $this->paginated = $paginated;
         $this->options($options);
@@ -131,9 +131,9 @@ class PaginatorHelper extends Helper
     /**
      * Get pagination instance.
      *
-     * @return \Cake\Paging\PaginationInterface
+     * @return \Cake\Paging\PaginatedInterface
      */
-    protected function paginated(): PaginationInterface
+    protected function paginated(): PaginatedInterface
     {
         if (!isset($this->paginated)) {
             throw new CakeException('You must set a pagination instance using `setPagination()` first.');

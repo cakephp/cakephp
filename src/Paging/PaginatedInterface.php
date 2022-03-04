@@ -24,7 +24,7 @@ use Traversable;
  *
  * @method int count() Item count for current page.
  */
-interface PaginationInterface extends Countable, Traversable
+interface PaginatedInterface extends Countable, Traversable
 {
     /**
      * Get current page number.

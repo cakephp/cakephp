@@ -33,7 +33,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Paging\PaginationInterface;
+use Cake\Paging\PaginatedInterface;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use Closure;
@@ -825,14 +825,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array<string, mixed> $settings The settings/configuration used for pagination. See {@link \Cake\Controller\Controller::$paginate}.
-     * @return \Cake\Paging\PaginationInterface
+     * @return \Cake\Paging\PaginatedInterface
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
      * @throws \Cake\Http\Exception\NotFoundException When a page out of bounds is requested.
      */
     public function paginate(
         RepositoryInterface|QueryInterface|string|null $object = null,
         array $settings = []
-    ): PaginationInterface {
+    ): PaginatedInterface {
         if (!is_object($object)) {
             $object = $this->fetchTable($object);
         }

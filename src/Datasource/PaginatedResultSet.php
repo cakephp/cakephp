@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\Paging\PaginationInterface;
+use Cake\Paging\PaginatedInterface;
 use IteratorIterator;
 
 /**
  * Paginated resultset.
  */
-class PaginatedResultSet extends IteratorIterator implements PaginationInterface
+class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
 {
     /**
      * Paging params.

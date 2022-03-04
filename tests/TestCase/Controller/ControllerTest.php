@@ -24,7 +24,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Paging\PaginationInterface;
+use Cake\Paging\PaginatedInterface;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
@@ -602,11 +602,11 @@ class ControllerTest extends TestCase
         $this->assertArrayNotHasKey('Paginator', $Controller->viewBuilder()->getHelpers());
 
         $results = $Controller->paginate('Posts');
-        $this->assertInstanceOf(PaginationInterface::class, $results);
+        $this->assertInstanceOf(PaginatedInterface::class, $results);
         $this->assertCount(3, $results);
 
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'));
-        $this->assertInstanceOf(PaginationInterface::class, $results);
+        $this->assertInstanceOf(PaginatedInterface::class, $results);
         $this->assertCount(3, $results);
 
         $paging = $Controller->getRequest()->getAttribute('paging');
@@ -617,7 +617,7 @@ class ControllerTest extends TestCase
         $this->assertNull($results->pagingParam('scope'));
 
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
-        $this->assertInstanceOf(PaginationInterface::class, $results);
+        $this->assertInstanceOf(PaginatedInterface::class, $results);
         $this->assertCount(1, $results);
 
         $paging = $Controller->getRequest()->getAttribute('paging');
@@ -641,7 +641,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, $response, 'Posts');
         $results = $Controller->paginate();
 
-        $this->assertInstanceOf(PaginationInterface::class, $results);
+        $this->assertInstanceOf(PaginatedInterface::class, $results);
     }
 
     public function testPaginateException()
