@@ -1187,12 +1187,13 @@ class BelongsToMany extends Association
 
                 $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
                 $junctionPrimaryKey = (array)$junction->getPrimaryKey();
+                $junctionQueryAlias = $junction->getAlias() . '__matches';
 
                 $keys = $matchesConditions = [];
                 foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
                     $aliased = $junction->aliasField($key);
                     $keys[$key] = $aliased;
-                    $matchesConditions[$aliased] = new IdentifierExpression('matches.' . $key);
+                    $matchesConditions[$aliased] = new IdentifierExpression($junctionQueryAlias . '.' . $key);
                 }
 
                 // Use association to create row selection
@@ -1204,7 +1205,7 @@ class BelongsToMany extends Association
                 // Create a subquery join to ensure we get
                 // the correct entity passed to callbacks.
                 $existing = $junction->query()
-                    ->from(['matches' => $matches])
+                    ->from([$junctionQueryAlias => $matches])
                     ->innerJoin(
                         [$junction->getAlias() => $junction->getTable()],
                         $matchesConditions
