@@ -709,13 +709,26 @@ class QueryExpression implements ExpressionInterface, Countable
     {
         $expression = trim($condition);
         $operator = '=';
-        if (
-            strpos($expression, ' ') !== false &&
-            preg_match('/^(.*?)\s+([^)"`\]\']+)$/', $condition, $matches)
-        ) {
-            $expression = $matches[1];
-            $operator = strtoupper($matches[2]);
+
+        $spaces = substr_count($expression, ' ');
+        // Handle expression values that contain multiple spaces, such as
+        // operators with a space in them like `field IS NOT` and
+        // `field NOT LIKE`, or combinations with function expressions
+        // like `CONCAT(first_name, ' ', last_name) IN`.
+        if ($spaces > 1) {
+            $parts = explode(' ', $expression);
+            if (preg_match('/(is not|not \w+)$/i', $expression)) {
+                $last = array_pop($parts);
+                $second = array_pop($parts);
+                $parts[] = "{$second} {$last}";
+            }
+            $operator = array_pop($parts);
+            $expression = implode(' ', $parts);
+        } elseif ($spaces == 1) {
+            $parts = explode(' ', $expression, 2);
+            [$expression, $operator] = $parts;
         }
+        $operator = strtoupper(trim($operator));
 
         $type = $this->getTypeMap()->type($expression);
         $typeMultiple = (is_string($type) && str_contains($type, '[]'));

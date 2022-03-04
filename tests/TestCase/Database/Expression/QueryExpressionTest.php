@@ -50,7 +50,7 @@ class QueryExpressionTest extends TestCase
         $expr = new QueryExpression(['FUNC(Users.first + Users.last) is not' => 'me']);
         $this->assertSame('FUNC(Users.first + Users.last) != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['FUNC(Users.name + Users.id) not similar to' => 'pattern']);
+        $expr = new QueryExpression(['FUNC(Users.name + Users.id) NOT SIMILAR TO' => 'pattern']);
         $this->assertSame('FUNC(Users.name + Users.id) NOT SIMILAR TO :c0', $expr->sql(new ValueBinder()));
     }
 

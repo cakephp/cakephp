@@ -111,7 +111,21 @@ class ErrorTrapTest extends TestCase
         }
     }
 
-    public function testRegisterAndLogging()
+    public function logLevelProvider(): array
+    {
+        return [
+            // PHP error level, expected log level
+            [E_USER_ERROR, 'error'],
+            [E_USER_WARNING, 'warning'],
+            [E_USER_NOTICE, 'info'],
+            [E_USER_DEPRECATED, 'info'],
+        ];
+    }
+
+    /**
+     * @dataProvider logLevelProvider
+     */
+    public function testLoggingLevel($level, $logLevel)
     {
         Log::setConfig('test_error', [
             'className' => 'Array',

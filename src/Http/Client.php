@@ -628,8 +628,8 @@ class Client implements ClientInterface
             $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
+        /** @phpstan-ignore-next-line */
         $request = new Request($url, $method, $headers, $data);
-        /** @var \Cake\Http\Client\Request $request */
         $request = $request->withProtocolVersion($this->getConfig('protocolVersion'));
         $cookies = $options['cookies'] ?? [];
         /** @var \Cake\Http\Client\Request $request */

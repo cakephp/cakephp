@@ -5320,4 +5320,82 @@ class QueryTest extends TestCase
         $this->assertSame('First Article', $statement->fetchColumn(0));
         $statement->closeCursor();
     }
+
+    /**
+     * Simple expressions from the point of view of the query expression
+     * object are expressions where the field contains one space at most.
+     */
+    public function testOperatorsInSimpleConditionsAreCaseInsensitive(): void
+    {
+        $query = (new Query($this->connection))
+            ->select('id')
+            ->from('articles')
+            ->where(['id in' => [1, 2, 3]]);
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE <id> IN \(:c0,:c1,:c2\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $query = (new Query($this->connection))
+            ->select('id')
+            ->from('articles')
+            ->where(['id IN' => [1, 2, 3]]);
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE <id> IN \(:c0,:c1,:c2\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Complex expressions from the point of view of the query expression
+     * object are expressions where the field contains multiple spaces.
+     */
+    public function testOperatorsInComplexConditionsAreCaseInsensitive(): void
+    {
+        $this->skipIf($this->autoQuote, 'Does not work when autoquoting is enabled.');
+
+        $query = (new Query($this->connection))
+            ->select('id')
+            ->from('profiles')
+            ->where(['CONCAT(first_name, " ", last_name) in' => ['foo bar', 'baz 42']]);
+
+        $this->assertSame(
+            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) in \(:c0,:c1\)',
+            $query->sql()
+        );
+
+        $query = (new Query($this->connection))
+            ->select('id')
+            ->from('profiles')
+            ->where(['CONCAT(first_name, " ", last_name) IN' => ['foo bar', 'baz 42']]);
+
+        $this->assertSame(
+            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) in \(:c0,:c1\)',
+            $query->sql()
+        );
+
+        $query = (new Query($this->connection))
+            ->select('id')
+            ->from('profiles')
+            ->where(['CONCAT(first_name, " ", last_name) not in' => ['foo bar', 'baz 42']]);
+
+        $this->assertSame(
+            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) not in \(:c0,:c1\)',
+            $query->sql()
+        );
+
+        $query = (new Query($this->connection))
+            ->select('id')
+            ->from('profiles')
+            ->where(['CONCAT(first_name, " ", last_name) NOT IN' => ['foo bar', 'baz 42']]);
+
+        $this->assertSame(
+            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) not in \(:c0,:c1\)',
+            $query->sql()
+        );
+    }
 }

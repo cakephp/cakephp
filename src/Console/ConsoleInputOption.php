@@ -77,6 +77,13 @@ class ConsoleInputOption
     protected array $_choices;
 
     /**
+     * The prompt string
+     *
+     * @var string|null
+     */
+    protected ?string $prompt = null;
+
+    /**
      * Is the option required.
      *
      * @var bool
@@ -94,6 +101,7 @@ class ConsoleInputOption
      * @param array<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
+     * @param string|null $prompt The prompt string.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
@@ -104,7 +112,8 @@ class ConsoleInputOption
         string|bool|null $default = null,
         array $choices = [],
         bool $multiple = false,
-        bool $required = false
+        bool $required = false,
+        ?string $prompt = null
     ) {
         $this->_name = $name;
         $this->_short = $short;
@@ -113,6 +122,7 @@ class ConsoleInputOption
         $this->_choices = $choices;
         $this->_multiple = $multiple;
         $this->required = $required;
+        $this->prompt = $prompt;
 
         if ($isBoolean) {
             $this->_default = (bool)$default;
@@ -123,6 +133,12 @@ class ConsoleInputOption
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
                 sprintf('Short option "%s" is invalid, short options must be one letter.', $this->_short)
+            );
+        }
+        if (isset($this->_default) && $this->prompt) {
+            throw new ConsoleException(
+                'You cannot set both `prompt` and `default` options. ' .
+                'Use either a static `default` or interactive `prompt`'
             );
         }
     }
@@ -264,6 +280,26 @@ class ConsoleInputOption
         }
 
         return true;
+    }
+
+    /**
+     * Get the list of choices this option has.
+     *
+     * @return array
+     */
+    public function choices(): array
+    {
+        return $this->_choices;
+    }
+
+    /**
+     * Get the prompt string
+     *
+     * @return string
+     */
+    public function prompt(): string
+    {
+        return (string)$this->prompt;
     }
 
     /**

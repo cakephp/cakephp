@@ -1021,6 +1021,34 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test that replace links use loads junction records with a concrete
+     * target table so that finders with contain will work.
+     */
+    public function testReplaceLinksFinderContain(): void
+    {
+        $this->setAppNamespace('TestApp');
+
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'through' => $joint,
+            'joinTable' => 'articles_tags',
+            'finder' => 'withAuthors',
+        ]);
+        $tag = $tags->get(1);
+        $article = $articles->get(1);
+
+        $assoc->replaceLinks($tag, [$article]);
+
+        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $fresh->articles);
+    }
+
+    /**
      * Tests replaceLinks with failing domain rules and new link targets.
      */
     public function testReplaceLinkFailingDomainRules(): void
