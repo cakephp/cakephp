@@ -189,7 +189,7 @@ class DateTimeWidget extends BasicWidget
                 $dateTime = clone $value;
             } elseif (is_string($value) && !is_numeric($value)) {
                 $dateTime = new DateTime($value);
-            } elseif (is_int($value) || is_numeric($value)) {
+            } elseif (is_numeric($value)) {
                 $dateTime = new DateTime('@' . $value);
             } else {
                 $dateTime = new DateTime();

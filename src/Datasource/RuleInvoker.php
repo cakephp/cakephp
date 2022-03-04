@@ -136,6 +136,7 @@ class RuleInvoker
             $entity->setInvalidField($errorField, $invalidValue);
         }
 
+        /** @phpstan-ignore-next-line */
         return $pass === true;
     }
 }
