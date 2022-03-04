@@ -781,21 +781,24 @@ class QueryExpression implements ExpressionInterface, Countable
         $expression = $field;
 
         $spaces = substr_count($field, ' ');
-        // Handle operators with a space in them like `is not` and `not like`
+        // Handle field values that contain multiple spaces, such as
+        // operators with a space in them like `field IS NOT` and
+        // `field NOT LIKE`, or combinations with function expressions
+        // like `CONCAT(first_name, ' ', last_name) IN`.
         if ($spaces > 1) {
             $parts = explode(' ', $field);
             if (preg_match('/(is not|not \w+)$/i', $field)) {
                 $last = array_pop($parts);
                 $second = array_pop($parts);
-                array_push($parts, strtolower("{$second} {$last}"));
+                $parts[] = "{$second} {$last}";
             }
             $operator = array_pop($parts);
             $expression = implode(' ', $parts);
         } elseif ($spaces == 1) {
             $parts = explode(' ', $field, 2);
             [$expression, $operator] = $parts;
-            $operator = strtolower(trim($operator));
         }
+        $operator = strtolower(trim($operator));
         $type = $this->getTypeMap()->type($expression);
 
         $typeMultiple = (is_string($type) && strpos($type, '[]') !== false);

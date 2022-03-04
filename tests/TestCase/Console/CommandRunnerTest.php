@@ -139,6 +139,28 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test that using special characters in an unknown command does
+     * not cause a PHP error.
+     */
+    public function testRunInvalidCommandWithSpecialCharacters(): void
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 's/pec[ial'], $this->getMockIo($output));
+
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString(
+            'Unknown command `cake s/pec[ial`. Run `cake --help` to get the list of commands.',
+            $messages
+        );
+    }
+
+    /**
      * Test that running an unknown command gives suggestions.
      */
     public function testRunInvalidCommandSuggestion(): void

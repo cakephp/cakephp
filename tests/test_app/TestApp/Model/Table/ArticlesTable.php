@@ -47,6 +47,17 @@ class ArticlesTable extends Table
     }
 
     /**
+     * Find articles and eager load authors.
+     *
+     * @param \Cake\ORM\Query $query The query
+     * @param array<string, mixed> $options The options
+     */
+    public function findWithAuthors($query, array $options = []): Query
+    {
+        return $query->contain('Authors');
+    }
+
+    /**
      * Example public method
      */
     public function doSomething(): void
