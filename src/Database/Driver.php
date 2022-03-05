@@ -276,16 +276,16 @@ abstract class Driver implements DriverInterface
             $exception = $e;
         }
 
-        $loggedQuery = new LoggedQuery();
-        $loggedQuery->driver = $this;
-        $loggedQuery->query = $statement->queryString();
-        $loggedQuery->params = $statement->getBoundParams();
-        $loggedQuery->error = $exception;
+        $logContext = [
+            'driver' => $this,
+            'error' => $exception,
+            'params' => $statement->getBoundParams(),
+        ];
         if (!$exception) {
-            $loggedQuery->numRows = $statement->rowCount();
-            $loggedQuery->took = $took;
+            $logContext['numRows'] = $statement->rowCount();
+            $logContext['took'] = $took;
         }
-        $this->logger->debug((string)$loggedQuery, ['query' => $loggedQuery]);
+        $this->logQuery($statement->queryString(), $logContext);
 
         if ($exception) {
             throw $exception;
@@ -317,7 +317,7 @@ abstract class Driver implements DriverInterface
             return true;
         }
 
-        $this->logSql('BEGIN');
+        $this->logQuery('BEGIN');
 
         return $this->getPdo()->beginTransaction();
     }
@@ -331,7 +331,7 @@ abstract class Driver implements DriverInterface
             return false;
         }
 
-        $this->logSql('COMMIT');
+        $this->logQuery('COMMIT');
 
         return $this->getPdo()->commit();
     }
@@ -345,7 +345,7 @@ abstract class Driver implements DriverInterface
             return false;
         }
 
-        $this->logSql('ROLLBACK');
+        $this->logQuery('ROLLBACK');
 
         return $this->getPdo()->rollBack();
     }
@@ -589,15 +589,17 @@ abstract class Driver implements DriverInterface
      * @param string $sql String to be logged.
      * @return void
      */
-    protected function logSql(string $sql): void
+    protected function logQuery(string $sql, array $context = []): void
     {
         if ($this->logger === null) {
             return;
         }
 
-        $query = new LoggedQuery();
-        $query->query = $sql;
-        $this->logger->debug((string)$query, ['query' => $query]);
+        $context['query'] = $sql;
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->setContext($context);
+
+        $this->logger->debug((string)$loggedQuery, ['query' => $loggedQuery]);
     }
 
     /**

@@ -35,42 +35,42 @@ class LoggedQuery implements JsonSerializable, Stringable
      *
      * @var \Cake\Database\DriverInterface|null
      */
-    public ?DriverInterface $driver = null;
+    protected ?DriverInterface $driver = null;
 
     /**
      * Query string that was executed
      *
      * @var string
      */
-    public string $query = '';
+    protected string $query = '';
 
     /**
      * Number of milliseconds this query took to complete
      *
      * @var float
      */
-    public float $took = 0;
+    protected float $took = 0;
 
     /**
      * Associative array with the params bound to the query string
      *
      * @var array
      */
-    public array $params = [];
+    protected array $params = [];
 
     /**
      * Number of rows affected or returned by the query execution
      *
      * @var int
      */
-    public int $numRows = 0;
+    protected int $numRows = 0;
 
     /**
      * The exception that was thrown by the execution of this query
      *
      * @var \Exception|null
      */
-    public ?Exception $error = null;
+    protected ?Exception $error = null;
 
     /**
      * Helper function used to replace query placeholders by the real
@@ -134,6 +134,19 @@ class LoggedQuery implements JsonSerializable, Stringable
             'numRows' => $this->numRows,
             'took' => $this->took,
         ];
+    }
+
+    /**
+     * Set logging context for this query.
+     *
+     * @param array $context Context data.
+     * @return void
+     */
+    public function setContext(array $context): void
+    {
+        foreach ($context as $key => $val) {
+            $this->{$key} = $val;
+        }
     }
 
     /**
