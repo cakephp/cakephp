@@ -68,8 +68,13 @@ class ConnectionHelper
         $connections = $connections ?? ConnectionManager::configured();
         foreach ($connections as $connection) {
             $connection = ConnectionManager::get($connection);
-            if ($connection instanceof Connection && $connection->getDriver()->getLogger() === null) {
+            $message = '--Starting test run ' . date('Y-m-d H:i:s');
+            if (
+                $connection instanceof Connection &&
+                $connection->getDriver()->log($message) === false
+            ) {
                 $connection->getDriver()->setLogger(new QueryLogger());
+                $connection->getDriver()->log($message);
             }
         }
     }

@@ -16,11 +16,17 @@ declare(strict_types=1);
 namespace TestApp\Database\Driver;
 
 use Cake\Database\Driver;
+use Psr\Log\LoggerInterface;
 
 abstract class StubDriver extends Driver
 {
     public function connect(): void
     {
         $this->pdo = $this->createPdo('', []);
+    }
+
+    public function getLogger(): ?LoggerInterface
+    {
+        return $this->logger;
     }
 }

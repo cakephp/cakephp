@@ -20,7 +20,7 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
 use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
+use Stringable;
 
 /**
  * Interface for database driver.
@@ -326,9 +326,11 @@ interface DriverInterface extends LoggerAwareInterface
     public function getMaxAliasLength(): ?int;
 
     /**
-     * Gets the the logger instance.
+     * Logs a message or query using the configured logger object.
      *
-     * @return \Psr\Log\LoggerInterface|null Logger instance if set.
+     * @param \Stringable|string $message Message string or query.
+     * @param array $context Logging context.
+     * @return bool True if message was logged.
      */
-    public function getLogger(): ?LoggerInterface;
+    public function log(Stringable|string $message, array $context = []): bool;
 }

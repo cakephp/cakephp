@@ -33,6 +33,7 @@ use PDO;
 use PDOException;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use Stringable;
 
 /**
  * Represents a database driver containing all specificities for
@@ -285,7 +286,7 @@ abstract class Driver implements DriverInterface
             $logContext['numRows'] = $statement->rowCount();
             $logContext['took'] = $took;
         }
-        $this->logQuery($statement->queryString(), $logContext);
+        $this->log($statement->queryString(), $logContext);
 
         if ($exception) {
             throw $exception;
@@ -317,7 +318,7 @@ abstract class Driver implements DriverInterface
             return true;
         }
 
-        $this->logQuery('BEGIN');
+        $this->log('BEGIN');
 
         return $this->getPdo()->beginTransaction();
     }
@@ -331,7 +332,7 @@ abstract class Driver implements DriverInterface
             return false;
         }
 
-        $this->logQuery('COMMIT');
+        $this->log('COMMIT');
 
         return $this->getPdo()->commit();
     }
@@ -345,7 +346,7 @@ abstract class Driver implements DriverInterface
             return false;
         }
 
-        $this->logQuery('ROLLBACK');
+        $this->log('ROLLBACK');
 
         return $this->getPdo()->rollBack();
     }
@@ -546,14 +547,6 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function getLogger(): ?LoggerInterface
-    {
-        return $this->logger;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
@@ -584,22 +577,21 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Logs a query string using the configured logger object.
-     *
-     * @param string $sql String to be logged.
-     * @return void
+     * @inheritDoc
      */
-    protected function logQuery(string $sql, array $context = []): void
+    public function log(Stringable|string $message, array $context = []): bool
     {
         if ($this->logger === null) {
-            return;
+            return false;
         }
 
-        $context['query'] = $sql;
+        $context['query'] = $message;
         $loggedQuery = new LoggedQuery();
         $loggedQuery->setContext($context);
 
         $this->logger->debug((string)$loggedQuery, ['query' => $loggedQuery]);
+
+        return true;
     }
 
     /**

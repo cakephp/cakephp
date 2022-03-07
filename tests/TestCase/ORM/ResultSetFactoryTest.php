@@ -217,8 +217,6 @@ class ResultSetFactoryTest extends TestCase
     {
         Log::setConfig('queries', ['className' => 'Array']);
 
-        $defaultLogger = $this->connection->getDriver()->getLogger();
-
         $logger = new QueryLogger();
         $this->connection->getDriver()->setLogger($logger);
 
@@ -235,9 +233,6 @@ class ResultSetFactoryTest extends TestCase
         $message = array_pop($messages);
         $this->assertStringContainsString('SELECT', $message);
 
-        if ($defaultLogger) {
-            $this->connection->getDriver()->setLogger();
-        }
         Log::reset();
     }
 }

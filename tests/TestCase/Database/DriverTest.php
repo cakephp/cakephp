@@ -445,7 +445,7 @@ class DriverTest extends TestCase
         $this->assertInstanceOf(QueryLogger::class, $logger);
     }
 
-    public function testGetAndSetLogger(): void
+    public function testSetLogger(): void
     {
         $logger = new QueryLogger();
         $this->driver->setLogger($logger);
