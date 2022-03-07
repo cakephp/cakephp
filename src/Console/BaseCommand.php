@@ -41,6 +41,13 @@ abstract class BaseCommand implements CommandInterface
     protected $name = 'cake unknown';
 
     /**
+     * The description of this command
+     *
+     * @var string
+     */
+    protected $description = '';
+
+    /**
      * @inheritDoc
      */
     public function setName(string $name)
@@ -63,6 +70,26 @@ abstract class BaseCommand implements CommandInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the command description.
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     /**

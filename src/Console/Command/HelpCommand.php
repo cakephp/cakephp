@@ -112,7 +112,21 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 [, $shortestName] = explode('.', $shortestName, 2);
             }
 
-            $grouped[$prefix][] = $shortestName;
+            $description = '';
+            try {
+                $reflectionClass = (new \ReflectionClass($class));
+                if (!$reflectionClass->isAbstract()) {
+                    $instance = $reflectionClass->newInstanceWithoutConstructor();
+                    if (is_subclass_of($instance, BaseCommand::class)) {
+                        $description = $instance->getDescription();
+                    }
+                }
+            } catch (\ReflectionException $e) {
+            }
+            $grouped[$prefix][] = [
+                'name' => $shortestName,
+                'description' => $description,
+            ];
         }
         ksort($grouped);
 
@@ -122,8 +136,12 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         foreach ($grouped as $prefix => $names) {
             $io->out("<info>{$prefix}</info>:");
             sort($names);
-            foreach ($names as $name) {
-                $io->out(' - ' . $name);
+            foreach ($names as $data) {
+                if ($data['description'] !== '') {
+                    $io->out(' - ' . str_pad($data['name'], 50) . ' | ' . $data['description']);
+                } else {
+                    $io->out(' - ' . $data['name']);
+                }
             }
             $io->out('');
         }
