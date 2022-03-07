@@ -50,14 +50,6 @@ interface CommandInterface
     public function setName(string $name);
 
     /**
-     * Set the description of this command
-     *
-     * @param string $description The description for the command
-     * @return mixed
-     */
-    public function setDescription(string $description);
-
-    /**
      * Run the command.
      *
      * @param array $argv Arguments from the CLI environment.

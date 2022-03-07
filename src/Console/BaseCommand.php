@@ -73,16 +73,6 @@ abstract class BaseCommand implements CommandInterface
     }
 
     /**
-     * @inheritDoc
-     */
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
      * Get the command description.
      *
      * @return string
