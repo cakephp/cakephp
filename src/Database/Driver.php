@@ -256,12 +256,13 @@ abstract class Driver implements DriverInterface
      * Execute the statement and log the query string.
      *
      * @param \Cake\Database\StatementInterface $statement Statement to execute.
+     * @param array|null $params List of values to be bound to query.
      * @return void
      */
-    protected function executeStatement(StatementInterface $statement): void
+    protected function executeStatement(StatementInterface $statement, ?array $params = null): void
     {
         if ($this->logger === null) {
-            $statement->execute();
+            $statement->execute($params);
 
             return;
         }
@@ -271,7 +272,7 @@ abstract class Driver implements DriverInterface
 
         try {
             $start = microtime(true);
-            $statement->execute();
+            $statement->execute($params);
             $took = (float)number_format((microtime(true) - $start) * 1000, 1);
         } catch (PDOException $e) {
             $exception = $e;
@@ -280,7 +281,7 @@ abstract class Driver implements DriverInterface
         $logContext = [
             'driver' => $this,
             'error' => $exception,
-            'params' => $statement->getBoundParams(),
+            'params' => $params ?? $statement->getBoundParams(),
         ];
         if (!$exception) {
             $logContext['numRows'] = $statement->rowCount();
