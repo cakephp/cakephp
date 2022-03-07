@@ -466,11 +466,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getRegistryAlias(): string
     {
-        if ($this->_registryAlias === null) {
-            $this->_registryAlias = $this->getAlias();
-        }
-
-        return $this->_registryAlias;
+        return $this->_registryAlias ??= $this->getAlias();
     }
 
     /**

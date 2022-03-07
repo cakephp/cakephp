@@ -342,9 +342,7 @@ class View implements EventDispatcherInterface
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
-        if ($request === null) {
-            $request = Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
-        }
+        $request ??= Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
         $this->request = $request;
         $this->response = $response ?: new Response();
         $this->Blocks = new $this->_viewBlockClass();
@@ -1207,11 +1205,7 @@ class View implements EventDispatcherInterface
      */
     public function helpers(): HelperRegistry
     {
-        if ($this->_helpers === null) {
-            $this->_helpers = new HelperRegistry($this);
-        }
-
-        return $this->_helpers;
+        return $this->_helpers ??= new HelperRegistry($this);
     }
 
     /**
@@ -1333,9 +1327,7 @@ class View implements EventDispatcherInterface
             }
         }
 
-        if ($name === null) {
-            $name = $this->template;
-        }
+        $name ??= $this->template;
 
         if (empty($name)) {
             throw new RuntimeException('Template name not provided');

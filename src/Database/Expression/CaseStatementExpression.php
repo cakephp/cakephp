@@ -420,9 +420,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             ));
         }
 
-        if ($type === null) {
-            $type = $this->inferType($result);
-        }
+        $type ??= $this->inferType($result);
 
         $this->else = $result;
         $this->elseType = $type;

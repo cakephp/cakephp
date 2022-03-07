@@ -81,11 +81,9 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        if ($callback === null) {
-            $callback = function ($v) {
-                return (bool)$v;
-            };
-        }
+        $callback ??= function ($v) {
+            return (bool)$v;
+        };
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -787,11 +785,9 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        if ($callback === null) {
-            $callback = function ($item) {
-                return $item;
-            };
-        }
+        $callback ??= function ($item) {
+            return $item;
+        };
 
         return $this->newCollection(
             new RecursiveIteratorIterator(

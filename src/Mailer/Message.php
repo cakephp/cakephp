@@ -773,9 +773,7 @@ class Message implements JsonSerializable
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
-            if ($name === null) {
-                $name = $email;
-            }
+            $name ??= $email;
             $this->{$varName}[$email] = $name;
 
             return $this;
@@ -1385,10 +1383,7 @@ class Message implements JsonSerializable
      */
     protected function attachFiles(?string $boundary = null): array
     {
-        if ($boundary === null) {
-            /** @var string $boundary */
-            $boundary = $this->boundary;
-        }
+        $boundary ??= $this->boundary;
 
         $msg = [];
         foreach ($this->attachments as $filename => $fileInfo) {
@@ -1425,10 +1420,7 @@ class Message implements JsonSerializable
      */
     protected function attachInlineFiles(?string $boundary = null): array
     {
-        if ($boundary === null) {
-            /** @var string $boundary */
-            $boundary = $this->boundary;
-        }
+        $boundary ??= $this->boundary;
 
         $msg = [];
         foreach ($this->getAttachments() as $filename => $fileInfo) {

@@ -213,10 +213,7 @@ class RulesChecker extends BaseRulesChecker
     ): RuleInvoker {
         if ($association instanceof Association) {
             $associationAlias = $association->getName();
-
-            if ($errorField === null) {
-                $errorField = $association->getProperty();
-            }
+            $errorField ??= $association->getProperty();
         } else {
             $associationAlias = $association;
 

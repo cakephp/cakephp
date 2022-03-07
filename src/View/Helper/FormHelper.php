@@ -324,11 +324,7 @@ class FormHelper extends Helper
     public function contextFactory(?ContextFactory $instance = null, array $contexts = []): ContextFactory
     {
         if ($instance === null) {
-            if ($this->_contextFactory === null) {
-                $this->_contextFactory = ContextFactory::createWithDefaults($contexts);
-            }
-
-            return $this->_contextFactory;
+            return $this->_contextFactory ??= ContextFactory::createWithDefaults($contexts);
         }
         $this->_contextFactory = $instance;
 
@@ -1908,9 +1904,7 @@ class FormHelper extends Helper
      */
     public function submit(?string $caption = null, array $options = []): string
     {
-        if ($caption === null) {
-            $caption = __d('cake', 'Submit');
-        }
+        $caption ??= __d('cake', 'Submit');
         $options += [
             'type' => 'submit',
             'secure' => false,

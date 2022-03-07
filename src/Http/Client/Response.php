@@ -361,9 +361,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function buildCookieCollection(): CookieCollection
     {
-        if ($this->cookies === null) {
-            $this->cookies = CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
-        }
+        $this->cookies ??= CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
 
         return $this->cookies;
     }

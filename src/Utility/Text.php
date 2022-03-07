@@ -760,9 +760,7 @@ class Text
             return '';
         }
 
-        if ($length === null) {
-            $length = self::_strlen($text, $options);
-        }
+        $length ??= self::_strlen($text, $options);
 
         if ($length < 0) {
             $text = self::_substr($text, $start, null, $options);
@@ -904,9 +902,7 @@ class Text
      */
     public static function toList(array $list, ?string $and = null, string $separator = ', '): string
     {
-        if ($and === null) {
-            $and = __d('cake', 'and');
-        }
+        $and ??= __d('cake', 'and');
         if (count($list) > 1) {
             return implode($separator, array_slice($list, 0, -1)) . ' ' . $and . ' ' . array_pop($list);
         }

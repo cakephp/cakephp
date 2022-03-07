@@ -83,12 +83,8 @@ trait ConsoleIntegrationTestTrait
     {
         $runner = $this->makeRunner();
 
-        if ($this->_out === null) {
-            $this->_out = new ConsoleOutput();
-        }
-        if ($this->_err === null) {
-            $this->_err = new ConsoleOutput();
-        }
+        $this->_out ??= new ConsoleOutput();
+        $this->_err ??= new ConsoleOutput();
         if ($this->_in === null) {
             $this->_in = new StubConsoleInput($input);
         } elseif ($input) {

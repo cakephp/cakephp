@@ -789,10 +789,9 @@ class Validation
             return false;
         }
 
-        if ($regex === null) {
-            // phpcs:ignore Generic.Files.LineLength
-            $regex = '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/ui';
-        }
+        // phpcs:ignore Generic.Files.LineLength
+        $regex ??= '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/ui';
+
         $return = static::_check($check, $regex);
         if ($deep === false || $deep === null) {
             return $return;

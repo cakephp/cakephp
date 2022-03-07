@@ -536,9 +536,7 @@ class Connection implements ConnectionInterface
         }
 
         $useSavePoint = $this->isSavePointsEnabled();
-        if ($toBeginning === null) {
-            $toBeginning = !$useSavePoint;
-        }
+        $toBeginning ??= !$useSavePoint;
         if ($this->_transactionLevel === 0 || $toBeginning) {
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
@@ -554,8 +552,8 @@ class Connection implements ConnectionInterface
         $savePoint = $this->_transactionLevel--;
         if ($useSavePoint) {
             $this->rollbackSavepoint($savePoint);
-        } elseif ($this->nestedTransactionRollbackException === null) {
-            $this->nestedTransactionRollbackException = new NestedTransactionRollbackException();
+        } else {
+            $this->nestedTransactionRollbackException ??= new NestedTransactionRollbackException();
         }
 
         return true;
