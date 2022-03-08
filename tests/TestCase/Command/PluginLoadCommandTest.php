@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -65,7 +65,7 @@ class PluginLoadCommandTest extends TestCase
     public function testHelp(): void
     {
         $this->exec('plugin load --help');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('plugin load');
     }
 
@@ -75,7 +75,7 @@ class PluginLoadCommandTest extends TestCase
     public function testLoadModifiesApplication(): void
     {
         $this->exec('plugin load TestPlugin');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $contents = file_get_contents($this->app);
         $this->assertMatchesRegularExpression('/Check plugins added here\n {8}\$this->addPlugin\(\'TestPlugin\'\);\n {4}\}\n/u', $contents);
@@ -87,7 +87,7 @@ class PluginLoadCommandTest extends TestCase
     public function testLoadUnknownPlugin(): void
     {
         $this->exec('plugin load NopeNotThere');
-        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Plugin NopeNotThere could not be found');
 
         $contents = file_get_contents($this->app);

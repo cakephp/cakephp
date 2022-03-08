@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
@@ -139,25 +139,25 @@ trait ConsoleIntegrationTestTrait
     }
 
     /**
-     * Asserts shell exited with the Command::CODE_SUCCESS
+     * Asserts shell exited with the CommandInterface::CODE_SUCCESS
      *
      * @param string $message Failure message
      * @return void
      */
     public function assertExitSuccess(string $message = ''): void
     {
-        $this->assertThat(Command::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
+        $this->assertThat(CommandInterface::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
     }
 
     /**
-     * Asserts shell exited with Command::CODE_ERROR
+     * Asserts shell exited with CommandInterface::CODE_ERROR
      *
      * @param string $message Failure message
      * @return void
      */
     public function assertExitError(string $message = ''): void
     {
-        $this->assertThat(Command::CODE_ERROR, new ExitCode($this->_exitCode), $message);
+        $this->assertThat(CommandInterface::CODE_ERROR, new ExitCode($this->_exitCode), $message);
     }
 
     /**
