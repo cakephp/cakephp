@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
-use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use DateTime;
@@ -160,9 +160,9 @@ class DateTimeWidget extends BasicWidget
 
         $dbType = $context->type($fieldName);
         $fractionalTypes = [
-            TableSchema::TYPE_DATETIME_FRACTIONAL,
-            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
-            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
+            TableSchemaInterface::TYPE_DATETIME_FRACTIONAL,
+            TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
 
         if (in_array($dbType, $fractionalTypes, true)) {
