@@ -19,7 +19,6 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use stdClass;
 
 /**
  * FactoryLocatorTest test case
@@ -50,14 +49,6 @@ class FactoryLocatorTest extends TestCase
      */
     public function testAdd(): void
     {
-        FactoryLocator::add('Test', function ($name) {
-            $mock = new stdClass();
-            $mock->name = $name;
-
-            return $mock;
-        });
-        $this->assertIsCallable(FactoryLocator::get('Test'));
-
         $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         FactoryLocator::add('MyType', $locator);
         $this->assertInstanceOf(LocatorInterface::class, FactoryLocator::get('MyType'));

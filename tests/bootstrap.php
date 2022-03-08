@@ -17,8 +17,10 @@ use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FactoryLocator;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
+use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\Utility\Security;
 
@@ -107,6 +109,8 @@ ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
 if (env('CAKE_TEST_AUTOQUOTE')) {
     ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);
 }
+
+FactoryLocator::add('Table', new TableLocator());
 
 Configure::write('Session', [
     'defaults' => 'php',
