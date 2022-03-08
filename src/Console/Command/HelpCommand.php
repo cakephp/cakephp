@@ -113,15 +113,8 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             }
 
             $description = '';
-            try {
-                $reflectionClass = (new \ReflectionClass($class));
-                if (!$reflectionClass->isAbstract()) {
-                    $instance = $reflectionClass->newInstanceWithoutConstructor();
-                    if (is_subclass_of($instance, BaseCommand::class)) {
-                        $description = $instance->getDescription();
-                    }
-                }
-            } catch (\ReflectionException $e) {
+            if (method_exists($class, 'getDescription')) {
+                $description = $class::getDescription();
             }
             $grouped[$prefix][] = [
                 'name' => $shortestName,

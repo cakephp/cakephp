@@ -45,7 +45,7 @@ abstract class BaseCommand implements CommandInterface
      *
      * @var string
      */
-    protected $description = '';
+    protected static $description = '';
 
     /**
      * @inheritDoc
@@ -77,9 +77,9 @@ abstract class BaseCommand implements CommandInterface
      *
      * @return string
      */
-    public function getDescription(): string
+    public static function getDescription(): string
     {
-        return $this->description;
+        return static::$description;
     }
 
     /**

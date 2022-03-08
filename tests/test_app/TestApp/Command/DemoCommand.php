@@ -9,7 +9,7 @@ use Cake\Console\ConsoleIo;
 
 class DemoCommand extends Command
 {
-    protected $description = 'This is a demo command';
+    protected static $description = 'This is a demo command';
 
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
