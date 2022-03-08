@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Datasource\PaginatedResultSet;
+use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Http\ServerRequest;
 use Cake\I18n\I18n;
 use Cake\ORM\ResultSet;

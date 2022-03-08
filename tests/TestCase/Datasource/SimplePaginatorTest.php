@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Core\Configure;
-use Cake\Datasource\SimplePaginator;
+use Cake\Datasource\Paging\SimplePaginator;
 use Cake\ORM\Entity;
 
 class SimplePaginatorTest extends PaginatorTest

@@ -21,7 +21,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\NotFoundException;
@@ -115,7 +115,7 @@ class PaginatorComponentTest extends TestCase
     public function testInvalidPaginatorOption(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paginator');
+        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paging\Paginator');
         new PaginatorComponent($this->registry, [
             'paginator' => new stdClass(),
         ]);

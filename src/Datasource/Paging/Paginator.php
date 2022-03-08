@@ -14,13 +14,13 @@ declare(strict_types=1);
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Datasource;
+namespace Cake\Datasource\Paging;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Paging\PaginatedInterface;
-use Cake\Paging\PaginatorInterface;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\QueryInterface;
+use Cake\Datasource\RepositoryInterface;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -154,8 +154,8 @@ class Paginator implements PaginatorInterface
      *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Paging\PaginatedInterface
-     * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
+     * @return \Cake\Datasource\Paging\PaginatedInterface
+     * @throws \Cake\Datasource\Paging\Exception\PageOutOfBoundsException
      */
     public function paginate(
         mixed $target,

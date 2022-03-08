@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         5.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Paging;
+namespace Cake\Datasource\Paging;
 
 /**
  * This interface describes the methods for paginator instance.
@@ -27,7 +27,7 @@ interface PaginatorInterface
      * @param mixed $target Anything that needs to be paginated.
      * @param array $params Request params.
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Paging\PaginatedInterface
+     * @return \Cake\Datasource\Paging\PaginatedInterface
      */
     public function paginate(
         mixed $target,

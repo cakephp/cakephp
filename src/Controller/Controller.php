@@ -18,8 +18,9 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paginator;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\PaginatedInterface;
+use Cake\Datasource\Paging\Paginator;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventDispatcherInterface;
@@ -33,7 +34,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Paging\PaginatedInterface;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use Closure;
@@ -825,7 +825,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array<string, mixed> $settings The settings/configuration used for pagination. See {@link \Cake\Controller\Controller::$paginate}.
-     * @return \Cake\Paging\PaginatedInterface
+     * @return \Cake\Datasource\Paging\PaginatedInterface
      * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
      * @throws \Cake\Http\Exception\NotFoundException When a page out of bounds is requested.
      */
@@ -839,7 +839,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $settings += $this->paginate;
 
-        /** @var class-string<\Cake\Paging\PaginatorInterface> $paginator */
+        /** @var class-string<\Cake\Datasource\Paging\PaginatorInterface> $paginator */
         $paginator = $settings['paginator'] ?? Paginator::class;
         $paginator = new $paginator();
         unset($settings['paginator']);

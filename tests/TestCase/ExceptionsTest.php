@@ -148,7 +148,7 @@ class ExceptionsTest extends TestCase
             ['Cake\Datasource\Exception\MissingDatasourceConfigException', 0],
             ['Cake\Datasource\Exception\MissingDatasourceException', 0],
             ['Cake\Datasource\Exception\MissingModelException', 0],
-            ['Cake\Datasource\Exception\PageOutOfBoundsException', 0],
+            ['Cake\Datasource\Paging\Exception\PageOutOfBoundsException', 0],
             ['Cake\Datasource\Exception\RecordNotFoundException', 0],
             ['Cake\Mailer\Exception\MissingActionException', 0],
             ['Cake\Mailer\Exception\MissingMailerException', 0],

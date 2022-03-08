@@ -14,7 +14,9 @@ declare(strict_types=1);
  * @since         3.9.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Datasource;
+namespace Cake\Datasource\Paging;
+
+use Cake\Datasource\QueryInterface;
 
 /**
  * Simplified paginator which avoids potentially expensives queries
