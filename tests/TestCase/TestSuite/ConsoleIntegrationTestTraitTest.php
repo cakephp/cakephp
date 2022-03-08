@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\Stub\MissingConsoleInputException;
 use Cake\TestSuite\TestCase;
@@ -43,7 +43,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     {
         $this->exec('');
 
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('Current Paths');
         $this->assertExitSuccess();
     }
@@ -56,7 +56,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->exec('sample');
 
         $this->assertOutputContains('SampleCommand');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     /**
@@ -76,7 +76,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     {
         $this->exec('format_specifier_command');
         $this->assertOutputContains('format specifier');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     /**
@@ -86,7 +86,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     {
         $this->exec('routes');
 
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     /**
@@ -99,7 +99,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->assertErrorEmpty();
         $this->assertOutputContains('arg: arg');
         $this->assertOutputContains('opt: some string');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     /**
@@ -111,7 +111,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
         $this->assertErrorEmpty();
         $this->assertOutputContains('arg: {"key":"value"}');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     /**
@@ -123,7 +123,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
         $this->assertErrorContains('Missing required argument');
         $this->assertErrorContains('`arg` argument is required');
-        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
     }
 
     /**
@@ -134,7 +134,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->exec('bridge', ['javascript']);
 
         $this->assertErrorContains('No!');
-        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
     }
 
     /**
@@ -155,7 +155,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->exec('bridge', ['cake', 'blue']);
 
         $this->assertOutputContains('You may pass');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     public function testExecWithMockServiceDependencies(): void
@@ -166,7 +166,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->exec('dependency');
 
         $this->assertOutputContains('constructor inject: {"console-mock":true}');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     /**
@@ -228,7 +228,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     public function assertionFailureMessagesProvider(): array
     {
         return [
-            'assertExitCode' => ['assertExitCode', 'Failed asserting that 1 matches exit code 0', 'routes', Command::CODE_ERROR],
+            'assertExitCode' => ['assertExitCode', 'Failed asserting that 1 matches exit code 0', 'routes', CommandInterface::CODE_ERROR],
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
             'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output', 'routes', 'missing'],
             'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output', 'routes', 'controller'],

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\Core\Plugin;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -46,7 +46,7 @@ class PluginLoadedCommandTest extends TestCase
         $expected = Plugin::loaded();
 
         $this->exec('plugin loaded');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         foreach ($expected as $value) {
             $this->assertOutputContains($value);

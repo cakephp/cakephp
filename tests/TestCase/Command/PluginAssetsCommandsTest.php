@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
@@ -78,7 +78,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets symlink');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $path = $this->wwwRoot . 'test_plugin';
         $this->assertFileExists($path . DS . 'root.js');
@@ -96,7 +96,7 @@ class PluginAssetsCommandsTest extends TestCase
         mkdir($this->wwwRoot . 'company');
 
         $this->exec('plugin assets symlink');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');

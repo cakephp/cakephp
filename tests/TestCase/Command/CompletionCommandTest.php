@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
@@ -55,7 +55,7 @@ class CompletionCommandTest extends TestCase
     public function testStartup(): void
     {
         $this->exec('completion');
-        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
 
         $this->assertOutputNotContains('Welcome to CakePHP');
     }
@@ -66,7 +66,7 @@ class CompletionCommandTest extends TestCase
     public function testCommands(): void
     {
         $this->exec('completion commands');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
             'test_plugin.example',
@@ -99,7 +99,7 @@ class CompletionCommandTest extends TestCase
     public function testOptionsNoArguments(): void
     {
         $this->exec('completion options');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputEmpty();
     }
 
@@ -109,7 +109,7 @@ class CompletionCommandTest extends TestCase
     public function testOptionsNonExistentCommand(): void
     {
         $this->exec('completion options foo');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputEmpty();
     }
 
@@ -119,7 +119,7 @@ class CompletionCommandTest extends TestCase
     public function testOptionsCommand(): void
     {
         $this->exec('completion options schema_cache');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
             '--connection -c',
@@ -138,7 +138,7 @@ class CompletionCommandTest extends TestCase
     public function testOptionsSubCommand(): void
     {
         $this->exec('completion options cache list');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
             '--help -h',
@@ -156,7 +156,7 @@ class CompletionCommandTest extends TestCase
     public function testOptionsNestedCommand(): void
     {
         $this->exec('completion options i18n extract');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
             '--plugin',
@@ -173,7 +173,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsCorePlugin(): void
     {
         $this->exec('completion subcommands schema_cache');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = 'build clear';
         $this->assertOutputContains($expected);
@@ -185,7 +185,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsAppPlugin(): void
     {
         $this->exec('completion subcommands sample');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('sub');
     }
 
@@ -195,7 +195,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsCoreMultiwordCommand(): void
     {
         $this->exec('completion subcommands cache');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
             'list', 'clear', 'clear_all',
@@ -212,7 +212,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsPlugin(): void
     {
         $this->exec('completion subcommands welcome');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = 'say_hello';
         $this->assertOutputContains($expected);
@@ -224,7 +224,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsPluginDotNotationBackwardCompatibility(): void
     {
         $this->exec('completion subcommands test_plugin_two.welcome');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = 'say_hello';
         $this->assertOutputContains($expected);
@@ -237,7 +237,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsAppDuplicatePluginNoDot(): void
     {
         $this->exec('completion subcommands sample');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('sub');
     }
 
@@ -247,7 +247,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsPluginDuplicateApp(): void
     {
         $this->exec('completion subcommands test_plugin.sample');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = 'sub';
         $this->assertOutputContains($expected);
@@ -259,7 +259,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsNoArguments(): void
     {
         $this->exec('completion subcommands');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $this->assertOutputEmpty();
     }
@@ -270,7 +270,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommandsNonExistentCommand(): void
     {
         $this->exec('completion subcommands foo');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $this->assertOutputEmpty();
     }
@@ -281,7 +281,7 @@ class CompletionCommandTest extends TestCase
     public function testSubCommands(): void
     {
         $this->exec('completion subcommands schema_cache');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = 'build clear';
         $this->assertOutputContains($expected);
@@ -302,7 +302,7 @@ class CompletionCommandTest extends TestCase
     public function testHelp(): void
     {
         $this->exec('completion --help');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $this->assertOutputContains('Output a list of available commands');
         $this->assertOutputContains('Output a list of available sub-commands');

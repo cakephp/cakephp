@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
@@ -124,7 +125,7 @@ class CommandTest extends TestCase
         $output = new ConsoleOutput();
 
         $this->assertSame(
-            Command::CODE_SUCCESS,
+            CommandInterface::CODE_SUCCESS,
             $command->run(['-h'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
@@ -142,7 +143,7 @@ class CommandTest extends TestCase
         $output = new ConsoleOutput();
 
         $this->assertSame(
-            Command::CODE_SUCCESS,
+            CommandInterface::CODE_SUCCESS,
             $command->run(['--help'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
@@ -199,7 +200,7 @@ class CommandTest extends TestCase
 
         $output = new ConsoleOutput();
         $result = $command->run([], $this->getMockIo($output));
-        $this->assertSame(Command::CODE_ERROR, $result);
+        $this->assertSame(CommandInterface::CODE_ERROR, $result);
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString(

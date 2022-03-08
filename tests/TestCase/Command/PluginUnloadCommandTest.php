@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -71,7 +71,7 @@ class PluginUnloadCommandTest extends TestCase
         $this->addPluginToApp($plugin2);
         $this->exec('plugin unload TestPlugin');
 
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $contents = file_get_contents($this->app);
 
         $this->assertStringNotContainsString($plugin1, $contents);
@@ -89,7 +89,7 @@ class PluginUnloadCommandTest extends TestCase
         $this->addPluginToApp($plugin2);
         $this->exec('plugin unload Vendor/TestPluginTwo');
 
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $contents = file_get_contents($this->app);
 
         $this->assertStringNotContainsString($plugin2, $contents);
@@ -162,7 +162,7 @@ class PluginUnloadCommandTest extends TestCase
         $this->addPluginToApp($content);
 
         $this->exec('plugin unload TestPlugin');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $result = file_get_contents($this->app);
 
