@@ -401,8 +401,8 @@ class View implements EventDispatcherInterface
     /**
      * Allows adding helpers from initialize() hook, overwriting any previously set ones with the same name.
      *
-     * @param string $helper
-     * @param array<string, mixed> $config
+     * @param string $helper The name of the helper
+     * @param array<string, mixed> $config The config associated to that helper
      * @return void
      */
     protected function addHelper(string $helper, array $config = []): void

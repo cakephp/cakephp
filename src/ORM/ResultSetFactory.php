@@ -32,6 +32,7 @@ class ResultSetFactory
      *
      * @param \Cake\ORM\Query $query Query from where results came.
      * @param array $results Results array.
+     * @return \Cake\ORM\ResultSet
      */
     public function createResultSet(Query $query, array $results): ResultSet
     {
@@ -103,9 +104,10 @@ class ResultSetFactory
     /**
      * Correctly nests results keys including those coming from associations.
      *
-     * Hyrate row array into entity if hydration is enabled.
+     * Hydrate row array into entity if hydration is enabled.
      *
      * @param array $row Array containing columns and values.
+     * @param array $data Array containing table and query metadata
      * @return \Cake\Datasource\EntityInterface|array
      */
     protected function groupResult(array $row, array $data): EntityInterface|array

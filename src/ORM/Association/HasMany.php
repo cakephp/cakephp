@@ -602,8 +602,7 @@ class HasMany extends Association
     /**
      * Sets the sort order in which target records should be returned.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort
-     *  A find() compatible order clause
+     * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort A find() compatible order clause
      * @return $this
      */
     public function setSort(ExpressionInterface|Closure|array|string $sort)
