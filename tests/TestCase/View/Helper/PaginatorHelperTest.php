@@ -42,7 +42,7 @@ class PaginatorHelperTest extends TestCase
     protected $Paginator;
 
     /**
-     * @var \Cake\Datasource\PaginatedResultSet
+     * @var \Cake\Datasource\Pagination\PaginatedResultSet
      */
     protected $paginatedResult;
 
@@ -70,9 +70,8 @@ class PaginatorHelperTest extends TestCase
             'hasNextPage' => true,
             'pageCount' => 7,
         ]);
-        $this->View = new View($request);
+        $this->View = new View($request, null, null, ['viewVars' => ['articles' => $this->paginatedResult]]);
         $this->Paginator = new PaginatorHelper($this->View);
-        $this->Paginator->setPagination($this->paginatedResult);
 
         Router::reload();
         $builder = Router::createRouteBuilder('/');
@@ -109,7 +108,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->paginatedResult = new PaginatedResultSet(new ResultSet([]), $params);
 
-        $this->Paginator->setPagination($this->paginatedResult);
+        $this->Paginator->setPaginated($this->paginatedResult);
     }
 
     /**
@@ -528,7 +527,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->setPagination(new PaginatedResultSet(
+        $this->Paginator->setPaginated(new PaginatedResultSet(
             new ResultSet([]),
             [
                 'count' => 1,
@@ -948,7 +947,7 @@ class PaginatorHelperTest extends TestCase
         $this->View->setRequest($request);
         // Need to run __construct to update _config['url']
         $paginator = new PaginatorHelper($this->View);
-        $paginator->setPagination($paginatedResult);
+        $paginator->setPaginated($paginatedResult);
 
         $result = $paginator->generateUrl(['sort' => 'name']);
         $expected = '/Posts/index?article%5Bsort%5D=name&amp;article%5Bpage%5D=3&amp;article%5Bpuppy%5D=no';
@@ -979,7 +978,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         $this->View->setRequest($request);
         $this->Paginator = new PaginatorHelper($this->View);
-        $this->Paginator->setPagination($this->paginatedResult);
+        $this->Paginator->setPaginated($this->paginatedResult);
 
         $result = $this->Paginator->sort('title');
         $expected = [
@@ -2892,7 +2891,7 @@ class PaginatorHelperTest extends TestCase
 
         $view = new View($request);
         $paginator = new PaginatorHelper($view);
-        $paginator->setPagination(new PaginatedResultSet(new ResultSet([]), [
+        $paginator->setPaginated(new PaginatedResultSet(new ResultSet([]), [
             'currentPage' => 1,
             'count' => 9,
             'totalCount' => null,
@@ -2953,7 +2952,7 @@ class PaginatorHelperTest extends TestCase
             ],
         ]));
         $this->Paginator = new PaginatorHelper($this->View);
-        $this->Paginator->setPagination($this->paginatedResult, ['paging' => ['scope' => 'article']]);
+        $this->Paginator->setPaginated($this->paginatedResult, ['paging' => ['scope' => 'article']]);
         $result = $this->Paginator->generateUrl(['page' => 2]);
         $expected = '/Articles/index/whatever/3?article%5Bpage%5D=2';
         $this->assertSame($expected, $result);

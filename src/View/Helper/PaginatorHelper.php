@@ -122,7 +122,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options array.
      * @return void
      */
-    public function setPagination(PaginatedInterface $paginated, array $options = []): void
+    public function setPaginated(PaginatedInterface $paginated, array $options = []): void
     {
         $this->paginated = $paginated;
         $this->options($options);
@@ -136,7 +136,16 @@ class PaginatorHelper extends Helper
     protected function paginated(): PaginatedInterface
     {
         if (!isset($this->paginated)) {
-            throw new CakeException('You must set a pagination instance using `setPagination()` first.');
+            foreach ($this->_View->getVars() as $name) {
+                $value = $this->_View->get($name);
+                if ($value instanceof PaginatedInterface) {
+                    $this->paginated = $value;
+                }
+            }
+        }
+
+        if (!isset($this->paginated)) {
+            throw new CakeException('You must set a pagination instance using `setPaginated()` first.');
         }
 
         return $this->paginated;
