@@ -238,15 +238,28 @@ class PluginCollection implements Iterator, Countable
         }
 
         $config += ['name' => $name];
-        /** @var class-string<\Cake\Core\PluginInterface> $className */
-        $className = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        $namespace = str_replace('/', '\\', $name);
+
+        $className = $namespace . '\\' . 'Plugin';
+        // Check for [Vendor/]Foo/Plugin class
         if (!class_exists($className)) {
-            $className = BasePlugin::class;
-            if (empty($config['path'])) {
-                $config['path'] = $this->findPath($name);
+            $pos = strpos($name, '/');
+            if ($pos === false) {
+                $className = $namespace . '\\' . $name . 'Plugin';
+            } else {
+                $className = $namespace . '\\' . substr($name, $pos + 1) . 'Plugin';
+            }
+
+            // Check for [Vendor/]Foo/FooPlugin
+            if (!class_exists($className)) {
+                $className = BasePlugin::class;
+                if (empty($config['path'])) {
+                    $config['path'] = $this->findPath($name);
+                }
             }
         }
 
+        /** @var class-string<\Cake\Core\PluginInterface> $className */
         return new $className($config);
     }
 
