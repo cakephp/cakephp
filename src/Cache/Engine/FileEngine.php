@@ -222,6 +222,10 @@ class FileEngine extends CacheEngine
         /** @psalm-suppress PossiblyNullReference */
         $path = $this->_File->getRealPath();
         $this->_File = null;
+        
+        if ($path === false) {
+            return false;
+        }
 
         // phpcs:disable
         return @unlink($path);
