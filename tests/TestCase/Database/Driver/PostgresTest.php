@@ -49,6 +49,7 @@ class PostgresTest extends TestCase
             'timezone' => null,
             'flags' => [],
             'init' => [],
+            'log' => false,
         ];
 
         $expected['flags'] += [
@@ -100,6 +101,7 @@ class PostgresTest extends TestCase
             'timezone' => 'Antarctica',
             'schema' => 'fooblic',
             'init' => ['Execute this', 'this too'],
+            'log' => false,
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
             ->onlyMethods(['createPdo'])

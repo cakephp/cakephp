@@ -17,8 +17,11 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Log\LoggedQuery;
+use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -28,6 +31,9 @@ use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Stringable;
 
 /**
  * Represents a database driver containing all specificities for
@@ -35,6 +41,8 @@ use PDOException;
  */
 abstract class Driver implements DriverInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var int|null Maximum alias length or null if no limit
      */
@@ -114,10 +122,13 @@ abstract class Driver implements DriverInterface
                 'Please pass "username" instead of "login" for connecting to the database'
             );
         }
-        $config += $this->_baseConfig;
+        $config += $this->_baseConfig + ['log' => false];
         $this->_config = $config;
         if (!empty($config['quoteIdentifiers'])) {
             $this->enableAutoQuoting();
+        }
+        if ($config['log'] !== false) {
+            $this->logger = $this->createLogger($config['log'] === true ? null : $config['log']);
         }
     }
 
@@ -218,6 +229,74 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
+    public function execute(string $sql, array $params = [], array $types = []): StatementInterface
+    {
+        $statement = $this->prepare($sql);
+        if (!empty($params)) {
+            $statement->bind($params, $types);
+        }
+        $this->executeStatement($statement);
+
+        return $statement;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function run(Query $query): StatementInterface
+    {
+        $statement = $this->prepare($query);
+        $query->getValueBinder()->attachTo($statement);
+        $this->executeStatement($statement);
+
+        return $statement;
+    }
+
+    /**
+     * Execute the statement and log the query string.
+     *
+     * @param \Cake\Database\StatementInterface $statement Statement to execute.
+     * @param array|null $params List of values to be bound to query.
+     * @return void
+     */
+    protected function executeStatement(StatementInterface $statement, ?array $params = null): void
+    {
+        if ($this->logger === null) {
+            $statement->execute($params);
+
+            return;
+        }
+
+        $exception = null;
+        $took = 0.0;
+
+        try {
+            $start = microtime(true);
+            $statement->execute($params);
+            $took = (float)number_format((microtime(true) - $start) * 1000, 1);
+        } catch (PDOException $e) {
+            $exception = $e;
+        }
+
+        $logContext = [
+            'driver' => $this,
+            'error' => $exception,
+            'params' => $params ?? $statement->getBoundParams(),
+        ];
+        if (!$exception) {
+            $logContext['numRows'] = $statement->rowCount();
+            $logContext['took'] = $took;
+        }
+        $this->log($statement->queryString(), $logContext);
+
+        if ($exception) {
+            throw $exception;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function prepare(Query|string $query): StatementInterface
     {
         $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
@@ -240,6 +319,8 @@ abstract class Driver implements DriverInterface
             return true;
         }
 
+        $this->log('BEGIN');
+
         return $this->getPdo()->beginTransaction();
     }
 
@@ -252,6 +333,8 @@ abstract class Driver implements DriverInterface
             return false;
         }
 
+        $this->log('COMMIT');
+
         return $this->getPdo()->commit();
     }
 
@@ -263,6 +346,8 @@ abstract class Driver implements DriverInterface
         if (!$this->getPdo()->inTransaction()) {
             return false;
         }
+
+        $this->log('ROLLBACK');
 
         return $this->getPdo()->rollBack();
     }
@@ -458,6 +543,56 @@ abstract class Driver implements DriverInterface
     public function getMaxAliasLength(): ?int
     {
         return static::MAX_ALIAS_LENGTH;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * Create logger instance.
+     *
+     * @param string|null $className Logger's class name
+     * @return \Psr\Log\LoggerInterface
+     */
+    protected function createLogger(?string $className): LoggerInterface
+    {
+        if ($className === null) {
+            $className = QueryLogger::class;
+        }
+
+        /** @var class-string<\Psr\Log\LoggerInterface>|null $className */
+        $className = App::className($className, 'Cake/Log', 'Log');
+        if ($className === null) {
+            throw new CakeException(
+                'For logging you must either set the `log` config to a FQCN which implemnts Psr\Log\LoggerInterface' .
+                ' or require the cakephp/log package in your composer config.'
+            );
+        }
+
+        return new $className();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function log(Stringable|string $message, array $context = []): bool
+    {
+        if ($this->logger === null) {
+            return false;
+        }
+
+        $context['query'] = $message;
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->setContext($context);
+
+        $this->logger->debug((string)$loggedQuery, ['query' => $loggedQuery]);
+
+        return true;
     }
 
     /**

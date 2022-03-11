@@ -57,6 +57,7 @@ class MysqlTest extends TestCase
             'encoding' => 'utf8mb4',
             'timezone' => null,
             'init' => [],
+            'log' => false,
         ];
 
         $expected['flags'] += [
@@ -96,6 +97,7 @@ class MysqlTest extends TestCase
                 'Execute this',
                 'this too',
             ],
+            'log' => false,
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->onlyMethods(['createPdo'])

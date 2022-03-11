@@ -26,7 +26,6 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
-use Cake\Database\Log\QueryLogger;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
@@ -70,7 +69,7 @@ class ConnectionTest extends TestCase
     protected $logState;
 
     /**
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $connection;
 
@@ -83,10 +82,6 @@ class ConnectionTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        $this->defaultLogger = $this->connection->getLogger();
-
-        $this->logState = $this->connection->isQueryLoggingEnabled();
-        $this->connection->disableQueryLogging();
 
         static::setAppNamespace();
     }
@@ -94,8 +89,6 @@ class ConnectionTest extends TestCase
     public function tearDown(): void
     {
         $this->connection->disableSavePoints();
-        $this->connection->setLogger($this->defaultLogger);
-        $this->connection->enableQueryLogging($this->logState);
 
         Log::reset();
         unset($this->connection);
@@ -213,20 +206,6 @@ class ConnectionTest extends TestCase
             $e->getMessage()
         );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
-    }
-
-    /**
-     * Tests creation of prepared statements
-     */
-    public function testPrepare(): void
-    {
-        $sql = 'SELECT 1 + 1';
-        $result = $this->connection->prepare($sql);
-        $this->assertInstanceOf(StatementInterface::class, $result);
-
-        $query = $this->connection->newQuery()->select('1 + 1');
-        $result = $this->connection->prepare($query);
-        $this->assertInstanceOf(StatementInterface::class, $result);
     }
 
     /**
@@ -829,96 +808,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * Tests default return vale for logger() function
-     */
-    public function testGetLoggerDefault(): void
-    {
-        $logger = $this->connection->getLogger();
-        $this->assertInstanceOf('Cake\Database\Log\QueryLogger', $logger);
-        $this->assertSame($logger, $this->connection->getLogger());
-    }
-
-    /**
-     * Tests setting and getting the logger object
-     */
-    public function testGetAndSetLogger(): void
-    {
-        $logger = new QueryLogger();
-        $this->connection->setLogger($logger);
-        $this->assertSame($logger, $this->connection->getLogger());
-    }
-
-    /**
-     * test enableQueryLogging method
-     */
-    public function testEnableQueryLogging(): void
-    {
-        $this->connection->enableQueryLogging(true);
-        $this->assertTrue($this->connection->isQueryLoggingEnabled());
-
-        $this->connection->disableQueryLogging();
-        $this->assertFalse($this->connection->isQueryLoggingEnabled());
-    }
-
-    /**
-     * Tests that log() function logs to the configured query logger
-     */
-    public function testLogFunction(): void
-    {
-        Log::setConfig('queries', ['className' => 'Array']);
-        $this->connection->enableQueryLogging();
-        $this->connection->log('SELECT 1');
-
-        $messages = Log::engine('queries')->read();
-        $this->assertCount(1, $messages);
-        $this->assertSame('debug: connection=test duration=0 rows=0 SELECT 1', $messages[0]);
-    }
-
-    /**
-     * Tests that begin and rollback are also logged
-     */
-    public function testLogBeginRollbackTransaction(): void
-    {
-        Log::setConfig('queries', ['className' => 'Array']);
-
-        $connection = new Connection([
-            'driver' => $this->getMockFormDriver(),
-            'log' => true,
-        ]);
-
-        $connection->begin();
-        $connection->begin(); //This one will not be logged
-        $connection->rollback();
-
-        $messages = Log::engine('queries')->read();
-        $this->assertCount(2, $messages);
-        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug: connection= duration=0 rows=0 ROLLBACK', $messages[1]);
-    }
-
-    /**
-     * Tests that commits are logged
-     */
-    public function testLogCommitTransaction(): void
-    {
-        $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver]])
-            ->getMock();
-
-        Log::setConfig('queries', ['className' => 'Array']);
-        $connection->enableQueryLogging(true);
-        $connection->begin();
-        $connection->commit();
-
-        $messages = Log::engine('queries')->read();
-        $this->assertCount(2, $messages);
-        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug: connection= duration=0 rows=0 COMMIT', $messages[1]);
-    }
-
-    /**
      * Tests setting and getting the cacher object
      */
     public function testGetAndSetCacher(): void
@@ -1183,7 +1072,7 @@ class ConnectionTest extends TestCase
     public function testAutomaticReconnect(): void
     {
         $conn = clone $this->connection;
-        $statement = $conn->query('SELECT 1');
+        $statement = $conn->execute('SELECT 1');
         $statement->execute();
         $statement->closeCursor();
 
@@ -1194,13 +1083,13 @@ class ConnectionTest extends TestCase
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
-            ->method('prepare')
+            ->method('execute')
             ->will($this->onConsecutiveCalls(
                 $this->throwException(new Exception('server gone away')),
                 $this->returnValue($statement)
             ));
 
-        $res = $conn->query('SELECT 1');
+        $res = $conn->execute('SELECT 1');
         $this->assertInstanceOf(StatementInterface::class, $res);
     }
 
@@ -1211,7 +1100,7 @@ class ConnectionTest extends TestCase
     public function testNoAutomaticReconnect(): void
     {
         $conn = clone $this->connection;
-        $statement = $conn->query('SELECT 1');
+        $statement = $conn->execute('SELECT 1');
         $statement->execute();
         $statement->closeCursor();
 
@@ -1224,11 +1113,11 @@ class ConnectionTest extends TestCase
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())
-            ->method('prepare')
+            ->method('execute')
             ->will($this->throwException(new Exception('server gone away')));
 
         try {
-            $conn->query('SELECT 1');
+            $conn->execute('SELECT 1');
         } catch (Exception $e) {
         }
         $this->assertInstanceOf(Exception::class, $e ?? null);

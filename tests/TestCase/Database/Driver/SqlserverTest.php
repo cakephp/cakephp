@@ -149,6 +149,7 @@ class SqlserverTest extends TestCase
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
         $expected['port'] = null;
+        $expected['log'] = false;
 
         $connection = $this->getMockBuilder('PDO')
             ->disableOriginalConstructor()

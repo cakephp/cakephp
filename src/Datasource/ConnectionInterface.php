@@ -16,14 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
  * This interface defines the methods you can depend on in a connection.
  */
-interface ConnectionInterface extends LoggerAwareInterface
+interface ConnectionInterface
 {
     /**
      * Gets the driver instance.
@@ -31,13 +29,6 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @return object
      */
     public function getDriver(): object;
-
-    /**
-     * Gets the current logger object.
-     *
-     * @return \Psr\Log\LoggerInterface logger instance
-     */
-    public function getLogger(): LoggerInterface;
 
     /**
      * Set a cacher.
@@ -67,26 +58,4 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @return array
      */
     public function config(): array;
-
-    /**
-     * Enable/disable query logging
-     *
-     * @param bool $enable Enable/disable query logging
-     * @return $this
-     */
-    public function enableQueryLogging(bool $enable = true);
-
-    /**
-     * Disable query logging
-     *
-     * @return $this
-     */
-    public function disableQueryLogging();
-
-    /**
-     * Check if query logging is enabled.
-     *
-     * @return bool
-     */
-    public function isQueryLoggingEnabled(): bool;
 }

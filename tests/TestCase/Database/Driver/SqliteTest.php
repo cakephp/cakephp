@@ -55,6 +55,7 @@ class SqliteTest extends TestCase
             'flags' => [],
             'init' => [],
             'mask' => 420,
+            'log' => false,
         ];
 
         $expected['flags'] += [
@@ -88,7 +89,7 @@ class SqliteTest extends TestCase
         $dsn = 'sqlite:bar.db';
 
         $expected = $config;
-        $expected += ['username' => null, 'password' => null, 'cache' => null, 'mode' => null];
+        $expected += ['username' => null, 'password' => null, 'cache' => null, 'mode' => null, 'log' => false];
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_EMULATE_PREPARES => false,
@@ -126,7 +127,7 @@ class SqliteTest extends TestCase
         $connection = ConnectionManager::get('test_shared_cache');
         $this->assertSame([], $connection->getSchemaCollection()->listTables());
 
-        $connection->query('CREATE TABLE test (test int);');
+        $connection->execute('CREATE TABLE test (test int);');
         $this->assertSame(['test'], $connection->getSchemaCollection()->listTables());
 
         ConnectionManager::setConfig('test_shared_cache2', [
