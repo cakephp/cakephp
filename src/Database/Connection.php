@@ -328,14 +328,12 @@ class Connection implements ConnectionInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $values, $types) {
-            $columns = array_keys($values);
+        $columns = array_keys($values);
 
-            return $this->newQuery()->insert($columns, $types)
-                ->into($table)
-                ->values($values)
-                ->execute();
-        });
+        return $this->newQuery()->insert($columns, $types)
+            ->into($table)
+            ->values($values)
+            ->execute();
     }
 
     /**
@@ -349,12 +347,10 @@ class Connection implements ConnectionInterface
      */
     public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $values, $conditions, $types) {
-            return $this->newQuery()->update($table)
-                ->set($values, $types)
-                ->where($conditions, $types)
-                ->execute();
-        });
+        return $this->newQuery()->update($table)
+            ->set($values, $types)
+            ->where($conditions, $types)
+            ->execute();
     }
 
     /**
@@ -367,11 +363,9 @@ class Connection implements ConnectionInterface
      */
     public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $conditions, $types) {
-            return $this->newQuery()->delete($table)
-                ->where($conditions, $types)
-                ->execute();
-        });
+        return $this->newQuery()->delete($table)
+            ->where($conditions, $types)
+            ->execute();
     }
 
     /**
