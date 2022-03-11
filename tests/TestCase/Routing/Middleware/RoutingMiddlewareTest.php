@@ -40,7 +40,7 @@ use TestApp\Middleware\UnserializableMiddleware;
  */
 class RoutingMiddlewareTest extends TestCase
 {
-    const ROUTING_CACHE_DEPRECATION_MESSAGE =
+    protected const ROUTING_CACHE_DEPRECATION_MESSAGE =
         'Use of routing cache is deprecated and will be removed in 5.0. ' .
         'Upgrade to the new `CakeDC/CachedRouting` plugin. ' .
         'See https://github.com/CakeDC/cakephp-cached-routing';
