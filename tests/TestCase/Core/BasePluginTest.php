@@ -25,7 +25,7 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
-use Company\TestPluginThree\Plugin as TestPluginThree;
+use Company\TestPluginThree\TestPluginThreePlugin;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -64,7 +64,7 @@ class BasePluginTest extends TestCase
         $plugin = new TestPlugin();
         $this->assertSame('TestPlugin', $plugin->getName());
 
-        $plugin = new TestPluginThree();
+        $plugin = new TestPluginThreePlugin();
         $this->assertSame('Company/TestPluginThree', $plugin->getName());
     }
 

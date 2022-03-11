@@ -527,6 +527,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
+     * @since 4.3.0
      * @psalm-param array{only?: array|string, except?: array|string} $options
      */
     public function middleware(MiddlewareInterface|Closure|string $middleware, array $options = []): void
@@ -541,6 +542,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Get middleware to be applied for this controller.
      *
      * @return array
+     * @since 4.3.0
      */
     public function getMiddleware(): array
     {

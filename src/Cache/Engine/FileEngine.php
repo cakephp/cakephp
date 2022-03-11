@@ -223,6 +223,10 @@ class FileEngine extends CacheEngine
         $path = $this->_File->getRealPath();
         unset($this->_File);
 
+        if ($path === false) {
+            return false;
+        }
+
         // phpcs:disable
         return @unlink($path);
         // phpcs:enable

@@ -95,7 +95,7 @@
             "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src/",
             "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src/",
             "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests/",
-            "ParentPlugin\\": "tests/test_app/Plugin/ParentPlugin/src/"
+            "Named\\": "tests/test_app/Plugin/Named/src/"
         }
     },
     "scripts": {
