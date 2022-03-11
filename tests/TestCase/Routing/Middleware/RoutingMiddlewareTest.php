@@ -40,11 +40,6 @@ use TestApp\Middleware\UnserializableMiddleware;
  */
 class RoutingMiddlewareTest extends TestCase
 {
-    protected const ROUTING_CACHE_DEPRECATION_MESSAGE =
-        'Use of routing cache is deprecated and will be removed in 5.0. ' .
-        'Upgrade to the new `CakeDC/CachedRouting` plugin. ' .
-        'See https://github.com/CakeDC/cakephp-cached-routing';
-
     protected $log = [];
 
     /**
@@ -466,6 +461,9 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testCacheRoutes(): void
     {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Routing/Middleware/RoutingMiddlewareTest.php',
+        ]);
         $cacheConfigName = '_cake_router_';
         Cache::setConfig($cacheConfigName, [
             'engine' => 'File',
@@ -479,10 +477,9 @@ class RoutingMiddlewareTest extends TestCase
             return new Response();
         });
         $app = new Application(CONFIG);
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware->process($request, $handler);
+        Configure::delete('Error.ignoredDeprecationPaths');
     }
 
     /**
@@ -490,6 +487,9 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testCacheNotUsedIfCacheDisabled(): void
     {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Routing/Middleware/RoutingMiddlewareTest.php',
+        ]);
         $cacheConfigName = '_cake_router_';
         Cache::drop($cacheConfigName);
         Cache::disable();
@@ -505,10 +505,9 @@ class RoutingMiddlewareTest extends TestCase
             return new Response();
         });
         $app = new Application(CONFIG);
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware->process($request, $handler);
+        Configure::delete('Error.ignoredDeprecationPaths');
     }
 
     /**
@@ -516,6 +515,9 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testCacheConfigNotFound(): void
     {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Routing/Middleware/RoutingMiddlewareTest.php',
+        ]);
         $this->expectException(CacheInvalidArgumentException::class);
         $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
 
@@ -525,14 +527,33 @@ class RoutingMiddlewareTest extends TestCase
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $app = new Application(CONFIG);
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, 'notfound');
         $middleware->process($request, new TestRequestHandler());
+        Configure::delete('Error.ignoredDeprecationPaths');
     }
 
     public function testFailedRouteCache(): void
     {
+        Cache::setConfig('_cake_router_', [
+            'engine' => 'File',
+            'path' => CACHE,
+        ]);
+
+        $app = $this->createMock(Application::class);
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage(
+            'Use of routing cache is deprecated and will be removed in 5.0. ' .
+            'Upgrade to the new `CakeDC/CachedRouting` plugin. ' .
+            'See https://github.com/CakeDC/cakephp-cached-routing'
+        );
+        new RoutingMiddleware($app, '_cake_router_');
+    }
+
+    public function testDeprecatedRouteCache(): void
+    {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Routing/Middleware/RoutingMiddlewareTest.php',
+        ]);
         Cache::setConfig('_cake_router_', [
             'engine' => 'File',
             'path' => CACHE,
@@ -545,14 +566,13 @@ class RoutingMiddlewareTest extends TestCase
                 return $routes->registerMiddleware('should fail', new UnserializableMiddleware($app));
             }));
 
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, '_cake_router_');
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
 
         $this->expectException(FailedRouteCacheException::class);
         $this->expectExceptionMessage('Unable to cache route collection.');
         $middleware->process($request, new TestRequestHandler());
+        Configure::delete('Error.ignoredDeprecationPaths');
     }
 
     /**
