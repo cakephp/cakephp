@@ -40,6 +40,11 @@ use TestApp\Middleware\UnserializableMiddleware;
  */
 class RoutingMiddlewareTest extends TestCase
 {
+    const ROUTING_CACHE_DEPRECATION_MESSAGE =
+        'Use of routing cache is deprecated and will be removed in 5.0. ' .
+        'Upgrade to the new `CakeDC/CachedRouting` plugin. ' .
+        'See https://github.com/CakeDC/cakephp-cached-routing';
+
     protected $log = [];
 
     /**
@@ -475,7 +480,7 @@ class RoutingMiddlewareTest extends TestCase
         });
         $app = new Application(CONFIG);
         $this->expectDeprecation();
-        $this->expectDeprecationMessage('Use of routing cache is deprecated and will be removed in 5.0. Upgrade to the new `CakeDC/CachedRouting` plugin. See https://github.com/CakeDC/cakephp-cached-routing');
+        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware->process($request, $handler);
     }
@@ -500,6 +505,8 @@ class RoutingMiddlewareTest extends TestCase
             return new Response();
         });
         $app = new Application(CONFIG);
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware->process($request, $handler);
     }
@@ -518,6 +525,8 @@ class RoutingMiddlewareTest extends TestCase
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $app = new Application(CONFIG);
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, 'notfound');
         $middleware->process($request, new TestRequestHandler());
     }
@@ -536,6 +545,8 @@ class RoutingMiddlewareTest extends TestCase
                 return $routes->registerMiddleware('should fail', new UnserializableMiddleware($app));
             }));
 
+        $this->expectDeprecation();
+        $this->expectDeprecationMessage(static::ROUTING_CACHE_DEPRECATION_MESSAGE);
         $middleware = new RoutingMiddleware($app, '_cake_router_');
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
 
