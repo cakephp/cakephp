@@ -216,10 +216,6 @@ class FileEngine extends CacheEngine
             return false;
         }
 
-        /**
-         * @psalm-suppress PossiblyNullReference
-         * @var string $path
-         */
         $path = $this->_File->getRealPath();
         unset($this->_File);
 

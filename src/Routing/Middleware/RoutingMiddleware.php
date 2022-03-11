@@ -71,6 +71,7 @@ class RoutingMiddleware implements MiddlewareInterface
     {
         if ($cacheConfig !== null) {
             deprecationWarning(
+                '4.4',
                 'Use of routing cache is deprecated and will be removed in 5.0. ' .
                 'Upgrade to the new `CakeDC/CachedRouting` plugin. ' .
                 'See https://github.com/CakeDC/cakephp-cached-routing'

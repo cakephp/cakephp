@@ -1185,6 +1185,7 @@ class BelongsToMany extends Association
                 $junction = $this->junction();
                 $target = $this->getTarget();
 
+                /** @var array<string> $foreignKey */
                 $foreignKey = (array)$this->getForeignKey();
                 $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
                 $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
@@ -1193,6 +1194,7 @@ class BelongsToMany extends Association
                 $junctionQueryAlias = $junction->getAlias() . '__matches';
 
                 $keys = $matchesConditions = [];
+                /** @var string $key */
                 foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
                     $aliased = $junction->aliasField($key);
                     $keys[$key] = $aliased;
