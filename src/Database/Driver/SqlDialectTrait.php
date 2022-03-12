@@ -21,6 +21,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\Query;
 use Closure;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -103,8 +104,14 @@ trait SqlDialectTrait
                 $query = (new IdentifierQuoter($this))->quote($query);
             }
 
-            /** @var \Cake\ORM\Query $query */
-            $query = $this->{'_' . $type . 'QueryTranslator'}($query);
+            $query = match ($type) {
+                'select' => $this->_selectQueryTranslator($query),
+                'insert' => $this->_insertQueryTranslator($query),
+                'update' => $this->_updateQueryTranslator($query),
+                'delete' => $this->_deleteQueryTranslator($query),
+                default => throw new InvalidArgumentException('Valid types are: select, insert, update, delete'),
+            };
+
             $translators = $this->_expressionTranslators();
             if (!$translators) {
                 return $query;
