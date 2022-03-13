@@ -511,9 +511,7 @@ class Sqlserver extends Driver
 
                     return $p;
                 };
-                $manipulator = function ($p, $key) use (&$params) {
-                    return $params[$key];
-                };
+                $manipulator = fn($p, $key) => $params[$key];
 
                 $expression
                     ->setName('DATEADD')
@@ -533,9 +531,7 @@ class Sqlserver extends Driver
                 if (count($expression) < 4) {
                     $params = [];
                     $expression
-                        ->iterateParts(function ($p) use (&$params) {
-                            return $params[] = $p;
-                        })
+                        ->iterateParts(fn($p) => $params[] = $p)
                         ->add([new FunctionExpression('LEN', [$params[0]]), ['string']]);
                 }
 
