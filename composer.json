@@ -114,7 +114,7 @@
             "@psalm"
         ],
         "stan-tests": "phpstan.phar analyze -c tests/phpstan.neon",
-        "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:~1.4.0 psalm/phar:~4.20.0 && mv composer.backup composer.json",
+        "stan-setup": "cp composer.json composer.backup && composer require --dev symfony/polyfill-php81 phpstan/phpstan:~1.4.0 psalm/phar:~4.22.0 && mv composer.backup composer.json",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
         "test": "phpunit",
