@@ -18,7 +18,6 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
-use ArrayObject;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
