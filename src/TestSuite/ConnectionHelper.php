@@ -99,9 +99,7 @@ class ConnectionHelper
         }
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
-        $schemas = array_map(function ($table) use ($collection) {
-            return $collection->describe($table);
-        }, $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $dialect = $connection->getDriver()->schemaDialect();
         /** @var \Cake\Database\Schema\TableSchema $schema */
@@ -133,9 +131,7 @@ class ConnectionHelper
 
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
-        $schemas = array_map(function ($table) use ($collection) {
-            return $collection->describe($table);
-        }, $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $this->runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getDriver()->schemaDialect();
@@ -158,14 +154,10 @@ class ConnectionHelper
     public function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
         if ($connection->getDriver()->supports(DriverInterface::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
-            $connection->disableConstraints(function (Connection $connection) use ($callback): void {
-                $callback($connection);
-            });
+            $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
         } else {
             $connection->transactional(function (Connection $connection) use ($callback): void {
-                $connection->disableConstraints(function (Connection $connection) use ($callback): void {
-                    $callback($connection);
-                });
+                $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
             });
         }
     }
