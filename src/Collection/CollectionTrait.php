@@ -129,7 +129,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         foreach ($this->optimizeUnwrap() as $v) {
             if ($value === $v) {
@@ -174,7 +174,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function extract($path): CollectionInterface
+    public function extract(callable|string $path): CollectionInterface
     {
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
@@ -191,7 +191,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function max($path, int $sort = SORT_NUMERIC): mixed
+    public function max(callable|string $path, int $sort = SORT_NUMERIC): mixed
     {
         return (new SortIterator($this->unwrap(), $path, SORT_DESC, $sort))->first();
     }
@@ -199,7 +199,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function min($path, int $sort = SORT_NUMERIC): mixed
+    public function min(callable|string $path, int $sort = SORT_NUMERIC): mixed
     {
         return (new SortIterator($this->unwrap(), $path, SORT_ASC, $sort))->first();
     }
@@ -207,7 +207,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function avg($path = null): float|int|null
+    public function avg(callable|string|null $path = null): float|int|null
     {
         $result = $this;
         if ($path !== null) {
@@ -230,7 +230,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function median($path = null): float|int|null
+    public function median(callable|string|null $path = null): float|int|null
     {
         $items = $this;
         if ($path !== null) {
@@ -256,7 +256,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sortBy($path, int $order = SORT_DESC, int $sort = SORT_NUMERIC): CollectionInterface
+    public function sortBy(callable|string $path, int $order = SORT_DESC, int $sort = SORT_NUMERIC): CollectionInterface
     {
         return new SortIterator($this->unwrap(), $path, $order, $sort);
     }
@@ -264,7 +264,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function groupBy($path): CollectionInterface
+    public function groupBy(callable|string $path): CollectionInterface
     {
         $callback = $this->_propertyExtractor($path);
         $group = [];
@@ -285,7 +285,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function indexBy($path): CollectionInterface
+    public function indexBy(callable|string $path): CollectionInterface
     {
         $callback = $this->_propertyExtractor($path);
         $group = [];
@@ -306,7 +306,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function countBy($path): CollectionInterface
+    public function countBy(callable|string $path): CollectionInterface
     {
         $callback = $this->_propertyExtractor($path);
 
@@ -326,7 +326,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sumOf($path = null): float|int
+    public function sumOf(callable|string|null $path = null): float|int
     {
         if ($path === null) {
             return array_sum($this->toList());
@@ -534,7 +534,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function append($items): CollectionInterface
+    public function append(iterable $items): CollectionInterface
     {
         $list = new AppendIterator();
         $list->append($this->unwrap());
@@ -546,7 +546,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function appendItem($item, $key = null): CollectionInterface
+    public function appendItem(mixed $item, mixed $key = null): CollectionInterface
     {
         if ($key !== null) {
             $data = [$key => $item];
@@ -560,7 +560,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function prepend($items): CollectionInterface
+    public function prepend(mixed $items): CollectionInterface
     {
         return $this->newCollection($items)->append($this);
     }
@@ -568,7 +568,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function prependItem($item, $key = null): CollectionInterface
+    public function prependItem(mixed $item, mixed $key = null): CollectionInterface
     {
         if ($key !== null) {
             $data = [$key => $item];
@@ -582,8 +582,11 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function combine($keyPath, $valuePath, $groupPath = null): CollectionInterface
-    {
+    public function combine(
+        callable|string $keyPath,
+        callable|string $valuePath,
+        callable|string|null $groupPath = null
+    ): CollectionInterface {
         $options = [
             'keyPath' => $this->_propertyExtractor($keyPath),
             'valuePath' => $this->_propertyExtractor($valuePath),
@@ -621,8 +624,11 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function nest($idPath, $parentPath, string $nestingKey = 'children'): CollectionInterface
-    {
+    public function nest(
+        callable|string $idPath,
+        callable|string $parentPath,
+        string $nestingKey = 'children'
+    ): CollectionInterface {
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
         $parentPath = $this->_propertyExtractor($parentPath);
@@ -669,7 +675,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function insert(string $path, $values): CollectionInterface
+    public function insert(string $path, mixed $values): CollectionInterface
     {
         return new InsertIterator($this->unwrap(), $path, $values);
     }
@@ -743,8 +749,10 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function listNested($order = 'desc', $nestingKey = 'children'): CollectionInterface
-    {
+    public function listNested(
+        string|int $order = 'desc',
+        callable|string $nestingKey = 'children'
+    ): CollectionInterface {
         if (is_string($order)) {
             $order = strtolower($order);
             $modes = [
@@ -771,7 +779,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function stopWhen($condition): CollectionInterface
+    public function stopWhen(callable|array $condition): CollectionInterface
     {
         if (!is_callable($condition)) {
             $condition = $this->_createMatcherFilter($condition);
@@ -810,9 +818,9 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function zip(iterable $items): CollectionInterface
+    public function zip(iterable ...$items): CollectionInterface
     {
-        return new ZipIterator(array_merge([$this->unwrap()], func_get_args()));
+        return new ZipIterator(array_merge([$this->unwrap()], $items));
     }
 
     /**
@@ -827,6 +835,7 @@ trait CollectionTrait
             $items = [$items];
         }
 
+        /** @var callable $callback */
         return new ZipIterator(array_merge([$this->unwrap()], $items), $callback);
     }
 
