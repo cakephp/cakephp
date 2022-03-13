@@ -188,11 +188,7 @@ abstract class Driver implements DriverInterface
      */
     public function version(): string
     {
-        if ($this->_version === null) {
-            $this->_version = (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
-        }
-
-        return $this->_version;
+        return $this->_version ??= (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     /**

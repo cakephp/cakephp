@@ -49,11 +49,7 @@ trait TypeMapTrait
      */
     public function getTypeMap(): TypeMap
     {
-        if ($this->_typeMap === null) {
-            $this->_typeMap = new TypeMap();
-        }
-
-        return $this->_typeMap;
+        return $this->_typeMap ??= new TypeMap();
     }
 
     /**

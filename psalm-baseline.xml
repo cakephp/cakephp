@@ -36,7 +36,7 @@
     </MissingParamType>
   </file>
   <file src="src/Controller/Component/RequestHandlerComponent.php">
-    <DeprecatedMethod occurrences="2">
+    <DeprecatedMethod occurrences="1">
       <code>prefers</code>
     </DeprecatedMethod>
   </file>
@@ -51,6 +51,11 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/ORM/Locator/LocatorAwareTrait.php">
+    <PossiblyInvalidPropertyAssignmentValue occurrences="1">
+      <code>$this-&gt;_tableLocator ??= FactoryLocator::get('Table')</code>
+    </PossiblyInvalidPropertyAssignmentValue>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
     <ArgumentTypeCoercion occurrences="2">

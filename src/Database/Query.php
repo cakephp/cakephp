@@ -1996,11 +1996,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function func(): FunctionsBuilder
     {
-        if ($this->_functionsBuilder === null) {
-            $this->_functionsBuilder = new FunctionsBuilder();
-        }
-
-        return $this->_functionsBuilder;
+        return $this->_functionsBuilder ??= new FunctionsBuilder();
     }
 
     /**
@@ -2192,11 +2188,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function getValueBinder(): ValueBinder
     {
-        if ($this->_valueBinder === null) {
-            $this->_valueBinder = new ValueBinder();
-        }
-
-        return $this->_valueBinder;
+        return $this->_valueBinder ??= new ValueBinder();
     }
 
     /**
@@ -2239,11 +2231,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function getSelectTypeMap(): TypeMap
     {
-        if ($this->_selectTypeMap === null) {
-            $this->_selectTypeMap = new TypeMap();
-        }
-
-        return $this->_selectTypeMap;
+        return $this->_selectTypeMap ??= new TypeMap();
     }
 
     /**

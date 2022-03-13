@@ -202,11 +202,8 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        $required = Hash::get($this->_context['required'], $field);
-
-        if ($required === null) {
-            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
-        }
+        $required = Hash::get($this->_context['required'], $field)
+            ?? Hash::get($this->_context['required'], $this->stripNesting($field));
 
         if (!empty($required) || $required === '0') {
             return true;
@@ -223,10 +220,8 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['required'])) {
             return null;
         }
-        $required = Hash::get($this->_context['required'], $field);
-        if ($required === null) {
-            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
-        }
+        $required = Hash::get($this->_context['required'], $field)
+            ?? Hash::get($this->_context['required'], $this->stripNesting($field));
 
         if ($required === false) {
             return null;
@@ -280,10 +275,8 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        $schema = Hash::get($this->_context['schema'], $field);
-        if ($schema === null) {
-            $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
-        }
+        $schema = Hash::get($this->_context['schema'], $field)
+            ?? Hash::get($this->_context['schema'], $this->stripNesting($field));
 
         return $schema['type'] ?? null;
     }
@@ -299,10 +292,8 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['schema'])) {
             return [];
         }
-        $schema = Hash::get($this->_context['schema'], $field);
-        if ($schema === null) {
-            $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
-        }
+        $schema = Hash::get($this->_context['schema'], $field)
+            ?? Hash::get($this->_context['schema'], $this->stripNesting($field));
 
         return array_intersect_key(
             (array)$schema,

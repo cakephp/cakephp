@@ -291,11 +291,7 @@ class Number
      */
     public static function getDefaultCurrencyFormat(): string
     {
-        if (static::$_defaultCurrencyFormat === null) {
-            static::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
-        }
-
-        return static::$_defaultCurrencyFormat;
+        return static::$_defaultCurrencyFormat ??= static::FORMAT_CURRENCY;
     }
 
     /**

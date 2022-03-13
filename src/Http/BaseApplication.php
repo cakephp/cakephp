@@ -251,11 +251,7 @@ abstract class BaseApplication implements
      */
     public function getContainer(): ContainerInterface
     {
-        if ($this->container === null) {
-            $this->container = $this->buildContainer();
-        }
-
-        return $this->container;
+        return $this->container ??= $this->buildContainer();
     }
 
     /**
@@ -308,9 +304,7 @@ abstract class BaseApplication implements
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
 
-        if ($this->controllerFactory === null) {
-            $this->controllerFactory = new ControllerFactory($container);
-        }
+        $this->controllerFactory ??= new ControllerFactory($container);
 
         if (Router::getRequest() !== $request) {
             Router::setRequest($request);

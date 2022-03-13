@@ -199,9 +199,7 @@ class Security
     {
         self::_checkKey($key, 'encrypt()');
 
-        if ($hmacSalt === null) {
-            $hmacSalt = static::getSalt();
-        }
+        $hmacSalt ??= static::getSalt();
         // Generate the encryption and hmac key.
         $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
@@ -245,9 +243,7 @@ class Security
         if (empty($cipher)) {
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');
         }
-        if ($hmacSalt === null) {
-            $hmacSalt = static::getSalt();
-        }
+        $hmacSalt ??= static::getSalt();
 
         // Generate the encryption and hmac key.
         $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');

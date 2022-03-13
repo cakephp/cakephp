@@ -179,11 +179,7 @@ class BelongsToMany extends Association
      */
     public function getTargetForeignKey(): array|string
     {
-        if ($this->_targetForeignKey === null) {
-            $this->_targetForeignKey = $this->_modelKey($this->getTarget()->getAlias());
-        }
-
-        return $this->_targetForeignKey;
+        return $this->_targetForeignKey ??= $this->_modelKey($this->getTarget()->getAlias());
     }
 
     /**

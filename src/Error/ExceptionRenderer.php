@@ -149,9 +149,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $routerRequest = Router::getRequest();
         // Fallback to the request in the router or make a new one from
         // $_SERVER
-        if ($request === null) {
-            $request = $routerRequest ?: ServerRequestFactory::fromGlobals();
-        }
+        $request ??= $routerRequest ?: ServerRequestFactory::fromGlobals();
 
         // If the current request doesn't have routing data, but we
         // found a request in the router context copy the params over

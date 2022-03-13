@@ -156,11 +156,8 @@ trait TranslateStrategyTrait
                     return null;
                 }
 
-                /** @var array<string, \Cake\Datasource\EntityInterface>|null $translations */
-                $translations = $entity->get('_translations');
-                if ($translations === null) {
-                    $translations = [];
-                }
+                /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
+                $translations = $entity->get('_translations') ?? [];
 
                 $options['validate'] = $this->_config['validator'];
                 $errors = [];

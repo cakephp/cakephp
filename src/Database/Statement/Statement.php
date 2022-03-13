@@ -105,9 +105,7 @@ class Statement implements StatementInterface
      */
     public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void
     {
-        if ($type === null) {
-            $type = 'string';
-        }
+        $type ??= 'string';
         if (!is_int($type)) {
             [$value, $type] = $this->cast($value, $type);
         }

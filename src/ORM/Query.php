@@ -309,11 +309,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function getEagerLoader(): EagerLoader
     {
-        if ($this->_eagerLoader === null) {
-            $this->_eagerLoader = new EagerLoader();
-        }
-
-        return $this->_eagerLoader;
+        return $this->_eagerLoader ??= new EagerLoader();
     }
 
     /**
@@ -915,11 +911,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function count(): int
     {
-        if ($this->_resultsCount === null) {
-            $this->_resultsCount = $this->_performCount();
-        }
-
-        return $this->_resultsCount;
+        return $this->_resultsCount ??= $this->_performCount();
     }
 
     /**

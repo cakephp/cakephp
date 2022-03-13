@@ -566,10 +566,8 @@ class ViewBuilder implements JsonSerializable
         ?Response $response = null,
         ?EventManagerInterface $events = null
     ): View {
-        $className = $this->_className;
-        if ($className === null) {
-            $className = App::className('App', 'View', 'View') ?? View::class;
-        } elseif ($className === 'View') {
+        $className = $this->_className ?? App::className('App', 'View', 'View') ?? View::class;
+        if ($className === 'View') {
             $className = App::className($className, 'View');
         } else {
             $className = App::className($className, 'View', 'View');
