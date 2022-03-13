@@ -1385,14 +1385,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField']
         );
 
-        return $query->formatResults(function ($results) use ($options) {
+        return $query->formatResults(fn($results) =>
             /** @var \Cake\Collection\CollectionInterface $results */
-            return $results->combine(
+            $results->combine(
                 $options['keyField'],
                 $options['valueField'],
                 $options['groupField']
-            );
-        });
+            ));
     }
 
     /**
@@ -1429,10 +1428,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
-        return $query->formatResults(function ($results) use ($options) {
+        return $query->formatResults(fn($results) =>
             /** @var \Cake\Collection\CollectionInterface $results */
-            return $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']);
-        });
+            $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']));
     }
 
     /**
@@ -1551,9 +1549,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _executeTransaction(callable $worker, bool $atomic = true): mixed
     {
         if ($atomic) {
-            return $this->getConnection()->transactional(function () use ($worker) {
-                return $worker();
-            });
+            return $this->getConnection()->transactional(fn () => $worker());
         }
 
         return $worker();
@@ -1615,9 +1611,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'defaults' => true,
         ]);
 
-        $entity = $this->_executeTransaction(function () use ($search, $callback, $options) {
-            return $this->_processFindOrCreate($search, $callback, $options->getArrayCopy());
-        }, $options['atomic']);
+        $entity = $this->_executeTransaction(
+            fn() => $this->_processFindOrCreate($search, $callback, $options->getArrayCopy()),
+            $options['atomic']
+        );
 
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
             $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
@@ -1882,9 +1879,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
-        $success = $this->_executeTransaction(function () use ($entity, $options) {
-            return $this->_processSave($entity, $options);
-        }, $options['atomic']);
+        $success = $this->_executeTransaction(
+            fn() => $this->_processSave($entity, $options),
+            $options['atomic']
+        );
 
         if ($success) {
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
@@ -2331,9 +2329,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true,
         ]);
 
-        $success = $this->_executeTransaction(function () use ($entity, $options) {
-            return $this->_processDelete($entity, $options);
-        }, $options['atomic']);
+        $success = $this->_executeTransaction(
+            fn() => $this->_processDelete($entity, $options),
+            $options['atomic']
+        );
 
         if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             $this->dispatchEvent('Model.afterDeleteCommit', [
