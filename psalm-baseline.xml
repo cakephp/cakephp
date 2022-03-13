@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.x-dev@">
+  <file src="src/Cache/Engine/RedisEngine.php">
+    <InvalidArgument occurrences="1">
+      <code>Redis::OPT_SCAN</code>
+    </InvalidArgument>
+    <InvalidReturnStatement occurrences="4">
+      <code>$this-&gt;_Redis-&gt;set($key, $value)</code>
+      <code>$this-&gt;_Redis-&gt;setEx($key, $duration, $value)</code>
+      <code>$value</code>
+      <code>$value</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="3">
+      <code>bool</code>
+      <code>int|false</code>
+      <code>int|false</code>
+    </InvalidReturnType>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$value</code>
+    </PossiblyInvalidArgument>
+  </file>
   <file src="src/Collection/CollectionTrait.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$iterator</code>

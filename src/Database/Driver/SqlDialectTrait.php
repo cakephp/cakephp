@@ -73,14 +73,14 @@ trait SqlDialectTrait
         }
 
         // string.string with spaces
-        if (preg_match('/^([\w-]+\.[\w][\w\s\-]*[\w])(.*)/u', $identifier, $matches)) {
+        if (preg_match('/^([\w-]+\.[\w][\w\s-]*[\w])(.*)/u', $identifier, $matches)) {
             $items = explode('.', $matches[1]);
             $field = implode($this->_endQuote . '.' . $this->_startQuote, $items);
 
             return $this->_startQuote . $field . $this->_endQuote . $matches[2];
         }
 
-        if (preg_match('/^[\w_\s-]*[\w_-]+/u', $identifier)) {
+        if (preg_match('/^[\w\s-]*[\w-]+/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
