@@ -93,9 +93,7 @@ trait CollectionTrait
      */
     public function reject(callable $callback): CollectionInterface
     {
-        return new FilterIterator($this->unwrap(), function ($key, $value, $items) use ($callback) {
-            return !$callback($key, $value, $items);
-        });
+        return new FilterIterator($this->unwrap(), fn($key, $value, $items) => !$callback($key, $value, $items));
     }
 
     /**
@@ -310,15 +308,8 @@ trait CollectionTrait
     {
         $callback = $this->_propertyExtractor($path);
 
-        $mapper = function ($value, $key, $mr) use ($callback): void {
-            /** @var \Cake\Collection\Iterator\MapReduce $mr */
-            $mr->emitIntermediate($value, $callback($value));
-        };
-
-        $reducer = function ($values, $key, $mr): void {
-            /** @var \Cake\Collection\Iterator\MapReduce $mr */
-            $mr->emit(count($values), $key);
-        };
+        $mapper = fn($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
+        $reducer = fn($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer));
     }
@@ -666,10 +657,7 @@ trait CollectionTrait
         };
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(function ($value) use (&$isObject) {
-                /** @var \ArrayIterator $value */
-                return $isObject ? $value : $value->getArrayCopy();
-            });
+            ->map(fn($value) => $isObject ? $value : $value->getArrayCopy());
     }
 
     /**

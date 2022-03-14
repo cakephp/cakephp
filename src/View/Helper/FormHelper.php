@@ -2347,9 +2347,10 @@ class FormHelper extends Helper
             }
             // Complex option types
             if (is_array($first)) {
-                $disabled = array_filter($options['options'], function ($i) use ($options) {
-                    return in_array($i['value'], $options['disabled'], true);
-                });
+                $disabled = array_filter(
+                    $options['options'],
+                    fn($i) => in_array($i['value'], $options['disabled'], true)
+                );
 
                 return count($disabled) > 0;
             }

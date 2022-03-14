@@ -141,14 +141,12 @@ abstract class Driver implements DriverInterface
      */
     protected function createPdo(string $dsn, array $config): PDO
     {
-        $action = function () use ($dsn, $config): PDO {
-            return new PDO(
-                $dsn,
-                $config['username'] ?: null,
-                $config['password'] ?: null,
-                $config['flags']
-            );
-        };
+        $action = fn() => new PDO(
+            $dsn,
+            $config['username'] ?: null,
+            $config['password'] ?: null,
+            $config['flags']
+        );
 
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
         try {

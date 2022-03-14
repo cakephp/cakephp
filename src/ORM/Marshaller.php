@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
@@ -75,9 +76,7 @@ class Marshaller
             $prop = (string)$prop;
             $columnType = $schema->getColumnType($prop);
             if ($columnType) {
-                $map[$prop] = function ($value, $entity) use ($columnType) {
-                    return TypeFactory::build($columnType)->marshal($value);
-                };
+                $map[$prop] = fn($value) => TypeFactory::build($columnType)->marshal($value);
             }
         }
 
@@ -405,10 +404,7 @@ class Marshaller
 
         if (!empty($conditions)) {
             $query = $target->find();
-            $query->andWhere(function ($exp) use ($conditions) {
-                /** @var \Cake\Database\Expression\QueryExpression $exp */
-                return $exp->or($conditions);
-            });
+            $query->andWhere(fn(QueryExpression $exp) => $exp->or($conditions));
 
             $keyFields = array_keys($primaryKey);
 
@@ -685,9 +681,7 @@ class Marshaller
             ->map(function ($data, $key) {
                 return explode(';', (string)$key);
             })
-            ->filter(function ($keys) use ($primary) {
-                return count(Hash::filter($keys)) === count($primary);
-            })
+            ->filter(fn ($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map([$this->_table, 'aliasField'], $primary);
                 $conditions['OR'][] = array_combine($fields, $keys);

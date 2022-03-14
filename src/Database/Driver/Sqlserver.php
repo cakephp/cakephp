@@ -511,7 +511,7 @@ class Sqlserver extends Driver
 
                     return $p;
                 };
-                $manipulator = function ($p, $key) use (&$params) {
+                $manipulator = function($p, $key) use (&$params) {
                     return $params[$key];
                 };
 

@@ -2146,9 +2146,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
         }
 
         if ($expression instanceof ExpressionInterface) {
-            $expression->traverse(function ($exp) use ($callback): void {
-                $this->_expressionsVisitor($exp, $callback);
-            });
+            $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback));
 
             if (!$expression instanceof self) {
                 $callback($expression);

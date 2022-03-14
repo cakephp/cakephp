@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Datasource\EntityInterface;
 
@@ -74,18 +75,12 @@ class LazyEagerLoader
         $primaryKey = $source->getPrimaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
 
-        $keys = $objects->map(function ($entity) use ($primaryKey, $method) {
-            return $entity->{$method}($primaryKey);
-        });
+        $keys = $objects->map(fn(EntityInterface $entity) => $entity->{$method}($primaryKey));
 
         $query = $source
             ->find()
             ->select((array)$primaryKey)
-            ->where(function ($exp, $q) use ($primaryKey, $keys, $source) {
-                /**
-                 * @var \Cake\Database\Expression\QueryExpression $exp
-                 * @var \Cake\ORM\Query $q
-                 */
+            ->where(function (QueryExpression $exp, Query $q) use ($primaryKey, $keys, $source) {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
                     $primaryKey = current($primaryKey);
                 }
@@ -148,10 +143,7 @@ class LazyEagerLoader
         $primaryKey = (array)$source->getPrimaryKey();
         $results = $results
             ->all()
-            ->indexBy(function ($e) use ($primaryKey) {
-                /** @var \Cake\Datasource\EntityInterface $e */
-                return implode(';', $e->extract($primaryKey));
-            })
+            ->indexBy(fn(EntityInterface $e) => implode(';', $e->extract($primaryKey)))
             ->toArray();
 
         foreach ($objects as $k => $object) {
