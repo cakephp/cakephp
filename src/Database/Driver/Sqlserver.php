@@ -511,7 +511,9 @@ class Sqlserver extends Driver
 
                     return $p;
                 };
-                $manipulator = fn($p, $key) => $params[$key];
+                $manipulator = function($p, $key) use (&$params) {
+                    return $params[$key];
+                };
 
                 $expression
                     ->setName('DATEADD')
