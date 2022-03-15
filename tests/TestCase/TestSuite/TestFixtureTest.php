@@ -21,9 +21,11 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
+use Cake\Test\Fixture\PostsFixture;
 use Cake\TestSuite\TestCase;
 use Exception;
 use TestApp\Test\Fixture\ArticlesFixture;
+use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\ImportsFixture;
 use TestApp\Test\Fixture\LettersFixture;
 use TestApp\Test\Fixture\StringsTestsFixture;
@@ -141,7 +143,6 @@ class TestFixtureTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`. The table does not exist.');
         $fixture = new LettersFixture();
-        $fixture->init();
     }
 
     /**
@@ -162,7 +163,6 @@ class TestFixtureTest extends TestCase
         }
 
         $fixture = new LettersFixture();
-        $fixture->init();
         $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
     }
 
@@ -188,10 +188,29 @@ class TestFixtureTest extends TestCase
         $table->getSchema()->setColumnType('complex_field', 'json');
 
         $fixture = new LettersFixture();
-        $fixture->init();
         $fixtureSchema = $fixture->getTableSchema();
         $this->assertSame(['id', 'letter', 'complex_field'], $fixtureSchema->columns());
         $this->assertSame('json', $fixtureSchema->getColumnType('complex_field'));
+    }
+
+    /**
+     * test init with other tables used in initialize()
+     *
+     * The FeaturedTagsTable uses PostsTable, then when PostsFixture
+     * reflects schema it should not raise an error.
+     */
+    public function testInitInitializeUsesRegistry(): void
+    {
+        $this->setAppNamespace();
+
+        $fixture = new FeaturedTagsFixture();
+
+        $posts = new PostsFixture();
+        $posts->fields = [];
+        $posts->init();
+
+        $expected = ['tag_id', 'priority'];
+        $this->assertSame($expected, $fixture->getTableSchema()->columns());
     }
 
     /**
