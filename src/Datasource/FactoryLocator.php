@@ -41,15 +41,28 @@ class FactoryLocator
      */
     public static function add(string $type, $factory): void
     {
-        if (!$factory instanceof LocatorInterface && !is_callable($factory)) {
-            throw new InvalidArgumentException(sprintf(
-                '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
-                . ' Got type `%s` instead.',
-                getTypeName($factory)
-            ));
+        if ($factory instanceof LocatorInterface) {
+            static::$_modelFactories[$type] = $factory;
+
+            return;
         }
 
-        static::$_modelFactories[$type] = $factory;
+        if (is_callable($factory)) {
+            deprecationWarning(
+                'Using a callable as a locator has been deprecated.'
+                . ' Use an instance of Cake\Datasource\Locator\LocatorInterface instead.'
+            );
+
+            static::$_modelFactories[$type] = $factory;
+
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
+            . ' Got type `%s` instead.',
+            getTypeName($factory)
+        ));
     }
 
     /**

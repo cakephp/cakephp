@@ -160,11 +160,13 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        FactoryLocator::add('Test', function ($name) {
-            $mock = new stdClass();
-            $mock->name = $name;
+        $this->deprecated(function () {
+            FactoryLocator::add('Test', function ($name) {
+                $mock = new stdClass();
+                $mock->name = $name;
 
-            return $mock;
+                return $mock;
+            });
         });
         $stub->setModelType('Test');
         $this->assertSame('Test', $stub->getModelType());
@@ -179,8 +181,10 @@ class ModelAwareTraitTest extends TestCase
         $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 
-        FactoryLocator::add('Test', function ($name) {
-            return false;
+        $this->deprecated(function () {
+            FactoryLocator::add('Test', function ($name) {
+                return false;
+            });
         });
 
         $stub->loadModel('Magic', 'Test');

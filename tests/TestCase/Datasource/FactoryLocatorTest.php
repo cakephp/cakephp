@@ -50,11 +50,13 @@ class FactoryLocatorTest extends TestCase
      */
     public function testAdd(): void
     {
-        FactoryLocator::add('Test', function ($name) {
-            $mock = new stdClass();
-            $mock->name = $name;
+        $this->deprecated(function () {
+            FactoryLocator::add('Test', function ($name) {
+                $mock = new stdClass();
+                $mock->name = $name;
 
-            return $mock;
+                return $mock;
+            });
         });
         $this->assertIsCallable(FactoryLocator::get('Test'));
 
