@@ -59,7 +59,10 @@ trait LocatorAwareTrait
      */
     public function getTableLocator(): LocatorInterface
     {
-        /** @var \Cake\ORM\Locator\LocatorInterface */
+        /**
+         * @var \Cake\ORM\Locator\LocatorInterface
+         * @psalm-suppress PropertyTypeCoercion
+         */
         return $this->_tableLocator ??= FactoryLocator::get('Table');
     }
 
