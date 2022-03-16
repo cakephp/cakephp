@@ -27,7 +27,6 @@ use Cake\Database\SqliteCompiler;
 use Cake\Database\Statement\SqliteStatement;
 use InvalidArgumentException;
 use PDO;
-use RuntimeException;
 
 /**
  * Class Sqlite
@@ -144,9 +143,6 @@ class Sqlite extends Driver
         }
 
         if ($params) {
-            if (PHP_VERSION_ID < 80100) {
-                throw new RuntimeException('SQLite URI support requires PHP 8.1.');
-            }
             $dsn = 'sqlite:file:' . $config['database'] . '?' . implode('&', $params);
         } else {
             $dsn = 'sqlite:' . $config['database'];

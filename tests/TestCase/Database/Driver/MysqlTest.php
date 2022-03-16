@@ -43,7 +43,7 @@ class MysqlTest extends TestCase
     public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->onlyMethods(['createPdo', 'getPdo'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
@@ -65,16 +65,10 @@ class MysqlTest extends TestCase
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        $connection = $this->getMockBuilder('StdClass')
-            ->addMethods(['exec'])
-            ->getMock();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
 
-        $driver->expects($this->any())
-            ->method('getPdo')
-            ->will($this->returnValue($connection));
         $driver->connect([]);
     }
 

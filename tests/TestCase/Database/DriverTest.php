@@ -385,7 +385,7 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test duration=[\d\.]+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
     }
 
     /**
