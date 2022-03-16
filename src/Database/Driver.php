@@ -359,9 +359,9 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function quote($value, $type = PDO::PARAM_STR): string
+    public function quote(string $value, int $type = PDO::PARAM_STR): string
     {
-        return $this->getPdo()->quote((string)$value, $type);
+        return $this->getPdo()->quote($value, $type);
     }
 
     /**
@@ -382,7 +382,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function schemaValue($value): string
+    public function schemaValue(mixed $value): string
     {
         if ($value === null) {
             return 'NULL';

@@ -195,11 +195,11 @@ interface DriverInterface extends LoggerAwareInterface
     /**
      * Returns a value in a safe representation to be used in a query string
      *
-     * @param mixed $value The value to quote.
+     * @param string $value The value to quote.
      * @param int $type Must be one of the \PDO::PARAM_* constants
      * @return string
      */
-    public function quote(mixed $value, int $type): string;
+    public function quote(string $value, int $type): string;
 
     /**
      * Returns a callable function that will be used to transform a passed Query object.
