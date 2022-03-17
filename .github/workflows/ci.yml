@@ -135,7 +135,7 @@ jobs:
     name: Windows - PHP 8.1 & SQL Server
 
     env:
-      EXTENSIONS: mbstring, intl, apcu, memcached, redis, pdo_sqlsrv
+      EXTENSIONS: mbstring, intl, apcu, redis, pdo_sqlsrv
       PHP_VERSION: '8.1'
 
     steps:
