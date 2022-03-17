@@ -252,6 +252,8 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             /** @var \Cake\Database\Schema\TableSchema $schema */
             $schema = $ormTable->getSchema();
             $this->_schema = $schema;
+
+            $this->getTableLocator()->clear();
         } catch (CakeException $e) {
             $message = sprintf(
                 'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
