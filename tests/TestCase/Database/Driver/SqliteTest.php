@@ -116,7 +116,7 @@ class SqliteTest extends TestCase
      */
     public function testConnectionSharedCached()
     {
-        $this->skipIf(PHP_VERSION_ID < 80100 || !extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         ConnectionManager::setConfig('test_shared_cache', [
             'className' => Connection::class,
             'driver' => Sqlite::class,
