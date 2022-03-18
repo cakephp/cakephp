@@ -105,13 +105,13 @@ class ConnectionHelper
         /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
             foreach ($dialect->dropConstraintSql($schema) as $statement) {
-                $connection->execute($statement)->closeCursor();
+                $connection->execute($statement);
             }
         }
         /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
             foreach ($dialect->dropTableSql($schema) as $statement) {
-                $connection->execute($statement)->closeCursor();
+                $connection->execute($statement);
             }
         }
     }
@@ -138,7 +138,7 @@ class ConnectionHelper
             /** @var \Cake\Database\Schema\TableSchema $schema */
             foreach ($schemas as $schema) {
                 foreach ($dialect->truncateTableSql($schema) as $statement) {
-                    $connection->execute($statement)->closeCursor();
+                    $connection->execute($statement);
                 }
             }
         });

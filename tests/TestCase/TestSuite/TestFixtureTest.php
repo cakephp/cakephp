@@ -179,7 +179,6 @@ class TestFixtureTest extends TestCase
             ->will($this->returnSelf());
 
         $statement = $this->createMock(StatementInterface::class);
-        $statement->expects($this->once())->method('closeCursor');
 
         $query->expects($this->once())
             ->method('execute')
