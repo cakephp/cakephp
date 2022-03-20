@@ -91,12 +91,7 @@ class ConnectionHelper
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
         $collection = $connection->getSchemaCollection();
-
-        if (method_exists($collection, 'listTablesWithoutViews')) {
-            $allTables = $collection->listTablesWithoutViews();
-        } else {
-            $allTables = $collection->listTables();
-        }
+        $allTables = $collection->listTablesWithoutViews();
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         $schemas = array_map(fn($table) => $collection->describe($table), $tables);

@@ -566,10 +566,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new RuntimeException("Unable to check max alias lengths for  `{$this->getAlias()}` without schema.");
         }
 
-        $maxLength = null;
-        if (method_exists($this->getConnection()->getDriver(), 'getMaxAliasLength')) {
-            $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
-        }
+        $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
         if ($maxLength === null) {
             return;
         }
@@ -858,10 +855,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        /** @var \Cake\ORM\Behavior $behavior */
-        $behavior = $this->_behaviors->get($name);
-
-        return $behavior;
+        /** @var \Cake\ORM\Behavior */
+        return $this->_behaviors->get($name);
     }
 
     /**
@@ -1042,10 +1037,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\BelongsTo $association */
-        $association = $this->_associations->load(BelongsTo::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\BelongsTo */
+        return $this->_associations->load(BelongsTo::class, $associated, $options);
     }
 
     /**
@@ -1088,10 +1081,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\HasOne $association */
-        $association = $this->_associations->load(HasOne::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\HasOne */
+        return $this->_associations->load(HasOne::class, $associated, $options);
     }
 
     /**
@@ -1140,10 +1131,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\HasMany $association */
-        $association = $this->_associations->load(HasMany::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\HasMany */
+        return $this->_associations->load(HasMany::class, $associated, $options);
     }
 
     /**
@@ -1194,10 +1183,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\BelongsToMany $association */
-        $association = $this->_associations->load(BelongsToMany::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\BelongsToMany */
+        return $this->_associations->load(BelongsToMany::class, $associated, $options);
     }
 
     /**
@@ -2169,9 +2156,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ->where($primaryKey)
             ->execute();
 
-        $success = $statement->errorCode() === '00000' ? $entity : false;
-
-        return $success;
+        return $statement->errorCode() === '00000' ? $entity : false;
     }
 
     /**

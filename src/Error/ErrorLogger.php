@@ -19,6 +19,7 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -158,7 +159,7 @@ class ErrorLogger implements ErrorLoggerInterface
             $message .= "\nReferer URL: " . $referer;
         }
 
-        if (method_exists($request, 'clientIp')) {
+        if ($request instanceof ServerRequest) {
             $clientIp = $request->clientIp();
             if ($clientIp && $clientIp !== '::1') {
                 $message .= "\nClient IP: " . $clientIp;

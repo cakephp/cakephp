@@ -340,12 +340,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function contentType(): ?string
     {
-        $type = $this->getEnv('CONTENT_TYPE');
-        if ($type) {
-            return $type;
-        }
-
-        return $this->getEnv('HTTP_CONTENT_TYPE');
+        return $this->getEnv('CONTENT_TYPE') ?: $this->getEnv('HTTP_CONTENT_TYPE');
     }
 
     /**

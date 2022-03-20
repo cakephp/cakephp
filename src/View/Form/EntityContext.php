@@ -583,7 +583,7 @@ class EntityContext implements ContextInterface
             return !is_numeric($part);
         });
         $key = implode('.', $keyParts);
-        $entity = $this->entity($parts) ?: null;
+        $entity = $this->entity($parts);
 
         if (isset($this->_validator[$key])) {
             if (is_object($entity)) {
