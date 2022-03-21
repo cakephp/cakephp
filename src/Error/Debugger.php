@@ -837,6 +837,7 @@ class Debugger
      */
     public static function getOutputFormat(): string
     {
+        deprecationWarning('5.0.0', 'Debugger::getOutputFormat() is deprecated.');
         return Debugger::getInstance()->_outputFormat;
     }
 
@@ -849,6 +850,7 @@ class Debugger
      */
     public static function setOutputFormat(string $format): void
     {
+        deprecationWarning('5.0.0', 'Debugger::setOutputFormat() is deprecated.');
         $self = Debugger::getInstance();
 
         if (!isset($self->_templates[$format])) {
@@ -902,6 +904,7 @@ class Debugger
      */
     public static function addFormat(string $format, array $strings): array
     {
+        deprecationWarning('5.0.0', 'Debugger::addFormat() is deprecated.');
         $self = Debugger::getInstance();
         if (isset($self->_templates[$format])) {
             if (isset($strings['links'])) {
@@ -929,6 +932,7 @@ class Debugger
      */
     public static function addRenderer(string $name, string $class): void
     {
+        deprecationWarning('5.0.0', 'Debugger::addRenderer() is deprecated.');
         if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 'Invalid renderer class. $class must implement ' . ErrorRendererInterface::class
@@ -946,6 +950,7 @@ class Debugger
      */
     public function outputError(array $data): void
     {
+        deprecationWarning('5.0.0', 'Debugger::outputError() is deprecated.');
         $defaults = [
             'level' => 0,
             'error' => 0,

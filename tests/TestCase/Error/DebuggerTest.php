@@ -135,8 +135,10 @@ class DebuggerTest extends TestCase
      */
     public function testSetOutputFormat(): void
     {
-        Debugger::setOutputFormat('html');
-        $this->assertSame('html', Debugger::getOutputFormat());
+        $this->deprecated(function () {
+            Debugger::setOutputFormat('html');
+            $this->assertSame('html', Debugger::getOutputFormat());
+        });
     }
 
     /**
@@ -144,8 +146,10 @@ class DebuggerTest extends TestCase
      */
     public function testGetSetOutputFormat(): void
     {
-        Debugger::setOutputFormat('html');
-        $this->assertSame('html', Debugger::getOutputFormat());
+        $this->deprecated(function () {
+            Debugger::setOutputFormat('html');
+            $this->assertSame('html', Debugger::getOutputFormat());
+        });
     }
 
     /**
@@ -154,7 +158,9 @@ class DebuggerTest extends TestCase
     public function testSetOutputAsException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        Debugger::setOutputFormat('Invalid junk');
+        $this->deprecated(function () {
+            Debugger::setOutputFormat('Invalid junk');
+        });
     }
 
     /**
@@ -162,18 +168,20 @@ class DebuggerTest extends TestCase
      */
     public function testOutputErrorDescriptionEncoding(): void
     {
-        Debugger::setOutputFormat('html');
+        $this->deprecated(function () {
+            Debugger::setOutputFormat('html');
 
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $debugger->outputError([
-            'error' => 'Notice',
-            'code' => E_NOTICE,
-            'level' => E_NOTICE,
-            'description' => 'Undefined index <script>alert(1)</script>',
-            'file' => __FILE__,
-            'line' => __LINE__,
-        ]);
+            ob_start();
+            $debugger = Debugger::getInstance();
+            $debugger->outputError([
+                'error' => 'Notice',
+                'code' => E_NOTICE,
+                'level' => E_NOTICE,
+                'description' => 'Undefined index <script>alert(1)</script>',
+                'file' => __FILE__,
+                'line' => __LINE__,
+            ]);
+        });
         $result = ob_get_clean();
         $this->assertStringContainsString('&lt;script&gt;', $result);
         $this->assertStringNotContainsString('<script>', $result);
@@ -185,7 +193,9 @@ class DebuggerTest extends TestCase
     public function testAddRendererInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        Debugger::addRenderer('test', stdClass::class);
+        $this->deprecated(function () {
+            Debugger::addRenderer('test', stdClass::class);
+        });
     }
 
     /**
@@ -193,26 +203,29 @@ class DebuggerTest extends TestCase
      */
     public function testAddOutputFormatOverwrite(): void
     {
-        Debugger::addRenderer('test', HtmlErrorRenderer::class);
-        Debugger::addFormat('test', [
-            'error' => '{:description} : {:path}, line {:line}',
-        ]);
-        Debugger::setOutputFormat('test');
+        $this->deprecated(function () {
+            Debugger::addRenderer('test', HtmlErrorRenderer::class);
+            Debugger::addFormat('test', [
+                'error' => '{:description} : {:path}, line {:line}',
+            ]);
+            Debugger::setOutputFormat('test');
 
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $data = [
-            'error' => 'Notice',
-            'code' => E_NOTICE,
-            'level' => E_NOTICE,
-            'description' => 'Oh no!',
-            'file' => __FILE__,
-            'line' => __LINE__,
-        ];
-        $debugger->outputError($data);
-        $result = ob_get_clean();
-        $this->assertStringContainsString('Oh no! :', $result);
-        $this->assertStringContainsString(", line {$data['line']}", $result);
+            ob_start();
+            $debugger = Debugger::getInstance();
+            $data = [
+                'error' => 'Notice',
+                'code' => E_NOTICE,
+                'level' => E_NOTICE,
+                'description' => 'Oh no!',
+                'file' => __FILE__,
+                'line' => __LINE__,
+            ];
+            $debugger->outputError($data);
+
+            $result = ob_get_clean();
+            $this->assertStringContainsString('Oh no! :', $result);
+            $this->assertStringContainsString(", line {$data['line']}", $result);
+        });
     }
 
     /**
@@ -220,19 +233,21 @@ class DebuggerTest extends TestCase
      */
     public function testOutputErrorLineHighlight(): void
     {
-        Debugger::setOutputFormat('js');
+        $this->deprecated(function () {
+            Debugger::setOutputFormat('js');
 
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $data = [
-            'level' => E_NOTICE,
-            'code' => E_NOTICE,
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'description' => 'Error description',
-            'start' => 1,
-        ];
-        $debugger->outputError($data);
+            ob_start();
+            $debugger = Debugger::getInstance();
+            $data = [
+                'level' => E_NOTICE,
+                'code' => E_NOTICE,
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'description' => 'Error description',
+                'start' => 1,
+            ];
+            $debugger->outputError($data);
+        });
         $result = ob_get_clean();
 
         $this->assertMatchesRegularExpression('#^\<span class\="code\-highlight"\>.*__LINE__.*\</span\>$#m', $result);
@@ -243,26 +258,28 @@ class DebuggerTest extends TestCase
      */
     public function testOutputErrorText(): void
     {
-        Debugger::setOutputFormat('txt');
+        $this->deprecated(function () {
+            Debugger::setOutputFormat('txt');
 
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $data = [
-            'level' => E_NOTICE,
-            'code' => E_NOTICE,
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'description' => 'Error description',
-            'start' => 1,
-        ];
-        $debugger->outputError($data);
-        $result = ob_get_clean();
+            ob_start();
+            $debugger = Debugger::getInstance();
+            $data = [
+                'level' => E_NOTICE,
+                'code' => E_NOTICE,
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'description' => 'Error description',
+                'start' => 1,
+            ];
+            $debugger->outputError($data);
+            $result = ob_get_clean();
 
-        $this->assertStringContainsString('notice: 8 :: Error description', $result);
-        $this->assertStringContainsString("on line {$data['line']} of {$data['file']}", $result);
-        $this->assertStringContainsString('Trace:', $result);
-        $this->assertStringContainsString('Cake\Test\TestCase\Error\DebuggerTest::testOutputErrorText()', $result);
-        $this->assertStringContainsString('[main]', $result);
+            $this->assertStringContainsString('notice: 8 :: Error description', $result);
+            $this->assertStringContainsString("on line {$data['line']} of {$data['file']}", $result);
+            $this->assertStringContainsString('Trace:', $result);
+            $this->assertStringContainsString('Cake\Test\TestCase\Error\DebuggerTest::testOutputErrorText()', $result);
+            $this->assertStringContainsString('[main]', $result);
+        });
     }
 
     /**
@@ -270,35 +287,37 @@ class DebuggerTest extends TestCase
      */
     public function testOutputErrorLog(): void
     {
+        $this->deprecated(function () {
         Debugger::setOutputFormat('log');
-        Log::setConfig('array', ['engine' => 'Array']);
+            Log::setConfig('array', ['engine' => 'Array']);
 
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $data = [
-            'level' => E_NOTICE,
-            'code' => E_NOTICE,
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'description' => 'Error description',
-            'start' => 1,
-        ];
-        $debugger->outputError($data);
-        $output = ob_get_clean();
-        /** @var \Cake\Log\Engine\ArrayLog $logger */
-        $logger = Log::engine('array');
-        $logs = $logger->read();
+            ob_start();
+            $debugger = Debugger::getInstance();
+            $data = [
+                'level' => E_NOTICE,
+                'code' => E_NOTICE,
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'description' => 'Error description',
+                'start' => 1,
+            ];
+            $debugger->outputError($data);
+            $output = ob_get_clean();
+            /** @var \Cake\Log\Engine\ArrayLog $logger */
+            $logger = Log::engine('array');
+            $logs = $logger->read();
 
-        $this->assertSame('', $output);
-        $this->assertCount(1, $logs);
-        // This is silly but that's how it works currently.
-        $this->assertStringContainsString("debug: \nCake\Error\Debugger::outputError()", $logs[0]);
+            $this->assertSame('', $output);
+            $this->assertCount(1, $logs);
+            // This is silly but that's how it works currently.
+            $this->assertStringContainsString("debug: \nCake\Error\Debugger::outputError()", $logs[0]);
 
-        $this->assertStringContainsString("'file' => '{$data['file']}'", $logs[0]);
-        $this->assertStringContainsString("'line' => (int) {$data['line']}", $logs[0]);
-        $this->assertStringContainsString("'trace' => ", $logs[0]);
-        $this->assertStringContainsString("'description' => 'Error description'", $logs[0]);
-        $this->assertStringContainsString('DebuggerTest::testOutputErrorLog()', $logs[0]);
+            $this->assertStringContainsString("'file' => '{$data['file']}'", $logs[0]);
+            $this->assertStringContainsString("'line' => (int) {$data['line']}", $logs[0]);
+            $this->assertStringContainsString("'trace' => ", $logs[0]);
+            $this->assertStringContainsString("'description' => 'Error description'", $logs[0]);
+            $this->assertStringContainsString('DebuggerTest::testOutputErrorLog()', $logs[0]);
+        });
     }
 
     /**
@@ -306,41 +325,43 @@ class DebuggerTest extends TestCase
      */
     public function testAddFormat(): void
     {
-        Debugger::addFormat('js', [
-            'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-                '&line={:line}">{:path}</a>, line {:line}',
-        ]);
-        Debugger::setOutputFormat('js');
+        $this->deprecated(function () {
+            Debugger::addFormat('js', [
+                'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
+                    '&line={:line}">{:path}</a>, line {:line}',
+            ]);
+            Debugger::setOutputFormat('js');
 
-        $result = Debugger::trace();
-        $this->assertMatchesRegularExpression('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+            $result = Debugger::trace();
+            $this->assertMatchesRegularExpression('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
-        Debugger::addFormat('xml', [
-            'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-                '{:description}</error>',
-        ]);
-        Debugger::setOutputFormat('xml');
+            Debugger::addFormat('xml', [
+                'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
+                    '{:description}</error>',
+            ]);
+            Debugger::setOutputFormat('xml');
 
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $debugger->outputError([
-            'level' => E_NOTICE,
-            'code' => E_NOTICE,
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'description' => 'Undefined variable: foo',
-        ]);
-        $result = ob_get_clean();
+            ob_start();
+            $debugger = Debugger::getInstance();
+            $debugger->outputError([
+                'level' => E_NOTICE,
+                'code' => E_NOTICE,
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'description' => 'Undefined variable: foo',
+            ]);
+            $result = ob_get_clean();
 
-        $expected = [
-            '<error',
-            '<code', '8', '/code',
-            '<file', 'preg:/[^<]+/', '/file',
-            '<line', '' . ((int)__LINE__ - 9), '/line',
-            'preg:/Undefined variable:\s+foo/',
-            '/error',
-        ];
-        $this->assertHtml($expected, $result, true);
+            $expected = [
+                '<error',
+                '<code', '8', '/code',
+                '<file', 'preg:/[^<]+/', '/file',
+                '<line', '' . ((int)__LINE__ - 9), '/line',
+                'preg:/Undefined variable:\s+foo/',
+                '/error',
+            ];
+            $this->assertHtml($expected, $result, true);
+        });
     }
 
     /**
@@ -348,24 +369,26 @@ class DebuggerTest extends TestCase
      */
     public function testAddFormatCallback(): void
     {
-        Debugger::addFormat('callback', ['callback' => [$this, 'customFormat']]);
-        Debugger::setOutputFormat('callback');
+        $this->deprecated(function () {
+            Debugger::addFormat('callback', ['callback' => [$this, 'customFormat']]);
+            Debugger::setOutputFormat('callback');
 
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $debugger->outputError([
-            'error' => 'Notice',
-            'code' => E_NOTICE,
-            'level' => E_NOTICE,
-            'description' => 'Undefined variable $foo',
-            'file' => __FILE__,
-            'line' => __LINE__,
-        ]);
-        $result = ob_get_clean();
-        $this->assertStringContainsString('Notice: I eated an error', $result);
-        $this->assertStringContainsString('DebuggerTest.php', $result);
+            ob_start();
+            $debugger = Debugger::getInstance();
+            $debugger->outputError([
+                'error' => 'Notice',
+                'code' => E_NOTICE,
+                'level' => E_NOTICE,
+                'description' => 'Undefined variable $foo',
+                'file' => __FILE__,
+                'line' => __LINE__,
+            ]);
+            $result = ob_get_clean();
+            $this->assertStringContainsString('Notice: I eated an error', $result);
+            $this->assertStringContainsString('DebuggerTest.php', $result);
 
-        Debugger::setOutputFormat('js');
+            Debugger::setOutputFormat('js');
+        });
     }
 
     /**
