@@ -29,6 +29,7 @@ use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
@@ -53,6 +54,7 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
     ContainerApplicationInterface,
+    EventDispatcherInterface,
     HttpApplicationInterface,
     PluginApplicationInterface,
     RoutingApplicationInterface

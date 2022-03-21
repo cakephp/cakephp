@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerInterface;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventInterface;
 use Closure;
 use LogicException;
@@ -90,7 +91,7 @@ trait ContainerStubTrait
         $appArgs = $this->_appArgs ?: [CONFIG];
 
         $app = new $appClass(...$appArgs);
-        if (!empty($this->containerServices) && method_exists($app, 'getEventManager')) {
+        if (!empty($this->containerServices) && $app instanceof EventDispatcherInterface) {
             $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
         }
 

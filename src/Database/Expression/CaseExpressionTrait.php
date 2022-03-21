@@ -23,6 +23,7 @@ use Cake\Database\Query;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\ValueBinder;
 use DateTimeInterface;
+use Stringable;
 
 /**
  * Trait that holds shared functionality for case related expressions.
@@ -60,7 +61,7 @@ trait CaseExpressionTrait
             $type = 'datetime';
         } elseif (
             is_object($value) &&
-            method_exists($value, '__toString')
+            $value instanceof Stringable
         ) {
             $type = 'string';
         } elseif (
