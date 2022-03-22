@@ -261,20 +261,14 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      */
     protected function coerceStringToType(string $argument, ReflectionNamedType $type): array|string|float|int|bool|null
     {
-        switch ($type->getName()) {
-            case 'string':
-                return $argument;
-            case 'float':
-                return is_numeric($argument) ? (float)$argument : null;
-            case 'int':
-                return ctype_digit($argument) ? (int)$argument : null;
-            case 'bool':
-                return $argument === '0' ? false : ($argument === '1' ? true : null);
-            case 'array':
-                return $argument === '' ? [] : explode(',', $argument);
-        }
-
-        return null;
+        return match ($type->getName()) {
+            'string' => $argument,
+            'float' => is_numeric($argument) ? (float)$argument : null,
+            'int' => ctype_digit($argument) ? (int)$argument : null,
+            'bool' => $argument === '0' ? false : ($argument === '1' ? true : null),
+            'array' => $argument === '' ? [] : explode(',', $argument),
+            default => null,
+        };
     }
 
     /**

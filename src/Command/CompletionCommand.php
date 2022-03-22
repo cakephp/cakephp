@@ -97,21 +97,13 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $mode = $args->getArgument('mode');
-        switch ($mode) {
-            case 'commands':
-                return $this->getCommands($args, $io);
-            case 'subcommands':
-                return $this->getSubcommands($args, $io);
-            case 'options':
-                return $this->getOptions($args, $io);
-            case 'fuzzy':
-                return static::CODE_SUCCESS;
-            default:
-                $io->err('Invalid mode chosen.');
-        }
-
-        return static::CODE_SUCCESS;
+        return match ($args->getArgument('mode')) {
+            'commands' => $this->getCommands($args, $io),
+            'subcommands' => $this->getSubcommands($args, $io),
+            'options' => $this->getOptions($args, $io),
+            'fuzzy' => static::CODE_SUCCESS,
+            default => $io->err('Invalid mode chosen.')
+        };
     }
 
     /**

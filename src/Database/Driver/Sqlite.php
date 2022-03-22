@@ -193,20 +193,16 @@ class Sqlite extends Driver
      */
     public function supports(string $feature): bool
     {
-        switch ($feature) {
-            case static::FEATURE_CTE:
-            case static::FEATURE_WINDOW:
-                return version_compare(
-                    $this->version(),
-                    $this->featureVersions[$feature],
-                    '>='
-                );
-
-            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
-                return true;
-        }
-
-        return parent::supports($feature);
+        return match ($feature) {
+            static::FEATURE_CTE,
+            static::FEATURE_WINDOW => version_compare(
+                $this->version(),
+                $this->featureVersions[$feature],
+                '>='
+            ),
+            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS => true,
+            default => parent::supports($feature),
+        };
     }
 
     /**

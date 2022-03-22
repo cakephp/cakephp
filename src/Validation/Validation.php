@@ -25,6 +25,7 @@ use LogicException;
 use NumberFormatter;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
+use UnhandledMatchError;
 
 /**
  * Validation Class. Used for validation of model data
@@ -344,49 +345,19 @@ class Validation
             return false;
         }
 
-        switch ($operator) {
-            case static::COMPARE_GREATER:
-                if ($check1 > $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_LESS:
-                if ($check1 < $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_GREATER_OR_EQUAL:
-                if ($check1 >= $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_LESS_OR_EQUAL:
-                if ($check1 <= $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_EQUAL:
-                if ($check1 == $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_NOT_EQUAL:
-                if ($check1 != $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_SAME:
-                if ($check1 === $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_NOT_SAME:
-                if ($check1 !== $check2) {
-                    return true;
-                }
-                break;
-            default:
-                static::$errors[] = 'You must define a valid $operator parameter for Validation::comparison()';
+        try {
+            return match ($operator) {
+                static::COMPARE_GREATER => $check1 > $check2,
+                static::COMPARE_LESS => $check1 < $check2,
+                static::COMPARE_GREATER_OR_EQUAL => $check1 >= $check2,
+                static::COMPARE_LESS_OR_EQUAL => $check1 <= $check2,
+                static::COMPARE_EQUAL => $check1 == $check2,
+                static::COMPARE_NOT_EQUAL => $check1 != $check2,
+                static::COMPARE_SAME => $check1 === $check2,
+                static::COMPARE_NOT_SAME => $check1 !== $check2,
+            };
+        } catch (UnhandledMatchError) {
+            static::$errors[] = 'You must define a valid $operator parameter for Validation::comparison()';
         }
 
         return false;
