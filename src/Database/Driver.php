@@ -487,14 +487,12 @@ abstract class Driver implements DriverInterface
      */
     public function supports(string $feature): bool
     {
-        switch ($feature) {
-            case static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION:
-            case static::FEATURE_QUOTE:
-            case static::FEATURE_SAVEPOINT:
-                return true;
-        }
-
-        return false;
+        return match ($feature) {
+            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            static::FEATURE_QUOTE,
+            static::FEATURE_SAVEPOINT => true,
+            default => false,
+        };
     }
 
     /**

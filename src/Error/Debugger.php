@@ -688,22 +688,14 @@ class Debugger
             return new ScalarNode($type, $var);
         }
 
-        switch ($type) {
-            case 'float':
-            case 'string':
-            case 'null':
-                return new ScalarNode($type, $var);
-            case 'bool':
-                return new ScalarNode('bool', $var);
-            case 'int':
-                return new ScalarNode('int', $var);
-            case 'array':
-                return static::exportArray($var, $context->withAddedDepth());
-            case 'unknown':
-                return new SpecialNode('(unknown)');
-            default:
-                return static::exportObject($var, $context->withAddedDepth());
-        }
+        return match ($type) {
+            'float', 'string', 'null' => new ScalarNode($type, $var),
+            'bool' => new ScalarNode('bool', $var),
+            'int' => new ScalarNode('int', $var),
+            'array' => static::exportArray($var, $context->withAddedDepth()),
+            'unknown' => new SpecialNode('(unknown)'),
+            default => static::exportObject($var, $context->withAddedDepth()),
+        };
     }
 
     /**
