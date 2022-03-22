@@ -1957,7 +1957,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['video' => ['src' => 'files/video.webm'], 'Your browser does not support the HTML5 Video element.', '/video'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->media('video.webm', ['autoload', 'muted' => 'muted']);
+        $result = $this->Html->media('video.webm', ['autoload' => true, 'muted' => 'muted']);
         $expected = [
             'video' => [
                 'src' => 'files/video.webm',

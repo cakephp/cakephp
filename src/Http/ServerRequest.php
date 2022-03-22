@@ -940,6 +940,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $new = clone $this;
 
+        /** @psalm-suppress DocblockTypeContradiction */
         if (
             !is_string($method) ||
             !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)

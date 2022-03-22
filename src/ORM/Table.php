@@ -2043,6 +2043,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $id = (array)$this->_newId($primary) + $keys;
 
         // Generate primary keys preferring values in $data.
+        /** @psalm-suppress RedundantConditionGivenDocblockType */
         $primary = array_combine($primary, $id) ?: [];
         $primary = array_intersect_key($data, $primary) + $primary;
 

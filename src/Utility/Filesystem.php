@@ -58,6 +58,7 @@ class Filesystem
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
+        /** @psalm-suppress ArgumentTypeCoercion */
         $directory = new FilesystemIterator($path, $flags);
 
         if ($filter === null) {
@@ -82,8 +83,10 @@ class Filesystem
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
+        /** @psalm-suppress ArgumentTypeCoercion */
         $directory = new RecursiveDirectoryIterator($path, $flags);
 
+        /** @psalm-suppress InvalidArgument */
         $dirFilter = new RecursiveCallbackFilterIterator(
             $directory,
             function (SplFileInfo $current) {
@@ -111,10 +114,10 @@ class Filesystem
      * Wrap iterator in additional filtering iterator.
      *
      * @param \Iterator $iterator Iterator
-     * @param \Closure|string|null $filter Regex string or callback.
+     * @param \Closure|string $filter Regex string or callback.
      * @return \Iterator
      */
-    protected function filterIterator(Iterator $iterator, Closure|string|null $filter): Iterator
+    protected function filterIterator(Iterator $iterator, Closure|string $filter): Iterator
     {
         if (is_string($filter)) {
             return new RegexIterator($iterator, $filter);

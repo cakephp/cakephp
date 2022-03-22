@@ -187,6 +187,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         if ($errorOccured && isset($controller->RequestHandler)) {
             try {
                 $event = new Event('Controller.startup', $controller);
+                /** @psalm-suppress PossiblyUndefinedMethod */
                 $controller->RequestHandler->startup($event);
             } catch (Throwable) {
             }

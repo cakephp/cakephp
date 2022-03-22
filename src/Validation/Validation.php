@@ -747,12 +747,10 @@ class Validation
                     $check = sprintf('%.1f', $check);
                 }
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
-            } elseif (is_numeric($places)) {
+            } else {
                 $places = '[0-9]{' . $places . '}';
                 $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
-            } else {
-                return false;
             }
         }
 

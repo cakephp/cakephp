@@ -122,6 +122,7 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function when(mixed $when, array|string|null $type = null)
     {
+        /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
         if (
             !(is_array($when) && !empty($when)) &&
             !is_scalar($when) &&
@@ -193,6 +194,7 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function then(mixed $result, ?string $type = null)
     {
+        /** @psalm-suppress DocblockTypeContradiction */
         if (
             $result !== null &&
             !is_scalar($result) &&
