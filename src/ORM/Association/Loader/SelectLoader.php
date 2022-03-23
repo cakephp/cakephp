@@ -244,6 +244,10 @@ class SelectLoader
      */
     protected function _assertFieldsPresent(Query $fetchQuery, array $key): void
     {
+        if ($fetchQuery->isAutoFieldsEnabled()) {
+            return;
+        }
+
         $select = $fetchQuery->aliasFields($fetchQuery->clause('select'));
         if (empty($select)) {
             return;

@@ -1234,10 +1234,17 @@ class PaginatorHelper extends Helper
      */
     public function limitControl(array $limits = [], ?int $default = null, array $options = []): string
     {
-        $out = $this->Form->create(null, ['type' => 'get']);
+        $model = $options['model'] ?? $this->defaultModel();
+        unset($options['model']);
+
+        $params = $this->params($model);
+        $scope = '';
+        if (!empty($params['scope'])) {
+            $scope = $params['scope'] . '.';
+        }
 
         if (empty($default)) {
-            $default = $this->param('perPage');
+            $default = $params['perPage'] ?? 0;
         }
 
         if (empty($limits)) {
@@ -1247,15 +1254,15 @@ class PaginatorHelper extends Helper
                 '100' => '100',
             ];
         }
-
-        $out .= $this->Form->control('limit', $options + [
-                'type' => 'select',
-                'label' => __('View'),
-                'default' => $default,
-                'value' => $this->_View->getRequest()->getQuery('limit'),
-                'options' => $limits,
-                'onChange' => 'this.form.submit()',
-            ]);
+        $out = $this->Form->create(null, ['type' => 'get']);
+        $out .= $this->Form->control($scope . 'limit', $options + [
+            'type' => 'select',
+            'label' => __('View'),
+            'default' => $default,
+            'value' => $this->_View->getRequest()->getQuery('limit'),
+            'options' => $limits,
+            'onChange' => 'this.form.submit()',
+        ]);
         $out .= $this->Form->end();
 
         return $out;
