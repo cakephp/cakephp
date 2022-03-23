@@ -14,13 +14,13 @@ declare(strict_types=1);
  * @since         3.9.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Datasource;
+namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paginator;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\Paginator;
 use Cake\Datasource\RepositoryInterface;
 
 trait PaginatorTestTrait
