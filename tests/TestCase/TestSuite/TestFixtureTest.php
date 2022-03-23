@@ -22,7 +22,9 @@ use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\Test\Fixture\ArticlesFixture;
+use Cake\Test\Fixture\PostsFixture;
 use Cake\TestSuite\TestCase;
+use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\LettersFixture;
 
 /**
@@ -135,6 +137,26 @@ class TestFixtureTest extends TestCase
         $fixtureSchema = $fixture->getTableSchema();
         $this->assertSame(['id', 'letter', 'complex_field'], $fixtureSchema->columns());
         $this->assertSame('json', $fixtureSchema->getColumnType('complex_field'));
+    }
+
+    /**
+     * test init with other tables used in initialize()
+     *
+     * The FeaturedTagsTable uses PostsTable, then when PostsFixture
+     * reflects schema it should not raise an error.
+     */
+    public function testInitInitializeUsesRegistry(): void
+    {
+        $this->setAppNamespace();
+
+        $fixture = new FeaturedTagsFixture();
+
+        $posts = new PostsFixture();
+        $posts->fields = [];
+        $posts->init();
+
+        $expected = ['tag_id', 'priority'];
+        $this->assertSame($expected, $fixture->getTableSchema()->columns());
     }
 
     /**

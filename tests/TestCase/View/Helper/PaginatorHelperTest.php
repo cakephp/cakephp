@@ -3265,6 +3265,7 @@ class PaginatorHelperTest extends TestCase
             'params' => [
                 'plugin' => null, 'controller' => 'Batches', 'action' => 'index', 'pass' => [],
             ],
+            'query' => ['owner' => 'billy', 'expected' => 1],
             'base' => '',
             'webroot' => '/',
         ]);
@@ -3339,6 +3340,59 @@ class PaginatorHelperTest extends TestCase
             '/div',
             '/form',
         ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
+     * test the limitControl() method with model option
+     */
+    public function testLimitControlModelOption(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'Accounts', 'action' => 'index', 'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
+            'Articles' => [
+                'current' => 9,
+                'count' => 62,
+                'prevPage' => false,
+                'nextPage' => true,
+                'pageCount' => 7,
+                'sort' => 'date',
+                'direction' => 'asc',
+                'page' => 1,
+                'scope' => 'article',
+            ],
+        ]));
+        $out = $this->Paginator->limitControl([25 => 25, 50 => 50], null, ['model' => 'Articles']);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'article-limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'article[limit]', 'id' => 'article-limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '25']],
+            '25',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+
+        $this->Paginator->options(['model' => 'Articles']);
+        $out = $this->Paginator->limitControl([25 => 25, 50 => 50]);
         $this->assertHtml($expected, $out);
     }
 
