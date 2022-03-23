@@ -96,7 +96,7 @@ class ValidatorTest extends TestCase
         $result = $validator->field('email')->rule('notBlank')->get('rule');
         $this->assertSame('notBlank', $result);
 
-        $rule = new ValidationRule();
+        $rule = new ValidationRule([]);
         $validator->add('field', 'myrule', $rule);
         $result = $validator->field('field')->rule('myrule');
         $this->assertSame($rule, $result);

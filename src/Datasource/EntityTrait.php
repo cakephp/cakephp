@@ -235,6 +235,7 @@ trait EntityTrait
         $options += ['setter' => true, 'guard' => $guard];
 
         foreach ($field as $name => $value) {
+            /** @psalm-suppress RedundantCastGivenDocblockType */
             $name = (string)$name;
             if ($options['guard'] === true && !$this->isAccessible($name)) {
                 continue;

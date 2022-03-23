@@ -44,6 +44,7 @@ class StringTemplate
         'allowfullscreen' => true,
         'async' => true,
         'autofocus' => true,
+        'autoload' => true,
         'autoplay' => true,
         'checked' => true,
         'compact' => true,
@@ -296,7 +297,7 @@ class StringTemplate
 
         foreach ($options as $key => $value) {
             if (!isset($exclude[$key]) && $value !== false && $value !== null) {
-                $attributes[] = $this->_formatAttribute((string)$key, $value, $escape);
+                $attributes[] = $this->_formatAttribute($key, $value, $escape);
             }
         }
         $out = trim(implode(' ', $attributes));

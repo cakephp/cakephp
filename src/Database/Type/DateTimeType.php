@@ -334,7 +334,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                     $dateTime = $this->_parseValue($value);
                 }
 
-                /** @var \Datetime|\DateTimeImmutable $dateTime */
+                /** @var \Datetime|\DateTimeImmutable|null $dateTime */
                 if ($dateTime !== null) {
                     $dateTime = $dateTime->setTimezone($this->defaultTimezone);
                 }

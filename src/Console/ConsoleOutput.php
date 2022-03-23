@@ -350,6 +350,7 @@ class ConsoleOutput
      */
     public function __destruct()
     {
+        /** @psalm-suppress RedundantCondition */
         if (is_resource($this->_output)) {
             fclose($this->_output);
         }
