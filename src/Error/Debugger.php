@@ -826,9 +826,12 @@ class Debugger
      * Get the output format for Debugger error rendering.
      *
      * @return string Returns the current format when getting.
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function getOutputFormat(): string
     {
+        deprecationWarning('Debugger::getOutputFormat() is deprecated.');
+
         return Debugger::getInstance()->_outputFormat;
     }
 
@@ -838,9 +841,11 @@ class Debugger
      * @param string $format The format you want errors to be output as.
      * @return void
      * @throws \InvalidArgumentException When choosing a format that doesn't exist.
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function setOutputFormat(string $format): void
     {
+        deprecationWarning('Debugger::setOutputFormat() is deprecated.');
         $self = Debugger::getInstance();
 
         if (!isset($self->_templates[$format])) {
@@ -891,9 +896,11 @@ class Debugger
      *    straight HTML output, or 'txt' for unformatted text.
      * @param array $strings Template strings, or a callback to be used for the output format.
      * @return array The resulting format string set.
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function addFormat(string $format, array $strings): array
     {
+        deprecationWarning('Debugger::addFormat() is deprecated.');
         $self = Debugger::getInstance();
         if (isset($self->_templates[$format])) {
             if (isset($strings['links'])) {
@@ -918,9 +925,11 @@ class Debugger
      * @param string $name The alias for the the renderer.
      * @param class-string<\Cake\Error\ErrorRendererInterface> $class The classname of the renderer to use.
      * @return void
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function addRenderer(string $name, string $class): void
     {
+        deprecationWarning('Debugger::addRenderer() is deprecated.');
         if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 'Invalid renderer class. $class must implement ' . ErrorRendererInterface::class
@@ -935,6 +944,7 @@ class Debugger
      *
      * @param array $data Data to output.
      * @return void
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public function outputError(array $data): void
     {
