@@ -141,16 +141,6 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^Cannot unset offset 'args' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
-			count: 1
-			path: src/Error/Debugger.php
-
-		-
-			message: "#^Cannot unset offset 'object' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
-			count: 1
-			path: src/Error/Debugger.php
-
-		-
 			message: "#^PHPDoc tag @param for parameter \\$subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Event/Event.php
