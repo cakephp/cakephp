@@ -31,12 +31,9 @@ use Cake\Error\Debug\ReferenceNode;
 use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
-use Cake\Error\Renderer\HtmlErrorRenderer;
-use Cake\Error\Renderer\TextErrorRenderer;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Text;
 use Closure;
 use Exception;
 use InvalidArgumentException;
@@ -66,66 +63,6 @@ class Debugger
         'outputMask' => [],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
-    ];
-
-    /**
-     * The current output format.
-     *
-     * @var string
-     */
-    protected string $_outputFormat = 'js';
-
-    /**
-     * Templates used when generating trace or error strings. Can be global or indexed by the format
-     * value used in $_outputFormat.
-     *
-     * @var array<string, array<string, mixed>>
-     */
-    protected array $_templates = [
-        'log' => [
-            // These templates are not actually used, as Debugger::log() is called instead.
-            'trace' => '{:reference} - {:path}, line {:line}',
-            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]',
-        ],
-        'js' => [
-            'error' => '',
-            'info' => '',
-            'trace' => '<pre class="stack-trace">{:trace}</pre>',
-            'code' => '',
-            'context' => '',
-            'links' => [],
-            'escapeContext' => true,
-        ],
-        'html' => [
-            'trace' => '<pre class="cake-error trace"><b>Trace</b> <p>{:trace}</p></pre>',
-            'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>',
-            'escapeContext' => true,
-        ],
-        'txt' => [
-            'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
-            'code' => '',
-            'info' => '',
-        ],
-        'base' => [
-            'traceLine' => '{:reference} - {:path}, line {:line}',
-            'trace' => "Trace:\n{:trace}\n",
-            'context' => "Context:\n{:context}\n",
-        ],
-    ];
-
-    /**
-     * Mapping for error renderers.
-     *
-     * Error renderers are replacing output formatting with
-     * an object based system. Having Debugger handle and render errors
-     * will be deprecated and the new ErrorTrap system should be used instead.
-     *
-     * @var array<string, class-string>
-     */
-    protected array $renderers = [
-        'txt' => TextErrorRenderer::class,
-        // The html alias ycurrently uses no JS and will be deprecated.
-        'js' => HtmlErrorRenderer::class,
     ];
 
     /**
@@ -165,47 +102,6 @@ class Debugger
 
         $config = array_intersect_key((array)Configure::read('Debugger'), $this->_defaultConfig);
         $this->setConfig($config);
-
-        $e = '<pre class="cake-error">';
-        $e .= '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-trace\')';
-        $e .= '.style.display = (document.getElementById(\'{:id}-trace\').style.display == ';
-        $e .= '\'none\' ? \'\' : \'none\');"><b>{:error}</b> ({:code})</a>: {:description} ';
-        $e .= '[<b>{:path}</b>, line <b>{:line}</b>]';
-
-        $e .= '<div id="{:id}-trace" class="cake-stack-trace" style="display: none;">';
-        $e .= '{:links}{:info}</div>';
-        $e .= '</pre>';
-        $this->_templates['js']['error'] = $e;
-
-        $t = '<div id="{:id}-trace" class="cake-stack-trace" style="display: none;">';
-        $t .= '{:context}{:code}{:trace}</div>';
-        $this->_templates['js']['info'] = $t;
-
-        $links = [];
-        $link = '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-code\')';
-        $link .= '.style.display = (document.getElementById(\'{:id}-code\').style.display == ';
-        $link .= '\'none\' ? \'\' : \'none\')">Code</a>';
-        $links['code'] = $link;
-
-        $link = '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-context\')';
-        $link .= '.style.display = (document.getElementById(\'{:id}-context\').style.display == ';
-        $link .= '\'none\' ? \'\' : \'none\')">Context</a>';
-        $links['context'] = $link;
-
-        $this->_templates['js']['links'] = $links;
-
-        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context cake-debug" ';
-        $this->_templates['js']['context'] .= 'style="display: none;">{:context}</pre>';
-
-        $this->_templates['js']['code'] = '<pre id="{:id}-code" class="cake-code-dump" ';
-        $this->_templates['js']['code'] .= 'style="display: none;">{:code}</pre>';
-
-        $e = '<pre class="cake-error"><b>{:error}</b> ({:code}) : {:description} ';
-        $e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
-        $this->_templates['html']['error'] = $e;
-
-        $this->_templates['html']['context'] = '<pre class="cake-context cake-debug"><b>Context</b> ';
-        $this->_templates['html']['context'] .= '<p>{:context}</p></pre>';
     }
 
     /**
@@ -395,7 +291,7 @@ class Debugger
      * ### Options
      *
      * - `depth` - The number of stack frames to return. Defaults to 999
-     * - `format` - The format you want the return. Defaults to the currently selected format. If
+     * - `format` - The format you want the return. Defaults to 'text'. If
      *    format is 'array' or 'points' the return will be an array.
      * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
      *   will be displayed.
@@ -414,7 +310,7 @@ class Debugger
         $self = Debugger::getInstance();
         $defaults = [
             'depth' => 999,
-            'format' => $self->_outputFormat,
+            'format' => 'text',
             'args' => false,
             'start' => 0,
             'scope' => null,
@@ -460,16 +356,14 @@ class Debugger
                 $back[] = ['file' => $trace['file'], 'line' => $trace['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
                 $back[] = $trace;
+            } elseif ($options['format'] === 'text') {
+                $path = static::trimPath($trace['file']);
+                $reference = $reference;
+                $back[] = sprintf('%s - %s, line %d', $reference, $path, $trace['line']);
             } else {
-                if (isset($self->_templates[$options['format']]['traceLine'])) {
-                    $tpl = $self->_templates[$options['format']]['traceLine'];
-                } else {
-                    $tpl = $self->_templates['base']['traceLine'];
-                }
-                $trace['path'] = static::trimPath($trace['file']);
-                $trace['reference'] = $reference;
-                unset($trace['object'], $trace['args']);
-                $back[] = Text::insert($tpl, $trace, ['before' => '{:', 'after' => '}']);
+                throw new InvalidArgumentException(
+                    'Invalid trace format chosen. Must be one of `array`, `points` or `text`.'
+                );
             }
         }
 
@@ -820,223 +714,6 @@ class Debugger
         }
 
         return $node;
-    }
-
-    /**
-     * Get the output format for Debugger error rendering.
-     *
-     * @return string Returns the current format when getting.
-     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
-     */
-    public static function getOutputFormat(): string
-    {
-        deprecationWarning('5.0.0', 'Debugger::getOutputFormat() is deprecated.');
-
-        return Debugger::getInstance()->_outputFormat;
-    }
-
-    /**
-     * Set the output format for Debugger error rendering.
-     *
-     * @param string $format The format you want errors to be output as.
-     * @return void
-     * @throws \InvalidArgumentException When choosing a format that doesn't exist.
-     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
-     */
-    public static function setOutputFormat(string $format): void
-    {
-        deprecationWarning('5.0.0', 'Debugger::setOutputFormat() is deprecated.');
-        $self = Debugger::getInstance();
-
-        if (!isset($self->_templates[$format])) {
-            throw new InvalidArgumentException('Invalid Debugger output format.');
-        }
-        $self->_outputFormat = $format;
-    }
-
-    /**
-     * Add an output format or update a format in Debugger.
-     *
-     * ```
-     * Debugger::addFormat('custom', $data);
-     * ```
-     *
-     * Where $data is an array of strings that use Text::insert() variable
-     * replacement. The template vars should be in a `{:id}` style.
-     * An error formatter can have the following keys:
-     *
-     * - 'error' - Used for the container for the error message. Gets the following template
-     *   variables: `id`, `error`, `code`, `description`, `path`, `line`, `links`, `info`
-     * - 'info' - A combination of `code`, `context` and `trace`. Will be set with
-     *   the contents of the other template keys.
-     * - 'trace' - The container for a stack trace. Gets the following template
-     *   variables: `trace`
-     * - 'context' - The container element for the context variables.
-     *   Gets the following templates: `id`, `context`
-     * - 'links' - An array of HTML links that are used for creating links to other resources.
-     *   Typically this is used to create javascript links to open other sections.
-     *   Link keys, are: `code`, `context`, `help`. See the JS output format for an
-     *   example.
-     * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
-     *   template variables: `reference`, `path`, `line`
-     *
-     * Alternatively if you want to use a custom callback to do all the formatting, you can use
-     * the callback key, and provide a callable:
-     *
-     * ```
-     * Debugger::addFormat('custom', ['callback' => [$foo, 'outputError']];
-     * ```
-     *
-     * The callback can expect two parameters. The first is an array of all
-     * the error data. The second contains the formatted strings generated using
-     * the other template strings. Keys like `info`, `links`, `code`, `context` and `trace`
-     * will be present depending on the other templates in the format type.
-     *
-     * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
-     *    straight HTML output, or 'txt' for unformatted text.
-     * @param array $strings Template strings, or a callback to be used for the output format.
-     * @return array The resulting format string set.
-     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
-     */
-    public static function addFormat(string $format, array $strings): array
-    {
-        deprecationWarning('5.0.0', 'Debugger::addFormat() is deprecated.');
-        $self = Debugger::getInstance();
-        if (isset($self->_templates[$format])) {
-            if (isset($strings['links'])) {
-                $self->_templates[$format]['links'] = array_merge(
-                    $self->_templates[$format]['links'],
-                    $strings['links']
-                );
-                unset($strings['links']);
-            }
-            $self->_templates[$format] = $strings + $self->_templates[$format];
-        } else {
-            $self->_templates[$format] = $strings;
-        }
-        unset($self->renderers[$format]);
-
-        return $self->_templates[$format];
-    }
-
-    /**
-     * Add a renderer to the current instance.
-     *
-     * @param string $name The alias for the the renderer.
-     * @param class-string<\Cake\Error\ErrorRendererInterface> $class The classname of the renderer to use.
-     * @return void
-     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
-     */
-    public static function addRenderer(string $name, string $class): void
-    {
-        deprecationWarning('5.0.0', 'Debugger::addRenderer() is deprecated.');
-        if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
-            throw new InvalidArgumentException(
-                'Invalid renderer class. $class must implement ' . ErrorRendererInterface::class
-            );
-        }
-        $self = Debugger::getInstance();
-        $self->renderers[$name] = $class;
-    }
-
-    /**
-     * Takes a processed array of data from an error and displays it in the chosen format.
-     *
-     * @param array $data Data to output.
-     * @return void
-     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
-     */
-    public function outputError(array $data): void
-    {
-        deprecationWarning('5.0.0', 'Debugger::outputError() is deprecated.');
-        $defaults = [
-            'level' => 0,
-            'error' => 0,
-            'code' => 0,
-            'description' => '',
-            'file' => '',
-            'line' => 0,
-            'context' => [],
-            'start' => 2,
-        ];
-        $data += $defaults;
-
-        $outputFormat = $this->_outputFormat;
-        if (isset($this->renderers[$outputFormat])) {
-            /** @var array $trace */
-            $trace = static::trace(['start' => $data['start'], 'format' => 'points']);
-            $error = new PhpError($data['code'], $data['description'], $data['file'], $data['line'], $trace);
-            /** @var \Cake\Error\ErrorRendererInterface $renderer */
-            $renderer = new $this->renderers[$outputFormat]();
-            echo $renderer->render($error, Configure::read('debug'));
-
-            return;
-        }
-
-        $files = static::trace(['start' => $data['start'], 'format' => 'points']);
-        $code = '';
-        $file = null;
-        if (isset($files[0]['file'])) {
-            $file = $files[0];
-        } elseif (isset($files[1]['file'])) {
-            $file = $files[1];
-        }
-        if ($file) {
-            $code = static::excerpt($file['file'], $file['line'], 1);
-        }
-        $trace = static::trace(['start' => $data['start'], 'depth' => '20']);
-        $insertOpts = ['before' => '{:', 'after' => '}'];
-        $context = [];
-        $links = [];
-        $info = '';
-
-        foreach ((array)$data['context'] as $var => $value) {
-            $context[] = "\${$var} = " . static::exportVar($value, 3);
-        }
-
-        switch ($this->_outputFormat) {
-            case false:
-                $this->_data[] = compact('context', 'trace') + $data;
-
-                return;
-            case 'log':
-                static::log(compact('context', 'trace') + $data);
-
-                return;
-        }
-
-        $data['trace'] = $trace;
-        $data['id'] = 'cakeErr' . uniqid();
-        $tpl = $this->_templates[$outputFormat] + $this->_templates['base'];
-
-        if (isset($tpl['links'])) {
-            foreach ($tpl['links'] as $key => $val) {
-                $links[$key] = Text::insert($val, $data, $insertOpts);
-            }
-        }
-
-        if (!empty($tpl['escapeContext'])) {
-            $data['description'] = h($data['description']);
-        }
-
-        $infoData = compact('code', 'context', 'trace');
-        foreach ($infoData as $key => $value) {
-            if (empty($value) || !isset($tpl[$key])) {
-                continue;
-            }
-            if (is_array($value)) {
-                $value = implode("\n", $value);
-            }
-            $info .= Text::insert($tpl[$key], [$key => $value] + $data, $insertOpts);
-        }
-        $links = implode(' ', $links);
-
-        if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
-            $tpl['callback']($data, compact('links', 'info'));
-
-            return;
-        }
-        echo Text::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
     }
 
     /**
