@@ -288,7 +288,7 @@ class DebuggerTest extends TestCase
     public function testOutputErrorLog(): void
     {
         $this->deprecated(function () {
-        Debugger::setOutputFormat('log');
+            Debugger::setOutputFormat('log');
             Log::setConfig('array', ['engine' => 'Array']);
 
             ob_start();

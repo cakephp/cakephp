@@ -840,6 +840,7 @@ class Debugger
     public static function getOutputFormat(): string
     {
         deprecationWarning('Debugger::getOutputFormat() is deprecated.');
+
         return Debugger::getInstance()->_outputFormat;
     }
 
