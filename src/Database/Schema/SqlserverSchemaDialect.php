@@ -388,18 +388,13 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     protected function _convertOnClause(string $clause): string
     {
-        switch ($clause) {
-            case 'NO_ACTION':
-                return TableSchema::ACTION_NO_ACTION;
-            case 'CASCADE':
-                return TableSchema::ACTION_CASCADE;
-            case 'SET_NULL':
-                return TableSchema::ACTION_SET_NULL;
-            case 'SET_DEFAULT':
-                return TableSchema::ACTION_SET_DEFAULT;
-        }
-
-        return TableSchema::ACTION_SET_NULL;
+        return match ($clause) {
+            'NO_ACTION' => TableSchema::ACTION_NO_ACTION,
+            'CASCADE' => TableSchema::ACTION_CASCADE,
+            'SET_NULL' => TableSchema::ACTION_SET_NULL,
+            'SET_DEFAULT' => TableSchema::ACTION_SET_DEFAULT,
+            default => TableSchema::ACTION_SET_NULL,
+        };
     }
 
     /**

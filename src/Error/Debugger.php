@@ -688,22 +688,14 @@ class Debugger
             return new ScalarNode($type, $var);
         }
 
-        switch ($type) {
-            case 'float':
-            case 'string':
-            case 'null':
-                return new ScalarNode($type, $var);
-            case 'bool':
-                return new ScalarNode('bool', $var);
-            case 'int':
-                return new ScalarNode('int', $var);
-            case 'array':
-                return static::exportArray($var, $context->withAddedDepth());
-            case 'unknown':
-                return new SpecialNode('(unknown)');
-            default:
-                return static::exportObject($var, $context->withAddedDepth());
-        }
+        return match ($type) {
+            'float', 'string', 'null' => new ScalarNode($type, $var),
+            'bool' => new ScalarNode('bool', $var),
+            'int' => new ScalarNode('int', $var),
+            'array' => static::exportArray($var, $context->withAddedDepth()),
+            'unknown' => new SpecialNode('(unknown)'),
+            default => static::exportObject($var, $context->withAddedDepth()),
+        };
     }
 
     /**
@@ -834,6 +826,7 @@ class Debugger
      * Get the output format for Debugger error rendering.
      *
      * @return string Returns the current format when getting.
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function getOutputFormat(): string
     {
@@ -848,6 +841,7 @@ class Debugger
      * @param string $format The format you want errors to be output as.
      * @return void
      * @throws \InvalidArgumentException When choosing a format that doesn't exist.
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function setOutputFormat(string $format): void
     {
@@ -902,6 +896,7 @@ class Debugger
      *    straight HTML output, or 'txt' for unformatted text.
      * @param array $strings Template strings, or a callback to be used for the output format.
      * @return array The resulting format string set.
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function addFormat(string $format, array $strings): array
     {
@@ -930,6 +925,7 @@ class Debugger
      * @param string $name The alias for the the renderer.
      * @param class-string<\Cake\Error\ErrorRendererInterface> $class The classname of the renderer to use.
      * @return void
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public static function addRenderer(string $name, string $class): void
     {
@@ -948,6 +944,7 @@ class Debugger
      *
      * @param array $data Data to output.
      * @return void
+     * @deprecated 4.4.0 Update your application so use ErrorTrap instead.
      */
     public function outputError(array $data): void
     {

@@ -40,6 +40,52 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Database/Connection.php">
+    <DeprecatedMethod occurrences="1">
+      <code>supportsDynamicConstraints</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Database/Driver.php">
+    <InvalidScalarArgument occurrences="2">
+      <code>$value</code>
+      <code>$value</code>
+    </InvalidScalarArgument>
+  </file>
+  <file src="src/Database/Expression/QueryExpression.php">
+    <DeprecatedClass occurrences="1">
+      <code>new CaseExpression($conditions, $values, $types)</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Database/Schema/MysqlSchemaDialect.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$_driver</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Database/Statement/PDOStatement.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$_statement</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Database/Type/DateTimeType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Time::class</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Database/Type/DateType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Date::class</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Datasource/ModelAwareTrait.php">
+    <DeprecatedClass occurrences="1">
+      <code>$this</code>
+    </DeprecatedClass>
+    <DeprecatedProperty occurrences="3">
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+  </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>

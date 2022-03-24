@@ -100,18 +100,14 @@ class Number
     {
         $size = (int)$size;
 
-        switch (true) {
-            case $size < 1024:
-                return __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size);
-            case round($size / 1024) < 1024:
-                return __d('cake', '{0,number,#,###.##} KB', $size / 1024);
-            case round($size / 1024 / 1024, 2) < 1024:
-                return __d('cake', '{0,number,#,###.##} MB', $size / 1024 / 1024);
-            case round($size / 1024 / 1024 / 1024, 2) < 1024:
-                return __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024);
-            default:
-                return __d('cake', '{0,number,#,###.##} TB', $size / 1024 / 1024 / 1024 / 1024);
-        }
+        return match (true) {
+            $size < 1024 => __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size),
+            round($size / 1024) < 1024 => __d('cake', '{0,number,#,###.##} KB', $size / 1024),
+            round($size / 1024 / 1024, 2) < 1024 => __d('cake', '{0,number,#,###.##} MB', $size / 1024 / 1024),
+            round($size / 1024 / 1024 / 1024, 2) < 1024 =>
+                __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024),
+            default => __d('cake', '{0,number,#,###.##} TB', $size / 1024 / 1024 / 1024 / 1024),
+        };
     }
 
     /**

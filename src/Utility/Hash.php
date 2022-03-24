@@ -208,16 +208,12 @@ class Hash
      */
     protected static function _matchToken(mixed $key, string $token): bool
     {
-        switch ($token) {
-            case '{n}':
-                return is_numeric($key);
-            case '{s}':
-                return is_string($key);
-            case '{*}':
-                return true;
-            default:
-                return is_numeric($token) ? ($key == $token) : $key === $token;
-        }
+        return match ($token) {
+            '{n}' => is_numeric($key),
+            '{s}' => is_string($key),
+            '{*}' => true,
+            default => is_numeric($token) ? ($key == $token) : $key === $token,
+        };
     }
 
     /**

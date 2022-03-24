@@ -260,17 +260,13 @@ class Sqlserver extends Driver
      */
     public function supports(string $feature): bool
     {
-        switch ($feature) {
-            case static::FEATURE_CTE:
-            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
-            case static::FEATURE_WINDOW:
-                return true;
-
-            case static::FEATURE_QUOTE:
-                return $this->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
-        }
-
-        return parent::supports($feature);
+        return match ($feature) {
+            static::FEATURE_CTE,
+            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS,
+            static::FEATURE_WINDOW => true,
+            static::FEATURE_QUOTE => $this->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc',
+            default => parent::supports($feature),
+        };
     }
 
     /**

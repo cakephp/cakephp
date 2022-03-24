@@ -321,6 +321,21 @@ parameters:
 			path: src/TestSuite/TestEmailTransport.php
 
 		-
+			message: "#^Dead catch \\- UnhandledMatchError is never thrown in the try block\\.$#"
+			count: 1
+			path: src/Validation/Validation.php
+
+		-
+			message: "#^Match expression does not handle remaining value\\: string$#"
+			count: 1
+			path: src/Validation/Validation.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Validation/Validation.php
+
+		-
 			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
 			count: 1
 			path: src/View/Cell.php

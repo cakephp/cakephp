@@ -177,7 +177,7 @@ class ResponseEmitter
     protected function emitHeaders(ResponseInterface $response): void
     {
         $cookies = [];
-        if (method_exists($response, 'getCookieCollection')) {
+        if ($response instanceof Response) {
             $cookies = iterator_to_array($response->getCookieCollection());
         }
 

@@ -1225,6 +1225,7 @@ class BelongsToMany extends Association
                 $property = $this->getProperty();
 
                 if (count($inserts)) {
+                    /** @psalm-suppress RedundantConditionGivenDocblockType */
                     $inserted = array_combine(
                         array_keys($inserts),
                         (array)$sourceEntity->get($property)

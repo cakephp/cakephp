@@ -1911,7 +1911,7 @@ class QueryTest extends TestCase
      * Integration test that uses the contain signature that is the same as the
      * matching signature
      */
-    public function testContainSecondSignature(): void
+    public function testContainClosureSignature(): void
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
@@ -1929,6 +1929,21 @@ class QueryTest extends TestCase
             }
         }
         $this->assertEquals([1], array_unique($ids));
+    }
+
+    public function testContainAutoFields(): void
+    {
+        $table = $this->getTableLocator()->get('authors');
+        $table->hasMany('articles');
+        $query = new Query($this->connection, $table);
+        $query
+            ->select()
+            ->contain('articles', function ($q) {
+                return $q->select(['test' => '(SELECT 20)'])
+                    ->enableAutoFields(true);
+            });
+        $results = $query->toArray();
+        $this->assertNotEmpty($results);
     }
 
     /**

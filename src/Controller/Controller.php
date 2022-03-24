@@ -87,8 +87,6 @@ use UnexpectedValueException;
  *
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
- * @property \Cake\Controller\Component\PaginatorComponent $Paginator
- * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @link https://book.cakephp.org/4/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
@@ -435,7 +433,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setRequest(ServerRequest $request)
     {
         $this->request = $request;
-        $this->plugin = $request->getParam('plugin') ?: null;
+        $this->plugin = $request->getParam('plugin');
 
         return $this;
     }
@@ -837,7 +835,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $settings += $this->paginate;
 
-        /** @var class-string<\Cake\Datasource\PaginatorInterface> $paginator */
+        /** @var \Cake\Datasource\PaginatorInterface|class-string<\Cake\Datasource\PaginatorInterface> $paginator */
         $paginator = $settings['paginator'] ?? Paginator::class;
         unset($settings['paginator']);
         if (is_string($paginator)) {
