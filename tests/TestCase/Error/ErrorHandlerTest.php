@@ -111,16 +111,14 @@ class ErrorHandlerTest extends TestCase
     public function testHandleErrorDebugOn(): void
     {
         Configure::write('debug', true);
-        $errorHandler = new ErrorHandler();
-
-        $result = '';
-        $this->deprecated(function () use ($errorHandler, &$result) {
+        $this->deprecated(function () {
+            $errorHandler = new ErrorHandler();
             $errorHandler->register();
 
             ob_start();
             $wrong = $wrong + 1;
-            $result = ob_get_clean();
         });
+        $result = ob_get_clean();
 
         $this->assertMatchesRegularExpression('/<div class="cake-error">/', $result);
         if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
@@ -184,8 +182,8 @@ class ErrorHandlerTest extends TestCase
      */
     public function testErrorMapping(int $error, string $expected): void
     {
-        $errorHandler = new ErrorHandler();
-        $this->deprecated(function () use ($errorHandler, $error, $expected) {
+        $this->deprecated(function () use ($error, $expected) {
+            $errorHandler = new ErrorHandler();
             $errorHandler->register();
 
             ob_start();

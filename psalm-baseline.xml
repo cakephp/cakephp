@@ -209,6 +209,11 @@
       <code>$this-&gt;modelClass</code>
     </DeprecatedProperty>
   </file>
+  <file src="src/Error/ErrorHandler.php">
+    <DeprecatedMethod occurrences="1">
+      <code>outputError</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
