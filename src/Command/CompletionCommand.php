@@ -56,7 +56,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             'commands' => 'Output a list of available commands',
             'subcommands' => 'Output a list of available sub-commands for a command',
             'options' => 'Output a list of available options for a command and possible subcommand.',
-            'fuzzy' => 'Does nothing. Only for backwards compatibility',
         ];
         $modeHelp = '';
         foreach ($modes as $key => $help) {
@@ -101,8 +100,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             'commands' => $this->getCommands($args, $io),
             'subcommands' => $this->getSubcommands($args, $io),
             'options' => $this->getOptions($args, $io),
-            'fuzzy' => static::CODE_SUCCESS,
-            default => $io->err('Invalid mode chosen.')
+            default => static::CODE_ERROR,
         };
     }
 
