@@ -17,9 +17,11 @@ namespace Cake\Test\TestCase\Http\Cookie;
 use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
+use Cake\Http\Cookie\SameSiteEnum;
 use Cake\TestSuite\TestCase;
 use DateTimeInterface;
 use InvalidArgumentException;
+use ValueError;
 
 /**
  * HTTP cookies test.
@@ -148,6 +150,9 @@ class CookieTest extends TestCase
         $this->assertNotSame($new, $cookie, 'Should make a clone');
         $this->assertStringNotContainsString('samesite=Lax', $cookie->toHeaderValue(), 'old instance not modified');
         $this->assertStringContainsString('samesite=Lax', $new->toHeaderValue());
+
+        $new = $cookie->withSameSite(SameSiteEnum::STRICT);
+        $this->assertStringContainsString('samesite=Strict', $new->toHeaderValue());
     }
 
     /**
@@ -155,11 +160,16 @@ class CookieTest extends TestCase
      */
     public function testWithSameSiteException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
+        $this->expectException(ValueError::class);
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie->withSameSite('invalid');
+    }
+
+    public function testGetSameSite(): void
+    {
+        $cookie = new Cookie(name: 'cakephp', value: 'cakephp-rocks', sameSite: 'NONE');
+        $this->assertSame(SameSiteEnum::NONE, $cookie->getSameSite());
     }
 
     /**
@@ -459,8 +469,7 @@ class CookieTest extends TestCase
 
     public function testInvalidSameSiteForDefaults(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
+        $this->expectException(ValueError::class);
 
         Cookie::setDefaults(['samesite' => 'ompalompa']);
         $cookie = new Cookie('cakephp', 'cakephp-rocks');

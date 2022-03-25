@@ -20,6 +20,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
+use ValueError;
 
 /**
  * Cookie object to build a cookie and turn it into a header value
@@ -108,9 +109,9 @@ class Cookie implements CookieInterface
     /**
      * Samesite
      *
-     * @var string|null
+     * @var \Cake\Http\Cookie\SameSiteEnum|null
      */
-    protected ?string $sameSite = null;
+    protected ?SameSiteEnum $sameSite = null;
 
     /**
      * Default attributes for a cookie.
@@ -142,7 +143,7 @@ class Cookie implements CookieInterface
      * @param string|null $domain Domain
      * @param bool|null $secure Is secure
      * @param bool|null $httpOnly HTTP Only
-     * @param string|null $sameSite Samesite
+     * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite Samesite
      */
     public function __construct(
         string $name,
@@ -152,7 +153,7 @@ class Cookie implements CookieInterface
         ?string $domain = null,
         ?bool $secure = null,
         ?bool $httpOnly = null,
-        ?string $sameSite = null
+        SameSiteEnum|string|null $sameSite = null
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -163,12 +164,7 @@ class Cookie implements CookieInterface
         $this->httpOnly = $httpOnly ?? static::$defaults['httponly'];
         $this->path = $path ?? static::$defaults['path'];
         $this->secure = $secure ?? static::$defaults['secure'];
-        if ($sameSite === null) {
-            $this->sameSite = static::$defaults['samesite'];
-        } else {
-            $this->validateSameSiteValue($sameSite);
-            $this->sameSite = $sameSite;
-        }
+        $this->sameSite = static::resolveSameSiteEnum($sameSite ?? static::$defaults['samesite']);
 
         if ($expiresAt) {
             /** @psalm-suppress UndefinedInterfaceMethod */
@@ -201,7 +197,7 @@ class Cookie implements CookieInterface
             $options['expires'] = static::dateTimeInstance($options['expires']);
         }
         if (isset($options['samesite'])) {
-            static::validateSameSiteValue($options['samesite']);
+            $options['samesite'] = static::resolveSameSiteEnum($options['samesite']);
         }
 
         static::$defaults = $options + static::$defaults;
@@ -303,12 +299,18 @@ class Cookie implements CookieInterface
 
         // Ignore invalid value when parsing headers
         // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
-        if (isset($data['samesite']) && !in_array($data['samesite'], CookieInterface::SAMESITE_VALUES, true)) {
-            unset($data['samesite']);
+        if (isset($data['samesite'])) {
+            try {
+                $data['samesite'] = static::resolveSameSiteEnum($data['samesite']);
+            } catch (ValueError) {
+                unset($data['samesite']);
+            }
         }
 
-        $name = (string)$data['name'];
-        $value = (string)$data['value'];
+        /** @var string $name */
+        $name = $data['name'];
+        /** @var string $value */
+        $value = $data['value'];
         unset($data['name'], $data['value']);
 
         return Cookie::create(
@@ -344,7 +346,7 @@ class Cookie implements CookieInterface
             $headerValue[] = sprintf('domain=%s', $this->domain);
         }
         if ($this->sameSite) {
-            $headerValue[] = sprintf('samesite=%s', $this->sameSite);
+            $headerValue[] = sprintf('samesite=%s', $this->sameSite->value);
         }
         if ($this->secure) {
             $headerValue[] = 'secure';
@@ -608,7 +610,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getSameSite(): ?string
+    public function getSameSite(): ?SameSiteEnum
     {
         return $this->sameSite;
     }
@@ -616,32 +618,27 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withSameSite(?string $sameSite): static
+    public function withSameSite(SameSiteEnum|string|null $sameSite): static
     {
-        if ($sameSite !== null) {
-            $this->validateSameSiteValue($sameSite);
-        }
-
         $new = clone $this;
-        $new->sameSite = $sameSite;
+        $new->sameSite = static::resolveSameSiteEnum($sameSite);
 
         return $new;
     }
 
     /**
-     * Check that value passed for SameSite is valid.
+     * Create SameSiteEnum instance.
      *
-     * @param string $sameSite SameSite value
-     * @return void
-     * @throws \InvalidArgumentException
+     * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite SameSite value
+     * @return \Cake\Http\Cookie\SameSiteEnum|null
      */
-    protected static function validateSameSiteValue(string $sameSite): void
+    protected static function resolveSameSiteEnum(SameSiteEnum|string|null $sameSite): ?SameSiteEnum
     {
-        if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
-            throw new InvalidArgumentException(
-                'Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES)
-            );
-        }
+        return match (true) {
+            $sameSite === null => $sameSite,
+            $sameSite instanceof SameSiteEnum => $sameSite,
+            default => SameSiteEnum::from(ucfirst(strtolower($sameSite))),
+        };
     }
 
     /**
@@ -753,7 +750,7 @@ class Cookie implements CookieInterface
         ];
 
         if ($this->sameSite !== null) {
-            $options['samesite'] = $this->sameSite;
+            $options['samesite'] = $this->sameSite->value;
         }
 
         return $options;
