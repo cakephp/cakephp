@@ -13,7 +13,9 @@ parameters:
 	earlyTerminatingMethodCalls:
 		Cake\Console\Shell:
 			- abort
-
+	excludePaths:
+			analyse:
+				- src/Datasource/Paginator.php
 services:
 	-
 		class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension
