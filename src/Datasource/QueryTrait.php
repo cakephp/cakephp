@@ -136,6 +136,7 @@ trait QueryTrait
      * @return \Cake\Datasource\ResultSetInterface
      * @psalm-suppress ImplementedReturnTypeMismatch
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->all();
