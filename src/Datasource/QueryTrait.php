@@ -135,6 +135,7 @@ trait QueryTrait
      *
      * @return \Traversable
      */
+    #[\ReturnTypeWillChange]
     public function getIterator(): Traversable
     {
         return $this->all();
