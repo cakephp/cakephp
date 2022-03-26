@@ -141,6 +141,11 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
+			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			count: 1
+			path: src/Error/Renderer/ConsoleExceptionRenderer.php
+
+		-
 			message: "#^PHPDoc tag @param for parameter \\$subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Event/Event.php
@@ -311,21 +316,6 @@ parameters:
 			path: src/TestSuite/TestEmailTransport.php
 
 		-
-			message: "#^Dead catch \\- UnhandledMatchError is never thrown in the try block\\.$#"
-			count: 1
-			path: src/Validation/Validation.php
-
-		-
-			message: "#^Match expression does not handle remaining value\\: string$#"
-			count: 1
-			path: src/Validation/Validation.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Validation/Validation.php
-
-		-
 			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
 			count: 1
 			path: src/View/Cell.php
@@ -344,9 +334,4 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
-
-		-
-			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
-			count: 1
-			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
