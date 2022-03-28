@@ -18,9 +18,6 @@ namespace Cake\Core;
 
 /**
  * Interface for applications that configure and use a dependency injection container.
- *
- * @experimental This interface is not final and can have additional
- *   methods and parameters added in future minor releases.
  */
 interface ContainerApplicationInterface
 {

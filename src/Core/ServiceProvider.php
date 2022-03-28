@@ -28,9 +28,6 @@ use RuntimeException;
  * to organize your application's dependencies. They also help
  * improve performance of applications with many services by
  * allowing service registration to be deferred until services are needed.
- *
- * @experimental This class' interface is not stable and may change
- *   in future minor releases.
  */
 abstract class ServiceProvider extends AbstractServiceProvider implements BootableServiceProviderInterface
 {
