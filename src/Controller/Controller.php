@@ -483,7 +483,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             ]);
         }
 
-        return Closure::fromCallable([$this, $action]);
+        return $this->$action(...);
     }
 
     /**

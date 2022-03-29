@@ -38,11 +38,7 @@ trait ExtractTrait
     protected function _propertyExtractor(callable|string $path): Closure
     {
         if (!is_string($path)) {
-            if (!$path instanceof Closure) {
-                $path = Closure::fromCallable($path);
-            }
-
-            return $path;
+            return $path(...);
         }
 
         $parts = explode('.', $path);

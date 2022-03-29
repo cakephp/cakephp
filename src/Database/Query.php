@@ -2115,9 +2115,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function traverseExpressions(callable $callback)
     {
-        if (!$callback instanceof Closure) {
-            $callback = Closure::fromCallable($callback);
-        }
+        $callback = $callback(...);
 
         foreach ($this->_parts as $part) {
             $this->_expressionsVisitor($part, $callback);
