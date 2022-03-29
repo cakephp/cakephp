@@ -1380,36 +1380,6 @@ class Response implements ResponseInterface
     /**
      * Get a CorsBuilder instance for defining CORS headers.
      *
-     * This method allow multiple ways to setup the domains, see the examples
-     *
-     * ### Full URI
-     * ```
-     * cors($request, 'https://www.cakephp.org');
-     * ```
-     *
-     * ### URI with wildcard
-     * ```
-     * cors($request, 'https://*.cakephp.org');
-     * ```
-     *
-     * ### Ignoring the requested protocol
-     * ```
-     * cors($request, 'www.cakephp.org');
-     * ```
-     *
-     * ### Any URI
-     * ```
-     * cors($request, '*');
-     * ```
-     *
-     * ### Allowed list of URIs
-     * ```
-     * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
-     * ```
-     *
-     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprecated.
-     * Instead the builder object should be used.
-     *
      * @param \Cake\Http\ServerRequest $request Request object
      * @return \Cake\Http\CorsBuilder A builder object the provides a fluent interface for defining
      *   additional CORS headers.
