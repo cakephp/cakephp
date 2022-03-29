@@ -82,6 +82,7 @@
             "src/Core/functions.php",
             "src/Collection/functions.php",
             "src/I18n/functions.php",
+            "src/Log/functions.php",
             "src/Routing/functions.php",
             "src/Utility/bootstrap.php"
         ]
