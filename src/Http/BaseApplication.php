@@ -29,6 +29,7 @@ use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
@@ -53,6 +54,7 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
     ContainerApplicationInterface,
+    EventDispatcherInterface,
     HttpApplicationInterface,
     PluginApplicationInterface,
     RoutingApplicationInterface
@@ -251,11 +253,7 @@ abstract class BaseApplication implements
      */
     public function getContainer(): ContainerInterface
     {
-        if ($this->container === null) {
-            $this->container = $this->buildContainer();
-        }
-
-        return $this->container;
+        return $this->container ??= $this->buildContainer();
     }
 
     /**
@@ -308,9 +306,7 @@ abstract class BaseApplication implements
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
 
-        if ($this->controllerFactory === null) {
-            $this->controllerFactory = new ControllerFactory($container);
-        }
+        $this->controllerFactory ??= new ControllerFactory($container);
 
         if (Router::getRequest() !== $request) {
             Router::setRequest($request);

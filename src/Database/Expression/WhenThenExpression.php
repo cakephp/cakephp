@@ -96,10 +96,7 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function __construct(?TypeMap $typeMap = null)
     {
-        if ($typeMap === null) {
-            $typeMap = new TypeMap();
-        }
-        $this->_typeMap = $typeMap;
+        $this->_typeMap = $typeMap ?? new TypeMap();
     }
 
     /**
@@ -125,6 +122,7 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function when(mixed $when, array|string|null $type = null)
     {
+        /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
         if (
             !(is_array($when) && !empty($when)) &&
             !is_scalar($when) &&
@@ -196,6 +194,7 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function then(mixed $result, ?string $type = null)
     {
+        /** @psalm-suppress DocblockTypeContradiction */
         if (
             $result !== null &&
             !is_scalar($result) &&
@@ -211,11 +210,7 @@ class WhenThenExpression implements ExpressionInterface
 
         $this->then = $result;
 
-        if ($type === null) {
-            $type = $this->inferType($result);
-        }
-
-        $this->thenType = $type;
+        $this->thenType = $type ?? $this->inferType($result);
 
         $this->hasThenBeenDefined = true;
 

@@ -6,21 +6,17 @@ declare(strict_types=1);
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         4.4.0
+ * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Routing\Exception;
+namespace Company\TestPluginThree;
 
-use Cake\Core\Exception\CakeException;
+use Cake\Core\BasePlugin;
 
-/**
- * Thrown when unable to cache route collection.
- */
-class FailedRouteCacheException extends CakeException
+class TestPluginThreePlugin extends BasePlugin
 {
 }

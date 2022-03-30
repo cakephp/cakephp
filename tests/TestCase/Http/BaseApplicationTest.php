@@ -183,10 +183,10 @@ class BaseApplicationTest extends TestCase
             BaseApplication::class,
             [$this->path]
         );
-        $app->addPlugin('ParentPlugin');
+        $app->addPlugin('Named');
         $app->pluginBootstrap();
         $this->assertTrue(
-            Configure::check('ParentPlugin.bootstrap'),
+            Configure::check('Named.bootstrap'),
             'Plugin bootstrap should be run'
         );
         $this->assertTrue(

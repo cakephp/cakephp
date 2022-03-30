@@ -26,7 +26,6 @@
     "require": {
         "php": ">=8.0",
         "cakephp/core": "^5.0",
-        "psr/log": "^3.0",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "suggest": {

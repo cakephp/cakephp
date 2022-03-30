@@ -288,15 +288,6 @@ class CompletionCommandTest extends TestCase
     }
 
     /**
-     * test that fuzzy returns nothing
-     */
-    public function testFuzzy(): void
-    {
-        $this->exec('completion fuzzy');
-        $this->assertOutputEmpty();
-    }
-
-    /**
      * test that help returns content
      */
     public function testHelp(): void

@@ -38,9 +38,9 @@ class ValidationRule
     /**
      * The 'on' key
      *
-     * @var callable|string
+     * @var callable|string|null
      */
-    protected $_on;
+    protected $_on = null;
 
     /**
      * The 'last' key
@@ -74,9 +74,9 @@ class ValidationRule
     /**
      * Constructor
      *
-     * @param array $validator [optional] The validator properties
+     * @param array $validator The validator properties
      */
-    public function __construct(array $validator = [])
+    public function __construct(array $validator)
     {
         $this->_addValidatorProps($validator);
     }
@@ -118,13 +118,13 @@ class ValidationRule
             return true;
         }
 
-        if (!is_string($this->_rule) && is_callable($this->_rule)) {
-            $callable = $this->_rule;
-            $isCallable = true;
-        } else {
+        if (is_string($this->_rule)) {
             $provider = $providers[$this->_provider];
             $callable = [$provider, $this->_rule];
             $isCallable = is_callable($callable);
+        } else {
+            $callable = $this->_rule;
+            $isCallable = true;
         }
 
         if (!$isCallable) {
@@ -166,16 +166,17 @@ class ValidationRule
      */
     protected function _skip(array $context): bool
     {
-        if (!is_string($this->_on) && is_callable($this->_on)) {
+        if (is_string($this->_on)) {
+            $newRecord = $context['newRecord'];
+
+            return ($this->_on === Validator::WHEN_CREATE && !$newRecord)
+                || ($this->_on === Validator::WHEN_UPDATE && $newRecord);
+        }
+
+        if ($this->_on !== null) {
             $function = $this->_on;
 
             return !$function($context);
-        }
-
-        $newRecord = $context['newRecord'];
-        if (!empty($this->_on)) {
-            return ($this->_on === Validator::WHEN_CREATE && !$newRecord)
-                || ($this->_on === Validator::WHEN_UPDATE && $newRecord);
         }
 
         return false;

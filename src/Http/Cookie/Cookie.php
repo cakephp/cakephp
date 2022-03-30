@@ -301,12 +301,10 @@ class Cookie implements CookieInterface
             unset($data['max-age']);
         }
 
-        if (isset($data['samesite'])) {
-            // Ignore invalid value when parsing headers
-            // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
-            if (!in_array($data['samesite'], CookieInterface::SAMESITE_VALUES, true)) {
-                unset($data['samesite']);
-            }
+        // Ignore invalid value when parsing headers
+        // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
+        if (isset($data['samesite']) && !in_array($data['samesite'], CookieInterface::SAMESITE_VALUES, true)) {
+            unset($data['samesite']);
         }
 
         $name = (string)$data['name'];

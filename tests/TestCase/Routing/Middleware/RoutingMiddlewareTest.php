@@ -16,24 +16,19 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Routing\Middleware;
 
-use Cake\Cache\Cache;
-use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Http\ServerRequestFactory;
-use Cake\Routing\Exception\FailedRouteCacheException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
-use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response;
 use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
 use TestApp\Middleware\DumbMiddleware;
-use TestApp\Middleware\UnserializableMiddleware;
 
 /**
  * Test for RoutingMiddleware
@@ -60,17 +55,6 @@ class RoutingMiddlewareTest extends TestCase
         $this->log = [];
 
         Configure::write('App.base', '');
-    }
-
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        Cache::enable();
-        if (in_array('_cake_router_', Cache::configured(), true)) {
-            Cache::clear('_cake_router_');
-        }
-        Cache::drop('_cake_router_');
     }
 
     /**
@@ -454,92 +438,6 @@ class RoutingMiddlewareTest extends TestCase
             ['/api/ping', ['first', 'last']],
             ['/api/version', ['second', 'last']],
         ];
-    }
-
-    /**
-     * Test we store route collection in cache.
-     */
-    public function testCacheRoutes(): void
-    {
-        $cacheConfigName = '_cake_router_';
-        Cache::setConfig($cacheConfigName, [
-            'engine' => 'File',
-            'path' => CACHE,
-        ]);
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $handler = new TestRequestHandler(function ($req) use ($cacheConfigName) {
-            $routeCollection = Cache::read('routeCollection', $cacheConfigName);
-            $this->assertInstanceOf(RouteCollection::class, $routeCollection);
-
-            return new Response();
-        });
-        $app = new Application(CONFIG);
-        $middleware = new RoutingMiddleware($app, $cacheConfigName);
-        $middleware->process($request, $handler);
-    }
-
-    /**
-     * Test we don't cache routes if cache is disabled.
-     */
-    public function testCacheNotUsedIfCacheDisabled(): void
-    {
-        $cacheConfigName = '_cake_router_';
-        Cache::drop($cacheConfigName);
-        Cache::disable();
-        Cache::setConfig($cacheConfigName, [
-            'engine' => 'File',
-            'path' => CACHE,
-        ]);
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $handler = new TestRequestHandler(function ($req) use ($cacheConfigName) {
-            $routeCollection = Cache::read('routeCollection', $cacheConfigName);
-            $this->assertNull($routeCollection);
-
-            return new Response();
-        });
-        $app = new Application(CONFIG);
-        $middleware = new RoutingMiddleware($app, $cacheConfigName);
-        $middleware->process($request, $handler);
-    }
-
-    /**
-     * Test cache name is used
-     */
-    public function testCacheConfigNotFound(): void
-    {
-        $this->expectException(CacheInvalidArgumentException::class);
-        $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
-
-        Cache::setConfig('_cake_router_', [
-            'engine' => 'File',
-            'path' => CACHE,
-        ]);
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $app = new Application(CONFIG);
-        $middleware = new RoutingMiddleware($app, 'notfound');
-        $middleware->process($request, new TestRequestHandler());
-    }
-
-    public function testFailedRouteCache(): void
-    {
-        Cache::setConfig('_cake_router_', [
-            'engine' => 'File',
-            'path' => CACHE,
-        ]);
-
-        $app = $this->createMock(Application::class);
-        $app
-            ->method('routes')
-            ->will($this->returnCallback(function (RouteBuilder $routes) use ($app) {
-                return $routes->registerMiddleware('should fail', new UnserializableMiddleware($app));
-            }));
-
-        $middleware = new RoutingMiddleware($app, '_cake_router_');
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-
-        $this->expectException(FailedRouteCacheException::class);
-        $this->expectExceptionMessage('Unable to cache route collection.');
-        $middleware->process($request, new TestRequestHandler());
     }
 
     /**

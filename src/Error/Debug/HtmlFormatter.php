@@ -125,20 +125,14 @@ class HtmlFormatter implements FormatterInterface
     protected function export(NodeInterface $var, int $indent): string
     {
         if ($var instanceof ScalarNode) {
-            switch ($var->getType()) {
-                case 'bool':
-                    return $this->style('const', $var->getValue() ? 'true' : 'false');
-                case 'null':
-                    return $this->style('const', 'null');
-                case 'string':
-                    return $this->style('string', "'" . (string)$var->getValue() . "'");
-                case 'int':
-                case 'float':
-                    return $this->style('visibility', "({$var->getType()})") .
-                        ' ' . $this->style('number', "{$var->getValue()}");
-                default:
-                    return "({$var->getType()}) {$var->getValue()}";
-            }
+            return match ($var->getType()) {
+                'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
+                'null' => $this->style('const', 'null'),
+                'string' => $this->style('string', "'" . (string)$var->getValue() . "'"),
+                'int', 'float' => $this->style('visibility', "({$var->getType()})") .
+                        ' ' . $this->style('number', "{$var->getValue()}"),
+                default => "({$var->getType()}) {$var->getValue()}",
+            };
         }
         if ($var instanceof ArrayNode) {
             return $this->exportArray($var, $indent + 1);

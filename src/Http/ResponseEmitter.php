@@ -177,7 +177,7 @@ class ResponseEmitter
     protected function emitHeaders(ResponseInterface $response): void
     {
         $cookies = [];
-        if (method_exists($response, 'getCookieCollection')) {
+        if ($response instanceof Response) {
             $cookies = iterator_to_array($response->getCookieCollection());
         }
 
@@ -237,9 +237,7 @@ class ResponseEmitter
      */
     protected function flush(?int $maxBufferLevel = null): void
     {
-        if ($maxBufferLevel === null) {
-            $maxBufferLevel = ob_get_level();
-        }
+        $maxBufferLevel ??= ob_get_level();
 
         while (ob_get_level() > $maxBufferLevel) {
             ob_end_flush();

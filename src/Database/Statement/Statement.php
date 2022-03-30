@@ -18,15 +18,12 @@ namespace Cake\Database\Statement;
 
 use Cake\Database\DriverInterface;
 use Cake\Database\FieldTypeConverter;
-use Cake\Database\Log\LoggedQuery;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Cake\Database\TypeMap;
 use InvalidArgumentException;
 use PDO;
-use PDOException;
 use PDOStatement;
-use Psr\Log\LoggerInterface;
 
 class Statement implements StatementInterface
 {
@@ -60,21 +57,11 @@ class Statement implements StatementInterface
     protected ?FieldTypeConverter $typeConverter;
 
     /**
-     * @var \Psr\Log\LoggerInterface|null
-     */
-    protected ?LoggerInterface $logger = null;
-
-    /**
      * Cached bound parameters used for logging
      *
      * @var array<mixed>
      */
     protected array $params = [];
-
-    /**
-     * @var float
-     */
-    protected float $took = 0.0;
 
     /**
      * @param \PDOStatement $statement PDO statement
@@ -89,16 +76,6 @@ class Statement implements StatementInterface
         $this->_driver = $driver;
         $this->statement = $statement;
         $this->typeConverter = $typeMap !== null ? new FieldTypeConverter($typeMap, $driver) : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-
-        return $this;
     }
 
     /**
@@ -128,15 +105,21 @@ class Statement implements StatementInterface
      */
     public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void
     {
-        if ($type === null) {
-            $type = 'string';
-        }
+        $type ??= 'string';
         if (!is_int($type)) {
             [$value, $type] = $this->cast($value, $type);
         }
 
         $this->params[$column] = $value;
         $this->performBind($column, $value, $type);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBoundParams(): array
+    {
+        return $this->params;
     }
 
     /**
@@ -152,36 +135,7 @@ class Statement implements StatementInterface
      */
     public function execute(?array $params = null): bool
     {
-        $success = false;
-        $exception = null;
-
-        try {
-            $start = microtime(true);
-            $success = $this->statement->execute($params);
-            $this->took = (microtime(true) - $start) * 1000;
-        } catch (PDOException $e) {
-            $exception = $e;
-            $this->took = 0.0;
-        }
-
-        if ($this->logger) {
-            $loggedQuery = new LoggedQuery();
-            $loggedQuery->driver = $this->_driver;
-            $loggedQuery->query = $this->queryString();
-            $loggedQuery->params = $params ?? $this->params;
-            $loggedQuery->error = $exception;
-            if (!$exception) {
-                $loggedQuery->numRows = $this->rowCount();
-                $loggedQuery->took = (int)round($this->took);
-            }
-            $this->logger->debug((string)$loggedQuery, ['query' => $loggedQuery]);
-        }
-
-        if ($exception) {
-            throw $exception;
-        }
-
-        return $success;
+        return $this->statement->execute($params);
     }
 
     /**

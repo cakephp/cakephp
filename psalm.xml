@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <psalm
+    errorLevel="2"
     allowStringToStandInForClass="true"
     usePhpDocMethodsWithoutMagicCall="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -12,15 +13,11 @@
         <directory name="src"/>
         <ignoreFiles>
             <directory name="vendor"/>
-            <file name="src/Utility/Filesystem.php"/>
         </ignoreFiles>
     </projectFiles>
 
     <issueHandlers>
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>
-        <RedundantConditionGivenDocblockType errorLevel="suppress"/>
-        <RedundantCastGivenDocblockType errorLevel="suppress"/>
-        <DocblockTypeContradiction errorLevel="suppress"/>
         <MissingClosureParamType errorLevel="suppress"/>
         <MissingClosureReturnType errorLevel="suppress"/>
         <UndefinedClass>

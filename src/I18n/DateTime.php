@@ -223,9 +223,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
             $regex = $filter;
             $filter = null;
         }
-        if ($filter === null) {
-            $filter = DateTimeZone::ALL;
-        }
+        $filter ??= DateTimeZone::ALL;
         $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country) ?: [];
 
         if ($regex) {

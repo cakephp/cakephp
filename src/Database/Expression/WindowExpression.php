@@ -121,9 +121,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             return $this;
         }
 
-        if ($this->order === null) {
-            $this->order = new OrderByExpression();
-        }
+        $this->order ??= new OrderByExpression();
 
         if ($fields instanceof Closure) {
             $fields = $fields(new QueryExpression([], [], ''));

@@ -25,6 +25,7 @@ use LogicException;
 use NumberFormatter;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
+use UnhandledMatchError;
 
 /**
  * Validation Class. Used for validation of model data
@@ -344,49 +345,19 @@ class Validation
             return false;
         }
 
-        switch ($operator) {
-            case static::COMPARE_GREATER:
-                if ($check1 > $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_LESS:
-                if ($check1 < $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_GREATER_OR_EQUAL:
-                if ($check1 >= $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_LESS_OR_EQUAL:
-                if ($check1 <= $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_EQUAL:
-                if ($check1 == $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_NOT_EQUAL:
-                if ($check1 != $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_SAME:
-                if ($check1 === $check2) {
-                    return true;
-                }
-                break;
-            case static::COMPARE_NOT_SAME:
-                if ($check1 !== $check2) {
-                    return true;
-                }
-                break;
-            default:
-                static::$errors[] = 'You must define a valid $operator parameter for Validation::comparison()';
+        try {
+            return match ($operator) {
+                static::COMPARE_GREATER => $check1 > $check2,
+                static::COMPARE_LESS => $check1 < $check2,
+                static::COMPARE_GREATER_OR_EQUAL => $check1 >= $check2,
+                static::COMPARE_LESS_OR_EQUAL => $check1 <= $check2,
+                static::COMPARE_EQUAL => $check1 == $check2,
+                static::COMPARE_NOT_EQUAL => $check1 != $check2,
+                static::COMPARE_SAME => $check1 === $check2,
+                static::COMPARE_NOT_SAME => $check1 !== $check2,
+            };
+        } catch (UnhandledMatchError) {
+            static::$errors[] = 'You must define a valid $operator parameter for Validation::comparison()';
         }
 
         return false;
@@ -747,12 +718,10 @@ class Validation
                     $check = sprintf('%.1f', $check);
                 }
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
-            } elseif (is_numeric($places)) {
+            } else {
                 $places = '[0-9]{' . $places . '}';
                 $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
-            } else {
-                return false;
             }
         }
 
@@ -789,10 +758,9 @@ class Validation
             return false;
         }
 
-        if ($regex === null) {
-            // phpcs:ignore Generic.Files.LineLength
-            $regex = '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/ui';
-        }
+        // phpcs:ignore Generic.Files.LineLength
+        $regex ??= '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/ui';
+
         $return = static::_check($check, $regex);
         if ($deep === false || $deep === null) {
             return $return;

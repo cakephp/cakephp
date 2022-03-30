@@ -209,18 +209,16 @@ class Mysql extends Driver
      */
     public function supports(string $feature): bool
     {
-        switch ($feature) {
-            case static::FEATURE_CTE:
-            case static::FEATURE_JSON:
-            case static::FEATURE_WINDOW:
-                return version_compare(
-                    $this->version(),
-                    $this->featureVersions[$this->serverType][$feature],
-                    '>='
-                );
-        }
-
-        return parent::supports($feature);
+        return match ($feature) {
+            static::FEATURE_CTE,
+            static::FEATURE_JSON,
+            static::FEATURE_WINDOW => version_compare(
+                $this->version(),
+                $this->featureVersions[$this->serverType][$feature],
+                '>='
+            ),
+            default => parent::supports($feature),
+        };
     }
 
     /**

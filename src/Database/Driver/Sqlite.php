@@ -27,7 +27,6 @@ use Cake\Database\SqliteCompiler;
 use Cake\Database\Statement\SqliteStatement;
 use InvalidArgumentException;
 use PDO;
-use RuntimeException;
 
 /**
  * Class Sqlite
@@ -144,9 +143,6 @@ class Sqlite extends Driver
         }
 
         if ($params) {
-            if (PHP_VERSION_ID < 80100) {
-                throw new RuntimeException('SQLite URI support requires PHP 8.1.');
-            }
             $dsn = 'sqlite:file:' . $config['database'] . '?' . implode('&', $params);
         } else {
             $dsn = 'sqlite:' . $config['database'];
@@ -197,20 +193,16 @@ class Sqlite extends Driver
      */
     public function supports(string $feature): bool
     {
-        switch ($feature) {
-            case static::FEATURE_CTE:
-            case static::FEATURE_WINDOW:
-                return version_compare(
-                    $this->version(),
-                    $this->featureVersions[$feature],
-                    '>='
-                );
-
-            case static::FEATURE_TRUNCATE_WITH_CONSTRAINTS:
-                return true;
-        }
-
-        return parent::supports($feature);
+        return match ($feature) {
+            static::FEATURE_CTE,
+            static::FEATURE_WINDOW => version_compare(
+                $this->version(),
+                $this->featureVersions[$feature],
+                '>='
+            ),
+            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS => true,
+            default => parent::supports($feature),
+        };
     }
 
     /**

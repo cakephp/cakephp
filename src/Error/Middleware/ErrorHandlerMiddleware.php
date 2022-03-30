@@ -19,7 +19,6 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
 use Cake\Http\Exception\RedirectException;
@@ -69,13 +68,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     ];
 
     /**
-     * Error handler instance.
-     *
-     * @var \Cake\Error\ErrorHandler|null
-     */
-    protected ?ErrorHandler $errorHandler = null;
-
-    /**
      * ExceptionTrap instance
      *
      * @var \Cake\Error\ExceptionTrap|null
@@ -85,28 +77,23 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param \Cake\Error\ErrorHandler|\Cake\Error\ExceptionTrap|array $errorHandler The error handler instance
+     * @param \Cake\Error\ExceptionTrap|array $config The error handler instance
      *  or config array.
      * @throws \InvalidArgumentException
      */
-    public function __construct(ErrorHandler|ExceptionTrap|array $errorHandler = [])
+    public function __construct(ExceptionTrap|array $config = [])
     {
         if (Configure::read('debug')) {
             ini_set('zend.exception_ignore_args', '0');
         }
 
-        if (is_array($errorHandler)) {
-            $this->setConfig($errorHandler);
-
-            return;
-        }
-        if ($errorHandler instanceof ErrorHandler) {
-            $this->errorHandler = $errorHandler;
+        if (is_array($config)) {
+            $this->setConfig($config);
 
             return;
         }
 
-        $this->exceptionTrap = $errorHandler;
+        $this->exceptionTrap = $config;
     }
 
     /**
@@ -136,17 +123,10 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
-        if ($this->errorHandler === null) {
-            $errorHandler = $this->getExceptionTrap();
-            $errorHandler->logException($exception, $request);
+        $trap = $this->getExceptionTrap();
+        $trap->logException($exception, $request);
 
-            $renderer = $errorHandler->renderer($exception, $request);
-        } else {
-            $errorHandler = $this->getErrorHandler();
-            $errorHandler->logException($exception, $request);
-
-            $renderer = $errorHandler->getRenderer($exception, $request);
-        }
+        $renderer = $trap->renderer($exception, $request);
 
         try {
             /** @var \Psr\Http\Message\ResponseInterface|string $response */
@@ -157,7 +137,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
             return $response;
         } catch (Throwable $internalException) {
-            $errorHandler->logException($internalException, $request);
+            $trap->logException($internalException, $request);
 
             return $this->handleInternalError();
         }
@@ -189,22 +169,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             'body' => 'An Internal Server Error Occurred',
             'status' => 500,
         ]);
-    }
-
-    /**
-     * Get a error handler instance
-     *
-     * @return \Cake\Error\ErrorHandler The error handler.
-     */
-    protected function getErrorHandler(): ErrorHandler
-    {
-        if ($this->errorHandler === null) {
-            /** @var class-string<\Cake\Error\ErrorHandler> $className */
-            $className = App::className('ErrorHandler', 'Error');
-            $this->errorHandler = new $className($this->getConfig());
-        }
-
-        return $this->errorHandler;
     }
 
     /**

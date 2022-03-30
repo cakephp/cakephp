@@ -17,6 +17,7 @@ namespace Cake\TestSuite;
 
 use Cake\Database\Connection;
 use Cake\Database\DriverInterface;
+use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Closure;
 
@@ -67,8 +68,13 @@ class ConnectionHelper
         $connections = $connections ?? ConnectionManager::configured();
         foreach ($connections as $connection) {
             $connection = ConnectionManager::get($connection);
-            if ($connection instanceof Connection) {
-                $connection->enableQueryLogging();
+            $message = '--Starting test run ' . date('Y-m-d H:i:s');
+            if (
+                $connection instanceof Connection &&
+                $connection->getDriver()->log($message) === false
+            ) {
+                $connection->getDriver()->setLogger(new QueryLogger());
+                $connection->getDriver()->log($message);
             }
         }
     }
@@ -85,29 +91,22 @@ class ConnectionHelper
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
         $collection = $connection->getSchemaCollection();
-
-        if (method_exists($collection, 'listTablesWithoutViews')) {
-            $allTables = $collection->listTablesWithoutViews();
-        } else {
-            $allTables = $collection->listTables();
-        }
+        $allTables = $collection->listTablesWithoutViews();
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
-        $schemas = array_map(function ($table) use ($collection) {
-            return $collection->describe($table);
-        }, $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $dialect = $connection->getDriver()->schemaDialect();
         /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
             foreach ($dialect->dropConstraintSql($schema) as $statement) {
-                $connection->execute($statement)->closeCursor();
+                $connection->execute($statement);
             }
         }
         /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
             foreach ($dialect->dropTableSql($schema) as $statement) {
-                $connection->execute($statement)->closeCursor();
+                $connection->execute($statement);
             }
         }
     }
@@ -127,16 +126,14 @@ class ConnectionHelper
 
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
-        $schemas = array_map(function ($table) use ($collection) {
-            return $collection->describe($table);
-        }, $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $this->runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getDriver()->schemaDialect();
             /** @var \Cake\Database\Schema\TableSchema $schema */
             foreach ($schemas as $schema) {
                 foreach ($dialect->truncateTableSql($schema) as $statement) {
-                    $connection->execute($statement)->closeCursor();
+                    $connection->execute($statement);
                 }
             }
         });
@@ -152,14 +149,10 @@ class ConnectionHelper
     public function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
         if ($connection->getDriver()->supports(DriverInterface::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
-            $connection->disableConstraints(function (Connection $connection) use ($callback): void {
-                $callback($connection);
-            });
+            $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
         } else {
             $connection->transactional(function (Connection $connection) use ($callback): void {
-                $connection->disableConstraints(function (Connection $connection) use ($callback): void {
-                    $callback($connection);
-                });
+                $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
             });
         }
     }

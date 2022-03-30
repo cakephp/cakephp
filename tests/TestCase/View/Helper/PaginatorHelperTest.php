@@ -172,10 +172,10 @@ class PaginatorHelperTest extends TestCase
         Router::setRequest($request);
 
         $this->setPaginatedResult([
-            'currentPpage' => 1,
+            'currentPage' => 1,
             'count' => 9,
             'totalCount' => 62,
-            'hasPevPage' => false,
+            'hasPrevPage' => false,
             'hasNextPage' => true,
             'pageCount' => 7,
             'sort' => 'date',
@@ -2802,6 +2802,7 @@ class PaginatorHelperTest extends TestCase
             'params' => [
                 'plugin' => null, 'controller' => 'Batches', 'action' => 'index', 'pass' => [],
             ],
+            'query' => ['owner' => 'billy', 'expected' => 1],
             'base' => '',
             'webroot' => '/',
         ]);
@@ -2872,6 +2873,55 @@ class PaginatorHelperTest extends TestCase
             '/option',
             ['option' => ['value' => '100', 'selected' => 'selected']],
             '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
+     * test the limitControl() method with scope
+     */
+    public function testLimitControlWithScope(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'Accounts', 'action' => 'index', 'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        $this->setPaginatedResult([
+            'perPage' => 25,
+            'count' => 9,
+            'totalCount' => 62,
+            'hasPrevPage' => false,
+            'hasNextPage' => true,
+            'pageCount' => 7,
+            'sort' => 'date',
+            'direction' => 'asc',
+            'page' => 1,
+            'scope' => 'article',
+        ], false);
+
+        $out = $this->Paginator->limitControl([25 => 25, 50 => 50]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'article-limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'article[limit]', 'id' => 'article-limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '25', 'selected' => 'selected']],
+            '25',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
             '/option',
             '/select',
             '/div',

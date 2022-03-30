@@ -240,9 +240,7 @@ class Asset
             return $path;
         }
 
-        if ($timestamp === null) {
-            $timestamp = Configure::read('Asset.timestamp');
-        }
+        $timestamp ??= Configure::read('Asset.timestamp');
         $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
         if ($timestampEnabled) {
             $filepath = preg_replace(

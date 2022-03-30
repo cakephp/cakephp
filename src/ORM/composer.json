@@ -39,6 +39,9 @@
     "autoload": {
         "psr-4": {
             "Cake\\ORM\\": "."
-        }
+        },
+        "files": [
+            "bootstrap.php"
+        ]
     }
 }

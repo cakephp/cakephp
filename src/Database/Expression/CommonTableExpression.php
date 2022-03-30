@@ -184,9 +184,7 @@ class CommonTableExpression implements ExpressionInterface
     {
         $fields = '';
         if ($this->fields) {
-            $expressions = array_map(function (IdentifierExpression $e) use ($binder) {
-                return $e->sql($binder);
-            }, $this->fields);
+            $expressions = array_map(fn(IdentifierExpression $e) => $e->sql($binder), $this->fields);
             $fields = sprintf('(%s)', implode(', ', $expressions));
         }
 

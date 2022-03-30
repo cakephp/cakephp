@@ -670,10 +670,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     /**
      * Prepend a set of items to a collection creating a new collection
      *
-     * @param mixed $items The items to prepend.
+     * @param iterable $items The items to prepend.
      * @return self
      */
-    public function prepend(mixed $items): CollectionInterface;
+    public function prepend(iterable $items): CollectionInterface;
 
     /**
      * Prepend a single item creating a new collection.
@@ -1016,8 +1016,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param iterable ...$items The collections to zip.
      * @return self
      */
-    public function zip(iterable $items): CollectionInterface;
+    public function zip(iterable ...$items): CollectionInterface;
 
+    // phpcs:disable
     /**
      * Combines the elements of this collection with each of the elements of the
      * passed iterables, using their positional index as a reference.
@@ -1038,7 +1039,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param callable $callback The function to use for zipping the elements together.
      * @return self
      */
-    public function zipWith(iterable $items, callable $callback): CollectionInterface;
+    public function zipWith(iterable $items, $callback): CollectionInterface;
+    // phpcs:enable
 
     /**
      * Breaks the collection into smaller arrays of the given size.

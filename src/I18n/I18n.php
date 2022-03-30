@@ -253,11 +253,7 @@ class I18n
      */
     public static function getDefaultLocale(): string
     {
-        if (static::$_defaultLocale === null) {
-            static::$_defaultLocale = Locale::getDefault() ?: static::DEFAULT_LOCALE;
-        }
-
-        return static::$_defaultLocale;
+        return static::$_defaultLocale ??= Locale::getDefault() ?: static::DEFAULT_LOCALE;
     }
 
     /**

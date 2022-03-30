@@ -1144,22 +1144,27 @@ class PaginatorHelper extends Helper
      */
     public function limitControl(array $limits = [], ?int $default = null, array $options = []): string
     {
-        $default = $default ?? $this->paginated()->perPage();
         $limits = $limits ?: [
             '20' => '20',
             '50' => '50',
             '100' => '100',
         ];
+        $default = $default ?? $this->paginated()->perPage();
+        /** @var string|null $scope */
+        $scope = $this->param('scope');
+        if ($scope) {
+            $scope .= '.';
+        }
 
         $out = $this->Form->create(null, ['type' => 'get']);
-        $out .= $this->Form->control('limit', $options + [
-                'type' => 'select',
-                'label' => __('View'),
-                'default' => $default,
-                'value' => $this->_View->getRequest()->getQuery('limit'),
-                'options' => $limits,
-                'onChange' => 'this.form.submit()',
-            ]);
+        $out .= $this->Form->control($scope . 'limit', $options + [
+            'type' => 'select',
+            'label' => __('View'),
+            'default' => $default,
+            'value' => $this->_View->getRequest()->getQuery('limit'),
+            'options' => $limits,
+            'onChange' => 'this.form.submit()',
+        ]);
         $out .= $this->Form->end();
 
         return $out;

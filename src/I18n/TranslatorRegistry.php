@@ -185,9 +185,7 @@ class TranslatorRegistry
      */
     public function get(string $name, ?string $locale = null): ?Translator
     {
-        if ($locale === null) {
-            $locale = $this->getLocale();
-        }
+        $locale ??= $this->getLocale();
 
         if (isset($this->registry[$name][$locale])) {
             return $this->registry[$name][$locale];

@@ -93,9 +93,8 @@ class Configure
         }
 
         if (isset($config['debug'])) {
-            if (static::$_hasIniSet === null) {
-                static::$_hasIniSet = function_exists('ini_set');
-            }
+            static::$_hasIniSet ??= function_exists('ini_set');
+
             if (static::$_hasIniSet) {
                 ini_set('display_errors', $config['debug'] ? '1' : '0');
             }
@@ -452,9 +451,8 @@ class Configure
      */
     public static function store(string $name, string $cacheConfig = 'default', ?array $data = null): bool
     {
-        if ($data === null) {
-            $data = static::$_values;
-        }
+        $data ??= static::$_values;
+
         if (!class_exists(Cache::class)) {
             throw new RuntimeException('You must install cakephp/cache to use Configure::store()');
         }

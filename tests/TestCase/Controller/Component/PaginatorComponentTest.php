@@ -32,7 +32,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
 use TestApp\Controller\Component\CustomPaginatorComponent;
-use TestApp\Datasource\CustomPaginator;
+use TestApp\Datasource\Paging\CustomPaginator;
 use UnexpectedValueException;
 
 class PaginatorComponentTest extends TestCase

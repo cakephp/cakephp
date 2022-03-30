@@ -89,9 +89,7 @@ class FileEngine extends CacheEngine
     {
         parent::init($config);
 
-        if ($this->_config['path'] === null) {
-            $this->_config['path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
-        }
+        $this->_config['path'] ??= sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
         if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
@@ -216,12 +214,12 @@ class FileEngine extends CacheEngine
             return false;
         }
 
-        /**
-         * @psalm-suppress PossiblyNullReference
-         * @var string $path
-         */
         $path = $this->_File->getRealPath();
         unset($this->_File);
+
+        if ($path === false) {
+            return false;
+        }
 
         // phpcs:disable
         return @unlink($path);

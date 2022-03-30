@@ -204,9 +204,7 @@ class Mailer implements EventListenerInterface
     {
         $this->message = new $this->messageClass();
 
-        if ($config === null) {
-            $config = static::getConfig('default');
-        }
+        $config ??= static::getConfig('default');
 
         if ($config) {
             $this->setProfile($config);
@@ -230,11 +228,7 @@ class Mailer implements EventListenerInterface
      */
     public function getRenderer(): Renderer
     {
-        if ($this->renderer === null) {
-            $this->renderer = new Renderer();
-        }
-
-        return $this->renderer;
+        return $this->renderer ??= new Renderer();
     }
 
     /**

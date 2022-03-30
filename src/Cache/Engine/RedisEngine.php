@@ -168,6 +168,7 @@ class RedisEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->_Redis->get($this->_key($key));
+        /** @psalm-suppress DocblockTypeContradiction */
         if ($value === false) {
             return $default;
         }

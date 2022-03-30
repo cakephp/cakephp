@@ -1052,9 +1052,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return $when === static::WHEN_CREATE ? static::WHEN_UPDATE : static::WHEN_CREATE;
         }
         if ($when instanceof Closure) {
-            return function ($context) use ($when) {
-                return !$when($context);
-            };
+            return fn($context) => !$when($context);
         }
 
         return $when;

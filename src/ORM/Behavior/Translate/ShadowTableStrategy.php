@@ -146,9 +146,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $query->contain([$config['hasOneAlias']]);
 
-        $query->formatResults(function ($results) use ($locale) {
-            return $this->rowMapper($results, $locale);
-        }, $query::PREPEND);
+        $query->formatResults(fn(CollectionInterface $results) => $this->rowMapper($results, $locale), $query::PREPEND);
     }
 
     /**

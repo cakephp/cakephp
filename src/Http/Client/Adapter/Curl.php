@@ -170,23 +170,17 @@ class Curl implements AdapterInterface
      */
     protected function getProtocolVersion(RequestInterface $request): int
     {
-        switch ($request->getProtocolVersion()) {
-            case '1.0':
-                return CURL_HTTP_VERSION_1_0;
-            case '1.1':
-                return CURL_HTTP_VERSION_1_1;
-            case '2':
-            case '2.0':
-                if (defined('CURL_HTTP_VERSION_2TLS')) {
-                    return CURL_HTTP_VERSION_2TLS;
-                }
-                if (defined('CURL_HTTP_VERSION_2_0')) {
-                    return CURL_HTTP_VERSION_2_0;
-                }
-                throw new HttpException('libcurl 7.33 or greater required for HTTP/2 support');
-        }
-
-        return CURL_HTTP_VERSION_NONE;
+        return match ($request->getProtocolVersion()) {
+            '1.0' => CURL_HTTP_VERSION_1_0,
+            '1.1' => CURL_HTTP_VERSION_1_1,
+            '2', '2.0' => defined('CURL_HTTP_VERSION_2TLS')
+                ? CURL_HTTP_VERSION_2TLS
+                : (defined('CURL_HTTP_VERSION_2_0')
+                    ? CURL_HTTP_VERSION_2_0
+                    : throw new HttpException('libcurl 7.33 or greater required for HTTP/2 support')
+                ),
+            default => CURL_HTTP_VERSION_NONE,
+        };
     }
 
     /**

@@ -178,7 +178,7 @@ abstract class BaseLog extends AbstractLogger
                     continue;
                 }
 
-                if (method_exists($value, '__serialize')) {
+                if ($value instanceof Serializable) {
                     $replacements['{' . $key . '}'] = serialize($value);
                     continue;
                 }

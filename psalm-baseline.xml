@@ -1,42 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.x-dev@">
+  <file src="src/Cache/Engine/RedisEngine.php">
+    <InvalidArgument occurrences="1">
+      <code>Redis::OPT_SCAN</code>
+    </InvalidArgument>
+    <InvalidReturnStatement occurrences="4">
+      <code>$this-&gt;_Redis-&gt;set($key, $value)</code>
+      <code>$this-&gt;_Redis-&gt;setEx($key, $duration, $value)</code>
+      <code>$value</code>
+      <code>$value</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="3">
+      <code>bool</code>
+      <code>int|false</code>
+      <code>int|false</code>
+    </InvalidReturnType>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$value</code>
+    </PossiblyInvalidArgument>
+  </file>
   <file src="src/Collection/CollectionTrait.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$iterator</code>
       <code>$iterator</code>
     </ArgumentTypeCoercion>
-    <MissingParamType occurrences="27">
+    <MissingParamType occurrences="1">
       <code>$callback</code>
-      <code>$condition</code>
-      <code>$groupPath</code>
-      <code>$idPath</code>
-      <code>$item</code>
-      <code>$item</code>
-      <code>$items</code>
-      <code>$items</code>
-      <code>$key</code>
-      <code>$key</code>
-      <code>$keyPath</code>
-      <code>$nestingKey</code>
-      <code>$order</code>
-      <code>$parentPath</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$value</code>
-      <code>$valuePath</code>
-      <code>$values</code>
     </MissingParamType>
   </file>
   <file src="src/Controller/Component/RequestHandlerComponent.php">
-    <DeprecatedMethod occurrences="2">
+    <DeprecatedMethod occurrences="1">
       <code>prefers</code>
     </DeprecatedMethod>
   </file>
@@ -47,10 +40,61 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Database/Connection.php">
+    <DeprecatedMethod occurrences="1">
+      <code>supportsDynamicConstraints</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Database/Driver.php">
+    <InvalidScalarArgument occurrences="2">
+      <code>$value</code>
+      <code>$value</code>
+    </InvalidScalarArgument>
+  </file>
+  <file src="src/Database/Expression/QueryExpression.php">
+    <DeprecatedClass occurrences="1">
+      <code>new CaseExpression($conditions, $values, $types)</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Database/Schema/MysqlSchemaDialect.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$_driver</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Database/Statement/PDOStatement.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$_statement</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Database/Type/DateTimeType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Time::class</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Database/Type/DateType.php">
+    <DeprecatedClass occurrences="1">
+      <code>Date::class</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Datasource/ModelAwareTrait.php">
+    <DeprecatedClass occurrences="1">
+      <code>$this</code>
+    </DeprecatedClass>
+    <DeprecatedProperty occurrences="3">
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+      <code>$this-&gt;modelClass</code>
+    </DeprecatedProperty>
+  </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/ORM/Locator/LocatorAwareTrait.php">
+    <PossiblyInvalidPropertyAssignmentValue occurrences="1">
+      <code>$this-&gt;_tableLocator ??= FactoryLocator::get('Table')</code>
+    </PossiblyInvalidPropertyAssignmentValue>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
     <ArgumentTypeCoercion occurrences="2">

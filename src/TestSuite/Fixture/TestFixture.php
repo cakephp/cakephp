@@ -146,6 +146,8 @@ class TestFixture implements FixtureInterface
             /** @var \Cake\Database\Schema\TableSchema $schema */
             $schema = $ormTable->getSchema();
             $this->_schema = $schema;
+
+            $this->getTableLocator()->clear();
         } catch (CakeException $e) {
             $message = sprintf(
                 'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
@@ -171,8 +173,7 @@ class TestFixture implements FixtureInterface
             foreach ($values as $row) {
                 $query->values($row);
             }
-            $statement = $query->execute();
-            $statement->closeCursor();
+            $query->execute();
         }
 
         return true;
@@ -212,7 +213,7 @@ class TestFixture implements FixtureInterface
         /** @var \Cake\Database\Connection $connection */
         $sql = $this->_schema->truncateSql($connection);
         foreach ($sql as $stmt) {
-            $connection->execute($stmt)->closeCursor();
+            $connection->execute($stmt);
         }
 
         return true;

@@ -23,15 +23,12 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
-use Cake\Database\Log\LoggedQuery;
-use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
-use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 use Throwable;
@@ -81,20 +78,6 @@ class Connection implements ConnectionInterface
     protected bool $_useSavePoints = false;
 
     /**
-     * Whether to log queries generated during this connection.
-     *
-     * @var bool
-     */
-    protected bool $_logQueries = false;
-
-    /**
-     * Logger object instance.
-     *
-     * @var \Psr\Log\LoggerInterface|null
-     */
-    protected ?LoggerInterface $_logger = null;
-
-    /**
      * Cacher object instance.
      *
      * @var \Psr\SimpleCache\CacheInterface|null
@@ -137,15 +120,10 @@ class Connection implements ConnectionInterface
         $driverConfig = array_diff_key($config, array_flip([
             'name',
             'driver',
-            'log',
             'cacheMetaData',
             'cacheKeyPrefix',
         ]));
         $this->_driver = $this->createDriver($config['driver'] ?? '', $driverConfig);
-
-        if (!empty($config['log'])) {
-            $this->enableQueryLogging((bool)$config['log']);
-        }
     }
 
     /**
@@ -270,24 +248,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Prepares a SQL statement to be executed.
-     *
-     * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
-     * @return \Cake\Database\StatementInterface
-     */
-    public function prepare(Query|string $query): StatementInterface
-    {
-        return $this->getDisconnectRetry()->run(function () use ($query) {
-            $statement = $this->_driver->prepare($query);
-            if ($this->_logQueries) {
-                $statement->setLogger($this->getLogger());
-            }
-
-            return $statement;
-        });
-    }
-
-    /**
      * Executes a query using $params for interpolating values and $types as a hint for each
      * those params.
      *
@@ -298,28 +258,7 @@ class Connection implements ConnectionInterface
      */
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($sql, $params, $types) {
-            $statement = $this->prepare($sql);
-            if (!empty($params)) {
-                $statement->bind($params, $types);
-            }
-            $statement->execute();
-
-            return $statement;
-        });
-    }
-
-    /**
-     * Compiles a Query object into a SQL string according to the dialect for this
-     * connection's driver
-     *
-     * @param \Cake\Database\Query $query The query to be compiled
-     * @param \Cake\Database\ValueBinder $binder Value binder
-     * @return string
-     */
-    public function compileQuery(Query $query, ValueBinder $binder): string
-    {
-        return $this->getDriver()->compileQuery($query, $binder)[1];
+        return $this->getDisconnectRetry()->run(fn () => $this->_driver->execute($sql, $params, $types));
     }
 
     /**
@@ -331,29 +270,7 @@ class Connection implements ConnectionInterface
      */
     public function run(Query $query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($query) {
-            $statement = $this->prepare($query);
-            $query->getValueBinder()->attachTo($statement);
-            $statement->execute();
-
-            return $statement;
-        });
-    }
-
-    /**
-     * Executes a SQL statement and returns the Statement object as result.
-     *
-     * @param string $sql The SQL query to execute.
-     * @return \Cake\Database\StatementInterface
-     */
-    public function query(string $sql): StatementInterface
-    {
-        return $this->getDisconnectRetry()->run(function () use ($sql) {
-            $statement = $this->prepare($sql);
-            $statement->execute();
-
-            return $statement;
-        });
+        return $this->getDisconnectRetry()->run(fn () => $this->_driver->run($query));
     }
 
     /**
@@ -411,14 +328,12 @@ class Connection implements ConnectionInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $values, $types) {
-            $columns = array_keys($values);
+        $columns = array_keys($values);
 
-            return $this->newQuery()->insert($columns, $types)
-                ->into($table)
-                ->values($values)
-                ->execute();
-        });
+        return $this->newQuery()->insert($columns, $types)
+            ->into($table)
+            ->values($values)
+            ->execute();
     }
 
     /**
@@ -432,12 +347,10 @@ class Connection implements ConnectionInterface
      */
     public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $values, $conditions, $types) {
-            return $this->newQuery()->update($table)
-                ->set($values, $types)
-                ->where($conditions, $types)
-                ->execute();
-        });
+        return $this->newQuery()->update($table)
+            ->set($values, $types)
+            ->where($conditions, $types)
+            ->execute();
     }
 
     /**
@@ -450,11 +363,9 @@ class Connection implements ConnectionInterface
      */
     public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $conditions, $types) {
-            return $this->newQuery()->delete($table)
-                ->where($conditions, $types)
-                ->execute();
-        });
+        return $this->newQuery()->delete($table)
+            ->where($conditions, $types)
+            ->execute();
     }
 
     /**
@@ -465,10 +376,6 @@ class Connection implements ConnectionInterface
     public function begin(): void
     {
         if (!$this->_transactionStarted) {
-            if ($this->_logQueries) {
-                $this->log('BEGIN');
-            }
-
             $this->getDisconnectRetry()->run(function (): void {
                 $this->_driver->beginTransaction();
             });
@@ -507,9 +414,6 @@ class Connection implements ConnectionInterface
 
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
-            if ($this->_logQueries) {
-                $this->log('COMMIT');
-            }
 
             return $this->_driver->commitTransaction();
         }
@@ -536,16 +440,11 @@ class Connection implements ConnectionInterface
         }
 
         $useSavePoint = $this->isSavePointsEnabled();
-        if ($toBeginning === null) {
-            $toBeginning = !$useSavePoint;
-        }
+        $toBeginning ??= !$useSavePoint;
         if ($this->_transactionLevel === 0 || $toBeginning) {
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
-            if ($this->_logQueries) {
-                $this->log('ROLLBACK');
-            }
             $this->_driver->rollbackTransaction();
 
             return true;
@@ -554,8 +453,8 @@ class Connection implements ConnectionInterface
         $savePoint = $this->_transactionLevel--;
         if ($useSavePoint) {
             $this->rollbackSavepoint($savePoint);
-        } elseif ($this->nestedTransactionRollbackException === null) {
-            $this->nestedTransactionRollbackException = new NestedTransactionRollbackException();
+        } else {
+            $this->nestedTransactionRollbackException ??= new NestedTransactionRollbackException();
         }
 
         return true;
@@ -611,7 +510,7 @@ class Connection implements ConnectionInterface
      */
     public function createSavePoint(string|int $name): void
     {
-        $this->execute($this->_driver->savePointSQL($name))->closeCursor();
+        $this->execute($this->_driver->savePointSQL($name));
     }
 
     /**
@@ -624,7 +523,7 @@ class Connection implements ConnectionInterface
     {
         $sql = $this->_driver->releaseSavePointSQL($name);
         if ($sql) {
-            $this->execute($sql)->closeCursor();
+            $this->execute($sql);
         }
     }
 
@@ -636,7 +535,7 @@ class Connection implements ConnectionInterface
      */
     public function rollbackSavepoint(string|int $name): void
     {
-        $this->execute($this->_driver->rollbackSavePointSQL($name))->closeCursor();
+        $this->execute($this->_driver->rollbackSavePointSQL($name));
     }
 
     /**
@@ -647,7 +546,7 @@ class Connection implements ConnectionInterface
     public function disableForeignKeys(): void
     {
         $this->getDisconnectRetry()->run(function (): void {
-            $this->execute($this->_driver->disableForeignKeySQL())->closeCursor();
+            $this->execute($this->_driver->disableForeignKeySQL());
         });
     }
 
@@ -659,7 +558,7 @@ class Connection implements ConnectionInterface
     public function enableForeignKeys(): void
     {
         $this->getDisconnectRetry()->run(function (): void {
-            $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
+            $this->execute($this->_driver->enableForeignKeySQL());
         });
     }
 
@@ -826,86 +725,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Enable/disable query logging
-     *
-     * @param bool $enable Enable/disable query logging
-     * @return $this
-     */
-    public function enableQueryLogging(bool $enable = true)
-    {
-        $this->_logQueries = $enable;
-
-        return $this;
-    }
-
-    /**
-     * Disable query logging
-     *
-     * @return $this
-     */
-    public function disableQueryLogging()
-    {
-        $this->_logQueries = false;
-
-        return $this;
-    }
-
-    /**
-     * Check if query logging is enabled.
-     *
-     * @return bool
-     */
-    public function isQueryLoggingEnabled(): bool
-    {
-        return $this->_logQueries;
-    }
-
-    /**
-     * Sets a logger
-     *
-     * @param \Psr\Log\LoggerInterface $logger Logger object
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger): void
-    {
-        $this->_logger = $logger;
-    }
-
-    /**
-     * Gets the logger object
-     *
-     * @return \Psr\Log\LoggerInterface logger instance
-     */
-    public function getLogger(): LoggerInterface
-    {
-        if ($this->_logger !== null) {
-            return $this->_logger;
-        }
-
-        if (!class_exists(QueryLogger::class)) {
-            throw new RuntimeException(
-                'For logging you must either set a logger using Connection::setLogger()' .
-                ' or require the cakephp/log package in your composer config.'
-            );
-        }
-
-        return $this->_logger = new QueryLogger(['connection' => $this->configName()]);
-    }
-
-    /**
-     * Logs a Query string using the configured logger object.
-     *
-     * @param string $sql string to be logged
-     * @return void
-     */
-    public function log(string $sql): void
-    {
-        $query = new LoggedQuery();
-        $query->query = $sql;
-        $this->getLogger()->debug((string)$query, ['query' => $query]);
-    }
-
-    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
@@ -929,8 +748,6 @@ class Connection implements ConnectionInterface
             'transactionLevel' => $this->_transactionLevel,
             'transactionStarted' => $this->_transactionStarted,
             'useSavePoints' => $this->_useSavePoints,
-            'logQueries' => $this->_logQueries,
-            'logger' => $this->_logger,
         ];
     }
 }

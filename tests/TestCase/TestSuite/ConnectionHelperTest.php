@@ -44,9 +44,9 @@ class ConnectionHelperTest extends TestCase
     {
         $connection = new Connection(['driver' => TestDriver::class]);
         ConnectionManager::setConfig('query_logging', $connection);
-        $this->assertFalse($connection->isQueryLoggingEnabled());
+        $this->assertFalse($connection->getDriver()->log(''));
 
         (new ConnectionHelper())->enableQueryLogging(['query_logging']);
-        $this->assertTrue($connection->isQueryLoggingEnabled());
+        $this->assertTrue($connection->getDriver()->log(''));
     }
 }

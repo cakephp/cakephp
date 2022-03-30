@@ -22,7 +22,9 @@ use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\Test\Fixture\ArticlesFixture;
+use Cake\Test\Fixture\PostsFixture;
 use Cake\TestSuite\TestCase;
+use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\LettersFixture;
 
 /**
@@ -138,6 +140,26 @@ class TestFixtureTest extends TestCase
     }
 
     /**
+     * test init with other tables used in initialize()
+     *
+     * The FeaturedTagsTable uses PostsTable, then when PostsFixture
+     * reflects schema it should not raise an error.
+     */
+    public function testInitInitializeUsesRegistry(): void
+    {
+        $this->setAppNamespace();
+
+        $fixture = new FeaturedTagsFixture();
+
+        $posts = new PostsFixture();
+        $posts->fields = [];
+        $posts->init();
+
+        $expected = ['tag_id', 'priority'];
+        $this->assertSame($expected, $fixture->getTableSchema()->columns());
+    }
+
+    /**
      * test the insert method
      */
     public function testInsert(): void
@@ -179,7 +201,6 @@ class TestFixtureTest extends TestCase
             ->will($this->returnSelf());
 
         $statement = $this->createMock(StatementInterface::class);
-        $statement->expects($this->once())->method('closeCursor');
 
         $query->expects($this->once())
             ->method('execute')

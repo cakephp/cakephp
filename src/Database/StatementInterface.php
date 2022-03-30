@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use PDO;
-use Psr\Log\LoggerInterface;
 
 interface StatementInterface
 {
@@ -197,10 +196,16 @@ interface StatementInterface
     public function lastInsertId(?string $table = null, ?string $column = null): string|int;
 
     /**
-     * Sets query logger to use when calling execute().
+     * Returns prepared query string.
      *
-     * @param \Psr\Log\LoggerInterface $logger Query logger
-     * @return $this
+     * @return string
      */
-    public function setLogger(LoggerInterface $logger);
+    public function queryString(): string;
+
+    /**
+     * Get the bound params.
+     *
+     * @return array
+     */
+    public function getBoundParams(): array;
 }

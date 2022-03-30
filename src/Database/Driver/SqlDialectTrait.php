@@ -21,6 +21,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\Query;
 use Closure;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -73,14 +74,14 @@ trait SqlDialectTrait
         }
 
         // string.string with spaces
-        if (preg_match('/^([\w-]+\.[\w][\w\s\-]*[\w])(.*)/u', $identifier, $matches)) {
+        if (preg_match('/^([\w-]+\.[\w][\w\s-]*[\w])(.*)/u', $identifier, $matches)) {
             $items = explode('.', $matches[1]);
             $field = implode($this->_endQuote . '.' . $this->_startQuote, $items);
 
             return $this->_startQuote . $field . $this->_endQuote . $matches[2];
         }
 
-        if (preg_match('/^[\w_\s-]*[\w_-]+/u', $identifier)) {
+        if (preg_match('/^[\w\s-]*[\w-]+/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
@@ -103,8 +104,14 @@ trait SqlDialectTrait
                 $query = (new IdentifierQuoter($this))->quote($query);
             }
 
-            /** @var \Cake\ORM\Query $query */
-            $query = $this->{'_' . $type . 'QueryTranslator'}($query);
+            $query = match ($type) {
+                'select' => $this->_selectQueryTranslator($query),
+                'insert' => $this->_insertQueryTranslator($query),
+                'update' => $this->_updateQueryTranslator($query),
+                'delete' => $this->_deleteQueryTranslator($query),
+                default => throw new InvalidArgumentException('Valid types are: select, insert, update, delete'),
+            };
+
             $translators = $this->_expressionTranslators();
             if (!$translators) {
                 return $query;

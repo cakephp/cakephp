@@ -238,9 +238,7 @@ class EagerLoader
      */
     public function setMatching(string $associationPath, ?callable $builder = null, array $options = [])
     {
-        if ($this->_matching === null) {
-            $this->_matching = new static();
-        }
+        $this->_matching ??= new static();
 
         $options += ['joinType' => Query::JOIN_TYPE_INNER];
         $sharedOptions = ['negateMatch' => false, 'matching' => true] + $options;
@@ -268,9 +266,7 @@ class EagerLoader
      */
     public function getMatching(): array
     {
-        if ($this->_matching === null) {
-            $this->_matching = new static();
-        }
+        $this->_matching ??= new static();
 
         return $this->_matching->getContain();
     }
@@ -374,9 +370,7 @@ class EagerLoader
             if (isset($options['queryBuilder'], $pointer[$table]['queryBuilder'])) {
                 $first = $pointer[$table]['queryBuilder'];
                 $second = $options['queryBuilder'];
-                $options['queryBuilder'] = function ($query) use ($first, $second) {
-                    return $second($first($query));
-                };
+                $options['queryBuilder'] = fn($query) => $second($first($query));
             }
 
             if (!is_array($options)) {

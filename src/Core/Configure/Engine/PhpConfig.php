@@ -62,10 +62,7 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function __construct(?string $path = null)
     {
-        if ($path === null) {
-            $path = CONFIG;
-        }
-        $this->_path = $path;
+        $this->_path = $path ?? CONFIG;
     }
 
     /**

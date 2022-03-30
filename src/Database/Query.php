@@ -356,7 +356,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             $binder->resetCount();
         }
 
-        return $this->getConnection()->compileQuery($this, $binder);
+        return $this->getConnection()->getDriver()->compileQuery($this, $binder)[1];
     }
 
     /**
@@ -842,15 +842,18 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * See `join()` for further details on conditions and types.
      *
-     * @param array<string>|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
+     * @param array<string, mixed>|string $table The table to join with
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
      * values to the corresponding database representation.
      * @return $this
      */
-    public function leftJoin(array|string $table, ExpressionInterface|array|string $conditions = [], array $types = [])
-    {
+    public function leftJoin(
+        array|string $table,
+        ExpressionInterface|Closure|array|string $conditions = [],
+        array $types = []
+    ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
 
         return $this;
@@ -864,15 +867,18 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
-     * @param array<string>|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions
+     * @param array<string, mixed>|string $table The table to join with
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
      * values to the corresponding database representation.
      * @return $this
      */
-    public function rightJoin(array|string $table, ExpressionInterface|array|string $conditions = [], array $types = [])
-    {
+    public function rightJoin(
+        array|string $table,
+        ExpressionInterface|Closure|array|string $conditions = [],
+        array $types = []
+    ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
 
         return $this;
@@ -886,7 +892,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that method's description for further details.
      *
-     * @param array|string $table The table to join with
+     * @param array<string, mixed>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array<string, string> $types a list of types associated to the conditions used for converting
@@ -906,7 +912,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     /**
      * Returns an array that can be passed to the join method describing a single join clause
      *
-     * @param array<string>|string $table The table to join with
+     * @param array<string, mixed>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
@@ -1996,11 +2002,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function func(): FunctionsBuilder
     {
-        if ($this->_functionsBuilder === null) {
-            $this->_functionsBuilder = new FunctionsBuilder();
-        }
-
-        return $this->_functionsBuilder;
+        return $this->_functionsBuilder ??= new FunctionsBuilder();
     }
 
     /**
@@ -2119,9 +2121,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function traverseExpressions(callable $callback)
     {
-        if (!$callback instanceof Closure) {
-            $callback = Closure::fromCallable($callback);
-        }
+        $callback = $callback(...);
 
         foreach ($this->_parts as $part) {
             $this->_expressionsVisitor($part, $callback);
@@ -2150,9 +2150,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
         }
 
         if ($expression instanceof ExpressionInterface) {
-            $expression->traverse(function ($exp) use ($callback): void {
-                $this->_expressionsVisitor($exp, $callback);
-            });
+            $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback));
 
             if (!$expression instanceof self) {
                 $callback($expression);
@@ -2192,11 +2190,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function getValueBinder(): ValueBinder
     {
-        if ($this->_valueBinder === null) {
-            $this->_valueBinder = new ValueBinder();
-        }
-
-        return $this->_valueBinder;
+        return $this->_valueBinder ??= new ValueBinder();
     }
 
     /**
@@ -2239,11 +2233,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function getSelectTypeMap(): TypeMap
     {
-        if ($this->_selectTypeMap === null) {
-            $this->_selectTypeMap = new TypeMap();
-        }
-
-        return $this->_selectTypeMap;
+        return $this->_selectTypeMap ??= new TypeMap();
     }
 
     /**

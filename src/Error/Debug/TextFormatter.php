@@ -71,16 +71,12 @@ TEXT;
     protected function export(NodeInterface $var, int $indent): string
     {
         if ($var instanceof ScalarNode) {
-            switch ($var->getType()) {
-                case 'bool':
-                    return $var->getValue() ? 'true' : 'false';
-                case 'null':
-                    return 'null';
-                case 'string':
-                    return "'" . (string)$var->getValue() . "'";
-                default:
-                    return "({$var->getType()}) {$var->getValue()}";
-            }
+            return match ($var->getType()) {
+                'bool' => $var->getValue() ? 'true' : 'false',
+                'null' => 'null',
+                'string' => "'" . (string)$var->getValue() . "'",
+                default => "({$var->getType()}) {$var->getValue()}",
+            };
         }
         if ($var instanceof ArrayNode) {
             return $this->exportArray($var, $indent + 1);

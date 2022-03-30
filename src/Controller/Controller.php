@@ -87,8 +87,6 @@ use UnexpectedValueException;
  *
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
- * @property \Cake\Controller\Component\PaginatorComponent $Paginator
- * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @link https://book.cakephp.org/4/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
@@ -257,11 +255,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->_components = $components;
         }
 
-        if ($this->_components === null) {
-            $this->_components = new ComponentRegistry($this);
-        }
-
-        return $this->_components;
+        return $this->_components ??= new ComponentRegistry($this);
     }
 
     /**
@@ -439,7 +433,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setRequest(ServerRequest $request)
     {
         $this->request = $request;
-        $this->plugin = $request->getParam('plugin') ?: null;
+        $this->plugin = $request->getParam('plugin');
 
         return $this;
     }
@@ -489,7 +483,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             ]);
         }
 
-        return Closure::fromCallable([$this, $action]);
+        return $this->$action(...);
     }
 
     /**
@@ -527,6 +521,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
+     * @since 4.3.0
      * @psalm-param array{only?: array|string, except?: array|string} $options
      */
     public function middleware(MiddlewareInterface|Closure|string $middleware, array $options = []): void
@@ -541,6 +536,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Get middleware to be applied for this controller.
      *
      * @return array
+     * @since 4.3.0
      */
     public function getMiddleware(): array
     {

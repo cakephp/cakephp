@@ -235,6 +235,7 @@ trait EntityTrait
         $options += ['setter' => true, 'guard' => $guard];
 
         foreach ($field as $name => $value) {
+            /** @psalm-suppress RedundantCastGivenDocblockType */
             $name = (string)$name;
             if ($options['guard'] === true && !$this->isAccessible($name)) {
                 continue;
@@ -405,7 +406,7 @@ trait EntityTrait
     }
 
     /**
-     * Checks tha a field has a value.
+     * Checks that a field has a value.
      *
      * This method will return true for
      *
@@ -1133,9 +1134,7 @@ trait EntityTrait
     public function setAccess(array|string $field, bool $set)
     {
         if ($field === '*') {
-            $this->_accessible = array_map(function ($p) use ($set) {
-                return $set;
-            }, $this->_accessible);
+            $this->_accessible = array_map(fn($p) => $set, $this->_accessible);
             $this->_accessible['*'] = $set;
 
             return $this;

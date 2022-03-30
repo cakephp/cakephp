@@ -23,12 +23,11 @@ use Cake\Database\Query;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\ValueBinder;
 use DateTimeInterface;
+use Stringable;
 
 /**
  * Trait that holds shared functionality for case related expressions.
  *
- * @property \Cake\Database\TypeMap $_typeMap The type map to use when using an array of conditions for the `WHEN`
- *  value.
  * @internal
  */
 trait CaseExpressionTrait
@@ -43,6 +42,7 @@ trait CaseExpressionTrait
     {
         $type = null;
 
+        /** @psalm-suppress RedundantCondition */
         if (is_string($value)) {
             $type = 'string';
         } elseif (is_int($value)) {
@@ -60,7 +60,7 @@ trait CaseExpressionTrait
             $type = 'datetime';
         } elseif (
             is_object($value) &&
-            method_exists($value, '__toString')
+            $value instanceof Stringable
         ) {
             $type = 'string';
         } elseif (

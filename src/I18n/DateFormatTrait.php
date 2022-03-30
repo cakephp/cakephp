@@ -226,9 +226,7 @@ trait DateFormatTrait
             $pattern = $format;
         }
 
-        if ($locale === null) {
-            $locale = I18n::getLocale();
-        }
+        $locale ??= I18n::getLocale();
 
         if (
             preg_match(
@@ -485,12 +483,8 @@ trait DateFormatTrait
      */
     public static function getDiffFormatter(): DifferenceFormatterInterface
     {
-        // Use the static property defined in chronos.
-        if (static::$diffFormatter === null) {
-            static::$diffFormatter = new RelativeTimeFormatter();
-        }
-
-        return static::$diffFormatter;
+        /** @phpstan-ignore-next-line */
+        return static::$diffFormatter ??= new RelativeTimeFormatter();
     }
 
     /**

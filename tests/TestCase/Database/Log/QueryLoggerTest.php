@@ -45,8 +45,10 @@ class QueryLoggerTest extends TestCase
     {
         $logger = new QueryLogger(['connection' => '']);
         $query = new LoggedQuery();
-        $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
-        $query->params = ['string', '3', null];
+        $query->setContext([
+            'query' => 'SELECT a FROM b where a = ? AND b = ? AND c = ?',
+            'params' => ['string', '3', null],
+        ]);
 
         Log::setConfig('queryLoggerTest', [
             'className' => 'Array',
@@ -69,7 +71,7 @@ class QueryLoggerTest extends TestCase
     {
         $logger = new QueryLogger(['connection' => 'test']);
         $query = new LoggedQuery();
-        $query->query = 'SELECT a';
+        $query->setContext(['query' => 'SELECT a']);
 
         Log::setConfig('queryLoggerTest', [
             'className' => 'Array',

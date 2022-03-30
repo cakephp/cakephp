@@ -18,17 +18,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.0']
+        php-version: ['8.1']
         db-type: [sqlite, pgsql]
         prefer-lowest: ['']
         include:
-          - php-version: '8.0'
+          - php-version: '8.1'
             db-type: 'mariadb'
-          - php-version: '8.0'
-            db-type: 'mysql'
-            prefer-lowest: 'prefer-lowest'
           - php-version: '8.1'
             db-type: 'mysql'
+            prefer-lowest: 'prefer-lowest'
           - php-version: '8.2'
             db-type: 'mysql'
 
@@ -97,7 +95,7 @@ jobs:
         fi
 
     - name: Setup problem matchers for PHPUnit
-      if: matrix.php-version == '8.0' && matrix.db-type == 'mysql'
+      if: matrix.php-version == '8.1' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
     - name: Wait for MySQL
@@ -129,16 +127,16 @@ jobs:
       run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
 
     - name: Submit code coverage
-      if: matrix.php-version == '8.0'
-      uses: codecov/codecov-action@v1
+      if: matrix.php-version == '8.1'
+      uses: codecov/codecov-action@v2
 
   testsuite-windows:
     runs-on: windows-2019
-    name: Windows - PHP 8.0 & SQL Server
+    name: Windows - PHP 8.1 & SQL Server
 
     env:
-      EXTENSIONS: mbstring, intl, apcu, memcached, redis, pdo_sqlsrv
-      PHP_VERSION: '8.0'
+      EXTENSIONS: mbstring, intl, apcu, redis, pdo_sqlsrv
+      PHP_VERSION: '8.1'
 
     steps:
     - uses: actions/checkout@v2
@@ -213,7 +211,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.0'
+        php-version: '8.1'
         extensions: mbstring, intl, apcu, memcached, redis
         tools: cs2pr
         coverage: none

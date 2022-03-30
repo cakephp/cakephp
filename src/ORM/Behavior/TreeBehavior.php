@@ -18,6 +18,7 @@ namespace Cake\ORM\Behavior;
 
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
@@ -226,16 +227,14 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $query = $this->_scope($this->_table->query())
+            $this->_scope($this->_table->query())
                 ->delete()
-                ->where(function ($exp) use ($config, $left, $right) {
-                    /** @var \Cake\Database\Expression\QueryExpression $exp */
-                    return $exp
+                ->where(
+                    fn (QueryExpression $exp) => $exp
                         ->gte($config['leftField'], $left + 1)
-                        ->lte($config['leftField'], $right - 1);
-                });
-            $statement = $query->execute();
-            $statement->closeCursor();
+                        ->lte($config['leftField'], $right - 1)
+                )
+                ->execute();
         }
 
         $this->_sync($diff, '-', "> {$right}");
@@ -358,10 +357,7 @@ class TreeBehavior extends Behavior
                     ->eq($config['leftField'], $leftInverse->add($config['leftField']))
                     ->eq($config['rightField'], $rightInverse->add($config['rightField']));
             },
-            function ($exp) use ($config) {
-                /** @var \Cake\Database\Expression\QueryExpression $exp */
-                return $exp->lt($config['leftField'], 0);
-            }
+            fn(QueryExpression $exp) => $exp->lt($config['leftField'], 0)
         );
     }
 
@@ -641,10 +637,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(function ($exp) use ($config, $nodeLeft) {
-                    /** @var \Cake\Database\Expression\QueryExpression $exp */
-                    return $exp->lt($config['rightField'], $nodeLeft);
-                })
+                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -655,10 +648,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(function ($exp) use ($config, $nodeLeft) {
-                    /** @var \Cake\Database\Expression\QueryExpression $exp */
-                    return $exp->lt($config['rightField'], $nodeLeft);
-                })
+                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderAsc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -735,10 +725,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(function ($exp) use ($config, $nodeRight) {
-                    /** @var \Cake\Database\Expression\QueryExpression $exp */
-                    return $exp->gt($config['leftField'], $nodeRight);
-                })
+                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -749,10 +736,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(function ($exp) use ($config, $nodeRight) {
-                    /** @var \Cake\Database\Expression\QueryExpression $exp */
-                    return $exp->gt($config['leftField'], $nodeRight);
-                })
+                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderDesc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -924,9 +908,8 @@ class TreeBehavior extends Behavior
 
             $query->update()
                 ->set($exp->eq($field, $movement))
-                ->where($where);
-
-            $query->execute()->closeCursor();
+                ->where($where)
+                ->execute();
         }
     }
 

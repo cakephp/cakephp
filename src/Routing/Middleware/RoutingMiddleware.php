@@ -16,17 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Middleware;
 
-use Cake\Cache\Cache;
-use Cake\Cache\InvalidArgumentException;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
-use Cake\Routing\Exception\FailedRouteCacheException;
-use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
-use Exception;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -54,82 +49,27 @@ class RoutingMiddleware implements MiddlewareInterface
     protected RoutingApplicationInterface $app;
 
     /**
-     * The cache configuration name to use for route collection caching,
-     * null to disable caching
-     *
-     * @var string|null
-     */
-    protected ?string $cacheConfig = null;
-
-    /**
      * Constructor
      *
      * @param \Cake\Routing\RoutingApplicationInterface $app The application instance that routes are defined on.
-     * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(RoutingApplicationInterface $app, ?string $cacheConfig = null)
+    public function __construct(RoutingApplicationInterface $app)
     {
         $this->app = $app;
-        $this->cacheConfig = $cacheConfig;
     }
 
     /**
-     * Trigger the application's routes() hook if the application exists and Router isn't initialized.
-     * Uses the routes cache if enabled via configuration param "Router.cache"
-     *
-     * If the middleware is created without an Application, routes will be
-     * loaded via the automatic route loading that pre-dates the routes() hook.
+     * Trigger the application's and plugin's routes() hook.
      *
      * @return void
      */
     protected function loadRoutes(): void
-    {
-        $routeCollection = $this->buildRouteCollection();
-        Router::setRouteCollection($routeCollection);
-    }
-
-    /**
-     * Check if route cache is enabled and use the configured Cache to 'remember' the route collection
-     *
-     * @return \Cake\Routing\RouteCollection
-     */
-    protected function buildRouteCollection(): RouteCollection
-    {
-        if (Cache::enabled() && $this->cacheConfig !== null) {
-            try {
-                return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
-                    return $this->prepareRouteCollection();
-                }, $this->cacheConfig);
-            } catch (InvalidArgumentException $e) {
-                throw $e;
-            } catch (Exception $e) {
-                throw new FailedRouteCacheException(
-                    'Unable to cache route collection. Cached routes must be serializable. Check for route-specific
-                    middleware or other unserializable settings in your routes. The original exception message can
-                    show what type of object failed to serialize.',
-                    null,
-                    $e
-                );
-            }
-        }
-
-        return $this->prepareRouteCollection();
-    }
-
-    /**
-     * Generate the route collection using the builder
-     *
-     * @return \Cake\Routing\RouteCollection
-     */
-    protected function prepareRouteCollection(): RouteCollection
     {
         $builder = Router::createRouteBuilder('/');
         $this->app->routes($builder);
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);
         }
-
-        return Router::getRouteCollection();
     }
 
     /**
