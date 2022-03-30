@@ -18,8 +18,8 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paginator;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\Paginator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\NotFoundException;
 use InvalidArgumentException;
@@ -34,15 +34,15 @@ use UnexpectedValueException;
  * You configure pagination when calling paginate(). See that method for more details.
  *
  * @link https://book.cakephp.org/4/en/controllers/components/pagination.html
- * @mixin \Cake\Datasource\Paginator
- * @deprecated 4.4.0 Use Cake\Datasource\Paginator directly. Will be removed in 6.0.
+ * @mixin \Cake\Datasource\Paging\Paginator
+ * @deprecated 4.4.0 Use Cake\Datasource\Paging\Paginator directly. Will be removed in 6.0.
  */
 class PaginatorComponent extends Component
 {
     /**
      * Datasource paginator instance.
      *
-     * @var \Cake\Datasource\Paginator
+     * @var \Cake\Datasource\Paging\Paginator
      */
     protected Paginator $_paginator;
 
@@ -226,7 +226,7 @@ class PaginatorComponent extends Component
     /**
      * Set paginator instance.
      *
-     * @param \Cake\Datasource\Paginator $paginator Paginator instance.
+     * @param \Cake\Datasource\Paging\Paginator $paginator Paginator instance.
      * @return $this
      */
     public function setPaginator(Paginator $paginator)
@@ -239,7 +239,7 @@ class PaginatorComponent extends Component
     /**
      * Get paginator instance.
      *
-     * @return \Cake\Datasource\Paginator
+     * @return \Cake\Datasource\Paging\Paginator
      */
     public function getPaginator(): Paginator
     {

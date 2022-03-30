@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         3.9.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Datasource;
+namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\Core\Configure;
-use Cake\Datasource\SimplePaginator;
+use Cake\Datasource\Paging\SimplePaginator;
 use Cake\ORM\Entity;
 
 class SimplePaginatorTest extends PaginatorTest

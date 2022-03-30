@@ -1396,7 +1396,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      * $table->find('threaded', [
      *  'keyField' => 'id',
-     *  'parentField' => 'ancestor_id'
+     *  'parentField' => 'ancestor_id',
      *  'nestingKey' => 'children'
      * ]);
      * ```

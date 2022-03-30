@@ -18,8 +18,8 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paginator;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\Paginator;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
@@ -835,7 +835,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $settings += $this->paginate;
 
-        /** @var \Cake\Datasource\PaginatorInterface|class-string<\Cake\Datasource\PaginatorInterface> $paginator */
+        /** @var \Cake\Datasource\Paging\PaginatorInterface|class-string<\Cake\Datasource\Paging\PaginatorInterface> $paginator */
         $paginator = $settings['paginator'] ?? Paginator::class;
         unset($settings['paginator']);
         if (is_string($paginator)) {

@@ -14,11 +14,14 @@ declare(strict_types=1);
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Datasource;
+namespace Cake\Datasource\Paging;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\QueryInterface;
+use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetInterface;
 
 /**
  * This class is used to handle automatic model data pagination.

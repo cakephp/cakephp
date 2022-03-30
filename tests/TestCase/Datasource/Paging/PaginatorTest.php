@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Datasource;
+namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
