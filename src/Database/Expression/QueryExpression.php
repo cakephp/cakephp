@@ -725,6 +725,11 @@ class QueryExpression implements ExpressionInterface, Countable
 
             $isArray = is_array($c);
             $isOperator = $isNot = false;
+            if($isArray && !$numericKey && count($c) === 2 && strpos(strtolower($k),' between ') !== false){
+                $parts = explode(' ',$k);
+                $this->_conditions[] = new BetweenExpression($parts[0],$c[0],$c[1]);
+                continue;
+            }
             if (!$numericKey) {
                 $normalizedKey = strtolower($k);
                 $isOperator = in_array($normalizedKey, $operators);
