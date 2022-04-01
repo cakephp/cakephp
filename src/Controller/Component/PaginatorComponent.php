@@ -19,8 +19,8 @@ namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\Paging\Paginator;
-use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\NotFoundException;
 use InvalidArgumentException;
 use UnexpectedValueException;
@@ -173,10 +173,10 @@ class PaginatorComponent extends Component
      *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object Table or query to paginate.
      * @param array<string, mixed> $settings The settings/configuration used for pagination.
-     * @return \Cake\Datasource\ResultSetInterface Query results
+     * @return \Cake\Datasource\Paging\PaginatedInterface
      * @throws \Cake\Http\Exception\NotFoundException
      */
-    public function paginate(object $object, array $settings = []): ResultSetInterface
+    public function paginate(object $object, array $settings = []): PaginatedInterface
     {
         $request = $this->_registry->getController()->getRequest();
 
@@ -186,11 +186,7 @@ class PaginatorComponent extends Component
                 $request->getQueryParams(),
                 $settings
             );
-
-            $this->_setPagingParams();
         } catch (PageOutOfBoundsException $e) {
-            $this->_setPagingParams();
-
             throw new NotFoundException(null, null, $e);
         }
 
@@ -244,20 +240,6 @@ class PaginatorComponent extends Component
     public function getPaginator(): Paginator
     {
         return $this->_paginator;
-    }
-
-    /**
-     * Set paging params to request instance.
-     *
-     * @return void
-     */
-    protected function _setPagingParams(): void
-    {
-        $controller = $this->getController();
-        $request = $controller->getRequest();
-        $paging = $this->_paginator->getPagingParams() + (array)$request->getAttribute('paging', []);
-
-        $controller->setRequest($request->withAttribute('paging', $paging));
     }
 
     /**
