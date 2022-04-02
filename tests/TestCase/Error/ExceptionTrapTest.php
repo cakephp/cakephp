@@ -41,13 +41,12 @@ class ExceptionTrapTest extends TestCase
     {
         parent::setUp();
         $this->memoryLimit = ini_get('memory_limit');
-
-        Log::drop('test_error');
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
+        Log::reset();
         ini_set('memory_limit', $this->memoryLimit);
     }
 
@@ -214,6 +213,28 @@ class ExceptionTrapTest extends TestCase
 
         $logs = Log::engine('test_error')->read();
         $this->assertStringContainsString('nope', $logs[0]);
+    }
+
+    /**
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
+    public function testSkipLogException(): void
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ExceptionRenderer::class,
+            'skipLog' => [InvalidArgumentException::class],
+        ]);
+
+        ob_start();
+        $trap->handleException(new InvalidArgumentException('nope'));
+        ob_get_clean();
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertEmpty($logs);
     }
 
     public function testEventTriggered()
