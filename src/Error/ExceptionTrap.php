@@ -230,6 +230,7 @@ class ExceptionTrap
             $this->logException($exception, $request);
         }
 
+        $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);
         try {
             $renderer = $this->renderer($exception);
             $renderer->write($renderer->render());
@@ -334,7 +335,6 @@ class ExceptionTrap
     {
         $logger = $this->logger();
         $logger->log($exception, $request);
-        $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);
     }
 
     /**
