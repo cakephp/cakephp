@@ -66,7 +66,7 @@ jobs:
         mysql database: 'cakephp'
         mysql root password: 'root'
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -85,7 +85,7 @@ jobs:
       run: echo "::set-output name=date::$(date +'%Y-%m')"
 
     - name: Cache composer dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
@@ -137,7 +137,7 @@ jobs:
 
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v2
 
   testsuite-windows:
     runs-on: windows-2019
@@ -163,7 +163,7 @@ jobs:
         key: ${{ steps.key-date.outputs.date }}
 
     - name: Cache PHP extensions
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ steps.php-ext-cache.outputs.dir }}
         key: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
@@ -189,7 +189,7 @@ jobs:
       run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
     - name: Cache composer dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
@@ -234,7 +234,7 @@ jobs:
       run: echo "::set-output name=date::$(date +'%Y-%m')"
 
     - name: Cache composer dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
