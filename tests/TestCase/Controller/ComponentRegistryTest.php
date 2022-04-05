@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Component\FlashComponent;
-use Cake\Controller\Component\RequestHandlerComponent;
+use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
@@ -162,10 +162,10 @@ class ComponentRegistryTest extends TestCase
     public function testReset(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
-        $instance = $this->Components->load('RequestHandler');
+        $instance = $this->Components->load('FormProtection');
         $this->assertSame(
             $instance,
-            $this->Components->RequestHandler,
+            $this->Components->FormProtection,
             'Instance in registry should be the same as previously loaded'
         );
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
@@ -173,7 +173,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertSame($this->Components, $this->Components->reset());
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $this->assertNotSame($instance, $this->Components->load('RequestHandler'));
+        $this->assertNotSame($instance, $this->Components->load('FormProtection'));
     }
 
     /**
@@ -183,11 +183,11 @@ class ComponentRegistryTest extends TestCase
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
-        $this->Components->load('RequestHandler');
-        $result = $this->Components->unload('RequestHandler');
+        $this->Components->load('FormProtection');
+        $result = $this->Components->unload('FormProtection');
 
         $this->assertSame($this->Components, $result);
-        $this->assertFalse(isset($this->Components->RequestHandler), 'Should be gone');
+        $this->assertFalse(isset($this->Components->FormProtection), 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -198,10 +198,10 @@ class ComponentRegistryTest extends TestCase
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
-        $this->Components->load('RequestHandler');
-        unset($this->Components->RequestHandler);
+        $this->Components->load('FormProtection');
+        unset($this->Components->FormProtection);
 
-        $this->assertFalse(isset($this->Components->RequestHandler), 'Should be gone');
+        $this->assertFalse(isset($this->Components->FormProtection), 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -223,11 +223,11 @@ class ComponentRegistryTest extends TestCase
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $requestHandler = new RequestHandlerComponent($this->Components);
-        $result = $this->Components->set('RequestHandler', $requestHandler);
+        $formProtection = new FormProtectionComponent($this->Components);
+        $result = $this->Components->set('FormProtection', $formProtection);
 
-        $this->assertSame($this->Components, $result);
-        $this->assertTrue(isset($this->Components->RequestHandler), 'Should be present');
+        $this->assertEquals($this->Components, $result);
+        $this->assertTrue(isset($this->Components->FormProtection), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -239,10 +239,10 @@ class ComponentRegistryTest extends TestCase
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $requestHandler = new RequestHandlerComponent($this->Components);
-        $this->Components->RequestHandler = $requestHandler;
+        $formProtection = new FormProtectionComponent($this->Components);
+        $this->Components->FormProtection = $formProtection;
 
-        $this->assertTrue(isset($this->Components->RequestHandler), 'Should be present');
+        $this->assertTrue(isset($this->Components->FormProtection), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -251,7 +251,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testCountable(): void
     {
-        $this->Components->load('RequestHandler');
+        $this->Components->load('FormProtection');
         $this->assertInstanceOf(Countable::class, $this->Components);
         $count = count($this->Components);
         $this->assertSame(1, $count);
@@ -262,7 +262,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testTraversable(): void
     {
-        $this->Components->load('RequestHandler');
+        $this->Components->load('FormProtection');
         $this->assertInstanceOf(Traversable::class, $this->Components);
 
         $result = null;

@@ -711,8 +711,8 @@ class Router
      * Instructs the router to parse out file extensions
      * from the URL. For example, http://example.com/posts.rss would yield a file
      * extension of "rss". The file extension itself is made available in the
-     * controller as `$this->request->getParam('_ext')`, and is used by the RequestHandler
-     * component to automatically switch to alternate layouts and templates, and
+     * controller as `$this->request->getParam('_ext')`, and is used by content
+     * type negotiation to automatically switch to alternate layouts and templates, and
      * load helpers corresponding to the given content, i.e. RssHelper. Switching
      * layouts and helpers requires that the chosen extension has a defined mime type
      * in `Cake\Http\Response`.
