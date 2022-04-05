@@ -174,23 +174,10 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $controller = new $class($request);
             $controller->startupProcess();
         } catch (Throwable) {
-            $errorOccured = true;
         }
 
         if (!isset($controller)) {
             return new Controller($request);
-        }
-
-        // Retry RequestHandler, as another aspect of startupProcess()
-        // could have failed. Ignore any exceptions out of startup, as
-        // there could be userland input data parsers.
-        if ($errorOccured && isset($controller->RequestHandler)) {
-            try {
-                $event = new Event('Controller.startup', $controller);
-                /** @psalm-suppress PossiblyUndefinedMethod */
-                $controller->RequestHandler->startup($event);
-            } catch (Throwable) {
-            }
         }
 
         return $controller;

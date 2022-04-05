@@ -18,6 +18,7 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
+use Cake\View\JsonView;
 use OutOfBoundsException;
 
 /**
@@ -31,7 +32,6 @@ class PostsController extends AppController
     public function initialize(): void
     {
         $this->loadComponent('Flash');
-        $this->loadComponent('RequestHandler');
         $this->loadComponent('FormProtection');
 
         $this->middleware(function ($request, $handler) {
@@ -63,6 +63,12 @@ class PostsController extends AppController
             $this->set('flash', $this->request->getSession()->consume('Flash'));
         }
     }
+
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
+    }
+
 
     /**
      * Index method.

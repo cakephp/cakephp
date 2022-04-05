@@ -28,11 +28,6 @@
       <code>$callback</code>
     </MissingParamType>
   </file>
-  <file src="src/Controller/Component/RequestHandlerComponent.php">
-    <DeprecatedMethod occurrences="1">
-      <code>prefers</code>
-    </DeprecatedMethod>
-  </file>
   <file src="src/Controller/ControllerFactory.php">
     <ArgumentTypeCoercion occurrences="3">
       <code>$request</code>
