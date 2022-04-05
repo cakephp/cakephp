@@ -27,7 +27,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
-use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;

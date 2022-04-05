@@ -69,7 +69,6 @@ class PostsController extends AppController
         return [JsonView::class];
     }
 
-
     /**
      * Index method.
      *
