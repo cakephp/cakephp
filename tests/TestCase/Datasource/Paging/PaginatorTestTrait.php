@@ -19,8 +19,8 @@ namespace Cake\Test\TestCase\Datasource\Paging;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Paging\DefaultPaginator;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paging\Paginator;
 use Cake\Datasource\RepositoryInterface;
 
 trait PaginatorTestTrait
@@ -44,7 +44,7 @@ trait PaginatorTestTrait
 
         Configure::write('App.namespace', 'TestApp');
 
-        $this->Paginator = new Paginator();
+        $this->Paginator = new DefaultPaginator();
 
         $this->Post = $this->getMockRepository();
     }

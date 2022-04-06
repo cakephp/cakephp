@@ -121,7 +121,7 @@ class PaginatorComponentTest extends TestCase
     public function testInvalidPaginatorOption(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paging\Paginator');
+        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paging\DefaultPaginator');
         $this->deprecated(function () {
             new PaginatorComponent($this->registry, [
                 'paginator' => new stdClass(),
