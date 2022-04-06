@@ -35,7 +35,7 @@ use UnexpectedValueException;
  *
  * @link https://book.cakephp.org/4/en/controllers/components/pagination.html
  * @mixin \Cake\Datasource\Paging\Paginator
- * @deprecated 4.4.0 Use Cake\Datasource\Paging\Paginator directly. Will be removed in 6.0.
+ * @deprecated 4.4.0 Use Cake\Datasource\Paging\Paginator directly.
  */
 class PaginatorComponent extends Component
 {
@@ -51,6 +51,10 @@ class PaginatorComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
+        deprecationWarning(
+            'PaginatorComponent is deprecated, use a Cake\Datasource\Pagination\Paginator instance directly.'
+        );
+
         if (!empty($this->_defaultConfig)) {
             throw new UnexpectedValueException('Default configuration must be set using a custom Paginator class.');
         }

@@ -19,12 +19,16 @@ namespace Cake\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\Paginator;
+use Cake\Datasource\Paging\PaginatorInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\ContentTypeNegotiation;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -32,6 +36,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use Closure;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -910,13 +915,45 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
         }
 
-        $this->loadComponent('Paginator');
         if (empty($table)) {
             throw new RuntimeException('Unable to locate an object compatible with paginate.');
         }
+
         $settings += $this->paginate;
 
-        return $this->Paginator->paginate($table, $settings);
+        if (isset($this->Paginator)) {
+            return $this->Paginator->paginate($table, $settings);
+        }
+
+        $paginator = $settings['paginator'] ?? Paginator::class;
+        unset($settings['paginator']);
+        if (is_string($paginator)) {
+            $paginator = new $paginator();
+        }
+        if (!$paginator instanceof PaginatorInterface) {
+            throw new InvalidArgumentException('Paginator must be an instance of ' . PaginatorInterface::class);
+        }
+
+        $results = null;
+        try {
+            $results = $paginator->paginate(
+                $table,
+                $this->request->getQueryParams(),
+                $settings
+            );
+        } catch (PageOutOfBoundsException $e) {
+            // Exception thrown below
+        } finally {
+            $paging = $paginator->getPagingParams() + (array)$this->request->getAttribute('paging', []);
+            $this->request = $this->request->withAttribute('paging', $paging);
+        }
+
+        if (isset($e)) {
+            throw new NotFoundException(null, null, $e);
+        }
+
+        /** @psalm-suppress NullableReturnStatement */
+        return $results;
     }
 
     /**
