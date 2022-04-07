@@ -1171,7 +1171,7 @@ class Validation
     public static function mimeType(mixed $check, array|string $mimeTypes = []): bool
     {
         $file = static::getFilename($check);
-        if ($file === false) {
+        if ($file === null) {
             return false;
         }
 
@@ -1202,13 +1202,12 @@ class Validation
     }
 
     /**
-     * Helper for reading the file out of the various file implementations
-     * we accept.
+     * Helper for reading the file name.
      *
      * @param mixed $check The data to read a filename out of.
-     * @return string|false Either the filename or false on failure.
+     * @return string|null Either the filename or null on failure.
      */
-    protected static function getFilename(mixed $check): string|false
+    protected static function getFilename(mixed $check): ?string
     {
         if ($check instanceof UploadedFileInterface) {
             // Uploaded files throw exceptions on upload errors.
@@ -1218,20 +1217,17 @@ class Validation
                     return $uri;
                 }
 
-                return false;
+                return null;
             } catch (RuntimeException) {
-                return false;
+                return null;
             }
-        }
-        if (is_array($check) && isset($check['tmp_name'])) {
-            return $check['tmp_name'];
         }
 
         if (is_string($check)) {
             return $check;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -1249,7 +1245,7 @@ class Validation
     public static function fileSize(mixed $check, string $operator, string|int $size): bool
     {
         $file = static::getFilename($check);
-        if ($file === false) {
+        if ($file === null) {
             return false;
         }
 
@@ -1310,53 +1306,44 @@ class Validation
      */
     public static function uploadedFile(mixed $file, array $options = []): bool
     {
+        if (!($file instanceof UploadedFileInterface)) {
+            return false;
+        }
+
         $options += [
             'minSize' => null,
             'maxSize' => null,
             'types' => null,
             'optional' => false,
         ];
-        if (!is_array($file) && !($file instanceof UploadedFileInterface)) {
-            return false;
-        }
-        $error = $isUploaded = false;
-        if ($file instanceof UploadedFileInterface) {
-            $error = $file->getError();
-            $isUploaded = true;
-        }
-        if (is_array($file)) {
-            $keys = ['error', 'name', 'size', 'tmp_name', 'type'];
-            ksort($file);
-            if (array_keys($file) !== $keys) {
-                return false;
-            }
-            $error = (int)$file['error'];
-            $isUploaded = is_uploaded_file($file['tmp_name']);
-        }
 
         if (!static::uploadError($file, $options['optional'])) {
             return false;
         }
-        if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
+
+        if ($options['optional'] && $file->getError() === UPLOAD_ERR_NO_FILE) {
             return true;
         }
+
         if (
             isset($options['minSize'])
             && !static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL, $options['minSize'])
         ) {
             return false;
         }
+
         if (
             isset($options['maxSize'])
             && !static::fileSize($file, static::COMPARE_LESS_OR_EQUAL, $options['maxSize'])
         ) {
             return false;
         }
+
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
             return false;
         }
 
-        return $isUploaded;
+        return true;
     }
 
     /**
@@ -1376,7 +1363,7 @@ class Validation
         }
 
         $file = static::getFilename($file);
-        if ($file === false) {
+        if ($file === null) {
             return false;
         }
 

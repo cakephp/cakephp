@@ -1021,7 +1021,7 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Tests the default file upload merging behavior.
      */
-    public function testFromGlobalsWithFilesAsObjectsDefault(): void
+    public function testFromGlobalsWithFiles(): void
     {
         $this->assertNull(Configure::read('App.uploadedFilesAsObjects'));
 
@@ -1042,66 +1042,6 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame($files['file']['error'], $expected->getError());
         $this->assertSame($files['file']['name'], $expected->getClientFilename());
         $this->assertSame($files['file']['type'], $expected->getClientMediaType());
-    }
-
-    /**
-     * Tests the "as arrays" file upload merging behavior.
-     */
-    public function testFromGlobalsWithFilesAsObjectsDisabled(): void
-    {
-        Configure::write('App.uploadedFilesAsObjects', false);
-
-        $files = [
-            'file' => [
-                'name' => 'file.txt',
-                'type' => 'text/plain',
-                'tmp_name' => __FILE__,
-                'error' => 0,
-                'size' => 1234,
-            ],
-        ];
-        $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
-
-        $expected = [
-            'file' => [
-                'tmp_name' => __FILE__,
-                'error' => 0,
-                'name' => 'file.txt',
-                'type' => 'text/plain',
-                'size' => 1234,
-            ],
-        ];
-        $this->assertEquals($expected, $request->getData());
-    }
-
-    /**
-     * Tests the "as objects" file upload merging behavior.
-     */
-    public function testFromGlobalsWithFilesAsObjectsEnabled(): void
-    {
-        Configure::write('App.uploadedFilesAsObjects', true);
-
-        $files = [
-            'file' => [
-                'name' => 'file.txt',
-                'type' => 'text/plain',
-                'tmp_name' => __FILE__,
-                'error' => 0,
-                'size' => 1234,
-            ],
-        ];
-        $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
-
-        $expected = [
-            'file' => new UploadedFile(
-                __FILE__,
-                1234,
-                0,
-                'file.txt',
-                'text/plain'
-            ),
-        ];
-        $this->assertEquals($expected, $request->getData());
     }
 
     /**
@@ -1232,10 +1172,8 @@ class ServerRequestFactoryTest extends TestCase
             ],
         ];
 
-        Configure::write('App.uploadedFilesAsObjects', false);
         $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
-        $this->assertEquals($files, $request->getData());
-        Configure::write('App.uploadedFilesAsObjects', true);
+        $this->assertInstanceOf(UploadedFileInterface::class, $request->getData()['birth_cert']);
 
         $uploads = $request->getUploadedFiles();
         $this->assertCount(1, $uploads);
@@ -1261,10 +1199,8 @@ class ServerRequestFactoryTest extends TestCase
             ],
         ];
 
-        Configure::write('App.uploadedFilesAsObjects', false);
         $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
-        $this->assertEquals($files, $request->getData());
-        Configure::write('App.uploadedFilesAsObjects', true);
+        $this->assertInstanceOf(UploadedFileInterface::class, $request->getData()[0]);
 
         $uploads = $request->getUploadedFiles();
         $this->assertCount(1, $uploads);
