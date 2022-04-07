@@ -262,12 +262,12 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function groupBy(callable|string $path): CollectionInterface
+    public function groupBy(callable|string $path, mixed $default = null): CollectionInterface
     {
         $callback = $this->_propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $value) {
-            $pathValue = $callback($value);
+            $pathValue = $callback($value) ?? $default;
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
                     'Cannot group by path that does not exist or contains a null value. ' .
@@ -283,12 +283,12 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function indexBy(callable|string $path): CollectionInterface
+    public function indexBy(callable|string $path, mixed $default = null): CollectionInterface
     {
         $callback = $this->_propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $value) {
-            $pathValue = $callback($value);
+            $pathValue = $callback($value) ?? $default;
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
                     'Cannot index by path that does not exist or contains a null value. ' .

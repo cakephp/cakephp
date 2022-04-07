@@ -691,6 +691,27 @@ class CollectionTest extends TestCase
         $collection->groupBy('missing');
     }
 
+    public function testGroupByDefault(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo'],
+            ['id' => 2, 'name' => 'bar'],
+            ['id' => 3, 'name' => 'baz', 'missing' => 'not default'],
+        ];
+        $collection = new Collection($items);
+
+        $expected = [
+            'default' => [
+                ['id' => 1, 'name' => 'foo'],
+                ['id' => 2, 'name' => 'bar'],
+            ],
+            'not default' => [
+                ['id' => 3, 'name' => 'baz', 'missing' => 'not default'],
+            ],
+        ];
+        $this->assertSame($expected, $collection->groupBy('missing', 'default')->toArray());
+    }
+
     /**
      * Provider for some indexBy tests
      *
@@ -781,6 +802,22 @@ class CollectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
         $collection->indexBy('missing');
+    }
+
+    public function testIndexByDefault(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo'],
+            ['id' => 2, 'name' => 'bar'],
+            ['id' => 3, 'name' => 'baz', 'missing' => 'not default'],
+        ];
+        $collection = new Collection($items);
+
+        $expected = [
+            'default' => ['id' => 2, 'name' => 'bar'],
+            'not default' => ['id' => 3, 'name' => 'baz', 'missing' => 'not default'],
+        ];
+        $this->assertSame($expected, $collection->indexBy('missing', 'default')->toArray());
     }
 
     /**

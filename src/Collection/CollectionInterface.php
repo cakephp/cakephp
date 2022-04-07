@@ -430,9 +430,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @param callable|string $path The column name to use for grouping or callback that returns the value.
      * or a function returning the grouping key out of the provided element
+     * @param mixed $default The default value to use if the path does not exist or is null.
      * @return self
      */
-    public function groupBy(callable|string $path): CollectionInterface;
+    public function groupBy(callable|string $path, mixed $default = null): CollectionInterface;
 
     /**
      * Given a list and a callback function that returns a key for each element
@@ -469,9 +470,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @param callable|string $path The column name to use for indexing or callback that returns the value.
      * or a function returning the indexing key out of the provided element
+     * @param mixed $default The default value to use if the path does not exist or is null.
      * @return self
      */
-    public function indexBy(callable|string $path): CollectionInterface;
+    public function indexBy(callable|string $path, mixed $default = null): CollectionInterface;
 
     /**
      * Sorts a list into groups and returns a count for the number of elements
