@@ -119,6 +119,7 @@ abstract class BaseCommand implements CommandInterface
         [$root, $name] = explode(' ', $this->name, 2);
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
+        $parser->setDescription(static::getDescription());
 
         $parser = $this->buildOptionParser($parser);
         if ($parser->subcommands()) {
@@ -138,7 +139,7 @@ abstract class BaseCommand implements CommandInterface
      */
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        return $parser->setDescription(static::getDescription());
+        return $parser;
     }
 
     /**
