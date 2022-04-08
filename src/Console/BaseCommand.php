@@ -138,7 +138,7 @@ abstract class BaseCommand implements CommandInterface
      */
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        return $parser;
+        return $parser->setDescription(static::getDescription());
     }
 
     /**
