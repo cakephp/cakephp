@@ -19,8 +19,8 @@ namespace Cake\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
-use Cake\Datasource\Paging\DefaultPaginator;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\PaginatorInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -135,7 +135,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * tables your controller will be paginating.
      *
      * @var array
-     * @see \Cake\Datasource\Paging\DefaultPaginator
+     * @see \Cake\Datasource\Paging\NumericPaginator
      */
     public $paginate = [];
 
@@ -933,7 +933,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             );
         }
 
-        $paginator = $settings['className'] ?? DefaultPaginator::class;
+        $paginator = $settings['className'] ?? NumericPaginator::class;
         unset($settings['className']);
         if (is_string($paginator)) {
             $className = App::className($paginator, 'Datasource/Paging', 'Paginator');

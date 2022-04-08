@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace TestApp\Datasource\Paging;
 
-use Cake\Datasource\Paging\DefaultPaginator;
+use Cake\Datasource\Paging\NumericPaginator;
 
-class CustomPaginator extends DefaultPaginator
+class CustomPaginator extends NumericPaginator
 {
 }

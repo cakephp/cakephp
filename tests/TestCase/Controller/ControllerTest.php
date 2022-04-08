@@ -672,7 +672,7 @@ class ControllerTest extends TestCase
         $this->assertFalse($paging['Posts']['nextPage']);
         $this->assertNull($paging['Posts']['scope']);
 
-        $Controller->paginate = ['className' => 'Default'];
+        $Controller->paginate = ['className' => 'Numeric'];
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);

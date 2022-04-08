@@ -18,8 +18,8 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Datasource\Paging\DefaultPaginator;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\NotFoundException;
 use InvalidArgumentException;
@@ -34,7 +34,7 @@ use UnexpectedValueException;
  * You configure pagination when calling paginate(). See that method for more details.
  *
  * @link https://book.cakephp.org/4/en/controllers/components/pagination.html
- * @mixin \Cake\Datasource\Paging\DefaultPaginator
+ * @mixin \Cake\Datasource\Paging\NumericPaginator
  * @deprecated 4.4.0 Use Cake\Datasource\Paging\Paginator directly.
  */
 class PaginatorComponent extends Component
@@ -42,7 +42,7 @@ class PaginatorComponent extends Component
     /**
      * Datasource paginator instance.
      *
-     * @var \Cake\Datasource\Paging\DefaultPaginator
+     * @var \Cake\Datasource\Paging\NumericPaginator
      */
     protected $_paginator;
 
@@ -52,7 +52,7 @@ class PaginatorComponent extends Component
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         deprecationWarning(
-            'PaginatorComponent is deprecated, use a Cake\Datasource\Pagination\DefaultPaginator instance directly.'
+            'PaginatorComponent is deprecated, use a Cake\Datasource\Pagination\NumericPaginator instance directly.'
         );
 
         if (!empty($this->_defaultConfig)) {
@@ -60,13 +60,13 @@ class PaginatorComponent extends Component
         }
 
         if (isset($config['paginator'])) {
-            if (!$config['paginator'] instanceof DefaultPaginator) {
-                throw new InvalidArgumentException('Paginator must be an instance of ' . DefaultPaginator::class);
+            if (!$config['paginator'] instanceof NumericPaginator) {
+                throw new InvalidArgumentException('Paginator must be an instance of ' . NumericPaginator::class);
             }
             $this->_paginator = $config['paginator'];
             unset($config['paginator']);
         } else {
-            $this->_paginator = new DefaultPaginator();
+            $this->_paginator = new NumericPaginator();
         }
 
         parent::__construct($registry, $config);
@@ -230,10 +230,10 @@ class PaginatorComponent extends Component
     /**
      * Set paginator instance.
      *
-     * @param \Cake\Datasource\Paging\DefaultPaginator $paginator Paginator instance.
+     * @param \Cake\Datasource\Paging\NumericPaginator $paginator Paginator instance.
      * @return $this
      */
-    public function setPaginator(DefaultPaginator $paginator)
+    public function setPaginator(NumericPaginator $paginator)
     {
         $this->_paginator = $paginator;
 
@@ -243,9 +243,9 @@ class PaginatorComponent extends Component
     /**
      * Get paginator instance.
      *
-     * @return \Cake\Datasource\Paging\DefaultPaginator
+     * @return \Cake\Datasource\Paging\NumericPaginator
      */
-    public function getPaginator(): DefaultPaginator
+    public function getPaginator(): NumericPaginator
     {
         return $this->_paginator;
     }

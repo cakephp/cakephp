@@ -20,7 +20,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\Paging\SimplePaginator;
 use Cake\ORM\Entity;
 
-class SimplePaginatorTest extends DefaultPaginatorTest
+class SimplePaginatorTest extends NumericPaginatorTest
 {
     public function setUp(): void
     {
