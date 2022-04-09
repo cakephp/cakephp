@@ -130,7 +130,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $io->out("<info>{$prefix}</info>:");
             sort($names);
             foreach ($names as $data) {
-                if ($data['description'] !== '') {
+                if ($data['description']) {
                     $io->out(' - ' . str_pad($data['name'], 50) . ' | ' . $data['description']);
                 } else {
                     $io->out(' - ' . $data['name']);
