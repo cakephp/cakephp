@@ -112,13 +112,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 [, $shortestName] = explode('.', $shortestName, 2);
             }
 
-            $description = '';
-            if (method_exists($class, 'getDescription')) {
-                $description = $class::getDescription();
-            }
             $grouped[$prefix][] = [
                 'name' => $shortestName,
-                'description' => $description,
+                'description' => is_subclass_of($class, BaseCommand::class) ? $class::getDescription() : '',
             ];
         }
         ksort($grouped);
