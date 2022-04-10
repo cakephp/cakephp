@@ -126,10 +126,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $io->out("<info>{$prefix}</info>:");
             sort($names);
             foreach ($names as $data) {
+                $io->out(' - ' . $data['name']);
                 if ($data['description']) {
-                    $io->out(' - ' . str_pad($data['name'], 50) . ' | ' . $data['description']);
-                } else {
-                    $io->out(' - ' . $data['name']);
+                    $io->info(str_pad(' \'', 5, '-') . ' ' . $data['description']);
                 }
             }
             $io->out('');
