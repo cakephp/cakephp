@@ -50,6 +50,7 @@ class BelongsToManyTest extends TestCase
         'core.Tags',
         'core.SpecialTags',
         'core.ArticlesTags',
+        'core.ArticlesTagsBindingKeys',
         'core.BinaryUuidItems',
         'core.BinaryUuidTags',
         'core.BinaryUuidItemsBinaryUuidTags',
@@ -1643,5 +1644,27 @@ class BelongsToManyTest extends TestCase
 
         $this->assertCount(1, $results);
         $this->assertCount(3, $results[0]->special_tags);
+    }
+
+    /**
+     * Test custom binding key for target table association
+     */
+    public function testBindingKeyMatching(): void
+    {
+        $table = $this->getTableLocator()->get('Tags');
+        $table->belongsToMany('Articles', [
+            'through' => 'ArticlesTagsBindingKeys',
+            'foreignKey' => 'tagname',
+            'targetForeignKey' => 'article_id',
+            'bindingKey' => 'name',
+        ]);
+        $query = $table->find()
+            ->matching('Articles', function ($q) {
+                return $q->where('Articles.id > 0');
+            });
+        $results = $query->all();
+
+        // 4 records in the junction table.
+        $this->assertCount(4, $results);
     }
 }
