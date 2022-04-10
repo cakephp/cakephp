@@ -672,6 +672,7 @@ class ControllerTest extends TestCase
         $this->assertFalse($paging['Posts']['nextPage']);
         $this->assertNull($paging['Posts']['scope']);
 
+        $Controller->paginate = ['className' => 'Numeric'];
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
@@ -682,6 +683,15 @@ class ControllerTest extends TestCase
         $this->assertTrue($paging['Posts']['prevPage']);
         $this->assertFalse($paging['Posts']['nextPage']);
         $this->assertSame($paging['Posts']['scope'], 'posts');
+
+        $results = $Controller->paginate(
+            $this->getTableLocator()->get('Posts'),
+            ['className' => 'Simple']
+        );
+        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+
+        $paging = $Controller->getRequest()->getAttribute('paging');
+        $this->assertSame($paging['Posts']['pageCount'], 0, 'SimplePaginator doesn\'t have a page count');
     }
 
     /**

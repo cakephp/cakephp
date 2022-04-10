@@ -20,7 +20,7 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paging\Paginator;
+use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\PaginatorInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -135,7 +135,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * tables your controller will be paginating.
      *
      * @var array
-     * @see \Cake\Controller\Component\PaginatorComponent
+     * @see \Cake\Datasource\Paging\NumericPaginator
      */
     public $paginate = [];
 
@@ -886,7 +886,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Handles pagination of records in Table objects.
      *
-     * Will load the referenced Table object, and have the PaginatorComponent
+     * Will load the referenced Table object, and have the paginator
      * paginate the query using the request date and settings defined in `$this->paginate`.
      *
      * This method will also make the PaginatorHelper available in the view.
@@ -925,10 +925,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->Paginator->paginate($table, $settings);
         }
 
-        $paginator = $settings['paginator'] ?? Paginator::class;
-        unset($settings['paginator']);
+        if (isset($settings['paginator'])) {
+            $settings['className'] = $settings['paginator'];
+            deprecationWarning(
+                '`paginator` option is deprecated,'
+                . ' use `className` instead a specify a paginator name/FQCN.'
+            );
+        }
+
+        $paginator = $settings['className'] ?? NumericPaginator::class;
+        unset($settings['className']);
         if (is_string($paginator)) {
-            $paginator = new $paginator();
+            $className = App::className($paginator, 'Datasource/Paging', 'Paginator');
+            if ($className === null) {
+                throw new InvalidArgumentException('Invalid paginator: ' . $paginator);
+            }
+            $paginator = new $className();
         }
         if (!$paginator instanceof PaginatorInterface) {
             throw new InvalidArgumentException('Paginator must be an instance of ' . PaginatorInterface::class);

@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\Datasource\Paging;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
-class PaginatorTest extends TestCase
+class NumericPaginatorTest extends TestCase
 {
     use PaginatorTestTrait;
 
