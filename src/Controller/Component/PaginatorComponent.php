@@ -60,11 +60,19 @@ class PaginatorComponent extends Component
         }
 
         if (isset($config['paginator'])) {
-            if (!$config['paginator'] instanceof NumericPaginator) {
+            $config['className'] = $config['paginator'];
+            deprecationWarning(
+                '`paginator` option is deprecated,'
+                . ' use `className` instead a specify a paginator name/FQCN.'
+            );
+        }
+
+        if (isset($config['className'])) {
+            if (!$config['className'] instanceof NumericPaginator) {
                 throw new InvalidArgumentException('Paginator must be an instance of ' . NumericPaginator::class);
             }
-            $this->_paginator = $config['paginator'];
-            unset($config['paginator']);
+            $this->_paginator = $config['className'];
+            unset($config['className']);
         } else {
             $this->_paginator = new NumericPaginator();
         }
