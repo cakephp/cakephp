@@ -1660,7 +1660,7 @@ class BelongsToManyTest extends TestCase
         ]);
         $query = $table->find()
             ->matching('Articles', function ($q) {
-                return $q->where('Articles.id > 0');
+                return $q->where(['Articles.id >' => 0]);
             });
         $results = $query->all();
 
