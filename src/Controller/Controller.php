@@ -19,8 +19,8 @@ namespace Cake\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\PaginatedInterface;
-use Cake\Datasource\Paging\Paginator;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventDispatcherInterface;
@@ -37,6 +37,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use Closure;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -135,9 +136,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - `allowedParameters` - A list of parameters users are allowed to set using request
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
-     * - `paginator` - The paginator class to use. Defaults to `Cake\Datasource\Paginator::class`.
+     * - `className` - The paginator class to use. Defaults to `Cake\Datasource\Paging\NumericPaginator::class`.
      *
      * @var array<string, mixed>
+     * @see \Cake\Datasource\Paging\NumericPaginator
      */
     protected array $paginate = [];
 
@@ -813,7 +815,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Handles pagination of records in Table objects.
      *
-     * Will load the referenced Table object, and have the PaginatorComponent
+     * Will load the referenced Table object, and have the paginator
      * paginate the query using the request date and settings defined in `$this->paginate`.
      *
      * This method will also make the PaginatorHelper available in the view.
@@ -836,9 +838,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $settings += $this->paginate;
 
         /** @var class-string<\Cake\Datasource\Paging\PaginatorInterface> $paginator */
-        $paginator = $settings['paginator'] ?? Paginator::class;
+        $paginator = App::className(
+            $settings['className'] ?? NumericPaginator::class,
+            'Datasource/Paging',
+            'Paginator'
+        );
         $paginator = new $paginator();
-        unset($settings['paginator']);
+        unset($settings['className']);
 
         try {
             $results = $paginator->paginate(

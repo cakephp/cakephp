@@ -616,7 +616,10 @@ class ControllerTest extends TestCase
         $this->assertFalse($results->hasPrevPage());
         $this->assertNull($results->pagingParam('scope'));
 
-        $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
+        $results = $Controller->paginate(
+            $this->getTableLocator()->get('Posts'),
+            ['scope' => 'posts', 'className' => 'Numeric']
+        );
         $this->assertInstanceOf(PaginatedInterface::class, $results);
         $this->assertCount(1, $results);
 
@@ -626,6 +629,14 @@ class ControllerTest extends TestCase
         $this->assertTrue($results->hasPrevPage());
         $this->assertFalse($results->hasNextPage());
         $this->assertSame($results->pagingParam('scope'), 'posts');
+
+        $results = $Controller->paginate(
+            $this->getTableLocator()->get('Posts'),
+            ['className' => 'Simple']
+        );
+        $this->assertInstanceOf(PaginatedInterface::class, $results);
+
+        $this->assertNull($results->pageCount(), 'SimplePaginator doesn\'t have a page count');
     }
 
     /**
@@ -911,12 +922,12 @@ class ControllerTest extends TestCase
         $response = new Response();
 
         $controller = new TestController($request, $response);
-        $result = $controller->loadComponent('Paginator');
-        $this->assertInstanceOf('Cake\Controller\Component\PaginatorComponent', $result);
-        $this->assertSame($result, $controller->Paginator);
+        $result = $controller->loadComponent('FormProtection');
+        $this->assertInstanceOf('Cake\Controller\Component\FormProtectionComponent', $result);
+        $this->assertSame($result, $controller->FormProtection);
 
         $registry = $controller->components();
-        $this->assertTrue(isset($registry->Paginator));
+        $this->assertTrue(isset($registry->FormProtection));
     }
 
     /**
@@ -928,13 +939,13 @@ class ControllerTest extends TestCase
         $response = new Response();
 
         $controller = new TestController($request, $response);
-        $this->assertNotEmpty($controller->loadComponent('Paginator'));
-        $this->assertNotEmpty($controller->loadComponent('Paginator'));
+        $this->assertNotEmpty($controller->loadComponent('FormProtection'));
+        $this->assertNotEmpty($controller->loadComponent('FormProtection'));
         try {
-            $controller->loadComponent('Paginator', ['bad' => 'settings']);
+            $controller->loadComponent('FormProtection', ['bad' => 'settings']);
             $this->fail('No exception');
         } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "Paginator" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The "FormProtection" alias has already been loaded', $e->getMessage());
         }
     }
 

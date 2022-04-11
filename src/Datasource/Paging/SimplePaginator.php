@@ -26,7 +26,7 @@ use Cake\Datasource\QueryInterface;
  * Instead use only the prev/next pagination controls, and handle 404 errors
  * when pagination goes past the available result set.
  */
-class SimplePaginator extends Paginator
+class SimplePaginator extends NumericPaginator
 {
     /**
      * Simple pagination does not perform any count query, so this method returns `null`.

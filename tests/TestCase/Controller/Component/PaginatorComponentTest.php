@@ -79,7 +79,9 @@ class PaginatorComponentTest extends TestCase
         $request = new ServerRequest(['url' => 'controller_posts/index']);
         $this->controller = new Controller($request);
         $this->registry = new ComponentRegistry($this->controller);
-        $this->Paginator = new PaginatorComponent($this->registry, []);
+        $this->deprecated(function () {
+            $this->Paginator = new PaginatorComponent($this->registry, []);
+        });
 
         $this->Post = $this->getMockRepository();
     }
@@ -89,24 +91,28 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginatorSetting(): void
     {
-        $paginator = new CustomPaginator();
-        $component = new PaginatorComponent($this->registry, [
-            'paginator' => $paginator,
-        ]);
+        $this->deprecated(function () {
+            $paginator = new CustomPaginator();
+            $component = new PaginatorComponent($this->registry, [
+                'paginator' => $paginator,
+            ]);
 
-        $this->assertSame($paginator, $component->getPaginator());
+            $this->assertSame($paginator, $component->getPaginator());
 
-        $component = new PaginatorComponent($this->registry, []);
-        $this->assertNotSame($paginator, $component->getPaginator());
+            $component = new PaginatorComponent($this->registry, []);
+            $this->assertNotSame($paginator, $component->getPaginator());
 
-        $component->setPaginator($paginator);
-        $this->assertSame($paginator, $component->getPaginator());
+            $component->setPaginator($paginator);
+            $this->assertSame($paginator, $component->getPaginator());
+        });
     }
 
     public function testInvalidDefaultConfig(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        new CustomPaginatorComponent($this->registry);
+        $this->deprecated(function () {
+            new CustomPaginatorComponent($this->registry);
+        });
     }
 
     /**
@@ -115,10 +121,12 @@ class PaginatorComponentTest extends TestCase
     public function testInvalidPaginatorOption(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paging\Paginator');
-        new PaginatorComponent($this->registry, [
-            'paginator' => new stdClass(),
-        ]);
+        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paging\NumericPaginator');
+        $this->deprecated(function () {
+            new PaginatorComponent($this->registry, [
+                'paginator' => new stdClass(),
+            ]);
+        });
     }
 
     /**
