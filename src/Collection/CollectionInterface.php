@@ -100,7 +100,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * in the callback.
      *
      * The callback is passed the value and key of the element being tested and should
-     * return true if the test pased.
+     * return true if the test passed.
      *
      * ### Example:
      *
@@ -123,7 +123,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * provided in the callback.
      *
      * The callback is passed the value and key of the element being tested and should
-     * return true if the test pased.
+     * return true if the test passed.
      *
      * ### Example:
      *
