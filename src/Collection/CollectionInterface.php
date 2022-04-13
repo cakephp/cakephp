@@ -99,9 +99,8 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * Returns true if all values in this collection pass the truth test provided
      * in the callback.
      *
-     * Each time the callback is executed it will receive the value of the element
-     * in the current iteration and  the key of the element as arguments, in that
-     * order.
+     * The callback is passed the value and key of the element being tested and should
+     * return true if the test pased.
      *
      * ### Example:
      *
@@ -111,7 +110,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * Empty collections always return true because it is a vacuous truth.
+     * Empty collections always return true.
      *
      * @param callable $callback a callback function
      * @return bool true if for all elements in this collection the provided
@@ -123,14 +122,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * Returns true if any of the values in this collection pass the truth test
      * provided in the callback.
      *
-     * Each time the callback is executed it will receive the value of the element
-     * in the current iteration and the key of the element as arguments, in that
-     * order.
+     * The callback is passed the value and key of the element being tested and should
+     * return true if the test pased.
      *
      * ### Example:
      *
      * ```
-     * $hasYoungPeople = (new Collection([24, 45, 15]))->every(function ($value, $key) {
+     * $hasYoungPeople = (new Collection([24, 45, 15]))->some(function ($value, $key) {
      *  return $value < 21;
      * });
      * ```
