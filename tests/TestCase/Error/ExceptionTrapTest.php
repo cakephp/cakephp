@@ -20,6 +20,8 @@ use Cake\Error\ErrorLogger;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\ConsoleExceptionRenderer;
+use Cake\Error\Renderer\HtmlExceptionRenderer;
+use Cake\Error\Renderer\SapiBasedExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Log\Log;
@@ -63,7 +65,7 @@ class ExceptionTrapTest extends TestCase
         $output = new ConsoleOutput();
         $trap = new ExceptionTrap(['exceptionRenderer' => null, 'stderr' => $output]);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(SapiBasedExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testConfigExceptionRenderer()
@@ -88,7 +90,7 @@ class ExceptionTrapTest extends TestCase
         $trap = new ExceptionTrap(['stderr' => $output]);
         $trap->setConfig('exceptionRenderer', null);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(SapiBasedExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testLoggerConfigInvalid()
@@ -188,12 +190,40 @@ class ExceptionTrapTest extends TestCase
     public function testHandleExceptionHtmlRendering()
     {
         $trap = new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => HtmlExceptionRenderer::class,
         ]);
         $error = new InvalidArgumentException('nope');
 
         ob_start();
         $trap->handleException($error);
+        $out = ob_get_clean();
+
+        $this->assertStringContainsString('<!DOCTYPE', $out);
+        $this->assertStringContainsString('<html', $out);
+        $this->assertStringContainsString('nope', $out);
+        $this->assertStringContainsString('ExceptionTrapTest', $out);
+    }
+
+    /**
+     * Test integration with HTML exception rendering
+     *
+     * Run in a separate process because HTML output writes headers.
+     *
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     * @deprecated 4.4.0
+     */
+    public function testHandleExceptionHtmlRenderingDeprecated()
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ExceptionRenderer::class,
+        ]);
+        $error = new InvalidArgumentException('nope');
+
+        ob_start();
+        $this->deprecated(function () use ($trap, $error) {
+            $trap->handleException($error);
+        });
         $out = ob_get_clean();
 
         $this->assertStringContainsString('<!DOCTYPE', $out);
@@ -225,7 +255,7 @@ class ExceptionTrapTest extends TestCase
             'className' => 'Array',
         ]);
         $trap = new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => TextExceptionRenderer::class,
             'skipLog' => [InvalidArgumentException::class],
         ]);
 
@@ -304,7 +334,7 @@ class ExceptionTrapTest extends TestCase
     public function testHandleFatalErrorHtmlRendering()
     {
         $trap = new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => HtmlExceptionRenderer::class,
         ]);
 
         ob_start();

@@ -87,6 +87,7 @@ use Throwable;
  * Would enable handling for all non Notice errors.
  *
  * @see \Cake\Error\ExceptionRenderer for more information on how to customize exception rendering.
+ * @deprecated 4.4.0 You should migrate your application to use ErrorTrap instead.
  */
 class ErrorHandler extends BaseErrorHandler
 {

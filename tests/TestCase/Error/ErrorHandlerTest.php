@@ -277,8 +277,10 @@ class ErrorHandlerTest extends TestCase
         $error = new NotFoundException('Kaboom!');
         $errorHandler = new TestErrorHandler();
 
-        $errorHandler->handleException($error);
-        $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
+        $this->deprecated(function () use ($error, $errorHandler) {
+            $errorHandler->handleException($error);
+            $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
+        });
     }
 
     /**

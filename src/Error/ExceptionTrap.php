@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error\Renderer\ConsoleExceptionRenderer;
+use Cake\Error\Renderer\SapiBasedExceptionRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
 use InvalidArgumentException;
@@ -99,7 +99,7 @@ class ExceptionTrap
         /** @var class-string|callable $class */
         $class = $this->_getConfig('exceptionRenderer');
         if (!$class) {
-            $class = $this->chooseRenderer();
+            $class = SapiBasedExceptionRenderer::class;
         }
 
         if (is_string($class)) {
@@ -118,17 +118,6 @@ class ExceptionTrap
         }
 
         return $class($exception, $request);
-    }
-
-    /**
-     * Choose an exception renderer based on config or the SAPI
-     *
-     * @return class-string<\Cake\Error\ExceptionRendererInterface>
-     */
-    protected function chooseRenderer(): string
-    {
-        /** @var class-string<\Cake\Error\ExceptionRendererInterface> */
-        return PHP_SAPI === 'cli' ? ConsoleExceptionRenderer::class : ExceptionRenderer::class;
     }
 
     /**

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace TestApp\Error;
 
-use Cake\Error\ExceptionRenderer;
+use Cake\Error\Renderer\HtmlExceptionRenderer;
 
-class MyCustomExceptionRenderer extends ExceptionRenderer
+class MyCustomExceptionRenderer extends HtmlExceptionRenderer
 {
     /**
      * @param \Cake\Controller\Controller $controller
