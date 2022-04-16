@@ -98,7 +98,11 @@ class ExceptionTrap
 
         /** @var class-string|callable $class */
         $class = $this->_getConfig('exceptionRenderer');
-        if (!$class) {
+        if (!$class || ($class === ExceptionRenderer::class && PHP_SAPI === 'cli')) {
+            // Default to detecting the exception renderer if we're
+            // in a CLI context and the Web renderer is currently selected.
+            // This indicates old configuration or user error, in both scenarios
+            // it is preferrable to use the Console renderer instead.
             $class = $this->chooseRenderer();
         }
 

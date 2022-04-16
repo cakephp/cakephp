@@ -148,7 +148,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => WebExceptionRenderer::class,
         ]));
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('whoops');

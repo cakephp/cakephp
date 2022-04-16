@@ -21,6 +21,7 @@ use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Log\Log;
 use Cake\TestSuite\Stub\ConsoleOutput;
@@ -58,6 +59,16 @@ class ExceptionTrapTest extends TestCase
         $trap->renderer($error);
     }
 
+    public function testConfigExceptionRendererFallbackInCli()
+    {
+        $output = new ConsoleOutput();
+        $trap = new ExceptionTrap(['exceptionRenderer' => ExceptionRenderer::class, 'stderr' => $output]);
+        $error = new InvalidArgumentException('nope');
+        // Even though we asked for ExceptionRenderer we should get a 
+        // ConsoleExceptionRenderer as we're in a CLI context.
+        $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
+    }
+
     public function testConfigExceptionRendererFallback()
     {
         $output = new ConsoleOutput();
@@ -68,18 +79,18 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigExceptionRenderer()
     {
-        $trap = new ExceptionTrap(['exceptionRenderer' => ExceptionRenderer::class]);
+        $trap = new ExceptionTrap(['exceptionRenderer' => WebExceptionRenderer::class]);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ExceptionRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(WebExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testConfigExceptionRendererFactory()
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => function ($err, $req) {
-            return new ExceptionRenderer($err, $req);
+            return new WebExceptionRenderer($err, $req);
         }]);
         $error = new InvalidArgumentException('nope');
-        $this->assertInstanceOf(ExceptionRenderer::class, $trap->renderer($error));
+        $this->assertInstanceOf(WebExceptionRenderer::class, $trap->renderer($error));
     }
 
     public function testConfigRendererHandleUnsafeOverwrite()
@@ -188,7 +199,7 @@ class ExceptionTrapTest extends TestCase
     public function testHandleExceptionHtmlRendering()
     {
         $trap = new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => WebExceptionRenderer::class,
         ]);
         $error = new InvalidArgumentException('nope');
 
@@ -225,7 +236,7 @@ class ExceptionTrapTest extends TestCase
             'className' => 'Array',
         ]);
         $trap = new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => WebExceptionRenderer::class,
             'skipLog' => [InvalidArgumentException::class],
         ]);
 
@@ -304,7 +315,7 @@ class ExceptionTrapTest extends TestCase
     public function testHandleFatalErrorHtmlRendering()
     {
         $trap = new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => WebExceptionRenderer::class,
         ]);
 
         ob_start();
