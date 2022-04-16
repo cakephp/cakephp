@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Command\CacheClearCommand;
+use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandRunner;
@@ -524,6 +526,36 @@ class CommandRunnerTest extends TestCase
         $runner = new CommandRunner($app, 'cake');
         $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertGreaterThan(2, count(Router::getRouteCollection()->routes()));
+    }
+
+    /**
+     * Test the Console.afterRun event
+     */
+    public function testAfterRunEvent(): void
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $runner->getEventManager()->on('Console.afterRun', function ($event, $command, $result) {
+            if ($command instanceof VersionCommand && $result === 0) {
+                return [
+                    [
+                        'command' => CacheClearCommand::class,
+                        'arguments' => ['_cake_model_'],
+                    ],
+                ];
+            }
+        });
+        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString(
+            'Clearing _cake_model_',
+            $messages
+        );
     }
 
     protected function makeAppWithCommands(array $commands): BaseApplication

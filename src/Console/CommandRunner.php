@@ -172,6 +172,17 @@ class CommandRunner implements EventDispatcherInterface
             $result = $this->runCommand($shell, $argv, $io);
         }
 
+        $event = $this->dispatchEvent('Console.afterRun', [
+            'command' => $shell,
+            'result' => $result,
+        ]);
+        if (is_array($event->getResult())) {
+            foreach ($event->getResult() as $commandData) {
+                $command = $this->createCommand($commandData['command'], $io);
+                $this->runCommand($command, $commandData['arguments'], $io);
+            }
+        }
+
         if ($result === null || $result === true) {
             return CommandInterface::CODE_SUCCESS;
         }
