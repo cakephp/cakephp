@@ -178,8 +178,13 @@ class CommandRunner implements EventDispatcherInterface
         ]);
         if (is_array($event->getResult())) {
             foreach ($event->getResult() as $commandData) {
-                $command = $this->createCommand($commandData['command'], $io);
-                $this->runCommand($command, $commandData['arguments'], $io);
+                $shell = $this->createCommand($commandData['command'], $io);
+                if ($shell instanceof Shell) {
+                    $this->runShell($shell, $commandData['arguments']);
+                }
+                if ($shell instanceof CommandInterface) {
+                    $this->runCommand($shell, $commandData['arguments'], $io);
+                }
             }
         }
 
