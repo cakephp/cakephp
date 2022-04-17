@@ -210,9 +210,17 @@
     </DeprecatedProperty>
   </file>
   <file src="src/Error/ErrorHandler.php">
+    <DeprecatedClass occurrences="1">
+      <code>ExceptionRenderer::class</code>
+    </DeprecatedClass>
     <DeprecatedMethod occurrences="1">
       <code>outputError</code>
     </DeprecatedMethod>
+  </file>
+  <file src="src/Error/ExceptionTrap.php">
+    <DeprecatedClass occurrences="2">
+      <code>\Cake\Error\ExceptionRenderer</code>
+    </DeprecatedClass>
   </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">

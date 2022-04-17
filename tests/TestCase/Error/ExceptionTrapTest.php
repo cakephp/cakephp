@@ -64,7 +64,7 @@ class ExceptionTrapTest extends TestCase
         $output = new ConsoleOutput();
         $trap = new ExceptionTrap(['exceptionRenderer' => ExceptionRenderer::class, 'stderr' => $output]);
         $error = new InvalidArgumentException('nope');
-        // Even though we asked for ExceptionRenderer we should get a 
+        // Even though we asked for ExceptionRenderer we should get a
         // ConsoleExceptionRenderer as we're in a CLI context.
         $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
     }
