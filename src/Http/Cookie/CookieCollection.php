@@ -238,7 +238,7 @@ class CookieCollection implements IteratorAggregate, Countable
             $uri->getHost(),
             $uri->getPath() ?: '/'
         );
-        $cookies = $extraCookies + $cookies;
+        $cookies = $cookies + $extraCookies;
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
             $cookie = sprintf('%s=%s', rawurlencode((string)$key), rawurlencode($value));
