@@ -408,7 +408,7 @@ class CookieCollectionTest extends TestCase
             ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
         $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request, ['b' => 'B']);
-        $this->assertSame('api=A; b=B', $request->getHeaderLine('Cookie'));
+        $this->assertSame('b=B; api=A', $request->getHeaderLine('Cookie'));
 
         $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request, ['api' => 'custom']);
