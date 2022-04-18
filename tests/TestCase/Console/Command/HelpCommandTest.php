@@ -95,6 +95,7 @@ class HelpCommandTest extends TestCase
         $this->assertOutputContains('- abort', 'command object');
         $this->assertOutputContains('To run a command', 'more info present');
         $this->assertOutputContains('To get help', 'more info present');
+        $this->assertOutputContains('This is a demo command', 'command description missing');
     }
 
     /**
