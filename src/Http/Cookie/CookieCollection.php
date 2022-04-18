@@ -26,6 +26,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Traversable;
+use TypeError;
 
 /**
  * Cookie Collection
@@ -68,7 +69,7 @@ class CookieCollection implements IteratorAggregate, Countable
         foreach ($header as $value) {
             try {
                 $cookies[] = Cookie::createFromHeaderString($value, $defaults);
-            } catch (Exception $e) {
+            } catch (Exception | TypeError $e) {
                 // Don't blow up on invalid cookies
             }
         }
