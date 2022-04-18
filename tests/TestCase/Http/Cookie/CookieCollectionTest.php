@@ -456,6 +456,7 @@ class CookieCollectionTest extends TestCase
             'http=name; HttpOnly; Secure;',
             'expires=expiring; Expires=Wed, 15-Jun-2022 10:22:22; Path=/api; HttpOnly; Secure;',
             'expired=expired; version=1; Expires=Wed, 15-Jun-2015 10:22:22;',
+            'invalid=invalid-secure; Expires=Tue, 17 May 2022 22:19:06 GMT; Secure=true; SameSite=none',
         ];
         $cookies = CookieCollection::createFromHeader($header);
         $this->assertCount(3, $cookies);
@@ -463,6 +464,7 @@ class CookieCollectionTest extends TestCase
         $this->assertTrue($cookies->has('expires'));
         $this->assertFalse($cookies->has('version'));
         $this->assertTrue($cookies->has('expired'), 'Expired cookies should be present');
+        $this->assertFalse($cookies->has('invalid'), 'Invalid cookies should not be present');
     }
 
     /**
