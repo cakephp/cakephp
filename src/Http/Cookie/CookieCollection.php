@@ -238,10 +238,10 @@ class CookieCollection implements IteratorAggregate, Countable
             $uri->getHost(),
             $uri->getPath() ?: '/'
         );
-        $cookies = array_merge($cookies, $extraCookies);
+        $cookies = $extraCookies + $cookies;
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
-            $cookie = sprintf('%s=%s', rawurlencode($key), rawurlencode($value));
+            $cookie = sprintf('%s=%s', rawurlencode((string)$key), rawurlencode($value));
             $size = strlen($cookie);
             if ($size > 4096) {
                 triggerWarning(sprintf(
