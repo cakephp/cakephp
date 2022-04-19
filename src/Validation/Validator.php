@@ -906,7 +906,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Requires a field to be not be an empty string.
+     * Requires a field to not be an empty string.
      *
      * Opposite to allowEmptyString()
      *
