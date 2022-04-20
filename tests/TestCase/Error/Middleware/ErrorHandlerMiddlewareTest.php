@@ -19,10 +19,10 @@ namespace Cake\Test\TestCase\Error\Middleware;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
-use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
@@ -148,7 +148,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
-            'exceptionRenderer' => ExceptionRenderer::class,
+            'exceptionRenderer' => WebExceptionRenderer::class,
         ]));
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('whoops');

@@ -98,7 +98,19 @@ class ExceptionTrap
 
         /** @var class-string|callable $class */
         $class = $this->_getConfig('exceptionRenderer');
-        if (!$class) {
+        $deprecatedConfig = ($class === ExceptionRenderer::class && PHP_SAPI === 'cli');
+        if ($deprecatedConfig) {
+            deprecationWarning(
+                'Your application is using a deprecated `Error.exceptionRenderer`. ' .
+                'You can either remove the `Error.exceptionRenderer` config key to have CakePHP choose ' .
+                'one of the default exception renderers, or define a class that is not `Cake\Error\ExceptionRenderer`.'
+            );
+        }
+        if (!$class || $deprecatedConfig) {
+            // Default to detecting the exception renderer if we're
+            // in a CLI context and the Web renderer is currently selected.
+            // This indicates old configuration or user error, in both scenarios
+            // it is preferrable to use the Console renderer instead.
             $class = $this->chooseRenderer();
         }
 
