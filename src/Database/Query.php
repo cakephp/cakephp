@@ -2396,6 +2396,8 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function __debugInfo(): array
     {
+        $sql = 'SQL could not be generated for this query as it is incomplete.';
+        $params = [];
         try {
             set_error_handler(
                 /** @return no-return */
@@ -2406,20 +2408,17 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-        } catch (RuntimeException) {
-            $sql = 'SQL could not be generated for this query as it is incomplete.';
-            $params = [];
         } finally {
             restore_error_handler();
-        }
 
-        return [
-            '(help)' => 'This is a Query object, to get the results execute or iterate it.',
-            'sql' => $sql,
-            'params' => $params,
-            'defaultTypes' => $this->getDefaultTypes(),
-            'decorators' => count($this->_resultDecorators),
-            'executed' => $this->_statement ? true : false,
-        ];
+            return [
+                '(help)' => 'This is a Query object, to get the results execute or iterate it.',
+                'sql' => $sql,
+                'params' => $params,
+                'defaultTypes' => $this->getDefaultTypes(),
+                'decorators' => count($this->_resultDecorators),
+                'executed' => $this->_statement ? true : false,
+            ];
+        }
     }
 }

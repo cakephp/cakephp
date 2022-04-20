@@ -209,7 +209,7 @@ class HasOneTest extends TestCase
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['join', 'select'])
-            ->disableOriginalConstructor()
+            ->setConstructorArgs([$this->user->getConnection(), $this->user])
             ->getMock();
         $config = [
             'sourceTable' => $this->user,
