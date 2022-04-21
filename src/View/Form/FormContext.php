@@ -49,7 +49,7 @@ class FormContext implements ContextInterface
      *
      * Keys:
      *
-     * - `entity` The Form class instance this context is operating on.
+     * - `entity` The Form class instance this context is operating on. **(required)**
      * - `validator` Optional name of the validation method to call on the Form object.
      */
     public function __construct(array $context)
