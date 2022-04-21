@@ -396,6 +396,26 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that empty value cookies are rejected
+     *
+     * @return void
+     */
+    public function testInvalidTokenEmptyStringCookies()
+    {
+        $this->expectException(InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => ['_csrfToken' => '*(&'],
+            // Invalid data that can't be base64 decoded.
+            'cookies' => ['csrfToken' => '*(&'],
+        ]);
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->process($request, $this->_getRequestHandler());
+    }
+
+    /**
      * Test that request non string cookies are ignored.
      */
     public function testInvalidTokenNonStringCookies(): void
