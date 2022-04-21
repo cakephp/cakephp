@@ -342,7 +342,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         } else {
             $decoded = base64_decode($token, true);
         }
-        if (strlen($decoded) <= static::TOKEN_VALUE_LENGTH) {
+        if (!$decoded || strlen($decoded) <= static::TOKEN_VALUE_LENGTH) {
             return false;
         }
 
