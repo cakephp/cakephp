@@ -350,7 +350,7 @@ class ControllerTest extends TestCase
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
-    public function testRenderViewClassesUsesExt()
+    public function testRenderViewClassesUsesSingleMimeExt()
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -362,6 +362,20 @@ class ControllerTest extends TestCase
         $response = $controller->render();
         $this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
         $this->assertNotEmpty(json_decode($response->getBody() . ''), 'Body should be json');
+    }
+
+    public function testRenderViewClassesUsesMultiMimeExt()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all', '_ext' => 'xml'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame('application/xml; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertTextStartsWith('<?xml', $response->getBody() . '', 'Body should be xml');
     }
 
     /**
