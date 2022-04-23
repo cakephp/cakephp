@@ -29,7 +29,6 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Error\Debugger;
 use Cake\Error\ExceptionRendererInterface;
-use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
@@ -183,17 +182,6 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
         if (!isset($controller)) {
             return new Controller($request);
-        }
-
-        // Retry RequestHandler, as another aspect of startupProcess()
-        // could have failed. Ignore any exceptions out of startup, as
-        // there could be userland input data parsers.
-        if ($errorOccured && isset($controller->RequestHandler)) {
-            try {
-                $event = new Event('Controller.startup', $controller);
-                $controller->RequestHandler->startup($event);
-            } catch (Throwable $e) {
-            }
         }
 
         return $controller;
@@ -444,7 +432,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     {
         $builder = $this->controller->viewBuilder();
         $builder
-            ->setHelpers([], false)
+            ->setHelpers([])
             ->setLayoutPath('')
             ->setTemplatePath('Error');
         $view = $this->controller->createView('View');

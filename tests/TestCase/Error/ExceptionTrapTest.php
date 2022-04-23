@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Error\ErrorLogger;
-use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
@@ -57,18 +56,6 @@ class ExceptionTrapTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $error = new InvalidArgumentException('nope');
         $trap->renderer($error);
-    }
-
-    public function testConfigExceptionRendererFallbackInCli()
-    {
-        $this->deprecated(function () {
-            $output = new ConsoleOutput();
-            $trap = new ExceptionTrap(['exceptionRenderer' => ExceptionRenderer::class, 'stderr' => $output]);
-            $error = new InvalidArgumentException('nope');
-            // Even though we asked for ExceptionRenderer we should get a
-            // ConsoleExceptionRenderer as we're in a CLI context.
-            $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
-        });
     }
 
     public function testConfigExceptionRendererFallback()
