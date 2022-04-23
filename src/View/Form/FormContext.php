@@ -40,7 +40,7 @@ class FormContext implements ContextInterface
      *
      * @var string|null
      */
-    protected $_validator = null;
+    protected ?string $_validator = null;
 
     /**
      * Constructor.

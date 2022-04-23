@@ -26,7 +26,7 @@ class ArticlesTagsBindingKeysFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['article_id' => 1, 'tagname' => 'tag1'],
         ['article_id' => 1, 'tagname' => 'tag2'],
         ['article_id' => 2, 'tagname' => 'tag1'],

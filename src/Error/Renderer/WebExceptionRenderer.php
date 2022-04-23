@@ -69,28 +69,28 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      *
      * @var \Throwable
      */
-    protected $error;
+    protected Throwable $error;
 
     /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
      */
-    protected $controller;
+    protected Controller $controller;
 
     /**
      * Template to render for {@link \Cake\Core\Exception\CakeException}
      *
      * @var string
      */
-    protected $template = '';
+    protected string $template = '';
 
     /**
      * The method corresponding to the Exception this object is for.
      *
      * @var string
      */
-    protected $method = '';
+    protected string $method = '';
 
     /**
      * If set, this will be request used to create the controller that will render
@@ -98,7 +98,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      *
      * @var \Cake\Http\ServerRequest|null
      */
-    protected $request;
+    protected ?ServerRequest $request;
 
     /**
      * Map of exceptions to http status codes.
@@ -109,7 +109,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      * @var array<string, int>
      * @psalm-var array<class-string<\Throwable>, int>
      */
-    protected $exceptionHttpCodes = [
+    protected array $exceptionHttpCodes = [
         // Controller exceptions
         InvalidParameterException::class => 404,
         MissingActionException::class => 404,
@@ -284,7 +284,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      * @param \Psr\Http\Message\ResponseInterface|string $output The response to output.
      * @return void
      */
-    public function write($output): void
+    public function write(ResponseInterface|string $output): void
     {
         if (is_string($output)) {
             echo $output;
