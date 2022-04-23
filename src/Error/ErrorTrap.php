@@ -147,20 +147,15 @@ class ErrorTrap
      */
     public function renderer(): ErrorRendererInterface
     {
-        $class = $this->_getConfig('errorRenderer');
-        if (!$class) {
-            $class = $this->chooseErrorRenderer();
-        }
+        /** @var class-string<\Cake\Error\ErrorRendererInterface> $class */
+        $class = $this->_getConfig('errorRenderer') ?: $this->chooseErrorRenderer();
         if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an error renderer. It must implement \Cake\Error\ErrorRendererInterface."
             );
         }
 
-        /** @var \Cake\Error\ErrorRendererInterface $instance */
-        $instance = new $class($this->_config);
-
-        return $instance;
+        return new $class($this->_config);
     }
 
     /**
@@ -170,19 +165,14 @@ class ErrorTrap
      */
     public function logger(): ErrorLoggerInterface
     {
-        $class = $this->_getConfig('logger');
-        if (!$class) {
-            $class = $this->_defaultConfig['logger'];
-        }
+        /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
+        $class = $this->_getConfig('logger', $this->_defaultConfig['logger']);
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an error logger. It must implement \Cake\Error\ErrorLoggerInterface."
             );
         }
 
-        /** @var \Cake\Error\ErrorLoggerInterface $instance */
-        $instance = new $class($this->_config);
-
-        return $instance;
+        return new $class($this->_config);
     }
 }

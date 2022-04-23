@@ -115,7 +115,7 @@ class ExceptionTrap
         }
 
         if (is_string($class)) {
-            /** @var class-string $class */
+            /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
             if (!(method_exists($class, 'render') && method_exists($class, 'write'))) {
                 throw new InvalidArgumentException(
                     "Cannot use {$class} as an `exceptionRenderer`. " .
@@ -123,10 +123,7 @@ class ExceptionTrap
                 );
             }
 
-            /** @var \Cake\Error\ExceptionRendererInterface $instance */
-            $instance = new $class($exception, $request, $this->_config);
-
-            return $instance;
+            return new $class($exception, $request, $this->_config);
         }
 
         return $class($exception, $request);
@@ -150,10 +147,8 @@ class ExceptionTrap
      */
     public function logger(): ErrorLoggerInterface
     {
-        $class = $this->_getConfig('logger');
-        if (!$class) {
-            $class = $this->_defaultConfig['logger'];
-        }
+        /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
+        $class = $this->_getConfig('logger', $this->_defaultConfig['logger']);
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an exception logger. " .
@@ -161,10 +156,7 @@ class ExceptionTrap
             );
         }
 
-        /** @var \Cake\Error\ErrorLoggerInterface $instance */
-        $instance = new $class($this->_config);
-
-        return $instance;
+        return new $class($this->_config);
     }
 
     /**
