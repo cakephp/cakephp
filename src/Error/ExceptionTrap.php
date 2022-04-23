@@ -98,12 +98,25 @@ class ExceptionTrap
 
         /** @var callable|class-string $class */
         $class = $this->_getConfig('exceptionRenderer');
-        if (!$class) {
+        $deprecatedConfig = ($class === ExceptionRenderer::class && PHP_SAPI === 'cli');
+        if ($deprecatedConfig) {
+            deprecationWarning(
+                '4.4.0',
+                'Your application is using a deprecated `Error.exceptionRenderer`. ' .
+                'You can either remove the `Error.exceptionRenderer` config key to have CakePHP choose ' .
+                'one of the default exception renderers, or define a class that is not `Cake\Error\ExceptionRenderer`.'
+            );
+        }
+        if (!$class || $deprecatedConfig) {
+            // Default to detecting the exception renderer if we're
+            // in a CLI context and the Web renderer is currently selected.
+            // This indicates old configuration or user error, in both scenarios
+            // it is preferrable to use the Console renderer instead.
             $class = $this->chooseRenderer();
         }
 
         if (is_string($class)) {
-            /** @var class-string $class */
+            /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
             if (!is_subclass_of($class, ExceptionRendererInterface::class)) {
                 throw new InvalidArgumentException(
                     "Cannot use {$class} as an `exceptionRenderer`. " .
@@ -111,7 +124,6 @@ class ExceptionTrap
                 );
             }
 
-            /** @var \Cake\Error\ExceptionRendererInterface */
             return new $class($exception, $request, $this->_config);
         }
 
@@ -136,10 +148,8 @@ class ExceptionTrap
      */
     public function logger(): ErrorLoggerInterface
     {
-        $class = $this->_getConfig('logger');
-        if (!$class) {
-            $class = $this->_defaultConfig['logger'];
-        }
+        /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
+        $class = $this->_getConfig('logger', $this->_defaultConfig['logger']);
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an exception logger. " .
@@ -147,10 +157,7 @@ class ExceptionTrap
             );
         }
 
-        /** @var \Cake\Error\ErrorLoggerInterface $instance */
-        $instance = new $class($this->_config);
-
-        return $instance;
+        return new $class($this->_config);
     }
 
     /**

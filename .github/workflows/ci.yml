@@ -128,7 +128,7 @@ jobs:
 
     - name: Submit code coverage
       if: matrix.php-version == '8.1'
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
 
   testsuite-windows:
     runs-on: windows-2019

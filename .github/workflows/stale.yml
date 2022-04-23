@@ -19,5 +19,5 @@ jobs:
         stale-pr-label: 'stale'
         days-before-stale: 120
         days-before-close: 15
-        exempt-issue-label: 'pinned'
-        exempt-pr-label: 'pinned'
+        exempt-issue-labels: 'pinned'
+        exempt-pr-labels: 'pinned'

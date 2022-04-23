@@ -959,7 +959,7 @@ class TableTest extends TestCase
             ],
         ];
 
-        $table = new Table(['table' => 'dates']);
+        $table = new Table(['table' => 'members']);
         $result = $table->addAssociations($params);
         $this->assertSame($table, $result);
 

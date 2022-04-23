@@ -19,8 +19,8 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -64,7 +64,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         'skipLog' => [],
         'log' => true,
         'trace' => false,
-        'exceptionRenderer' => ExceptionRenderer::class,
+        'exceptionRenderer' => WebExceptionRenderer::class,
     ];
 
     /**

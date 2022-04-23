@@ -18,7 +18,7 @@ namespace Cake\TestSuite;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Exception\DatabaseException;
-use Cake\Error\ExceptionRenderer;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Form\FormProtector;
@@ -558,9 +558,9 @@ trait IntegrationTestTrait
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (empty($class) || !class_exists($class)) {
-            $class = ExceptionRenderer::class;
+            $class = WebExceptionRenderer::class;
         }
-        /** @var \Cake\Error\ExceptionRenderer $instance */
+        /** @var \Cake\Error\Renderer\WebExceptionRenderer $instance */
         $instance = new $class($exception);
         $this->_response = $instance->render();
     }

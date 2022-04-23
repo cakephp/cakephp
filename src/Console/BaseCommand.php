@@ -66,6 +66,16 @@ abstract class BaseCommand implements CommandInterface
     }
 
     /**
+     * Get the command description.
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return '';
+    }
+
+    /**
      * Get the root command name.
      *
      * @return string
@@ -109,6 +119,7 @@ abstract class BaseCommand implements CommandInterface
         [$root, $name] = explode(' ', $this->name, 2);
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
+        $parser->setDescription(static::getDescription());
 
         $parser = $this->buildOptionParser($parser);
         if ($parser->subcommands()) {

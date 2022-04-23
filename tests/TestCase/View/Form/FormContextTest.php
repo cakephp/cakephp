@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Form;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Form\Form;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
@@ -32,6 +33,14 @@ class FormContextTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+    }
+
+    public function testConstructor()
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('`$context[\'entity\']` must be an instance of Cake\Form\Form');
+
+        new FormContext([]);
     }
 
     /**
@@ -144,6 +153,18 @@ class FormContextTest extends TestCase
         $this->assertTrue($context->isRequired('email'));
         $this->assertNull($context->isRequired('body'));
         $this->assertNull($context->isRequired('Prefix.body'));
+
+        // Non-default validator name.
+        $form = new Form();
+        $form->setValidator('custom', new Validator());
+        $form->getValidator('custom')
+            ->notEmptyString('title');
+        $form->validate([
+            'title' => '',
+        ], 'custom');
+
+        $context = new FormContext(['entity' => $form, 'validator' => 'custom']);
+        $this->assertTrue($context->isRequired('title'));
     }
 
     /**

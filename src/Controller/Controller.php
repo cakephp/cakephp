@@ -747,9 +747,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         // Prefer the _ext route parameter if it is defined.
         $ext = $request->getParam('_ext');
         if ($ext) {
-            $extType = $this->response->getMimeType($ext);
-            if (isset($typeMap[$extType])) {
-                return $typeMap[$extType];
+            $extTypes = (array)($this->response->getMimeType($ext) ?: []);
+            foreach ($extTypes as $extType) {
+                if (isset($typeMap[$extType])) {
+                    return $typeMap[$extType];
+                }
             }
         }
 
