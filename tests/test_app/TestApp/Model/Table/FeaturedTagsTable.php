@@ -22,6 +22,8 @@ use Cake\ORM\TableRegistry;
  */
 class FeaturedTagsTable extends Table
 {
+    protected $Posts;
+
     public function initialize(array $config): void
     {
         // Used to reproduce https://github.com/cakephp/cakephp/issues/16373
