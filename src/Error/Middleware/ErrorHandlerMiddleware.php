@@ -217,7 +217,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         if ($this->errorHandler === null) {
             deprecationWarning(
-                'Using an `errorHandler` is deprecated. You should migate to the `ExceptionTrap` sub-system instead.'
+                'Using an `ErrorHandler` is deprecated. You should migate to the `ExceptionTrap` sub-system instead.'
             );
             /** @var class-string<\Cake\Error\ErrorHandler> $className */
             $className = App::className('ErrorHandler', 'Error');
