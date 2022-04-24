@@ -44,7 +44,6 @@ class ExceptionTrap
         'logger' => ErrorLogger::class,
         'stderr' => null,
         'log' => true,
-        'skipLog' => [],
         'trace' => false,
     ];
 
@@ -222,17 +221,7 @@ class ExceptionTrap
         }
         $request = Router::getRequest();
 
-        $shouldLog = true;
-        foreach ($this->_config['skipLog'] as $class) {
-            if ($exception instanceof $class) {
-                $shouldLog = false;
-                break;
-            }
-        }
-
-        if ($shouldLog) {
-            $this->logException($exception, $request);
-        }
+        $this->logException($exception, $request);
 
         try {
             $renderer = $this->renderer($exception);
