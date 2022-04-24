@@ -1555,6 +1555,11 @@ class FormHelper extends Helper
     {
         $attributes['options'] = $options;
         $attributes['idPrefix'] = $this->_idPrefix;
+        
+        if (!isset($attributes['id'])) {
+			$attributes['id'] = true;
+		}
+        
         $attributes = $this->_initInputField($fieldName, $attributes);
 
         $hiddenField = $attributes['hiddenField'] ?? true;
@@ -2113,6 +2118,11 @@ class FormHelper extends Helper
             'hiddenField' => true,
             'secure' => true,
         ];
+        
+        if (!isset($attributes['id'])) {
+			$attributes['id'] = true;
+		}
+        
         $attributes = $this->_initInputField($fieldName, $attributes);
         $attributes['options'] = $options;
         $attributes['idPrefix'] = $this->_idPrefix;
