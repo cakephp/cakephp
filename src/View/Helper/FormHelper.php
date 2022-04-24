@@ -1557,8 +1557,8 @@ class FormHelper extends Helper
         $attributes['idPrefix'] = $this->_idPrefix;
         
         if (!isset($attributes['id'])) {
-			$attributes['id'] = true;
-		}
+            $attributes['id'] = true;
+        }
         
         $attributes = $this->_initInputField($fieldName, $attributes);
 
@@ -2120,8 +2120,8 @@ class FormHelper extends Helper
         ];
         
         if (!isset($attributes['id'])) {
-			$attributes['id'] = true;
-		}
+            $attributes['id'] = true;
+        }
         
         $attributes = $this->_initInputField($fieldName, $attributes);
         $attributes['options'] = $options;
