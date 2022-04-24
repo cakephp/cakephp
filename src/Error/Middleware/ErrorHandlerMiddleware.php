@@ -111,6 +111,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
         if ($errorHandler instanceof ErrorHandler) {
+            deprecationWarning(
+                'Using an `ErrorHandler` is deprecated. You should migate to the `ExceptionTrap` sub-system instead.'
+            );
             $this->errorHandler = $errorHandler;
 
             return;
@@ -121,7 +124,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
         throw new InvalidArgumentException(sprintf(
-            '$errorHandler argument must be a config array, ExceptionTrap or ErrorHandler instance. Got `%s` instead.',
+            '$errorHandler argument must be a config array or ExceptionTrap instance. Got `%s` instead.',
             getTypeName($errorHandler)
         ));
     }
@@ -216,9 +219,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected function getErrorHandler(): ErrorHandler
     {
         if ($this->errorHandler === null) {
-            deprecationWarning(
-                'Using an `ErrorHandler` is deprecated. You should migate to the `ExceptionTrap` sub-system instead.'
-            );
             /** @var class-string<\Cake\Error\ErrorHandler> $className */
             $className = App::className('ErrorHandler', 'Error');
             $this->errorHandler = new $className($this->getConfig());
