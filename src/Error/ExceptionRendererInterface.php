@@ -23,6 +23,7 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @method \Psr\Http\Message\ResponseInterface|string render() Render the exception to a string or Http Response.
  * @method void write(\Psr\Http\Message\ResponseInterface|string $output) Write the output to the output stream.
+ *  This method is only called when exceptions are handled by a global default exception handler.
  */
 interface ExceptionRendererInterface
 {

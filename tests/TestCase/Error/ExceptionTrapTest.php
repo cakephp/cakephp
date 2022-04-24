@@ -38,6 +38,8 @@ class ExceptionTrapTest extends TestCase
      */
     private $memoryLimit;
 
+    private $triggered = false;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -242,12 +244,17 @@ class ExceptionTrapTest extends TestCase
             'skipLog' => [InvalidArgumentException::class],
         ]);
 
+        $trap->getEventManager()->on('Exception.beforeRender', function () use (&$triggered) {
+            $this->triggered = true;
+        });
+
         ob_start();
         $trap->handleException(new InvalidArgumentException('nope'));
         ob_get_clean();
 
         $logs = Log::engine('test_error')->read();
         $this->assertEmpty($logs);
+        $this->assertTrue($this->triggered, 'Should have triggered event when skipping logging.');
     }
 
     public function testEventTriggered()
