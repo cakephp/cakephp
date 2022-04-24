@@ -5,6 +5,7 @@ namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Renderer\ConsoleExceptionRenderer;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
 use InvalidArgumentException;
@@ -97,23 +98,7 @@ class ExceptionTrap
         $request = $request ?? Router::getRequest();
 
         /** @var callable|class-string $class */
-        $class = $this->_getConfig('exceptionRenderer');
-        $deprecatedConfig = ($class === ExceptionRenderer::class && PHP_SAPI === 'cli');
-        if ($deprecatedConfig) {
-            deprecationWarning(
-                '4.4.0',
-                'Your application is using a deprecated `Error.exceptionRenderer`. ' .
-                'You can either remove the `Error.exceptionRenderer` config key to have CakePHP choose ' .
-                'one of the default exception renderers, or define a class that is not `Cake\Error\ExceptionRenderer`.'
-            );
-        }
-        if (!$class || $deprecatedConfig) {
-            // Default to detecting the exception renderer if we're
-            // in a CLI context and the Web renderer is currently selected.
-            // This indicates old configuration or user error, in both scenarios
-            // it is preferrable to use the Console renderer instead.
-            $class = $this->chooseRenderer();
-        }
+        $class = $this->_getConfig('exceptionRenderer') ?: $this->chooseRenderer();
 
         if (is_string($class)) {
             /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
@@ -138,7 +123,7 @@ class ExceptionTrap
     protected function chooseRenderer(): string
     {
         /** @var class-string<\Cake\Error\ExceptionRendererInterface> */
-        return PHP_SAPI === 'cli' ? ConsoleExceptionRenderer::class : ExceptionRenderer::class;
+        return PHP_SAPI === 'cli' ? ConsoleExceptionRenderer::class : WebExceptionRenderer::class;
     }
 
     /**

@@ -152,7 +152,6 @@ class TestFixtureTest extends TestCase
         $fixture = new FeaturedTagsFixture();
 
         $posts = new PostsFixture();
-        $posts->fields = [];
         $posts->init();
 
         $expected = ['tag_id', 'priority'];

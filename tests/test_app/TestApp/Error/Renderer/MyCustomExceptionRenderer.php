@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace TestApp\Error;
+namespace TestApp\Error\Renderer;
 
-use Cake\Error\ExceptionRenderer;
+use Cake\Error\Renderer\WebExceptionRenderer;
 
-class MyCustomExceptionRenderer extends ExceptionRenderer
+class MyCustomExceptionRenderer extends WebExceptionRenderer
 {
     /**
      * @param \Cake\Controller\Controller $controller

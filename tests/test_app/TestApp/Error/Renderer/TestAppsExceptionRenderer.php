@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace TestApp\Error;
+namespace TestApp\Error\Renderer;
 
 use Cake\Controller\Controller;
-use Cake\Error\ExceptionRenderer;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Exception;
 use TestApp\Controller\TestAppsErrorController;
 
-class TestAppsExceptionRenderer extends ExceptionRenderer
+class TestAppsExceptionRenderer extends WebExceptionRenderer
 {
     /**
      * @inheritDoc

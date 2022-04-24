@@ -25,7 +25,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
-use Cake\Error\ExceptionRenderer;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Exception\HttpException;
@@ -48,10 +48,10 @@ use TestApp\Controller\Admin\ErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
 use TestApp\Error\Exception\MissingWidgetThingException;
 use TestApp\Error\Exception\MyPDOException;
-use TestApp\Error\MyCustomExceptionRenderer;
-use TestApp\Error\TestAppsExceptionRenderer;
+use TestApp\Error\Renderer\MyCustomExceptionRenderer;
+use TestApp\Error\Renderer\TestAppsExceptionRenderer;
 
-class ExceptionRendererTest extends TestCase
+class WebExceptionRendererTest extends TestCase
 {
     /**
      * @var bool
@@ -119,7 +119,7 @@ class ExceptionRendererTest extends TestCase
             ->withParam('controller', 'Foo')
             ->withParam('action', 'bar');
         $exception = new NotFoundException();
-        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+        $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
@@ -129,7 +129,7 @@ class ExceptionRendererTest extends TestCase
         $request = $request->withParam('prefix', 'Admin');
         $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
 
-        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+        $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
@@ -137,7 +137,7 @@ class ExceptionRendererTest extends TestCase
         $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
 
         Configure::write('debug', false);
-        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+        $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
@@ -149,7 +149,7 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * test that methods declared in an ExceptionRenderer subclass are not converted
+     * test that methods declared in an WebExceptionRenderer subclass are not converted
      * into error400 when debug > 0
      */
     public function testSubclassMethodsNotBeingConvertedToError(): void
@@ -185,7 +185,7 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * test that ExceptionRenderer subclasses properly convert framework errors.
+     * test that WebExceptionRenderer subclasses properly convert framework errors.
      */
     public function testSubclassConvertingFrameworkErrors(): void
     {
@@ -209,7 +209,7 @@ class ExceptionRendererTest extends TestCase
     public function testConstruction(): void
     {
         $exception = new NotFoundException('Page not found');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
             'Cake\Controller\ErrorController',
@@ -225,7 +225,7 @@ class ExceptionRendererTest extends TestCase
     {
         Configure::write('debug', false);
         $exception = new MissingActionException('Secret info not to be leaked');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
             'Cake\Controller\ErrorController',
@@ -259,7 +259,7 @@ class ExceptionRendererTest extends TestCase
     public function testUnknownExceptionTypeWithExceptionThatHasA400Code(): void
     {
         $exception = new MissingWidgetThingException('coding fail.');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
 
         $this->assertSame(404, $response->getStatusCode());
@@ -273,7 +273,7 @@ class ExceptionRendererTest extends TestCase
     public function testUnknownExceptionTypeWithNoCodeIsA500(): void
     {
         $exception = new OutOfBoundsException('foul ball.');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
         $result = $ExceptionRenderer->render();
 
         $this->assertSame(500, $result->getStatusCode());
@@ -288,7 +288,7 @@ class ExceptionRendererTest extends TestCase
         Configure::write('debug', false);
 
         $exception = new OutOfBoundsException('foul ball.');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
@@ -304,7 +304,7 @@ class ExceptionRendererTest extends TestCase
     public function testUnknownExceptionTypeWithCodeHigherThan500(): void
     {
         $exception = new HttpException('foul ball.', 501);
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
 
@@ -323,7 +323,7 @@ class ExceptionRendererTest extends TestCase
         Router::setRequest($request);
 
         $exception = new NotFoundException('Custom message');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
@@ -347,7 +347,7 @@ class ExceptionRendererTest extends TestCase
 
         $exception = new NotFoundException('Custom message');
         $exceptionLine = __LINE__ - 1;
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
@@ -370,13 +370,13 @@ class ExceptionRendererTest extends TestCase
         Configure::write('debug', false);
 
         $exception = new NotFoundException('Custom message');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
         $this->assertStringContainsString('Custom message', (string)$result->getBody());
 
         $exception = new MissingActionException(['controller' => 'PostsController', 'action' => 'index']);
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
         $this->assertStringContainsString('Not Found', (string)$result->getBody());
@@ -393,7 +393,7 @@ class ExceptionRendererTest extends TestCase
         Router::setRequest($request);
 
         $exception = new NotFoundException('Custom message');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $result = (string)$ExceptionRenderer->render()->getBody();
 
@@ -407,7 +407,7 @@ class ExceptionRendererTest extends TestCase
     public function testError500Message(): void
     {
         $exception = new InternalErrorException('An Internal Error Has Occurred.');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
@@ -423,7 +423,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new MethodNotAllowedException('Only allowing POST and DELETE');
         $exception->setHeader('Allow', ['POST', 'DELETE']);
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
         $this->assertTrue($result->hasHeader('Allow'));
@@ -633,7 +633,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testCakeExceptionHandling(Exception $exception, array $patterns, int $code): void
     {
-        $exceptionRenderer = new ExceptionRenderer($exception);
+        $exceptionRenderer = new WebExceptionRenderer($exception);
         $response = $exceptionRenderer->render();
 
         $this->assertEquals($code, $response->getStatusCode());
@@ -838,7 +838,7 @@ class ExceptionRendererTest extends TestCase
         $this->assertNull(Router::getRequest());
 
         $exception = new Exception('Terrible');
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
         $result = $ExceptionRenderer->render();
 
         $this->assertStringContainsString('Internal Error', (string)$result->getBody());
@@ -863,7 +863,7 @@ class ExceptionRendererTest extends TestCase
         // Simulate a request having routing applied and stored in router
         Router::setRequest($routerRequest);
 
-        $exceptionRenderer = new ExceptionRenderer(new Exception('Terrible'), new ServerRequest());
+        $exceptionRenderer = new WebExceptionRenderer(new Exception('Terrible'), new ServerRequest());
         $exceptionRenderer->render();
         $properties = $exceptionRenderer->__debugInfo();
 
@@ -887,7 +887,7 @@ class ExceptionRendererTest extends TestCase
         $events->on('Controller.shutdown', $listener);
 
         $exception = new Exception('Terrible');
-        $renderer = new ExceptionRenderer($exception);
+        $renderer = new WebExceptionRenderer($exception);
         $renderer->render();
 
         $expected = ['Controller.shutdown'];
@@ -922,7 +922,7 @@ class ExceptionRendererTest extends TestCase
         $exception = new MyPDOException('There was an error in the SQL query');
         $exception->queryString = 'SELECT * from poo_query < 5 and :seven';
         $exception->params = ['seven' => 7];
-        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
 
         $this->assertSame(500, $response->getStatusCode());
