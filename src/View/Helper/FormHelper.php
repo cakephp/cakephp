@@ -1569,6 +1569,7 @@ class FormHelper extends Helper
                 'form' => $attributes['form'] ?? null,
                 'name' => $attributes['name'],
             ]);
+            /* id is missing */
         }
 
         return $hidden . $radio;
