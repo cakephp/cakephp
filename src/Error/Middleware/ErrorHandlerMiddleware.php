@@ -58,7 +58,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      * - `trace` Should error logs include stack traces?
      * - `exceptionRenderer` The renderer instance or class name to use or a callable factory
      *   which returns a \Cake\Error\ExceptionRendererInterface instance.
-     *   Defaults to \Cake\Error\ExceptionRenderer
+     *   Defaults to \Cake\Error\Renderer\WebExceptionRenderer
      *
      * @var array<string, mixed>
      */
@@ -216,6 +216,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected function getErrorHandler(): ErrorHandler
     {
         if ($this->errorHandler === null) {
+            deprecationWarning(
+                'Using an `errorHandler` is deprecated. You should migate to the `ExceptionTrap` sub-system instead.'
+            );
             /** @var class-string<\Cake\Error\ErrorHandler> $className */
             $className = App::className('ErrorHandler', 'Error');
             $this->errorHandler = new $className($this->getConfig());
