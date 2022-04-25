@@ -58,7 +58,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      * - `trace` Should error logs include stack traces?
      * - `exceptionRenderer` The renderer instance or class name to use or a callable factory
      *   which returns a \Cake\Error\ExceptionRendererInterface instance.
-     *   Defaults to \Cake\Error\ExceptionRenderer
+     *   Defaults to \Cake\Error\Renderer\WebExceptionRenderer
      *
      * @var array<string, mixed>
      */
@@ -111,6 +111,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
         if ($errorHandler instanceof ErrorHandler) {
+            deprecationWarning(
+                'Using an `ErrorHandler` is deprecated. You should migate to the `ExceptionTrap` sub-system instead.'
+            );
             $this->errorHandler = $errorHandler;
 
             return;
@@ -121,7 +124,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
         throw new InvalidArgumentException(sprintf(
-            '$errorHandler argument must be a config array, ExceptionTrap or ErrorHandler instance. Got `%s` instead.',
+            '$errorHandler argument must be a config array or ExceptionTrap instance. Got `%s` instead.',
             getTypeName($errorHandler)
         ));
     }
