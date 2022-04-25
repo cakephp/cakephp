@@ -79,7 +79,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            '$errorHandler argument must be a config array, ExceptionTrap or ErrorHandler'
+            '$errorHandler argument must be a config array or ExceptionTrap'
         );
         new ErrorHandlerMiddleware('nope');
     }
@@ -102,27 +102,29 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testRendererFactory(): void
     {
-        $request = ServerRequestFactory::fromGlobals();
+        $this->deprecated(function () {
+            $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception) {
-            $this->assertInstanceOf('LogicException', $exception);
-            $response = new Response();
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->onlyMethods(['render'])
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->will($this->returnValue($response));
+            $factory = function ($exception) {
+                $this->assertInstanceOf('LogicException', $exception);
+                $response = new Response();
+                $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
+                    ->onlyMethods(['render'])
+                    ->getMock();
+                $mock->expects($this->once())
+                    ->method('render')
+                    ->will($this->returnValue($response));
 
-            return $mock;
-        };
-        $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
-            'exceptionRenderer' => $factory,
-        ]));
-        $handler = new TestRequestHandler(function (): void {
-            throw new LogicException('Something bad');
+                return $mock;
+            };
+            $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
+                'exceptionRenderer' => $factory,
+            ]));
+            $handler = new TestRequestHandler(function (): void {
+                throw new LogicException('Something bad');
+            });
+            $middleware->process($request, $handler);
         });
-        $middleware->process($request, $handler);
     }
 
     /**
@@ -350,27 +352,29 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testHandleExceptionRenderingFails(): void
     {
-        $request = ServerRequestFactory::fromGlobals();
+        $this->deprecated(function () {
+            $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception) {
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->onlyMethods(['render'])
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->will($this->throwException(new LogicException('Rendering failed')));
+            $factory = function ($exception) {
+                $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
+                    ->onlyMethods(['render'])
+                    ->getMock();
+                $mock->expects($this->once())
+                    ->method('render')
+                    ->will($this->throwException(new LogicException('Rendering failed')));
 
-            return $mock;
-        };
-        $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
-            'exceptionRenderer' => $factory,
-        ]));
-        $handler = new TestRequestHandler(function (): void {
-            throw new ServiceUnavailableException('whoops');
+                return $mock;
+            };
+            $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
+                'exceptionRenderer' => $factory,
+            ]));
+            $handler = new TestRequestHandler(function (): void {
+                throw new ServiceUnavailableException('whoops');
+            });
+            $response = $middleware->process($request, $handler);
+            $this->assertSame(500, $response->getStatusCode());
+            $this->assertSame('An Internal Server Error Occurred', '' . $response->getBody());
         });
-        $response = $middleware->process($request, $handler);
-        $this->assertSame(500, $response->getStatusCode());
-        $this->assertSame('An Internal Server Error Occurred', '' . $response->getBody());
     }
 
     /**

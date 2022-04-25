@@ -48,6 +48,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      * Ignored if contructor is passed an ExceptionTrap instance.
      *
      * Configuration keys and values are shared with `ExceptionTrap`.
+     * This class will pass its configuration onto the ExceptionTrap
+     * class if you are using the array style constructor.
      *
      * @var array<string, mixed>
      * @see \Cake\Error\ExceptionTrap
@@ -98,6 +100,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
         if ($errorHandler instanceof ErrorHandler) {
+            deprecationWarning(
+                'Using an `ErrorHandler` is deprecated. You should migate to the `ExceptionTrap` sub-system instead.'
+            );
             $this->errorHandler = $errorHandler;
 
             return;
@@ -108,7 +113,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
         throw new InvalidArgumentException(sprintf(
-            '$errorHandler argument must be a config array, ExceptionTrap or ErrorHandler instance. Got `%s` instead.',
+            '$errorHandler argument must be a config array or ExceptionTrap instance. Got `%s` instead.',
             getTypeName($errorHandler)
         ));
     }
