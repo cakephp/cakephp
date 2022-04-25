@@ -341,7 +341,6 @@ class ExceptionTrap
      */
     public function logException(Throwable $exception, ?ServerRequestInterface $request = null): void
     {
-        $logger = $this->logger();
         $shouldLog = true;
         foreach ($this->_config['skipLog'] as $class) {
             if ($exception instanceof $class) {
@@ -350,7 +349,7 @@ class ExceptionTrap
             }
         }
         if ($shouldLog) {
-            $logger->log($exception, $request);
+            $this->logger()->log($exception, $request);
         }
         $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);
     }
