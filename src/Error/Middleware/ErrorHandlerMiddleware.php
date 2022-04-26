@@ -146,15 +146,15 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
         if ($this->errorHandler === null) {
-            $trap = $this->getExceptionTrap();
-            $trap->logException($exception, $request);
+            $handler = $this->getExceptionTrap();
+            $handler->logException($exception, $request);
 
-            $renderer = $trap->renderer($exception, $request);
+            $renderer = $handler->renderer($exception, $request);
         } else {
-            $errorHandler = $this->getErrorHandler();
-            $errorHandler->logException($exception, $request);
+            $handler = $this->getErrorHandler();
+            $handler->logException($exception, $request);
 
-            $renderer = $errorHandler->getRenderer($exception, $request);
+            $renderer = $handler->getRenderer($exception, $request);
         }
 
         try {
@@ -166,7 +166,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
             return $response;
         } catch (Throwable $internalException) {
-            $errorHandler->logException($internalException, $request);
+            $handler->logException($internalException, $request);
 
             return $this->handleInternalError();
         }

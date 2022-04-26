@@ -244,7 +244,7 @@ class ExceptionTrapTest extends TestCase
             'skipLog' => [InvalidArgumentException::class],
         ]);
 
-        $trap->getEventManager()->on('Exception.beforeRender', function () use (&$triggered) {
+        $trap->getEventManager()->on('Exception.beforeRender', function () {
             $this->triggered = true;
         });
 
