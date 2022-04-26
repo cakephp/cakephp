@@ -8071,7 +8071,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'multi_field', 'value' => '', 'id' => 'multi-field-'
+                'type' => 'hidden', 'name' => 'multi_field', 'value' => '', 'id' => 'multi-field-',
             ],
             ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'multi-field-0']],
