@@ -336,6 +336,24 @@ class ControllerTest extends TestCase
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
+    /**
+     * Test that render() will do content negotiation when supported
+     * by the controller.
+     */
+    public function testRenderViewClassesContentNegotiationMatchAllType()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'text/html'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->matchAll();
+        $response = $controller->render();
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'), 'Default response type');
+        $this->assertEmpty($response->getBody() . '', 'Body should be empty');
+        $this->assertSame(406, $response->getStatusCode(), 'status code is wrong');
+    }
+
     public function testRenderViewClassesSetContentTypeHeader()
     {
         $request = new ServerRequest([
