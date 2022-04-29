@@ -3095,7 +3095,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('Model.field', ['option A']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'prefix-model-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'prefix-model-field'],
             'label' => ['for' => 'prefix-model-field-0'],
             ['input' => [
                 'type' => 'radio',
@@ -3110,7 +3110,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('Model.field', ['option A', 'option']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'prefix-model-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'prefix-model-field'],
             'label' => ['for' => 'prefix-model-field-0'],
             ['input' => [
                 'type' => 'radio',
@@ -3130,7 +3130,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'prefix-model-multi-field-',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'prefix-model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'prefix-model-multi-field-0']],
@@ -3404,7 +3404,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'contact-multiple']],
             'Multiple',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'disabled' => 'disabled', 'value' => '', 'id' => 'contact-multiple-']],
+            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'disabled' => 'disabled', 'value' => '', 'id' => 'contact-multiple']],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'contact-multiple-1']],
             ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 1, 'disabled' => 'disabled', 'id' => 'contact-multiple-1']],
@@ -3436,7 +3436,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'contact-multiple']],
             'Multiple',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'value' => '', 'id' => 'contact-multiple-']],
+            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'value' => '', 'id' => 'contact-multiple']],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'contact-multiple-50']],
             ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 50, 'disabled' => 'disabled', 'id' => 'contact-multiple-50']],
@@ -3618,7 +3618,7 @@ class FormHelperTest extends TestCase
                 ['label' => ['for' => 'publisher-id']],
                 'Publisher',
                 '/label',
-                'input' => ['type' => 'hidden', 'name' => 'Publisher[id]', 'value' => '', 'id' => 'publisher-id-'],
+                'input' => ['type' => 'hidden', 'name' => 'Publisher[id]', 'value' => '', 'id' => 'publisher-id'],
                 ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'publisher-id-value-1']],
                 ['input' => ['type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 1', 'id' => 'publisher-id-value-1']],
@@ -3738,7 +3738,7 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'tags-ids'],
             'Tags',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'tags[_ids]', 'value' => '', 'id' => 'tags-ids-'],
+            'input' => ['type' => 'hidden', 'name' => 'tags[_ids]', 'value' => '', 'id' => 'tags-ids'],
 
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'tags-ids-1']],
@@ -4055,7 +4055,7 @@ class FormHelperTest extends TestCase
             ['multiple' => 'checkbox', 'value' => [0, 1]]
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-0', 'class' => 'selected']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '0', 'id' => 'model-multi-field-0']],
@@ -4083,7 +4083,7 @@ class FormHelperTest extends TestCase
             ['multiple' => 'checkbox']
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-1-2']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'model-multi-field-1-2']],
@@ -4436,7 +4436,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->radio('Model.field', ['option A']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             'label' => ['for' => 'model-field-0'],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
             'option A',
@@ -4449,7 +4449,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('Model.field', ['option A', 'option B']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             ['label' => ['for' => 'model-field-0']],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
             'option A',
@@ -4467,7 +4467,7 @@ class FormHelperTest extends TestCase
             ['form' => 'my-form']
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'form' => 'my-form', 'id' => 'employee-gender-'],
+            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'form' => 'my-form', 'id' => 'employee-gender'],
             ['label' => ['for' => 'employee-gender-male']],
             ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'employee-gender-male', 'form' => 'my-form']],
             'Male',
@@ -4481,7 +4481,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('Model.field', ['option A', 'option B'], ['name' => 'Model[custom]']);
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'Model[custom]', 'value' => '', 'id' => 'model-field-']],
+            ['input' => ['type' => 'hidden', 'name' => 'Model[custom]', 'value' => '', 'id' => 'model-field']],
             ['label' => ['for' => 'model-field-0']],
             ['input' => ['type' => 'radio', 'name' => 'Model[custom]', 'value' => '0', 'id' => 'model-field-0']],
             'option A',
@@ -4501,7 +4501,7 @@ class FormHelperTest extends TestCase
             ]
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'id' => 'employee-gender-'],
+            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'id' => 'employee-gender'],
             ['label' => ['for' => 'employee-gender-male']],
             ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male',
                 'id' => 'employee-gender-male', 'style' => 'width:20px']],
@@ -4528,7 +4528,7 @@ class FormHelperTest extends TestCase
         $attrs = ['disabled' => []];
         $result = $this->Form->radio('Model.field', $options, $attrs);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             ['label' => ['for' => 'model-field-r']],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => 'r', 'id' => 'model-field-r']],
             'red',
@@ -4563,7 +4563,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('title', ['option A', 'option B']);
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '', 'id' => 'title-']],
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '', 'id' => 'title']],
             ['label' => ['for' => 'title-0']],
             ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
             'option A',
@@ -4583,7 +4583,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->radio('title', ['option A'], ['hiddenField' => 'N']);
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => 'N', 'id' => 'title-']],
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => 'N', 'id' => 'title']],
             'label' => ['for' => 'title-0'],
             ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
             'option A',
@@ -4593,7 +4593,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('title', ['option A'], ['hiddenField' => '']);
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '', 'id' => 'title-']],
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '', 'id' => 'title']],
             'label' => ['for' => 'title-0'],
             ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
             'option A',
@@ -4618,7 +4618,7 @@ class FormHelperTest extends TestCase
                 '<label',
                 'Test',
                 '/label',
-                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-']],
+                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
                 ['label' => ['for' => 'test-0']],
                     ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
                     'A',
@@ -4641,7 +4641,7 @@ class FormHelperTest extends TestCase
                 '<label',
                 'Test',
                 '/label',
-                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-']],
+                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
                 ['label' => ['for' => 'test-0']],
                     ['input' => ['type' => 'radio', 'checked' => 'checked', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
                     'A',
@@ -4661,7 +4661,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
-                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-']],
+                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
                 ['label' => ['for' => 'test-0']],
                     ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
                     'A',
@@ -4684,7 +4684,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
-                ['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => '', 'id' => 'accept-']],
+                ['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => '', 'id' => 'accept']],
                 ['label' => ['for' => 'accept-1']],
                 ['input' => [
                     'type' => 'radio',
@@ -4717,7 +4717,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->radio('Model.field', ['A', 'B'], ['label' => false]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1']],
         ];
@@ -4743,7 +4743,7 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => 'Model[field]',
                 'value' => '',
-                'id' => 'model-field-'
+                'id' => 'model-field'
             ]],
             ['label' => ['for' => 'model-field-0']],
                 ['input' => [
@@ -4794,7 +4794,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->radio('Model.field', ['v' => 'value'], ['value' => 'nope']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             'label' => ['for' => 'model-field-v'],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => 'v', 'id' => 'model-field-v']],
             'value',
@@ -5311,7 +5311,7 @@ class FormHelperTest extends TestCase
 
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field-',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-0']],
@@ -5350,7 +5350,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field-',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-a+']],
@@ -5389,7 +5389,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field-',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-a-b']],
@@ -5437,7 +5437,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[tags]', 'value' => '', 'id' => 'model-tags-',
+                'type' => 'hidden', 'name' => 'Model[tags]', 'value' => '', 'id' => 'model-tags',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-tags-1', 'class' => 'selected']],
@@ -5549,7 +5549,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'model-multi-field']],
             'Multi Field',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-0']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'model-multi-field-0']],
@@ -5581,7 +5581,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'model-multi-field']],
             'Multi Field',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field-'],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-a']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'a', 'id' => 'model-multi-field-a']],
@@ -5632,7 +5632,7 @@ class FormHelperTest extends TestCase
             'name' => 'fish',
         ]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category-'],
+            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'category-0']],
                     ['input' => ['type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'category-0']],
@@ -5677,7 +5677,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Category',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'category-'],
+            'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'category-0']],
                     ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'category-0']],
@@ -7906,7 +7906,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'div' => ['class' => 'input radio'],
-            ['input' => ['type' => 'hidden', 'name' => 'confirm', 'value' => '', 'id' => 'confirm-']],
+            ['input' => ['type' => 'hidden', 'name' => 'confirm', 'value' => '', 'id' => 'confirm']],
             ['input' => ['type' => 'radio', 'name' => 'confirm', 'id' => 'confirm-y', 'value' => 'Y']],
             ['label' => ['for' => 'confirm-y']],
             'Yes',
@@ -7927,7 +7927,7 @@ class FormHelperTest extends TestCase
             'name' => 'fish',
         ]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category-'],
+            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
                 ['input' => ['type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'category-0']],
                 ['label' => ['for' => 'category-0']],
@@ -8052,7 +8052,7 @@ class FormHelperTest extends TestCase
         // Ensure id => doesn't cause problem when multiple inputs are generated.
         $result = $this->Form->radio('field', ['option A', 'option B'], ['id' => true]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => '', 'id' => 'field-'],
+            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => '', 'id' => 'field'],
             ['label' => ['for' => 'field-0']],
             ['input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'field-0']],
             'option A',
@@ -8071,7 +8071,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'multi_field', 'value' => '', 'id' => 'multi-field-',
+                'type' => 'hidden', 'name' => 'multi_field', 'value' => '', 'id' => 'multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'multi-field-0']],
@@ -8439,7 +8439,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
             '/div',
@@ -8461,7 +8461,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'checkbox1']],
             'My checkboxes',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1-'],
+            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1'],
             ['div' => ['class' => 'checkbox']],
             ['input' => ['type' => 'checkbox', 'name' => 'checkbox1[]', 'value' => '1', 'id' => 'checkbox1-1']],
             '/div',
@@ -8493,7 +8493,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8517,7 +8517,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8541,7 +8541,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['label' => ['for' => 'test-0', 'class' => 'custom-class custom-class-array']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8562,7 +8562,7 @@ class FormHelperTest extends TestCase
             'value' => 1,
         ]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test-'],
+            'input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test'],
             ['label' => ['class' => 'custom-class another-class', 'data-name' => 'bob', 'for' => 'test-0']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8607,7 +8607,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'checkbox1']],
             'My checkboxes',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1-'],
+            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1'],
             ['div' => ['class' => 'checkbox']],
             ['label' => [
                 'class' => 'custom-class selected',
@@ -8657,7 +8657,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'checkbox1']],
             'My checkboxes',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1-'],
+            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1'],
             ['div' => ['class' => 'checkbox']],
             ['label' => [
                 'class' => 'custom-class another-class selected',
