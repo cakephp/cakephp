@@ -1573,7 +1573,7 @@ class FormHelper extends Helper
                 'value' => $hiddenField === true ? '' : (string)$hiddenField,
                 'form' => $attributes['form'] ?? null,
                 'name' => $attributes['name'],
-                'id' => $attributes['id'] . '-',
+                'id' => $attributes['id'],
             ]);
         }
 
@@ -2134,7 +2134,7 @@ class FormHelper extends Helper
                 'value' => '',
                 'secure' => false,
                 'disabled' => $attributes['disabled'] === true || $attributes['disabled'] === 'disabled',
-                'id' => $attributes['id'] . '-',
+                'id' => $attributes['id'],
             ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
