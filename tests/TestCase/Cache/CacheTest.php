@@ -22,6 +22,7 @@ use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Cache\InvalidArgumentException;
+use Cake\Http\Exception\NotImplementedException;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use stdClass;
@@ -876,5 +877,30 @@ class CacheTest extends TestCase
         Cache::disable();
         $pool = Cache::pool('tests');
         $this->assertInstanceOf(SimpleCacheInterface::class, $pool);
+    }
+
+    /**
+     * Test delete async method.
+     */
+    public function testDeleteAsync(): void
+    {
+        $this->expectException(NotImplementedException::class);
+
+        $this->_configCache();
+        Cache::add('test_delete_async_key', 'test data', 'tests');
+        Cache::deleteAsync('test_delete_async_key', 'tests');
+    }
+
+    /**
+     * Test clear blocking method.
+     */
+    public function testClearBlocking(): void
+    {
+        $this->expectException(NotImplementedException::class);
+
+        $this->_configCache();
+        Cache::add('test_clear_blocking_key1', 'test data1', 'tests');
+        Cache::add('test_clear_blocking_key2', 'test data2', 'tests');
+        Cache::clearBlocking('tests');
     }
 }

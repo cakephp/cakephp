@@ -329,6 +329,19 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * testDeleteCacheAsync method
+     */
+    public function testDeleteCacheAsync(): void
+    {
+        $data = 'this is a test of the emergency broadcasting system';
+        $result = Cache::write('delete_async_test', $data, 'redis');
+        $this->assertTrue($result);
+
+        $result = Cache::deleteAsync('delete_async_test', 'redis');
+        $this->assertTrue($result);
+    }
+
+    /**
      * testDecrement method
      */
     public function testDecrement(): void
@@ -449,6 +462,32 @@ class RedisEngineTest extends TestCase
         $this->assertSame('cache2', Cache::read('some_value', 'redis2'));
 
         Cache::clear('redis2');
+    }
+
+    /**
+     * testClearBlocking method
+     */
+    public function testClearBlocking(): void
+    {
+        Cache::setConfig('redis_clear_blocking', [
+            'engine' => 'Redis',
+            'prefix' => 'cake2_',
+            'duration' => 3600,
+            'port' => $this->port,
+        ]);
+
+        Cache::write('some_value', 'cache1', 'redis');
+        $result = Cache::clearBlocking('redis');
+        $this->assertTrue($result);
+        $this->assertNull(Cache::read('some_value', 'redis'));
+
+        Cache::write('some_value', 'cache2', 'redis_clear_blocking');
+        $result = Cache::clearBlocking('redis');
+        $this->assertTrue($result);
+        $this->assertNull(Cache::read('some_value', 'redis'));
+        $this->assertSame('cache2', Cache::read('some_value', 'redis_clear_blocking'));
+
+        Cache::clearBlocking('redis_clear_blocking');
     }
 
     /**

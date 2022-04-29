@@ -66,4 +66,19 @@ interface CacheEngineInterface
      * @return bool
      */
     public function clearGroup(string $group): bool;
+
+    /**
+     * Delete a key from the cache asynchronously
+     *
+     * @param string $key Identifier for the data
+     * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     */
+    public function deleteAsync(string $key): bool;
+
+    /**
+     * Blocking Delete all keys from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clearBlocking(): bool;
 }

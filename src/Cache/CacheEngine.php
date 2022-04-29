@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Cache;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Http\Exception\NotImplementedException;
 use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 
@@ -280,11 +281,38 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     abstract public function delete($key): bool;
 
     /**
+     * Delete a key from the cache asynchronously
+     *
+     * Empty method and always raises an exception.
+     * It needs to be implemented in a concrete cache engine.
+     *
+     * @param string $key Identifier for the data
+     * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     */
+    public function deleteAsync($key): bool
+    {
+        throw new NotImplementedException('There is no implementation of a concrete cache engine.');
+    }
+
+    /**
      * Delete all keys from the cache
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
     abstract public function clear(): bool;
+
+    /**
+     * Blocking delete all keys from the cache
+     *
+     * Empty method and always raises an exception.
+     * It needs to be implemented in a concrete cache engine.
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clearBlocking(): bool
+    {
+        throw new NotImplementedException('There is no implementation of a concrete cache engine.');
+    }
 
     /**
      * Add a key to the cache if it does not already exist.

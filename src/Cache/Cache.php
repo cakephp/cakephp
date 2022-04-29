@@ -426,6 +426,32 @@ class Cache
     }
 
     /**
+     * Delete a key from the cache asynchronously.
+     *
+     * ### Usage:
+     *
+     * Asynchronous deleting from the active cache configuration.
+     *
+     * ```
+     * Cache::delete('my_data');
+     * ```
+     *
+     * Asynchronous deleting from a specific cache configuration.
+     *
+     * ```
+     * Cache::delete('my_data', 'long_term');
+     * ```
+     *
+     * @param string $key Identifier for the data
+     * @param string $config name of the configuration to use. Defaults to 'default'
+     * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     */
+    public static function deleteAsync(string $key, string $config = 'default'): bool
+    {
+        return static::pool($config)->deleteAsync($key);
+    }
+
+    /**
      * Delete many keys from the cache.
      *
      * ### Usage:
@@ -461,6 +487,17 @@ class Cache
     public static function clear(string $config = 'default'): bool
     {
         return static::pool($config)->clear();
+    }
+
+    /**
+     * Blocking delete all keys from the cache
+     *
+     * @param string $config name of the configuration to use. Defaults to 'default'
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public static function clearBlocking(string $config = 'default'): bool
+    {
+        return static::pool($config)->clearBlocking();
     }
 
     /**
