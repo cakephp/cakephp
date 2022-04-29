@@ -86,12 +86,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyFor()
      *
-     * When an array is given, if it has at least the `name`, `type`, `tmp_name` and `error` keys,
-     * and the value of `error` is equal to `UPLOAD_ERR_NO_FILE`, the value will be recognized as
-     * empty.
-     *
-     * When an instance of \Psr\Http\Message\UploadedFileInterface is given the
-     * return value of it's getError() method must be equal to `UPLOAD_ERR_NO_FILE`.
+     * The return value of \Psr\Http\Message\UploadedFileInterface::getError()
+     * method must be equal to `UPLOAD_ERR_NO_FILE`.
      *
      * @var int
      */
@@ -2480,14 +2476,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (is_array($data)) {
-            if (
-                ($flags & self::EMPTY_FILE)
-                && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])
-                && (int)$data['error'] === UPLOAD_ERR_NO_FILE
-            ) {
-                return true;
-            }
-
             $allFieldsAreEmpty = true;
             foreach ($data as $field) {
                 if ($field !== null && $field !== '') {

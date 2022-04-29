@@ -162,27 +162,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             return $request;
         }
 
-        if (Configure::read('App.uploadedFilesAsObjects', true)) {
-            $parsedBody = Hash::merge($parsedBody, $files);
-        } else {
-            // Make a flat map that can be inserted into body for BC.
-            /** @var array<\Laminas\Diactoros\UploadedFile> $fileMap */
-            $fileMap = Hash::flatten($files);
-            foreach ($fileMap as $key => $file) {
-                $error = $file->getError();
-                $tmpName = '';
-                if ($error === UPLOAD_ERR_OK) {
-                    $tmpName = $file->getStream()->getMetadata('uri');
-                }
-                $parsedBody = Hash::insert($parsedBody, (string)$key, [
-                    'tmp_name' => $tmpName,
-                    'error' => $error,
-                    'name' => $file->getClientFilename(),
-                    'type' => $file->getClientMediaType(),
-                    'size' => $file->getSize(),
-                ]);
-            }
-        }
+        $parsedBody = Hash::merge($parsedBody, $files);
 
         return $request->withParsedBody($parsedBody);
     }

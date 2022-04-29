@@ -653,17 +653,6 @@ class ValidatorTest extends TestCase
             ->add('picture', 'file', ['rule' => 'uploadedFile']);
 
         $data = [
-            'picture' => [
-                'name' => '',
-                'type' => '',
-                'tmp_name' => '',
-                'error' => UPLOAD_ERR_NO_FILE,
-            ],
-        ];
-        $result = $validator->validate($data);
-        $this->assertEmpty($result, 'No errors on empty file');
-
-        $data = [
             'picture' => new UploadedFile(
                 '',
                 0,
@@ -672,17 +661,6 @@ class ValidatorTest extends TestCase
         ];
         $result = $validator->validate($data);
         $this->assertEmpty($result, 'No errors on empty file');
-
-        $data = [
-            'picture' => [
-                'name' => 'fake.png',
-                'type' => '',
-                'tmp_name' => '',
-                'error' => UPLOAD_ERR_OK,
-            ],
-        ];
-        $result = $validator->validate($data);
-        $this->assertNotEmpty($result, 'Invalid file should be caught still.');
     }
 
     /**
@@ -799,29 +777,13 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->field('photo')->isEmptyAllowed());
 
         $data = [
-            'photo' => [
-                'name' => '',
-                'type' => '',
-                'tmp_name' => '',
-                'error' => UPLOAD_ERR_NO_FILE,
-            ],
-        ];
-        $result = $validator->validate($data);
-        $this->assertEmpty($result);
-
-        $data = [
             'photo' => null,
         ];
         $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
-            'photo' => [
-                'name' => '',
-                'type' => '',
-                'tmp_name' => '',
-                'error' => UPLOAD_ERR_FORM_SIZE,
-            ],
+            'photo' => [],
         ];
         $expected = [
             'photo' => [
@@ -833,11 +795,6 @@ class ValidatorTest extends TestCase
 
         $data = [
             'photo' => '',
-        ];
-        $expected = [
-            'photo' => [
-                'uploadedFile' => 'The provided value is invalid',
-            ],
         ];
         $result = $validator->validate($data);
         $this->assertSame($expected, $result);
@@ -872,17 +829,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->isEmptyAllowed('photo', true));
         $this->assertFalse($validator->isEmptyAllowed('photo', false));
 
-        $data = [
-            'photo' => [
-                'name' => '',
-                'type' => '',
-                'tmp_name' => '',
-                'error' => UPLOAD_ERR_NO_FILE,
-            ],
-        ];
         $error = ['photo' => ['_empty' => 'required field']];
-        $this->assertSame($error, $validator->validate($data));
-
         $data = ['photo' => null];
         $this->assertSame($error, $validator->validate($data));
 

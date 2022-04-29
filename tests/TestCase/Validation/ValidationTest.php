@@ -2503,8 +2503,7 @@ class ValidationTest extends TestCase
         $image = TEST_APP . 'webroot/img/cake.power.gif';
 
         $this->assertTrue(Validation::mimeType($image, ['image/gif']));
-        $this->assertTrue(Validation::mimeType(['tmp_name' => $image], ['image/gif']));
-        $this->assertTrue(Validation::mimeType(['tmp_name' => $image], '#image/.+#'));
+        $this->assertTrue(Validation::mimeType($image, '#image/.+#'));
         $this->assertTrue(Validation::mimeType($image, ['image/GIF']));
 
         $this->assertFalse(Validation::mimeType($image, ['image/png']));
@@ -2592,14 +2591,12 @@ class ValidationTest extends TestCase
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, 1024));
-        $this->assertTrue(Validation::fileSize(['tmp_name' => $image], Validation::COMPARE_LESS, 1024));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, '1KB'));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_GREATER_OR_EQUAL, 200));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, 201));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, '201B'));
 
         $this->assertFalse(Validation::fileSize($image, Validation::COMPARE_GREATER, 1024));
-        $this->assertFalse(Validation::fileSize(['tmp_name' => $image], Validation::COMPARE_GREATER, '1KB'));
     }
 
     /**
@@ -2619,42 +2616,13 @@ class ValidationTest extends TestCase
     /**
      * Test uploaded file validation.
      */
-    public function testUploadedFileErrorCode(): void
+    public function testUploadedFileFailure(): void
     {
         $this->assertFalse(Validation::uploadedFile('derp'));
         $invalid = [
             'name' => 'testing',
         ];
         $this->assertFalse(Validation::uploadedFile($invalid));
-
-        $file = [
-            'name' => 'cake.power.gif',
-            'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
-            'error' => UPLOAD_ERR_OK,
-            'type' => 'image/gif',
-            'size' => 201,
-        ];
-        $this->assertTrue(Validation::uploadedFile($file));
-
-        $file['error'] = UPLOAD_ERR_NO_FILE;
-        $this->assertFalse(Validation::uploadedFile($file), 'Error upload should fail.');
-    }
-
-    /**
-     * Test uploaded file validation.
-     *
-     * @dataProvider uploadedFileProvider
-     */
-    public function testUploadedFileArray(bool $expected, array $options): void
-    {
-        $file = [
-            'name' => 'cake.power.gif',
-            'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
-            'error' => UPLOAD_ERR_OK,
-            'type' => 'text/plain',
-            'size' => 201,
-        ];
-        $this->assertSame($expected, Validation::uploadedFile($file, $options));
     }
 
     /**
@@ -2662,13 +2630,8 @@ class ValidationTest extends TestCase
      */
     public function testUploadedFileNoFile(): void
     {
-        $file = [
-            'name' => '',
-            'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
-            'error' => UPLOAD_ERR_NO_FILE,
-            'type' => '',
-            'size' => 0,
-        ];
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_NO_FILE, 'cake.power.gif', 'image/gif');
         $options = [
             'optional' => true,
             'minSize' => 500,
@@ -2680,22 +2643,6 @@ class ValidationTest extends TestCase
             'optional' => false,
         ];
         $this->assertFalse(Validation::uploadedFile($file, $options), 'File is required.');
-    }
-
-    /**
-     * Test uploaded file validation.
-     */
-    public function testUploadedFileWithDifferentFileParametersOrder(): void
-    {
-        $file = [
-            'name' => 'cake.power.gif',
-            'error' => UPLOAD_ERR_OK,
-            'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
-            'type' => 'text/plain',
-            'size' => 201,
-        ];
-        $options = [];
-        $this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
     }
 
     /**
@@ -2722,7 +2669,7 @@ class ValidationTest extends TestCase
      *
      * @dataProvider uploadedFileProvider
      */
-    public function testUploadedFilePsr7(bool $expected, array $options): void
+    public function testUploadedFile(bool $expected, array $options): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
@@ -2986,9 +2933,7 @@ class ValidationTest extends TestCase
     public function testImageSize(): void
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
-        $upload = [
-            'tmp_name' => $image,
-        ];
+        $upload = new UploadedFile($image, 5308, UPLOAD_ERR_OK, 'test.jpg', 'image/jpeg');
 
         $this->assertTrue(Validation::imageSize($upload, [
             'width' => [Validation::COMPARE_GREATER, 100],
@@ -3027,30 +2972,12 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test imageSize with a PSR7 object
-     */
-    public function testImageSizePsr7(): void
-    {
-        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
-        $upload = new UploadedFile($image, 5308, UPLOAD_ERR_OK, 'test.jpg', 'image/jpeg');
-
-        $this->assertTrue(Validation::imageSize($upload, [
-            'width' => [Validation::COMPARE_GREATER, 100],
-            'height' => [Validation::COMPARE_GREATER, 100],
-        ]));
-        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 100));
-        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 100));
-    }
-
-    /**
      * Test imageHeight
      */
     public function testImageHeight(): void
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
-        $upload = [
-            'tmp_name' => $image,
-        ];
+        $upload = new UploadedFile($image, 5308, UPLOAD_ERR_OK, 'test.jpg', 'image/jpeg');
 
         $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 100));
         $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_LESS, 2000));
@@ -3067,9 +2994,7 @@ class ValidationTest extends TestCase
     public function testImageWidth(): void
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
-        $upload = [
-            'tmp_name' => $image,
-        ];
+        $upload = new UploadedFile($image, 5308, UPLOAD_ERR_OK, 'test.jpg', 'image/jpeg');
 
         $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 100));
         $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_LESS, 2000));
