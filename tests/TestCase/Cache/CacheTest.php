@@ -21,8 +21,8 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\Exception\NotSupportedMethodException;
 use Cake\Cache\InvalidArgumentException;
-use Cake\Http\Exception\NotImplementedException;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use stdClass;
@@ -884,7 +884,7 @@ class CacheTest extends TestCase
      */
     public function testDeleteAsync(): void
     {
-        $this->expectException(NotImplementedException::class);
+        $this->expectException(NotSupportedMethodException::class);
 
         $this->_configCache();
         Cache::add('test_delete_async_key', 'test data', 'tests');
@@ -896,7 +896,7 @@ class CacheTest extends TestCase
      */
     public function testClearBlocking(): void
     {
-        $this->expectException(NotImplementedException::class);
+        $this->expectException(NotSupportedMethodException::class);
 
         $this->_configCache();
         Cache::add('test_clear_blocking_key1', 'test data1', 'tests');

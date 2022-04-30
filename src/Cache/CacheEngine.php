@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Cache;
 
+use Cake\Cache\Exception\NotSupportedMethodException;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\Exception\NotImplementedException;
 use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 
@@ -291,7 +291,8 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function deleteAsync($key): bool
     {
-        throw new NotImplementedException('The deleteAsync() method is not supported by' . static::class . '. Used delete() instead.');
+        $message = 'The deleteAsync() method is not supported by' . static::class . '. Used delete() instead.';
+        throw new NotSupportedMethodException($message);
     }
 
     /**
@@ -311,7 +312,8 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function clearBlocking(): bool
     {
-        throw new NotImplementedException('Fast blocking clears are not supported by ' . static::class . '. Use clear() instead.');
+        $message = 'Fast blocking clears are not supported by ' . static::class . '. Use clear() instead.';
+        throw new NotSupportedMethodException($message);
     }
 
     /**
