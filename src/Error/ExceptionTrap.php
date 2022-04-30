@@ -35,8 +35,22 @@ class ExceptionTrap
     }
 
     /**
-     * See the `Error` key in you `config/app.php`
-     * for details on the keys and their values.
+     * Configuration options. Generally these will be defined in your config/app.php
+     *
+     * - `trace` - boolean - Whether or not backtraces should be included in
+     *   logged exceptions.
+     * - `logger` - string - The class name of the error logger to use.
+     * - `exceptionRenderer` - string - The class responsible for rendering uncaught exceptions.
+     *   The chosen class will be used for for both CLI and web environments. If  you want different
+     *   classes used in CLI and web environments you'll need to write that conditional logic as well.
+     *   The conventional location for custom renderers is in `src/Error`. Your exception renderer needs to
+     *   implement the `render()` method and return either a string or Http\Response.
+     * - `skipLog` - array - List of exceptions to skip for logging. Exceptions that
+     *   extend one of the listed exceptions will also be skipped for logging.
+     *   E.g.: `'skipLog' => ['Cake\Http\Exception\NotFoundException', 'Cake\Http\Exception\UnauthorizedException']`
+     * - `extraFatalErrorMemory` - int - The number of megabytes to increase the memory limit by
+     *   when a fatal error is encountered. This allows
+     *   breathing room to complete logging or error handling.
      *
      * @var array<string, mixed>
      */
@@ -208,17 +222,7 @@ class ExceptionTrap
         }
         $request = Router::getRequest();
 
-        $shouldLog = true;
-        foreach ($this->_config['skipLog'] as $class) {
-            if ($exception instanceof $class) {
-                $shouldLog = false;
-                break;
-            }
-        }
-
-        if ($shouldLog) {
-            $this->logException($exception, $request);
-        }
+        $this->logException($exception, $request);
 
         try {
             $renderer = $this->renderer($exception);
@@ -312,9 +316,10 @@ class ExceptionTrap
      * Log an exception.
      *
      * Primarily a public function to ensure consistency between global exception handling
-     * and the ErrorHandlerMiddleware.
+     * and the ErrorHandlerMiddleware. This method will apply the `skipLog` filter
+     * skipping logging if the exception should not be logged.
      *
-     * After logging, the `Exception.beforeRender` event is triggered.
+     * After logging is attempted the `Exception.beforeRender` event is triggered.
      *
      * @param \Throwable $exception The exception to log
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The optional request
@@ -322,8 +327,16 @@ class ExceptionTrap
      */
     public function logException(Throwable $exception, ?ServerRequestInterface $request = null): void
     {
-        $logger = $this->logger();
-        $logger->log($exception, $request);
+        $shouldLog = true;
+        foreach ($this->_config['skipLog'] as $class) {
+            if ($exception instanceof $class) {
+                $shouldLog = false;
+                break;
+            }
+        }
+        if ($shouldLog) {
+            $this->logger()->log($exception, $request);
+        }
         $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);
     }
 

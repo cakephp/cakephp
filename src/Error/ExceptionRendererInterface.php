@@ -33,6 +33,8 @@ interface ExceptionRendererInterface
     /**
      * Write the output to the output stream.
      *
+     * This method is only called when exceptions are handled by a global default exception handler.
+     *
      * @param \Psr\Http\Message\ResponseInterface|string $output Response instance or string for output.
      * @return void
      */

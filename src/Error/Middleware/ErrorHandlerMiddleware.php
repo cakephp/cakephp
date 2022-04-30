@@ -43,27 +43,16 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Default configuration values.
      *
-     * Ignored if contructor is passed an ErrorHandler instance.
+     * Ignored if contructor is passed an ExceptionTrap instance.
      *
-     * - `log` Enable logging of exceptions.
-     * - `skipLog` List of exceptions to skip logging. Exceptions that
-     *   extend one of the listed exceptions will also not be logged. Example:
-     *
-     *   ```
-     *   'skipLog' => ['Cake\Error\NotFoundException', 'Cake\Error\UnauthorizedException']
-     *   ```
-     *
-     * - `trace` Should error logs include stack traces?
-     * - `exceptionRenderer` The renderer instance or class name to use or a callable factory
-     *   which returns a \Cake\Error\ExceptionRendererInterface instance.
-     *   Defaults to \Cake\Error\ExceptionRenderer
+     * Configuration keys and values are shared with `ExceptionTrap`.
+     * This class will pass its configuration onto the ExceptionTrap
+     * class if you are using the array style constructor.
      *
      * @var array<string, mixed>
+     * @see \Cake\Error\ExceptionTrap
      */
     protected array $_defaultConfig = [
-        'skipLog' => [],
-        'log' => true,
-        'trace' => false,
         'exceptionRenderer' => WebExceptionRenderer::class,
     ];
 
