@@ -291,7 +291,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function deleteAsync($key): bool
     {
-        throw new NotImplementedException('There is no implementation of a concrete cache engine.');
+        throw new NotImplementedException('The deleteAsync() method is not supported by' . static::class . '. Used delete() instead.');
     }
 
     /**
