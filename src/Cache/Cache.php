@@ -490,7 +490,7 @@ class Cache
     }
 
     /**
-     * Blocking delete all keys from the cache
+     * Blocking delete of all keys from the cache
      *
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the cache was successfully cleared, false otherwise
