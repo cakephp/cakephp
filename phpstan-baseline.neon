@@ -386,16 +386,6 @@ parameters:
 			path: src/Mailer/Email.php
 
 		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/ORM/EagerLoader.php
