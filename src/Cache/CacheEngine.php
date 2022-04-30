@@ -311,7 +311,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function clearBlocking(): bool
     {
-        throw new NotImplementedException('There is no implementation of a concrete cache engine.');
+        throw new NotImplementedException('Fast blocking clears are not supported by ' . static::class . '. Use clear() instead.');
     }
 
     /**
