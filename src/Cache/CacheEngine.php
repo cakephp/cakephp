@@ -289,7 +289,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function deleteAsync($key): bool
+    public function deleteAsync(string $key): bool
     {
         $message = 'The deleteAsync() method is not supported by' . static::class . '. Used delete() instead.';
         throw new NotSupportedMethodException($message);
