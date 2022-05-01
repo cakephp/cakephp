@@ -190,7 +190,7 @@ class CsrfProtectionMiddleware
      */
     public function createToken()
     {
-        $value = Security::randomBytes(static::TOKEN_VALUE_LENGTH);
+        $value = Security::randomBytes(static::TOKEN_VALUE_LENGTHAAA);
         if (!$this->_config['verifyTokenSource']) {
             return hash('sha512', $value, false);
         }
@@ -282,7 +282,7 @@ class CsrfProtectionMiddleware
      * @param mixed $cookie The cookie token.
      * @return bool
      */
-    protected function _compareToken($post, $cookie): bool
+    protected function _compareToken($post, $cookie)
     {
         if (!is_string($post)) {
             $post = '';
