@@ -190,6 +190,105 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that the X-CSRF-Token works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testValidTokenInHeaderVerifySource($method)
+    {
+        $middleware = new CsrfProtectionMiddleware(['verifyTokenSource' => true]);
+        $token = $middleware->createToken();
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                'HTTP_X_CSRF_TOKEN' => $token,
+            ],
+            'post' => ['a' => 'b'],
+            'cookies' => ['csrfToken' => $token],
+        ]);
+        $response = new Response();
+
+        // No exception means the test is valid
+        $response = $middleware($request, $response, $this->_getNextClosure());
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Test that the X-CSRF-Token works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testInvalidTokenInHeaderVerifySource($method)
+    {
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                // Even though the values match they are not signed.
+                'HTTP_X_CSRF_TOKEN' => 'nope',
+            ],
+            'post' => ['a' => 'b'],
+            'cookies' => ['csrfToken' => 'nope'],
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware(['verifyTokenSource' => true]);
+        $middleware($request, $response, $this->_getNextClosure());
+    }
+
+    /**
+     * Test that request data works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testValidTokenRequestDataVerifySource($method)
+    {
+        $middleware = new CsrfProtectionMiddleware(['verifyTokenSource' => true]);
+        $token = $middleware->createToken();
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+            ],
+            'post' => ['_csrfToken' => $token],
+            'cookies' => ['csrfToken' => $token],
+        ]);
+        $response = new Response();
+
+        $closure = function ($request, $response) {
+            $this->assertNull($request->getData('_csrfToken'));
+        };
+
+        // No exception means everything is OK
+        $middleware($request, $response, $closure);
+    }
+
+    /**
+     * Test that request data works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testInvalidTokenRequestDataVerifySource($method)
+    {
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+            ],
+            // Even though the tokens match they are not signed.
+            'post' => ['_csrfToken' => 'example-token'],
+            'cookies' => ['csrfToken' => 'example-token'],
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware(['verifyTokenSource' => true]);
+        $middleware($request, $response, $this->_getNextClosure());
+    }
+
+    /**
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider

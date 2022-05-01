@@ -15,7 +15,7 @@ namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
-use Cake\Http\ServerRequest;
+use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\BodyContains;
@@ -51,7 +51,6 @@ use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use Laminas\Diactoros\Uri;
@@ -701,8 +700,11 @@ trait IntegrationTestTrait
         }
 
         if ($this->_csrfToken === true) {
+            // While most applications will not be using verify tokens, we enable
+            // it for tests so that if applications upgrade they don't face testing failures.
+            $middleware = new CsrfProtectionMiddleware(['verifyTokenSource' => true]);
             if (!isset($this->_cookie['csrfToken'])) {
-                $this->_cookie['csrfToken'] = Text::uuid();
+                $this->_cookie['csrfToken'] = $middleware->createToken();
             }
             if (!isset($data['_csrfToken'])) {
                 $data['_csrfToken'] = $this->_cookie['csrfToken'];
