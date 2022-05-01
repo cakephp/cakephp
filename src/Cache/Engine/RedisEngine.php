@@ -235,7 +235,7 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function deleteAsync($key): bool
+    public function deleteAsync(string $key): bool
     {
         $key = $this->_key($key);
 
