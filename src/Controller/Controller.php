@@ -834,13 +834,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($preferredType) {
             return $typeMap[$preferredType];
         }
-        // See if there is a match-all view class.
-        if (isset($typeMap[View::TYPE_MATCH_ALL])) {
-            return $typeMap[View::TYPE_MATCH_ALL];
-        }
 
-        // No decision
-        return null;
+        // Use the match-all view if available or null for no decision.
+        return $typeMap[View::TYPE_MATCH_ALL] ?? null;
     }
 
     /**
