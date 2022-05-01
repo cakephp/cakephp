@@ -23,10 +23,9 @@ namespace Cake\Cache;
  * Internally Cache uses this interface when calling engine
  * methods.
  *
- * @method bool deleteAsync(string $key) Delete a key from the cache asynchronously
- * @method bool deleteBlocking() Blocking Delete all keys from the cache
- *
  * @since 3.7.0
+ * @method bool deleteAsync(string $key) Delete a key from the cache asynchronously
+ * @method bool clearBlocking() Blocking Delete all keys from the cache
  */
 interface CacheEngineInterface
 {
