@@ -291,7 +291,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function deleteAsync(string $key): bool
     {
-        $message = 'The deleteAsync() method is not supported by' . static::class . '. Used delete() instead.';
+        $message = 'The deleteAsync() method is not supported by ' . static::class . '. Use delete() instead.';
         throw new NotSupportedMethodException($message);
     }
 
