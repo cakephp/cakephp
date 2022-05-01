@@ -100,13 +100,4 @@
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
-  <file src="src/TestSuite/TestSuite.php">
-    <InternalClass occurrences="1">
-      <code>BaseTestSuite</code>
-    </InternalClass>
-    <InternalMethod occurrences="2">
-      <code>addTestFile</code>
-      <code>addTestFile</code>
-    </InternalMethod>
-  </file>
 </files>
