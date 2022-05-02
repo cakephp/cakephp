@@ -228,6 +228,21 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * Delete a key from the cache asynchronously
+     *
+     * Just unlink a key from the cache. The actual removal will happen later asynchronously.
+     *
+     * @param string $key Identifier for the data
+     * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     */
+    public function deleteAsync(string $key): bool
+    {
+        $key = $this->_key($key);
+
+        return $this->_Redis->unlink($key) > 0;
+    }
+
+    /**
      * Delete all keys from the cache
      *
      * @return bool True if the cache was successfully cleared, false otherwise
@@ -249,6 +264,37 @@ class RedisEngine extends CacheEngine
 
             foreach ($keys as $key) {
                 $isDeleted = ($this->_Redis->del($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
+            }
+        }
+
+        return $isAllDeleted;
+    }
+
+    /**
+     * Delete all keys from the cache by a blocking operation
+     *
+     * Faster than clear() using unlink method.
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clearBlocking(): bool
+    {
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern);
+
+            if ($keys === false) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = ($this->_Redis->unlink($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
