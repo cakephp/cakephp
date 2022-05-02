@@ -50,7 +50,7 @@ class CsrfProtectionMiddleware
      *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *  - `verifyTokenSource` Generate and verify tokens that include the application salt
-     *    value. This prevents tokens from being manipulated by an attacker via XSS or physical 
+     *    value. This prevents tokens from being manipulated by an attacker via XSS or physical
      *    access. This behavior is disabled by default as it is not cross compatible with tokens
      *    created in earlier versions of CakePHP. It is recommended that you enable this setting
      *    if possible as it is the default in 4.x.
