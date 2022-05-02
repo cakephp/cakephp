@@ -34,6 +34,7 @@ use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
+use Cake\View\View;
 use Cake\View\ViewVarsTrait;
 use Closure;
 use InvalidArgumentException;
@@ -830,11 +831,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         // Use accept header based negotiation.
         $contentType = new ContentTypeNegotiation();
         $preferredType = $contentType->preferredType($request, array_keys($typeMap));
-        if (!$preferredType) {
-            return null;
+        if ($preferredType) {
+            return $typeMap[$preferredType];
         }
 
-        return $typeMap[$preferredType];
+        // Use the match-all view if available or null for no decision.
+        return $typeMap[View::TYPE_MATCH_ALL] ?? null;
     }
 
     /**

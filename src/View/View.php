@@ -315,6 +315,14 @@ class View implements EventDispatcherInterface
     public const PLUGIN_TEMPLATE_FOLDER = 'plugin';
 
     /**
+     * The magic 'match-all' content type that views can use to
+     * behave as a fallback during content-type negotiation.
+     *
+     * @var string
+     */
+    public const TYPE_MATCH_ALL = '_match_all_';
+
+    /**
      * Constructor
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
@@ -375,7 +383,7 @@ class View implements EventDispatcherInterface
     protected function setContentType(): void
     {
         $viewContentType = $this->contentType();
-        if (!$viewContentType) {
+        if (!$viewContentType || $viewContentType == static::TYPE_MATCH_ALL) {
             return;
         }
         $response = $this->getResponse();
