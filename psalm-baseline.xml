@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.x-dev@">
   <file src="src/Cache/Engine/RedisEngine.php">
-    <InvalidArgument occurrences="1">
+    <InvalidArgument occurrences="2">
       <code>Redis::OPT_SCAN</code>
     </InvalidArgument>
     <InvalidReturnStatement occurrences="4">
