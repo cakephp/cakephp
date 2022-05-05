@@ -144,6 +144,28 @@ class ErrorTrapTest extends TestCase
         $this->assertStringContainsString($logLevel, $logs[0]);
     }
 
+    public function testHandleErrorLogTrace()
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ErrorTrap([
+            'errorRenderer' => TextErrorRenderer::class,
+            'trace' => true,
+        ]);
+        $trap->register();
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_WARNING);
+        ob_get_clean();
+        restore_error_handler();
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+        $this->assertStringContainsString('Trace:', $logs[0]);
+        $this->assertStringContainsString('ErrorTrapTest::testHandleErrorLogTrace', $logs[0]);
+    }
+
     public function testHandleErrorNoLog()
     {
         Log::setConfig('test_error', [

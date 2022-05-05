@@ -8,6 +8,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Renderer\ConsoleErrorRenderer;
 use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Routing\Router;
 use Exception;
 use InvalidArgumentException;
 
@@ -123,10 +124,18 @@ class ErrorTrap
         $renderer = $this->renderer();
         $logger = $this->logger();
 
+        $context = [];
+        if ($this->_config['trace']) {
+            $context = [
+                'trace' => $error->getTraceAsString(),
+                'request' => Router::getRequest(),
+            ];
+        }
+
         try {
             // Log first incase rendering or event listeners fail
             if ($this->_config['log']) {
-                $logger->logMessage($error->getLabel(), $error->getMessage());
+                $logger->logMessage($error->getLabel(), $error->getMessage(), $context);
             }
             $event = $this->dispatchEvent('Error.beforeRender', ['error' => $error]);
             if ($event->isStopped()) {
