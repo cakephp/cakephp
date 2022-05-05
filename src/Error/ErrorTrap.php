@@ -122,17 +122,17 @@ class ErrorTrap
         $renderer = $this->renderer();
         $logger = $this->logger();
 
-        $context = [];
-        if ($this->_config['trace']) {
-            $context = [
-                'trace' => $error->getTraceAsString(),
-                'request' => Router::getRequest(),
-            ];
-        }
 
         try {
             // Log first incase rendering or event listeners fail
             if ($this->_config['log']) {
+                $context = [];
+                if ($this->_config['trace']) {
+                    $context = [
+                        'trace' => $error->getTraceAsString(),
+                        'request' => Router::getRequest(),
+                    ];
+                }
                 $logger->logMessage($error->getLabel(), $error->getMessage(), $context);
             }
             $event = $this->dispatchEvent('Error.beforeRender', ['error' => $error]);
