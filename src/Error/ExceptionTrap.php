@@ -373,7 +373,7 @@ class ExceptionTrap
     public function logInternalError(Throwable $exception): void
     {
         $message = sprintf(
-            "[%s] %s (%s:%s)", // Keeping same message format
+            '[%s] %s (%s:%s)', // Keeping same message format
             get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),
