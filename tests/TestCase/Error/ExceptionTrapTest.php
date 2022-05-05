@@ -230,6 +230,19 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('nope', $logs[0]);
     }
 
+    public function testLogExceptionConfigOff()
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ExceptionTrap(['log' => false]);
+        $error = new InvalidArgumentException('nope');
+        $trap->logException($error);
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertEmpty($logs);
+    }
+
     /**
      * @preserveGlobalState disabled
      * @runInSeparateProcess

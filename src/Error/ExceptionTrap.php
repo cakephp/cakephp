@@ -348,7 +348,7 @@ class ExceptionTrap
                 break;
             }
         }
-        if ($shouldLog) {
+        if ($shouldLog && $this->_config['log']) {
             $this->logger()->log($exception, $request);
         }
         $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);
@@ -366,8 +366,6 @@ class ExceptionTrap
      */
     public function logInternalError(Throwable $exception): void
     {
-        // Disable trace for internal errors.
-        $this->_config['trace'] = false;
         $message = sprintf(
             "[%s] %s (%s:%s)\n%s", // Keeping same message format
             get_class($exception),
