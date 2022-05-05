@@ -346,7 +346,15 @@ class ExceptionTrap
      */
     public function logException(Throwable $exception, ?ServerRequestInterface $request = null): void
     {
-        if ($this->_config['log']) {
+        $shouldLog = $this->_config['log'];
+        if ($shouldLog) {
+            foreach ($this->getConfig('skipLog') as $class) {
+                if ($exception instanceof $class) {
+                    $shouldLog = false;
+                }
+            }
+        }
+        if ($shouldLog) {
             $this->logger()->log($exception, $request);
         }
         $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);

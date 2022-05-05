@@ -33,14 +33,11 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * Default configuration values.
      *
-     * - `skipLog` List of exceptions to skip logging. Exceptions that
-     *   extend one of the listed exceptions will also not be logged.
      * - `trace` Should error logs include stack traces?
      *
      * @var array<string, mixed>
      */
     protected $_defaultConfig = [
-        'skipLog' => [],
         'trace' => false,
     ];
 
@@ -79,12 +76,6 @@ class ErrorLogger implements ErrorLoggerInterface
      */
     public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
-        foreach ($this->getConfig('skipLog') as $class) {
-            if ($exception instanceof $class) {
-                return false;
-            }
-        }
-
         $message = $this->getMessage($exception);
 
         if ($request !== null) {
