@@ -36,11 +36,9 @@ class ErrorTrap
      */
     protected $_defaultConfig = [
         'errorLevel' => E_ALL,
-        'ignoredDeprecationPaths' => [],
         'log' => true,
         'logger' => ErrorLogger::class,
         'errorRenderer' => null,
-        'extraFatalErrorMemory' => 4 * 1024,
         'trace' => false,
     ];
 

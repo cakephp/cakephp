@@ -64,6 +64,7 @@ class ExceptionTrap
         'log' => true,
         'skipLog' => [],
         'trace' => false,
+        'extraFatalErrorMemory' => 4,
     ];
 
     /**
