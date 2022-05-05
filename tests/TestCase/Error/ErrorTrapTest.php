@@ -115,17 +115,16 @@ class ErrorTrapTest extends TestCase
     {
         return [
             // PHP error level, expected log level
-            [E_USER_ERROR, 'error'],
             [E_USER_WARNING, 'warning'],
-            [E_USER_NOTICE, 'info'],
-            [E_USER_DEPRECATED, 'info'],
+            [E_USER_NOTICE, 'notice'],
+            [E_USER_DEPRECATED, 'notice'],
         ];
     }
 
     /**
      * @dataProvider logLevelProvider
      */
-    public function testLoggingLevel($level, $logLevel)
+    public function testHandleErrorLoggingLevel($level, $logLevel)
     {
         Log::setConfig('test_error', [
             'className' => 'Array',
@@ -136,12 +135,33 @@ class ErrorTrapTest extends TestCase
         $trap->register();
 
         ob_start();
-        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        trigger_error('Oh no it was bad', $level);
         ob_get_clean();
         restore_error_handler();
 
         $logs = Log::engine('test_error')->read();
         $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+        $this->assertStringContainsString($logLevel, $logs[0]);
+    }
+
+    public function testHandleErrorNoLog()
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ErrorTrap([
+            'log' => false,
+            'errorRenderer' => TextErrorRenderer::class,
+        ]);
+        $trap->register();
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_WARNING);
+        ob_get_clean();
+        restore_error_handler();
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertEmpty($logs);
     }
 
     public function testRegisterNoOutputDebug()

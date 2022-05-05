@@ -125,13 +125,16 @@ class ErrorTrap
 
         try {
             // Log first incase rendering or event listeners fail
-            $logger->logMessage($error->getLabel(), $error->getMessage());
+            if ($this->_config['log']) {
+                $logger->logMessage($error->getLabel(), $error->getMessage());
+            }
             $event = $this->dispatchEvent('Error.beforeRender', ['error' => $error]);
             if ($event->isStopped()) {
                 return true;
             }
             $renderer->write($renderer->render($error, $debug));
         } catch (Exception $e) {
+            // Fatal errors always log.
             $logger->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
 
             return false;
