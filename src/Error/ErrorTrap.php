@@ -129,7 +129,6 @@ class ErrorTrap
         $renderer = $this->renderer();
         $logger = $this->logger();
 
-
         try {
             // Log first incase rendering or event listeners fail
             if ($this->_config['log']) {

@@ -336,6 +336,11 @@ abstract class BaseErrorHandler
         if (empty($this->_config['log'])) {
             return false;
         }
+        foreach ($this->_config['skipLog'] as $class) {
+            if ($exception instanceof $class) {
+                return false;
+            }
+        }
 
         return $this->getLogger()->log($exception, $request ?? Router::getRequest());
     }
