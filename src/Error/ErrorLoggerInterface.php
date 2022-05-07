@@ -24,6 +24,11 @@ use Throwable;
  *
  * Used by the ErrorHandlerMiddleware and global
  * error handlers to log exceptions and errors.
+ *
+ * @method bool logException(\Throwable $exception, bool $includeTrace = false, ?\Psr\Http\Message\ServerRequestInterface $request = null)
+ *   Log an exception with an optional HTTP request.
+ * @method bool logError(\Cake\Error\PhpError $error, bool $includeTrace = false, ?\Psr\Http\Message\ServerRequestInterface $request = null)
+ *   Log an error with an optional HTTP request.
  */
 interface ErrorLoggerInterface
 {

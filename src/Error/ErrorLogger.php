@@ -52,7 +52,62 @@ class ErrorLogger implements ErrorLoggerInterface
     }
 
     /**
-     * @inheritDoc
+     * Log an error to Cake's Log subsystem
+     *
+     * @param \Cake\Error\PhpError $error The error to log
+     * @param bool $includeTrace Should the log message include a stacktrace
+     * @param ?\Psr\Http\Message\ServerRequestInterface $request The request if in an HTTP context.
+     * @return bool Logging success
+     */
+    public function logError(PhpError $error, bool $includeTrace = false, ?ServerRequestInterface $request = null): bool
+    {
+        $message = $error->getMessage();
+        if ($request) {
+            $message .= $this->getRequestContext($request);
+        }
+        if ($includeTrace) {
+            $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
+        }
+        $logMap = [
+            'strict' => LOG_NOTICE,
+            'deprecated' => LOG_NOTICE,
+        ];
+        $level = $error->getLabel();
+        $level = $logMap[$level] ?? $level;
+
+        return Log::write($level, $message);
+    }
+
+    /**
+     * Log an exception to Cake's Log subsystem
+     *
+     * @param \Throwable $exception The exception to log a message for.
+     * @param bool $includeTrace Whether or not a stack trace should be logged.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
+     * @return bool
+     */
+    public function logException(
+        Throwable $exception,
+        bool $includeTrace = false,
+        ?ServerRequestInterface $request = null
+    ): bool {
+        $message = $this->getMessage($exception, false, $includeTrace);
+
+        if ($request !== null) {
+            $message .= $this->getRequestContext($request);
+        }
+
+        $message .= "\n\n";
+
+        return Log::error($message);
+    }
+
+    /**
+     * @param string|int $level The logging level
+     * @param string $message The message to be logged.
+     * @param array $context Context.
+     * @return bool
+     * @deprecated 4.4.0 Use logError instead.
      */
     public function logMessage($level, string $message, array $context = []): bool
     {
@@ -72,11 +127,14 @@ class ErrorLogger implements ErrorLoggerInterface
     }
 
     /**
-     * @inheritDoc
+     * @param \Throwable $exception The exception to log a message for.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
+     * @return bool
+     * @deprecated 4.4.0 Use logException instead.
      */
     public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
-        $message = $this->getMessage($exception);
+        $message = $this->getMessage($exception, false, $this->getConfig('trace'));
 
         if ($request !== null) {
             $message .= $this->getRequestContext($request);
@@ -92,9 +150,10 @@ class ErrorLogger implements ErrorLoggerInterface
      *
      * @param \Throwable $exception The exception to log a message for.
      * @param bool $isPrevious False for original exception, true for previous
+     * @param bool $includeTrace Whether or not to include a stack trace.
      * @return string Error message
      */
-    protected function getMessage(Throwable $exception, bool $isPrevious = false): string
+    protected function getMessage(Throwable $exception, bool $isPrevious = false, bool $includeTrace = false): string
     {
         $message = sprintf(
             '%s[%s] %s in %s on line %s',
@@ -113,7 +172,7 @@ class ErrorLogger implements ErrorLoggerInterface
             }
         }
 
-        if ($this->getConfig('trace')) {
+        if ($includeTrace) {
             /** @var array $trace */
             $trace = Debugger::formatTrace($exception, ['format' => 'points']);
             $message .= "\nStack Trace:\n";
@@ -128,7 +187,7 @@ class ErrorLogger implements ErrorLoggerInterface
 
         $previous = $exception->getPrevious();
         if ($previous) {
-            $message .= $this->getMessage($previous, true);
+            $message .= $this->getMessage($previous, true, $includeTrace);
         }
 
         return $message;

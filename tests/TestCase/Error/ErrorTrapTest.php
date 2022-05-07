@@ -24,10 +24,13 @@ use Cake\Error\PhpError;
 use Cake\Error\Renderer\ConsoleErrorRenderer;
 use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Error\Renderer\TextErrorRenderer;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
+use TestApp\Error\LegacyErrorLogger;
 
 class ErrorTrapTest extends TestCase
 {
@@ -36,6 +39,7 @@ class ErrorTrapTest extends TestCase
         parent::setUp();
 
         Log::drop('test_error');
+        Router::reload();
     }
 
     public function testConfigRendererInvalid()
@@ -184,6 +188,37 @@ class ErrorTrapTest extends TestCase
 
         $logs = Log::engine('test_error')->read();
         $this->assertEmpty($logs);
+    }
+
+    public function testHandleErrorLogDeprecatedLoggerMethods()
+    {
+        $request = new ServerRequest([
+            'url' => '/articles/view/1',
+        ]);
+        Router::setRequest($request);
+
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ErrorTrap([
+            'errorRenderer' => TextErrorRenderer::class,
+            'logger' => LegacyErrorLogger::class,
+            'log' => true,
+            'trace' => true,
+        ]);
+
+        $this->deprecated(function () use ($trap) {
+            // Calling this method directly as deprecated() interferes with registering
+            // an error handler.
+            ob_start();
+            $trap->handleError(E_USER_WARNING, 'Oh no it was bad', __FILE__, __LINE__);
+            ob_get_clean();
+        });
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+        $this->assertStringContainsString('IncludeTrace', $logs[0]);
+        $this->assertStringContainsString('URL=http://localhost/articles/view/1', $logs[0]);
     }
 
     public function testRegisterNoOutputDebug()
