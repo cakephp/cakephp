@@ -357,7 +357,7 @@ class ExceptionTrap
         if ($shouldLog) {
             $logger = $this->logger();
             if (method_exists($logger, 'logException')) {
-                $logger->logException($exception, $this->_config['trace'], $request);
+                $logger->logException($exception, $request, $this->_config['trace']);
             } else {
                 $loggerClass = get_class($logger);
                 deprecationWarning(

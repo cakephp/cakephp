@@ -55,11 +55,11 @@ class ErrorLogger implements ErrorLoggerInterface
      * Log an error to Cake's Log subsystem
      *
      * @param \Cake\Error\PhpError $error The error to log
-     * @param bool $includeTrace Should the log message include a stacktrace
      * @param ?\Psr\Http\Message\ServerRequestInterface $request The request if in an HTTP context.
-     * @return bool Logging success
+     * @param bool $includeTrace Should the log message include a stacktrace
+     * @return void
      */
-    public function logError(PhpError $error, bool $includeTrace = false, ?ServerRequestInterface $request = null): bool
+    public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
         $message = $error->getMessage();
         if ($request) {
@@ -75,31 +75,28 @@ class ErrorLogger implements ErrorLoggerInterface
         $level = $error->getLabel();
         $level = $logMap[$level] ?? $level;
 
-        return Log::write($level, $message);
+        Log::write($level, $message);
     }
 
     /**
      * Log an exception to Cake's Log subsystem
      *
      * @param \Throwable $exception The exception to log a message for.
-     * @param bool $includeTrace Whether or not a stack trace should be logged.
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
-     * @return bool
+     * @param bool $includeTrace Whether or not a stack trace should be logged.
+     * @return void
      */
     public function logException(
         Throwable $exception,
-        bool $includeTrace = false,
-        ?ServerRequestInterface $request = null
-    ): bool {
+        ?ServerRequestInterface $request = null,
+        bool $includeTrace = false
+    ): void {
         $message = $this->getMessage($exception, false, $includeTrace);
 
         if ($request !== null) {
             $message .= $this->getRequestContext($request);
         }
-
-        $message .= "\n\n";
-
-        return Log::error($message);
+        Log::error($message);
     }
 
     /**

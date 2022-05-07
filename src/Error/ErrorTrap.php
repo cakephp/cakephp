@@ -159,11 +159,11 @@ class ErrorTrap
         }
         $logger = $this->logger();
         if (method_exists($logger, 'logError')) {
-            $logger->logError($error, $this->_config['trace'], Router::getRequest());
+            $logger->logError($error, Router::getRequest(), $this->_config['trace']);
         } else {
             $loggerClass = get_class($logger);
             deprecationWarning(
-                "The configured logger `{$loggerClass}` does not implement `logError` " .
+                "The configured logger `{$loggerClass}` does not implement `logError()` " .
                 'which will be required in future versions of CakePHP.'
             );
             $context = [];
