@@ -209,6 +209,15 @@
       <code>$this-&gt;modelClass</code>
     </DeprecatedProperty>
   </file>
+  <file src="src/Error/BaseErrorHandler.php">
+    <DeprecatedMethod occurrences="1">
+      <code>log</code>
+    </DeprecatedMethod>
+    <DeprecatedMethod occurrences="2">
+      <code>logMessage</code>
+    </DeprecatedMethod>
+  </file>
+
   <file src="src/Error/ErrorHandler.php">
     <DeprecatedClass occurrences="1">
       <code>ExceptionRenderer::class</code>
@@ -217,10 +226,18 @@
       <code>outputError</code>
     </DeprecatedMethod>
   </file>
+  <file src="src/Error/ErrorTrap.php">
+    <DeprecatedMethod occurrences="2">
+      <code>logMessage</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/Error/ExceptionTrap.php">
     <DeprecatedClass occurrences="2">
       <code>\Cake\Error\ExceptionRenderer</code>
     </DeprecatedClass>
+    <DeprecatedMethod occurrences="1">
+      <code>log</code>
+    </DeprecatedMethod>
   </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
