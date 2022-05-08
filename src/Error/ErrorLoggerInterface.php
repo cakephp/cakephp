@@ -38,6 +38,7 @@ interface ErrorLoggerInterface
      * @param \Throwable $exception The exception to log a message for.
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
      * @return bool
+     * @deprecated 4.4.0 Implement `logException` instead.
      */
     public function log(
         Throwable $exception,
@@ -51,6 +52,7 @@ interface ErrorLoggerInterface
      * @param string $message The message to be logged.
      * @param array $context Context.
      * @return bool
+     * @deprecated 4.4.0 Implement `logError` instead.
      */
     public function logMessage($level, string $message, array $context = []): bool;
 }
