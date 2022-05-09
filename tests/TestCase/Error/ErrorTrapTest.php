@@ -24,10 +24,13 @@ use Cake\Error\PhpError;
 use Cake\Error\Renderer\ConsoleErrorRenderer;
 use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Error\Renderer\TextErrorRenderer;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
+use TestApp\Error\LegacyErrorLogger;
 
 class ErrorTrapTest extends TestCase
 {
@@ -36,6 +39,7 @@ class ErrorTrapTest extends TestCase
         parent::setUp();
 
         Log::drop('test_error');
+        Router::reload();
     }
 
     public function testConfigRendererInvalid()
@@ -115,17 +119,16 @@ class ErrorTrapTest extends TestCase
     {
         return [
             // PHP error level, expected log level
-            [E_USER_ERROR, 'error'],
             [E_USER_WARNING, 'warning'],
-            [E_USER_NOTICE, 'info'],
-            [E_USER_DEPRECATED, 'info'],
+            [E_USER_NOTICE, 'notice'],
+            [E_USER_DEPRECATED, 'notice'],
         ];
     }
 
     /**
      * @dataProvider logLevelProvider
      */
-    public function testLoggingLevel($level, $logLevel)
+    public function testHandleErrorLoggingLevel($level, $logLevel)
     {
         Log::setConfig('test_error', [
             'className' => 'Array',
@@ -136,12 +139,86 @@ class ErrorTrapTest extends TestCase
         $trap->register();
 
         ob_start();
-        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        trigger_error('Oh no it was bad', $level);
         ob_get_clean();
         restore_error_handler();
 
         $logs = Log::engine('test_error')->read();
         $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+        $this->assertStringContainsString($logLevel, $logs[0]);
+    }
+
+    public function testHandleErrorLogTrace()
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ErrorTrap([
+            'errorRenderer' => TextErrorRenderer::class,
+            'trace' => true,
+        ]);
+        $trap->register();
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_WARNING);
+        ob_get_clean();
+        restore_error_handler();
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+        $this->assertStringContainsString('Trace:', $logs[0]);
+        $this->assertStringContainsString('ErrorTrapTest::testHandleErrorLogTrace', $logs[0]);
+    }
+
+    public function testHandleErrorNoLog()
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ErrorTrap([
+            'log' => false,
+            'errorRenderer' => TextErrorRenderer::class,
+        ]);
+        $trap->register();
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_WARNING);
+        ob_get_clean();
+        restore_error_handler();
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertEmpty($logs);
+    }
+
+    public function testHandleErrorLogDeprecatedLoggerMethods()
+    {
+        $request = new ServerRequest([
+            'url' => '/articles/view/1',
+        ]);
+        Router::setRequest($request);
+
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+        ]);
+        $trap = new ErrorTrap([
+            'errorRenderer' => TextErrorRenderer::class,
+            'logger' => LegacyErrorLogger::class,
+            'log' => true,
+            'trace' => true,
+        ]);
+
+        $this->deprecated(function () use ($trap) {
+            // Calling this method directly as deprecated() interferes with registering
+            // an error handler.
+            ob_start();
+            $trap->handleError(E_USER_WARNING, 'Oh no it was bad', __FILE__, __LINE__);
+            ob_get_clean();
+        });
+
+        $logs = Log::engine('test_error')->read();
+        $this->assertStringContainsString('Oh no it was bad', $logs[0]);
+        $this->assertStringContainsString('IncludeTrace', $logs[0]);
+        $this->assertStringContainsString('URL=http://localhost/articles/view/1', $logs[0]);
     }
 
     public function testRegisterNoOutputDebug()
