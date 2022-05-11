@@ -111,6 +111,7 @@ class Client implements ClientInterface
      * @var array<string, mixed>
      */
     protected $_defaultConfig = [
+        'auth' => null,
         'adapter' => null,
         'host' => null,
         'port' => null,
@@ -174,6 +175,10 @@ class Client implements ClientInterface
      *   \Cake\Http\Client\Adapter\Curl if `curl` extension is loaded else
      *   \Cake\Http\Client\Adapter\Stream.
      * - protocolVersion - The HTTP protocol version to use. Defaults to 1.1
+     * - auth - The authentication credentials to use. If a `username` and `password`
+     *   key are provided without a `type` key Basic authentication will be assumed.
+     *   You can use the `type` key to define the authentication adapter classname
+     *   to use. Short class names are resolved to the `Http\Client\Auth` namespace.
      *
      * @param array<string, mixed> $config Config options for scoped clients.
      * @throws \InvalidArgumentException
