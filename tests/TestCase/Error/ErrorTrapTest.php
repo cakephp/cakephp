@@ -27,8 +27,8 @@ use Cake\Error\Renderer\TextErrorRenderer;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Cake\TestSuite\TestCase;
 use Cake\TestSuite\Stub\ConsoleOutput;
+use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
 use TestApp\Error\LegacyErrorLogger;
@@ -222,7 +222,7 @@ class ErrorTrapTest extends TestCase
         $this->assertStringContainsString('URL=http://localhost/articles/view/1', $logs[0]);
     }
 
-    public function testTraceOptionConsoleRendering()
+    public function testConsoleRenderingNoTrace()
     {
         $stub = new ConsoleOutput();
         $trap = new ErrorTrap([
@@ -240,6 +240,27 @@ class ErrorTrapTest extends TestCase
         $out = $stub->messages();
         $this->assertStringContainsString('Oh no it was bad', $out[0]);
         $this->assertStringNotContainsString('Trace', $out[0]);
+    }
+
+    public function testConsoleRenderingWithTrace()
+    {
+        $stub = new ConsoleOutput();
+        $trap = new ErrorTrap([
+            'errorRenderer' => ConsoleErrorRenderer::class,
+            'trace' => true,
+            'stderr' => $stub,
+        ]);
+        $trap->register();
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        ob_get_clean();
+        restore_error_handler();
+
+        $out = $stub->messages();
+        $this->assertStringContainsString('Oh no it was bad', $out[0]);
+        $this->assertStringContainsString('Trace', $out[0]);
+        $this->assertStringContainsString('ErrorTrapTest::testConsoleRenderingWithTrace', $out[0]);
     }
 
     public function testRegisterNoOutputDebug()
