@@ -134,7 +134,6 @@ jobs:
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
-      continue-on-error: ${{ matrix.php-version == '8.2' }}
 
     - name: Prefer lowest check
       if: matrix.prefer-lowest == 'prefer-lowest'
