@@ -33,13 +33,24 @@ class ConsoleErrorRenderer implements ErrorRendererInterface
     protected $output;
 
     /**
+     * @var bool
+     */
+    protected $trace = false;
+
+    /**
      * Constructor.
+     *
+     * ### Options
+     *
+     * - `stderr` - The ConsoleOutput instance to use. Defaults to `php://stderr`
+     * - `trace` - Whether or not stacktraces should be output.
      *
      * @param array $config Error handling configuration.
      */
     public function __construct(array $config)
     {
         $this->output = $config['stderr'] ?? new ConsoleOutput('php://stderr');
+        $this->trace = (bool)($config['trace'] ?? false);
     }
 
     /**
@@ -55,14 +66,19 @@ class ConsoleErrorRenderer implements ErrorRendererInterface
      */
     public function render(PhpError $error, bool $debug): string
     {
+        $trace = '';
+        if ($this->trace) {
+            $trace = "\n<info>Stack Trace:</info>\n\n" . $error->getTraceAsString();
+        }
+
         return sprintf(
-            "<error>%s: %s :: %s</error> on line %s of %s\n<info>Trace:</info>\n%s",
+            '<error>%s: %s :: %s</error> on line %s of %s%s',
             $error->getLabel(),
             $error->getCode(),
             $error->getMessage(),
             $error->getLine() ?? '',
             $error->getFile() ?? '',
-            $error->getTraceAsString(),
+            $trace
         );
     }
 }
