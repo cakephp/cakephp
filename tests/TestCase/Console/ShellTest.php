@@ -450,7 +450,7 @@ class ShellTest extends TestCase
 
         $this->fs->mkdir($path);
 
-        $contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
+        $contents = "<?php{$eol}echo 'test';{$eol}\$te = 'st';{$eol}";
 
         $this->Shell->interactive = false;
         $result = $this->Shell->createFile($file, $contents);
@@ -475,7 +475,7 @@ class ShellTest extends TestCase
 
         $this->fs->mkdir($path);
 
-        $contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
+        $contents = "<?php{$eol}echo 'test';{$eol}\$te = 'st';{$eol}";
         $this->Shell->interactive = false;
         $result = $this->Shell->createFile($file, $contents);
         $this->assertFalse($result);
