@@ -5313,10 +5313,10 @@ class QueryTest extends TestCase
         if ($driver instanceof Postgres) {
             // Older postgres versions throw an error on the parameter type without a cast
             $query->select(['test_string' => $query->func()->cast(new StringExpression('testString', $collation), 'text')]);
-            $expected = "SELECT \(CAST\(:c0 COLLATE \"${collation}\" AS text\)\) AS <test_string>";
+            $expected = "SELECT \(CAST\(:c0 COLLATE \"{$collation}\" AS text\)\) AS <test_string>";
         } else {
             $query->select(['test_string' => new StringExpression('testString', $collation)]);
-            $expected = "SELECT \(:c0 COLLATE ${collation}\) AS <test_string>";
+            $expected = "SELECT \(:c0 COLLATE {$collation}\) AS <test_string>";
         }
         $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
 
@@ -5353,9 +5353,9 @@ class QueryTest extends TestCase
 
         if ($driver instanceof Postgres) {
             // Older postgres versions throw an error on the parameter type without a cast
-            $expected = "SELECT \(<title> COLLATE \"${collation}\"\) AS <test_string>";
+            $expected = "SELECT \(<title> COLLATE \"{$collation}\"\) AS <test_string>";
         } else {
-            $expected = "SELECT \(<title> COLLATE ${collation}\) AS <test_string>";
+            $expected = "SELECT \(<title> COLLATE {$collation}\) AS <test_string>";
         }
         $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
 
