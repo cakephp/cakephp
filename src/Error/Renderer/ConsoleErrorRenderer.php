@@ -35,7 +35,7 @@ class ConsoleErrorRenderer implements ErrorRendererInterface
     /**
      * @var bool
      */
-    protected $trace = false;
+    protected bool $trace = false;
 
     /**
      * Constructor.

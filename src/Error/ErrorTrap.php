@@ -138,7 +138,7 @@ class ErrorTrap
             $renderer->write($renderer->render($error, $debug));
         } catch (Exception $e) {
             // Fatal errors always log.
-            $this->logger()->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
+            $this->logger()->logException($e);
 
             return false;
         }
@@ -157,24 +157,7 @@ class ErrorTrap
         if (!$this->_config['log']) {
             return;
         }
-        $logger = $this->logger();
-        if (method_exists($logger, 'logError')) {
-            $logger->logError($error, Router::getRequest(), $this->_config['trace']);
-        } else {
-            $loggerClass = get_class($logger);
-            deprecationWarning(
-                "The configured logger `{$loggerClass}` does not implement `logError()` " .
-                'which will be required in future versions of CakePHP.'
-            );
-            $context = [];
-            if ($this->_config['trace']) {
-                $context = [
-                    'trace' => $error->getTraceAsString(),
-                    'request' => Router::getRequest(),
-                ];
-            }
-            $logger->logMessage($error->getLabel(), $error->getMessage(), $context);
-        }
+        $this->logger()->logError($error, Router::getRequest(), $this->_config['trace']);
     }
 
     /**

@@ -53,12 +53,7 @@ class ErrorLogger implements ErrorLoggerInterface
     }
 
     /**
-     * Log an error to Cake's Log subsystem
-     *
-     * @param \Cake\Error\PhpError $error The error to log
-     * @param ?\Psr\Http\Message\ServerRequestInterface $request The request if in an HTTP context.
-     * @param bool $includeTrace Should the log message include a stacktrace
-     * @return void
+     * @inheritDoc
      */
     public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
@@ -80,12 +75,7 @@ class ErrorLogger implements ErrorLoggerInterface
     }
 
     /**
-     * Log an exception to Cake's Log subsystem
-     *
-     * @param \Throwable $exception The exception to log a message for.
-     * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
-     * @param bool $includeTrace Whether or not a stack trace should be logged.
-     * @return void
+     * @inheritDoc
      */
     public function logException(
         Throwable $exception,
@@ -98,49 +88,6 @@ class ErrorLogger implements ErrorLoggerInterface
             $message .= $this->getRequestContext($request);
         }
         Log::error($message);
-    }
-
-    /**
-     * @param string|int $level The logging level
-     * @param string $message The message to be logged.
-     * @param array $context Context.
-     * @return bool
-     * @deprecated 4.4.0 Use logError instead.
-     */
-    public function logMessage($level, string $message, array $context = []): bool
-    {
-        if (!empty($context['request'])) {
-            $message .= $this->getRequestContext($context['request']);
-        }
-        if (!empty($context['trace'])) {
-            $message .= "\nTrace:\n" . $context['trace'] . "\n";
-        }
-        $logMap = [
-            'strict' => LOG_NOTICE,
-            'deprecated' => LOG_NOTICE,
-        ];
-        $level = $logMap[$level] ?? $level;
-
-        return Log::write($level, $message);
-    }
-
-    /**
-     * @param \Throwable $exception The exception to log a message for.
-     * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
-     * @return bool
-     * @deprecated 4.4.0 Use logException instead.
-     */
-    public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
-    {
-        $message = $this->getMessage($exception, false, $this->getConfig('trace'));
-
-        if ($request !== null) {
-            $message .= $this->getRequestContext($request);
-        }
-
-        $message .= "\n\n";
-
-        return Log::error($message);
     }
 
     /**

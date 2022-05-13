@@ -22,14 +22,12 @@ use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Exception\MissingControllerException;
-use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
 use stdClass;
-use TestApp\Error\LegacyErrorLogger;
 use Throwable;
 
 class ExceptionTrapTest extends TestCase
@@ -230,28 +228,6 @@ class ExceptionTrapTest extends TestCase
 
         $logs = Log::engine('test_error')->read();
         $this->assertEmpty($logs);
-    }
-
-    public function testLogExceptionDeprecatedLoggerMethods()
-    {
-        Log::setConfig('test_error', [
-            'className' => 'Array',
-        ]);
-        $trap = new ExceptionTrap([
-            'log' => true,
-            'logger' => LegacyErrorLogger::class,
-            'trace' => true,
-        ]);
-        $error = new InvalidArgumentException('nope');
-        $request = new ServerRequest(['url' => '/articles/view/1']);
-        $this->deprecated(function () use ($trap, $error, $request) {
-            $trap->logException($error, $request);
-        });
-
-        $logs = Log::engine('test_error')->read();
-        $this->assertStringContainsString('nope', $logs[0]);
-        $this->assertStringContainsString('IncludeTrace', $logs[0]);
-        $this->assertStringContainsString('URL=http://localhost/articles/view/1', $logs[0]);
     }
 
     /**
