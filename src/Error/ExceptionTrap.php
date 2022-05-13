@@ -341,17 +341,7 @@ class ExceptionTrap
             }
         }
         if ($shouldLog) {
-            $logger = $this->logger();
-            if (method_exists($logger, 'logException')) {
-                $logger->logException($exception, $request, $this->_config['trace']);
-            } else {
-                $loggerClass = get_class($logger);
-                deprecationWarning(
-                    "The configured logger `{$loggerClass}` should implement `logException()` " .
-                    'to be compatible with future versions of CakePHP.'
-                );
-                $this->logger()->log($exception, $request);
-            }
+            $this->logger()->logException($exception, $request, $this->_config['trace']);
         }
         $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception]);
     }
