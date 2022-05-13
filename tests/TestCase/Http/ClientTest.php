@@ -974,6 +974,7 @@ class ClientTest extends TestCase
         $client = Client::createFromUrl('http://example.co:80/some/uri/?foo=bar');
         $config = $client->getConfig();
         $expected = [
+            'auth' => null,
             'adapter' => null,
             'host' => 'example.co',
             'port' => 80,
