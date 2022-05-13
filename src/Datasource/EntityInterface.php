@@ -216,7 +216,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
 
     /**
      * Returns whether this entity contains a field named $field
-     * regardless of if it is empty.
+     * and is not set to null.
      *
      * @param array<string>|string $field The field to check.
      * @return bool
