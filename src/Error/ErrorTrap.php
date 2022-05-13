@@ -8,6 +8,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Renderer\ConsoleErrorRenderer;
 use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Routing\Router;
 use Exception;
 use InvalidArgumentException;
 
@@ -28,18 +29,23 @@ class ErrorTrap
     }
 
     /**
-     * See the `Error` key in you `config/app.php`
-     * for details on the keys and their values.
+     * Configuration options. Generally these are defined in config/app.php
+     *
+     * - `errorLevel` - int - The level of errors you are interested in capturing.
+     * - `errorRenderer` - string - The class name of render errors with. Defaults
+     *   to choosing between Html and Console based on the SAPI.
+     * - `log` - boolean - Whether or not you want errors logged.
+     * - `logger` - string - The class name of the error logger to use.
+     * - `trace` - boolean - Whether or not backtraces should be included in
+     *   logged errors.
      *
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'errorLevel' => E_ALL,
-        'ignoredDeprecationPaths' => [],
+        'errorRenderer' => null,
         'log' => true,
         'logger' => ErrorLogger::class,
-        'errorRenderer' => null,
-        'extraFatalErrorMemory' => 4 * 1024,
         'trace' => false,
     ];
 
@@ -121,23 +127,54 @@ class ErrorTrap
 
         $debug = Configure::read('debug');
         $renderer = $this->renderer();
-        $logger = $this->logger();
 
         try {
             // Log first incase rendering or event listeners fail
-            $logger->logMessage($error->getLabel(), $error->getMessage());
+            $this->logError($error);
             $event = $this->dispatchEvent('Error.beforeRender', ['error' => $error]);
             if ($event->isStopped()) {
                 return true;
             }
             $renderer->write($renderer->render($error, $debug));
         } catch (Exception $e) {
-            $logger->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
+            // Fatal errors always log.
+            $this->logger()->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
 
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Logging helper method.
+     *
+     * @param \Cake\Error\PhpError $error The error object to log.
+     * @return void
+     */
+    protected function logError(PhpError $error): void
+    {
+        if (!$this->_config['log']) {
+            return;
+        }
+        $logger = $this->logger();
+        if (method_exists($logger, 'logError')) {
+            $logger->logError($error, Router::getRequest(), $this->_config['trace']);
+        } else {
+            $loggerClass = get_class($logger);
+            deprecationWarning(
+                "The configured logger `{$loggerClass}` does not implement `logError()` " .
+                'which will be required in future versions of CakePHP.'
+            );
+            $context = [];
+            if ($this->_config['trace']) {
+                $context = [
+                    'trace' => $error->getTraceAsString(),
+                    'request' => Router::getRequest(),
+                ];
+            }
+            $logger->logMessage($error->getLabel(), $error->getMessage(), $context);
+        }
     }
 
     /**

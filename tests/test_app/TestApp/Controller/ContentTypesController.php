@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\View\JsonView;
+use Cake\View\NegotiationRequiredView;
 use Cake\View\XmlView;
 use TestApp\View\PlainTextView;
 
@@ -38,6 +39,13 @@ class ContentTypesController extends AppController
     public function all()
     {
         $this->viewClasses = [JsonView::class, XmlView::class];
+        $this->set('data', ['hello', 'world']);
+        $this->viewBuilder()->setOption('serialize', ['data']);
+    }
+
+    public function matchAll()
+    {
+        $this->viewClasses = [JsonView::class, XmlView::class, NegotiationRequiredView::class];
         $this->set('data', ['hello', 'world']);
         $this->viewBuilder()->setOption('serialize', ['data']);
     }

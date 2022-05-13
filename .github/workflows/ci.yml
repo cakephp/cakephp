@@ -120,7 +120,6 @@ jobs:
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
-      continue-on-error: ${{ matrix.php-version == '8.2' }}
 
     - name: Prefer lowest check
       if: matrix.prefer-lowest == 'prefer-lowest'
@@ -237,13 +236,13 @@ jobs:
       run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
 
     - name: Run psalm
-      if: success() || failure()
+      if: always()
       run: vendor/bin/psalm.phar --output-format=github
 
     - name: Run phpstan
-      if: success() || failure()
+      if: always()
       run: vendor/bin/phpstan.phar analyse --error-format=github
 
     - name: Run phpstan for tests
-      if: success() || failure()
+      if: always()
       run: vendor/bin/phpstan.phar analyse -c tests/phpstan.neon --error-format=github

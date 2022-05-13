@@ -560,13 +560,12 @@ class Session
      */
     protected function _overwrite(array &$old, array $new): void
     {
-        if (!empty($old)) {
-            foreach ($old as $key => $var) {
-                if (!isset($new[$key])) {
-                    unset($old[$key]);
-                }
+        foreach ($old as $key => $var) {
+            if (!isset($new[$key])) {
+                unset($old[$key]);
             }
         }
+
         foreach ($new as $key => $var) {
             $old[$key] = $var;
         }
