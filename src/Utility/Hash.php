@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Utility;
 
 use ArrayAccess;
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -1144,6 +1145,246 @@ class Hash
         }
 
         return $data;
+    }
+
+    /**
+     * Validates data against provided schema.
+     *
+     * @param array $data Data to validate
+     * @param array $schema Schema to validate against
+     * @return array
+     */
+    public static function validate(array $data, array $schema): array
+    {
+        $defaults = ['required' => $schema['required'] ?? false, 'strict' => $schema['strict'] ?? true];
+
+        $fields = $schema['fields'] ?? [];
+        if (empty($fields)) {
+            throw new CakeException('Schema must include a `fields` array.');
+        }
+
+        return static::validateShape($data, ['fields' => $fields], '', $defaults);
+    }
+
+    /**
+     * Validate an array shape.
+     *
+     * @param array $data Array data
+     * @param array $shape Array spec
+     * @param string $arrayPath Dot notation path of array
+     * @param array $defaults Schema defaults
+     * @return array
+     */
+    protected static function validateShape(array $data, array $shape, string $arrayPath, array $defaults): array
+    {
+        $errors = [];
+        $fields = $shape['fields'];
+
+        foreach ($data as $key => $value) {
+            $fieldPath = static::getFieldPath($arrayPath, $key);
+
+            $fieldData = $fields[$key] ?? null;
+            if ($fieldData === null) {
+                if ($shape['strict'] ?? $defaults['strict']) {
+                    return [$fieldPath => 'Specification for field missing.'];
+                }
+                continue;
+            }
+            $fieldSpec = static::buildFieldSpec($fieldData);
+
+            $errors += static::validateField($value, (array)$fieldSpec['type'], $fieldPath, $defaults);
+        }
+
+        $missing = array_diff(array_keys($fields), array_keys($data));
+        foreach ($missing as $field) {
+            $fieldSpec = static::buildFieldSpec($fields[$field]);
+            if ($fieldSpec['required'] ?? $defaults['required']) {
+                $errors[static::getFieldPath($arrayPath, $field)] = 'Array key missing for required field.';
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Validate field in array.
+     *
+     * @param mixed $value Value to validate
+     * @param array $typeSpec Type specification
+     * @param string $fieldPath Dot notation path of field
+     * @param array $defaults Schema defaults
+     * @return array
+     */
+    protected static function validateField(
+        $value,
+        array $typeSpec,
+        string $fieldPath,
+        array $defaults
+    ): array {
+        foreach ($typeSpec as $typeId => $type) {
+            if ($typeId === 'array{}') {
+                if (is_array($value)) {
+                    return static::validateShape($value, $type, $fieldPath, $defaults);
+                }
+                continue;
+            }
+
+            if (is_string($typeId)) {
+                if (static::isValueOfGenericType($value, $typeId, $type)) {
+                    return [];
+                }
+                continue;
+            }
+
+            if (static::isValueOfType($value, $type)) {
+                return [];
+            }
+        }
+
+        return [$fieldPath => 'Field value does not match expected type.'];
+    }
+
+    /**
+     * Gets fields spec from field data.
+     *
+     * @param array|string $fieldData Field data
+     * @return array
+     */
+    protected static function buildFieldSpec($fieldData): array
+    {
+        if (is_string($fieldData)) {
+            // field-spec is a single type string: ['field' => 'string']
+            return ['type' => $fieldData];
+        }
+
+        return $fieldData;
+    }
+
+    /**
+     * Checks if $value maches expected $type.
+     *
+     * @param mixed $value Value to check
+     * @param string $type Type name
+     * @return bool
+     */
+    protected static function isValueOfType($value, string $type): bool
+    {
+        switch ($type) {
+            case 'array':
+                return is_array($value);
+            case 'list':
+                if (!is_array($value)) {
+                    return false;
+                }
+
+                $e = 0;
+                foreach ($value as $i => $v) {
+                    if ($i !== $e++) {
+                        return false;
+                    }
+                }
+
+                return true;
+            case 'string':
+                return is_string($value);
+            case 'float':
+                return is_float($value);
+            case 'int':
+                return is_int($value);
+            case 'bool':
+                return is_bool($value);
+            case 'null':
+                return $value === null;
+            case 'mixed':
+                return true;
+        }
+
+        return $value instanceof $type;
+    }
+
+    /**
+     * Checks if a value matches expected generic type.
+     *
+     * @param mixed $value Value to check
+     * @param string $type Type name
+     * @param array|string $generics Elements type
+     * @return bool
+     */
+    protected static function isValueOfGenericType($value, string $type, $generics): bool
+    {
+        switch ($type) {
+            case 'array<>':
+                if (!is_array($value)) {
+                    return false;
+                }
+
+                foreach ($value as $i => $v) {
+                    $isType = false;
+                    foreach ((array)$generics as $generic) {
+                        if (static::isValueOfType($v, $generic)) {
+                            $isType = true;
+                            break;
+                        }
+                    }
+
+                    if (!$isType) {
+                        return false;
+                    }
+                }
+
+                return true;
+            case 'list<>':
+                if (!is_array($value)) {
+                    return false;
+                }
+
+                $e = 0;
+                foreach ($value as $i => $v) {
+                    if ($i !== $e++) {
+                        return false;
+                    }
+
+                    $isType = false;
+                    foreach ((array)$generics as $generic) {
+                        if (static::isValueOfType($v, $generic)) {
+                            $isType = true;
+                            break;
+                        }
+                    }
+
+                    if (!$isType) {
+                        return false;
+                    }
+                }
+
+                return true;
+            case 'class-string<>':
+                foreach ((array)$generics as $generic) {
+                    /** @var class-string $generic */
+                    if (is_a($value, $generic, true)) {
+                        return true;
+                    }
+                }
+                break;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets field path previous path and key.
+     *
+     * @param string $previous Previous path
+     * @param string $key Key name
+     * @return string
+     */
+    protected static function getFieldPath(string $previous, string $key)
+    {
+        if ($previous) {
+            return $previous . '.' . $key;
+        }
+
+        return $key;
     }
 
     /**

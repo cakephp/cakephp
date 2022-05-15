@@ -17,12 +17,14 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility;
 
 use ArrayObject;
+use Cake\Core\Exception\CakeException;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use RuntimeException;
+use stdClass;
 
 /**
  * HashTest
@@ -757,6 +759,546 @@ class HashTest extends TestCase
         ];
         $this->assertSame($expected, Hash::merge($a, $b, $c));
         $this->assertSame($expected, Hash::merge($a, $b, [], $c));
+    }
+
+    public function testValidateSimpleTypes(): void
+    {
+        // test all valid basic types
+        $errors = Hash::validate(
+            ['array' => [], 'list' => ['value'], 'string' => 'a string', 'float' => 1.23, 'int' => 1, 'bool' => true, 'mixed' => true, 'null' => null, 'class' => new stdClass()],
+            [
+                'fields' => [
+                    'array' => 'array',
+                    'list' => 'list',
+                    'string' => 'string',
+                    'float' => 'float',
+                    'int' => 'int',
+                    'bool' => 'bool',
+                    'null' => 'null',
+                    'mixed' => 'mixed',
+                    'class' => stdClass::class,
+                ],
+            ]
+        );
+        $this->assertempty($errors);
+
+        // test all invalid basic types
+        $errors = Hash::validate(
+            ['array' => null, 'list' => ['a' => 'value'], 'string' => 1.23, 'float' => 2, 'int' => null, 'bool' => new stdClass(), 'null' => 1, 'class' => true],
+            [
+                'fields' => [
+                    'array' => 'array',
+                    'list' => 'list',
+                    'string' => 'string',
+                    'float' => 'float',
+                    'int' => 'int',
+                    'bool' => 'bool',
+                    'null' => 'null',
+                    'class' => stdClass::class,
+                ],
+            ]
+        );
+        $this->assertSame(
+            [
+                'array' => 'Field value does not match expected type.',
+                'list' => 'Field value does not match expected type.',
+                'string' => 'Field value does not match expected type.',
+                'float' => 'Field value does not match expected type.',
+                'int' => 'Field value does not match expected type.',
+                'bool' => 'Field value does not match expected type.',
+                'null' => 'Field value does not match expected type.',
+                'class' => 'Field value does not match expected type.',
+            ],
+            $errors
+        );
+    }
+
+    public function testValidateClassString(): void
+    {
+        // test class-string
+        $errors = Hash::validate(
+            ['has_class_string' => stdClass::class],
+            [
+                'fields' => [
+                    'has_class_string' => [
+                        'type' => ['class-string<>' => stdClass::class],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_class_string' => stdClass::class],
+            [
+                'fields' => [
+                    'has_class_string' => [
+                        'type' => ['class-string<>' => [Hash::class, stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_class_string' => Hash::class],
+            [
+                'fields' => [
+                    'has_class_string' => [
+                        'type' => ['class-string<>' => stdClass::class],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(
+            ['has_class_string' => 'Field value does not match expected type.'],
+            $errors
+        );
+    }
+
+    public function testValidateGenericArray()
+    {
+        $errors = Hash::validate(
+            ['has_array' => ['a' => new stdClass(), new stdClass()]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => ['array<>' => stdClass::class],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_array' => ['a' => new stdClass(), new stdClass()]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => ['array<>' => [stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_array' => [new stdClass(), 'a' => 1]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => ['array<>' => ['int', stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_array' => new stdClass()],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => ['array<>' => [stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(
+            ['has_array' => 'Field value does not match expected type.'],
+            $errors
+        );
+
+        $errors = Hash::validate(
+            ['has_array' => [new stdClass(), 'a' => 1]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => ['array<>' => [stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(
+            ['has_array' => 'Field value does not match expected type.'],
+            $errors
+        );
+    }
+
+    public function testValidateGenericList()
+    {
+        $errors = Hash::validate(
+            ['has_list' => [new stdClass(), new stdClass()]],
+            [
+                'fields' => [
+                    'has_list' => [
+                        'type' => ['list<>' => stdClass::class],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_list' => [new stdClass(), new stdClass()]],
+            [
+                'fields' => [
+                    'has_list' => [
+                        'type' => ['list<>' => [stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_list' => [new stdClass(), 1]],
+            [
+                'fields' => [
+                    'has_list' => [
+                        'type' => ['list<>' => ['int', stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_list' => new stdClass()],
+            [
+                'fields' => [
+                    'has_list' => [
+                        'type' => ['list<>' => [stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(
+            ['has_list' => 'Field value does not match expected type.'],
+            $errors
+        );
+
+        $errors = Hash::validate(
+            ['has_list' => [new stdClass(), 1]],
+            [
+                'fields' => [
+                    'has_list' => [
+                        'type' => ['list<>' => [stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(
+            ['has_list' => 'Field value does not match expected type.'],
+            $errors
+        );
+
+        $errors = Hash::validate(
+            ['has_list' => [new stdClass(), 'a' => 1]],
+            [
+                'fields' => [
+                    'has_list' => [
+                        'type' => ['list<>' => ['int', stdClass::class]],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(
+            ['has_list' => 'Field value does not match expected type.'],
+            $errors
+        );
+    }
+
+    public function testValidateArrayTypes(): void
+    {
+        // test single-dimension
+        $errors = Hash::validate(
+            ['has_array' => ['int' => 1]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => ['int' => 'int'],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_array' => ['int' => 1.13]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => ['int' => 'int'],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(['has_array.int' => 'Field value does not match expected type.'], $errors);
+
+        // test multi-dimension
+        $errors = Hash::validate(
+            ['has_array' => ['nested' => ['int' => 1]]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => [
+                                    'nested' => [
+                                        'type' => [
+                                            'array{}' => [
+                                                'fields' => ['int' => 'int'],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['has_array' => ['nested' => ['int' => 1.23]]],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => [
+                                    'nested' => [
+                                        'type' => [
+                                            'array{}' => [
+                                                'fields' => ['int' => 'int'],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(['has_array.nested.int' => 'Field value does not match expected type.'], $errors);
+    }
+
+    public function testValidateRequired(): void
+    {
+        $errors = Hash::validate(
+            ['int' => 1],
+            [
+                'required' => true,
+                'fields' => [
+                    'int' => [
+                        'type' => 'int',
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['int' => 1],
+            [
+                'fields' => [
+                    'int' => [
+                        'required' => true,
+                        'type' => 'int',
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['int' => 1],
+            [
+                'required' => true,
+                'fields' => [
+                    'int' => [
+                        'required' => false,
+                        'type' => 'int',
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            [],
+            [
+                'fields' => [
+                    'int' => [
+                        'required' => true,
+                        'type' => 'int',
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(['int' => 'Array key missing for required field.'], $errors);
+
+        $errors = Hash::validate(
+            [],
+            [
+                'required' => false,
+                'fields' => [
+                    'int' => [
+                        'required' => true,
+                        'type' => 'int',
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(['int' => 'Array key missing for required field.'], $errors);
+
+        $errors = Hash::validate(
+            ['has_array' => []],
+            [
+                'required' => false,
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => [
+                                    'int' => ['required' => true, 'type' => 'int'],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(['has_array.int' => 'Array key missing for required field.'], $errors);
+    }
+
+    public function testValidateUnionType(): void
+    {
+        $errors = Hash::validate(
+            ['string_or_int' => 1],
+            ['fields' => ['string_or_int' => ['type' => ['string', 'int']]]],
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['string_or_float' => 1],
+            ['fields' => ['string_or_float' => ['type' => ['string', 'float']]]],
+        );
+        $this->assertSame(['string_or_float' => 'Field value does not match expected type.'], $errors);
+
+        $errors = Hash::validate(
+            ['int_or_array' => ['int' => 1]],
+            [
+                'fields' => [
+                    'int_or_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => ['int' => 'int'],
+                            ],
+                            'int',
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validate(
+            ['int_or_array' => 'string'],
+            [
+                'fields' => [
+                    'int_or_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => ['int' => 'int'],
+                            ],
+                            'int',
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(['int_or_array' => 'Field value does not match expected type.'], $errors);
+    }
+
+    public function testValidateStrict(): void
+    {
+        // test not strict
+        $errors = Hash::validate(['extra' => true], ['strict' => false, 'fields' => ['int' => 'int']]);
+        $this->assertEmpty($errors);
+
+        // test not strict array
+        $errors = Hash::validate(
+            ['has_array' => ['extra' => true]],
+            [
+                'strict' => true,
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'strict' => false,
+                                'fields' => ['int' => 'int'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        );
+        $this->assertEmpty($errors);
+
+        // test strict
+        $errors = Hash::validate(['extra' => true], ['fields' => ['int' => 'int']]);
+        $this->assertSame(['extra' => 'Specification for field missing.'], $errors);
+
+        // test strict array
+        $errors = Hash::validate(
+            ['has_array' => ['extra' => true]],
+            [
+                'strict' => false,
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'strict' => true,
+                                'fields' => ['int' => 'int'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        );
+        $this->assertSame(['has_array.extra' => 'Specification for field missing.'], $errors);
+    }
+
+    public function testValidateInvalidSchema(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Schema must include a `fields` array.');
+        Hash::validate(
+            ['int' => 1],
+            []
+        );
+    }
+
+    public function testValidateInvalidSchemaEmpty(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Schema must include a `fields` array.');
+        Hash::validate(
+            ['int' => 1],
+            ['fields' => []]
+        );
     }
 
     /**
