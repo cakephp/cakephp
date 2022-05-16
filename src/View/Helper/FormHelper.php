@@ -1563,7 +1563,7 @@ class FormHelper extends Helper
         $attributes = $this->_initInputField($fieldName, $attributes);
 
         $hiddenField = $attributes['hiddenField'] ?? true;
-        unset($attributes['hiddenField']);        
+        unset($attributes['hiddenField']);
 
         $hidden = '';
         if ($hiddenField !== false && is_scalar($hiddenField)) {
@@ -1574,11 +1574,11 @@ class FormHelper extends Helper
                 'id' => $attributes['id'],
             ]);
         }
-        
+
         if (!isset($attributes['type']) && isset($attributes['name'])) {
             unset($attributes['id']);
         }
-        
+
         $radio = $this->widget('radio', $attributes);
 
         return $hidden . $radio;
@@ -2143,7 +2143,7 @@ class FormHelper extends Helper
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
         unset($attributes['hiddenField']);
-        
+
         if (!isset($attributes['type']) && isset($attributes['name'])) {
             unset($attributes['id']);
         }
