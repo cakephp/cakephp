@@ -1853,6 +1853,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'checkRules' => true,
             'checkExisting' => true,
             '_primary' => true,
+            '_cleanOnSuccess' => true,
         ]);
 
         if ($entity->hasErrors((bool)$options['associated'])) {
@@ -1872,8 +1873,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
-                $entity->clean();
-                $entity->setNew(false);
+                if ($options['_cleanOnSuccess']) {
+                    $entity->clean();
+                    $entity->setNew(false);
+                }
                 $entity->setSource($this->getRegistryAlias());
             }
         }
@@ -2221,10 +2224,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 '_primary' => true,
             ]
         );
+        $options['_cleanOnSuccess'] = false;
 
         /** @var array<bool> $isNew */
         $isNew = [];
-        $cleanup = function ($entities) use (&$isNew): void {
+        $cleanupOnFailure = function ($entities) use (&$isNew): void {
             /** @var array<\Cake\Datasource\EntityInterface> $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
@@ -2249,20 +2253,40 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     }
                 });
         } catch (Exception $e) {
-            $cleanup($entities);
+            $cleanupOnFailure($entities);
 
             throw $e;
         }
 
         if ($failed !== null) {
-            $cleanup($entities);
+            $cleanupOnFailure($entities);
 
             throw new PersistenceFailedException($failed, ['saveMany']);
         }
 
+        $cleanupOnSuccess = function (EntityInterface $entity) use (&$cleanupOnSuccess) {
+            $entity->clean();
+            $entity->setNew(false);
+
+            foreach (array_keys($entity->toArray()) as $field) {
+                $value = $entity->get($field);
+
+                if ($value instanceof EntityInterface) {
+                    $cleanupOnSuccess($value);
+                } elseif (is_array($value) && current($value) instanceof EntityInterface) {
+                    foreach ($value as $associated) {
+                        $cleanupOnSuccess($associated);
+                    }
+                }
+            }
+        };
+
         if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                if ($options['atomic'] || $options['_primary']) {
+                    $cleanupOnSuccess($entity);
+                }
             }
         }
 
