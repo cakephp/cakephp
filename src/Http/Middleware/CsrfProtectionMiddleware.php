@@ -190,7 +190,7 @@ class CsrfProtectionMiddleware
      */
     public function createToken()
     {
-        $value = Security::randomBytes(static::TOKEN_VALUE_LENGTH);
+        $value = Security::randomString(static::TOKEN_VALUE_LENGTH);
         if (!$this->_config['verifyTokenSource']) {
             return hash('sha512', $value, false);
         }
