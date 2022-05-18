@@ -154,7 +154,7 @@ class EventManager implements EventManagerInterface
         }
         throw new InvalidArgumentException(
             'Invalid arguments for EventManager::on(). ' .
-            "Expected 1, 2 or 3 arguments. Got {$argCount} arguments."
+            "Expected 1 argument of type EventListenerInterface, 2 or 3 arguments. Got {$argCount} arguments."
         );
     }
 

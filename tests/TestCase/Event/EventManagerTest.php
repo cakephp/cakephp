@@ -19,6 +19,7 @@ use Cake\Event\EventList;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Event\TestEvent;
 
 /**
@@ -290,12 +291,14 @@ class EventManagerTest extends TestCase
     /**
      * Test the on() with invalid arguments
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid arguments for EventManager::on(). Expected 1, 2 or 3 arguments.
      * @return void
      */
     public function testOnInvalidArgument()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Invalid arguments for EventManager::on(). Expected 1 argument of type EventListenerInterface, 2 or 3 arguments.'
+        );
         $manager = new EventManager();
         $manager->on();
     }
