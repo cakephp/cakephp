@@ -2721,14 +2721,38 @@ class TableTest extends TestCase
     public function testSaveManyResultSet(): void
     {
         $table = $this->getTableLocator()->get('authors');
+        $table->hasMany('articles', ['sort' => 'articles.id']);
 
         $entities = $table->find()
             ->order(['id' => 'ASC'])
+            ->contain(['articles'])
             ->all();
         $entities->first()->name = 'admad';
+        $entities->first()->articles[0]->title = 'First Article Edited';
+
+        $listener = function (EventInterface $event, EntityInterface $entity, $options) {
+            if ($entity->id === 1) {
+                $this->assertTrue($entity->isDirty());
+
+                $this->assertSame('admad', $entity->name);
+                $this->assertSame('mariano', $entity->getOriginal('name'));
+
+                $this->assertSame('First Article Edited', $entity->articles[0]->title);
+                $this->assertSame('First Article', $entity->articles[0]->getOriginal('title'));
+            } else {
+                $this->assertFalse($entity->isDirty());
+            }
+        };
+        $table = $this->getTableLocator()
+            ->get('authors');
+
+        $table->getEventManager()
+            ->on('Model.afterSaveCommit', $listener);
 
         $result = $table->saveMany($entities);
         $this->assertSame($entities, $result);
+        $this->assertFalse($result->first()->isDirty());
+        $this->assertFalse($result->first()->articles[0]->isDirty());
 
         $first = $table->find()
             ->order(['id' => 'ASC'])
@@ -4870,6 +4894,7 @@ class TableTest extends TestCase
             'atomic' => true,
             'checkRules' => true,
             'checkExisting' => true,
+            '_cleanOnSuccess' => true,
         ];
         $this->assertEquals($expected, $actualOptions);
     }
@@ -4905,6 +4930,7 @@ class TableTest extends TestCase
                 'Articles' => [],
                 'Tags' => [],
             ],
+            '_cleanOnSuccess' => true,
         ];
         $this->assertEquals($expected, $actualOptions);
     }
@@ -4981,6 +5007,7 @@ class TableTest extends TestCase
             'checkRules' => true,
             'checkExisting' => true,
             'associated' => [],
+            '_cleanOnSuccess' => true,
         ];
         $this->assertEquals($expected, $actualSaveOptions);
 
@@ -5027,6 +5054,7 @@ class TableTest extends TestCase
             'checkRules' => true,
             'checkExisting' => true,
             '_sourceTable' => $authors,
+            '_cleanOnSuccess' => true,
         ];
         $this->assertEquals($expected, $actualOptions);
     }
@@ -5066,6 +5094,7 @@ class TableTest extends TestCase
                 'Tags' => [],
                 'ArticlesTags' => [],
             ],
+            '_cleanOnSuccess' => true,
         ];
         $this->assertEquals($expected, $actualOptions);
     }
@@ -5153,6 +5182,7 @@ class TableTest extends TestCase
                 'Tags' => [],
                 'ArticlesTags' => [],
             ],
+            '_cleanOnSuccess' => true,
         ];
         $this->assertEquals($expected, $actualSaveOptions);
 
