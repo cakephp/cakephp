@@ -1167,6 +1167,69 @@ class Hash
     }
 
     /**
+     * Validates the value for a dot notation path.
+     *
+     * @param string $path Dot notatin path
+     * @param mixed $value Value to validate
+     * @param array $schema Schema to validate against
+     * @return array
+     */
+    public static function validatePath(string $path, $value, array $schema): array
+    {
+        $defaults = ['required' => $schema['required'] ?? false, 'strict' => $schema['strict'] ?? true];
+
+        $fields = $schema['fields'] ?? [];
+        if (empty($fields)) {
+            throw new CakeException('Schema must include a `fields` array.');
+        }
+
+        $fieldSpec = null;
+        $shape = ['fields' => $fields];
+
+        $parts = explode('.', $path);
+        $lastField = end($parts);
+        $parts = array_slice($parts, 0, -1);
+
+        $path = [];
+        foreach ($parts as $field) {
+            $path[] = $field;
+
+            $fieldData = $shape['fields'][$field] ?? null;
+            if ($fieldData === null) {
+                if ($shape['strict'] ?? $defaults['strict']) {
+                    return [implode('.', $path) => 'Specification for field missing.'];
+                }
+
+                return [];
+            }
+            $fieldSpec = static::buildFieldSpec($fieldData);
+
+            $type = (array)$fieldSpec['type'];
+            if (in_array('array', $type, true) || in_array('array', (array)($type['array<>'] ?? []), true)) {
+                return [];
+            }
+
+            $shape = $type['array{}'] ?? null;
+            if (!$shape) {
+                return [implode('.', $path) => 'Field value does not match expected type.'];
+            }
+        }
+        $path[] = $lastField;
+
+        $fieldData = $shape['fields'][$lastField] ?? null;
+        if ($fieldData === null) {
+            if ($shape['strict'] ?? $defaults['strict']) {
+                return [implode('.', $path) => 'Specification for field missing.'];
+            }
+
+            return [];
+        }
+        $fieldSpec = static::buildFieldSpec($fieldData);
+
+        return static::validateField($value, (array)$fieldSpec['type'], implode('.', $path), $defaults);
+    }
+
+    /**
      * Validate an array shape.
      *
      * @param array $data Array data

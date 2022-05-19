@@ -1301,6 +1301,110 @@ class HashTest extends TestCase
         );
     }
 
+    public function testValidatePath(): void
+    {
+        $errors = Hash::validatePath('array', [], ['fields' => ['array' => 'array']]);
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validatePath(
+            'has_array.shape',
+            ['int' => 1],
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => [
+                                    'shape' => [
+                                        'type' => [
+                                            'array{}' => [
+                                                'fields' => ['int' => 'int'],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validatePath('has_array.int', 1, ['fields' => ['has_array' => ['type' => ['array{}' => ['fields' => ['int' => 'int']]]]]]);
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validatePath('has_array.int', null, ['fields' => ['has_array' => ['type' => ['array{}' => ['fields' => ['int' => 'int']]]]]]);
+        $this->assertSame(['has_array.int' => 'Field value does not match expected type.'], $errors);
+
+        $errors = Hash::validatePath('not_array.int', 1, ['fields' => ['not_array' => 'int']]);
+        $this->assertSame(['not_array' => 'Field value does not match expected type.'], $errors);
+
+        $errors = Hash::validatePath('has_array.int', 1, ['fields' => ['has_array' => ['type' => ['array{}' => ['fields' => ['int' => 'int']]]]]]);
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validatePath(
+            'has_array.nested.int',
+            1,
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => [
+                                    'nested' => [
+                                        'type' => [
+                                            'array{}' => [
+                                                'fields' => ['int' => 'int',],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validatePath(
+            'has_array.nested.int',
+            null,
+            [
+                'fields' => [
+                    'has_array' => [
+                        'type' => [
+                            'array{}' => [
+                                'fields' => [
+                                    'nested' => [
+                                        'type' => [
+                                            'array{}' => [
+                                                'fields' => [
+                                                    'int' => 'int',
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+        $this->assertSame(['has_array.nested.int' => 'Field value does not match expected type.'], $errors);
+
+        $errors = Hash::validatePath('array.int', 1, ['fields' => ['array' => 'array']]);
+        $this->assertEmpty($errors);
+
+        $errors = Hash::validatePath('list.int', 1, ['fields' => ['list' => 'list']]);
+        $this->assertSame(['list' => 'Field value does not match expected type.'], $errors);
+
+        $errors = Hash::validatePath('list.int', 1, ['fields' => ['list' => ['type' => ['list<>' => 'int']]]]);
+        $this->assertSame(['list' => 'Field value does not match expected type.'], $errors);
+    }
+
     /**
      * test normalizing arrays
      */
