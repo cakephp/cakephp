@@ -728,25 +728,28 @@ class Hash
      */
     public static function expand(array $data, string $separator = '.'): array
     {
-        $result = [];
-        foreach ($data as $flat => $value) {
-            $keys = explode($separator, (string)$flat);
-            $keys = array_reverse($keys);
-            $child = [
-                $keys[0] => $value,
-            ];
-            array_shift($keys);
-            foreach ($keys as $k) {
-                $child = [
-                    $k => $child,
-                ];
+        $hash = [];
+        foreach ($data as $path => $value) {
+            $keys = explode($separator, (string)$path);
+            if (count($keys) === 1) {
+                $hash[$path] = $value;
+                continue;
             }
 
-            $stack = [[$child, &$result]];
-            static::_merge($stack, $result);
+            $valueKey = end($keys);
+            $keys = array_slice($keys, 0, -1);
+
+            $keyHash = &$hash;
+            foreach ($keys as $key) {
+                if (!array_key_exists($key, $keyHash)) {
+                    $keyHash[$key] = [];
+                }
+                $keyHash = &$keyHash[$key];
+            }
+            $keyHash[$valueKey] = $value;
         }
 
-        return $result;
+        return $hash;
     }
 
     /**
