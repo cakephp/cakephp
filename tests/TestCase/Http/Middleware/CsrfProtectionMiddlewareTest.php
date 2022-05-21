@@ -87,6 +87,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $this->assertEquals(0, $cookie['expire'], 'session duration.');
             $this->assertEquals('/dir/', $cookie['path'], 'session path.');
             $this->assertEquals($cookie['value'], $request->getParam('_csrfToken'));
+            $this->assertRegExp('/^[a-z0-9]+$/', $cookie['value']);
         };
 
         $middleware = new CsrfProtectionMiddleware();
@@ -199,6 +200,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
     {
         $middleware = new CsrfProtectionMiddleware(['verifyTokenSource' => true]);
         $token = $middleware->createToken();
+        $this->assertRegexp('/^[a-z0-9]+$/', $token, 'Token should not have unencoded binary data.');
+
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
