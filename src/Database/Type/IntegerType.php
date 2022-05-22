@@ -36,7 +36,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      */
     protected function checkNumeric(mixed $value): void
     {
-        if (!is_numeric($value)) {
+        if (!is_numeric($value) && !is_bool($value)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot convert value of type `%s` to integer',
                 get_debug_type($value)
