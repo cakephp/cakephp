@@ -38,11 +38,11 @@ interface QueryInterface
      * If `true` is passed in the second argument, any previous selections will
      * be overwritten with the list passed in the first argument.
      *
-     * @param callable|array|string|float|int $fields Fields.
+     * @param \Closure|array|string|float|int $fields Fields.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select(callable|array|string|float|int $fields, bool $overwrite = false);
+    public function select(Closure|array|string|float|int $fields, bool $overwrite = false);
 
     /**
      * Returns a key => value array representing a single aliased field
@@ -363,7 +363,7 @@ interface QueryInterface
      *
      * ### Adding conditions in multiple steps:
      *
-     * You can use callable functions to construct complex expressions, functions
+     * You can use callback to construct complex expressions, functions
      * receive as first argument a new QueryExpression object and this query instance
      * as second argument. Functions must return an expression object, that will be
      * added the list of conditions for the query using the AND operator.

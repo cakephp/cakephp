@@ -115,7 +115,7 @@ class EagerLoader
      * - `foreignKey`: Used to set a different field to match both tables, if set to false
      *   no join conditions will be generated automatically
      * - `fields`: An array with the fields that should be fetched from the association
-     * - `queryBuilder`: Equivalent to passing a callable instead of an options array
+     * - `queryBuilder`: Equivalent to passing a callback instead of an options array
      * - `matching`: Whether to inform the association class that it should filter the
      *  main query by the results fetched by that class.
      * - `joinType`: For joinable associations, the SQL join type to use.
@@ -124,11 +124,11 @@ class EagerLoader
      * @param array|string $associations List of table aliases to be queried.
      * When this method is called multiple times it will merge previous list with
      * the new one.
-     * @param callable|null $queryBuilder The query builder callable.
+     * @param \Closure|null $queryBuilder The query builder callback.
      * @return array Containments.
      * @throws \InvalidArgumentException When using $queryBuilder with an array of $associations
      */
-    public function contain(array|string $associations, ?callable $queryBuilder = null): array
+    public function contain(array|string $associations, ?Closure $queryBuilder = null): array
     {
         if ($queryBuilder) {
             if (!is_string($associations)) {
@@ -231,12 +231,12 @@ class EagerLoader
      *  - `negateMatch`: Whether to add conditions negate match on target association
      *
      * @param string $associationPath Dot separated association path, 'Name1.Name2.Name3'.
-     * @param callable|null $builder the callback function to be used for setting extra
+     * @param \Closure|null $builder the callback function to be used for setting extra
      * options to the filtering query.
      * @param array<string, mixed> $options Extra options for the association matching.
      * @return $this
      */
-    public function setMatching(string $associationPath, ?callable $builder = null, array $options = [])
+    public function setMatching(string $associationPath, ?Closure $builder = null, array $options = [])
     {
         $this->_matching ??= new static();
 

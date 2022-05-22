@@ -160,11 +160,11 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     protected bool $_dirty = false;
 
     /**
-     * A list of callback functions to be called to alter each row from resulting
+     * A list of callbacks to be called to alter each row from resulting
      * statement upon retrieval. Each one of the callback function will receive
      * the row array as first argument.
      *
-     * @var array<callable>
+     * @var array<\Closure>
      */
     protected array $_resultDecorators = [];
 
@@ -377,7 +377,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * });
      * ```
      *
-     * @param \Closure $callback A function or callable to be executed for each part
+     * @param \Closure $callback Callback to be executed for each part
      * @return $this
      */
     public function traverse(Closure $callback)
@@ -409,11 +409,11 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * }, ['select', 'from']);
      * ```
      *
-     * @param callable $visitor A function or callable to be executed for each part
+     * @param \Closure $visitor Callback executed for each part
      * @param array<string> $parts The list of query parts to traverse
      * @return $this
      */
-    public function traverseParts(callable $visitor, array $parts)
+    public function traverseParts(Closure $visitor, array $parts)
     {
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
@@ -496,7 +496,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * real field to be aliased. It is possible to alias strings, Expression objects or
      * even other Query objects.
      *
-     * If a callable function is passed, the returning array of the function will
+     * If a callback is passed, the returning array of the function will
      * be used as the list of fields.
      *
      * By default this function will append any passed argument to the list of fields
@@ -518,13 +518,13 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
-     * @param \Cake\Database\ExpressionInterface|callable|array|string|float|int $fields fields to be added to the list.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields fields to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select(ExpressionInterface|callable|array|string|float|int $fields = [], bool $overwrite = false)
+    public function select(ExpressionInterface|Closure|array|string|float|int $fields = [], bool $overwrite = false)
     {
-        if (!is_string($fields) && is_callable($fields)) {
+        if (!is_string($fields) && $fields instanceof Closure) {
             $fields = $fields($this);
         }
 
@@ -773,7 +773,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
                 $t = ['table' => $t, 'conditions' => $this->newExpr()];
             }
 
-            if (!is_string($t['conditions']) && is_callable($t['conditions'])) {
+            if (!is_string($t['conditions']) && $t['conditions'] instanceof Closure) {
                 $t['conditions'] = $t['conditions']($this->newExpr(), $this);
             }
 
@@ -1020,7 +1020,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * ### Adding conditions in multiple steps:
      *
-     * You can use callable functions to construct complex expressions, functions
+     * You can use callbacks to construct complex expressions, functions
      * receive as first argument a new QueryExpression object and this query instance
      * as second argument. Functions must return an expression object, that will be
      * added the list of conditions for the query using the `AND` operator.
@@ -1837,7 +1837,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * $query->update('articles')->set(['title' => 'The Title'], ['title' => 'string']);
      * ```
      *
-     * Passing a callable:
+     * Passing a callback:
      *
      * ```
      * $query->update('articles')->set(function ($exp) {
@@ -2089,11 +2089,11 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * });
      * ```
      *
-     * @param callable|null $callback The callback to invoke when results are fetched.
+     * @param \Closure|null $callback The callback to invoke when results are fetched.
      * @param bool $overwrite Whether this should append or replace all existing decorators.
      * @return $this
      */
-    public function decorateResults(?callable $callback, bool $overwrite = false)
+    public function decorateResults(?Closure $callback, bool $overwrite = false)
     {
         $this->_dirty();
         if ($overwrite) {
@@ -2115,11 +2115,11 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * Callback will receive as first parameter the currently visited expression.
      *
-     * @param callable $callback the function to be executed for each ExpressionInterface
+     * @param \Closure $callback the function to be executed for each ExpressionInterface
      *   found inside this query.
      * @return $this
      */
-    public function traverseExpressions(callable $callback)
+    public function traverseExpressions(Closure $callback)
     {
         $callback = $callback(...);
 

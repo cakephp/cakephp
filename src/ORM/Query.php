@@ -27,6 +27,7 @@ use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
+use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
@@ -98,12 +99,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected bool $aliasingEnabled = true;
 
     /**
-     * A callable function that can be used to calculate the total amount of
+     * A callback used to calculate the total amount of
      * records this query will match when not using `limit`
      *
-     * @var callable|null
+     * @var \Closure|null
      */
-    protected $_counter;
+    protected ?Closure $_counter = null;
 
     /**
      * Instance of a class responsible for storing association containments and
@@ -188,7 +189,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * real field to be aliased. It is possible to alias strings, Expression objects or
      * even other Query objects.
      *
-     * If a callable function is passed, the returning array of the function will
+     * If a callback is passed, the returning array of the function will
      * be used as the list of fields.
      *
      * By default this function will append any passed argument to the list of fields
@@ -214,13 +215,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * all the fields in the schema of the table or the association will be added to
      * the select clause.
      *
-     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|callable|array|string|float|int $fields Fields
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|\Closure|array|string|float|int $fields Fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
     public function select(
-        ExpressionInterface|Table|Association|callable|array|string|float|int $fields = [],
+        ExpressionInterface|Table|Association|Closure|array|string|float|int $fields = [],
         bool $overwrite = false
     ) {
         if ($fields instanceof Association) {
@@ -368,7 +369,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * - `fields`: An array with the fields that should be fetched from the association.
      * - `finder`: The finder to use when loading associated records. Either the name of the
      *   finder as a string, or an array to define options to pass to the finder.
-     * - `queryBuilder`: Equivalent to passing a callable instead of an options array.
+     * - `queryBuilder`: Equivalent to passing a callback instead of an options array.
      *
      * ### Example:
      *
@@ -422,13 +423,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * previous list will be emptied.
      *
      * @param array|string $associations List of table aliases to be queried.
-     * @param callable|bool $override The query builder for the association, or
+     * @param \Closure|bool $override The query builder for the association, or
      *   if associations is an array, a bool on whether to override previous list
      *   with the one passed
      * defaults to merging previous list with the new one.
      * @return $this
      */
-    public function contain(array|string $associations, callable|bool $override = false)
+    public function contain(array|string $associations, Closure|bool $override = false)
     {
         $loader = $this->getEagerLoader();
         if ($override === true) {
@@ -436,7 +437,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $queryBuilder = null;
-        if (is_callable($override)) {
+        if ($override instanceof Closure) {
             $queryBuilder = $override;
         }
 
@@ -547,11 +548,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param callable|null $builder a function that will receive a pre-made query object
+     * @param \Closure|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function matching(string $assoc, ?callable $builder = null)
+    public function matching(string $assoc, ?Closure $builder = null)
     {
         $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -619,11 +620,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to join with
-     * @param callable|null $builder a function that will receive a pre-made query object
+     * @param \Closure|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function leftJoinWith(string $assoc, ?callable $builder = null)
+    public function leftJoinWith(string $assoc, ?Closure $builder = null)
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
@@ -667,12 +668,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * will select no fields from the association.
      *
      * @param string $assoc The association to join with
-     * @param callable|null $builder a function that will receive a pre-made query object
+     * @param \Closure|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      * @see \Cake\ORM\Query::matching()
      */
-    public function innerJoinWith(string $assoc, ?callable $builder = null)
+    public function innerJoinWith(string $assoc, ?Closure $builder = null)
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
@@ -732,11 +733,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param callable|null $builder a function that will receive a pre-made query object
+     * @param \Closure|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function notMatching(string $assoc, ?callable $builder = null)
+    public function notMatching(string $assoc, ?Closure $builder = null)
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
@@ -977,7 +978,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Registers a callable function that will be executed when the `count` method in
+     * Registers a callback that will be executed when the `count` method in
      * this query is called. The return value for the function will be set as the
      * return value of the `count` method.
      *
@@ -991,10 +992,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * If the first param is a null value, the built-in counter function will be called
      * instead
      *
-     * @param callable|null $counter The counter value
+     * @param \Closure|null $counter The counter value
      * @return $this
      */
-    public function counter(?callable $counter)
+    public function counter(?Closure $counter)
     {
         $this->_counter = $counter;
 
