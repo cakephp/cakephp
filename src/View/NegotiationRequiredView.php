@@ -55,7 +55,7 @@ class NegotiationRequiredView extends View
      * @param string|false|null $layout Layout to use. False to disable.
      * @return string Rendered content.
      */
-    public function render(?string $template = null, $layout = null): string
+    public function render(?string $template = null, string|false|null $layout = null): string
     {
         return '';
     }
