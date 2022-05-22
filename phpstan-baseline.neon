@@ -226,6 +226,11 @@ parameters:
 			path: src/I18n/DateTime.php
 
 		-
+			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(int, string\\)\\: void given\\.$#"
+			count: 1
+			path: src/Network/Socket.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/ORM/EagerLoader.php
