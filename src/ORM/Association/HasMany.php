@@ -662,7 +662,7 @@ class HasMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
-            'finder' => [$this, 'find'],
+            'finder' => $this->find(...),
         ]);
 
         return $loader->buildEagerLoader($options);

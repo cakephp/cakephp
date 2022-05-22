@@ -92,7 +92,7 @@ trait ContainerStubTrait
 
         $app = new $appClass(...$appArgs);
         if (!empty($this->containerServices) && $app instanceof EventDispatcherInterface) {
-            $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
+            $app->getEventManager()->on('Application.buildContainer', $this->modifyContainer(...));
         }
 
         return $app;

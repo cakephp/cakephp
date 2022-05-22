@@ -64,7 +64,7 @@ class IdentifierQuoter
             $this->_quoteParts($query);
         }
 
-        $query->traverseExpressions([$this, 'quoteExpression']);
+        $query->traverseExpressions($this->quoteExpression(...));
         $query->setValueBinder($binder);
 
         return $query;

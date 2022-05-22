@@ -153,7 +153,7 @@ class Oauth
             $values['oauth_realm'] = $credentials['realm'];
         }
         $key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
-        $key = array_map([$this, '_encode'], $key);
+        $key = array_map($this->_encode(...), $key);
         $key = implode('&', $key);
 
         $values['oauth_signature'] = base64_encode(
@@ -251,7 +251,7 @@ class Oauth
             $this->_normalizedUrl($request->getUri()),
             $this->_normalizedParams($request, $oauthValues),
         ];
-        $parts = array_map([$this, '_encode'], $parts);
+        $parts = array_map($this->_encode(...), $parts);
 
         return implode('&', $parts);
     }

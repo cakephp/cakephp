@@ -81,7 +81,7 @@ class ValidationRuleTest extends TestCase
         $providers = ['default' => ''];
 
         $rule = new ValidationRule([
-            'rule' => [$this, 'willFail'],
+            'rule' => $this->willFail(...),
         ]);
         $this->assertFalse($rule->process($data, $providers, $context));
     }

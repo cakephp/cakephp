@@ -144,7 +144,7 @@ class Socket
         }
 
         /** @psalm-suppress InvalidArgument */
-        set_error_handler([$this, '_connectionErrorHandler']);
+        set_error_handler($this->_connectionErrorHandler(...));
         $remoteSocketTarget = $scheme . $this->_config['host'];
         $port = (int)$this->_config['port'];
         if ($port > 0) {

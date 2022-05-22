@@ -90,7 +90,7 @@ class ErrorTrap
     {
         $level = $this->_config['errorLevel'] ?? -1;
         error_reporting($level);
-        set_error_handler([$this, 'handleError'], $level);
+        set_error_handler($this->handleError(...), $level);
     }
 
     /**
