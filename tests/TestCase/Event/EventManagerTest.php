@@ -518,7 +518,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchLocalHandledByGlobal(): void
     {
-        $callback = [$this, 'onMyEvent'];
+        $callback = $this->onMyEvent(...);
         EventManager::instance()->on('my_event', $callback);
         $manager = new EventManager();
         $event = new Event('my_event', $manager);

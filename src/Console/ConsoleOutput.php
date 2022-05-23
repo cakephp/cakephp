@@ -222,7 +222,7 @@ class ConsoleOutput
 
         return preg_replace_callback(
             '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
-            [$this, '_replaceTags'],
+            $this->_replaceTags(...),
             $text
         );
     }

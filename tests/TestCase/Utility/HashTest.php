@@ -2506,7 +2506,7 @@ class HashTest extends TestCase
     {
         $data = static::articleData();
 
-        $result = Hash::map($data, '{n}.Article.id', [$this, 'mapCallback']);
+        $result = Hash::map($data, '{n}.Article.id', $this->mapCallback(...));
         $expected = [2, 4, 6, 8, 10];
         $this->assertSame($expected, $result);
     }
@@ -2529,7 +2529,7 @@ class HashTest extends TestCase
     {
         $data = static::articleData();
 
-        $result = Hash::reduce($data, '{n}.Article.id', [$this, 'reduceCallback']);
+        $result = Hash::reduce($data, '{n}.Article.id', $this->reduceCallback(...));
         $this->assertSame(15, $result);
     }
 

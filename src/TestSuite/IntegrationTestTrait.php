@@ -501,7 +501,7 @@ trait IntegrationTestTrait
      */
     protected function _makeDispatcher(): MiddlewareDispatcher
     {
-        EventManager::instance()->on('Controller.initialize', [$this, 'controllerSpy']);
+        EventManager::instance()->on('Controller.initialize', $this->controllerSpy(...));
         /** @var \Cake\Core\HttpApplicationInterface $app */
         $app = $this->createApp();
 

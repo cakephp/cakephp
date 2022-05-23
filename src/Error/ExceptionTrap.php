@@ -174,8 +174,8 @@ class ExceptionTrap
      */
     public function register(): void
     {
-        set_exception_handler([$this, 'handleException']);
-        register_shutdown_function([$this, 'handleShutdown']);
+        set_exception_handler($this->handleException(...));
+        register_shutdown_function($this->handleShutdown(...));
         static::$registeredTrap = $this;
     }
 

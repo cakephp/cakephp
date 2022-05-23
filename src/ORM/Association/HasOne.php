@@ -150,7 +150,7 @@ class HasOne extends Association
             'bindingKey' => $this->getBindingKey(),
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
-            'finder' => [$this, 'find'],
+            'finder' => $this->find(...),
         ]);
 
         return $loader->buildEagerLoader($options);

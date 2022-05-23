@@ -763,7 +763,7 @@ class Response implements ResponseInterface, Stringable
     public function mapType(array|string $ctype): array|string|null
     {
         if (is_array($ctype)) {
-            return array_map([$this, 'mapType'], $ctype);
+            return array_map($this->mapType(...), $ctype);
         }
 
         foreach ($this->_mimeTypes as $alias => $types) {

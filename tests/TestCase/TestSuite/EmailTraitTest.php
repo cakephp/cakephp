@@ -190,7 +190,7 @@ class EmailTraitTest extends TestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($expectedMessage);
 
-        call_user_func_array([$this, $assertion], $params);
+        call_user_func_array($this->$assertion(...), $params);
     }
 
     /**
