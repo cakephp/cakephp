@@ -18,6 +18,7 @@ namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
 use Cake\Core\StaticConfigTrait;
+use Closure;
 use RuntimeException;
 
 /**
@@ -543,8 +544,8 @@ class Cache
     /**
      * Provides the ability to easily do read-through caching.
      *
-     * When called if the $key is not set in $config, the $callable function
-     * will be invoked. The results will then be stored into the cache config
+     * If the key is not set, the default callback is run to get the default value.
+     * The results will then be stored into the cache config
      * at key.
      *
      * Examples:
@@ -558,20 +559,20 @@ class Cache
      * ```
      *
      * @param string $key The cache key to read/store data at.
-     * @param callable $callable The callable that provides data in the case when
-     *   the cache key is empty. Can be any callable type supported by your PHP.
+     * @param \Closure $default The callback that provides data in the case when
+     *   the cache key is empty.
      * @param string $config The cache configuration to use for this operation.
      *   Defaults to default.
      * @return mixed If the key is found: the cached data.
-     *   If the key is not found the value returned by the callable.
+     *   If the key is not found the value returned by the the default callback.
      */
-    public static function remember(string $key, callable $callable, string $config = 'default'): mixed
+    public static function remember(string $key, Closure $default, string $config = 'default'): mixed
     {
         $existing = self::read($key, $config);
         if ($existing !== null) {
             return $existing;
         }
-        $results = $callable();
+        $results = $default();
         self::write($key, $results, $config);
 
         return $results;
