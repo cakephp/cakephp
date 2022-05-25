@@ -558,10 +558,10 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Executes a callable function for each of the parts that form this expression.
+     * Executes a callback for each of the parts that form this expression.
      *
-     * The callable function is required to return a value with which the currently
-     * visited part will be replaced. If the callable function returns null then
+     * The callback is required to return a value with which the currently
+     * visited part will be replaced. If the callback returns null then
      * the part will be discarded completely from this expression.
      *
      * The callback function will receive each of the conditions as first param and
@@ -569,10 +569,10 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed by reference, this will enable you to change the key under which the
      * modified part is stored.
      *
-     * @param callable $callback The callable to apply to each part.
+     * @param \Closure $callback The callback to run for each part
      * @return $this
      */
-    public function iterateParts(callable $callback)
+    public function iterateParts(Closure $callback)
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {
