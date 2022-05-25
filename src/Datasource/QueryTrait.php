@@ -58,7 +58,7 @@ trait QueryTrait
      * List of formatter classes or callbacks that will post-process the
      * results when fetched
      *
-     * @var array<callable>
+     * @var array<\Closure>
      */
     protected array $_formatters = [];
 
@@ -309,7 +309,6 @@ trait QueryTrait
 
     /**
      * Register a new MapReduce routine to be executed on top of the database results
-     * Both the mapper and caller callable should be invokable objects.
      *
      * The MapReduce routing will only be run when the query is executed and the first
      * result is attempted to be fetched.
@@ -317,13 +316,13 @@ trait QueryTrait
      * If the third argument is set to true, it will erase previous map reducers
      * and replace it with the arguments passed.
      *
-     * @param callable|null $mapper The mapper callable.
-     * @param callable|null $reducer The reducing function.
+     * @param \Closure|null $mapper The mapper function
+     * @param \Closure|null $reducer The reducing function
      * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
      * @return $this
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
-    public function mapReduce(?callable $mapper = null, ?callable $reducer = null, bool $overwrite = false)
+    public function mapReduce(?Closure $mapper = null, ?Closure $reducer = null, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_mapReduce = [];
@@ -437,12 +436,12 @@ trait QueryTrait
      * });
      * ```
      *
-     * @param callable|null $formatter The formatting callable.
+     * @param \Closure|null $formatter The formatting function
      * @param int|bool $mode Whether to overwrite, append or prepend the formatter.
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function formatResults(?callable $formatter = null, int|bool $mode = self::APPEND)
+    public function formatResults(?Closure $formatter = null, int|bool $mode = self::APPEND)
     {
         if ($mode === self::OVERWRITE) {
             $this->_formatters = [];
@@ -470,7 +469,7 @@ trait QueryTrait
     /**
      * Returns the list of previously registered format routines.
      *
-     * @return array<callable>
+     * @return array<\Closure>
      */
     public function getResultFormatters(): array
     {
