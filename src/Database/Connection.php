@@ -29,6 +29,7 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
+use Closure;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 use Throwable;
@@ -563,9 +564,28 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * @inheritDoc
+     * Executes a callable function inside a transaction, if any exception occurs
+     * while executing the passed callable, the transaction will be rolled back
+     * If the result of the callable function is `false`, the transaction will
+     * also be rolled back. Otherwise the transaction is committed after executing
+     * the callback.
+     *
+     * The callback will receive the connection instance as its first argument.
+     *
+     * ### Example:
+     *
+     * ```
+     * $connection->transactional(function ($connection) {
+     *   $connection->newQuery()->delete('users')->execute();
+     * });
+     * ```
+     *
+     * @param \Closure $callback The callback to execute within a transaction.
+     * @return mixed The return value of the callback.
+     * @throws \Exception Will re-throw any exception raised in $callback after
+     *   rolling back the transaction.
      */
-    public function transactional(callable $callback): mixed
+    public function transactional(Closure $callback): mixed
     {
         $this->begin();
 
@@ -603,9 +623,24 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * @inheritDoc
+     * Run an operation with constraints disabled.
+     *
+     * Constraints should be re-enabled after the callback succeeds/fails.
+     *
+     * ### Example:
+     *
+     * ```
+     * $connection->disableConstraints(function ($connection) {
+     *   $connection->newQuery()->delete('users')->execute();
+     * });
+     * ```
+     *
+     * @param \Closure $callback Callback to run with constraints disabled
+     * @return mixed The return value of the callback.
+     * @throws \Exception Will re-throw any exception raised in $callback after
+     *   rolling back the transaction.
      */
-    public function disableConstraints(callable $callback): mixed
+    public function disableConstraints(Closure $callback): mixed
     {
         return $this->getDisconnectRetry()->run(function () use ($callback) {
             $this->disableForeignKeys();
