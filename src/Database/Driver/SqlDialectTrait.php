@@ -89,7 +89,7 @@ trait SqlDialectTrait
     }
 
     /**
-     * Returns a callable function that will be used to transform a passed Query object.
+     * Returns a closure that will be used to transform a passed Query object.
      * This function, in turn, will return an instance of a Query object that has been
      * transformed to accommodate any specificities of the SQL dialect in use.
      *

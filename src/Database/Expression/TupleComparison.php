@@ -211,7 +211,7 @@ class TupleComparison extends ComparisonExpression
      * it is an ExpressionInterface
      *
      * @param mixed $value The value to traverse
-     * @param \Closure $callback The callable to use when traversing
+     * @param \Closure $callback The callback to use when traversing
      * @return void
      */
     protected function _traverseValue(mixed $value, Closure $callback): void

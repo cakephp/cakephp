@@ -66,8 +66,8 @@ class ConnectionRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * If a callable is passed as first argument, The returned value of this
-     * function will be the result of the callable.
+     * If a closure is passed as first argument, The returned value of this
+     * function will be the result from calling the closure.
      *
      * @param object|string $class The classname or object to make.
      * @param string $alias The alias of the object.

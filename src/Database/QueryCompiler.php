@@ -124,7 +124,7 @@ class QueryCompiler
     }
 
     /**
-     * Returns a callable object that can be used to compile a SQL string representation
+     * Returns a closure that can be used to compile a SQL string representation
      * of this query.
      *
      * @param string $sql initial sql string to append to

@@ -155,7 +155,7 @@ class FormProtectionComponent extends Component
     /**
      * Execute callback.
      *
-     * @param \Closure $callback A valid callable
+     * @param \Closure $callback Callback
      * @param \Cake\Http\Exception\BadRequestException $exception Exception instance.
      * @return \Cake\Http\Response|null
      */

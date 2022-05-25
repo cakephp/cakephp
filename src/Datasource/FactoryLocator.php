@@ -32,7 +32,7 @@ class FactoryLocator
     protected static array $_modelFactories = [];
 
     /**
-     * Register a callable to generate repositories of a given type.
+     * Register a locator to return repositories of a given type.
      *
      * @param string $type The name of the repository type the factory function is for.
      * @param \Cake\Datasource\Locator\LocatorInterface $factory The factory function used to create instances.

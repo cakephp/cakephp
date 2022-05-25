@@ -20,7 +20,7 @@ use Cake\Database\Type\BatchCastingInterface;
 use Cake\Database\Type\OptionalConvertInterface;
 
 /**
- * A callable class to be used for processing each of the rows in a statement
+ * An invokable class to be used for processing each of the rows in a statement
  * result, so that the values are converted to the right PHP types.
  *
  * @internal
