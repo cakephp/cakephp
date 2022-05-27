@@ -231,6 +231,11 @@ parameters:
 			path: src/Database/Statement/PDOStatement.php
 
 		-
+			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: src/Database/Statement/PDOStatement.php
+
+		-
 			message: "#^Static property Cake\\\\Datasource\\\\ConnectionManager\\:\\:\\$_registry \\(Cake\\\\Datasource\\\\ConnectionRegistry\\) in isset\\(\\) is not nullable\\.$#"
 			count: 2
 			path: src/Datasource/ConnectionManager.php
@@ -269,6 +274,16 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Client.php
+
+		-
+			message: "#^Parameter \\$ch of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:exec\\(\\) has invalid type CurlHandle\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
+
+		-
+			message: "#^Parameter \\$handle of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:createResponse\\(\\) has invalid type CurlHandle\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
 
 		-
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
@@ -402,11 +417,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
-			count: 1
-			path: src/ORM/Table.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: src/ORM/Table.php
 
