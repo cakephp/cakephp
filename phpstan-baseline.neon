@@ -31,11 +31,6 @@ parameters:
 			path: src/Collection/Collection.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterator of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
-			count: 2
-			path: src/Collection/Collection.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Collection.php
@@ -66,22 +61,12 @@ parameters:
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterator of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
-			count: 2
-			path: src/Collection/Iterator/TreeIterator.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
 			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
-			path: src/Collection/Iterator/TreePrinter.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
 			path: src/Collection/Iterator/TreePrinter.php
 
@@ -97,11 +82,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
-			path: src/Collection/Iterator/ZipIterator.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
 			path: src/Collection/Iterator/ZipIterator.php
 
@@ -417,11 +397,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
-			path: src/ORM/ResultSet.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
 			path: src/ORM/ResultSet.php
 
