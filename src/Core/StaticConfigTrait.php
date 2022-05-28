@@ -25,7 +25,7 @@ use LogicException;
  * for classes that provide an adapter facade or need to have sets of
  * configuration data registered and manipulated.
  *
- * Implementing objects are expected to declare a static `$_dsnClassMap` property.
+ * Implementing objects are expected to declare a static `$dsnClassMap` or `$_dsnClassMap` property.
  */
 trait StaticConfigTrait
 {
@@ -309,7 +309,11 @@ REGEXP;
      */
     public static function setDsnClassMap(array $map): void
     {
-        static::$_dsnClassMap = $map + static::$_dsnClassMap;
+        if (property_exists(static::class, '_dsnClassMap')) {
+            static::$_dsnClassMap = $map + static::$_dsnClassMap;
+        } else {
+            static::$dsnClassMap = $map + static::$dsnClassMap;
+        }
     }
 
     /**
@@ -320,6 +324,6 @@ REGEXP;
      */
     public static function getDsnClassMap(): array
     {
-        return static::$_dsnClassMap;
+        return property_exists(static::class, '_dsnClassMap') ? static::$_dsnClassMap : static::$dsnClassMap;
     }
 }

@@ -20,6 +20,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Config\TestEmailStaticConfig;
 use TestApp\Config\TestLogStaticConfig;
+use TestApp\Config\TestLogStaticConfigUnderscore;
 use TypeError;
 
 /**
@@ -176,6 +177,7 @@ class StaticConfigTraitTest extends TestCase
             'serialize' => true,
         ];
         $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+        $this->assertEquals($expected, TestLogStaticConfigUnderscore::parseDsn($dsn));
     }
 
     /**
@@ -190,5 +192,6 @@ class StaticConfigTraitTest extends TestCase
             'scheme' => 'file',
         ];
         $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+        $this->assertEquals($expected, TestLogStaticConfigUnderscore::parseDsn($dsn));
     }
 }
