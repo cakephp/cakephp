@@ -480,10 +480,6 @@ class Sqlserver extends Driver
     protected function _transformFunctionExpression(FunctionExpression $expression): void
     {
         switch ($expression->getName()) {
-            case 'CONCAT':
-                // CONCAT function is expressed as exp1 + exp2
-                $expression->setName('')->setConjunction(' +');
-                break;
             case 'DATEDIFF':
                 /** @var bool $hasDay */
                 $hasDay = false;
