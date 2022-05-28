@@ -22,27 +22,30 @@ use InvalidArgumentException;
 use RuntimeException;
 use TestApp\Config\ReadOnlyTestInstanceConfig;
 use TestApp\Config\TestInstanceConfig;
+use TestApp\Config\TestInstanceConfigUnderscore;
 
 class InstanceConfigTraitTest extends TestCase
 {
-    /**
-     * @var \TestApp\Config\TestInstanceConfig
-     */
-    protected $object;
-
     /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->object = new TestInstanceConfig();
+    }
+
+    public function configProvider(): array
+    {
+        return [
+            'config' => [new TestInstanceConfig()],
+            'underscore' => [new TestInstanceConfigUnderscore()],
+        ];
     }
 
     /**
-     * testDefaultsAreSet
+     * @dataProvider configProvider
      */
-    public function testDefaultsAreSet(): void
+    public function testDefaultsAreSet($config): void
     {
         $this->assertSame(
             [
@@ -52,77 +55,77 @@ class InstanceConfigTraitTest extends TestCase
                     'other' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'runtime config should match the defaults if not overridden'
         );
     }
 
     /**
-     * testGetSimple
+     * @dataProvider configProvider
      */
-    public function testGetSimple(): void
+    public function testGetSimple($config): void
     {
         $this->assertSame(
             'string',
-            $this->object->getConfig('some'),
+            $config->getConfig('some'),
             'should return the key value only'
         );
 
         $this->assertSame(
             ['nested' => 'value', 'other' => 'value'],
-            $this->object->getConfig('a'),
+            $config->getConfig('a'),
             'should return the key value only'
         );
     }
 
     /**
-     * testGetDot
+     * @dataProvider configProvider
      */
-    public function testGetDot(): void
+    public function testGetDot($config): void
     {
         $this->assertSame(
             'value',
-            $this->object->getConfig('a.nested'),
+            $config->getConfig('a.nested'),
             'should return the nested value only'
         );
     }
 
     /**
-     * testGetDefault
+     * @dataProvider configProvider
      */
-    public function testGetDefault(): void
+    public function testGetDefault($config): void
     {
         $this->assertSame(
             'default',
-            $this->object->getConfig('nonexistent', 'default')
+            $config->getConfig('nonexistent', 'default')
         );
 
         $this->assertSame(
             'my-default',
-            $this->object->getConfig('nested.nonexistent', 'my-default')
+            $config->getConfig('nested.nonexistent', 'my-default')
         );
     }
 
     /**
-     * testSetSimple
+     * @dataProvider configProvider
      */
-    public function testSetSimple(): void
+    public function testSetSimple($config): void
     {
-        $this->object->setConfig('foo', 'bar');
+        $config->setConfig('foo', 'bar');
         $this->assertSame(
             'bar',
-            $this->object->getConfig('foo'),
+            $config->getConfig('foo'),
             'should return the same value just set'
         );
 
-        $return = $this->object->setConfig('some', 'zum');
+        $return = $config->setConfig('some', 'zum');
         $this->assertSame(
             'zum',
-            $this->object->getConfig('some'),
+            $config->getConfig('some'),
             'should return the overwritten value'
         );
         $this->assertSame(
-            $this->object,
+            $config,
             $return,
             'write operations should return the instance'
         );
@@ -133,27 +136,27 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => ['nested' => 'value', 'other' => 'value'],
                 'foo' => 'bar',
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'updates should be merged with existing config'
         );
     }
 
     /**
-     * testSetNested
+     * @dataProvider configProvider
      */
-    public function testSetNested(): void
+    public function testSetNested($config): void
     {
-        $this->object->setConfig('new.foo', 'bar');
+        $config->setConfig('new.foo', 'bar');
         $this->assertSame(
             'bar',
-            $this->object->getConfig('new.foo'),
+            $config->getConfig('new.foo'),
             'should return the same value just set'
         );
 
-        $this->object->setConfig('a.nested', 'zum');
+        $config->setConfig('a.nested', 'zum');
         $this->assertSame(
             'zum',
-            $this->object->getConfig('a.nested'),
+            $config->getConfig('a.nested'),
             'should return the overwritten value'
         );
 
@@ -163,20 +166,20 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => ['nested' => 'zum', 'other' => 'value'],
                 'new' => ['foo' => 'bar'],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'updates should be merged with existing config'
         );
     }
 
     /**
-     * testSetNested
+     * @dataProvider configProvider
      */
-    public function testSetArray(): void
+    public function testSetArray($config): void
     {
-        $this->object->setConfig(['foo' => 'bar']);
+        $config->setConfig(['foo' => 'bar']);
         $this->assertSame(
             'bar',
-            $this->object->getConfig('foo'),
+            $config->getConfig('foo'),
             'should return the same value just set'
         );
 
@@ -186,14 +189,14 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => ['nested' => 'value', 'other' => 'value'],
                 'foo' => 'bar',
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'updates should be merged with existing config'
         );
 
-        $this->object->setConfig(['new.foo' => 'bar']);
+        $config->setConfig(['new.foo' => 'bar']);
         $this->assertSame(
             'bar',
-            $this->object->getConfig('new.foo'),
+            $config->getConfig('new.foo'),
             'should return the same value just set'
         );
 
@@ -204,11 +207,11 @@ class InstanceConfigTraitTest extends TestCase
                 'foo' => 'bar',
                 'new' => ['foo' => 'bar'],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'updates should be merged with existing config'
         );
 
-        $this->object->setConfig(['multiple' => 'different', 'a.values.to' => 'set']);
+        $config->setConfig(['multiple' => 'different', 'a.values.to' => 'set']);
 
         $this->assertSame(
             [
@@ -218,35 +221,41 @@ class InstanceConfigTraitTest extends TestCase
                 'new' => ['foo' => 'bar'],
                 'multiple' => 'different',
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'updates should be merged with existing config'
         );
     }
 
-    public function testGetConfigOrFail(): void
+    /**
+     * @dataProvider configProvider
+     */
+    public function testGetConfigOrFail($config): void
     {
-        $this->object->setConfig(['foo' => 'bar']);
+        $config->setConfig(['foo' => 'bar']);
         $this->assertSame(
             'bar',
-            $this->object->getConfigOrFail('foo'),
+            $config->getConfigOrFail('foo'),
             'should return the same value just set'
         );
     }
 
-    public function testGetConfigOrFailException(): void
+    /**
+     * @dataProvider configProvider
+     */
+    public function testGetConfigOrFailException($config): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected configuration `foo` not found.');
 
-        $this->object->getConfigOrFail('foo');
+        $config->getConfigOrFail('foo');
     }
 
     /**
-     * test shallow merge
+     * @dataProvider configProvider
      */
-    public function testConfigShallow(): void
+    public function testConfigShallow($config): void
     {
-        $this->object->configShallow(['a' => ['new_nested' => true], 'new' => 'bar']);
+        $config->configShallow(['a' => ['new_nested' => true], 'new' => 'bar']);
 
         $this->assertSame(
             [
@@ -254,28 +263,28 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => ['new_nested' => true],
                 'new' => 'bar',
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'When merging a scalar property will be overwritten with an array'
         );
     }
 
     /**
-     * testSetClobber
+     * @dataProvider configProvider
      */
-    public function testSetClobber(): void
+    public function testSetClobber($config): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot set a.nested.value');
-        $this->object->setConfig(['a.nested.value' => 'not possible'], null, false);
-        $this->object->getConfig();
+        $config->setConfig(['a.nested.value' => 'not possible'], null, false);
+        $config->getConfig();
     }
 
     /**
-     * testMerge
+     * @dataProvider configProvider
      */
-    public function testMerge(): void
+    public function testMerge($config): void
     {
-        $this->object->setConfig(['a' => ['nother' => 'value']]);
+        $config->setConfig(['a' => ['nother' => 'value']]);
 
         $this->assertSame(
             [
@@ -286,17 +295,17 @@ class InstanceConfigTraitTest extends TestCase
                     'nother' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'Merging should not delete untouched array values'
         );
     }
 
     /**
-     * testMergeDotKey
+     * @dataProvider configProvider
      */
-    public function testMergeDotKey(): void
+    public function testMergeDotKey($config): void
     {
-        $this->object->setConfig('a.nother', 'value');
+        $config->setConfig('a.nother', 'value');
 
         $this->assertSame(
             [
@@ -307,11 +316,11 @@ class InstanceConfigTraitTest extends TestCase
                     'nother' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'Should act the same as having passed the equivalent array to the config function'
         );
 
-        $this->object->setConfig(['a.nextra' => 'value']);
+        $config->setConfig(['a.nextra' => 'value']);
 
         $this->assertSame(
             [
@@ -323,17 +332,17 @@ class InstanceConfigTraitTest extends TestCase
                     'nextra' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'Merging should not delete untouched array values'
         );
     }
 
     /**
-     * testSetDefaultsMerge
+     * @dataProvider configProvider
      */
-    public function testSetDefaultsMerge(): void
+    public function testSetDefaultsMerge($config): void
     {
-        $this->object->setConfig(['a' => ['nother' => 'value']]);
+        $config->setConfig(['a' => ['nother' => 'value']]);
 
         $this->assertSame(
             [
@@ -344,17 +353,17 @@ class InstanceConfigTraitTest extends TestCase
                     'nother' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'First access should act like any subsequent access'
         );
     }
 
     /**
-     * testSetDefaultsNoMerge
+     * @dataProvider configProvider
      */
-    public function testSetDefaultsNoMerge(): void
+    public function testSetDefaultsNoMerge($config): void
     {
-        $this->object->setConfig(['a' => ['nother' => 'value']], null, false);
+        $config->setConfig(['a' => ['nother' => 'value']], null, false);
 
         $this->assertSame(
             [
@@ -363,7 +372,7 @@ class InstanceConfigTraitTest extends TestCase
                     'nother' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'If explicitly no-merge, array values should be overwritten'
         );
     }
@@ -373,10 +382,12 @@ class InstanceConfigTraitTest extends TestCase
      *
      * Merging offers no such protection of clobbering a value whilst implemented
      * using the Hash class
+     *
+     * @dataProvider configProvider
      */
-    public function testSetMergeNoClobber(): void
+    public function testSetMergeNoClobber($config): void
     {
-        $this->object->setConfig(['a.nested.value' => 'it is possible']);
+        $config->setConfig(['a.nested.value' => 'it is possible']);
 
         $this->assertSame(
             [
@@ -388,15 +399,15 @@ class InstanceConfigTraitTest extends TestCase
                     'other' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'When merging a scalar property will be overwritten with an array'
         );
     }
 
     /**
-     * testReadOnlyConfig
+     * @dataProvider configProvider
      */
-    public function testReadOnlyConfig(): void
+    public function testReadOnlyConfig($config): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('This Instance is readonly');
@@ -415,19 +426,19 @@ class InstanceConfigTraitTest extends TestCase
     }
 
     /**
-     * testDeleteSimple
+     * @dataProvider configProvider
      */
-    public function testDeleteSimple(): void
+    public function testDeleteSimple($config): void
     {
-        $this->object->setConfig('foo', null);
+        $config->setConfig('foo', null);
         $this->assertNull(
-            $this->object->getConfig('foo'),
+            $config->getConfig('foo'),
             'setting a new key to null should have no effect'
         );
 
-        $this->object->setConfig('some', null);
+        $config->setConfig('some', null);
         $this->assertNull(
-            $this->object->getConfig('some'),
+            $config->getConfig('some'),
             'should delete the existing value'
         );
 
@@ -435,25 +446,25 @@ class InstanceConfigTraitTest extends TestCase
             [
                 'a' => ['nested' => 'value', 'other' => 'value'],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'deleted keys should not be present'
         );
     }
 
     /**
-     * testDeleteNested
+     * @dataProvider configProvider
      */
-    public function testDeleteNested(): void
+    public function testDeleteNested($config): void
     {
-        $this->object->setConfig('new.foo', null);
+        $config->setConfig('new.foo', null);
         $this->assertNull(
-            $this->object->getConfig('new.foo'),
+            $config->getConfig('new.foo'),
             'setting a new key to null should have no effect'
         );
 
-        $this->object->setConfig('a.nested', null);
+        $config->setConfig('a.nested', null);
         $this->assertNull(
-            $this->object->getConfig('a.nested'),
+            $config->getConfig('a.nested'),
             'should delete the existing value'
         );
         $this->assertSame(
@@ -463,13 +474,13 @@ class InstanceConfigTraitTest extends TestCase
                     'other' => 'value',
                 ],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'deleted keys should not be present'
         );
 
-        $this->object->setConfig('a.other', null);
+        $config->setConfig('a.other', null);
         $this->assertNull(
-            $this->object->getConfig('a.other'),
+            $config->getConfig('a.other'),
             'should delete the existing value'
         );
         $this->assertSame(
@@ -477,37 +488,37 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => [],
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'deleted keys should not be present'
         );
     }
 
     /**
-     * testDeleteArray
+     * @dataProvider configProvider
      */
-    public function testDeleteArray(): void
+    public function testDeleteArray($config): void
     {
-        $this->object->setConfig('a', null);
+        $config->setConfig('a', null);
         $this->assertNull(
-            $this->object->getConfig('a'),
+            $config->getConfig('a'),
             'should delete the existing value'
         );
         $this->assertSame(
             [
                 'some' => 'string',
             ],
-            $this->object->getConfig(),
+            $config->getConfig(),
             'deleted keys should not be present'
         );
     }
 
     /**
-     * testDeleteClobber
+     * @dataProvider configProvider
      */
-    public function testDeleteClobber(): void
+    public function testDeleteClobber($config): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot unset a.nested.value.whoops');
-        $this->object->setConfig('a.nested.value.whoops', null);
+        $config->setConfig('a.nested.value.whoops', null);
     }
 }

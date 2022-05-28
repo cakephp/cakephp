@@ -4,7 +4,7 @@ namespace TestApp\Config;
 
 use Cake\Core\InstanceConfigTrait;
 
-class TestInstanceConfig
+class TestInstanceConfigUnderscore
 {
     use InstanceConfigTrait;
 
@@ -13,7 +13,7 @@ class TestInstanceConfig
      *
      * @var array
      */
-    protected $defaultConfig = [
+    protected $_defaultConfig = [
         'some' => 'string',
         'a' => [
             'nested' => 'value',

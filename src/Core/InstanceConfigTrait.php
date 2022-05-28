@@ -23,7 +23,7 @@ use InvalidArgumentException;
 /**
  * A trait for reading and writing instance config
  *
- * Implementing objects are expected to declare a `$_defaultConfig` property.
+ * Implementing objects are expected to declare a `$defaultConfig` or `$_defaultConfig`  property.
  */
 trait InstanceConfigTrait
 {
@@ -73,7 +73,7 @@ trait InstanceConfigTrait
     public function setConfig($key, $value = null, $merge = true)
     {
         if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
+            $this->_config = property_exists($this, '_defaultConfig') ? $this->_defaultConfig : $this->defaultConfig;
             $this->_configInitialized = true;
         }
 
@@ -118,7 +118,7 @@ trait InstanceConfigTrait
     public function getConfig(?string $key = null, $default = null)
     {
         if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
+            $this->_config = property_exists($this, '_defaultConfig') ? $this->_defaultConfig : $this->defaultConfig;
             $this->_configInitialized = true;
         }
 
@@ -175,7 +175,7 @@ trait InstanceConfigTrait
     public function configShallow($key, $value = null)
     {
         if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
+            $this->_config = property_exists($this, '_defaultConfig') ? $this->_defaultConfig : $this->defaultConfig;
             $this->_configInitialized = true;
         }
 
