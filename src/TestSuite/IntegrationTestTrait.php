@@ -617,10 +617,10 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL
      * @param string $method The HTTP method
-     * @param string|array|null $data The request data.
+     * @param string|array $data The request data.
      * @return array The request context
      */
-    protected function _buildRequest($url, $method, $data)
+    protected function _buildRequest($url, $method, $data = [])
     {
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
