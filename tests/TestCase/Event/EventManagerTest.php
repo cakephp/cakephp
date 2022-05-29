@@ -24,6 +24,7 @@ use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 use TestApp\TestCase\Event\CustomTestEventListenerInterface;
 use TestApp\TestCase\Event\EventTestListener;
+use TestApp\TestCase\Event\MultiMethodEventListenerInterface;
 
 /**
  * Tests the Cake\Event\EventManager class functionality
@@ -343,16 +344,16 @@ class EventManagerTest extends TestCase
     public function testOnSubscriberMultiple(): void
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->onlyMethods(['listenerFunction', 'thirdListenerFunction'])
+        $listener = $this->getMockBuilder(MultiMethodEventListenerInterface::class)
+            ->onlyMethods(['listenerFunction', 'secondListenerFunction'])
             ->getMock();
-        $manager->on($listener);
+        $this->deprecated(fn () => $manager->on($listener));
         $event = new Event('multiple.handlers');
         $listener->expects($this->once())
             ->method('listenerFunction')
             ->with($event);
         $listener->expects($this->once())
-            ->method('thirdListenerFunction')
+            ->method('secondListenerFunction')
             ->with($event);
         $manager->dispatch($event);
     }
@@ -378,6 +379,22 @@ class EventManagerTest extends TestCase
         $manager->off($listener);
         $this->assertEquals([], $manager->listeners('fake.event'));
         $this->assertEquals([], $manager->listeners('another.event'));
+    }
+
+    public function testDetachSubscriberMultiple(): void
+    {
+        $manager = new EventManager();
+        $listener = $this->getMockBuilder(MultiMethodEventListenerInterface::class)
+            ->onlyMethods(['listenerFunction', 'secondListenerFunction'])
+            ->getMock();
+        $this->deprecated(fn () => $manager->on($listener));
+        $expected = [
+            ['callable' => [$listener, 'listenerFunction']],
+            ['callable' => [$listener, 'secondListenerFunction']],
+        ];
+        $this->assertEquals($expected, $manager->listeners('multiple.handlers'));
+        $this->deprecated(fn () => $manager->off($listener));
+        $this->assertEquals([], $manager->listeners('multiple.handlers'));
     }
 
     /**
