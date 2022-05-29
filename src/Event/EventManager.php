@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Event;
 
 use Cake\Core\Exception\CakeException;
-use Closure;
 use InvalidArgumentException;
 
 /**
@@ -229,10 +228,10 @@ class EventManager implements EventManagerInterface
      *  - `settings` - The event handler settings
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
-     * @param \Closure|array|string $handlers Event handlers
+     * @param array|string $handlers Event handlers
      * @return array
      */
-    protected function normalizeHandlers(EventListenerInterface $subscriber, Closure|array|string $handlers): array
+    protected function normalizeHandlers(EventListenerInterface $subscriber, array|string $handlers): array
     {
         // Check if an array of handlers not single handler config array
         if (is_array($handlers) && !isset($handlers['callable'])) {
@@ -255,23 +254,19 @@ class EventManager implements EventManagerInterface
      *  - `settings` - The event handler settings
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
-     * @param \Closure|array|string $handler Event handler
+     * @param array|string $handler Event handler
      * @return array
      */
-    protected function normalizeHandler(EventListenerInterface $subscriber, Closure|array|string $handler): array
+    protected function normalizeHandler(EventListenerInterface $subscriber, array|string $handler): array
     {
         if (is_string($handler)) {
             return ['callable' => [$subscriber, $handler], 'settings' => []];
         }
 
-        if (is_array($handler)) {
-            $callable = $handler['callable'];
-            unset($handler['callable']);
+        $method = $handler['callable'];
+        unset($handler['callable']);
 
-            return ['callable' => is_string($callable) ? [$subscriber, $callable] : $callable, 'settings' => $handler];
-        }
-
-        return ['callable' => $handler, 'settings' => []];
+        return ['callable' => [$subscriber, $method], 'settings' => $handler];
     }
 
     /**
