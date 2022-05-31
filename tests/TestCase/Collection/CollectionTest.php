@@ -22,9 +22,11 @@ use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use CallbackFilterIterator;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use Exception;
 use Generator;
 use InvalidArgumentException;
 use LogicException;
@@ -1870,6 +1872,18 @@ class CollectionTest extends TestCase
         $result = $collection->__debugInfo();
         $expected = [
             'count' => 0,
+        ];
+        $this->assertSame($expected, $result);
+
+        $filter = function ($value) {
+            throw new Exception('filter exception');
+        };
+        $iterator = new CallbackFilterIterator(new ArrayIterator($items), $filter);
+        $collection = new Collection($iterator);
+
+        $result = $collection->__debugInfo();
+        $expected = [
+            'count' => 'An exception occurred while getting count',
         ];
         $this->assertSame($expected, $result);
     }
