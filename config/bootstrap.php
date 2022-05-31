@@ -20,6 +20,7 @@ use Cake\Routing\Router;
  */
 define('TIME_START', (float)microtime(true));
 
+require CORE_TESTS . 'class_aliases.php';
 require CAKE . 'basics.php';
 
 // Sets the initial router state so future reloads work.
