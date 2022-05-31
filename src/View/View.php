@@ -78,7 +78,7 @@ class View implements EventDispatcherInterface
     }
     use EventDispatcherTrait;
     use InstanceConfigTrait {
-        getConfig as private _getConfig;
+        getConfig as protected;
     }
     use LogTrait;
 
