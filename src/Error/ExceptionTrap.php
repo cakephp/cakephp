@@ -29,9 +29,7 @@ use Throwable;
 class ExceptionTrap
 {
     use EventDispatcherTrait;
-    use InstanceConfigTrait {
-        getConfig as private _getConfig;
-    }
+    use InstanceConfigTrait;
 
     /**
      * Configuration options. Generally these will be defined in your config/app.php
@@ -116,7 +114,7 @@ class ExceptionTrap
         $request = $request ?? Router::getRequest();
 
         /** @var class-string|callable $class */
-        $class = $this->_getConfig('exceptionRenderer');
+        $class = $this->getConfig('exceptionRenderer');
         $deprecatedConfig = ($class === ExceptionRenderer::class && PHP_SAPI === 'cli');
         if ($deprecatedConfig) {
             deprecationWarning(
@@ -167,7 +165,7 @@ class ExceptionTrap
     public function logger(): ErrorLoggerInterface
     {
         /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
-        $class = $this->_getConfig('logger', $this->_defaultConfig['logger']);
+        $class = $this->getConfig('logger', $this->_defaultConfig['logger']);
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an exception logger. " .

@@ -24,9 +24,7 @@ use InvalidArgumentException;
 class ErrorTrap
 {
     use EventDispatcherTrait;
-    use InstanceConfigTrait {
-        getConfig as private _getConfig;
-    }
+    use InstanceConfigTrait;
 
     /**
      * Configuration options. Generally these are defined in config/app.php
@@ -66,7 +64,7 @@ class ErrorTrap
      */
     protected function chooseErrorRenderer(): string
     {
-        $config = $this->_getConfig('errorRenderer');
+        $config = $this->getConfig('errorRenderer');
         if ($config !== null) {
             return $config;
         }
@@ -185,7 +183,7 @@ class ErrorTrap
     public function renderer(): ErrorRendererInterface
     {
         /** @var class-string<\Cake\Error\ErrorRendererInterface> $class */
-        $class = $this->_getConfig('errorRenderer') ?: $this->chooseErrorRenderer();
+        $class = $this->getConfig('errorRenderer') ?: $this->chooseErrorRenderer();
         if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an error renderer. It must implement \Cake\Error\ErrorRendererInterface."
@@ -203,7 +201,7 @@ class ErrorTrap
     public function logger(): ErrorLoggerInterface
     {
         /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
-        $class = $this->_getConfig('logger', $this->_defaultConfig['logger']);
+        $class = $this->getConfig('logger', $this->_defaultConfig['logger']);
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an error logger. It must implement \Cake\Error\ErrorLoggerInterface."
