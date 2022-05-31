@@ -33,6 +33,14 @@ class EventTestListener
     }
 
     /**
+     * Test function to be used in event dispatching
+     */
+    public function thirdListenerFunction(): void
+    {
+        $this->callList[] = __FUNCTION__;
+    }
+
+    /**
      * Auxiliary function to help in stopPropagation testing
      *
      * @return bool|void

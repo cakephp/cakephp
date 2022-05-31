@@ -139,10 +139,9 @@ class EventManager implements EventManagerInterface
      */
     protected function _attachSubscriber(EventListenerInterface $subscriber): void
     {
-        foreach ($subscriber->implementedEvents() as $eventKey => $handlers) {
-            foreach ($this->normalizeHandlers($subscriber, $handlers) as $handler) {
-                $this->on($eventKey, $handler['settings'], $handler['callable']);
-            }
+        foreach ($subscriber->implementedEvents() as $eventKey => $handler) {
+            $handler = $this->normalizeHandler($subscriber, $handler);
+            $this->on($eventKey, $handler['settings'], $handler['callable']);
         }
     }
 
@@ -212,42 +211,10 @@ class EventManager implements EventManagerInterface
         if (!empty($eventKey)) {
             $events = [$eventKey => $events[$eventKey]];
         }
-        foreach ($events as $key => $handlers) {
-            foreach ($this->normalizeHandlers($subscriber, $handlers) as $handler) {
-                $this->off($key, $handler['callable']);
-            }
+        foreach ($events as $key => $handler) {
+            $handler = $this->normalizeHandler($subscriber, $handler);
+            $this->off($key, $handler['callable']);
         }
-    }
-
-    /**
-     * Builds an array of normalized handlers.
-     *
-     * A normalized handler is an aray with these keys:
-     *
-     *  - `callable` - The event handler callable
-     *  - `settings` - The event handler settings
-     *
-     * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
-     * @param array|string $handlers Event handlers
-     * @return array
-     */
-    protected function normalizeHandlers(EventListenerInterface $subscriber, array|string $handlers): array
-    {
-        // Check if an array of handlers not single handler config array
-        if (is_array($handlers) && !isset($handlers['callable'])) {
-            deprecationWarning(
-                '4.4.0',
-                'Registering multiple methods with an event is deprecated. ' .
-                'Assign a single method and call others from it.'
-            );
-            foreach ($handlers as &$handler) {
-                $handler = $this->normalizeHandler($subscriber, $handler);
-            }
-
-            return $handlers;
-        }
-
-        return [$this->normalizeHandler($subscriber, $handlers)];
     }
 
     /**
@@ -255,7 +222,7 @@ class EventManager implements EventManagerInterface
      *
      * A normalized handler is an aray with these keys:
      *
-     *  - `callable` - The event handler callable
+     *  - `callable` - The event handler closure
      *  - `settings` - The event handler settings
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
@@ -265,13 +232,13 @@ class EventManager implements EventManagerInterface
     protected function normalizeHandler(EventListenerInterface $subscriber, array|string $handler): array
     {
         if (is_string($handler)) {
-            return ['callable' => [$subscriber, $handler], 'settings' => []];
+            return ['callable' => $subscriber->$handler(...), 'settings' => []];
         }
 
         $method = $handler['callable'];
         unset($handler['callable']);
 
-        return ['callable' => [$subscriber, $method], 'settings' => $handler];
+        return ['callable' => $subscriber->$method(...), 'settings' => $handler];
     }
 
     /**
