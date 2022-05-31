@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\FixtureManager;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use PDOException;
 
@@ -92,7 +92,7 @@ class FixtureManagerTest extends TestCase
         $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
-        $buffer = new ConsoleOutput();
+        $buffer = new StubConsoleOutput();
         Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer,
@@ -124,7 +124,7 @@ class FixtureManagerTest extends TestCase
         $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
-        $buffer = new ConsoleOutput();
+        $buffer = new StubConsoleOutput();
         Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer,

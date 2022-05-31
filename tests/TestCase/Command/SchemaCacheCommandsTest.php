@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**

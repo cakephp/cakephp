@@ -128,6 +128,15 @@
       <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
+  <file src="src/Console/TestSuite/LegacyShellDispatcher.php">
+    <DeprecatedClass occurrences="5">
+      <code>$instance</code>
+      <code>Shell</code>
+      <code>ShellDispatcher</code>
+      <code>\Cake\Console\Shell</code>
+      <code>parent::__construct($args, $bootstrap)</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/Controller/Component/RequestHandlerComponent.php">
     <DeprecatedMethod occurrences="2">
       <code>prefers</code>
@@ -162,6 +171,12 @@
       <code>$request</code>
       <code>$request</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Core/TestSuite/ContainerStubTrait.php">
+    <DeprecatedClass occurrences="2">
+      <code>$this</code>
+      <code>$this</code>
+    </DeprecatedClass>
   </file>
   <file src="src/Database/Connection.php">
     <DeprecatedMethod occurrences="1">
@@ -408,12 +423,6 @@
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
-  <file src="src/TestSuite/ContainerStubTrait.php">
-    <DeprecatedClass occurrences="2">
-      <code>$this</code>
-      <code>$this</code>
-    </DeprecatedClass>
-  </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
     <DeprecatedInterface occurrences="1">
       <code>FixtureInjector</code>
@@ -430,15 +439,6 @@
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="src/TestSuite/LegacyShellDispatcher.php">
-    <DeprecatedClass occurrences="5">
-      <code>$instance</code>
-      <code>Shell</code>
-      <code>ShellDispatcher</code>
-      <code>\Cake\Console\Shell</code>
-      <code>parent::__construct($args, $bootstrap)</code>
-    </DeprecatedClass>
   </file>
   <file src="src/TestSuite/TestCase.php">
     <DeprecatedProperty occurrences="7">

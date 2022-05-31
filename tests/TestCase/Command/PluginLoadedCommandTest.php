@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Command\Command;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Plugin;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**

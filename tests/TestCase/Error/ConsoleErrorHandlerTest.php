@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Console\Exception\ConsoleException;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Log\Log;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -34,7 +34,7 @@ class ConsoleErrorHandlerTest extends TestCase
     protected $Error;
 
     /**
-     * @var \Cake\TestSuite\Stub\ConsoleOutput
+     * @var \Cake\Console\TestSuite\StubConsoleOutput
      */
     protected $stderr;
 
@@ -44,7 +44,7 @@ class ConsoleErrorHandlerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->stderr = new ConsoleOutput();
+        $this->stderr = new StubConsoleOutput();
         $this->Error = $this->getMockBuilder('Cake\Error\ConsoleErrorHandler')
             ->onlyMethods(['_stop'])
             ->setConstructorArgs([['stderr' => $this->stderr]])

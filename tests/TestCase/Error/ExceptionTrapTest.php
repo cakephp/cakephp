@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error;
 
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionTrap;
@@ -25,7 +26,6 @@ use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
@@ -66,7 +66,7 @@ class ExceptionTrapTest extends TestCase
     public function testConfigExceptionRendererFallbackInCli()
     {
         $this->deprecated(function () {
-            $output = new ConsoleOutput();
+            $output = new StubConsoleOutput();
             $trap = new ExceptionTrap(['exceptionRenderer' => ExceptionRenderer::class, 'stderr' => $output]);
             $error = new InvalidArgumentException('nope');
             // Even though we asked for ExceptionRenderer we should get a
@@ -77,7 +77,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigExceptionRendererFallback()
     {
-        $output = new ConsoleOutput();
+        $output = new StubConsoleOutput();
         $trap = new ExceptionTrap(['exceptionRenderer' => null, 'stderr' => $output]);
         $error = new InvalidArgumentException('nope');
         $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
@@ -101,7 +101,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigRendererHandleUnsafeOverwrite()
     {
-        $output = new ConsoleOutput();
+        $output = new StubConsoleOutput();
         $trap = new ExceptionTrap(['stderr' => $output]);
         $trap->setConfig('exceptionRenderer', null);
         $error = new InvalidArgumentException('nope');
@@ -145,7 +145,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testHandleExceptionConsoleRenderingNoStack()
     {
-        $output = new ConsoleOutput();
+        $output = new StubConsoleOutput();
         $trap = new ExceptionTrap([
             'exceptionRenderer' => ConsoleExceptionRenderer::class,
             'stderr' => $output,
@@ -161,7 +161,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testHandleExceptionConsoleRenderingWithStack()
     {
-        $output = new ConsoleOutput();
+        $output = new StubConsoleOutput();
         $trap = new ExceptionTrap([
             'exceptionRenderer' => ConsoleExceptionRenderer::class,
             'stderr' => $output,
@@ -179,7 +179,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testHandleExceptionConsoleWithAttributes()
     {
-        $output = new ConsoleOutput();
+        $output = new StubConsoleOutput();
         $trap = new ExceptionTrap([
             'exceptionRenderer' => ConsoleExceptionRenderer::class,
             'stderr' => $output,

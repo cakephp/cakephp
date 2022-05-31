@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell\Helper;
 
 use Cake\Console\ConsoleIo;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Shell\Helper\TableHelper;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class TableHelperTest extends TestCase
 {
     /**
-     * @var \Cake\TestSuite\Stub\ConsoleOutput
+     * @var \Cake\Console\TestSuite\StubConsoleOutput
      */
     protected $stub;
 
@@ -48,7 +48,7 @@ class TableHelperTest extends TestCase
     {
         parent::setUp();
 
-        $this->stub = new ConsoleOutput();
+        $this->stub = new StubConsoleOutput();
         $this->io = new ConsoleIo($this->stub);
         $this->helper = new TableHelper($this->io);
     }
