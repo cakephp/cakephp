@@ -30,9 +30,7 @@ use Throwable;
 class ExceptionTrap
 {
     use EventDispatcherTrait;
-    use InstanceConfigTrait {
-        getConfig as private _getConfig;
-    }
+    use InstanceConfigTrait;
 
     /**
      * Configuration options. Generally these will be defined in your config/app.php
@@ -117,7 +115,7 @@ class ExceptionTrap
         $request = $request ?? Router::getRequest();
 
         /** @var callable|class-string $class */
-        $class = $this->_getConfig('exceptionRenderer') ?: $this->chooseRenderer();
+        $class = $this->getConfig('exceptionRenderer') ?: $this->chooseRenderer();
 
         if (is_string($class)) {
             /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
@@ -153,7 +151,7 @@ class ExceptionTrap
     public function logger(): ErrorLoggerInterface
     {
         /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
-        $class = $this->_getConfig('logger', $this->_defaultConfig['logger']);
+        $class = $this->getConfig('logger', $this->_defaultConfig['logger']);
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "Cannot use {$class} as an exception logger. " .

@@ -211,6 +211,18 @@ class MarshallerTest extends TestCase
         $this->assertSame($data['created'], $result->created->getTimestamp());
     }
 
+    public function testOneWithFieldMatchingTableAlias(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->getSchema()->addColumn('Articles', ['type' => 'string']);
+
+        $data = ['Articles' => 'a title', 'title' => 'First post', 'body' => 'Content here', 'author_id' => 1];
+        $marshall = new Marshaller($articles);
+        $result = $marshall->one($data);
+
+        $this->assertEquals($data['Articles'], $result->Articles);
+    }
+
     /**
      * Ensure that marshalling casts reasonably.
      */

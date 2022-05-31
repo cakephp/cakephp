@@ -235,6 +235,11 @@ class EventManager implements EventManagerInterface
     {
         // Check if an array of handlers not single handler config array
         if (is_array($handlers) && !isset($handlers['callable'])) {
+            deprecationWarning(
+                '4.4.0',
+                'Registering multiple methods with an event is deprecated. ' .
+                'Assign a single method and call others from it.'
+            );
             foreach ($handlers as &$handler) {
                 $handler = $this->normalizeHandler($subscriber, $handler);
             }

@@ -1552,12 +1552,15 @@ class FormHelper extends Helper
     {
         $attributes['options'] = $options;
         $attributes['idPrefix'] = $this->_idPrefix;
+
+        if (!isset($attributes['id'])) {
+            $attributes['id'] = true;
+        }
+
         $attributes = $this->_initInputField($fieldName, $attributes);
 
         $hiddenField = $attributes['hiddenField'] ?? true;
         unset($attributes['hiddenField']);
-
-        $radio = $this->widget('radio', $attributes);
 
         $hidden = '';
         if ($hiddenField !== false && is_scalar($hiddenField)) {
@@ -1565,8 +1568,15 @@ class FormHelper extends Helper
                 'value' => $hiddenField === true ? '' : (string)$hiddenField,
                 'form' => $attributes['form'] ?? null,
                 'name' => $attributes['name'],
+                'id' => $attributes['id'],
             ]);
         }
+
+        if (!isset($attributes['type']) && isset($attributes['name'])) {
+            unset($attributes['id']);
+        }
+
+        $radio = $this->widget('radio', $attributes);
 
         return $hidden . $radio;
     }
@@ -2107,6 +2117,11 @@ class FormHelper extends Helper
             'hiddenField' => true,
             'secure' => true,
         ];
+
+        if (!isset($attributes['id'])) {
+            $attributes['id'] = true;
+        }
+
         $attributes = $this->_initInputField($fieldName, $attributes);
         $attributes['options'] = $options;
         $attributes['idPrefix'] = $this->_idPrefix;
@@ -2118,10 +2133,15 @@ class FormHelper extends Helper
                 'value' => '',
                 'secure' => false,
                 'disabled' => $attributes['disabled'] === true || $attributes['disabled'] === 'disabled',
+                'id' => $attributes['id'],
             ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
         unset($attributes['hiddenField']);
+
+        if (!isset($attributes['type']) && isset($attributes['name'])) {
+            unset($attributes['id']);
+        }
 
         return $hidden . $this->widget('multicheckbox', $attributes);
     }

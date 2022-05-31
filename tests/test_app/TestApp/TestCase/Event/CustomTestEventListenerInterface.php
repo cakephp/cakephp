@@ -18,10 +18,6 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
         return [
             'fake.event' => 'listenerFunction',
             'another.event' => ['callable' => 'secondListenerFunction'],
-            'multiple.handlers' => [
-                ['callable' => 'listenerFunction'],
-                ['callable' => 'thirdListenerFunction'],
-            ],
         ];
     }
 

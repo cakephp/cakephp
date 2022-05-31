@@ -692,6 +692,7 @@ class RulesCheckerIntegrationTest extends TestCase
                         'checkRules' => true,
                         'checkExisting' => true,
                         '_primary' => true,
+                        '_cleanOnSuccess' => true,
                     ],
                     $options->getArrayCopy()
                 );
@@ -731,6 +732,7 @@ class RulesCheckerIntegrationTest extends TestCase
                         'checkRules' => true,
                         'checkExisting' => true,
                         '_primary' => true,
+                        '_cleanOnSuccess' => true,
                     ],
                     $options->getArrayCopy()
                 );

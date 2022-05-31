@@ -268,7 +268,7 @@ class Marshaller
         $options += ['validate' => true];
 
         $tableName = $this->_table->getAlias();
-        if (isset($data[$tableName])) {
+        if (isset($data[$tableName]) && is_array($data[$tableName])) {
             $data += $data[$tableName];
             unset($data[$tableName]);
         }

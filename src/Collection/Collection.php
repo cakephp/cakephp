@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Collection;
 
 use ArrayIterator;
+use Exception;
 use IteratorIterator;
 
 /**
@@ -81,8 +82,14 @@ class Collection extends IteratorIterator implements CollectionInterface
      */
     public function __debugInfo(): array
     {
+        try {
+            $count = $this->count();
+        } catch (Exception $e) {
+            $count = 'An exception occurred while getting count';
+        }
+
         return [
-            'count' => $this->count(),
+            'count' => $count,
         ];
     }
 }
