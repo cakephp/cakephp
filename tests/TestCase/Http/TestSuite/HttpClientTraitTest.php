@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\TestSuite;
+namespace Cake\Test\TestCase\Http\TestSuite;
 
 use Cake\Http\Client;
-use Cake\TestSuite\HttpClientTrait;
+use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
 
 class HttpClientTraitTest extends TestCase
