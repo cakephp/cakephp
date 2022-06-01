@@ -426,17 +426,17 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_err \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
+			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_err \\(Cake\\\\Console\\\\TestSuite\\\\StubConsoleOutput\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_in \\(Cake\\\\Console\\\\ConsoleInput\\) does not accept null\\.$#"
+			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_in \\(Cake\\\\Console\\\\TestSuite\\\\StubConsoleInput\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_out \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
+			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_out \\(Cake\\\\Console\\\\TestSuite\\\\StubConsoleOutput\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 

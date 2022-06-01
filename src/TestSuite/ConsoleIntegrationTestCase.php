@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+
 /**
  * A test case class intended to make integration tests of cake console commands
  * easier.

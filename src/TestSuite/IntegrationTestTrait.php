@@ -17,6 +17,7 @@ namespace Cake\TestSuite;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventInterface;

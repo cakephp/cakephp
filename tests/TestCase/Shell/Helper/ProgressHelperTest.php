@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell\Helper;
 
 use Cake\Console\ConsoleIo;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Shell\Helper\ProgressHelper;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -32,7 +32,7 @@ class ProgressHelperTest extends TestCase
     protected $helper;
 
     /**
-     * @var \Cake\TestSuite\Stub\ConsoleOutput
+     * @var \Cake\Console\TestSuite\StubConsoleOutput
      */
     protected $stub;
 
@@ -48,7 +48,7 @@ class ProgressHelperTest extends TestCase
     {
         parent::setUp();
 
-        $this->stub = new ConsoleOutput();
+        $this->stub = new StubConsoleOutput();
         $this->io = new ConsoleIo($this->stub);
         $this->helper = new ProgressHelper($this->io);
     }
