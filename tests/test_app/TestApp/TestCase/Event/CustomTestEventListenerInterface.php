@@ -20,12 +20,4 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
             'another.event' => ['callable' => 'secondListenerFunction'],
         ];
     }
-
-    /**
-     * Test function to be used in event dispatching
-     */
-    public function thirdListenerFunction(): void
-    {
-        $this->callList[] = __FUNCTION__;
-    }
 }
