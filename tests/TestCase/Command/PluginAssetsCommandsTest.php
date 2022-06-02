@@ -19,9 +19,9 @@ namespace Cake\Test\TestCase\Command;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use SplFileInfo;
@@ -110,7 +110,7 @@ class PluginAssetsCommandsTest extends TestCase
     {
         $this->loadPlugins(['TestTheme']);
 
-        $output = new ConsoleOutput();
+        $output = new StubConsoleOutput();
         $io = $this->getMockBuilder(ConsoleIo::class)
             ->setConstructorArgs([$output, $output, null, null])
             ->addMethods(['in'])

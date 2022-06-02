@@ -13,7 +13,7 @@ declare(strict_types=1);
  * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Constraint\Console;
+namespace Cake\Console\TestSuite\Constraint;
 
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -27,12 +27,12 @@ abstract class ContentsBase extends Constraint
     /**
      * @var string
      */
-    protected string $contents;
+    protected $contents;
 
     /**
      * @var string
      */
-    protected string $output;
+    protected $output;
 
     /**
      * Constructor

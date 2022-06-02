@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**

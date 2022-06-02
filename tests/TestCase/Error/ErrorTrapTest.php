@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error;
 
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Error\ErrorLogger;
 use Cake\Error\ErrorTrap;
@@ -26,7 +27,6 @@ use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Error\Renderer\TextErrorRenderer;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
@@ -191,7 +191,7 @@ class ErrorTrapTest extends TestCase
 
     public function testConsoleRenderingNoTrace()
     {
-        $stub = new ConsoleOutput();
+        $stub = new StubConsoleOutput();
         $trap = new ErrorTrap([
             'errorRenderer' => ConsoleErrorRenderer::class,
             'trace' => false,
@@ -211,7 +211,7 @@ class ErrorTrapTest extends TestCase
 
     public function testConsoleRenderingWithTrace()
     {
-        $stub = new ConsoleOutput();
+        $stub = new StubConsoleOutput();
         $trap = new ErrorTrap([
             'errorRenderer' => ConsoleErrorRenderer::class,
             'trace' => true,

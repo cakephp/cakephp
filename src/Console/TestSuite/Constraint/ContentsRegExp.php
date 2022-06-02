@@ -13,14 +13,14 @@ declare(strict_types=1);
  * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Constraint\Console;
+namespace Cake\Console\TestSuite\Constraint;
 
 /**
- * ContentsNotContain
+ * ContentsRegExp
  *
  * @internal
  */
-class ContentsNotContain extends ContentsBase
+class ContentsRegExp extends ContentsBase
 {
     /**
      * Checks if contents contain expected
@@ -28,9 +28,9 @@ class ContentsNotContain extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
-    public function matches(mixed $other): bool
+    public function matches($other): bool
     {
-        return mb_strpos($this->contents, $other) === false;
+        return preg_match($other, $this->contents) > 0;
     }
 
     /**
@@ -40,6 +40,15 @@ class ContentsNotContain extends ContentsBase
      */
     public function toString(): string
     {
-        return sprintf('is not in %s', $this->output);
+        return sprintf('PCRE pattern found in %s', $this->output);
+    }
+
+    /**
+     * @param mixed $other Expected
+     * @return string
+     */
+    public function failureDescription($other): string
+    {
+        return '`' . $other . '` ' . $this->toString();
     }
 }

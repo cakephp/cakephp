@@ -13,22 +13,19 @@ declare(strict_types=1);
  * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite;
+namespace Cake\Console\TestSuite;
 
-use Cake\Console\CommandInterface;
+use Cake\Command\Command;
 use Cake\Console\CommandRunner;
-use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
-use Cake\TestSuite\Constraint\Console\ContentsContain;
-use Cake\TestSuite\Constraint\Console\ContentsContainRow;
-use Cake\TestSuite\Constraint\Console\ContentsEmpty;
-use Cake\TestSuite\Constraint\Console\ContentsNotContain;
-use Cake\TestSuite\Constraint\Console\ContentsRegExp;
-use Cake\TestSuite\Constraint\Console\ExitCode;
-use Cake\TestSuite\Stub\ConsoleInput as StubConsoleInput;
-use Cake\TestSuite\Stub\ConsoleOutput;
-use Cake\TestSuite\Stub\MissingConsoleInputException;
+use Cake\Console\TestSuite\Constraint\ContentsContain;
+use Cake\Console\TestSuite\Constraint\ContentsContainRow;
+use Cake\Console\TestSuite\Constraint\ContentsEmpty;
+use Cake\Console\TestSuite\Constraint\ContentsNotContain;
+use Cake\Console\TestSuite\Constraint\ContentsRegExp;
+use Cake\Console\TestSuite\Constraint\ExitCode;
+use Cake\Core\TestSuite\ContainerStubTrait;
 use RuntimeException;
 
 /**
@@ -43,39 +40,46 @@ trait ConsoleIntegrationTestTrait
     use ContainerStubTrait;
 
     /**
+     * Whether to use the CommandRunner
+     *
+     * @var bool
+     */
+    protected $_useCommandRunner = false;
+
+    /**
      * Last exit code
      *
      * @var int|null
      */
-    protected ?int $_exitCode = null;
+    protected $_exitCode;
 
     /**
      * Console output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|null
+     * @var \Cake\Console\TestSuite\StubConsoleOutput
      */
-    protected ?ConsoleOutput $_out = null;
+    protected $_out;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|null
+     * @var \Cake\Console\TestSuite\StubConsoleOutput
      */
-    protected ?ConsoleOutput $_err = null;
+    protected $_err;
 
     /**
      * Console input mock
      *
-     * @var \Cake\Console\ConsoleInput|null
+     * @var \Cake\Console\TestSuite\StubConsoleInput
      */
-    protected ?ConsoleInput $_in = null;
+    protected $_in;
 
     /**
      * Runs CLI integration test
      *
      * @param string $command Command to run
      * @param array $input Input values to pass to an interactive shell
-     * @throws \Cake\TestSuite\Stub\MissingConsoleInputException
+     * @throws \Cake\Console\TestSuite\MissingConsoleInputException
      * @throws \RuntimeException
      * @return void
      */
@@ -83,8 +87,12 @@ trait ConsoleIntegrationTestTrait
     {
         $runner = $this->makeRunner();
 
-        $this->_out ??= new ConsoleOutput();
-        $this->_err ??= new ConsoleOutput();
+        if ($this->_out === null) {
+            $this->_out = new StubConsoleOutput();
+        }
+        if ($this->_err === null) {
+            $this->_err = new StubConsoleOutput();
+        }
         if ($this->_in === null) {
             $this->_in = new StubConsoleInput($input);
         } elseif ($input) {
@@ -120,6 +128,18 @@ trait ConsoleIntegrationTestTrait
         $this->_out = null;
         $this->_err = null;
         $this->_in = null;
+        $this->_useCommandRunner = false;
+    }
+
+    /**
+     * Set this test case to use the CommandRunner rather than the legacy
+     * ShellDispatcher
+     *
+     * @return void
+     */
+    public function useCommandRunner(): void
+    {
+        $this->_useCommandRunner = true;
     }
 
     /**
@@ -135,25 +155,25 @@ trait ConsoleIntegrationTestTrait
     }
 
     /**
-     * Asserts shell exited with the CommandInterface::CODE_SUCCESS
+     * Asserts shell exited with the Command::CODE_SUCCESS
      *
      * @param string $message Failure message
      * @return void
      */
-    public function assertExitSuccess(string $message = ''): void
+    public function assertExitSuccess($message = '')
     {
-        $this->assertThat(CommandInterface::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
+        $this->assertThat(Command::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
     }
 
     /**
-     * Asserts shell exited with CommandInterface::CODE_ERROR
+     * Asserts shell exited with Command::CODE_ERROR
      *
      * @param string $message Failure message
      * @return void
      */
-    public function assertExitError(string $message = ''): void
+    public function assertExitError($message = '')
     {
-        $this->assertThat(CommandInterface::CODE_ERROR, new ExitCode($this->_exitCode), $message);
+        $this->assertThat(Command::CODE_ERROR, new ExitCode($this->_exitCode), $message);
     }
 
     /**
@@ -253,14 +273,18 @@ trait ConsoleIntegrationTestTrait
     /**
      * Builds the appropriate command dispatcher
      *
-     * @return \Cake\Console\CommandRunner
+     * @return \Cake\Console\CommandRunner|\Cake\Console\TestSuite\LegacyCommandRunner
      */
-    protected function makeRunner(): CommandRunner
+    protected function makeRunner()
     {
-        /** @var \Cake\Core\ConsoleApplicationInterface $app */
-        $app = $this->createApp();
+        if ($this->_useCommandRunner) {
+            /** @var \Cake\Core\ConsoleApplicationInterface $app */
+            $app = $this->createApp();
 
-        return new CommandRunner($app);
+            return new CommandRunner($app);
+        }
+
+        return new LegacyCommandRunner();
     }
 
     /**

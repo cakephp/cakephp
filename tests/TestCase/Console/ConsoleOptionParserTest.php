@@ -23,8 +23,8 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\MissingOptionException;
-use Cake\TestSuite\Stub\ConsoleInput;
-use Cake\TestSuite\Stub\ConsoleOutput;
+use Cake\Console\TestSuite\StubConsoleInput;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use LogicException;
 
@@ -41,7 +41,7 @@ class ConsoleOptionParserTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->io = new ConsoleIo(new ConsoleOutput(), new ConsoleOutput(), new ConsoleInput([]));
+        $this->io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));
     }
 
     /**
@@ -380,8 +380,8 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('color', [
             'prompt' => 'What is your favorite?',
         ]);
-        $out = new ConsoleOutput();
-        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput(['red']));
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput(['red']));
 
         $result = $parser->parse([], $io);
         $this->assertEquals(['color' => 'red', 'help' => false], $result[0]);
@@ -416,8 +416,8 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addOption('color', [
             'prompt' => 'What is your favorite?',
         ]);
-        $out = new ConsoleOutput();
-        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput([]));
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
 
         $result = $parser->parse(['--color', 'blue'], $io);
         $this->assertEquals(['color' => 'blue', 'help' => false], $result[0]);
@@ -434,8 +434,8 @@ class ConsoleOptionParserTest extends TestCase
             'required' => true,
             'prompt' => 'What is your favorite?',
         ]);
-        $out = new ConsoleOutput();
-        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput(['red']));
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput(['red']));
 
         $result = $parser->parse([], $io);
         $this->assertEquals(['color' => 'red', 'help' => false], $result[0]);
@@ -457,8 +457,8 @@ class ConsoleOptionParserTest extends TestCase
             'prompt' => 'What is your favorite?',
             'choices' => ['red', 'green', 'blue'],
         ]);
-        $out = new ConsoleOutput();
-        $io = new ConsoleIo($out, new ConsoleOutput(), new ConsoleInput(['purple', 'red']));
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput(['purple', 'red']));
 
         $result = $parser->parse([], $io);
         $this->assertEquals(['color' => 'red', 'help' => false], $result[0]);

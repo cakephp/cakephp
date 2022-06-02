@@ -13,13 +13,10 @@ declare(strict_types=1);
  * @since         4.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite;
+namespace Cake\Core\TestSuite;
 
 use Cake\Core\Configure;
-use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerInterface;
-use Cake\Core\HttpApplicationInterface;
-use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventInterface;
 use Closure;
 use LogicException;
@@ -40,21 +37,21 @@ trait ContainerStubTrait
      * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
      * @var string|null
      */
-    protected ?string $_appClass = null;
+    protected $_appClass;
 
     /**
      * The customized application constructor arguments.
      *
      * @var array|null
      */
-    protected ?array $_appArgs = null;
+    protected $_appArgs;
 
     /**
      * The collection of container services.
      *
      * @var array
      */
-    private array $containerServices = [];
+    private $containerServices = [];
 
     /**
      * Configure the application class to use in integration tests.
@@ -77,7 +74,7 @@ trait ContainerStubTrait
      *
      * @return \Cake\Core\HttpApplicationInterface|\Cake\Core\ConsoleApplicationInterface
      */
-    protected function createApp(): HttpApplicationInterface|ConsoleApplicationInterface
+    protected function createApp()
     {
         if ($this->_appClass) {
             $appClass = $this->_appClass;
@@ -91,8 +88,8 @@ trait ContainerStubTrait
         $appArgs = $this->_appArgs ?: [CONFIG];
 
         $app = new $appClass(...$appArgs);
-        if (!empty($this->containerServices) && $app instanceof EventDispatcherInterface) {
-            $app->getEventManager()->on('Application.buildContainer', $this->modifyContainer(...));
+        if (!empty($this->containerServices) && method_exists($app, 'getEventManager')) {
+            $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
         }
 
         return $app;

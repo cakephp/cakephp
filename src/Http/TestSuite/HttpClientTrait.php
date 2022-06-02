@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite;
+namespace Cake\Http\TestSuite;
 
 use Cake\Http\Client;
 use Cake\Http\Client\Response;

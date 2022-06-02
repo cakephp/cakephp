@@ -13,30 +13,24 @@ declare(strict_types=1);
  * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Constraint\Console;
+namespace Cake\Console\TestSuite\Constraint;
 
 /**
- * ContentsContainRow
+ * ContentsNotContain
  *
  * @internal
  */
-class ContentsContainRow extends ContentsRegExp
+class ContentsNotContain extends ContentsBase
 {
     /**
      * Checks if contents contain expected
      *
-     * @param mixed $other Row
+     * @param mixed $other Expected
      * @return bool
      */
-    public function matches(mixed $other): bool
+    public function matches($other): bool
     {
-        $row = array_map(function ($cell) {
-            return preg_quote($cell, '/');
-        }, (array)$other);
-        $cells = implode('\s+\|\s+', $row);
-        $pattern = '/' . $cells . '/';
-
-        return preg_match($pattern, $this->contents) > 0;
+        return mb_strpos($this->contents, $other) === false;
     }
 
     /**
@@ -46,15 +40,6 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function toString(): string
     {
-        return sprintf('row was in %s', $this->output);
-    }
-
-    /**
-     * @param mixed $other Expected content
-     * @return string
-     */
-    public function failureDescription(mixed $other): string
-    {
-        return '`' . $this->exporter()->shortenedExport($other) . '` ' . $this->toString();
+        return sprintf('is not in %s', $this->output);
     }
 }

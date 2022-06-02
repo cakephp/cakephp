@@ -13,24 +13,31 @@ declare(strict_types=1);
  * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Constraint\Console;
+namespace Cake\Console\TestSuite\Constraint;
 
 /**
- * ContentsContain
+ * ContentsContainRow
  *
  * @internal
  */
-class ContentsContain extends ContentsBase
+class ContentsContainRow extends ContentsRegExp
 {
     /**
      * Checks if contents contain expected
      *
-     * @param mixed $other Expected
+     * @param array $other Row
      * @return bool
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function matches(mixed $other): bool
+    public function matches($other): bool
     {
-        return mb_strpos($this->contents, $other) !== false;
+        $row = array_map(function ($cell) {
+            return preg_quote($cell, '/');
+        }, $other);
+        $cells = implode('\s+\|\s+', $row);
+        $pattern = '/' . $cells . '/';
+
+        return preg_match($pattern, $this->contents) > 0;
     }
 
     /**
@@ -40,6 +47,15 @@ class ContentsContain extends ContentsBase
      */
     public function toString(): string
     {
-        return sprintf('is in %s,' . PHP_EOL . 'actual result:' . PHP_EOL, $this->output) . $this->contents;
+        return sprintf('row was in %s', $this->output);
+    }
+
+    /**
+     * @param mixed $other Expected content
+     * @return string
+     */
+    public function failureDescription($other): string
+    {
+        return '`' . $this->exporter()->shortenedExport($other) . '` ' . $this->toString();
     }
 }

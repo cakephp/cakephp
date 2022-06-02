@@ -13,44 +13,50 @@ declare(strict_types=1);
  * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Constraint\Console;
+namespace Cake\Console\TestSuite\Constraint;
+
+use PHPUnit\Framework\Constraint\Constraint;
 
 /**
- * ContentsEmpty
+ * ExitCode constraint
  *
  * @internal
  */
-class ContentsEmpty extends ContentsBase
+class ExitCode extends Constraint
 {
     /**
-     * Checks if contents are empty
-     *
-     * @param mixed $other Expected
-     * @return bool
+     * @var int|null
      */
-    public function matches(mixed $other): bool
+    private $exitCode;
+
+    /**
+     * Constructor
+     *
+     * @param int|null $exitCode Exit code
+     */
+    public function __construct(?int $exitCode)
     {
-        return $this->contents === '';
+        $this->exitCode = $exitCode;
     }
 
     /**
-     * Assertion message
+     * Checks if event is in fired array
+     *
+     * @param mixed $other Constraint check
+     * @return bool
+     */
+    public function matches($other): bool
+    {
+        return $other === $this->exitCode;
+    }
+
+    /**
+     * Assertion message string
      *
      * @return string
      */
     public function toString(): string
     {
-        return sprintf('%s is empty', $this->output);
-    }
-
-    /**
-     * Overwrites the descriptions so we can remove the automatic "expected" message
-     *
-     * @param mixed $other Value
-     * @return string
-     */
-    protected function failureDescription(mixed $other): string
-    {
-        return $this->toString();
+        return sprintf('matches exit code %s', $this->exitCode ?? 'null');
     }
 }

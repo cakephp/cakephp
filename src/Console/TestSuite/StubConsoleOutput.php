@@ -13,9 +13,9 @@ declare(strict_types=1);
  * @link          https://cakephp.org CakePHP Project
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Stub;
+namespace Cake\Console\TestSuite;
 
-use Cake\Console\ConsoleOutput as ConsoleOutputBase;
+use Cake\Console\ConsoleOutput;
 
 /**
  * StubOutput makes testing shell commands/shell helpers easier.
@@ -25,20 +25,20 @@ use Cake\Console\ConsoleOutput as ConsoleOutputBase;
  *
  * ```
  * use Cake\Console\ConsoleIo;
- * use Cake\TestSuite\Stub\ConsoleOutput;
+ * use Cake\Console\TestSuite\StubConsoleOutput;
  *
- * $output = new ConsoleOutput();
+ * $output = new StubConsoleOutput();
  * $io = new ConsoleIo($output);
  * ```
  */
-class ConsoleOutput extends ConsoleOutputBase
+class StubConsoleOutput extends ConsoleOutput
 {
     /**
      * Buffered messages.
      *
      * @var array<string>
      */
-    protected array $_out = [];
+    protected $_out = [];
 
     /**
      * Write output to the buffer.
@@ -47,7 +47,7 @@ class ConsoleOutput extends ConsoleOutputBase
      * @param int $newlines Number of newlines to append
      * @return int
      */
-    public function write(array|string $message, int $newlines = 1): int
+    public function write($message, int $newlines = 1): int
     {
         foreach ((array)$message as $line) {
             $this->_out[] = $line;

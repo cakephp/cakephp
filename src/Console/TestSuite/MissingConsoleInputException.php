@@ -13,7 +13,7 @@ declare(strict_types=1);
  * @link          https://cakephp.org CakePHP Project
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Stub;
+namespace Cake\Console\TestSuite;
 
 use RuntimeException;
 
@@ -28,8 +28,12 @@ class MissingConsoleInputException extends RuntimeException
      * @param string $question The question text.
      * @return void
      */
-    public function setQuestion(string $question): void
+    public function setQuestion($question)
     {
         $this->message .= "\nThe question asked was: " . $question;
     }
 }
+
+// phpcs:disable
+class_alias(MissingConsoleInputException::class, 'Cake\TestSuite\Stub\MissingConsoleInputException');
+// phpcs:enable

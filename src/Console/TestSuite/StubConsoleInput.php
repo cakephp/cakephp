@@ -13,9 +13,9 @@ declare(strict_types=1);
  * @link          https://cakephp.org CakePHP Project
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Stub;
+namespace Cake\Console\TestSuite;
 
-use Cake\Console\ConsoleInput as ConsoleInputBase;
+use Cake\Console\ConsoleInput;
 use NumberFormatter;
 
 /**
@@ -24,21 +24,21 @@ use NumberFormatter;
  * This class enables input to be stubbed and have exceptions
  * raised when no answer is available.
  */
-class ConsoleInput extends ConsoleInputBase
+class StubConsoleInput extends ConsoleInput
 {
     /**
      * Reply values for ask() and askChoice()
      *
      * @var array<string>
      */
-    protected array $replies = [];
+    protected $replies = [];
 
     /**
      * Current message index
      *
      * @var int
      */
-    protected int $currentIndex = -1;
+    protected $currentIndex = -1;
 
     /**
      * Constructor
@@ -81,7 +81,7 @@ class ConsoleInput extends ConsoleInputBase
      * @param int $timeout An optional time to wait for data
      * @return bool True for data available, false otherwise
      */
-    public function dataAvailable(int $timeout = 0): bool
+    public function dataAvailable($timeout = 0): bool
     {
         return true;
     }

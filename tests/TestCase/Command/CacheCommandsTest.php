@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Console\CommandInterface;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
