@@ -16,7 +16,9 @@ declare(strict_types=1);
 namespace Cake\Core\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerInterface;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Event\EventInterface;
 use Closure;
 use LogicException;
@@ -37,21 +39,21 @@ trait ContainerStubTrait
      * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
      * @var string|null
      */
-    protected $_appClass;
+    protected ?string $_appClass = null;
 
     /**
      * The customized application constructor arguments.
      *
      * @var array|null
      */
-    protected $_appArgs;
+    protected ?array $_appArgs = null;
 
     /**
      * The collection of container services.
      *
      * @var array
      */
-    private $containerServices = [];
+    private array $containerServices = [];
 
     /**
      * Configure the application class to use in integration tests.
@@ -74,7 +76,7 @@ trait ContainerStubTrait
      *
      * @return \Cake\Core\HttpApplicationInterface|\Cake\Core\ConsoleApplicationInterface
      */
-    protected function createApp()
+    protected function createApp(): HttpApplicationInterface|ConsoleApplicationInterface
     {
         if ($this->_appClass) {
             $appClass = $this->_appClass;

@@ -38,7 +38,7 @@ class StubConsoleOutput extends ConsoleOutput
      *
      * @var array<string>
      */
-    protected $_out = [];
+    protected array $_out = [];
 
     /**
      * Write output to the buffer.
@@ -47,7 +47,7 @@ class StubConsoleOutput extends ConsoleOutput
      * @param int $newlines Number of newlines to append
      * @return int
      */
-    public function write($message, int $newlines = 1): int
+    public function write(array|string $message, int $newlines = 1): int
     {
         foreach ((array)$message as $line) {
             $this->_out[] = $line;
