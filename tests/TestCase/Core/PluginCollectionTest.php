@@ -48,6 +48,26 @@ class PluginCollectionTest extends TestCase
         $this->assertCount(1, $plugins);
     }
 
+    public function testAddFromConfig()
+    {
+        Configure::write('debug', false);
+
+        $config = [
+            'Company/TestPluginThree',
+            'TestPlugin' => ['onlyDebug' => true],
+            'Nope' => ['optional' => true],
+            'Named' => ['routes' => false],
+        ];
+
+        $plugins = new PluginCollection();
+        $plugins->addFromConfig($config);
+
+        $this->assertCount(2, $plugins);
+        $this->assertTrue($plugins->has('Company/TestPluginThree'));
+        $this->assertFalse($plugins->has('TestPlugin'));
+        $this->assertFalse($plugins->get('Named')->isEnabled('routes'));
+    }
+
     public function testAddOperations(): void
     {
         $plugins = new PluginCollection();
