@@ -40,39 +40,32 @@ trait ConsoleIntegrationTestTrait
     use ContainerStubTrait;
 
     /**
-     * Whether to use the CommandRunner
-     *
-     * @var bool
-     */
-    protected $_useCommandRunner = false;
-
-    /**
      * Last exit code
      *
      * @var int|null
      */
-    protected $_exitCode;
+    protected ?int $_exitCode = null;
 
     /**
      * Console output stub
      *
-     * @var \Cake\Console\TestSuite\StubConsoleOutput
+     * @var \Cake\Console\TestSuite\StubConsoleOutput|null
      */
-    protected $_out;
+    protected ?StubConsoleOutput $_out = null;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\Console\TestSuite\StubConsoleOutput
+     * @var \Cake\Console\TestSuite\StubConsoleOutput|null
      */
-    protected $_err;
+    protected ?StubConsoleOutput $_err = null;
 
     /**
      * Console input mock
      *
-     * @var \Cake\Console\TestSuite\StubConsoleInput
+     * @var \Cake\Console\TestSuite\StubConsoleInput|null
      */
-    protected $_in;
+    protected ?StubConsoleInput $_in = null;
 
     /**
      * Runs CLI integration test
@@ -128,18 +121,6 @@ trait ConsoleIntegrationTestTrait
         $this->_out = null;
         $this->_err = null;
         $this->_in = null;
-        $this->_useCommandRunner = false;
-    }
-
-    /**
-     * Set this test case to use the CommandRunner rather than the legacy
-     * ShellDispatcher
-     *
-     * @return void
-     */
-    public function useCommandRunner(): void
-    {
-        $this->_useCommandRunner = true;
     }
 
     /**
@@ -160,7 +141,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertExitSuccess($message = '')
+    public function assertExitSuccess(string $message = ''): void
     {
         $this->assertThat(Command::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
     }
@@ -171,7 +152,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertExitError($message = '')
+    public function assertExitError(string $message = ''): void
     {
         $this->assertThat(Command::CODE_ERROR, new ExitCode($this->_exitCode), $message);
     }
@@ -273,18 +254,14 @@ trait ConsoleIntegrationTestTrait
     /**
      * Builds the appropriate command dispatcher
      *
-     * @return \Cake\Console\CommandRunner|\Cake\Console\TestSuite\LegacyCommandRunner
+     * @return \Cake\Console\CommandRunner
      */
-    protected function makeRunner()
+    protected function makeRunner(): CommandRunner
     {
-        if ($this->_useCommandRunner) {
-            /** @var \Cake\Core\ConsoleApplicationInterface $app */
-            $app = $this->createApp();
+        /** @var \Cake\Core\ConsoleApplicationInterface $app */
+        $app = $this->createApp();
 
-            return new CommandRunner($app);
-        }
-
-        return new LegacyCommandRunner();
+        return new CommandRunner($app);
     }
 
     /**
