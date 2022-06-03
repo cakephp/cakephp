@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Utility\Hash;
 use Countable;
 use Generator;
 use InvalidArgumentException;
@@ -76,6 +77,49 @@ class PluginCollection implements Iterator, Countable
             $this->add($plugin);
         }
         $this->loadConfig();
+    }
+
+    /**
+     * Add plugins from config array.
+     *
+     * @param array $config Configuration array. For e.g.:
+     *   ```
+     *   [
+     *       'Company/TestPluginThree',
+     *       'TestPlugin' => ['onlyDebug' => true, 'onlyCli' => true],
+     *       'Nope' => ['optional' => true],
+     *       'Named' => ['routes' => false, 'bootstrap' => false],
+     *   ]
+     *   ```
+     * @return void
+     */
+    public function addFromConfig(array $config): void
+    {
+        $debug = Configure::read('debug');
+        $cli = PHP_SAPI === 'cli';
+
+        foreach (Hash::normalize($config) as $name => $options) {
+            $options = (array)$options;
+            $onlyDebug = $options['onlyDebug'] ?? false;
+            $onlyCli = $options['onlyCli'] ?? false;
+            $optional = $options['optional'] ?? false;
+
+            if (
+                ($onlyDebug && !$debug)
+                || ($onlyCli && !$cli)
+            ) {
+                continue;
+            }
+
+            try {
+                $plugin = $this->create($name, $options);
+                $this->add($plugin);
+            } catch (MissingPluginException $e) {
+                if (!$optional) {
+                    throw $e;
+                }
+            }
+        }
     }
 
     /**
