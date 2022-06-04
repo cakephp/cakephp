@@ -34,6 +34,7 @@ class TreeBehaviorTest extends TestCase
     protected $fixtures = [
         'core.MenuLinkTrees',
         'core.NumberTrees',
+        'core.NumberTreesArticles',
     ];
 
     /**
@@ -1173,6 +1174,32 @@ class TreeBehaviorTest extends TestCase
             '_18:19 - 18:radios',
         ];
         $this->assertMpttValues($expected, $table);
+    }
+
+    /**
+     * Tests deleting a subtree with ORM delete operations
+     */
+    public function testDeleteSubTreeWithOrm(): void
+    {
+        $NumberTreesArticles = $this->getTableLocator()->get('NumberTreesArticles');
+        $table = $this->table;
+        $table->addAssociations([
+            'hasMany' => [
+                'NumberTreesArticles' => [
+                    'cascadeCallbacks' => true,
+                    'dependent' => true
+                ]
+            ]
+        ]);
+        $table->getBehavior('Tree')->setConfig(['enableOrmDelete' => true]);
+        $entity = $table->get(1);
+        $this->assertTrue($table->delete($entity));
+
+        $expected = [
+            ' 5: 6 - 11:alien hardware',
+        ];
+        $this->assertMpttValues($expected, $this->table);
+        $this->assertSame(1, $NumberTreesArticles->find()->count());
     }
 
     /**

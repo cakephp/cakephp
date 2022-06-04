@@ -1260,6 +1260,36 @@ return [
         ],
     ],
     [
+        'table' => 'number_trees_articles',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'number_tree_id' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+            'title' => [
+                'type' => 'string',
+                'null' => true,
+            ],
+            'body' => 'text',
+            'published' => [
+                'type' => 'string',
+                'length' => 1,
+                'default' => 'N',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
         'table' => 'composite_increments',
         'columns' => [
             'id' => [

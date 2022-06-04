@@ -75,6 +75,7 @@ class TreeBehavior extends Behavior
         'scope' => null,
         'level' => null,
         'recoverOrder' => null,
+        'enableOrmDelete' => false,
     ];
 
     /**
@@ -227,15 +228,22 @@ class TreeBehavior extends Behavior
 
         if ($diff > 2) {
             $query = $this->_scope($this->_table->query())
-                ->delete()
                 ->where(function ($exp) use ($config, $left, $right) {
                     /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp
                         ->gte($config['leftField'], $left + 1)
                         ->lte($config['leftField'], $right - 1);
                 });
-            $statement = $query->execute();
-            $statement->closeCursor();
+            if($this->getConfig('enableOrmDelete')){
+                $result = $query->toArray();
+                foreach($result as $entity) {
+                    $this->_table->delete($entity, ['atomic' => false]);
+                }
+            } else {
+                $query->delete();
+                $statement = $query->execute();
+                $statement->closeCursor();
+            }
         }
 
         $this->_sync($diff, '-', "> {$right}");
