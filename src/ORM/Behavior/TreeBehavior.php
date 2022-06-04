@@ -75,7 +75,7 @@ class TreeBehavior extends Behavior
         'scope' => null,
         'level' => null,
         'recoverOrder' => null,
-        'enableOrmDelete' => false,
+        'useOrmDelete' => false,
     ];
 
     /**
@@ -234,7 +234,7 @@ class TreeBehavior extends Behavior
                         ->gte($config['leftField'], $left + 1)
                         ->lte($config['leftField'], $right - 1);
                 });
-            if ($this->getConfig('enableOrmDelete')) {
+            if ($this->getConfig('useOrmDelete')) {
                 $result = $query->toArray();
                 foreach ($result as $entity) {
                     $this->_table->delete($entity, ['atomic' => false]);

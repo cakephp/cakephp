@@ -1191,7 +1191,7 @@ class TreeBehaviorTest extends TestCase
                 ],
             ],
         ]);
-        $table->getBehavior('Tree')->setConfig(['enableOrmDelete' => true]);
+        $table->getBehavior('Tree')->setConfig(['useOrmDelete' => true]);
         $entity = $table->get(1);
         $this->assertTrue($table->delete($entity));
 
