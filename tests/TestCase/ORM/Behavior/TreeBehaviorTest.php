@@ -1187,9 +1187,9 @@ class TreeBehaviorTest extends TestCase
             'hasMany' => [
                 'NumberTreesArticles' => [
                     'cascadeCallbacks' => true,
-                    'dependent' => true
-                ]
-            ]
+                    'dependent' => true,
+                ],
+            ],
         ]);
         $table->getBehavior('Tree')->setConfig(['enableOrmDelete' => true]);
         $entity = $table->get(1);
