@@ -21,6 +21,8 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
+use Cake\Core\PluginInterface;
+use Cake\Utility\Hash;
 
 /**
  * Command for loading plugins.
@@ -38,18 +40,11 @@ class PluginLoadCommand extends Command
     }
 
     /**
-     * Arguments
+     * Config file
      *
-     * @var \Cake\Console\Arguments
+     * @var string
      */
-    protected Arguments $args;
-
-    /**
-     * Console IO
-     *
-     * @var \Cake\Console\ConsoleIo
-     */
-    protected ConsoleIo $io;
+    protected string $configFile = CONFIG . 'plugins.php';
 
     /**
      * Execute the command
@@ -60,65 +55,70 @@ class PluginLoadCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $this->io = $io;
-        $this->args = $args;
+        $plugin = (string)$args->getArgument('plugin');
+        $options = [];
+        if ($args->getOption('only-debug')) {
+            $options['onlyDebug'] = true;
+        }
+        if ($args->getOption('only-cli')) {
+            $options['onlyCli'] = true;
+        }
+        if ($args->getOption('optional')) {
+            $options['optional'] = true;
+        }
 
-        $plugin = $args->getArgument('plugin') ?? '';
+        foreach (PluginInterface::VALID_HOOKS as $hook) {
+            if ($args->getOption('no-' . $hook)) {
+                $options[$hook] = false;
+            }
+        }
+
         try {
             Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
-            $this->io->err($e->getMessage());
-            $this->io->err('Ensure you have the correct spelling and casing.');
+            /** @psalm-suppress InvalidArgument */
+            if (empty($options['optional'])) {
+                $io->err($e->getMessage());
+                $io->err('Ensure you have the correct spelling and casing.');
 
-            return static::CODE_ERROR;
+                return static::CODE_ERROR;
+            }
         }
 
-        $app = APP . 'Application.php';
-        if (file_exists($app)) {
-            $this->modifyApplication($app, $plugin);
+        $result = $this->modifyConfigFile($plugin, $options);
+        if ($result === static::CODE_ERROR) {
+            $io->err('Failed to update `CONFIG/plugins.php`');
+        }
 
+        return $result;
+    }
+
+    /**
+     * Modify the plugins config file.
+     *
+     * @param string $plugin Plugin name.
+     * @param array $options Plugin options.
+     * @return int
+     */
+    protected function modifyConfigFile(string $plugin, array $options): int
+    {
+        // phpcs:ignore
+        $config = @include $this->configFile;
+        if (!is_array($config)) {
+            $config = [];
+        } else {
+            $config = Hash::normalize($config);
+        }
+
+        $config[$plugin] = $options;
+
+        $contents = '<?php' . "\n" . 'return ' . var_export($config, true) . ';';
+
+        if (file_put_contents($this->configFile, $contents)) {
             return static::CODE_SUCCESS;
         }
 
         return static::CODE_ERROR;
-    }
-
-    /**
-     * Modify the application class
-     *
-     * @param string $app The Application file to modify.
-     * @param string $plugin The plugin name to add.
-     * @return void
-     */
-    protected function modifyApplication(string $app, string $plugin): void
-    {
-        $contents = file_get_contents($app);
-
-        // Find start of bootstrap
-        if (!preg_match('/^(\s+)public function bootstrap(?:\s*)\(\)/mu', $contents, $matches, PREG_OFFSET_CAPTURE)) {
-            $this->io->err('Your Application class does not have a bootstrap() method. Please add one.');
-            $this->abort();
-        }
-
-        $offset = $matches[0][1];
-        $indent = $matches[1][0];
-
-        // Find closing function bracket
-        if (!preg_match("/^$indent\}\n$/mu", $contents, $matches, PREG_OFFSET_CAPTURE, $offset)) {
-            $this->io->err('Your Application class does not have a bootstrap() method. Please add one.');
-            $this->abort();
-        }
-
-        $append = "$indent    \$this->addPlugin('%s');\n";
-        $insert = str_replace(', []', '', sprintf($append, $plugin));
-
-        $offset = $matches[0][1];
-        $contents = substr_replace($contents, $insert, $offset, 0);
-
-        file_put_contents($app, $contents);
-
-        $this->io->out('');
-        $this->io->out(sprintf('%s modified', $app));
     }
 
     /**
@@ -130,12 +130,35 @@ class PluginLoadCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
-            'Command for loading plugins.',
-        ])
-        ->addArgument('plugin', [
-            'help' => 'Name of the plugin to load. Must be in CamelCase format. Example: cake plugin load Example',
-            'required' => true,
-        ]);
+                'Command for loading plugins.',
+            ])->addArgument('plugin', [
+                'help' => 'Name of the plugin to load. Must be in CamelCase format. Example: cake plugin load Example',
+                'required' => true,
+            ])->addOption('only-debug', [
+                'boolean' => true,
+                'help' => 'Load the plugin only when `debug` is enabled.',
+            ])->addOption('only-cli', [
+                'boolean' => true,
+                'help' => 'Load the plugin only for CLI.',
+            ])->addOption('optional', [
+                'boolean' => true,
+                'help' => 'Do not throw an error if the plugin is not available.',
+            ])->addOption('no-bootstrap', [
+                'boolean' => true,
+                'help' => 'Do not run the `bootstrap()` hook.',
+            ])->addOption('no-console', [
+                'boolean' => true,
+                'help' => 'Do not run the `console()` hook.',
+            ])->addOption('no-middleware', [
+                'boolean' => true,
+                'help' => 'Do not run the `middleware()` hook..',
+            ])->addOption('no-routes', [
+                'boolean' => true,
+                'help' => 'Do not run the `routes()` hook.',
+            ])->addOption('no-services', [
+                'boolean' => true,
+                'help' => 'Do not run the `services()` hook.',
+            ]);
 
         return $parser;
     }
