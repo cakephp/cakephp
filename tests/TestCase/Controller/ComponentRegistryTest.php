@@ -43,7 +43,7 @@ class ComponentRegistryTest extends TestCase
     {
         parent::setUp();
         $controller = new Controller(new ServerRequest(), new Response());
-        $this->Components = new ComponentRegistry($controller);
+        $this->Components = (new ComponentRegistry())->setController($controller);
     }
 
     /**

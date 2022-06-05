@@ -257,7 +257,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->_components = $components;
         }
 
-        return $this->_components ??= new ComponentRegistry($this);
+        return $this->_components ??= (new ComponentRegistry())->setController($this);
     }
 
     /**

@@ -52,7 +52,7 @@ class FlashComponentTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         $this->Controller = new Controller(new ServerRequest(['session' => new Session()]));
-        $ComponentRegistry = new ComponentRegistry($this->Controller);
+        $ComponentRegistry = (new ComponentRegistry())->setController($this->Controller);
         $this->Flash = new FlashComponent($ComponentRegistry);
         $this->Session = new Session();
     }
