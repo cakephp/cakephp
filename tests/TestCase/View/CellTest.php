@@ -346,8 +346,7 @@ class CellTest extends TestCase
     public function testCellInheritsController(): void
     {
         $request = new ServerRequest();
-        $response = new Response();
-        $controller = new CellTraitTestController($request, $response);
+        $controller = new CellTraitTestController($request);
         $controller->viewBuilder()->setTheme('Pretty');
         $controller->viewBuilder()->setClassName('Json');
         $cell = $controller->cell('Articles');

@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingViewException;
 
@@ -36,7 +37,7 @@ class ViewVarsTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = new Controller();
+        $this->subject = new Controller(new ServerRequest());
     }
 
     /**
