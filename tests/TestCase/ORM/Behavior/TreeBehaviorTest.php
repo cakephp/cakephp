@@ -1182,6 +1182,14 @@ class TreeBehaviorTest extends TestCase
     public function testDeleteSubTreeWithOrm(): void
     {
         $NumberTreesArticles = $this->getTableLocator()->get('NumberTreesArticles');
+        $newArticle = $NumberTreesArticles->newEntity([
+            'number_tree_id' => 7, // Link to sub-tree item
+            'title' => 'New Article',
+            'body' => 'New Article Body',
+            'published' => 'Y',
+        ]);
+        $NumberTreesArticles->save($newArticle);
+
         $table = $this->table;
         $table->addAssociations([
             'hasMany' => [
@@ -1192,14 +1200,26 @@ class TreeBehaviorTest extends TestCase
             ],
         ]);
         $table->getBehavior('Tree')->setConfig(['useOrmDelete' => true]);
-        $entity = $table->get(1);
+
+        // Delete parent category
+        $entity = $table->get(6);
         $this->assertTrue($table->delete($entity));
 
         $expected = [
-            ' 5: 6 - 11:alien hardware',
+            ' 1:12 -  1:electronics',
+            '_ 2: 9 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '__ 7: 8 -  5:plasma',
+            '13:14 - 11:alien hardware',
         ];
         $this->assertMpttValues($expected, $this->table);
-        $this->assertSame(1, $NumberTreesArticles->find()->count());
+
+        // Check if new article which was linked to sub-category was deleted
+        $count = $NumberTreesArticles->find()
+            ->where(['number_tree_id' => 7])
+            ->count();
+        $this->assertSame(0, $count);
     }
 
     /**
