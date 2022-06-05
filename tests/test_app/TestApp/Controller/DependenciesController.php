@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TestApp\Controller;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
@@ -22,10 +21,9 @@ class DependenciesController extends Controller
         ?Response $response = null,
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
-        ?ComponentRegistry $components = null,
         ?stdClass $inject = null
     ) {
-        parent::__construct($request, $response, $name, $eventManager, $components);
+        parent::__construct($request, $response, $name, $eventManager);
         $this->inject = $inject;
     }
 

@@ -938,7 +938,8 @@ class ControllerTest extends TestCase
             ->addMethods(['offsetGet'])
             ->getMock();
 
-        $controller = new TestController($request, $response, null, null, $componentRegistry);
+        $controller = new TestController($request, $response, null, null);
+        $controller->components($componentRegistry);
         $this->assertInstanceOf(get_class($componentRegistry), $controller->components());
 
         $result = $controller->components();

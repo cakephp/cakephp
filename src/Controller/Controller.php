@@ -184,14 +184,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Http\Response|null $response Response object for this controller.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
-     * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
      */
     public function __construct(
         ?ServerRequest $request = null,
         ?Response $response = null,
         ?string $name = null,
-        ?EventManagerInterface $eventManager = null,
-        ?ComponentRegistry $components = null
+        ?EventManagerInterface $eventManager = null
     ) {
         if ($name !== null) {
             $this->name = $name;
@@ -218,10 +216,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $plugin = $this->request->getParam('plugin');
             $tableAlias = ($plugin ? $plugin . '.' : '') . $this->name;
             $this->defaultTable = $tableAlias;
-        }
-
-        if ($components !== null) {
-            $this->components($components);
         }
 
         $this->initialize();
