@@ -1177,9 +1177,9 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
-     * Tests deleting a subtree with ORM delete operations
+     * Tests deleting a subtree with ORM delete callbacks
      */
-    public function testDeleteSubTreeWithOrm(): void
+    public function testDeleteSubTreeWithCallbacks(): void
     {
         $NumberTreesArticles = $this->getTableLocator()->get('NumberTreesArticles');
         $newArticle = $NumberTreesArticles->newEntity([
@@ -1199,7 +1199,7 @@ class TreeBehaviorTest extends TestCase
                 ],
             ],
         ]);
-        $table->getBehavior('Tree')->setConfig(['useOrmDelete' => true]);
+        $table->getBehavior('Tree')->setConfig(['cascadeCallbacks' => true]);
 
         // Delete parent category
         $entity = $table->get(6);
