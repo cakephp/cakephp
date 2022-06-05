@@ -235,9 +235,9 @@ class TreeBehavior extends Behavior
                         ->lte($config['leftField'], $right - 1);
                 });
             if ($this->getConfig('useOrmDelete')) {
-                $result = $query->toArray();
-                foreach ($result as $entity) {
-                    $this->_table->delete($entity, ['atomic' => false]);
+                $entities = $query->toArray();
+                foreach ($entities as $entityToDelete) {
+                    $this->_table->delete($entityToDelete, ['atomic' => false]);
                 }
             } else {
                 $query->delete();
