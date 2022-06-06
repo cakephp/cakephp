@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use Brick\VarExporter\VarExporter;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -83,7 +84,12 @@ class PluginUnloadCommand extends Command
 
         unset($config[$plugin]);
 
-        $contents = '<?php' . "\n" . 'return ' . var_export($config, true) . ';';
+        if (class_exists(VarExporter::class)) {
+            $array = VarExporter::export($config);
+        } else {
+            $array = var_export($config, true);
+        }
+        $contents = '<?php' . "\n" . 'return ' . $array . ';';
 
         if (file_put_contents($this->configFile, $contents)) {
             return null;
