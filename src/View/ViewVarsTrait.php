@@ -98,4 +98,30 @@ trait ViewVarsTrait
 
         return $this;
     }
+
+    /**
+     * Wrapper function to set variables into the template as well as enabling the serialization of these variables
+     *
+     * @param array|string $name A string or an array of data.
+     * @param mixed|null $value Value in case $name is a string (which then works as the key).
+     *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
+     * @return $this
+     */
+    public function setSerialized(array|string $name, mixed $value = null)
+    {
+        $this->set($name, $value);
+        if (is_array($name)) {
+            if ($value === null) {
+                $data = array_keys($name);
+            } else {
+                $data = $name;
+            }
+        } else {
+            $data = [$name];
+        }
+        $currentSerialized = $this->viewBuilder()->getOption('serialize') ?? [];
+        $this->viewBuilder()->setOption('serialize', array_merge($currentSerialized, $data));
+
+        return $this;
+    }
 }

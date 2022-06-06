@@ -87,6 +87,53 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
+     * test setSerialized() with different keys and values
+     */
+    public function testSetSerializedVars(): void
+    {
+        $keys = ['one', 'key'];
+        $vals = ['two', 'val'];
+        $this->subject->setSerialized($keys, $vals);
+
+        $expected = ['one' => 'two', 'key' => 'val'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
+
+        $expected = ['one', 'key'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getOption('serialize'));
+    }
+
+    /**
+     * test setSerialized() with chained calls
+     */
+    public function testSetSerializedVarsChained(): void
+    {
+        $this->subject->setSerialized('key1', 'val1')
+            ->setSerialized('key2', 'val2');
+
+        $expected = ['key1' => 'val1', 'key2' => 'val2'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
+
+        $expected = ['key1', 'key2'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getOption('serialize'));
+    }
+
+    /**
+     * test setSerialized() with compact()
+     */
+    public function testSetSerializedVarsCompact(): void
+    {
+        $key1 = 'val1';
+        $key2 = 'val2';
+        $this->subject->setSerialized(compact('key1', 'key2'));
+
+        $expected = ['key1' => 'val1', 'key2' => 'val2'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
+
+        $expected = ['key1', 'key2'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getOption('serialize'));
+    }
+
+    /**
      * test that createView() updates viewVars of View instance on each call.
      */
     public function testUptoDateViewVars(): void
