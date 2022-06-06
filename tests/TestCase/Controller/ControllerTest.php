@@ -913,25 +913,6 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Test the components() method with the custom ObjectRegistry.
-     */
-    public function testComponentsWithCustomRegistry(): void
-    {
-        $request = new ServerRequest(['url' => '/']);
-        $componentRegistry = $this->getMockBuilder('Cake\Controller\ComponentRegistry')
-            ->addMethods(['offsetGet'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $controller = new TestController($request);
-        $controller->components($componentRegistry);
-        $this->assertInstanceOf(get_class($componentRegistry), $controller->components());
-
-        $result = $controller->components();
-        $this->assertSame($result, $controller->components());
-    }
-
-    /**
      * Test adding a component
      */
     public function testLoadComponent(): void
