@@ -118,6 +118,22 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
+     * test setSerialized() with chained calls which have the same key
+     */
+    public function testSetSerializedVarsChainedSameKeys(): void
+    {
+        $this->subject->setSerialized('key1', 'val1')
+            ->setSerialized('key2', 'val2')
+            ->setSerialized('key1', 'val3');
+
+        $expected = ['key1' => 'val3', 'key2' => 'val2'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
+
+        $expected = ['key1', 'key2'];
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getOption('serialize'));
+    }
+
+    /**
      * test setSerialized() with compact()
      */
     public function testSetSerializedVarsCompact(): void

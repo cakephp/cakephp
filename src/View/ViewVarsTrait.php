@@ -120,7 +120,7 @@ trait ViewVarsTrait
             $data = [$name];
         }
         $currentSerialized = $this->viewBuilder()->getOption('serialize') ?? [];
-        $this->viewBuilder()->setOption('serialize', array_merge($currentSerialized, $data));
+        $this->viewBuilder()->setOption('serialize', array_unique(array_merge($currentSerialized, $data)));
 
         return $this;
     }
