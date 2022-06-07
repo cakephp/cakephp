@@ -76,6 +76,7 @@ class TreeBehavior extends Behavior
         'scope' => null,
         'level' => null,
         'recoverOrder' => null,
+        'cascadeCallbacks' => false,
     ];
 
     /**
@@ -227,14 +228,21 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $this->_scope($this->_table->query())
-                ->delete()
+            $query = $this->_scope($this->_table->query())
                 ->where(
                     fn (QueryExpression $exp) => $exp
                         ->gte($config['leftField'], $left + 1)
                         ->lte($config['leftField'], $right - 1)
-                )
-                ->execute();
+                );
+            if ($this->getConfig('cascadeCallbacks')) {
+                $entities = $query->toArray();
+                foreach ($entities as $entityToDelete) {
+                    $this->_table->delete($entityToDelete, ['atomic' => false]);
+                }
+            } else {
+                $query->delete()
+                    ->execute();
+            }
         }
 
         $this->_sync($diff, '-', "> {$right}");
