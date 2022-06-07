@@ -34,7 +34,7 @@ interface EventListenerInterface
      *      return [
      *          'Order.complete' => 'sendEmail',
      *          'Article.afterBuy' => 'decrementInventory',
-     *          'User.onRegister' => ['callable' => 'logRegistration', 'priority' => 20]
+     *          'User.onRegister' => ['callable' => 'logRegistration', 'priority' => 20, 'passParams' => true]
      *      ];
      *  }
      * ```
