@@ -24,6 +24,7 @@ use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Middleware\SessionCsrfProtectionMiddleware;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\RouteBuilder;
@@ -1635,7 +1636,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testViewVariableNotFoundShouldReturnNull(): void
     {
-        $this->_controller = new Controller();
+        $this->_controller = new Controller(new ServerRequest());
         $this->assertNull($this->viewVariable('notFound'));
     }
 

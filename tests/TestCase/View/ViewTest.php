@@ -709,7 +709,7 @@ class ViewTest extends TestCase
      */
     public function testElementParamsDontOverwriteHelpers(): void
     {
-        $Controller = new ViewPostsController();
+        $Controller = new ViewPostsController(new ServerRequest());
 
         $View = $Controller->createView();
         $result = $View->element('type_check', ['form' => 'string'], ['callbacks' => true]);
@@ -725,7 +725,7 @@ class ViewTest extends TestCase
      */
     public function testElementCacheHelperNoCache(): void
     {
-        $Controller = new ViewPostsController();
+        $Controller = new ViewPostsController(new ServerRequest());
         $View = $Controller->createView();
         $result = $View->element('test_element', ['ram' => 'val', 'test' => ['foo', 'bar']]);
         $this->assertSame('this is the test element', $result);
@@ -1118,7 +1118,7 @@ class ViewTest extends TestCase
      */
     public function testViewVarOverwritingLocalHelperVar(): void
     {
-        $Controller = new ViewPostsController();
+        $Controller = new ViewPostsController(new ServerRequest());
         $Controller->set('html', 'I am some test html');
         $View = $Controller->createView();
         $View->setTemplatePath($Controller->getName());

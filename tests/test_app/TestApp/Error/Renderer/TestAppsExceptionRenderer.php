@@ -5,7 +5,6 @@ namespace TestApp\Error\Renderer;
 
 use Cake\Controller\Controller;
 use Cake\Error\Renderer\WebExceptionRenderer;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Exception;
@@ -22,12 +21,11 @@ class TestAppsExceptionRenderer extends WebExceptionRenderer
         if ($request === null) {
             $request = new ServerRequest();
         }
-        $response = new Response();
         try {
-            $controller = new TestAppsErrorController($request, $response);
+            $controller = new TestAppsErrorController($request);
             $controller->viewBuilder()->setLayout('banana');
         } catch (Exception $e) {
-            $controller = new Controller($request, $response);
+            $controller = new Controller($request);
             $controller->viewBuilder()->setTemplatePath('Error');
         }
 

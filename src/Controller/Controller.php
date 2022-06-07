@@ -179,23 +179,19 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Sets a number of properties based on conventions if they are empty. To override the
      * conventions CakePHP uses you can define properties in your class declaration.
      *
-     * @param \Cake\Http\ServerRequest|null $request Request object for this controller. Can be null for testing,
+     * @param \Cake\Http\ServerRequest $request Request object for this controller.
      *   but expect that features that use the request parameters will not work.
-     * @param \Cake\Http\Response|null $response Response object for this controller.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
-     * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
      */
     public function __construct(
-        ?ServerRequest $request = null,
-        ?Response $response = null,
+        ServerRequest $request,
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
-        ?ComponentRegistry $components = null
     ) {
         if ($name !== null) {
             $this->name = $name;
-        } elseif (!$this->name && $request) {
+        } elseif (!$this->name) {
             $controller = $request->getParam('controller');
             if ($controller) {
                 $this->name = $controller;
@@ -207,8 +203,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->name = substr($name, 0, -10);
         }
 
-        $this->setRequest($request ?: new ServerRequest());
-        $this->response = $response ?: new Response();
+        $this->setRequest($request);
+        $this->response = new Response();
 
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
@@ -218,10 +214,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $plugin = $this->request->getParam('plugin');
             $tableAlias = ($plugin ? $plugin . '.' : '') . $this->name;
             $this->defaultTable = $tableAlias;
-        }
-
-        if ($components !== null) {
-            $this->components($components);
         }
 
         $this->initialize();
@@ -244,19 +236,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Get the component registry for this controller.
      *
-     * If called with the first parameter, it will be set as the controller $this->_components property
-     *
-     * @param \Cake\Controller\ComponentRegistry|null $components Component registry.
      * @return \Cake\Controller\ComponentRegistry
      */
-    public function components(?ComponentRegistry $components = null): ComponentRegistry
+    public function components(): ComponentRegistry
     {
-        if ($components !== null) {
-            $components->setController($this);
-
-            return $this->_components = $components;
-        }
-
         return $this->_components ??= new ComponentRegistry($this);
     }
 

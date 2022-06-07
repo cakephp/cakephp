@@ -21,7 +21,6 @@ use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
@@ -42,7 +41,7 @@ class ComponentRegistryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $controller = new Controller(new ServerRequest(), new Response());
+        $controller = new Controller(new ServerRequest());
         $this->Components = new ComponentRegistry($controller);
     }
 

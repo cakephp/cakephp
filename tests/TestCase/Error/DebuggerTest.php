@@ -26,6 +26,7 @@ use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Form\Form;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use MyClass;
@@ -158,7 +159,7 @@ object(stdClass) id:0 {
 TEXT;
         $this->assertTextEquals($expected, $result);
 
-        $Controller = new Controller();
+        $Controller = new Controller(new ServerRequest());
         $Controller->viewBuilder()->setHelpers(['Html', 'Form']);
         $View = $Controller->createView();
 

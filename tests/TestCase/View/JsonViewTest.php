@@ -20,7 +20,6 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\SerializationFailureException;
@@ -220,8 +219,7 @@ class JsonViewTest extends TestCase
     public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
 
         $Controller->set($data);
         $Controller->viewBuilder()
@@ -239,8 +237,7 @@ class JsonViewTest extends TestCase
     public function testRenderSerializeNoHelpers(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
 
         $Controller->set([
             'tags' => ['cakephp', 'framework'],
@@ -260,8 +257,7 @@ class JsonViewTest extends TestCase
     public function testJsonpResponse(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
 
         $data = ['user' => 'fake', 'list' => ['item1', 'item2']];
         $Controller->set([
@@ -296,8 +292,7 @@ class JsonViewTest extends TestCase
     public function testRenderWithView(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $Controller->setName('Posts');
 
         $data = [
@@ -326,8 +321,7 @@ class JsonViewTest extends TestCase
         $this->expectExceptionMessage('Serialization of View data failed.');
 
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
 
         $data = "\xB1\x31";
         $Controller->set('data', $data);
