@@ -136,10 +136,6 @@ class EventManager implements EventManagerInterface
             if (is_array($function) && isset($function['callable'])) {
                 [$method, $options] = $this->_extractCallable($function, $subscriber);
             } elseif (is_array($function) && is_numeric(key($function))) {
-                deprecationWarning(
-                    'Registering multiple methods with an event is deprecated. ' .
-                    'Assign a single method and call others from it.'
-                );
                 foreach ($function as $f) {
                     [$method, $options] = $this->_extractCallable($f, $subscriber);
                     $this->on($eventKey, $options, $method);
@@ -248,10 +244,6 @@ class EventManager implements EventManagerInterface
         foreach ($events as $key => $function) {
             if (is_array($function)) {
                 if (is_numeric(key($function))) {
-                    deprecationWarning(
-                        'Registering multiple methods with an event is deprecated. ' .
-                        'Assign a single method and call others from it.'
-                    );
                     foreach ($function as $handler) {
                         $handler = $handler['callable'] ?? $handler;
                         $this->off($key, [$subscriber, $handler]);
