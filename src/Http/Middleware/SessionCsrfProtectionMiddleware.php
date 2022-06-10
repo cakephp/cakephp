@@ -43,7 +43,7 @@ use RuntimeException;
  *
  * If you use this middleware *do not* also use CsrfProtectionMiddleware.
  *
- * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#sychronizer-token-pattern
+ * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
  */
 class SessionCsrfProtectionMiddleware implements MiddlewareInterface
 {

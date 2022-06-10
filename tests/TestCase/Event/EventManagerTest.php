@@ -345,6 +345,28 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Test implementedEvents binding multiple callbacks to the same event name.
+     *
+     * @triggers multiple.handlers
+     */
+    public function testOnSubscriberMultiple(): void
+    {
+        $manager = new EventManager();
+        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
+            ->onlyMethods(['listenerFunction', 'thirdListenerFunction'])
+            ->getMock();
+        $manager->on($listener);
+        $event = new Event('multiple.handlers');
+        $listener->expects($this->once())
+            ->method('listenerFunction')
+            ->with($event);
+        $listener->expects($this->once())
+            ->method('thirdListenerFunction')
+            ->with($event);
+        $manager->dispatch($event);
+    }
+
+    /**
      * Tests subscribing a listener object and firing the events it subscribed to
      */
     public function testDetachSubscriber(): void

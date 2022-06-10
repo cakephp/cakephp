@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Event;
 
 use Cake\Core\Exception\CakeException;
+use Closure;
 use InvalidArgumentException;
 
 /**
@@ -139,9 +140,10 @@ class EventManager implements EventManagerInterface
      */
     protected function _attachSubscriber(EventListenerInterface $subscriber): void
     {
-        foreach ($subscriber->implementedEvents() as $eventKey => $handler) {
-            $handler = $this->normalizeHandler($subscriber, $handler);
-            $this->on($eventKey, $handler['settings'], $handler['callable']);
+        foreach ($subscriber->implementedEvents() as $eventKey => $handlers) {
+            foreach ($this->normalizeHandlers($subscriber, $handlers) as $handler) {
+                $this->on($eventKey, $handler['settings'], $handler['callable']);
+            }
         }
     }
 
@@ -211,14 +213,15 @@ class EventManager implements EventManagerInterface
         if (!empty($eventKey)) {
             $events = [$eventKey => $events[$eventKey]];
         }
-        foreach ($events as $key => $handler) {
-            $handler = $this->normalizeHandler($subscriber, $handler);
-            $this->off($key, $handler['callable']);
+        foreach ($events as $key => $handlers) {
+            foreach ($this->normalizeHandlers($subscriber, $handlers) as $handler) {
+                $this->off($key, $handler['callable']);
+            }
         }
     }
 
     /**
-     * Builds a single normalized handler.
+     * Builds an array of normalized handlers.
      *
      * A normalized handler is an aray with these keys:
      *
@@ -226,19 +229,51 @@ class EventManager implements EventManagerInterface
      *  - `settings` - The event handler settings
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
-     * @param array|string $handler Event handler
+     * @param \Closure|array|string $handlers Event handlers
      * @return array
      */
-    protected function normalizeHandler(EventListenerInterface $subscriber, array|string $handler): array
+    protected function normalizeHandlers(EventListenerInterface $subscriber, Closure|array|string $handlers): array
     {
-        if (is_string($handler)) {
-            return ['callable' => $subscriber->$handler(...), 'settings' => []];
+        // Check if an array of handlers not single handler config array
+        if (is_array($handlers) && !isset($handlers['callable'])) {
+            foreach ($handlers as &$handler) {
+                $handler = $this->normalizeHandler($subscriber, $handler);
+            }
+
+            return $handlers;
         }
 
-        $method = $handler['callable'];
-        unset($handler['callable']);
+        return [$this->normalizeHandler($subscriber, $handlers)];
+    }
 
-        return ['callable' => $subscriber->$method(...), 'settings' => $handler];
+    /**
+     * Builds a single normalized handler.
+     *
+     * A normalized handler is an array with these keys:
+     *
+     *  - `callable` - The event handler closure
+     *  - `settings` - The event handler settings
+     *
+     * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
+     * @param \Closure|array|string $handler Event handler
+     * @return array
+     */
+    protected function normalizeHandler(EventListenerInterface $subscriber, Closure|array|string $handler): array
+    {
+        $callable = $handler;
+        $settings = [];
+
+        if (is_array($handler)) {
+            $callable = $handler['callable'];
+            $settings = $handler;
+            unset($settings['callable']);
+        }
+
+        if (is_string($callable)) {
+            $callable = $subscriber->$callable(...);
+        }
+
+        return ['callable' => $callable, 'settings' => $settings];
     }
 
     /**
