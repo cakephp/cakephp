@@ -47,7 +47,7 @@ class RedisEngine extends CacheEngine
      * - `port` port number to the Redis server.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `scan_count` Number of keys to ask for each scan (default: 10)
+     * - `scanCount` Number of keys to ask for each scan (default: 10)
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
@@ -66,7 +66,7 @@ class RedisEngine extends CacheEngine
         'server' => '127.0.0.1',
         'timeout' => 0,
         'unix_socket' => false,
-        'scan_count' => 10,
+        'scanCount' => 10,
     ];
 
     /**
@@ -258,7 +258,7 @@ class RedisEngine extends CacheEngine
         $pattern = $this->_config['prefix'] . '*';
 
         while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scan_count']);
+            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
 
             if ($keys === false) {
                 break;
@@ -289,7 +289,7 @@ class RedisEngine extends CacheEngine
         $pattern = $this->_config['prefix'] . '*';
 
         while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scan_count']);
+            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
 
             if ($keys === false) {
                 break;
