@@ -1389,8 +1389,6 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge when fields contains an association.
-     *
-     * @param $fields
      */
     public function testMergeWithSingleAssociationAndFields(): void
     {

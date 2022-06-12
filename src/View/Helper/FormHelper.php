@@ -1025,7 +1025,7 @@ class FormHelper extends Helper
      * @param string $fieldName This should be "modelname.fieldname"
      * @param array<string, mixed> $options Each type of input takes different options.
      * @return string Completed form widget.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-form-inputs
+     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-form-controls
      * @psalm-suppress InvalidReturnType
      * @psalm-suppress InvalidReturnStatement
      */

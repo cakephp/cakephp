@@ -43,6 +43,11 @@ class EventManagerTest extends TestCase
             ['callable' => $listener->listenerFunction(...)],
         ];
         $this->assertEquals($expected, $manager->listeners('fake.event'));
+
+        $expected = [
+            ['callable' => $listener->thirdListenerFunction(...)],
+        ];
+        $this->assertEquals($expected, $manager->listeners('closure.event'));
     }
 
     /**
@@ -353,7 +358,7 @@ class EventManagerTest extends TestCase
     {
         $manager = new EventManager();
         $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->onlyMethods(['listenerFunction', 'thirdListenerFunction'])
+            ->onlyMethods(['listenerFunction', 'secondListenerFunction'])
             ->getMock();
         $manager->on($listener);
         $event = new Event('multiple.handlers');
@@ -361,7 +366,7 @@ class EventManagerTest extends TestCase
             ->method('listenerFunction')
             ->with($event);
         $listener->expects($this->once())
-            ->method('thirdListenerFunction')
+            ->method('secondListenerFunction')
             ->with($event);
         $manager->dispatch($event);
     }
