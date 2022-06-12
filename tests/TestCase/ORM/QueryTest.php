@@ -1872,7 +1872,7 @@ class QueryTest extends TestCase
     public function testDeprecatedPathCollectionProxy(string $method, $arg, $return): void
     {
         $this->expectDeprecation();
-        $this->expectDeprecationMessage('QueryTest.php');
+        $this->expectDeprecationMessage("Calling `Cake\Datasource\ResultSetInterface` methods, such as `$method()`, on queries is deprecated.");
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all'])
