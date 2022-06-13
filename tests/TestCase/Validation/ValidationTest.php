@@ -91,7 +91,6 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notBlank('fooo' . chr(243) . 'blabla'));
         $this->assertTrue(Validation::notBlank('abçďĕʑʘπй'));
         $this->assertTrue(Validation::notBlank('José'));
-        $this->assertTrue(Validation::notBlank(utf8_decode('José')));
         $this->assertFalse(Validation::notBlank("\t "));
         $this->assertFalse(Validation::notBlank(''));
     }
