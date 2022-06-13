@@ -1129,6 +1129,23 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('tag2', $result->tags[1]->name);
     }
 
+    public function testReplaceLinksMissingKeyData()
+    {
+        $articles = $this->fetchTable('Articles');
+        $tags = $this->fetchTable('Tags');
+
+        $articles->belongsToMany('Tags');
+        $article = $articles->find()->firstOrFail();
+
+        $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
+        $tag1->_joinData = new ArticlesTag(['tag_id' => 99]);
+
+        $article->tags = [$tag1];
+        $articles->saveOrFail($article, ['associated' => ['Tags']]);
+
+        $this->assertCount(1, $article->tags);
+    }
+
     /**
      * Provider for empty values
      *

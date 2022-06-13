@@ -1280,10 +1280,7 @@ class BelongsToMany extends Association
             foreach ($unmatchedEntityKeys as $i => $unmatchedKeys) {
                 $matched = false;
                 foreach ($keys as $key) {
-                    if (!array_key_exists($key, $unmatchedKeys) || !array_key_exists($key, $existingKeys)) {
-                        // Either side missing is no match.
-                        $matched = false;
-                    } elseif (is_object($unmatchedKeys[$key]) && is_object($existingKeys[$key])) {
+                    if (is_object($unmatchedKeys[$key]) && is_object($existingKeys[$key])) {
                         // If both sides are an object then use == so that value objects
                         // are seen as equivalent.
                         $matched = $existingKeys[$key] == $unmatchedKeys[$key];
