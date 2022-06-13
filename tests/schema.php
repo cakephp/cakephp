@@ -922,6 +922,58 @@ return [
         ],
     ],
     [
+        'table' => 'composite_key_articles',
+        'columns' => [
+            'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'created' => [
+                'type' => 'datetime',
+                'null' => false,
+            ],
+            'body' => [
+                'type' => 'text',
+            ],
+        ],
+        'constraints' => [
+            'composite_article_pk' => [
+                'type' => 'primary',
+                'columns' => [
+                    'author_id',
+                    'created',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'composite_key_articles_tags',
+        'columns' => [
+            'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'created' => [
+                'type' => 'datetime',
+                'null' => false,
+            ],
+            'tag_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'composite_article_tags_pk' => [
+                'type' => 'primary',
+                'columns' => [
+                    'author_id',
+                    'created',
+                    'tag_id',
+                ],
+            ],
+        ],
+    ],
+    [
         'table' => 'profiles',
         'columns' => [
             'id' => [
