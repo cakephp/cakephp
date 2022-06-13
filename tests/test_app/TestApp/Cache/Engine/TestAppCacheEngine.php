@@ -79,4 +79,15 @@ class TestAppCacheEngine extends CacheEngine
     public function clearGroup(string $group): bool
     {
     }
+
+    /**
+     * Return duration method result.
+     *
+     * @param mixed $ttl
+     * @return int
+     */
+    public function getDuration($ttl): int
+    {
+        return $this->duration($ttl);
+    }
 }
