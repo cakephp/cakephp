@@ -36,6 +36,7 @@ use SplObjectStorage;
  * that contains the association fields between the source and the target table.
  *
  * An example of a BelongsToMany association would be Article belongs to many Tags.
+ * In this example 'Article' is the source table and 'Tags' is the target table.
  */
 class BelongsToMany extends Association
 {
@@ -1277,7 +1278,25 @@ class BelongsToMany extends Association
             $fields = $result->extract($keys);
             $found = false;
             foreach ($indexed as $i => $data) {
-                if ($fields === $data) {
+                $matched = false;
+                foreach ($keys as $key) {
+                    if (!array_key_exists($key, $data) || !array_key_exists($key, $fields)) {
+                        // Either side missing is no match.
+                        $matched = false;
+                    } elseif (is_object($data[$key]) && is_object($fields[$key])) {
+                        // If both sides are an object then use == so that value objects
+                        // are seen as equivalent.
+                        $matched = $fields[$key] == $data[$key];
+                    } else {
+                        // Use strict equality for all other values.
+                        $matched = $fields[$key] === $data[$key];
+                    }
+                    // Stop checks on first failure.
+                    if (!$matched) {
+                        break;
+                    }
+                }
+                if ($matched) {
                     unset($indexed[$i]);
                     $found = true;
                     break;
