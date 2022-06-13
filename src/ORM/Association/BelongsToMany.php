@@ -1267,29 +1267,29 @@ class BelongsToMany extends Association
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
         $keys = array_merge($foreignKey, $assocForeignKey);
-        $deletes = $indexed = $present = [];
+        $deletes = $unmatchedEntityKeys = $present = [];
 
         foreach ($jointEntities as $i => $entity) {
-            $indexed[$i] = $entity->extract($keys);
+            $unmatchedEntityKeys[$i] = $entity->extract($keys);
             $present[$i] = array_values($entity->extract($assocForeignKey));
         }
 
-        foreach ($existing as $result) {
-            $fields = $result->extract($keys);
+        foreach ($existing as $existingLink) {
+            $existingKeys = $existingLink->extract($keys);
             $found = false;
-            foreach ($indexed as $i => $data) {
+            foreach ($unmatchedEntityKeys as $i => $unmatchedKeys) {
                 $matched = false;
                 foreach ($keys as $key) {
-                    if (!array_key_exists($key, $data) || !array_key_exists($key, $fields)) {
+                    if (!array_key_exists($key, $unmatchedKeys) || !array_key_exists($key, $existingKeys)) {
                         // Either side missing is no match.
                         $matched = false;
-                    } elseif (is_object($data[$key]) && is_object($fields[$key])) {
+                    } elseif (is_object($unmatchedKeys[$key]) && is_object($existingKeys[$key])) {
                         // If both sides are an object then use == so that value objects
                         // are seen as equivalent.
-                        $matched = $fields[$key] == $data[$key];
+                        $matched = $existingKeys[$key] == $unmatchedKeys[$key];
                     } else {
                         // Use strict equality for all other values.
-                        $matched = $fields[$key] === $data[$key];
+                        $matched = $existingKeys[$key] === $unmatchedKeys[$key];
                     }
                     // Stop checks on first failure.
                     if (!$matched) {
@@ -1297,14 +1297,15 @@ class BelongsToMany extends Association
                     }
                 }
                 if ($matched) {
-                    unset($indexed[$i]);
+                    // Remove the unmatched entity so we don't look at it again.
+                    unset($unmatchedEntityKeys[$i]);
                     $found = true;
                     break;
                 }
             }
 
             if (!$found) {
-                $deletes[] = $result;
+                $deletes[] = $existingLink;
             }
         }
 
