@@ -18,6 +18,7 @@ namespace Cake\Cache;
 
 use Cake\Core\InstanceConfigTrait;
 use DateInterval;
+use DateTime;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -383,7 +384,9 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             return $ttl;
         }
         if ($ttl instanceof DateInterval) {
-            return (int)$ttl->format('%s');
+            return (int)DateTime::createFromFormat('U', '0')
+                ->add($ttl)
+                ->format('U');
         }
 
         throw new InvalidArgumentException('TTL values must be one of null, int, \DateInterval');
