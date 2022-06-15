@@ -75,6 +75,8 @@ class Sqlserver extends Driver
         'failoverPartner' => null,
         'loginTimeout' => null,
         'multiSubnetFailover' => null,
+        'encrypt' => null,
+        'trustServerCertificate' => null,
     ];
 
     /**
