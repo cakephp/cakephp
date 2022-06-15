@@ -151,6 +151,12 @@ class Sqlserver extends Driver
         if ($config['multiSubnetFailover'] !== null) {
             $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
         }
+        if ($config['encrypt'] !== null) {
+            $dsn .= ";Encrypt={$config['encrypt']}";
+        }
+        if ($config['trustServerCertificate'] !== null) {
+            $dsn .= ";TrustServerCertificate={$config['trustServerCertificate']}";
+        }
         $this->_connect($dsn, $config);
 
         $connection = $this->getConnection();
