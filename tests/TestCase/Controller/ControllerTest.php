@@ -21,6 +21,7 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -394,6 +395,20 @@ class ControllerTest extends TestCase
         $response = $controller->render();
         $this->assertSame('application/xml; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertTextStartsWith('<?xml', $response->getBody() . '', 'Body should be xml');
+    }
+
+    public function testRenderViewClassesMineExtMissingView()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all', '_ext' => 'json'],
+        ]);
+        $controller = new ContentTypesController($request, new Response());
+        $controller->plain();
+
+        $this->expectException(NotFoundException::class);
+        $response = $controller->render();
     }
 
     /**
