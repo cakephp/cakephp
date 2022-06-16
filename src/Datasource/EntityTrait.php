@@ -107,7 +107,7 @@ trait EntityTrait
      * not defined in the map will take its value. For example, `'*' => true`
      * means that any field not defined in the map will be accessible by default
      *
-     * @var array<bool>
+     * @var array<string, bool>
      */
     protected $_accessible = ['*' => true];
 
