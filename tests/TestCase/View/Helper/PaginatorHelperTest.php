@@ -2471,8 +2471,8 @@ class PaginatorHelperTest extends TestCase
             'limit' => 3,
             'sort' => 'Client.name',
             'order' => 'DESC',
-            'start' => 1,
-            'end' => 3,
+            'startPage' => 1,
+            'endPage' => 3,
             'alias' => 'Client',
         ], false);
         $input = 'Page {{page}} of {{pages}}, showing {{current}} records out of {{count}} total, ';
@@ -2511,8 +2511,8 @@ class PaginatorHelperTest extends TestCase
             'limit' => 5000,
             'sort' => 'Client.name',
             'order' => 'DESC',
-            'start' => 4566001,
-            'end' => 4569001,
+            'startPage' => 4566001,
+            'endPage' => 4569001,
             'alias' => 'Client',
         ], false);
 
@@ -2948,8 +2948,8 @@ class PaginatorHelperTest extends TestCase
             'hasPrevPage' => false,
             'hasNextPage' => true,
             'pageCount' => null,
-            'start' => 1,
-            'end' => 9,
+            'startPage' => 1,
+            'endPage' => 9,
             'sort' => null,
             'direction' => null,
             'limit' => null,

@@ -635,8 +635,8 @@ class PaginatorHelper extends Helper
             'pages' => (int)$paging['pageCount'],
             'current' => (int)$paging['count'],
             'count' => (int)$paging['totalCount'],
-            'start' => (int)$paging['start'],
-            'end' => (int)$paging['end'],
+            'start' => (int)$paging['startPage'],
+            'end' => (int)$paging['endPage'],
         ]);
 
         $alias = $this->param('alias');
