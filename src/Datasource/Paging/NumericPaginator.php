@@ -321,8 +321,8 @@ class NumericPaginator implements PaginatorInterface
             $end = $start + $params['count'] - 1;
         }
 
-        $params['startPage'] = $start;
-        $params['endPage'] = $end;
+        $params['start'] = $start;
+        $params['end'] = $end;
 
         return $params;
     }

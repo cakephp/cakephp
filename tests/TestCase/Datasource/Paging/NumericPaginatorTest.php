@@ -145,8 +145,8 @@ class NumericPaginatorTest extends TestCase
         $pagingParams = $result->pagingParams();
         $this->assertSame('published', $pagingParams['finder']);
 
-        $this->assertSame(1, $pagingParams['startPage']);
-        $this->assertSame(2, $pagingParams['endPage']);
+        $this->assertSame(1, $pagingParams['start']);
+        $this->assertSame(2, $pagingParams['end']);
         $this->assertFalse($pagingParams['hasNextPage']);
     }
 
