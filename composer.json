@@ -28,15 +28,15 @@
         "ext-mbstring": "*",
         "cakephp/chronos": "^2.2",
         "composer/ca-bundle": "^1.2",
-        "laminas/laminas-diactoros": "^2.2.2",
-        "laminas/laminas-httphandlerrunner": "^1.1 || ^2.0",
-        "league/container": "^4.2.0",
-        "psr/container": "^1.1 || ^2.0",
+        "laminas/laminas-diactoros": "^2.11",
+        "laminas/laminas-httphandlerrunner": "^2.1",
+        "league/container": "^4.2",
+        "psr/container": "^2.0",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
-        "psr/log": "^2.0 || ^3.0",
-        "psr/simple-cache": "^2.0 || ^3.0"
+        "psr/log": "^3.0",
+        "psr/simple-cache": "^3.0"
     },
     "replace": {
         "cakephp/cache": "self.version",
