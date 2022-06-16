@@ -1266,6 +1266,7 @@ class BelongsToMany extends Association
         $target = $this->getTarget();
         $belongsTo = $junction->getAssociation($target->getAlias());
         $foreignKey = (array)$this->getForeignKey();
+        /** @var array<string> $assocForeignKey */
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
         /** @var array<string> $keys */

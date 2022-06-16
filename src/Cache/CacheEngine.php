@@ -376,12 +376,9 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
         if (is_int($ttl)) {
             return $ttl;
         }
-        if ($ttl instanceof DateInterval) {
-            return (int)DateTime::createFromFormat('U', '0')
-                ->add($ttl)
-                ->format('U');
-        }
 
-        return (int)$ttl->format('%s');
+        return (int)DateTime::createFromFormat('U', '0')
+            ->add($ttl)
+            ->format('U');
     }
 }
