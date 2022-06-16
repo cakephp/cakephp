@@ -540,9 +540,9 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function setLogger(LoggerInterface $logger): void
+    public function getLogger(): ?LoggerInterface
     {
-        $this->logger = $logger;
+        return $this->logger;
     }
 
     /**

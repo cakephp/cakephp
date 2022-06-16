@@ -20,6 +20,7 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Closure;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Stringable;
 
 /**
@@ -333,4 +334,11 @@ interface DriverInterface extends LoggerAwareInterface
      * @return bool True if message was logged.
      */
     public function log(Stringable|string $message, array $context = []): bool;
+
+    /**
+     * Get the logger instance.
+     *
+     * @return \Psr\Log\LoggerInterface|null
+     */
+    public function getLogger(): ?LoggerInterface;
 }
