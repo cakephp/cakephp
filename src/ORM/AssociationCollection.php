@@ -350,10 +350,10 @@ class AssociationCollection implements IteratorAggregate
      * array. If true is passed, then it returns all association names
      * in this collection.
      *
-     * @param array|bool $keys the list of association names to normalize
+     * @param array|string|bool $keys the list of association names to normalize
      * @return array
      */
-    public function normalizeKeys(array|bool $keys): array
+    public function normalizeKeys(array|string|bool $keys): array
     {
         if ($keys === true) {
             $keys = $this->keys();

@@ -36,6 +36,7 @@ use SplObjectStorage;
  * that contains the association fields between the source and the target table.
  *
  * An example of a BelongsToMany association would be Article belongs to many Tags.
+ * In this example 'Article' is the source table and 'Tags' is the target table.
  */
 class BelongsToMany extends Association
 {
@@ -1269,29 +1270,42 @@ class BelongsToMany extends Association
 
         /** @var array<string> $keys */
         $keys = array_merge($foreignKey, $assocForeignKey);
-        $deletes = $indexed = $present = [];
+        $deletes = $unmatchedEntityKeys = $present = [];
 
         foreach ($jointEntities as $i => $entity) {
-            /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
-            $indexed[$i] = $entity->extract($keys);
-            /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+            $unmatchedEntityKeys[$i] = $entity->extract($keys);
             $present[$i] = array_values($entity->extract($assocForeignKey));
         }
 
-        /** @var \Cake\Datasource\EntityInterface $result */
-        foreach ($existing as $result) {
-            $fields = $result->extract($keys);
+        foreach ($existing as $existingLink) {
+            $existingKeys = $existingLink->extract($keys);
             $found = false;
-            foreach ($indexed as $i => $data) {
-                if ($fields === $data) {
-                    unset($indexed[$i]);
+            foreach ($unmatchedEntityKeys as $i => $unmatchedKeys) {
+                $matched = false;
+                foreach ($keys as $key) {
+                    if (is_object($unmatchedKeys[$key]) && is_object($existingKeys[$key])) {
+                        // If both sides are an object then use == so that value objects
+                        // are seen as equivalent.
+                        $matched = $existingKeys[$key] == $unmatchedKeys[$key];
+                    } else {
+                        // Use strict equality for all other values.
+                        $matched = $existingKeys[$key] === $unmatchedKeys[$key];
+                    }
+                    // Stop checks on first failure.
+                    if (!$matched) {
+                        break;
+                    }
+                }
+                if ($matched) {
+                    // Remove the unmatched entity so we don't look at it again.
+                    unset($unmatchedEntityKeys[$i]);
                     $found = true;
                     break;
                 }
             }
 
             if (!$found) {
-                $deletes[] = $result;
+                $deletes[] = $existingLink;
             }
         }
 

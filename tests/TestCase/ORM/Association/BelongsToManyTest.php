@@ -22,6 +22,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -55,6 +56,8 @@ class BelongsToManyTest extends TestCase
         'core.BinaryUuidItems',
         'core.BinaryUuidTags',
         'core.BinaryUuidItemsBinaryUuidTags',
+        'core.CompositeKeyArticles',
+        'core.CompositeKeyArticlesTags',
     ];
 
     /**
@@ -1117,6 +1120,78 @@ class BelongsToManyTest extends TestCase
 
         $refresh = $items->get($item->id, ['contain' => 'BinaryUuidTags']);
         $this->assertCount(1, $refresh->binary_uuid_tags, 'One tag should remain');
+    }
+
+    public function testReplaceLinksComplexTypeForeignKey()
+    {
+        $articles = $this->fetchTable('CompositeKeyArticles');
+        $tags = $this->fetchTable('Tags');
+
+        $articles->belongsToMany('Tags', [
+            'foreignKey' => ['author_id', 'created'],
+        ]);
+
+        $article = $articles->newEntity([
+            'author_id' => 1,
+            'body' => 'First post',
+            'created' => new DateTime(),
+        ]);
+        $articles->saveOrFail($article);
+        $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
+        $tag2 = $tags->find()->where(['Tags.name' => 'tag2'])->firstOrFail();
+
+        $findArticle = function ($article) use ($articles) {
+            return $articles->find()
+                ->where(['CompositeKeyArticles.author_id' => $article->author_id])
+                ->contain('Tags')
+                ->firstOrFail();
+        };
+
+        $article = $findArticle($article);
+        $this->assertEmpty($article->tags);
+
+        // Create the first link
+        $article = $articles->patchEntity($article, ['tags' => ['_ids' => [$tag1->id]]]);
+        $result = $articles->save($article, ['associated' => 'Tags']);
+        $this->assertNotEmpty($result);
+        $this->assertCount(1, $result->tags);
+        $this->assertEquals($tag1->id, $result->tags[0]->id);
+
+        // Add second tag. Reload tag objects so created fields have different
+        // instances.
+        $article = $findArticle($article);
+        $article = $articles->patchEntity($article, ['tags' => ['_ids' => [$tag1->id, $tag2->id]]]);
+        $result = $articles->save($article, ['associated' => 'Tags']);
+
+        // Check in memory entity.
+        $this->assertNotEmpty($result);
+        $this->assertCount(2, $result->tags);
+        $this->assertEquals('tag1', $result->tags[0]->name);
+        $this->assertEquals('tag2', $result->tags[1]->name);
+
+        // Reload to check persisted state.
+        $result = $findArticle($article);
+        $this->assertNotEmpty($result);
+        $this->assertCount(2, $result->tags);
+        $this->assertEquals('tag1', $result->tags[0]->name);
+        $this->assertEquals('tag2', $result->tags[1]->name);
+    }
+
+    public function testReplaceLinksMissingKeyData()
+    {
+        $articles = $this->fetchTable('Articles');
+        $tags = $this->fetchTable('Tags');
+
+        $articles->belongsToMany('Tags');
+        $article = $articles->find()->firstOrFail();
+
+        $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
+        $tag1->_joinData = new ArticlesTag(['tag_id' => 99]);
+
+        $article->tags = [$tag1];
+        $articles->saveOrFail($article, ['associated' => ['Tags']]);
+
+        $this->assertCount(1, $article->tags);
     }
 
     /**

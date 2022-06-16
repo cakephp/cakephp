@@ -359,6 +359,20 @@ class ControllerTest extends TestCase
         $this->assertTextStartsWith('<?xml', $response->getBody() . '', 'Body should be xml');
     }
 
+    public function testRenderViewClassesMineExtMissingView()
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all', '_ext' => 'json'],
+        ]);
+        $controller = new ContentTypesController($request);
+        $controller->plain();
+
+        $this->expectException(NotFoundException::class);
+        $controller->render();
+    }
+
     /**
      * test view rendering changing response
      */

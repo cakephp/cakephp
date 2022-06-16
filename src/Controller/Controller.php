@@ -737,6 +737,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                     return $typeMap[$extType];
                 }
             }
+
+            throw new NotFoundException();
         }
 
         // Use accept header based negotiation.
