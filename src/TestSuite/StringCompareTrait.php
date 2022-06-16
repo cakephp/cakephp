@@ -55,7 +55,7 @@ trait StringCompareTrait
             $path = $this->_compareBasePath . $path;
         }
 
-        $this->_updateComparisons ??= env('UPDATE_TEST_COMPARISON_FILES');
+        $this->_updateComparisons ??= env('UPDATE_TEST_COMPARISON_FILES') ?: false;
 
         if ($this->_updateComparisons) {
             file_put_contents($path, $result);
