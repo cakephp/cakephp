@@ -275,8 +275,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * Determine the controller class name based on current request and controller param
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
-     * @return string|null
-     * @psalm-return class-string<\Cake\Controller\Controller>|null
+     * @return class-string<\Cake\Controller\Controller>|null
      */
     public function getControllerClass(ServerRequest $request): ?string
     {

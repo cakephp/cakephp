@@ -36,11 +36,11 @@ class CacheRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct classname or null.
-     * @psalm-return class-string|null
+     * @return class-string<\Cake\Cache\CacheEngine>|null Either the correct classname or null.
      */
     protected function _resolveClassName(string $class): ?string
     {
+        /** @var class-string<\Cake\Cache\CacheEngine>|null */
         return App::className($class, 'Cache/Engine', 'Engine');
     }
 

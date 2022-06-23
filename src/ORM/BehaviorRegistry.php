@@ -100,11 +100,11 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct class name or null.
-     * @psalm-return class-string|null
+     * @return class-string<\Cake\ORM\Behavior>|null Either the correct class name or null.
      */
     protected function _resolveClassName(string $class): ?string
     {
+        /** @var class-string<\Cake\ORM\Behavior>|null */
         return static::className($class);
     }
 

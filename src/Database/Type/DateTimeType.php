@@ -426,8 +426,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * Get the classname used for building objects.
      *
-     * @return string
-     * @psalm-return class-string<\DateTime>|class-string<\DateTimeImmutable>
+     * @return class-string<\DateTime>|class-string<\DateTimeImmutable>
      */
     public function getDateTimeClassName(): string
     {

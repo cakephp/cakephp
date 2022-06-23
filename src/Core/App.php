@@ -51,8 +51,7 @@ class App
      * @param string $class Class name
      * @param string $type Type of class
      * @param string $suffix Class name suffix
-     * @return string|null Namespaced class name, null if the class is not found.
-     * @psalm-return class-string|null
+     * @return class-string|null Namespaced class name, null if the class is not found.
      */
     public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {
