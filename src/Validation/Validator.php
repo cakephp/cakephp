@@ -314,8 +314,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Returns the provider stored under that name if it exists.
      *
      * @param string $name The name under which the provider should be set.
-     * @return object|string|null
-     * @psalm-return object|class-string|null
+     * @return object|class-string|null
      */
     public function getProvider(string $name): object|string|null
     {
@@ -335,8 +334,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Returns the default provider stored under that name if it exists.
      *
      * @param string $name The name under which the provider should be retrieved.
-     * @return object|string|null
-     * @psalm-return object|class-string|null
+     * @return object|class-string|null
      */
     public static function getDefaultProvider(string $name): object|string|null
     {

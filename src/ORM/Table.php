@@ -693,8 +693,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the class used to hydrate rows for this table.
      *
-     * @return string
-     * @psalm-return class-string<\Cake\Datasource\EntityInterface>
+     * @return class-string<\Cake\Datasource\EntityInterface>
      */
     public function getEntityClass(): string
     {

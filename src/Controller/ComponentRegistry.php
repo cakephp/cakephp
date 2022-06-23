@@ -67,11 +67,11 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}.
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct class name or null.
-     * @psalm-return class-string|null
+     * @return class-string<\Cake\Controller\Component>|null Either the correct class name or null.
      */
     protected function _resolveClassName(string $class): ?string
     {
+        /** @var class-string<\Cake\Controller\Component>|null */
         return App::className($class, 'Controller/Component', 'Component');
     }
 

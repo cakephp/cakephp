@@ -979,9 +979,8 @@ abstract class TestCase extends BaseTestCase
      *
      * @param string $alias The model to get a mock for.
      * @param array<string, mixed> $options The config data for the mock's constructor.
-     * @return string
+     * @return class-string<\Cake\ORM\Table>
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @psalm-return class-string<\Cake\ORM\Table>
      */
     protected function _getTableClassName(string $alias, array $options): string
     {
