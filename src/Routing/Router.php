@@ -131,7 +131,7 @@ class Router
      *
      * @var \Cake\Http\ServerRequest|null
      */
-    protected static ?ServerRequest $_request;
+    protected static ?ServerRequest $_request = null;
 
     /**
      * Initial state is populated the first time reload() is called which is at the bottom
