@@ -553,9 +553,12 @@ class ServerRequest implements ServerRequestInterface
     protected function _acceptHeaderDetector(array $detect): bool
     {
         $content = new ContentTypeNegotiation();
-        $accepted = $content->preferredType($this, $detect['accept']);
+        $options = $detect['accept'];
+        // We add text/html as the browsers often combine xml + html types together.
+        $options[] = 'text/html';
+        $accepted = $content->preferredType($this, $options);
 
-        return $accepted !== null;
+        return $accepted !== null && $accepted != 'text/html';
     }
 
     /**
