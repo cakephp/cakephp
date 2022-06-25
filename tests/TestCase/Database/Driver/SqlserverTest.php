@@ -150,6 +150,8 @@ class SqlserverTest extends TestCase
         $expected['multiSubnetFailover'] = null;
         $expected['port'] = null;
         $expected['log'] = false;
+        $expected['encrypt'] = null;
+        $expected['trustServerCertificate'] = null;
 
         $connection = $this->getMockBuilder('PDO')
             ->disableOriginalConstructor()

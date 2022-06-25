@@ -16,13 +16,13 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\ORM\Locator;
 
-use Cake\Core\Exception\CakeException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\LocatorAwareStub;
+use UnexpectedValueException;
 
 /**
  * LocatorAwareTrait test case
@@ -81,10 +81,23 @@ class LocatorAwareTraitTest extends TestCase
 
     public function testfetchTableException()
     {
-        $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('You must provide an `$alias` or set the `$defaultTable` property.');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+        );
 
         $stub = new LocatorAwareStub();
+        $stub->fetchTable();
+    }
+
+    public function testfetchTableExceptionForEmptyString()
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+        );
+
+        $stub = new LocatorAwareStub('');
         $stub->fetchTable();
     }
 }

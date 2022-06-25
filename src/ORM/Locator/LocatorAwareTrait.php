@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Locator;
 
-use Cake\Core\Exception\CakeException;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Table;
+use UnexpectedValueException;
 
 /**
  * Contains method for setting and accessing LocatorInterface instance
@@ -81,8 +81,10 @@ trait LocatorAwareTrait
     public function fetchTable(?string $alias = null, array $options = []): Table
     {
         $alias = $alias ?? $this->defaultTable;
-        if ($alias === null) {
-            throw new CakeException('You must provide an `$alias` or set the `$defaultTable` property.');
+        if (empty($alias)) {
+            throw new UnexpectedValueException(
+                'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+            );
         }
 
         return $this->getTableLocator()->get($alias, $options);

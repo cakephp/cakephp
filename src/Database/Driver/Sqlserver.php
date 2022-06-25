@@ -80,6 +80,8 @@ class Sqlserver extends Driver
         'failoverPartner' => null,
         'loginTimeout' => null,
         'multiSubnetFailover' => null,
+        'encrypt' => null,
+        'trustServerCertificate' => null,
     ];
 
     /**
@@ -148,6 +150,12 @@ class Sqlserver extends Driver
         }
         if ($config['multiSubnetFailover'] !== null) {
             $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
+        }
+        if ($config['encrypt'] !== null) {
+            $dsn .= ";Encrypt={$config['encrypt']}";
+        }
+        if ($config['trustServerCertificate'] !== null) {
+            $dsn .= ";TrustServerCertificate={$config['trustServerCertificate']}";
         }
 
         $this->pdo = $this->createPdo($dsn, $config);
