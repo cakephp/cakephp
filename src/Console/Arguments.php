@@ -129,7 +129,7 @@ class Arguments
     /**
      * Get an array of all the options
      *
-     * @return array<string, string|int|bool|null>
+     * @return array<string, string|bool|null>
      */
     public function getOptions(): array
     {
