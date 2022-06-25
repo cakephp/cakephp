@@ -153,6 +153,8 @@ class SqlserverTest extends TestCase
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
         $expected['port'] = null;
+        $expected['encrypt'] = null;
+        $expected['trustServerCertificate'] = null;
 
         $connection = $this->getMockBuilder('stdClass')
             ->addMethods(['exec', 'quote'])
