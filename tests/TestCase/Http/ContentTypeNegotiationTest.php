@@ -36,7 +36,7 @@ class ContentTypeNegotiationTest extends TestCase
             ],
         ]);
         $this->assertEquals('text/html', $content->preferredType($request));
-        $this->assertEquals('text/html', $content->preferredType($request, ['text/html', 'application/json']));
+        $this->assertEquals('text/html', $content->preferredType($request, ['text/html', 'application/xml']));
         $this->assertEquals('application/xml', $content->preferredType($request, ['application/xml']));
         $this->assertNull($content->preferredType($request, ['application/json']));
     }
