@@ -543,7 +543,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getExpiry(): DateTimeInterface|null
+    public function getExpiry(): ?DateTimeInterface
     {
         return $this->expiresAt;
     }

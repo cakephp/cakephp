@@ -144,7 +144,7 @@ interface CookieInterface
      *
      * @return \DateTimeInterface|null Timestamp of expiry or null
      */
-    public function getExpiry(): DateTimeInterface|null;
+    public function getExpiry(): ?DateTimeInterface;
 
     /**
      * Get the timestamp from the expiration time

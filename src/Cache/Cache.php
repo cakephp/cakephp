@@ -19,6 +19,7 @@ namespace Cake\Cache;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Core\StaticConfigTrait;
 use Closure;
+use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
 /**
@@ -201,7 +202,7 @@ class Cache
      * @param string $config The name of the configured cache backend.
      * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      */
-    public static function pool(string $config)
+    public static function pool(string $config): CacheInterface&CacheEngineInterface
     {
         if (!static::$_enabled) {
             return new NullEngine();

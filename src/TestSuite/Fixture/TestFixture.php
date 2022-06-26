@@ -16,6 +16,8 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Schema\SqlGeneratorInterface;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -57,7 +59,7 @@ class TestFixture implements FixtureInterface
      * @var \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $_schema;
+    protected TableSchemaInterface&SqlGeneratorInterface $_schema;
 
     /**
      * Instantiate the fixture.
@@ -224,7 +226,7 @@ class TestFixture implements FixtureInterface
      *
      * @return \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      */
-    public function getTableSchema()
+    public function getTableSchema(): TableSchemaInterface&SqlGeneratorInterface
     {
         return $this->_schema;
     }

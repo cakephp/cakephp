@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
+use Cake\Cache\CacheEngineInterface;
+use Psr\SimpleCache\CacheInterface;
+
 /**
  * Constructs and stores instances of translators that can be
  * retrieved by name and locale.
@@ -168,7 +171,7 @@ class TranslatorRegistry
      * @param \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface $cacher The cacher instance.
      * @return void
      */
-    public function setCacher($cacher): void
+    public function setCacher(CacheInterface&CacheEngineInterface $cacher): void
     {
         $this->_cacher = $cacher;
     }
