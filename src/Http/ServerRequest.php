@@ -133,7 +133,7 @@ class ServerRequest implements ServerRequestInterface
             'accept' => ['application/xml', 'text/xml'],
             'exclude' => ['text/html'],
             'param' => '_ext',
-            'value' => 'xml'
+            'value' => 'xml',
         ],
     ];
 
