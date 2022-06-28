@@ -238,6 +238,7 @@ jobs:
     - name: Run psalm
       if: always()
       run: vendor/bin/psalm.phar --output-format=github
+      continue-on-error: true
 
     - name: Run phpstan
       if: always()
