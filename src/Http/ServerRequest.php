@@ -563,9 +563,8 @@ class ServerRequest implements ServerRequestInterface
         // Some detectors overlap with the default browser Accept header
         // For these types we use an exclude list to refine our content type
         // detection.
-        $exclude = null;
-        if (!empty($detect['exclude'])) {
-            $exclude = $detect['exclude'];
+        $exclude = $detect['exclude'] ?: null;
+        if ($exclude) {
             $options = array_merge($options, $exclude);
         }
 
