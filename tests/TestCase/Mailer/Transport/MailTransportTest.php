@@ -61,7 +61,7 @@ class MailTransportTest extends TestCase
      */
     public function testSendData(): void
     {
-        $eol = version_compare(PHP_VERSION, '8.0', '>=') ? "\r\n" : "\n";
+        $eol = "\r\n";
 
         $message = new Message();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
