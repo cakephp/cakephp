@@ -37,8 +37,6 @@ class FilesystemTest extends TestCase
     {
         parent::setUp();
 
-        $this->skipIf(version_compare(PHP_VERSION, '8.1.0-dev', '>='));
-
         $this->vfs = vfsStream::setup('root');
         $this->vfsPath = vfsStream::url('root');
 
