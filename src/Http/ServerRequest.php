@@ -130,7 +130,12 @@ class ServerRequest implements ServerRequestInterface
         'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
         'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
-        'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
+        'xml' => [
+            'accept' => ['application/xml', 'text/xml'],
+            'exclude' => ['text/html'],
+            'param' => '_ext',
+            'value' => 'xml',
+        ],
     ];
 
     /**
@@ -560,9 +565,25 @@ class ServerRequest implements ServerRequestInterface
     protected function _acceptHeaderDetector(array $detect): bool
     {
         $content = new ContentTypeNegotiation();
-        $accepted = $content->preferredType($this, $detect['accept']);
+        $options = $detect['accept'];
 
-        return $accepted !== null;
+        // Some detectors overlap with the default browser Accept header
+        // For these types we use an exclude list to refine our content type
+        // detection.
+        $exclude = $detect['exclude'] ?? null;
+        if ($exclude) {
+            $options = array_merge($options, $exclude);
+        }
+
+        $accepted = $content->preferredType($this, $options);
+        if ($accepted === null) {
+            return false;
+        }
+        if ($exclude && in_array($accepted, $exclude, true)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

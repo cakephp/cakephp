@@ -92,6 +92,12 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'text/plain, */*');
         $this->assertFalse($request->is('json'));
+
+        $request = new ServerRequest();
+        $request = $request->withEnv('HTTP_ACCEPT', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8');
+        $this->assertFalse($request->is('json'));
+        $this->assertFalse($request->is('xml'));
+        $this->assertFalse($request->is('xml'));
     }
 
     public function testConstructor(): void
