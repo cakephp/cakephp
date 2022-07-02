@@ -26,6 +26,21 @@ class ContentTypeNegotiationTest extends TestCase
         $this->assertNull($content->preferredType($request));
     }
 
+    public function testPreferredTypeFirefoxHtml()
+    {
+        $content = new ContentTypeNegotiation();
+        $request = new ServerRequest([
+            'url' => '/dashboard',
+            'environment' => [
+                'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            ],
+        ]);
+        $this->assertEquals('text/html', $content->preferredType($request));
+        $this->assertEquals('text/html', $content->preferredType($request, ['text/html', 'application/xml']));
+        $this->assertEquals('application/xml', $content->preferredType($request, ['application/xml']));
+        $this->assertNull($content->preferredType($request, ['application/json']));
+    }
+
     public function testPreferredTypeFirstMatch()
     {
         $content = new ContentTypeNegotiation();
