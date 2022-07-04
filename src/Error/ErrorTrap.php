@@ -200,6 +200,12 @@ class ErrorTrap
      */
     public function logger(): ErrorLoggerInterface
     {
+        $oldConfig = $this->getConfig('errorLogger');
+        if ($oldConfig !== null) {
+            deprecationWarning('The `errorLogger` configuration key is deprecated. Use `logger` instead.');
+            $this->setConfig('logger', $oldConfig);
+        }
+
         /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
         $class = $this->getConfig('logger', $this->_defaultConfig['logger']);
         if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
