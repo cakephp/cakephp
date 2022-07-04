@@ -179,7 +179,7 @@ jobs:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
-        coverage: none
+        coverage: pcov
 
     - name: Setup SQLServer
       run: |
@@ -210,9 +210,13 @@ jobs:
     - name: Run PHPUnit (autoquote enabled)
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
+        CODECOVERAGE: 1
       run: |
           set CAKE_TEST_AUTOQUOTE=1
-          vendor/bin/phpunit --verbose --testsuite=database
+          vendor/bin/phpunit --verbose --testsuite=database  --coverage-clover=coverage.xml
+
+    - name: Submit code coverage
+      uses: codecov/codecov-action@v3
 
   cs-stan:
     name: Coding Standard & Static Analysis
