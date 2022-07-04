@@ -192,7 +192,7 @@ if (!function_exists('env')) {
      * @return string|float|int|bool|null Environment variable setting.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#env
      */
-    function env(string $key, string|bool|null $default = null): string|float|int|bool|null
+    function env(string $key, string|float|int|bool|null $default = null): string|float|int|bool|null
     {
         if ($key === 'HTTPS') {
             if (isset($_SERVER['HTTPS'])) {
