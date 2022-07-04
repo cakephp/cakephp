@@ -1357,6 +1357,26 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test sending file in requests.
+     */
+    public function testSendUnlinked(): void
+    {
+        $filename = TMP . 'cake_test_send_unlink.php';
+        file_put_contents(
+            $filename,
+            file_get_contents(
+                TEST_APP . 'TestApp' . DS . 'Controller' . DS . 'PostsController.php'
+            )
+        );
+
+        $this->get('/posts/file?file=' . $filename);
+        $this->assertFileResponse($filename);
+        $this->assertFileExists($filename);
+        system("rm -rf {$filename}");
+        $this->assertFileDoesNotExist($filename);
+    }
+
+    /**
      * Test sending file with psr7 stack
      */
     public function testSendFileHttpServer(): void

@@ -138,6 +138,11 @@ class PostsController extends AppController
      */
     public function file()
     {
+        $filename = $this->request->getQuery('file');
+        if ($filename) {
+            return $this->response->withFile($filename);
+        }
+
         return $this->response->withFile(__FILE__);
     }
 
