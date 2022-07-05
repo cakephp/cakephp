@@ -28,6 +28,20 @@ use RuntimeException;
 class SecurityTest extends TestCase
 {
     /**
+     * Test engine
+     */
+    public function testEngineEquivalence(): void
+    {
+        $restore = Security::engine();
+        $newEngine = new OpenSsl();
+
+        Security::engine($newEngine);
+
+        $this->assertSame($newEngine, Security::engine());
+        $this->assertNotSame($restore, Security::engine());
+    }
+
+    /**
      * testHash method
      */
     public function testHash(): void
@@ -183,20 +197,6 @@ class SecurityTest extends TestCase
         $txt = '';
         $key = 'This is a key that is long enough to be ok.';
         Security::decrypt($txt, $key);
-    }
-
-    /**
-     * Test engine
-     */
-    public function testEngineEquivalence(): void
-    {
-        $restore = Security::engine();
-        $newEngine = new OpenSsl();
-
-        Security::engine($newEngine);
-
-        $this->assertSame($newEngine, Security::engine());
-        $this->assertNotSame($restore, Security::engine());
     }
 
     /**

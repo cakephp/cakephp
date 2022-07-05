@@ -163,17 +163,15 @@ class Security
      */
     public static function engine($instance = null)
     {
-        if ($instance === null && static::$_instance === null) {
-            if (extension_loaded('openssl')) {
-                $instance = new OpenSsl();
-            }
-        }
         if ($instance) {
-            static::$_instance = $instance;
+            return static::$_instance = $instance;
         }
         if (isset(static::$_instance)) {
             /** @psalm-suppress LessSpecificReturnStatement */
             return static::$_instance;
+        }
+        if (extension_loaded('openssl')) {
+            return static::$_instance = new OpenSsl();
         }
         throw new InvalidArgumentException(
             'No compatible crypto engine available. ' .
