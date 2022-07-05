@@ -82,6 +82,14 @@ class ErrorTrapTest extends TestCase
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
     }
 
+    public function testLoggerConfigCompatibility()
+    {
+        $this->deprecated(function () {
+            $trap = new ErrorTrap(['errorLogger' => ErrorLogger::class]);
+            $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
+        });
+    }
+
     public function testLoggerHandleUnsafeOverwrite()
     {
         $trap = new ErrorTrap();
