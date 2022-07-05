@@ -1361,19 +1361,16 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testSendUnlinked(): void
     {
-        $filename = TMP . 'cake_test_send_unlink.php';
-        file_put_contents(
-            $filename,
-            file_get_contents(
-                TEST_APP . 'TestApp' . DS . 'Controller' . DS . 'PostsController.php'
-            )
-        );
+        $file = microtime(true) . 'txt';
+        $path = TMP . $file;
+        file_put_contents($path, 'testing unlink');
 
-        $this->get('/posts/file?file=' . $filename);
-        $this->assertFileResponse($filename);
-        $this->assertFileExists($filename);
-        system("rm -rf {$filename}");
-        $this->assertFileDoesNotExist($filename);
+        $this->get("/posts/file?file={$file}");
+        $this->assertResponseOk();
+        $this->assertFileResponse($path);
+        $this->assertFileExists($path);
+        system("rm -rf {$path}");
+        $this->assertFileDoesNotExist($path);
     }
 
     /**
