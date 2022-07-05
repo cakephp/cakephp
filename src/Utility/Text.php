@@ -53,7 +53,7 @@ class Text
      * Generate a random UUID version 4
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
-     * Instead, you should use the openssl or mcrypt extensions.
+     * Instead, you should use `Security::randomBytes()` or `Security::randomString()` instead.
      *
      * It should also not be used to create identifiers that have security implications, such as
      * 'unguessable' URL identifiers. Instead, you should use {@link \Cake\Utility\Security::randomBytes()}` for that.
