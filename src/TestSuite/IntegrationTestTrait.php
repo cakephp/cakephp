@@ -1322,10 +1322,10 @@ trait IntegrationTestTrait
         $this->assertThat(null, new FileSent($this->_response), $verboseMessage);
         $this->assertThat($expected, new FileSentAs($this->_response), $verboseMessage);
 
-        $body = $this->_response->getBody();
-        if ($body) {
-            $body->close();
+        if (!$this->_response) {
+            return;
         }
+        $this->_response->getBody()->close();
     }
 
     /**
