@@ -1197,26 +1197,23 @@ class ConnectionTest extends TestCase
      */
     public function testNestedTransactionRollbackExceptionThrown(): void
     {
-        $this->rollbackSourceLine = -1;
-
+        $executedNested = false;
         $e = null;
         try {
-            $this->connection->transactional(function () {
-                $this->connection->transactional(function () {
+            $this->connection->transactional(function () use (&$executedNested) {
+                $this->connection->transactional(function () use (&$executedNested) {
+                    $executedNested = true;
+
                     return false;
                 });
-                $this->rollbackSourceLine = __LINE__ - 1;
-
-                return true;
             });
 
             $this->fail('NestedTransactionRollbackException should be thrown');
         } catch (NestedTransactionRollbackException $e) {
         }
 
-        $trace = $e->getTrace();
-        $this->assertEquals(__FILE__, $trace[1]['file']);
-        $this->assertEquals($this->rollbackSourceLine, $trace[1]['line']);
+        $this->assertNotNull($e);
+        $this->assertTrue($executedNested);
     }
 
     /**
