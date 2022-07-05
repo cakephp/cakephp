@@ -665,7 +665,7 @@ class TableLocatorTest extends TestCase
     /**
      * testInstanceSetButNotOptions
      *
-     * Tests that mock model will not thrown an exception if model fetched with options.
+     * Tests that mock model will not throw an exception if model fetched with options.
      */
     public function testInstanceSetButNotOptions(): void
     {
