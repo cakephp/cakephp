@@ -26,11 +26,6 @@ parameters:
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
-			path: src/Collection/Collection.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Collection.php
@@ -56,19 +51,9 @@ parameters:
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
-			path: src/Collection/Iterator/TreeIterator.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Iterator/TreeIterator.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
-			path: src/Collection/Iterator/TreePrinter.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
@@ -78,11 +63,6 @@ parameters:
 		-
 			message: "#^Method Cake\\\\Collection\\\\Iterator\\\\ZipIterator\\:\\:toArray\\(\\) should return array but returns array\\<array, array\\>\\.$#"
 			count: 1
-			path: src/Collection/Iterator/ZipIterator.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
@@ -251,6 +231,11 @@ parameters:
 			path: src/Error/Debugger.php
 
 		-
+			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			count: 1
+			path: src/Error/Renderer/ConsoleExceptionRenderer.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Event/EventManager.php
@@ -396,11 +381,6 @@ parameters:
 			path: src/ORM/Query.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
-			count: 2
-			path: src/ORM/ResultSet.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/ORM/ResultSet.php
@@ -544,9 +524,4 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
-
-		-
-			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
-			count: 1
-			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
