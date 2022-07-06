@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\DifferenceFormatterInterface;
+use Cake\Core\Exception\CakeException;
 use Closure;
 use DateTime;
 use DateTimeZone;
@@ -359,6 +360,9 @@ trait DateFormatTrait
             null,
             $pattern
         );
+        if (!$formatter) {
+            throw new CakeException('Unable to create IntlDateFormatter instance');
+        }
         $formatter->setLenient(static::$lenientParsing);
 
         $time = $formatter->parse($time);
