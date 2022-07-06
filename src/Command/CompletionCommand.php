@@ -94,7 +94,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         return match ($args->getArgument('mode')) {
             'commands' => $this->getCommands($args, $io),
@@ -171,7 +171,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
-    protected function getOptions(Arguments $args, ConsoleIo $io): ?int
+    protected function getOptions(Arguments $args, ConsoleIo $io): int
     {
         $name = $args->getArgument('command');
         $subcommand = $args->getArgument('subcommand');

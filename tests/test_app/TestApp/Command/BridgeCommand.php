@@ -9,7 +9,7 @@ use Cake\Console\ConsoleIo;
 
 class BridgeCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $name = $io->ask('What is your name');
 
@@ -28,5 +28,7 @@ class BridgeCommand extends Command
         }
 
         $io->out('You may pass.');
+
+        return static::CODE_SUCCESS;
     }
 }

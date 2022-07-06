@@ -9,8 +9,10 @@ use Cake\Console\ConsoleIo;
 
 class SampleCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $io->out('This is the main method called from SampleCommand');
+
+        return static::CODE_SUCCESS;
     }
 }

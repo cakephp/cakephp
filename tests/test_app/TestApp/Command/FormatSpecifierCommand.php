@@ -9,8 +9,10 @@ use Cake\Console\ConsoleIo;
 
 class FormatSpecifierCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $io->out('Be careful! %s is a format specifier!');
+
+        return static::CODE_SUCCESS;
     }
 }

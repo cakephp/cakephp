@@ -10,10 +10,12 @@ use Cake\Console\ConsoleOptionParser;
 
 class IntegrationCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $io->out('arg: ' . $args->getArgument('arg'));
         $io->out('opt: ' . $args->getOption('opt'));
+
+        return static::CODE_SUCCESS;
     }
 
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser

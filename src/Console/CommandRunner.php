@@ -166,9 +166,6 @@ class CommandRunner implements EventDispatcherInterface
         $command = $this->getCommand($io, $commands, $name);
         $result = $this->runCommand($command, $argv, $io);
 
-        if ($result === null) {
-            return CommandInterface::CODE_SUCCESS;
-        }
         if ($result >= 0 && $result <= 255) {
             return $result;
         }
@@ -317,9 +314,9 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\CommandInterface $command The command to run.
      * @param array $argv The CLI arguments to invoke.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null Exit code
+     * @return int Exit code
      */
-    protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
+    protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): int
     {
         try {
             return $command->run($argv, $io);

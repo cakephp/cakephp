@@ -54,7 +54,7 @@ interface CommandInterface
      *
      * @param array $argv Arguments from the CLI environment.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null Exit code or null for success.
+     * @return int Exit code.
      */
-    public function run(array $argv, ConsoleIo $io): ?int;
+    public function run(array $argv, ConsoleIo $io): int;
 }

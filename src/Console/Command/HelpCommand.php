@@ -55,7 +55,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $commands = $this->commands->getIterator();
         if ($commands instanceof ArrayIterator) {

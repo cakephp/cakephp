@@ -9,11 +9,11 @@ use Cake\Console\ConsoleIo;
 
 class NonInteractiveCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $result = $io->ask('What?', 'Default!');
         $io->quiet('Result: ' . $result);
 
-        return null;
+        return static::CODE_SUCCESS;
     }
 }

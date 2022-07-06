@@ -14,7 +14,7 @@ class DemoCommand extends Command
         return 'This is a demo command';
     }
 
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $io->quiet('Quiet!');
         $io->out('Demo Command!');
@@ -23,6 +23,6 @@ class DemoCommand extends Command
             $io->out($args->getArgumentAt(0));
         }
 
-        return null;
+        return static::CODE_SUCCESS;
     }
 }
