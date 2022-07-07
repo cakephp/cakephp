@@ -144,7 +144,7 @@ jobs:
       uses: codecov/codecov-action@v3
 
   testsuite-windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     name: Windows - PHP 8.0 & SQL Server
 
     env:
