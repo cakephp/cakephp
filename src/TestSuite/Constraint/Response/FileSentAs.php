@@ -35,8 +35,12 @@ class FileSentAs extends ResponseBase
      */
     public function matches($other): bool
     {
-        /** @psalm-suppress PossiblyNullReference */
-        return $this->response->getFile()->getPathName() === $other;
+        $file = $this->response->getFile();
+        if (!$file) {
+            return false;
+        }
+
+        return $file->getPathName() === $other;
     }
 
     /**
