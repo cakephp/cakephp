@@ -646,13 +646,14 @@ class Folder
         if ($this->create($nextPathname, $mode)) {
             if (!file_exists($pathname)) {
                 $old = umask(0);
-                umask($old);
                 if (mkdir($pathname, $mode, true)) {
                     $this->_messages[] = sprintf('%s created', $pathname);
+                    umask($old);
 
                     return true;
                 }
                 $this->_errors[] = sprintf('%s NOT created', $pathname);
+                umask($old);
 
                 return false;
             }
