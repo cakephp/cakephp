@@ -143,6 +143,14 @@ class PostsController extends AppController
      */
     public function file()
     {
+        $filename = $this->request->getQuery('file');
+        if ($filename) {
+            $path = TMP . $filename;
+
+            return $this->response->withFile($path, ['download' => true])
+                ->withHeader('Content-Disposition', "attachment;filename=*UTF-8''{$filename}");
+        }
+
         return $this->response->withFile(__FILE__);
     }
 

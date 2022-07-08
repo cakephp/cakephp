@@ -53,7 +53,7 @@ abstract class AbstractLocator implements LocatorInterface
         unset($storeOptions['allowFallbackClass']);
 
         if (isset($this->instances[$alias])) {
-            if (!empty($storeOptions) && $this->options[$alias] !== $storeOptions) {
+            if (!empty($storeOptions) && isset($this->options[$alias]) && $this->options[$alias] !== $storeOptions) {
                 throw new RuntimeException(sprintf(
                     'You cannot configure "%s", it already exists in the registry.',
                     $alias

@@ -657,4 +657,18 @@ class TableLocatorTest extends TestCase
         $table = $this->_locator->get('FooBar');
         $this->assertInstanceOf(ArticlesTable::class, $table);
     }
+
+    /**
+     * testInstanceSetButNotOptions
+     *
+     * Tests that mock model will not throw an exception if model fetched with options.
+     */
+    public function testInstanceSetButNotOptions(): void
+    {
+        $this->setTableLocator($this->_locator);
+        $mock = $this->getMockForModel('Articles', ['findPublished']);
+        $table = $this->_locator->get('Articles', ['className' => ArticlesTable::class]);
+
+        $this->assertSame($table, $mock);
+    }
 }

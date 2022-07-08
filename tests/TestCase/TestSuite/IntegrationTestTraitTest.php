@@ -1345,6 +1345,23 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test sending file in requests.
+     */
+    public function testSendUnlinked(): void
+    {
+        $file = microtime(true) . 'txt';
+        $path = TMP . $file;
+        file_put_contents($path, 'testing unlink');
+
+        $this->get("/posts/file?file={$file}");
+        $this->assertResponseOk();
+        $this->assertFileResponse($path);
+        $this->assertFileExists($path);
+        system("rm -rf {$path}");
+        $this->assertFileDoesNotExist($path);
+    }
+
+    /**
      * Test sending file with psr7 stack
      */
     public function testSendFileHttpServer(): void
