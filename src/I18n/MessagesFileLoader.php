@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use Locale;
-use RuntimeException;
 
 /**
  * A generic translations package factory that will load translations files
@@ -104,7 +104,7 @@ class MessagesFileLoader
      * package containing the messages loaded from the file.
      *
      * @return \Cake\I18n\Package|false
-     * @throws \RuntimeException if no file parser class could be found for the specified
+     * @throws \Cake\Core\Exception\CakeException if no file parser class could be found for the specified
      * file extension.
      */
     public function __invoke(): Package|false
@@ -119,7 +119,7 @@ class MessagesFileLoader
         $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
-            throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
+            throw new CakeException(sprintf('Could not find class %s', "{$name}FileParser"));
         }
 
         /** @var \Cake\I18n\Parser\MoFileParser|\Cake\I18n\Parser\PoFileParser $object */

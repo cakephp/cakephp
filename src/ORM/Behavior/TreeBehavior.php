@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM\Behavior;
 
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
@@ -25,7 +26,6 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Makes the table to which this is attached to behave like a nested set and
@@ -96,7 +96,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
-     * @throws \RuntimeException if the parent to set for the node is invalid
+     * @throws \Cake\Database\Exception\DatabaseException if the parent to set for the node is invalid
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity): void
     {
@@ -108,7 +108,7 @@ class TreeBehavior extends Behavior
         $level = $config['level'];
 
         if ($parent && $entity->get($primaryKey) === $parent) {
-            throw new RuntimeException("Cannot set a node's parent as itself");
+            throw new DatabaseException("Cannot set a node's parent as itself");
         }
 
         if ($isNew) {
@@ -256,7 +256,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity to re-parent
      * @param mixed $parent the id of the parent to set
      * @return void
-     * @throws \RuntimeException if the parent to set to the entity is not valid
+     * @throws \Cake\Database\Exception\DatabaseException if the parent to set to the entity is not valid
      */
     protected function _setParent(EntityInterface $entity, mixed $parent): void
     {
@@ -269,7 +269,7 @@ class TreeBehavior extends Behavior
         $left = $entity->get($config['left']);
 
         if ($parentLeft > $left && $parentLeft < $right) {
-            throw new RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 'Cannot use node "%s" as parent for entity "%s"',
                 $parent,
                 $entity->get($this->_getPrimaryKey())

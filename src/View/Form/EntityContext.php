@@ -18,6 +18,7 @@ namespace Cake\View\Form;
 
 use ArrayAccess;
 use Cake\Collection\Collection;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Entity;
@@ -25,7 +26,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
-use RuntimeException;
+use InvalidArgumentException;
 use Traversable;
 
 /**
@@ -117,7 +118,7 @@ class EntityContext implements ContextInterface
      * like arrays, Collection objects and ResultSets.
      *
      * @return void
-     * @throws \RuntimeException When a table object cannot be located/inferred.
+     * @throws \Cake\Core\Exception\CakeException When a table object cannot be located/inferred.
      */
     protected function _prepare(): void
     {
@@ -153,7 +154,7 @@ class EntityContext implements ContextInterface
         }
 
         if (!($table instanceof Table)) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'Unable to find table class for current entity.'
             );
         }
@@ -331,7 +332,7 @@ class EntityContext implements ContextInterface
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|iterable|null
-     * @throws \RuntimeException When properties cannot be read.
+     * @throws \Cake\Core\Exception\CakeException When properties cannot be read.
      */
     public function entity(?array $path = null): EntityInterface|iterable|null
     {
@@ -374,7 +375,7 @@ class EntityContext implements ContextInterface
             }
             $entity = $next;
         }
-        throw new RuntimeException(sprintf(
+        throw new CakeException(sprintf(
             'Unable to fetch property "%s"',
             implode('.', $path)
         ));
@@ -390,7 +391,7 @@ class EntityContext implements ContextInterface
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return array Containing the found entity, and remaining un-matched path.
-     * @throws \RuntimeException When properties cannot be read.
+     * @throws \Cake\Core\Exception\CakeException When properties cannot be read.
      */
     protected function leafEntity(?array $path = null): array
     {
@@ -400,7 +401,7 @@ class EntityContext implements ContextInterface
 
         $oneElement = count($path) === 1;
         if ($oneElement && $this->_isCollection) {
-            throw new RuntimeException(sprintf(
+            throw new CakeException(sprintf(
                 'Unable to fetch property "%s"',
                 implode('.', $path)
             ));
@@ -441,7 +442,7 @@ class EntityContext implements ContextInterface
             }
             $entity = $next;
         }
-        throw new RuntimeException(sprintf(
+        throw new CakeException(sprintf(
             'Unable to fetch property "%s"',
             implode('.', $path)
         ));
@@ -575,7 +576,7 @@ class EntityContext implements ContextInterface
      *
      * @param array $parts Each one of the parts in a path for a field name
      * @return \Cake\Validation\Validator
-     * @throws \RuntimeException If validator cannot be retrieved based on the parts.
+     * @throws \Cake\Core\Exception\CakeException If validator cannot be retrieved based on the parts.
      */
     protected function _getValidator(array $parts): Validator
     {
@@ -595,7 +596,7 @@ class EntityContext implements ContextInterface
 
         $table = $this->_getTable($parts);
         if (!$table) {
-            throw new RuntimeException('Validator not found: ' . $key);
+            throw new InvalidArgumentException('Validator not found: ' . $key);
         }
         $alias = $table->getAlias();
 
@@ -734,7 +735,7 @@ class EntityContext implements ContextInterface
              * @var array<string> $remainingParts
              */
             [$entity, $remainingParts] = $this->leafEntity($parts);
-        } catch (RuntimeException) {
+        } catch (CakeException) {
             return [];
         }
         if ($entity instanceof EntityInterface && count($remainingParts) === 0) {

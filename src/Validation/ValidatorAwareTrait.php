@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Validation;
 
 use Cake\Event\EventDispatcherInterface;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * A trait that provides methods for building and
@@ -107,14 +107,14 @@ trait ValidatorAwareTrait
      *
      * @param string $name The name of the validation set to create.
      * @return \Cake\Validation\Validator
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function createValidator(string $name): Validator
     {
         $method = 'validation' . ucfirst($name);
         if (!$this->validationMethodExists($method)) {
             $message = sprintf('The %s::%s() validation method does not exists.', static::class, $method);
-            throw new RuntimeException($message);
+            throw new InvalidArgumentException($message);
         }
 
         $validator = new $this->_validatorClass();
@@ -127,7 +127,7 @@ trait ValidatorAwareTrait
         }
 
         if (!$validator instanceof Validator) {
-            throw new RuntimeException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'The %s::%s() validation method must return an instance of %s.',
                 static::class,
                 $method,

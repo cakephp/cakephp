@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association\Loader;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
 use Closure;
-use RuntimeException;
 
 /**
  * Implements the logic for loading an association using a SELECT query and a pivot table
@@ -170,7 +170,7 @@ class SelectWithPivotLoader extends SelectLoader
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
      * @param array<string, mixed> $options The options passed to the eager loader
      * @return array<string, mixed>
-     * @throws \RuntimeException when the association property is not part of the results set.
+     * @throws \Cake\Database\Exception\DatabaseException when the association property is not part of the results set.
      */
     protected function _buildResultMap(Query $fetchQuery, array $options): array
     {
@@ -179,7 +179,7 @@ class SelectWithPivotLoader extends SelectLoader
 
         foreach ($fetchQuery->all() as $result) {
             if (!isset($result[$this->junctionProperty])) {
-                throw new RuntimeException(sprintf(
+                throw new DatabaseException(sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
                     $this->junctionProperty
                 ));

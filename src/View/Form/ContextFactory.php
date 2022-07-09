@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\View\Form;
 
 use Cake\Collection\Collection;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
-use RuntimeException;
 
 /**
  * Factory for getting form context instance based on provided data.
@@ -136,7 +136,7 @@ class ContextFactory
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @param array<string, mixed> $data The data to get a context provider for.
      * @return \Cake\View\Form\ContextInterface Context provider.
-     * @throws \RuntimeException When a context instance cannot be generated for given entity.
+     * @throws \Cake\Core\Exception\CakeException When a context instance cannot be generated for given entity.
      */
     public function get(ServerRequest $request, array $data = []): ContextInterface
     {
@@ -151,7 +151,7 @@ class ContextFactory
         }
 
         if (!isset($context)) {
-            throw new RuntimeException(sprintf(
+            throw new CakeException(sprintf(
                 'No context provider found for value of type `%s`.'
                 . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.',
                 get_debug_type($data['entity'])

@@ -29,7 +29,6 @@ use Cake\Http\BaseApplication;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
@@ -106,7 +105,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunMissingRootCommand(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot run any commands. No arguments received.');
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods(['middleware', 'bootstrap', 'routes'])

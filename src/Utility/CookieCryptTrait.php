@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Cookie Crypt Trait.
@@ -83,7 +83,7 @@ trait CookieCryptTrait
                 'Invalid encryption cipher. Must be one of %s or false.',
                 implode(', ', $this->_validCiphers)
             );
-            throw new RuntimeException($msg);
+            throw new InvalidArgumentException($msg);
         }
     }
 

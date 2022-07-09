@@ -37,7 +37,6 @@ use LimitIterator;
 use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
-use RuntimeException;
 use Traversable;
 use const SORT_ASC;
 use const SORT_DESC;
@@ -750,7 +749,7 @@ trait CollectionTrait
             ];
 
             if (!isset($modes[$order])) {
-                throw new RuntimeException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'",
                     $order
                 ));

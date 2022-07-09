@@ -18,8 +18,8 @@ namespace Cake\Cache;
 
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
-use RuntimeException;
 
 /**
  * An object registry for cache engines.
@@ -68,7 +68,7 @@ class CacheRegistry extends ObjectRegistry
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config An array of settings to use for the cache engine.
      * @return \Cake\Cache\CacheEngine The constructed CacheEngine class.
-     * @throws \RuntimeException when an object doesn't implement the correct interface.
+     * @throws \Cake\Core\Exception\CakeException when an object doesn't implement the correct interface.
      */
     protected function _create(object|string $class, string $alias, array $config): CacheEngine
     {
@@ -80,13 +80,13 @@ class CacheRegistry extends ObjectRegistry
         unset($config['className']);
 
         if (!($instance instanceof CacheEngine)) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'Cache engines must use Cake\Cache\CacheEngine as a base class.'
             );
         }
 
         if (!$instance->init($config)) {
-            throw new RuntimeException(
+            throw new CakeException(
                 sprintf(
                     'Cache engine %s is not properly configured. Check error log for additional information.',
                     get_class($instance)

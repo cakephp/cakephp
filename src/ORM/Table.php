@@ -21,6 +21,7 @@ use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
@@ -48,7 +49,6 @@ use Cake\Validation\ValidatorAwareTrait;
 use Closure;
 use Exception;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Represents a single database table.
@@ -558,12 +558,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * queries fit into the max length allowed by database driver.
      *
      * @return void
-     * @throws \RuntimeException When an alias combination is too long
+     * @throws \Cake\Database\Exception\DatabaseException When an alias combination is too long
      */
     protected function checkAliasLengths(): void
     {
         if ($this->_schema === null) {
-            throw new RuntimeException("Unable to check max alias lengths for  `{$this->getAlias()}` without schema.");
+            throw new DatabaseException("Unable to check max alias lengths for  `{$this->getAlias()}` without schema.");
         }
 
         $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
@@ -575,7 +575,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         foreach ($this->_schema->columns() as $name) {
             if (strlen($table . '__' . $name) > $maxLength) {
                 $nameLength = $maxLength - 2;
-                throw new RuntimeException(
+                throw new DatabaseException(
                     'ORM queries generate field aliases using the table name/alias and column name. ' .
                     "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
                     'You must change the table schema in the database and shorten either the table or column ' .
@@ -1911,7 +1911,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
      * @param \ArrayObject $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|false
-     * @throws \RuntimeException When an entity is missing some of the primary keys.
+     * @throws \Cake\Database\Exception\DatabaseException When an entity is missing some of the primary keys.
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
      *   is aborted in the afterSave event.
      */
@@ -1943,7 +1943,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             if ($result !== false && !($result instanceof EntityInterface)) {
-                throw new RuntimeException(sprintf(
+                throw new DatabaseException(sprintf(
                     'The beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
                     get_debug_type($result)
                 ));
@@ -2028,7 +2028,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface $entity the subject entity from were $data was extracted
      * @param array $data The actual data that needs to be saved
      * @return \Cake\Datasource\EntityInterface|false
-     * @throws \RuntimeException if not all the primary keys where supplied or could
+     * @throws \Cake\Database\Exception\DatabaseException if not all the primary keys where supplied or could
      * be generated when the table has composite primary keys. Or when the table has no primary key.
      */
     protected function _insert(EntityInterface $entity, array $data): EntityInterface|false
@@ -2039,7 +2039,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'Cannot insert row in "%s" table, it has no primary key.',
                 $this->getTable()
             );
-            throw new RuntimeException($msg);
+            throw new DatabaseException($msg);
         }
         $keys = array_fill(0, count($primary), null);
         $id = (array)$this->_newId($primary) + $keys;
@@ -2064,7 +2064,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
                         implode(', ', array_keys($primary))
                     );
-                    throw new RuntimeException($msg);
+                    throw new DatabaseException($msg);
                 }
             }
         }
@@ -2653,13 +2653,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $property the association name
      * @return \Cake\ORM\Association
-     * @throws \RuntimeException if no association with such name exists
+     * @throws \Cake\Database\Exception\DatabaseException if no association with such name exists
      */
     public function __get(string $property): Association
     {
         $association = $this->_associations->get($property);
         if (!$association) {
-            throw new RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 'Undefined property `%s`. ' .
                 'You have not defined the `%s` association on `%s`.',
                 $property,

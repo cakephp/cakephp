@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\DriverInterface;
+use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18nDateTimeInterface;
 use DateTime as NativeDateTime;
@@ -26,7 +27,6 @@ use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 use PDO;
-use RuntimeException;
 
 /**
  * Datetime type converter.
@@ -402,7 +402,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
-        throw new RuntimeException(
+        throw new DatabaseException(
             sprintf('Cannot use locale parsing with the %s class', $this->_className)
         );
     }

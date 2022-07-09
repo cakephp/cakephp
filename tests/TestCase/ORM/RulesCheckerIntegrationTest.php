@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -27,7 +28,6 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Closure;
-use RuntimeException;
 use stdClass;
 
 /**
@@ -576,7 +576,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testExistsInInvalidAssociation(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('ExistsIn rule for \'author_id\' is invalid. \'NotValid\' is not associated with \'Cake\ORM\Table\'.');
         $entity = new Entity([
             'title' => 'An Article',

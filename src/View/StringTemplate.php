@@ -20,7 +20,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Provides an interface for registering and inserting
@@ -230,12 +230,12 @@ class StringTemplate
      * @param string $name The template name.
      * @param array<string, mixed> $data The data to insert.
      * @return string Formatted string
-     * @throws \RuntimeException If template not found.
+     * @throws \InvalidArgumentException If template not found.
      */
     public function format(string $name, array $data): string
     {
         if (!isset($this->_compiled[$name])) {
-            throw new RuntimeException("Cannot find template named '$name'.");
+            throw new InvalidArgumentException("Cannot find template named '$name'.");
         }
         [$template, $placeholders] = $this->_compiled[$name];
 

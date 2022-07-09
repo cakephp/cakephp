@@ -30,7 +30,6 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Form helper library.
@@ -1209,7 +1208,7 @@ class FormHelper extends Helper
 
                 return $this->{$options['type']}($fieldName, $opts, $options + ['label' => $label]);
             case 'input':
-                throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
+                throw new InvalidArgumentException("Invalid type 'input' used for field '$fieldName'");
 
             default:
                 return $this->{$options['type']}($fieldName, $options);

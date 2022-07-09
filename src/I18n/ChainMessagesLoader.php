@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use RuntimeException;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Wraps multiple message loaders calling them one after another until
@@ -47,13 +47,13 @@ class ChainMessagesLoader
      * the chain.
      *
      * @return \Cake\I18n\Package
-     * @throws \RuntimeException if any of the loaders in the chain is not a valid callable
+     * @throws \Cake\Core\Exception\CakeException if any of the loaders in the chain is not a valid callable
      */
     public function __invoke(): Package
     {
         foreach ($this->_loaders as $k => $loader) {
             if (!is_callable($loader)) {
-                throw new RuntimeException(sprintf(
+                throw new CakeException(sprintf(
                     'Loader "%s" in the chain is not a valid callable',
                     $k
                 ));
@@ -65,7 +65,7 @@ class ChainMessagesLoader
             }
 
             if (!($package instanceof Package)) {
-                throw new RuntimeException(sprintf(
+                throw new CakeException(sprintf(
                     'Loader "%s" in the chain did not return a valid Package object',
                     $k
                 ));

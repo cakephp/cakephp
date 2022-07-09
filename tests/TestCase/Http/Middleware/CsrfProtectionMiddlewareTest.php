@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
@@ -28,7 +29,6 @@ use Laminas\Diactoros\Response as DiactorosResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -216,7 +216,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         });
 
         $middleware = new CsrfProtectionMiddleware();
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $middleware->process($request, $handler);
     }
 

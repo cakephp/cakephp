@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\QueryTests;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
@@ -24,7 +25,6 @@ use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
 
 /**
  * Tests WindowExpression class
@@ -99,7 +99,7 @@ class WindowQueryTest extends TestCase
 
     public function testMissingWindow(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
         (new Query($this->connection))->window('name', function () {
             return new QueryExpression();

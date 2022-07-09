@@ -18,9 +18,9 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Base class for console commands.
@@ -112,7 +112,7 @@ abstract class BaseCommand implements CommandInterface
      * You can override buildOptionParser() to define your options & arguments.
      *
      * @return \Cake\Console\ConsoleOptionParser
-     * @throws \RuntimeException When the parser is invalid
+     * @throws \Cake\Core\Exception\CakeException When the parser is invalid
      */
     public function getOptionParser(): ConsoleOptionParser
     {
@@ -123,7 +123,7 @@ abstract class BaseCommand implements CommandInterface
 
         $parser = $this->buildOptionParser($parser);
         if ($parser->subcommands()) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'You cannot add sub-commands to `Command` sub-classes. Instead make a separate command.'
             );
         }

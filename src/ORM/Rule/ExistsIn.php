@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Rule;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
-use RuntimeException;
 
 /**
  * Checks that the value provided in a field exists as the primary key of another
@@ -76,14 +76,14 @@ class ExistsIn
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      * @param array<string, mixed> $options Options passed to the check,
      * where the `repository` key is required.
-     * @throws \RuntimeException When the rule refers to an undefined association.
+     * @throws \Cake\Database\Exception\DatabaseException When the rule refers to an undefined association.
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
         if (is_string($this->_repository)) {
             if (!$options['repository']->hasAssociation($this->_repository)) {
-                throw new RuntimeException(sprintf(
+                throw new DatabaseException(sprintf(
                     "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
                     implode(', ', $this->_fields),
                     $this->_repository,

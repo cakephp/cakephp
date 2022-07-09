@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Database\Connection;
-use RuntimeException;
+use Cake\Database\Exception\DatabaseException;
 
 /**
  * Fixture strategy that wraps fixtures in a transaction that is rolled back
@@ -65,7 +65,7 @@ class TransactionStrategy implements FixtureStrategyInterface
                 );
                 $connection->enableSavePoints();
                 if (!$connection->isSavePointsEnabled()) {
-                    throw new RuntimeException(
+                    throw new DatabaseException(
                         "Could not enable save points for the `{$connection->configName()}` connection. " .
                             'Your database needs to support savepoints in order to use ' .
                             'TransactionStrategy.'

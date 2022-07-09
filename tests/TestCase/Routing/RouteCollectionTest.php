@@ -23,7 +23,7 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
+use InvalidArgumentException;
 
 class RouteCollectionTest extends TestCase
 {
@@ -717,7 +717,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
         $this->collection->middlewareGroup('group', ['bad']);
     }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -28,7 +29,6 @@ use Cake\Database\Expression\WindowExpression;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
-use RuntimeException;
 use Stringable;
 use Traversable;
 
@@ -279,12 +279,12 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * The results are cached until the query is modified and marked dirty.
      *
      * @return iterable
-     * @thows \RuntimeException When query is not a SELECT query.
+     * @throws \Cake\Core\Exception\CakeException When query is not a SELECT query.
      */
     public function all(): iterable
     {
         if ($this->_type !== Query::TYPE_SELECT) {
-            throw new RuntimeException(
+            throw new CakeException(
                 '`all()` supports SELECT queries only. Use `execute()` to run all other queries.'
             );
         }
@@ -475,7 +475,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             $query = $this->getConnection()->newQuery();
             $cte = $cte(new CommonTableExpression(), $query);
             if (!($cte instanceof CommonTableExpression)) {
-                throw new RuntimeException(
+                throw new CakeException(
                     'You must return a `CommonTableExpression` from a Closure passed to `with()`.'
                 );
             }
@@ -1532,7 +1532,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
         if ($window instanceof Closure) {
             $window = $window(new WindowExpression(), $this);
             if (!($window instanceof WindowExpression)) {
-                throw new RuntimeException('You must return a `WindowExpression` from a Closure passed to `window()`.');
+                throw new CakeException('You must return a `WindowExpression` from a Closure passed to `window()`.');
             }
         }
 
@@ -1711,12 +1711,12 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      * @param array $columns The columns to insert into.
      * @param array<string, string> $types A map between columns & their datatypes.
      * @return $this
-     * @throws \RuntimeException When there are 0 columns.
+     * @throws \InvalidArgumentException When there are 0 columns.
      */
     public function insert(array $columns, array $types = [])
     {
         if (empty($columns)) {
-            throw new RuntimeException('At least 1 column is required to perform an insert.');
+            throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
         $this->_dirty();
         $this->_type = 'insert';
@@ -2402,7 +2402,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             set_error_handler(
                 /** @return no-return */
                 function ($errno, $errstr): void {
-                    throw new RuntimeException($errstr, $errno);
+                    throw new CakeException($errstr, $errno);
                 },
                 E_ALL
             );

@@ -436,7 +436,7 @@ class TableTest extends TestCase
         $maxAlias = $this->connection->getDriver()->getMaxAliasLength();
         if ($maxAlias && $maxAlias < 72) {
             $nameLength = $maxAlias - 2;
-            $this->expectException(RuntimeException::class);
+            $this->expectException(DatabaseException::class);
             $this->expectExceptionMessage(
                 'ORM queries generate field aliases using the table name/alias and column name. ' .
                 "The table alias `very_long_alias_name` and column `this_is_invalid_because_it_is_very_very_very_long` create an alias longer than ({$nameLength}). " .
@@ -2098,7 +2098,7 @@ class TableTest extends TestCase
      */
     public function testBeforeSaveException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('The beforeSave callback must return `false` or `EntityInterface` instance. Got `int` instead.');
 
         $table = $this->getTableLocator()->get('users');
@@ -2322,7 +2322,7 @@ class TableTest extends TestCase
      */
     public function testSaveNewErrorOnNoPrimaryKey(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot insert row in "users" table, it has no primary key');
         $entity = new Entity(['username' => 'superuser']);
         $table = $this->getTableLocator()->get('users', [
@@ -3338,7 +3338,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that a RuntimeException is thrown if the custom validator does not return an Validator instance
+     * Tests that a InvalidArgumentException is thrown if the custom validator does not return an Validator instance
      */
     public function testValidationWithBadDefiner(): void
     {
@@ -3348,7 +3348,7 @@ class TableTest extends TestCase
         $table->expects($this->once())
             ->method('validationBad');
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(sprintf(
             'The %s::validationBad() validation method must return an instance of Cake\Validation\Validator.',
             get_class($table)
@@ -3358,11 +3358,11 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that a RuntimeException is thrown if the custom validator method does not exist.
+     * Tests that a InvalidArgumentException is thrown if the custom validator method does not exist.
      */
     public function testValidatorWithMissingMethod(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The Cake\ORM\Table::validationMissing() validation method does not exists.');
         $table = new Table();
         $table->getValidator('missing');

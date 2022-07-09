@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
 use Countable;
 use IteratorAggregate;
-use RuntimeException;
 use Traversable;
 
 /**
@@ -127,7 +127,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name The name of the alias in the registry.
      * @param array<string, mixed> $config The config data for the new instance.
      * @return void
-     * @throws \RuntimeException When a duplicate is found.
+     * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      */
     protected function _checkDuplicate(string $name, array $config): void
     {
@@ -135,7 +135,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         $msg = sprintf('The "%s" alias has already been loaded.', $name);
         $hasConfig = method_exists($existing, 'getConfig');
         if (!$hasConfig) {
-            throw new RuntimeException($msg);
+            throw new CakeException($msg);
         }
         if (empty($config)) {
             return;
@@ -160,7 +160,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             }
         }
         if ($failure) {
-            throw new RuntimeException($msg . $failure);
+            throw new CakeException($msg . $failure);
         }
     }
 
@@ -223,13 +223,13 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name Name of object.
      * @return object Object instance.
-     * @throws \RuntimeException If not loaded or found.
+     * @throws \Cake\Core\Exception\CakeException If not loaded or found.
      * @psalm-return TObject
      */
     public function get(string $name): object
     {
         if (!isset($this->_loaded[$name])) {
-            throw new RuntimeException(sprintf('Unknown object "%s"', $name));
+            throw new CakeException(sprintf('Unknown object "%s"', $name));
         }
 
         return $this->_loaded[$name];

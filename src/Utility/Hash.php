@@ -17,7 +17,6 @@ namespace Cake\Utility;
 
 use ArrayAccess;
 use InvalidArgumentException;
-use RuntimeException;
 use const SORT_ASC;
 use const SORT_DESC;
 use const SORT_LOCALE_STRING;
@@ -446,7 +445,7 @@ class Hash
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::combine
-     * @throws \RuntimeException When keys and values count is unequal.
+     * @throws \InvalidArgumentException When keys and values count is unequal.
      */
     public static function combine(
         array $data,
@@ -486,7 +485,7 @@ class Hash
         }
 
         if (is_array($keys) && count($keys) !== count($vals)) {
-            throw new RuntimeException(
+            throw new InvalidArgumentException(
                 'Hash::combine() needs an equal number of keys + values.'
             );
         }

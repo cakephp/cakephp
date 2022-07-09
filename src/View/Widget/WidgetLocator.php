@@ -20,8 +20,8 @@ use Cake\Core\App;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\View\StringTemplate;
 use Cake\View\View;
+use InvalidArgumentException;
 use ReflectionClass;
-use RuntimeException;
 
 /**
  * A registry/factory for input widgets.
@@ -111,7 +111,7 @@ class WidgetLocator
      *
      * @param array $widgets Array of widgets to use.
      * @return void
-     * @throws \RuntimeException When class does not implement WidgetInterface.
+     * @throws \InvalidArgumentException When class does not implement WidgetInterface.
      */
     public function add(array $widgets): void
     {
@@ -124,7 +124,7 @@ class WidgetLocator
             }
 
             if (is_object($widget) && !($widget instanceof WidgetInterface)) {
-                throw new RuntimeException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'Widget objects must implement `%s`. Got `%s` instance instead.',
                     WidgetInterface::class,
                     get_debug_type($widget)
@@ -149,13 +149,13 @@ class WidgetLocator
      *
      * @param string $name The widget name to get.
      * @return \Cake\View\Widget\WidgetInterface WidgetInterface instance.
-     * @throws \RuntimeException when widget is undefined.
+     * @throws \InvalidArgumentException when widget is undefined.
      */
     public function get(string $name): WidgetInterface
     {
         if (!isset($this->_widgets[$name])) {
             if (empty($this->_widgets['_default'])) {
-                throw new RuntimeException(sprintf('Unknown widget `%s`', $name));
+                throw new InvalidArgumentException(sprintf('Unknown widget `%s`', $name));
             }
 
             $name = '_default';
@@ -183,7 +183,7 @@ class WidgetLocator
      *
      * @param array|string $config The widget config.
      * @return \Cake\View\Widget\WidgetInterface Widget instance.
-     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
      */
     protected function _resolveWidget(array|string $config): WidgetInterface
     {
@@ -194,7 +194,7 @@ class WidgetLocator
         $class = array_shift($config);
         $className = App::className($class, 'View/Widget', 'Widget');
         if ($className === null) {
-            throw new RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
+            throw new InvalidArgumentException(sprintf('Unable to locate widget class "%s"', $class));
         }
         if (count($config)) {
             $reflection = new ReflectionClass($className);

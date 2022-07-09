@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Log;
 
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * Registry of loaded log engines
@@ -50,11 +50,11 @@ class LogEngineRegistry extends ObjectRegistry
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the logger is missing in.
      * @return void
-     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\CakeException
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
-        throw new RuntimeException(sprintf('Could not load class %s', $class));
+        throw new CakeException(sprintf('Could not load class %s', $class));
     }
 
     /**

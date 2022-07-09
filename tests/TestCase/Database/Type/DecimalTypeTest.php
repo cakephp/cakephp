@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
-use RuntimeException;
 
 /**
  * Test for the Decimal type.
@@ -229,7 +229,7 @@ class DecimalTypeTest extends TestCase
      */
     public function testUseLocaleParsingInvalid(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         DecimalType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }

@@ -1106,7 +1106,7 @@ class ViewTest extends TestCase
 
     public function testGetTemplateException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Template name not provided');
         $view = new View();
         $view->render();

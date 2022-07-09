@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
@@ -24,7 +25,6 @@ use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use ReflectionFunction;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -335,7 +335,7 @@ class Router
                     $ref->getStartLine(),
                     $e->getMessage()
                 );
-                throw new RuntimeException($message, (int)$e->getCode(), $e);
+                throw new CakeException($message, (int)$e->getCode(), $e);
             }
         }
 

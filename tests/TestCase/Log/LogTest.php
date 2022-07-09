@@ -16,11 +16,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Log;
 
 use BadMethodCallException;
+use Cake\Core\Exception\CakeException;
 use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * LogTest class
@@ -73,7 +73,7 @@ class LogTest extends TestCase
      */
     public function testImportingLoggerFailure(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         Log::setConfig('fail', []);
         Log::engine('fail');
     }

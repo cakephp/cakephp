@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Event\Decorator;
 
 use Cake\Event\EventInterface;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Event Condition Decorator
@@ -67,7 +67,7 @@ class ConditionDecorator extends AbstractDecorator
             return $condition !== 'unless';
         }
         if (!is_callable($this->_options[$condition])) {
-            throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');
+            throw new InvalidArgumentException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
 
         return (bool)$this->_options[$condition]($event);

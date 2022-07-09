@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
@@ -23,7 +24,6 @@ use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Closure;
-use RuntimeException;
 
 /**
  * Represents an 1 - N relationship where the source side of the relation is
@@ -159,7 +159,7 @@ class BelongsTo extends Association
      *
      * @param array<string, mixed> $options list of options passed to attachTo method
      * @return array<\Cake\Database\Expression\IdentifierExpression>
-     * @throws \RuntimeException if the number of columns in the foreignKey do not
+     * @throws \Cake\Database\Exception\DatabaseException if the number of columns in the foreignKey do not
      * match the number of columns in the target table primaryKey
      */
     protected function _joinCondition(array $options): array
@@ -173,11 +173,11 @@ class BelongsTo extends Association
         if (count($foreignKey) !== count($bindingKey)) {
             if (empty($bindingKey)) {
                 $msg = 'The "%s" table does not define a primary key. Please set one.';
-                throw new RuntimeException(sprintf($msg, $this->getTarget()->getTable()));
+                throw new DatabaseException(sprintf($msg, $this->getTarget()->getTable()));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
-            throw new RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),

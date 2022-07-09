@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\DriverInterface;
+use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\Number;
 use InvalidArgumentException;
 use PDO;
-use RuntimeException;
 use Stringable;
 
 /**
@@ -151,7 +151,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @param bool $enable Whether to enable
      * @return $this
-     * @throws \RuntimeException
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     public function useLocaleParser(bool $enable = true)
     {
@@ -168,7 +168,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
-        throw new RuntimeException(
+        throw new DatabaseException(
             sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
         );
     }

@@ -20,6 +20,7 @@ use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverInterface;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -37,7 +38,6 @@ use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use ReflectionProperty;
-use RuntimeException;
 
 /**
  * Tests Query class
@@ -1780,7 +1780,7 @@ class QueryTest extends TestCase
      */
     public function testCacheErrorOnNonSelect(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
         $query->insert(['test']);
@@ -1952,7 +1952,7 @@ class QueryTest extends TestCase
      */
     public function testContainWithQueryBuilderHasManyError(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
         $query = new Query($this->connection, $table);
@@ -3502,7 +3502,7 @@ class QueryTest extends TestCase
         $articles = $comments->belongsTo('Articles');
         $articles->hasOne('ArticlesTranslations');
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('`Articles` association cannot contain() associations when using JOIN strategy');
         $comments->find()
             ->innerJoinWith('Articles', function (Query $q) {

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Locator\AbstractLocator;
 use Cake\Datasource\RepositoryInterface;
@@ -24,7 +25,6 @@ use Cake\ORM\AssociationCollection;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
-use RuntimeException;
 
 /**
  * Provides a default registry/factory for Table objects.
@@ -141,7 +141,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         }
 
         if (isset($this->instances[$alias])) {
-            throw new RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 'You cannot configure "%s", it has already been constructed.',
                 $alias
             ));

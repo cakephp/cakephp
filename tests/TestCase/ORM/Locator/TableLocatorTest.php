@@ -16,13 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
+use Cake\Core\Exception\CakeException;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-use RuntimeException;
 use TestApp\Infrastructure\Table\AddressesTable;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\MyUsersTable;
@@ -103,7 +104,7 @@ class TableLocatorTest extends TestCase
         $users = $this->_locator->get('Users');
         $this->assertNotEmpty($users);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('You cannot configure "Users", it has already been constructed.');
 
         $this->_locator->setConfig('Users', ['table' => 'my_users']);
@@ -277,7 +278,7 @@ class TableLocatorTest extends TestCase
         $users = $this->_locator->get('Users');
         $this->assertNotEmpty($users);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You cannot configure "Users", it already exists in the registry.');
 
         $this->_locator->get('Users', ['table' => 'my_users']);

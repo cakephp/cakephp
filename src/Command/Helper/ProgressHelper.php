@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Command\Helper;
 
 use Cake\Console\Helper;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Create a progress bar using a supplied callback.
@@ -76,7 +76,7 @@ class ProgressHelper extends Helper
             $args['callback'] = $args[0];
         }
         if (!$args['callback'] || !is_callable($args['callback'])) {
-            throw new RuntimeException('Callback option must be a callable.');
+            throw new InvalidArgumentException('Callback option must be a callable.');
         }
         $this->init($args);
 

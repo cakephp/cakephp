@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Core\Exception\CakeException;
 use League\Container\DefinitionContainerInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
-use RuntimeException;
 
 /**
  * Container ServiceProvider
@@ -54,7 +54,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
                 ContainerInterface::class,
                 get_debug_type($container)
             );
-            throw new RuntimeException($message);
+            throw new CakeException($message);
         }
 
         return $container;

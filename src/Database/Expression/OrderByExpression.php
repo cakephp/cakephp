@@ -19,7 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * An expression object for ORDER BY clauses
@@ -75,7 +75,7 @@ class OrderByExpression extends QueryExpression
                 is_string($val) &&
                 !in_array(strtoupper($val), ['ASC', 'DESC'], true)
             ) {
-                throw new RuntimeException(
+                throw new InvalidArgumentException(
                     sprintf(
                         'Passing extra expressions by associative array (`\'%s\' => \'%s\'`) ' .
                         'is not allowed to avoid potential SQL injection. ' .

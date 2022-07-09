@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\DriverInterface;
+use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\Number;
 use PDO;
-use RuntimeException;
 
 /**
  * Float type converter.
@@ -150,7 +150,7 @@ class FloatType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
-        throw new RuntimeException(
+        throw new DatabaseException(
             sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
         );
     }

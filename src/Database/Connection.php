@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
@@ -31,7 +32,6 @@ use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -750,7 +750,7 @@ class Connection implements ConnectionInterface
         }
 
         if (!class_exists(Cache::class)) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'To use caching you must either set a cacher using Connection::setCacher()' .
                 ' or require the cakephp/cache package in your composer config.'
             );

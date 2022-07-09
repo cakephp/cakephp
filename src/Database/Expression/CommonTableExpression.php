@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
-use RuntimeException;
 
 /**
  * An expression that represents a common table expression definition.
@@ -102,7 +102,7 @@ class CommonTableExpression implements ExpressionInterface
         if ($query instanceof Closure) {
             $query = $query();
             if (!($query instanceof ExpressionInterface)) {
-                throw new RuntimeException(
+                throw new DatabaseException(
                     'You must return an `ExpressionInterface` from a Closure passed to `query()`.'
                 );
             }

@@ -31,7 +31,6 @@ use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Run CLI commands for the provided application.
@@ -126,10 +125,14 @@ class CommandRunner implements EventDispatcherInterface
      * @param array $argv The arguments from the CLI environment.
      * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function run(array $argv, ?ConsoleIo $io = null): int
     {
+        if (empty($argv)) {
+            throw new InvalidArgumentException('Cannot run any commands. No arguments received.');
+        }
+
         $this->bootstrap();
 
         $commands = new CommandCollection([
@@ -146,9 +149,6 @@ class CommandRunner implements EventDispatcherInterface
         $this->dispatchEvent('Console.buildCommands', ['commands' => $commands]);
         $this->loadRoutes();
 
-        if (empty($argv)) {
-            throw new RuntimeException('Cannot run any commands. No arguments received.');
-        }
         // Remove the root executable segment
         array_shift($argv);
 
