@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
-use Cake\Cache\InvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use DateInterval;
@@ -321,28 +320,16 @@ class FileEngineTest extends TestCase
         $result = Cache::read('views.countries.something', 'file_test');
         $this->assertSame('here', $result);
 
+        $key = 'colon:quote"slash/brackets[]';
+        $result = Cache::write($key, 'here', 'file_test');
+        $this->assertTrue($result);
+        $this->assertFileExists(TMP . 'tests/cake_colon%3Aquote%22slash%2Fbrackets%5B%5D');
+
+        $result = Cache::read($key, 'file_test');
+        $this->assertSame('here', $result);
+
         $result = Cache::clear('file_test');
         $this->assertTrue($result);
-    }
-
-    /**
-     * Test invalid key() containing :
-     */
-    public function testInvalidKeyColon(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('contains invalid characters');
-        Cache::write('domain.test.com:8080', 'here', 'file_test');
-    }
-
-    /**
-     * Test invalid key() containing >
-     */
-    public function testInvalidKeyAngleBracket(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('contains invalid characters');
-        Cache::write('command>dir|more', 'here', 'file_test');
     }
 
     /**
