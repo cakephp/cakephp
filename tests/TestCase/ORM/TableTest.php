@@ -5380,11 +5380,19 @@ class TableTest extends TestCase
         return [
             [
                 ['fields' => ['id'], 'cache' => 'default'],
-                'get-test-table_name-[10]', 'default',
+                'get-test-table_name-[10]', 'default', 10,
+            ],
+            [
+                ['fields' => ['id'], 'cache' => 'default'],
+                'get-test-table_name-["uuid"]', 'default', 'uuid',
+            ],
+            [
+                ['fields' => ['id'], 'cache' => 'default'],
+                'get-test-table_name-["2020-07-08T00:00:00+00:00"]', 'default', new FrozenTime('2020-07-08'),
             ],
             [
                 ['fields' => ['id'], 'cache' => 'default', 'key' => 'custom_key'],
-                'custom_key', 'default',
+                'custom_key', 'default', 10,
             ],
         ];
     }
@@ -5396,8 +5404,9 @@ class TableTest extends TestCase
      * @param array $options
      * @param string $cacheKey
      * @param string $cacheConfig
+     * @param mixed $primaryKey
      */
-    public function testGetWithCache($options, $cacheKey, $cacheConfig): void
+    public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['callFinder', 'query'])
@@ -5425,14 +5434,14 @@ class TableTest extends TestCase
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('where')
-            ->with([$table->getAlias() . '.bar' => 10])
+            ->with([$table->getAlias() . '.bar' => $primaryKey])
             ->will($this->returnSelf());
         $query->expects($this->once())->method('cache')
             ->with($cacheKey, $cacheConfig)
             ->will($this->returnSelf());
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
-        $result = $table->get(10, $options);
+        $result = $table->get($primaryKey, $options);
         $this->assertSame($entity, $result);
     }
 
