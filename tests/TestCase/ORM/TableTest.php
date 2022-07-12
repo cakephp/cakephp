@@ -5334,7 +5334,7 @@ class TableTest extends TestCase
             ],
             [
                 ['fields' => ['id'], 'cache' => 'default'],
-                'get-test-table_name-["2020-07-08T00:00:00+00:00"]', 'default', new FrozenTime('2020-07-08'),
+                'get-test-table_name-["2020-07-08T00:00:00+00:00"]', 'default', new DateTime('2020-07-08'),
             ],
             [
                 ['fields' => ['id'], 'cache' => 'default', 'key' => 'custom_key'],
