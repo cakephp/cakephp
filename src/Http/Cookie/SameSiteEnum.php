@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
-// phpcs:ignoreFile
 enum SameSiteEnum: string
 {
     case LAX = 'Lax';
