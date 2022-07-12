@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Cache\InvalidArgumentException;
 use CallbackFilterIterator;
 use DateInterval;
 use Exception;
@@ -436,14 +435,7 @@ class FileEngine extends CacheEngine
     {
         $key = parent::_key($key);
 
-        if (preg_match('/[\/\\<>?:|*"]/', $key)) {
-            throw new InvalidArgumentException(
-                "Cache key `{$key}` contains invalid characters. " .
-                'You cannot use /, \\, <, >, ?, :, |, *, or " in cache keys.'
-            );
-        }
-
-        return $key;
+        return rawurlencode($key);
     }
 
     /**

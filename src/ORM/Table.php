@@ -1482,12 +1482,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function get($primaryKey, array $options = []): EntityInterface
     {
+        if ($primaryKey === null) {
+            throw new InvalidPrimaryKeyException(sprintf(
+                'Record not found in table "%s" with primary key [NULL]',
+                $this->getTable()
+            ));
+        }
+
         $key = (array)$this->getPrimaryKey();
         $alias = $this->getAlias();
         foreach ($key as $index => $keyname) {
             $key[$index] = $alias . '.' . $keyname;
         }
-        $primaryKey = (array)$primaryKey;
+        if (!is_array($primaryKey)) {
+            $primaryKey = [$primaryKey];
+        }
         if (count($key) !== count($primaryKey)) {
             $primaryKey = $primaryKey ?: [null];
             $primaryKey = array_map(function ($key) {
