@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
 
 /**
  * Translate behavior test case
@@ -862,7 +862,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testReParentSelf(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->get(1);
         $entity->parent_id = $entity->id;
@@ -874,7 +874,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testReParentSelfNewEntity(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->newEntity(['name' => 'root']);
         $entity->id = 1;
@@ -1089,7 +1089,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testReparentCycle(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot use node "5" as parent for entity "2"');
         $table = $this->table;
         $entity = $table->get(2);

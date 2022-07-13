@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use Cake\Database\Connection;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\TypedResultInterface;
@@ -30,7 +31,6 @@ use Cake\Datasource\ResultSetInterface;
 use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
-use RuntimeException;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -1052,12 +1052,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param \Cake\Cache\CacheEngine|string $config Either the name of the cache config to use, or
      *   a cache config instance.
      * @return $this
-     * @throws \RuntimeException When you attempt to cache a non-select query.
+     * @throws \Cake\Database\Exception\DatabaseException When you attempt to cache a non-select query.
      */
     public function cache($key, $config = 'default')
     {
         if ($this->_type !== self::TYPE_SELECT) {
-            throw new RuntimeException('You cannot cache the results of non-select queries.');
+            throw new DatabaseException('You cannot cache the results of non-select queries.');
         }
 
         return $this->_cache($key, $config);
@@ -1067,12 +1067,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * {@inheritDoc}
      *
      * @return \Cake\Datasource\ResultSetInterface
-     * @throws \RuntimeException if this method is called on a non-select Query.
+     * @throws \Cake\Database\Exception\DatabaseException if this method is called on a non-select Query.
      */
     public function all(): ResultSetInterface
     {
         if ($this->_type !== self::TYPE_SELECT) {
-            throw new RuntimeException(
+            throw new DatabaseException(
                 'You cannot call all() on a non-select query. Use execute() instead.'
             );
         }

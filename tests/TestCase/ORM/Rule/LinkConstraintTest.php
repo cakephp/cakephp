@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Rule;
 
 use Cake\Core\Configure;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
@@ -26,7 +27,6 @@ use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 use stdClass;
 
 /**
@@ -110,7 +110,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testMissingPrimaryKeyValues(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage(
             'LinkConstraint rule on `Articles` requires all primary key values for building the counting ' .
             'conditions, expected values for `(id, nonexistent)`, got `(1, )`.'

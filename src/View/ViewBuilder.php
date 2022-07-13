@@ -23,9 +23,9 @@ use Cake\Http\ServerRequest;
 use Cake\View\Exception\MissingViewException;
 use Closure;
 use Exception;
+use InvalidArgumentException;
 use JsonSerializable;
 use PDO;
-use RuntimeException;
 
 /**
  * Provides an API for iteratively building a view up.
@@ -635,7 +635,7 @@ class ViewBuilder implements JsonSerializable
      * @param mixed $item Reference to the view var value.
      * @param string $key View var key.
      * @return void
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _checkViewVars(mixed &$item, string $key): void
     {
@@ -648,7 +648,7 @@ class ViewBuilder implements JsonSerializable
             $item instanceof Closure ||
             $item instanceof PDO
         ) {
-            throw new RuntimeException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Failed serializing the `%s` %s in the `%s` view var',
                 is_resource($item) ? get_resource_type($item) : get_class($item),
                 is_resource($item) ? 'resource' : 'object',

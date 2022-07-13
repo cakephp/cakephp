@@ -19,7 +19,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Auth\Oauth;
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
 
 /**
  * Oauth test.
@@ -398,7 +397,7 @@ class OauthTest extends TestCase
             'privateKey' => 'not a private key',
         ];
         $auth = new Oauth();
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('openssl error');
         $auth->authentication($request, $options);
     }

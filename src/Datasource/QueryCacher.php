@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Cache\Cache;
+use Cake\Core\Exception\CakeException;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
-use RuntimeException;
 use Traversable;
 
 /**
@@ -97,7 +97,7 @@ class QueryCacher
      *
      * @param object $query The query to generate a key for.
      * @return string
-     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\CakeException
      */
     protected function _resolveKey(object $query): string
     {
@@ -108,7 +108,7 @@ class QueryCacher
         $key = $func($query);
         if (!is_string($key)) {
             $msg = sprintf('Cache key functions must return a string. Got %s.', var_export($key, true));
-            throw new RuntimeException($msg);
+            throw new CakeException($msg);
         }
 
         return $key;

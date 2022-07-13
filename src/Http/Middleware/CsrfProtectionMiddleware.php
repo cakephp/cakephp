@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http\Middleware;
 
 use ArrayAccess;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
@@ -28,7 +29,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 /**
  * Provides CSRF protection & validation.
@@ -133,7 +133,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
         if ($request->getAttribute('csrfToken')) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'A CSRF token is already set in the request.' .
                 "\n" .
                 'Ensure you do not have the CSRF middleware applied more than once. ' .

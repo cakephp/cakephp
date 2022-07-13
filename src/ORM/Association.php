@@ -20,6 +20,7 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
@@ -29,7 +30,6 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * An Association is a relationship established between two tables and is used
@@ -381,7 +381,7 @@ abstract class Association
                     $errorMessage .= 'You can\'t have an association of the same name with a different target ';
                     $errorMessage .= '"className" option anywhere in your app.';
 
-                    throw new RuntimeException(sprintf(
+                    throw new DatabaseException(sprintf(
                         $errorMessage,
                         isset($this->_sourceTable) ? get_class($this->_sourceTable) : 'null',
                         $this->getName(),
@@ -724,7 +724,7 @@ abstract class Association
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
-                throw new RuntimeException(sprintf(
+                throw new DatabaseException(sprintf(
                     'Query builder for association "%s" did not return a query',
                     $this->getName()
                 ));
@@ -736,7 +736,7 @@ abstract class Association
             $this->_strategy === static::STRATEGY_JOIN &&
             $dummy->getContain()
         ) {
-            throw new RuntimeException(
+            throw new DatabaseException(
                 "`{$this->getName()}` association cannot contain() associations when using JOIN strategy."
             );
         }
@@ -1060,7 +1060,7 @@ abstract class Association
      *
      * @param array<string, mixed> $options list of options passed to attachTo method
      * @return array
-     * @throws \RuntimeException if the number of columns in the foreignKey do not
+     * @throws \Cake\Database\Exception\DatabaseException if the number of columns in the foreignKey do not
      * match the number of columns in the source table primaryKey
      */
     protected function _joinCondition(array $options): array
@@ -1078,11 +1078,11 @@ abstract class Association
                     $table = $this->getSource()->getTable();
                 }
                 $msg = 'The "%s" table does not define a primary key, and cannot have join conditions generated.';
-                throw new RuntimeException(sprintf($msg, $table));
+                throw new DatabaseException(sprintf($msg, $table));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
-            throw new RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),

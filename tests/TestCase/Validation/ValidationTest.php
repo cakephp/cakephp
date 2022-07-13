@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
@@ -26,7 +27,6 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
-use RuntimeException;
 use stdClass;
 
 require_once __DIR__ . '/stubs.php';
@@ -2545,7 +2545,7 @@ class ValidationTest extends TestCase
      */
     public function testMimeTypeFalse(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $image = CORE_TESTS . 'invalid-file.png';
         Validation::mimeType($image, ['image/gif']);
     }

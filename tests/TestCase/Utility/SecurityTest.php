@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * SecurityTest class
@@ -88,7 +87,7 @@ class SecurityTest extends TestCase
      */
     public function testInvalidHashTypeException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: \w+/');
 
         Security::hash('test', 'doesnotexist', false);

@@ -15,11 +15,11 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
 use Laminas\Diactoros\MessageTrait;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 use SimpleXMLElement;
 
 /**
@@ -145,12 +145,12 @@ class Response extends Message implements ResponseInterface
      *
      * @param string $body Gzip encoded body.
      * @return string
-     * @throws \RuntimeException When attempting to decode gzip content without gzinflate.
+     * @throws \Cake\Core\Exception\CakeException When attempting to decode gzip content without gzinflate.
      */
     protected function _decodeGzipBody(string $body): string
     {
         if (!function_exists('gzinflate')) {
-            throw new RuntimeException('Cannot decompress gzip response body without gzinflate()');
+            throw new CakeException('Cannot decompress gzip response body without gzinflate()');
         }
         $offset = 0;
         // Look for gzip 'signature'
@@ -162,7 +162,7 @@ class Response extends Message implements ResponseInterface
             return gzinflate(substr($body, $offset + 8));
         }
 
-        throw new RuntimeException('Invalid gzip response');
+        throw new CakeException('Invalid gzip response');
     }
 
     /**

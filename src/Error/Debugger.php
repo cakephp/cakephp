@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Debug\ArrayItemNode;
 use Cake\Error\Debug\ArrayNode;
@@ -39,7 +40,6 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -201,7 +201,7 @@ class Debugger
         $instance = static::getInstance();
         if (!isset($instance->editors[$name])) {
             $known = implode(', ', array_keys($instance->editors));
-            throw new RuntimeException("Unknown editor `{$name}`. Known editors are {$known}");
+            throw new InvalidArgumentException("Unknown editor `{$name}`. Known editors are {$known}");
         }
         $instance->setConfig('editor', $name);
     }
@@ -218,7 +218,7 @@ class Debugger
         $instance = static::getInstance();
         $editor = $instance->getConfig('editor');
         if (!isset($instance->editors[$editor])) {
-            throw new RuntimeException("Cannot format editor URL `{$editor}` is not a known editor.");
+            throw new InvalidArgumentException("Cannot format editor URL `{$editor}` is not a known editor.");
         }
 
         $template = $instance->editors[$editor];
@@ -501,7 +501,7 @@ class Debugger
         }
         $instance = new $class();
         if (!$instance instanceof FormatterInterface) {
-            throw new RuntimeException(
+            throw new CakeException(
                 "The `{$class}` formatter does not implement " . FormatterInterface::class
             );
         }

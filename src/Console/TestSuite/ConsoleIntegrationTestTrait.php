@@ -26,7 +26,6 @@ use Cake\Console\TestSuite\Constraint\ContentsNotContain;
 use Cake\Console\TestSuite\Constraint\ContentsRegExp;
 use Cake\Console\TestSuite\Constraint\ExitCode;
 use Cake\Core\TestSuite\ContainerStubTrait;
-use RuntimeException;
 
 /**
  * A bundle of methods that makes testing commands
@@ -73,7 +72,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $command Command to run
      * @param array $input Input values to pass to an interactive shell
      * @throws \Cake\Console\TestSuite\MissingConsoleInputException
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @return void
      */
     public function exec(string $command, array $input = []): void
@@ -89,7 +88,9 @@ trait ConsoleIntegrationTestTrait
         if ($this->_in === null) {
             $this->_in = new StubConsoleInput($input);
         } elseif ($input) {
-            throw new RuntimeException('You can use `$input` only if `$_in` property is null and will be reset.');
+            throw new InvalidArgumentException(
+                'You can use `$input` only if `$_in` property is null and will be reset.'
+            );
         }
 
         $args = $this->commandStringToArgs("cake $command");

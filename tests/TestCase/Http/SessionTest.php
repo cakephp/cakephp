@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
 
@@ -172,7 +172,7 @@ class SessionTest extends TestCase
     {
         $session = new Session();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
 
         $session->readOrFail('testing');
     }

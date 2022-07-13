@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
+use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
 use Cake\Utility\Text;
 use Countable;
 use DateTimeInterface;
 use InvalidArgumentException;
-use LogicException;
 use NumberFormatter;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
@@ -1165,8 +1165,7 @@ class Validation
      * @param mixed $check Value to check.
      * @param array|string $mimeTypes Array of mime types or regex pattern to check.
      * @return bool Success
-     * @throws \RuntimeException when mime type can not be determined.
-     * @throws \LogicException when ext/fileinfo is missing
+     * @throws \Cake\Core\Exception\CakeException when mime type can not be determined.
      */
     public static function mimeType(mixed $check, array|string $mimeTypes = []): bool
     {
@@ -1176,18 +1175,18 @@ class Validation
         }
 
         if (!function_exists('finfo_open')) {
-            throw new LogicException('ext/fileinfo is required for validating file mime types');
+            throw new CakeException('ext/fileinfo is required for validating file mime types');
         }
 
         if (!is_file($file)) {
-            throw new RuntimeException('Cannot validate mimetype for a missing file');
+            throw new CakeException('Cannot validate mimetype for a missing file');
         }
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $file);
 
         if (!$mime) {
-            throw new RuntimeException('Can not determine the mimetype.');
+            throw new CakeException('Can not determine the mimetype.');
         }
 
         if (is_string($mimeTypes)) {
@@ -1454,7 +1453,7 @@ class Validation
             'type' => 'latLong',
         ];
         if ($options['type'] !== 'latLong') {
-            throw new RuntimeException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Unsupported coordinate type "%s". Use "latLong" instead.',
                 $options['type']
             ));

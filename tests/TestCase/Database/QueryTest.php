@@ -39,7 +39,6 @@ use DateTime;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use ReflectionProperty;
-use RuntimeException;
 use stdClass;
 use TestApp\Database\Type\BarType;
 
@@ -1786,7 +1785,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrderByAssociativeArrayContainingExtraExpressions(): void
     {
-        $this->expectException('RuntimeException');
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Passing extra expressions by associative array (`\'id\' => \'desc -- Comment\'`) ' .
             'is not allowed to avoid potential SQL injection. ' .
@@ -2864,7 +2863,7 @@ class QueryTest extends TestCase
      */
     public function testDeleteRemovingAliasesCanBreakJoins(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
         $query = new Query($this->connection);
 
@@ -3159,7 +3158,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateRemovingAliasesCanBreakJoins(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
         $query = new Query($this->connection);
 
@@ -3191,7 +3190,7 @@ class QueryTest extends TestCase
      */
     public function testInsertNothing(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('At least 1 column is required to perform an insert.');
         $query = new Query($this->connection);
         $query->insert([]);

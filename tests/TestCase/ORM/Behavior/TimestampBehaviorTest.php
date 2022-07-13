@@ -23,7 +23,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
-use RuntimeException;
+use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
@@ -227,7 +227,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testNonDateTimeTypeException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('TimestampBehavior only supports columns of type DateTimeType.');
 
         $table = $this->getTableInstance();

@@ -20,7 +20,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Provides a translator method for tuple comparisons
@@ -58,7 +58,7 @@ trait TupleComparisonTranslatorTrait
 
         $operator = strtoupper($expression->getOperator());
         if (!in_array($operator, ['IN', '='])) {
-            throw new RuntimeException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Tuple comparison transform only supports the `IN` and `=` operators, `%s` given.',
                     $operator

@@ -18,6 +18,7 @@ namespace Cake\View;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
@@ -34,7 +35,6 @@ use Cake\View\Exception\MissingTemplateException;
 use Generator;
 use InvalidArgumentException;
 use LogicException;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -704,13 +704,13 @@ class View implements EventDispatcherInterface
      * @param callable $block The block of code that you want to cache the output of.
      * @param array<string, mixed> $options The options defining the cache key etc.
      * @return string The rendered content.
-     * @throws \RuntimeException When $options is lacking a 'key' option.
+     * @throws \InvalidArgumentException When $options is lacking a 'key' option.
      */
     public function cache(callable $block, array $options = []): string
     {
         $options += ['key' => '', 'config' => $this->elementCache];
         if (empty($options['key'])) {
-            throw new RuntimeException('Cannot cache content with an empty key');
+            throw new InvalidArgumentException('Cannot cache content with an empty key');
         }
         $result = Cache::read($options['key'], $options['config']);
         if ($result) {
@@ -794,7 +794,7 @@ class View implements EventDispatcherInterface
 
         if ($this->autoLayout) {
             if (empty($this->layout)) {
-                throw new RuntimeException(
+                throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method View::disableAutoLayout() instead.'
                 );
@@ -877,7 +877,7 @@ class View implements EventDispatcherInterface
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
-     * @throws \RuntimeException If the array combine operation failed.
+     * @throws \Cake\Core\Exception\CakeException If the array combine operation failed.
      */
     public function set(array|string $name, mixed $value = null)
     {
@@ -886,7 +886,7 @@ class View implements EventDispatcherInterface
                 /** @var array|false $data */
                 $data = array_combine($name, $value);
                 if ($data === false) {
-                    throw new RuntimeException(
+                    throw new CakeException(
                         'Invalid data provided for array_combine() to work: Both $name and $value require same count.'
                     );
                 }
@@ -1318,7 +1318,7 @@ class View implements EventDispatcherInterface
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
      * @throws \Cake\View\Exception\MissingTemplateException when a template file could not be found.
-     * @throws \RuntimeException When template name not provided.
+     * @throws \Cake\Core\Exception\CakeException When template name not provided.
      */
     protected function _getTemplateFileName(?string $name = null): string
     {
@@ -1338,7 +1338,7 @@ class View implements EventDispatcherInterface
         $name ??= $this->template;
 
         if (empty($name)) {
-            throw new RuntimeException('Template name not provided');
+            throw new CakeException('Template name not provided');
         }
 
         [$plugin, $name] = $this->pluginSplit($name);
@@ -1436,13 +1436,13 @@ class View implements EventDispatcherInterface
      * @param string|null $name The name of the layout to find.
      * @return string Filename for layout file.
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
-     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\CakeException
      */
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
             if (empty($this->layout)) {
-                throw new RuntimeException(
+                throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method View::disableAutoLayout() instead.'
                 );

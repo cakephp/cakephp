@@ -20,10 +20,10 @@ use Cake\Core\App;
 use Cake\Http\Middleware\ClosureDecoratorMiddleware;
 use Closure;
 use Countable;
+use InvalidArgumentException;
 use LogicException;
 use OutOfBoundsException;
 use Psr\Http\Server\MiddlewareInterface;
-use RuntimeException;
 use SeekableIterator;
 
 /**
@@ -63,7 +63,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      *
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to resolve.
      * @return \Psr\Http\Server\MiddlewareInterface
-     * @throws \RuntimeException If Middleware not found.
+     * @throws \InvalidArgumentException If Middleware not found.
      */
     protected function resolve(MiddlewareInterface|Closure|string $middleware): MiddlewareInterface
     {
@@ -71,7 +71,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
             /** @psalm-var class-string<\Psr\Http\Server\MiddlewareInterface>|null $className */
             $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null) {
-                throw new RuntimeException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'Middleware "%s" was not found.',
                     $middleware
                 ));

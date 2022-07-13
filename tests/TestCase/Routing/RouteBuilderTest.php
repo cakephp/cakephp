@@ -27,7 +27,6 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * RouteBuilder test case
@@ -978,7 +977,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testMiddlewareGroupOverlap(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot add middleware group \'test\'. A middleware by this name has already been registered.');
         $func = function (): void {
         };
@@ -992,7 +991,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testApplyMiddlewareInvalidName(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot apply \'bad\' middleware or middleware group. Use registerMiddleware() to register middleware');
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->applyMiddleware('bad');

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
@@ -27,7 +28,6 @@ use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Contains regression test for the Query builder
@@ -145,7 +145,7 @@ class QueryRegressionTest extends TestCase
             'finder' => 'list',
         ]);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('"_joinData" is missing from the belongsToMany results');
         $table->find()->contain('Tags')->toArray();
     }

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Debug;
 
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * A Debugger formatter for generating output with ANSI escape codes
@@ -138,7 +138,7 @@ class ConsoleFormatter implements FormatterInterface
         if ($var instanceof SpecialNode) {
             return $this->style('special', $var->getValue());
         }
-        throw new RuntimeException('Unknown node received ' . get_class($var));
+        throw new InvalidArgumentException('Unknown node received ' . get_class($var));
     }
 
     /**

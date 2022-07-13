@@ -18,8 +18,8 @@ namespace Cake\Cache\Engine;
 
 use APCUIterator;
 use Cake\Cache\CacheEngine;
+use Cake\Core\Exception\CakeException;
 use DateInterval;
-use RuntimeException;
 
 /**
  * APCu storage engine for cache
@@ -45,7 +45,7 @@ class ApcuEngine extends CacheEngine
     public function init(array $config = []): bool
     {
         if (!extension_loaded('apcu')) {
-            throw new RuntimeException('The `apcu` extension must be enabled to use ApcuEngine.');
+            throw new CakeException('The `apcu` extension must be enabled to use ApcuEngine.');
         }
 
         return parent::init($config);

@@ -21,7 +21,6 @@ use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
-use RuntimeException;
 
 /**
  * Configuration class. Used for managing runtime configuration information.
@@ -156,13 +155,13 @@ class Configure
      *
      * @param string $var Variable to obtain. Use '.' to access array elements.
      * @return mixed Value stored in configure.
-     * @throws \RuntimeException if the requested configuration is not set.
+     * @throws \Cake\Core\Exception\CakeException if the requested configuration is not set.
      * @link https://book.cakephp.org/4/en/development/configuration.html#reading-configuration-data
      */
     public static function readOrFail(string $var): mixed
     {
         if (!static::check($var)) {
-            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+            throw new CakeException(sprintf('Expected configuration key "%s" not found.', $var));
         }
 
         return static::read($var);
@@ -196,13 +195,13 @@ class Configure
      *
      * @param string $var Variable to consume. Use '.' to access array elements.
      * @return mixed Value stored in configure.
-     * @throws \RuntimeException if the requested configuration is not set.
+     * @throws \Cake\Core\Exception\CakeException if the requested configuration is not set.
      * @since 3.6.0
      */
     public static function consumeOrFail(string $var): mixed
     {
         if (!static::check($var)) {
-            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+            throw new CakeException(sprintf('Expected configuration key "%s" not found.', $var));
         }
 
         return static::consume($var);
@@ -447,14 +446,13 @@ class Configure
      * @param string $cacheConfig The cache configuration to save into. Defaults to 'default'
      * @param array|null $data Either an array of data to store, or leave empty to store all values.
      * @return bool Success
-     * @throws \RuntimeException
      */
     public static function store(string $name, string $cacheConfig = 'default', ?array $data = null): bool
     {
         $data ??= static::$_values;
 
         if (!class_exists(Cache::class)) {
-            throw new RuntimeException('You must install cakephp/cache to use Configure::store()');
+            throw new CakeException('You must install cakephp/cache to use Configure::store()');
         }
 
         return Cache::write($name, $data, $cacheConfig);
@@ -467,12 +465,11 @@ class Configure
      * @param string $name Name of the stored config file to load.
      * @param string $cacheConfig Name of the Cache configuration to read from.
      * @return bool Success.
-     * @throws \RuntimeException
      */
     public static function restore(string $name, string $cacheConfig = 'default'): bool
     {
         if (!class_exists(Cache::class)) {
-            throw new RuntimeException('You must install cakephp/cache to use Configure::restore()');
+            throw new CakeException('You must install cakephp/cache to use Configure::restore()');
         }
         $values = Cache::read($name, $cacheConfig);
         if ($values) {

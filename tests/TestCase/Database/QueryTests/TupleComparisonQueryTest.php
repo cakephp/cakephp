@@ -23,8 +23,8 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\TupleComparison;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDOException;
-use RuntimeException;
 
 /**
  * Tuple comparison query tests.
@@ -53,7 +53,7 @@ class TupleComparisonQueryTest extends TestCase
             $driver instanceof Sqlite ||
             $driver instanceof Sqlserver
         ) {
-            $this->expectException(RuntimeException::class);
+            $this->expectException(InvalidArgumentException::class);
             $this->expectExceptionMessage(
                 'Tuple comparison transform only supports the `IN` and `=` operators, `NOT IN` given.'
             );

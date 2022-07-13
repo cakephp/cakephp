@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Locator;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\RepositoryInterface;
-use RuntimeException;
 
 /**
  * Provides an abstract registry/factory for repository objects.
@@ -44,7 +44,7 @@ abstract class AbstractLocator implements LocatorInterface
      * @param string $alias The alias name you want to get.
      * @param array<string, mixed> $options The options you want to build the table with.
      * @return \Cake\Datasource\RepositoryInterface
-     * @throws \RuntimeException When trying to get alias for which instance
+     * @throws \Cake\Core\Exception\CakeException When trying to get alias for which instance
      *   has already been created with different options.
      */
     public function get(string $alias, array $options = []): RepositoryInterface
@@ -54,7 +54,7 @@ abstract class AbstractLocator implements LocatorInterface
 
         if (isset($this->instances[$alias])) {
             if (!empty($storeOptions) && isset($this->options[$alias]) && $this->options[$alias] !== $storeOptions) {
-                throw new RuntimeException(sprintf(
+                throw new CakeException(sprintf(
                     'You cannot configure "%s", it already exists in the registry.',
                     $alias
                 ));

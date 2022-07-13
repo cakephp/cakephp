@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Exception\XmlException;
@@ -25,7 +26,6 @@ use Cake\Utility\Xml;
 use DateTime;
 use DOMDocument;
 use Exception;
-use RuntimeException;
 use SimpleXMLElement;
 use TypeError;
 
@@ -200,7 +200,7 @@ class XmlTest extends TestCase
      */
     public function testBuildInvalidData($value): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         Xml::build($value);
     }
 

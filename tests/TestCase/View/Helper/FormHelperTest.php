@@ -36,7 +36,6 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use ReflectionProperty;
-use RuntimeException;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
@@ -3775,7 +3774,7 @@ class FormHelperTest extends TestCase
      */
     public function testInvalidControlTypeOption(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid type \'input\' used for field \'text\'');
         $this->Form->control('text', ['type' => 'input']);
     }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
@@ -1104,7 +1105,7 @@ class RouterTest extends TestCase
      */
     public function testUrlGenerationWithUrlFilterFailureClosure(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: nope/'
@@ -1132,7 +1133,7 @@ class RouterTest extends TestCase
      */
     public function testUrlGenerationWithUrlFilterFailureMethod(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: /'

@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Crypto\OpenSsl;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Security Library contains utility methods related to security
@@ -57,7 +57,7 @@ class Security
      * @param string|bool $salt If true, automatically prepends the value returned by
      *   Security::getSalt() to $string.
      * @return string Hash
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @link https://book.cakephp.org/4/en/core-libraries/security.html#hashing-data
      */
     public static function hash(string $string, ?string $algorithm = null, string|bool $salt = false): string
@@ -69,7 +69,7 @@ class Security
 
         $availableAlgorithms = hash_algos();
         if (!in_array($algorithm, $availableAlgorithms, true)) {
-            throw new RuntimeException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'The hash type `%s` was not found. Available algorithms are: %s',
                 $algorithm,
                 implode(', ', $availableAlgorithms)
@@ -283,7 +283,7 @@ class Security
     public static function getSalt(): string
     {
         if (static::$_salt === null) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.'
             );
         }

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association\Loader;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
@@ -24,7 +25,6 @@ use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Closure;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Implements the logic for loading an association using a SELECT query
@@ -370,7 +370,7 @@ class SelectLoader
      *
      * @param array<string, mixed> $options The options for getting the link field.
      * @return array<string>|string
-     * @throws \RuntimeException
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     protected function _linkField(array $options): array|string
     {
@@ -380,7 +380,7 @@ class SelectLoader
         if ($options['foreignKey'] === false && $this->associationType === Association::ONE_TO_MANY) {
             $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
                    'You must provide a foreignKey column.';
-            throw new RuntimeException($msg);
+            throw new DatabaseException($msg);
         }
 
         $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?

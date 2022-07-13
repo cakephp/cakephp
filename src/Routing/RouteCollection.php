@@ -20,9 +20,9 @@ use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 use Closure;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use RuntimeException;
 
 /**
  * Contains a collection of routes.
@@ -409,19 +409,19 @@ class RouteCollection
      * @param string $name Name of the middleware group
      * @param array<string> $middlewareNames Names of the middleware
      * @return $this
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
             $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
-            throw new RuntimeException($message);
+            throw new InvalidArgumentException($message);
         }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
                 $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
-                throw new RuntimeException($message);
+                throw new InvalidArgumentException($message);
             }
         }
 
@@ -469,7 +469,7 @@ class RouteCollection
      * @param array<string> $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
-     * @throws \RuntimeException when a requested middleware does not exist.
+     * @throws \InvalidArgumentException when a requested middleware does not exist.
      */
     public function getMiddleware(array $names): array
     {
@@ -480,7 +480,7 @@ class RouteCollection
                 continue;
             }
             if (!$this->hasMiddleware($name)) {
-                throw new RuntimeException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     "The middleware named '%s' has not been registered. Use registerMiddleware() to define it.",
                     $name
                 ));

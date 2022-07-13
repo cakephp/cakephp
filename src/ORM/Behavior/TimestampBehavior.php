@@ -23,7 +23,7 @@ use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Behavior;
 use DateTimeInterface;
-use RuntimeException;
+use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
@@ -220,7 +220,7 @@ class TimestampBehavior extends Behavior
         $type = TypeFactory::build($columnType);
 
         if (!$type instanceof DateTimeType) {
-            throw new RuntimeException('TimestampBehavior only supports columns of type DateTimeType.');
+            throw new InvalidArgumentException('TimestampBehavior only supports columns of type DateTimeType.');
         }
 
         $class = $type->getDateTimeClassName();

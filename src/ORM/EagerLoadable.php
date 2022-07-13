@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
-use RuntimeException;
+use Cake\Database\Exception\DatabaseException;
 
 /**
  * Represents a single level in the associations tree to be eagerly loaded
@@ -170,12 +170,12 @@ class EagerLoadable
      * Gets the Association class instance to use for loading the records.
      *
      * @return \Cake\ORM\Association
-     * @throws \RuntimeException
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     public function instance(): Association
     {
         if ($this->_instance === null) {
-            throw new RuntimeException('No instance set.');
+            throw new DatabaseException('No instance set.');
         }
 
         return $this->_instance;

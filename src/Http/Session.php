@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use RuntimeException;
 use SessionHandlerInterface;
 use const PHP_SESSION_ACTIVE;
 
@@ -308,7 +308,7 @@ class Session
      *
      * @param array<string, mixed> $options Ini options to set.
      * @return void
-     * @throws \RuntimeException if any directive could not be set
+     * @throws \Cake\Core\Exception\CakeException if any directive could not be set
      */
     public function options(array $options): void
     {
@@ -318,7 +318,7 @@ class Session
 
         foreach ($options as $setting => $value) {
             if (ini_set($setting, (string)$value) === false) {
-                throw new RuntimeException(
+                throw new CakeException(
                     sprintf('Unable to configure the session, setting %s failed.', $setting)
                 );
             }
@@ -329,7 +329,7 @@ class Session
      * Starts the Session.
      *
      * @return bool True if session was started
-     * @throws \RuntimeException if the session was already started
+     * @throws \Cake\Core\Exception\CakeException if the session was already started
      */
     public function start(): bool
     {
@@ -345,7 +345,7 @@ class Session
         }
 
         if (session_status() === PHP_SESSION_ACTIVE) {
-            throw new RuntimeException('Session was already started');
+            throw new CakeException('Session was already started');
         }
 
         if (ini_get('session.use_cookies') && headers_sent()) {
@@ -353,7 +353,7 @@ class Session
         }
 
         if (!session_start()) {
-            throw new RuntimeException('Could not start the session');
+            throw new CakeException('Could not start the session');
         }
 
         $this->_started = true;
@@ -385,7 +385,7 @@ class Session
         }
 
         if (!session_write_close()) {
-            throw new RuntimeException('Could not close the session');
+            throw new CakeException('Could not close the session');
         }
 
         $this->_started = false;
@@ -455,13 +455,13 @@ class Session
      * Returns given session variable, or throws Exception if not found.
      *
      * @param string $name The name of the session variable (or a path as sent to Hash.extract)
-     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\CakeException
      * @return mixed|null
      */
     public function readOrFail(string $name): mixed
     {
         if (!$this->check($name)) {
-            throw new RuntimeException(sprintf('Expected session key "%s" not found.', $name));
+            throw new CakeException(sprintf('Expected session key "%s" not found.', $name));
         }
 
         return $this->read($name);

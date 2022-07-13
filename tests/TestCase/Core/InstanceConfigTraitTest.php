@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
-use RuntimeException;
 use TestApp\Config\ReadOnlyTestInstanceConfig;
 use TestApp\Config\TestInstanceConfig;
 
@@ -264,7 +264,7 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testSetClobber(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Cannot set a.nested.value');
         $this->object->setConfig(['a.nested.value' => 'not possible'], null, false);
         $this->object->getConfig();

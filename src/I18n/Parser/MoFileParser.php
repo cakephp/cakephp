@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Parser;
 
-use RuntimeException;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Parses file in MO format
@@ -55,7 +55,7 @@ class MoFileParser
      *
      * @param string $file The file to be parsed.
      * @return array List of messages extracted from the file
-     * @throws \RuntimeException If stream content has an invalid format.
+     * @throws \Cake\Core\Exception\CakeException If stream content has an invalid format.
      */
     public function parse(string $file): array
     {
@@ -64,7 +64,7 @@ class MoFileParser
         $stat = fstat($stream);
 
         if ($stat['size'] < self::MO_HEADER_SIZE) {
-            throw new RuntimeException('Invalid format for MO translations file');
+            throw new CakeException('Invalid format for MO translations file');
         }
         $magic = unpack('V1', fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
@@ -74,7 +74,7 @@ class MoFileParser
         } elseif ($magic === self::MO_BIG_ENDIAN_MAGIC) {
             $isBigEndian = true;
         } else {
-            throw new RuntimeException('Invalid format for MO translations file');
+            throw new CakeException('Invalid format for MO translations file');
         }
 
         // offset formatRevision

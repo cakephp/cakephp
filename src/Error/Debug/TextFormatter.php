@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Debug;
 
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * A Debugger formatter for generating unstyled plain text output.
@@ -87,7 +87,7 @@ TEXT;
         if ($var instanceof SpecialNode) {
             return $var->getValue();
         }
-        throw new RuntimeException('Unknown node received ' . get_class($var));
+        throw new InvalidArgumentException('Unknown node received ' . get_class($var));
     }
 
     /**

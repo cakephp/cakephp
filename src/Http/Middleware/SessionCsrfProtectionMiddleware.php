@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http\Middleware;
 
 use ArrayAccess;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Session;
 use Cake\Utility\Hash;
@@ -25,7 +26,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 /**
  * Provides CSRF protection via session based tokens.
@@ -110,7 +110,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
 
         $session = $request->getAttribute('session');
         if (!$session || !($session instanceof Session)) {
-            throw new RuntimeException('You must have a `session` attribute to use session based CSRF tokens');
+            throw new CakeException('You must have a `session` attribute to use session based CSRF tokens');
         }
 
         $token = $session->read($this->_config['key']);

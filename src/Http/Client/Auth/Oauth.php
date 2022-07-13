@@ -19,7 +19,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Request;
 use Cake\Utility\Security;
 use Psr\Http\Message\UriInterface;
-use RuntimeException;
 
 /**
  * Oauth 1 authentication strategy for Cake\Http\Client
@@ -171,12 +170,11 @@ class Oauth
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return string
-     * @throws \RuntimeException
      */
     protected function _rsaSha1(Request $request, array $credentials): string
     {
         if (!function_exists('openssl_pkey_get_private')) {
-            throw new RuntimeException('RSA-SHA1 signature method requires the OpenSSL extension.');
+            throw new CakeException('RSA-SHA1 signature method requires the OpenSSL extension.');
         }
 
         $nonce = $credentials['nonce'] ?? bin2hex(Security::randomBytes(16));
@@ -369,9 +367,10 @@ class Oauth
     }
 
     /**
-     * Check for SSL errors and raise if one is encountered.
+     * Check for SSL errors and throw an exception if found.
      *
      * @return void
+     * @throws \Cake\Core\Exception\CakeException When an error is found
      */
     protected function checkSslError(): void
     {
@@ -381,7 +380,7 @@ class Oauth
         }
 
         if (strlen($error) > 0) {
-            throw new RuntimeException('openssl error: ' . $error);
+            throw new CakeException('openssl error: ' . $error);
         }
     }
 }

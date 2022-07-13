@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Rule;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Checks whether links to a given association exist / do not exist.
@@ -164,7 +164,7 @@ class LinkConstraint
 
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
-            throw new RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 'LinkConstraint rule on `%s` requires all primary key values for building the counting ' .
                 'conditions, expected values for `(%s)`, got `(%s)`.',
                 $source->getAlias(),

@@ -22,7 +22,6 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * HashTest
@@ -2234,7 +2233,7 @@ class HashTest extends TestCase
      */
     public function testCombineErrorMissingValue(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['name' => 'jose']],
@@ -2247,7 +2246,7 @@ class HashTest extends TestCase
      */
     public function testCombineErrorMissingKey(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['id' => 2]],

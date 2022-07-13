@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use RuntimeException;
+use InvalidArgumentException;
 use stdClass;
 
 class StringTemplateTest extends TestCase
@@ -154,7 +154,7 @@ class StringTemplateTest extends TestCase
      */
     public function testFormatMissingTemplate(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot find template named \'missing\'');
         $templates = [
             'text' => '{{text}}',

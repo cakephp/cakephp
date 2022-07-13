@@ -26,7 +26,6 @@ use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use Psr\Http\Server\MiddlewareInterface;
-use RuntimeException;
 
 /**
  * Provides features for building routes inside scopes.
@@ -990,7 +989,7 @@ class RouteBuilder
      *
      * @param string ...$names The names of the middleware to apply to the current scope.
      * @return $this
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
      */
     public function applyMiddleware(string ...$names)
@@ -999,7 +998,7 @@ class RouteBuilder
             if (!$this->_collection->middlewareExists($name)) {
                 $message = "Cannot apply '$name' middleware or middleware group. " .
                     'Use registerMiddleware() to register middleware.';
-                throw new RuntimeException($message);
+                throw new InvalidArgumentException($message);
             }
         }
         $this->middleware = array_unique(array_merge($this->middleware, $names));

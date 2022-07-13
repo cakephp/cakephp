@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Driver;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\Query;
 use Closure;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Sql dialect trait
@@ -223,13 +223,13 @@ trait SqlDialectTrait
      *
      * @param \Cake\Database\Query $query The query to process.
      * @return \Cake\Database\Query The modified query.
-     * @throws \RuntimeException In case the processed query contains any joins, as removing
+     * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
      */
     protected function _removeAliasesFromConditions(Query $query): Query
     {
         if ($query->clause('join')) {
-            throw new RuntimeException(
+            throw new DatabaseException(
                 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
                 'this can break references to joined tables.'
             );

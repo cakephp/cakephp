@@ -29,8 +29,8 @@ use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use MyClass;
-use RuntimeException;
 use SplFixedArray;
 use stdClass;
 use TestApp\Error\TestDebugger;
@@ -749,7 +749,7 @@ EXPECTED;
      */
     public function testSetEditorInvalid(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         Debugger::setEditor('nope');
     }
 

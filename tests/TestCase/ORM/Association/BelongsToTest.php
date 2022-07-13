@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use ArrayObject;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
@@ -26,7 +27,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Tests BelongsTo class
@@ -273,7 +273,7 @@ class BelongsToTest extends TestCase
      */
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
         $this->company->setPrimaryKey(['id', 'tenant_id']);
         $query = $this->client->query();

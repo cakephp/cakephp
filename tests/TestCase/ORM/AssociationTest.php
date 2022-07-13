@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Database\Exception\DatabaseException;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TestTable;
 
@@ -170,7 +170,7 @@ class AssociationTest extends TestCase
      */
     public function testInvalidTableFetchedFromRegistry(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(DatabaseException::class);
 
         $config = [
             'className' => TestTable::class,

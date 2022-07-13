@@ -22,7 +22,6 @@ use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Exception;
-use RuntimeException;
 
 /**
  * ConfigureTest
@@ -82,7 +81,7 @@ class ConfigureTest extends TestCase
      */
     public function testReadOrFailThrowingException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
         Configure::readOrFail('This.Key.Does.Not.exist');
     }
@@ -253,7 +252,7 @@ class ConfigureTest extends TestCase
      */
     public function testLoadExceptionOnNonExistentFile(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         Configure::config('test', new PhpConfig());
         Configure::load('nonexistent_configuration_file', 'test');
     }
@@ -263,7 +262,7 @@ class ConfigureTest extends TestCase
      */
     public function testLoadExceptionOnNonExistentEngine(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         Configure::load('nonexistent_configuration_file', 'nonexistent_configuration_engine');
     }
 
@@ -574,7 +573,7 @@ class ConfigureTest extends TestCase
      */
     public function testConsumeOrFailThrowingException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
         Configure::consumeOrFail('This.Key.Does.Not.exist');
     }
