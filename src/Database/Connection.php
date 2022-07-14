@@ -52,9 +52,9 @@ class Connection implements ConnectionInterface
      * Driver object, responsible for creating the real connection
      * and provide specific SQL dialect.
      *
-     * @var \Cake\Database\DriverInterface
+     * @var \Cake\Database\Driver
      */
-    protected DriverInterface $_driver;
+    protected Driver $_driver;
 
     /**
      * Contains how many nested transactions have been started.
@@ -158,17 +158,17 @@ class Connection implements ConnectionInterface
     /**
      * Creates driver from name, class name or instance.
      *
-     * @param \Cake\Database\DriverInterface|string $name Driver name, class name or instance.
+     * @param \Cake\Database\Driver|string $name Driver name, class name or instance.
      * @param array $config Driver config if $name is not an instance.
-     * @return \Cake\Database\DriverInterface
+     * @return \Cake\Database\Driver
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
      */
-    protected function createDriver(DriverInterface|string $name, array $config): DriverInterface
+    protected function createDriver(Driver|string $name, array $config): Driver
     {
         $driver = $name;
         if (is_string($driver)) {
-            /** @psalm-var class-string<\Cake\Database\DriverInterface>|null $className */
+            /** @psalm-var class-string<\Cake\Database\Driver>|null $className */
             $className = App::className($driver, 'Database/Driver');
             if ($className === null) {
                 throw new MissingDriverException(['driver' => $driver, 'connection' => $this->configName()]);
@@ -197,9 +197,9 @@ class Connection implements ConnectionInterface
     /**
      * Gets the driver instance.
      *
-     * @return \Cake\Database\DriverInterface
+     * @return \Cake\Database\Driver
      */
-    public function getDriver(): DriverInterface
+    public function getDriver(): Driver
     {
         return $this->_driver;
     }
@@ -475,7 +475,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->_useSavePoints = false;
         } else {
-            $this->_useSavePoints = $this->_driver->supports(DriverInterface::FEATURE_SAVEPOINT);
+            $this->_useSavePoints = $this->_driver->supports(Driver::FEATURE_SAVEPOINT);
         }
 
         return $this;
@@ -690,7 +690,7 @@ class Connection implements ConnectionInterface
      */
     public function supportsQuoting(): bool
     {
-        return $this->_driver->supports(DriverInterface::FEATURE_QUOTE);
+        return $this->_driver->supports(Driver::FEATURE_QUOTE);
     }
 
     /**

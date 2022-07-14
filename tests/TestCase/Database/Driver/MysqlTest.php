@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
-use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -227,18 +227,18 @@ class MysqlTest extends TestCase
 
         $this->assertSame(
             version_compare($driver->version(), $featureVersions[$serverType]['cte'], '>='),
-            $driver->supports(DriverInterface::FEATURE_CTE)
+            $driver->supports(Driver::FEATURE_CTE)
         );
         $this->assertSame(
             version_compare($driver->version(), $featureVersions[$serverType]['json'], '>='),
-            $driver->supports(DriverInterface::FEATURE_CTE)
+            $driver->supports(Driver::FEATURE_CTE)
         );
         $this->assertSame(
             version_compare($driver->version(), $featureVersions[$serverType]['window'], '>='),
-            $driver->supports(DriverInterface::FEATURE_CTE)
+            $driver->supports(Driver::FEATURE_CTE)
         );
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_SAVEPOINT));
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_QUOTE));
+        $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
+        $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
 
         $this->assertFalse($driver->supports('this-is-fake'));
     }

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18nDateTimeInterface;
@@ -134,10 +134,10 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * Convert DateTime instance into strings.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase(mixed $value, DriverInterface $driver): ?string
+    public function toDatabase(mixed $value, Driver $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -202,10 +202,10 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * {@inheritDoc}
      *
      * @param mixed $value Value to be converted to PHP equivalent
-     * @param \Cake\Database\DriverInterface $driver Object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
      * @return \DateTimeInterface|null
      */
-    public function toPHP($value, DriverInterface $driver): ?DateTimeInterface
+    public function toPHP($value, Driver $driver): ?DateTimeInterface
     {
         if ($value === null) {
             return null;
@@ -259,7 +259,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
-    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -480,10 +480,10 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * Casts given value to Statement equivalent
      *
      * @param mixed $value value to be converted to PDO statement
-     * @param \Cake\Database\DriverInterface $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
-    public function toStatement(mixed $value, DriverInterface $driver): mixed
+    public function toStatement(mixed $value, Driver $driver): mixed
     {
         return PDO::PARAM_STR;
     }

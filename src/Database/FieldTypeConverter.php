@@ -28,9 +28,9 @@ use Cake\Database\Type\OptionalConvertInterface;
 class FieldTypeConverter
 {
     /**
-     * @var \Cake\Database\DriverInterface
+     * @var \Cake\Database\Driver
      */
-    protected DriverInterface $driver;
+    protected Driver $driver;
 
     /**
      * Maps type names to conversion settings.
@@ -43,9 +43,9 @@ class FieldTypeConverter
      * Builds the type map
      *
      * @param \Cake\Database\TypeMap $typeMap Contains the types to use for converting results
-     * @param \Cake\Database\DriverInterface $driver The driver to use for the type conversion
+     * @param \Cake\Database\Driver $driver The driver to use for the type conversion
      */
-    public function __construct(TypeMap $typeMap, DriverInterface $driver)
+    public function __construct(TypeMap $typeMap, Driver $driver)
     {
         $this->driver = $driver;
 

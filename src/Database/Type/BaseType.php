@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\TypeInterface;
 use PDO;
 
@@ -61,7 +61,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
-    public function toStatement(mixed $value, DriverInterface $driver): mixed
+    public function toStatement(mixed $value, Driver $driver): mixed
     {
         if ($value === null) {
             return PDO::PARAM_NULL;

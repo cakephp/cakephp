@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Database\Connection;
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Closure;
@@ -148,7 +148,7 @@ class ConnectionHelper
      */
     public function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
-        if ($connection->getDriver()->supports(DriverInterface::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
+        if ($connection->getDriver()->supports(Driver::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
             $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
         } else {
             $connection->transactional(function (Connection $connection) use ($callback): void {

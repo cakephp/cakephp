@@ -158,7 +158,9 @@ class Postgres extends Driver
     }
 
     /**
-     * @inheritDoc
+     * Get the SQL for disabling foreign keys.
+     *
+     * @return string
      */
     public function disableForeignKeySQL(): string
     {

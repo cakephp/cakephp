@@ -16,10 +16,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\QueryTests;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\DriverInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query;
@@ -61,7 +61,7 @@ class WindowQueryTest extends TestCase
             $driver instanceof Mysql ||
             $driver instanceof Sqlite
         ) {
-            $this->skipTests = !$this->connection->getDriver()->supports(DriverInterface::FEATURE_WINDOW);
+            $this->skipTests = !$this->connection->getDriver()->supports(Driver::FEATURE_WINDOW);
         } else {
             $this->skipTests = false;
         }

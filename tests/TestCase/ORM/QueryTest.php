@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Engine\FileEngine;
+use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
-use Cake\Database\DriverInterface;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -3776,7 +3776,7 @@ class QueryTest extends TestCase
     public function testWith(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_CTE),
+            !$this->connection->getDriver()->supports(Driver::FEATURE_CTE),
             'The current driver does not support common table expressions.'
         );
         $this->skipIf(
@@ -3784,7 +3784,7 @@ class QueryTest extends TestCase
                 $this->connection->getDriver() instanceof Mysql ||
                 $this->connection->getDriver() instanceof Sqlite
             ) &&
-            !$this->connection->getDriver()->supports(DriverInterface::FEATURE_WINDOW),
+            !$this->connection->getDriver()->supports(Driver::FEATURE_WINDOW),
             'The current driver does not support window functions.'
         );
 

@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
-use Cake\Database\DriverInterface;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -299,7 +298,7 @@ SQL;
 SQL;
         $connection->execute($table);
 
-        if ($connection->getDriver()->supports(DriverInterface::FEATURE_JSON)) {
+        if ($connection->getDriver()->supports(Driver::FEATURE_JSON)) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
                     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -1344,7 +1343,7 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-        $this->skipIf(!$connection->getDriver()->supports(DriverInterface::FEATURE_JSON), 'Does not support native json');
+        $this->skipIf(!$connection->getDriver()->supports(Driver::FEATURE_JSON), 'Does not support native json');
         $this->skipIf($connection->getDriver()->isMariadb(), 'MariaDb internally uses TEXT for JSON columns');
 
         $schema = new SchemaCollection($connection);

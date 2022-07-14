@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\DriverInterface;
 use Exception;
 use JsonSerializable;
 use Stringable;
@@ -33,9 +33,9 @@ class LoggedQuery implements JsonSerializable, Stringable
     /**
      * Driver executing the query
      *
-     * @var \Cake\Database\DriverInterface|null
+     * @var \Cake\Database\Driver|null
      */
-    protected ?DriverInterface $driver = null;
+    protected ?Driver $driver = null;
 
     /**
      * Query string that was executed
