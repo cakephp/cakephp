@@ -41,9 +41,9 @@ class Session
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *
-     * @var \SessionHandlerInterface
+     * @var \SessionHandlerInterface|null
      */
-    protected SessionHandlerInterface $_engine;
+    protected ?SessionHandlerInterface $_engine = null;
 
     /**
      * Indicates whether the sessions has already started

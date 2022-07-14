@@ -491,6 +491,12 @@ class SessionTest extends TestCase
         $this->assertSame($engine, $session->engine());
     }
 
+    public function testEngineIsNull()
+    {
+        $session = new Session();
+        $this->assertNull($session->engine());
+    }
+
     /**
      * Tests instantiating a missing engine
      */
