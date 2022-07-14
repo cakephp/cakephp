@@ -10,7 +10,6 @@ use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
 use Exception;
-use InvalidArgumentException;
 
 /**
  * Entry point to CakePHP's error handling.
@@ -184,11 +183,6 @@ class ErrorTrap
     {
         /** @var class-string<\Cake\Error\ErrorRendererInterface> $class */
         $class = $this->getConfig('errorRenderer') ?: $this->chooseErrorRenderer();
-        if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
-            throw new InvalidArgumentException(
-                "Cannot use {$class} as an error renderer. It must implement \Cake\Error\ErrorRendererInterface."
-            );
-        }
 
         return new $class($this->_config);
     }
@@ -208,11 +202,6 @@ class ErrorTrap
 
         /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
         $class = $this->getConfig('logger', $this->_defaultConfig['logger']);
-        if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
-            throw new InvalidArgumentException(
-                "Cannot use {$class} as an error logger. It must implement \Cake\Error\ErrorLoggerInterface."
-            );
-        }
 
         return new $class($this->_config);
     }

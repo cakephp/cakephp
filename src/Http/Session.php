@@ -263,22 +263,16 @@ class Session
         if ($class instanceof SessionHandlerInterface) {
             return $this->setEngine($class);
         }
-        $className = App::className($class, 'Http/Session');
 
-        if (!$className) {
+        /** @var class-string<\SessionHandlerInterface>|null $className */
+        $className = App::className($class, 'Http/Session');
+        if ($className === null) {
             throw new InvalidArgumentException(
                 sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
             );
         }
 
-        $handler = new $className($options);
-        if (!($handler instanceof SessionHandlerInterface)) {
-            throw new InvalidArgumentException(
-                'The chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used as an engine.'
-            );
-        }
-
-        return $this->setEngine($handler);
+        return $this->setEngine(new $className($options));
     }
 
     /**
