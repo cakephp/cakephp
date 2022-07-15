@@ -157,6 +157,11 @@ class Translator
 
         if ($message === '') {
             $message = $key;
+
+            // If singular haven't been translated, fallback to the key.
+            if (isset($tokensValues['_singular']) && $tokensValues['_count'] === 1) {
+                $message = $tokensValues['_singular'];
+            }
         }
 
         unset($tokensValues['_count'], $tokensValues['_singular']);

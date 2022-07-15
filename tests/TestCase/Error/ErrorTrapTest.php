@@ -28,8 +28,6 @@ use Cake\Error\Renderer\TextErrorRenderer;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
-use stdClass;
 
 class ErrorTrapTest extends TestCase
 {
@@ -39,13 +37,6 @@ class ErrorTrapTest extends TestCase
 
         Log::drop('test_error');
         Router::reload();
-    }
-
-    public function testConfigRendererInvalid()
-    {
-        $trap = new ErrorTrap(['errorRenderer' => stdClass::class]);
-        $this->expectException(InvalidArgumentException::class);
-        $trap->renderer();
     }
 
     public function testConfigErrorRendererFallback()
@@ -65,13 +56,6 @@ class ErrorTrapTest extends TestCase
         $trap = new ErrorTrap();
         $trap->setConfig('errorRenderer', null);
         $this->assertInstanceOf(ConsoleErrorRenderer::class, $trap->renderer());
-    }
-
-    public function testLoggerConfigInvalid()
-    {
-        $trap = new ErrorTrap(['logger' => stdClass::class]);
-        $this->expectException(InvalidArgumentException::class);
-        $trap->logger();
     }
 
     public function testLoggerConfig()

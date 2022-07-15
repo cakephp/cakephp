@@ -105,17 +105,6 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
-     * Test load invalid class.
-     */
-    public function testLoadInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The association must extend `Cake\ORM\Association` class, `stdClass` given.');
-
-        $this->associations->load('stdClass', 'Users');
-    }
-
-    /**
      * Test removeAll method
      */
     public function testRemoveAll(): void
