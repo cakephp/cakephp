@@ -572,8 +572,12 @@ class ResultSet implements ResultSetInterface
      */
     public function __debugInfo()
     {
+        $currentIndex = $this->_index;
+        // toArray() adjusts the current index, so we have to reset it
+        $items = $this->toArray();
+        $this->_index = $currentIndex;
         return [
-            'items' => $this->toArray(),
+            'items' => $items,
         ];
     }
 }
