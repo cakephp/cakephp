@@ -364,22 +364,6 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test error on invalid route class
-     */
-    public function testConnectErrorInvalidRouteClass(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Route class not found, or route class is not a subclass of');
-        $routes = new RouteBuilder(
-            $this->collection,
-            '/l',
-            [],
-            ['extensions' => ['json']]
-        );
-        $routes->connect('/{controller}', [], ['routeClass' => '\stdClass']);
-    }
-
-    /**
      * Test conflicting parameters raises an exception.
      */
     public function testConnectConflictingParameters(): void

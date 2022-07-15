@@ -166,12 +166,6 @@ class ExceptionTrap
     {
         /** @var class-string<\Cake\Error\ErrorLoggerInterface> $class */
         $class = $this->getConfig('logger', $this->_defaultConfig['logger']);
-        if (!in_array(ErrorLoggerInterface::class, class_implements($class))) {
-            throw new InvalidArgumentException(
-                "Cannot use {$class} as an exception logger. " .
-                "It must implement \Cake\Error\ErrorLoggerInterface."
-            );
-        }
 
         return new $class($this->_config);
     }
