@@ -576,6 +576,7 @@ class ResultSet implements ResultSetInterface
         // toArray() adjusts the current index, so we have to reset it
         $items = $this->toArray();
         $this->_index = $currentIndex;
+
         return [
             'items' => $items,
         ];
