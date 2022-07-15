@@ -634,20 +634,12 @@ abstract class Driver
     /**
      * Returns whether the driver supports the feature.
      *
-     * Defaults to true for FEATURE_QUOTE and FEATURE_SAVEPOINT.
+     * The FEATURE_* constants represent all features used by cakephp.
      *
      * @param string $feature Driver feature name
      * @return bool
      */
-    public function supports(string $feature): bool
-    {
-        return match ($feature) {
-            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            static::FEATURE_QUOTE,
-            static::FEATURE_SAVEPOINT => true,
-            default => false,
-        };
-    }
+    abstract public function supports(string $feature): bool;
 
     /**
      * Transforms the passed query to this Driver's dialect and returns an instance

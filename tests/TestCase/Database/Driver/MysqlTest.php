@@ -224,21 +224,18 @@ class MysqlTest extends TestCase
                 'window' => '10.2.0',
             ],
         ];
+        foreach ($featureVersions[$serverType] as $feature => $version) {
+            $this->assertSame(
+                version_compare($driver->version(), $version, '>='),
+                $driver->supports($feature)
+            );
+        }
 
-        $this->assertSame(
-            version_compare($driver->version(), $featureVersions[$serverType]['cte'], '>='),
-            $driver->supports(Driver::FEATURE_CTE)
-        );
-        $this->assertSame(
-            version_compare($driver->version(), $featureVersions[$serverType]['json'], '>='),
-            $driver->supports(Driver::FEATURE_CTE)
-        );
-        $this->assertSame(
-            version_compare($driver->version(), $featureVersions[$serverType]['window'], '>='),
-            $driver->supports(Driver::FEATURE_CTE)
-        );
+        $this->assertTrue($driver->supports(Driver::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
         $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
         $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
+
+        $this->assertFalse($driver->supports(Driver::FEATURE_TRUNCATE_WITH_CONSTRAINTS));
 
         $this->assertFalse($driver->supports('this-is-fake'));
     }

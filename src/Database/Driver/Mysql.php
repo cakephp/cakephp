@@ -212,6 +212,12 @@ class Mysql extends Driver
     public function supports(string $feature): bool
     {
         return match ($feature) {
+            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            static::FEATURE_QUOTE,
+            static::FEATURE_SAVEPOINT => true,
+
+            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS => false,
+
             static::FEATURE_CTE,
             static::FEATURE_JSON,
             static::FEATURE_WINDOW => version_compare(
@@ -219,7 +225,8 @@ class Mysql extends Driver
                 $this->featureVersions[$this->serverType][$feature],
                 '>='
             ),
-            default => parent::supports($feature),
+
+            default => false,
         };
     }
 
