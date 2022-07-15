@@ -30,16 +30,16 @@ class IdentifierQuoter
     /**
      * The driver instance used to do the identifier quoting
      *
-     * @var \Cake\Database\DriverInterface
+     * @var \Cake\Database\Driver
      */
-    protected DriverInterface $_driver;
+    protected Driver $_driver;
 
     /**
      * Constructor
      *
-     * @param \Cake\Database\DriverInterface $driver The driver instance used to do the identifier quoting
+     * @param \Cake\Database\Driver $driver The driver instance used to do the identifier quoting
      */
-    public function __construct(DriverInterface $driver)
+    public function __construct(Driver $driver)
     {
         $this->_driver = $driver;
     }

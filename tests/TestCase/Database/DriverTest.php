@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
@@ -114,12 +113,12 @@ class DriverTest extends TestCase
      */
     public function testSupports(): void
     {
-        $this->assertTrue($this->driver->supports(DriverInterface::FEATURE_SAVEPOINT));
-        $this->assertTrue($this->driver->supports(DriverInterface::FEATURE_QUOTE));
+        $this->assertTrue($this->driver->supports(Driver::FEATURE_SAVEPOINT));
+        $this->assertTrue($this->driver->supports(Driver::FEATURE_QUOTE));
 
-        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_CTE));
-        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_JSON));
-        $this->assertFalse($this->driver->supports(DriverInterface::FEATURE_WINDOW));
+        $this->assertFalse($this->driver->supports(Driver::FEATURE_CTE));
+        $this->assertFalse($this->driver->supports(Driver::FEATURE_JSON));
+        $this->assertFalse($this->driver->supports(Driver::FEATURE_WINDOW));
 
         $this->assertFalse($this->driver->supports('this-is-fake'));
     }

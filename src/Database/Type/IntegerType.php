@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use InvalidArgumentException;
 use PDO;
 
@@ -48,10 +48,10 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * Convert integer data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toDatabase(mixed $value, DriverInterface $driver): ?int
+    public function toDatabase(mixed $value, Driver $driver): ?int
     {
         if ($value === null || $value === '') {
             return null;
@@ -66,10 +66,10 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * {@inheritDoc}
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toPHP($value, DriverInterface $driver): ?int
+    public function toPHP($value, Driver $driver): ?int
     {
         if ($value === null) {
             return null;
@@ -81,7 +81,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
-    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -100,10 +100,10 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * Get the correct PDO binding type for integer data.
      *
      * @param mixed $value The value being bound.
-     * @param \Cake\Database\DriverInterface $driver The driver.
+     * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement(mixed $value, DriverInterface $driver): int
+    public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_INT;
     }

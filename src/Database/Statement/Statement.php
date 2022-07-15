@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\FieldTypeConverter;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
@@ -42,9 +42,9 @@ class Statement implements StatementInterface
     ];
 
     /**
-     * @var \Cake\Database\DriverInterface
+     * @var \Cake\Database\Driver
      */
-    protected DriverInterface $_driver;
+    protected Driver $_driver;
 
     /**
      * @var \PDOStatement
@@ -65,12 +65,12 @@ class Statement implements StatementInterface
 
     /**
      * @param \PDOStatement $statement PDO statement
-     * @param \Cake\Database\DriverInterface $driver Database driver
+     * @param \Cake\Database\Driver $driver Database driver
      * @param \Cake\Database\TypeMap|null $typeMap Results type map
      */
     public function __construct(
         PDOStatement $statement,
-        DriverInterface $driver,
+        Driver $driver,
         ?TypeMap $typeMap = null,
     ) {
         $this->_driver = $driver;

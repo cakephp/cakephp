@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\Number;
 use InvalidArgumentException;
@@ -49,11 +49,11 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * Convert decimal strings into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|float|int|null
      * @throws \InvalidArgumentException
      */
-    public function toDatabase(mixed $value, DriverInterface $driver): string|float|int|null
+    public function toDatabase(mixed $value, Driver $driver): string|float|int|null
     {
         if ($value === null || $value === '') {
             return null;
@@ -81,10 +81,10 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * {@inheritDoc}
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toPHP($value, DriverInterface $driver): ?string
+    public function toPHP($value, Driver $driver): ?string
     {
         if ($value === null) {
             return null;
@@ -96,7 +96,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
-    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -113,10 +113,10 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * Get the correct PDO binding type for decimal data.
      *
      * @param mixed $value The value being bound.
-     * @param \Cake\Database\DriverInterface $driver The driver.
+     * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement(mixed $value, DriverInterface $driver): int
+    public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }

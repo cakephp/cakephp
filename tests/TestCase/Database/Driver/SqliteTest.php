@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
-use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -207,15 +207,15 @@ class SqliteTest extends TestCase
 
         $this->assertSame(
             version_compare($driver->version(), $featureVersions['cte'], '>='),
-            $driver->supports(DriverInterface::FEATURE_CTE)
+            $driver->supports(Driver::FEATURE_CTE)
         );
         $this->assertSame(
             version_compare($driver->version(), $featureVersions['window'], '>='),
-            $driver->supports(DriverInterface::FEATURE_WINDOW)
+            $driver->supports(Driver::FEATURE_WINDOW)
         );
-        $this->assertFalse($driver->supports(DriverInterface::FEATURE_JSON));
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_SAVEPOINT));
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_QUOTE));
+        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
+        $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
+        $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
 
         $this->assertFalse($driver->supports('this-is-fake'));
     }

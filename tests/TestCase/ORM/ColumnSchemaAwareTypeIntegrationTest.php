@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use TestApp\Database\Type\ColumnSchemaAwareType;
@@ -73,7 +73,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         $type
             ->expects($this->once())
             ->method('convertColumnDefinition')
-            ->willReturnCallback(function (array $definition, DriverInterface $driver) {
+            ->willReturnCallback(function (array $definition, Driver $driver) {
                 $this->assertEquals(
                     [
                         'length',

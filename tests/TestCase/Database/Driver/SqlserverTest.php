@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\DriverInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
@@ -513,11 +513,11 @@ class SqlserverTest extends TestCase
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf(!$driver instanceof Sqlserver);
 
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_CTE));
-        $this->assertFalse($driver->supports(DriverInterface::FEATURE_JSON));
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_SAVEPOINT));
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_QUOTE));
-        $this->assertTrue($driver->supports(DriverInterface::FEATURE_WINDOW));
+        $this->assertTrue($driver->supports(Driver::FEATURE_CTE));
+        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
+        $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
+        $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
+        $this->assertTrue($driver->supports(Driver::FEATURE_WINDOW));
 
         $this->assertFalse($driver->supports('this-is-fake'));
     }
