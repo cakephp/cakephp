@@ -82,6 +82,7 @@ class AssociationCollection implements IteratorAggregate
      * @param array<string, mixed> $options List of options to configure the association definition.
      * @return \Cake\ORM\Association
      * @throws \InvalidArgumentException
+     * @psalm-param class-string<\Cake\ORM\Association> $className
      */
     public function load(string $className, string $associated, array $options = []): Association
     {
@@ -90,14 +91,6 @@ class AssociationCollection implements IteratorAggregate
         ];
 
         $association = new $className($associated, $options);
-        if (!$association instanceof Association) {
-            $message = sprintf(
-                'The association must extend `%s` class, `%s` given.',
-                Association::class,
-                get_class($association)
-            );
-            throw new InvalidArgumentException($message);
-        }
 
         return $this->add($association->getName(), $association);
     }

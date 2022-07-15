@@ -859,9 +859,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        $behavior = $this->_behaviors->get($name);
-
-        return $behavior;
+        return $this->_behaviors->get($name);
     }
 
     /**

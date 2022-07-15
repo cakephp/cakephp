@@ -348,7 +348,7 @@ class I18nTest extends TestCase
         }, 'en_US');
         $this->assertSame('Le Moo', __dn('custom', 'Cow', 'Cows', 1));
         $this->assertSame('Les Moos', __dn('custom', 'Cow', 'Cows', 2));
-        $this->assertSame('{0} years', __dn('custom', '{0} year', '{0} years', 1));
+        $this->assertSame('{0} year', __dn('custom', '{0} year', '{0} years', 1));
         $this->assertSame('{0} years', __dn('custom', '{0} year', '{0} years', 2));
     }
 

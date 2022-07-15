@@ -29,7 +29,6 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
-use stdClass;
 use TestApp\Error\LegacyErrorLogger;
 use Throwable;
 
@@ -53,14 +52,6 @@ class ExceptionTrapTest extends TestCase
         parent::tearDown();
         Log::reset();
         ini_set('memory_limit', $this->memoryLimit);
-    }
-
-    public function testConfigRendererInvalid()
-    {
-        $trap = new ExceptionTrap(['exceptionRenderer' => stdClass::class]);
-        $this->expectException(InvalidArgumentException::class);
-        $error = new InvalidArgumentException('nope');
-        $trap->renderer($error);
     }
 
     public function testConfigExceptionRendererFallbackInCli()
@@ -106,13 +97,6 @@ class ExceptionTrapTest extends TestCase
         $trap->setConfig('exceptionRenderer', null);
         $error = new InvalidArgumentException('nope');
         $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
-    }
-
-    public function testLoggerConfigInvalid()
-    {
-        $trap = new ExceptionTrap(['logger' => stdClass::class]);
-        $this->expectException(InvalidArgumentException::class);
-        $trap->logger();
     }
 
     public function testLoggerConfig()
