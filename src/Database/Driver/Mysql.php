@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
 use PDO;
@@ -209,20 +210,20 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(string $feature): bool
+    public function supports(DriverFeatureEnum $feature): bool
     {
         return match ($feature) {
-            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            static::FEATURE_QUOTE,
-            static::FEATURE_SAVEPOINT => true,
+            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeatureEnum::PDO_QUOTE,
+            DriverFeatureEnum::SAVEPOINT => true,
 
-            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS => false,
+            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS => false,
 
-            static::FEATURE_CTE,
-            static::FEATURE_JSON,
-            static::FEATURE_WINDOW => version_compare(
+            DriverFeatureEnum::CTE,
+            DriverFeatureEnum::JSON,
+            DriverFeatureEnum::WINDOW => version_compare(
                 $this->version(),
-                $this->featureVersions[$this->serverType][$feature],
+                $this->featureVersions[$this->serverType][$feature->value],
                 '>='
             ),
 

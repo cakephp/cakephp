@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
@@ -513,15 +513,13 @@ class SqlserverTest extends TestCase
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf(!$driver instanceof Sqlserver);
 
-        $this->assertTrue($driver->supports(Driver::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
-        $this->assertTrue($driver->supports(Driver::FEATURE_TRUNCATE_WITH_CONSTRAINTS));
-        $this->assertTrue($driver->supports(Driver::FEATURE_CTE));
-        $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
-        $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
-        $this->assertTrue($driver->supports(Driver::FEATURE_WINDOW));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::CTE));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::PDO_QUOTE));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
 
-        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
-
-        $this->assertFalse($driver->supports('this-is-fake'));
+        $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
     }
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\StringExpression;
@@ -178,17 +179,17 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(string $feature): bool
+    public function supports(DriverFeatureEnum $feature): bool
     {
         return match ($feature) {
-            static::FEATURE_CTE,
-            static::FEATURE_JSON,
-            static::FEATURE_QUOTE,
-            static::FEATURE_SAVEPOINT,
-            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS,
-            static::FEATURE_WINDOW => true,
+            DriverFeatureEnum::CTE,
+            DriverFeatureEnum::JSON,
+            DriverFeatureEnum::PDO_QUOTE,
+            DriverFeatureEnum::SAVEPOINT,
+            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeatureEnum::WINDOW => true,
 
-            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
+            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
 
             default => false,
         };

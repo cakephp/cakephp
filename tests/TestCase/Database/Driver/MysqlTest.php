@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -227,16 +227,14 @@ class MysqlTest extends TestCase
         foreach ($featureVersions[$serverType] as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports($feature)
+                $driver->supports(DriverFeatureEnum::from($feature))
             );
         }
 
-        $this->assertTrue($driver->supports(Driver::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
-        $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
-        $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::PDO_QUOTE));
 
-        $this->assertFalse($driver->supports(Driver::FEATURE_TRUNCATE_WITH_CONSTRAINTS));
-
-        $this->assertFalse($driver->supports('this-is-fake'));
+        $this->assertFalse($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
     }
 }

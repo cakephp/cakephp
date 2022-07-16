@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 
 /**
@@ -351,7 +351,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $out = $this->_driver->quoteIdentifier($name);
-        $nativeJson = $this->_driver->supports(Driver::FEATURE_JSON);
+        $nativeJson = $this->_driver->supports(DriverFeatureEnum::JSON);
 
         $typeMap = [
             TableSchemaInterface::TYPE_TINYINTEGER => ' TINYINT',

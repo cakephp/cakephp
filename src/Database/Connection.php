@@ -475,7 +475,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->_useSavePoints = false;
         } else {
-            $this->_useSavePoints = $this->_driver->supports(Driver::FEATURE_SAVEPOINT);
+            $this->_useSavePoints = $this->_driver->supports(DriverFeatureEnum::SAVEPOINT);
         }
 
         return $this;
@@ -690,7 +690,7 @@ class Connection implements ConnectionInterface
      */
     public function supportsQuoting(): bool
     {
-        return $this->_driver->supports(Driver::FEATURE_QUOTE);
+        return $this->_driver->supports(DriverFeatureEnum::PDO_QUOTE);
     }
 
     /**

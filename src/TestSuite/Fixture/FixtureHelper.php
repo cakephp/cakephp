@@ -19,7 +19,7 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
-use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -187,7 +187,7 @@ class FixtureHelper
         $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
             if ($connection instanceof Connection) {
                 $sortedFixtures = null;
-                if ($connection->getDriver()->supports(Driver::FEATURE_TRUNCATE_WITH_CONSTRAINTS)) {
+                if ($connection->getDriver()->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS)) {
                     $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
                 }
 

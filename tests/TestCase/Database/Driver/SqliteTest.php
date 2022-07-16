@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Connection;
-use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -201,23 +201,21 @@ class SqliteTest extends TestCase
         $this->skipIf(!$driver instanceof Sqlite);
 
         $featureVersions = [
-            Driver::FEATURE_CTE => '3.8.3',
-            Driver::FEATURE_WINDOW => '3.28.0',
+            'cte' => '3.8.3',
+            'window' => '3.28.0',
         ];
         foreach ($featureVersions as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports($feature)
+                $driver->supports(DriverFeatureEnum::from($feature))
             );
         }
 
-        $this->assertTrue($driver->supports(Driver::FEATURE_TRUNCATE_WITH_CONSTRAINTS));
-        $this->assertTrue($driver->supports(Driver::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
-        $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
-        $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::PDO_QUOTE));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
 
-        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
-
-        $this->assertFalse($driver->supports('this-is-fake'));
+        $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
     }
 }
