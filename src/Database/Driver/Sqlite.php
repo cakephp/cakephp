@@ -194,14 +194,21 @@ class Sqlite extends Driver
     public function supports(string $feature): bool
     {
         return match ($feature) {
+            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            static::FEATURE_QUOTE,
+            static::FEATURE_SAVEPOINT,
+            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS => true,
+
+            static::FEATURE_JSON => false,
+
             static::FEATURE_CTE,
             static::FEATURE_WINDOW => version_compare(
                 $this->version(),
                 $this->featureVersions[$feature],
                 '>='
             ),
-            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS => true,
-            default => parent::supports($feature),
+
+            default => false,
         };
     }
 

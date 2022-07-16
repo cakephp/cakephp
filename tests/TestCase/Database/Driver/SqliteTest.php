@@ -201,21 +201,22 @@ class SqliteTest extends TestCase
         $this->skipIf(!$driver instanceof Sqlite);
 
         $featureVersions = [
-            'cte' => '3.8.3',
-            'window' => '3.28.0',
+            Driver::FEATURE_CTE => '3.8.3',
+            Driver::FEATURE_WINDOW => '3.28.0',
         ];
+        foreach ($featureVersions as $feature => $version) {
+            $this->assertSame(
+                version_compare($driver->version(), $version, '>='),
+                $driver->supports($feature)
+            );
+        }
 
-        $this->assertSame(
-            version_compare($driver->version(), $featureVersions['cte'], '>='),
-            $driver->supports(Driver::FEATURE_CTE)
-        );
-        $this->assertSame(
-            version_compare($driver->version(), $featureVersions['window'], '>='),
-            $driver->supports(Driver::FEATURE_WINDOW)
-        );
-        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
+        $this->assertTrue($driver->supports(Driver::FEATURE_TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(Driver::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
         $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
         $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
+
+        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
 
         $this->assertFalse($driver->supports('this-is-fake'));
     }

@@ -183,10 +183,14 @@ class Postgres extends Driver
         return match ($feature) {
             static::FEATURE_CTE,
             static::FEATURE_JSON,
+            static::FEATURE_QUOTE,
+            static::FEATURE_SAVEPOINT,
             static::FEATURE_TRUNCATE_WITH_CONSTRAINTS,
             static::FEATURE_WINDOW => true,
+
             static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
-            default => parent::supports($feature),
+
+            default => false,
         };
     }
 

@@ -513,11 +513,14 @@ class SqlserverTest extends TestCase
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf(!$driver instanceof Sqlserver);
 
+        $this->assertTrue($driver->supports(Driver::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(Driver::FEATURE_TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(Driver::FEATURE_CTE));
-        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
         $this->assertTrue($driver->supports(Driver::FEATURE_SAVEPOINT));
         $this->assertTrue($driver->supports(Driver::FEATURE_QUOTE));
         $this->assertTrue($driver->supports(Driver::FEATURE_WINDOW));
+
+        $this->assertFalse($driver->supports(Driver::FEATURE_JSON));
 
         $this->assertFalse($driver->supports('this-is-fake'));
     }

@@ -109,21 +109,6 @@ class DriverTest extends TestCase
     }
 
     /**
-     * Tests default implementation of feature support check.
-     */
-    public function testSupports(): void
-    {
-        $this->assertTrue($this->driver->supports(Driver::FEATURE_SAVEPOINT));
-        $this->assertTrue($this->driver->supports(Driver::FEATURE_QUOTE));
-
-        $this->assertFalse($this->driver->supports(Driver::FEATURE_CTE));
-        $this->assertFalse($this->driver->supports(Driver::FEATURE_JSON));
-        $this->assertFalse($this->driver->supports(Driver::FEATURE_WINDOW));
-
-        $this->assertFalse($this->driver->supports('this-is-fake'));
-    }
-
-    /**
      * Test schemaValue().
      * Uses a provider for all the different values we can pass to the method.
      *
