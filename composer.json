@@ -68,10 +68,7 @@
     },
     "config": {
         "process-timeout": 900,
-        "sort-packages": true,
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
