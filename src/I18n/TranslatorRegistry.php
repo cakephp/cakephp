@@ -340,7 +340,8 @@ class TranslatorRegistry
         if (!$this->_useFallback || $name === $fallbackDomain) {
             return $loader;
         }
-        $loader = function () use ($loader, $fallbackDomain) {
+
+        return function () use ($loader, $fallbackDomain) {
             /** @var \Cake\I18n\Package $package */
             $package = $loader();
             if (!$package->getFallback()) {
@@ -349,7 +350,5 @@ class TranslatorRegistry
 
             return $package;
         };
-
-        return $loader;
     }
 }

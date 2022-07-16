@@ -101,9 +101,8 @@ abstract class BaseCommand implements CommandInterface
         $pos = strrpos(static::class, '\\');
         /** @psalm-suppress PossiblyFalseOperand */
         $name = substr(static::class, $pos + 1, -7);
-        $name = Inflector::underscore($name);
 
-        return $name;
+        return Inflector::underscore($name);
     }
 
     /**

@@ -67,7 +67,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         }
         $code = implode("\n", $excerpt);
 
-        $html = <<<HTML
+        return <<<HTML
 <div class="cake-error">
     {$toggle}: {$description} [in <b>{$path}</b>, line <b>{$line}</b>]
     <div id="{$id}-trace" class="cake-stack-trace" style="display: none;">
@@ -77,8 +77,6 @@ class HtmlErrorRenderer implements ErrorRendererInterface
     </div>
 </div>
 HTML;
-
-        return $html;
     }
 
     /**

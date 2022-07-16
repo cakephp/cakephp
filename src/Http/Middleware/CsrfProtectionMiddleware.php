@@ -429,7 +429,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _createCookie(string $value, ServerRequestInterface $request): CookieInterface
     {
-        $cookie = Cookie::create(
+        return Cookie::create(
             $this->_config['cookieName'],
             $value,
             [
@@ -440,7 +440,5 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'samesite' => $this->_config['samesite'],
             ]
         );
-
-        return $cookie;
     }
 }
