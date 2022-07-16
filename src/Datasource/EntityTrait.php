@@ -287,7 +287,9 @@ trait EntityTrait
         }
 
         if ($method) {
-            return $this->{$method}($value);
+            $result = $this->{$method}($value);
+
+            return $result;
         }
 
         return $value;
