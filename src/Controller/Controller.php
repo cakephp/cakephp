@@ -44,7 +44,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use UnexpectedValueException;
 
 /**
  * Application controller class for organization of business logic.
@@ -477,19 +476,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Closure $action The action closure.
      * @param array $args The arguments to be passed when invoking action.
      * @return void
-     * @throws \UnexpectedValueException If return value of action is not `null` or `ResponseInterface` instance.
      */
     public function invokeAction(Closure $action, array $args): void
     {
         $result = $action(...$args);
-        if ($result !== null && !$result instanceof ResponseInterface) {
-            throw new UnexpectedValueException(sprintf(
-                'Controller actions can only return ResponseInterface instance or null. '
-                . 'Got %s instead.',
-                get_debug_type($result)
-            ));
-        }
-        if ($result === null && $this->isAutoRenderEnabled()) {
+        if ($result !== null) {
+            assert(
+                $result instanceof ResponseInterface,
+                sprintf(
+                    'Controller actions can only return ResponseInterface instance or null. '
+                    . 'Got %s instead.',
+                    get_debug_type($result)
+                )
+            );
+        } elseif ($this->isAutoRenderEnabled()) {
             $result = $this->render();
         }
         if ($result) {

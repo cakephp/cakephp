@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Cake\Console;
 
 use Cake\Core\ContainerInterface;
-use InvalidArgumentException;
 
 /**
  * This is a factory for creating Command instances.
@@ -49,11 +48,6 @@ class CommandFactory implements CommandFactoryInterface
             $command = $this->container->get($className);
         } else {
             $command = new $className();
-        }
-
-        if (!$command instanceof CommandInterface) {
-            $message = sprintf('Class `%s` must be an instance of `Cake\Console\CommandInterface`.', $className);
-            throw new InvalidArgumentException($message);
         }
 
         return $command;

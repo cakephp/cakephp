@@ -28,7 +28,6 @@ use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
@@ -85,35 +84,6 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app);
         $this->assertSame(EventManager::instance(), $runner->getEventManager());
-    }
-
-    /**
-     * test event manager cannot be set on applications without events.
-     */
-    public function testSetEventManagerNonEventedApplication(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $app = $this->createMock(ConsoleApplicationInterface::class);
-
-        $events = new EventManager();
-        $runner = new CommandRunner($app);
-        $runner->setEventManager($events);
-    }
-
-    /**
-     * Test that running with empty argv fails
-     */
-    public function testRunMissingRootCommand(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot run any commands. No arguments received.');
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $runner = new CommandRunner($app);
-        $runner->run([]);
     }
 
     /**

@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View\Form;
 
-use Cake\Core\Exception\CakeException;
 use Cake\Form\Form;
 use Cake\Utility\Hash;
 
@@ -54,9 +53,10 @@ class FormContext implements ContextInterface
      */
     public function __construct(array $context)
     {
-        if (!isset($context['entity']) || !$context['entity'] instanceof Form) {
-            throw new CakeException('`$context[\'entity\']` must be an instance of Cake\Form\Form');
-        }
+        assert(
+            isset($context['entity']) && $context['entity'] instanceof Form,
+            "`\$context['entity']` must be an instance of Cake\Form\Form"
+        );
 
         $this->_form = $context['entity'];
         $this->_validator = $context['validator'] ?? null;

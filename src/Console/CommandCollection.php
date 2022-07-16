@@ -61,13 +61,16 @@ class CommandCollection implements IteratorAggregate, Countable
      */
     public function add(string $name, CommandInterface|string $command)
     {
-        if (is_string($command) && !is_subclass_of($command, CommandInterface::class)) {
-            throw new InvalidArgumentException(sprintf(
-                "Cannot use '%s' for command '%s'. " .
-                "It is not a subclass of Cake\Console\CommandInterface.",
-                $command,
-                $name
-            ));
+        if (is_string($command)) {
+            assert(
+                is_subclass_of($command, CommandInterface::class),
+                sprintf(
+                    "Cannot use '%s' for command '%s'. " .
+                    "It is not a subclass of Cake\Console\CommandInterface.",
+                    $command,
+                    $name
+                )
+            );
         }
         if (!preg_match('/^[^\s]+(?:(?: [^\s]+){1,2})?$/ui', $name)) {
             throw new InvalidArgumentException(

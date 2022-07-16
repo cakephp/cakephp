@@ -126,14 +126,15 @@ trait ValidatorAwareTrait
             $this->dispatchEvent($event, compact('validator', 'name'));
         }
 
-        if (!$validator instanceof Validator) {
-            throw new InvalidArgumentException(sprintf(
+        assert(
+            $validator instanceof Validator,
+            sprintf(
                 'The %s::%s() validation method must return an instance of %s.',
                 static::class,
                 $method,
                 Validator::class
-            ));
-        }
+            )
+        );
 
         return $validator;
     }

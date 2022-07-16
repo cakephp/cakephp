@@ -169,6 +169,8 @@ class ExceptionTrap
         set_exception_handler($this->handleException(...));
         register_shutdown_function($this->handleShutdown(...));
         static::$registeredTrap = $this;
+
+        ini_set('assert.exception', '1');
     }
 
     /**

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
+use AssertionError;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
@@ -42,7 +43,6 @@ use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\PostsTable;
 use TestPlugin\Controller\Admin\CommentsController;
 use TestPlugin\Controller\TestPluginController;
-use UnexpectedValueException;
 
 /**
  * ControllerTest class
@@ -855,7 +855,7 @@ class ControllerTest extends TestCase
      */
     public function testInvokeActionException(): void
     {
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(AssertionError::class);
         $this->expectExceptionMessage(
             'Controller actions can only return ResponseInterface instance or null. '
                 . 'Got string instead.'

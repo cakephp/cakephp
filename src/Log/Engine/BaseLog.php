@@ -86,13 +86,6 @@ abstract class BaseLog extends AbstractLogger
             $formatter = new $class($options);
         }
 
-        if (!$formatter instanceof AbstractFormatter) {
-            throw new InvalidArgumentException(sprintf(
-                'Formatter must extend `%s`, got `%s` instead',
-                AbstractFormatter::class,
-                get_class($formatter)
-            ));
-        }
         $this->formatter = $formatter;
     }
 

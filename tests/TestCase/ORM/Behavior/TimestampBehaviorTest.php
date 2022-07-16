@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use AssertionError;
 use Cake\Event\Event;
 use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\TimestampBehavior;
@@ -23,7 +24,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
-use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
@@ -227,7 +227,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testNonDateTimeTypeException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(AssertionError::class);
         $this->expectExceptionMessage('TimestampBehavior only supports columns of type DateTimeType.');
 
         $table = $this->getTableInstance();

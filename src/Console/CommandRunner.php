@@ -30,7 +30,6 @@ use Cake\Event\EventManagerInterface;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 
 /**
  * Run CLI commands for the provided application.
@@ -125,13 +124,10 @@ class CommandRunner implements EventDispatcherInterface
      * @param array $argv The arguments from the CLI environment.
      * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
-     * @throws \InvalidArgumentException
      */
     public function run(array $argv, ?ConsoleIo $io = null): int
     {
-        if (empty($argv)) {
-            throw new InvalidArgumentException('Cannot run any commands. No arguments received.');
-        }
+        assert(!empty($argv), 'Cannot run any commands. No arguments received.');
 
         $this->bootstrap();
 
@@ -218,13 +214,14 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function setEventManager(EventManagerInterface $eventManager)
     {
-        if ($this->app instanceof PluginApplicationInterface) {
-            $this->app->setEventManager($eventManager);
+        assert(
+            $this->app instanceof PluginApplicationInterface,
+            'Cannot set the event manager, the application does not support events.'
+        );
 
-            return $this;
-        }
+        $this->app->setEventManager($eventManager);
 
-        throw new InvalidArgumentException('Cannot set the event manager, the application does not support events.');
+        return $this;
     }
 
     /**

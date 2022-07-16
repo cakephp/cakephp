@@ -123,12 +123,15 @@ class WidgetLocator
                 continue;
             }
 
-            if (is_object($widget) && !($widget instanceof WidgetInterface)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Widget objects must implement `%s`. Got `%s` instance instead.',
-                    WidgetInterface::class,
-                    get_debug_type($widget)
-                ));
+            if (is_object($widget)) {
+                assert(
+                    $widget instanceof WidgetInterface,
+                    sprintf(
+                        'Widget objects must implement `%s`. Got `%s` instance instead.',
+                        WidgetInterface::class,
+                        get_debug_type($widget)
+                    )
+                );
             }
 
             $this->_widgets[$key] = $widget;

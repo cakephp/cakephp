@@ -202,9 +202,6 @@ class Client implements ClientInterface
             $adapter = new $adapter();
         }
 
-        if (!$adapter instanceof AdapterInterface) {
-            throw new InvalidArgumentException('Adapter must be an instance of Cake\Http\Client\AdapterInterface');
-        }
         $this->_adapter = $adapter;
 
         if (!empty($this->_config['cookieJar'])) {

@@ -62,7 +62,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-version }}
         extensions: mbstring, intl, apcu, memcached, redis, pdo_${{ matrix.db-type }}
-        ini-values: apc.enable_cli = 1
+        ini-values: apc.enable_cli = 1, zend.assertions = 1
         coverage: pcov
 
     - name: Get composer cache directory
@@ -164,7 +164,7 @@ jobs:
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
-        ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
+        ini-values: apc.enable_cli = 1, zend.assertions = 1, extension = php_fileinfo.dll
         coverage: none
 
     - name: Setup SQLServer

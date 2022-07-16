@@ -22,7 +22,6 @@ use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use stdClass;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\SampleCommand;
 
@@ -49,18 +48,6 @@ class CommandCollectionTest extends TestCase
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('sample'));
         $this->assertCount(2, $collection);
-    }
-
-    /**
-     * Constructor with invalid class names should blow up
-     */
-    public function testConstructorInvalidClass(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\'. It is not a subclass of Cake\Console\CommandInterface');
-        new CommandCollection([
-            'nope' => stdClass::class,
-        ]);
     }
 
     /**
@@ -140,17 +127,6 @@ class CommandCollectionTest extends TestCase
         $this->expectExceptionMessage("The command name `$name` is invalid.");
         $collection = new CommandCollection();
         $collection->add($name, DemoCommand::class);
-    }
-
-    /**
-     * Class names that are not commands should fail
-     */
-    public function testInvalidCommandClassName(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'Cake\TestSuite\TestCase\' for command \'routes\'. It is not a subclass of Cake\Console\CommandInterface');
-        $collection = new CommandCollection();
-        $collection->add('routes', TestCase::class);
     }
 
     /**

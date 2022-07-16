@@ -171,9 +171,11 @@ class NumericPaginator implements PaginatorInterface
             }
         }
 
-        if (!($target instanceof RepositoryInterface)) {
-            throw new CakeException('Pagination targe must be a QueryInterface or ResultSetInterface instance.');
-        }
+        assert(
+            $target instanceof RepositoryInterface,
+            'Pagination target must be an instance of Cake\Datasource\QueryInterface'
+                . ' or Cake\Datasource\RepositoryInterface.'
+        );
 
         $data = $this->extractData($target, $params, $settings);
         $query = $this->getQuery($target, $query, $data);
