@@ -228,7 +228,9 @@ class Filesystem
         unset($iterator);
 
         // phpcs:ignore
-        return $result && @rmdir($path);
+        $result = $result && @rmdir($path);
+
+        return $result;
     }
 
     /**
