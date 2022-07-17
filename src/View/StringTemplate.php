@@ -378,8 +378,6 @@ class StringTemplate
         /** @psalm-suppress PossiblyInvalidArgument */
         $class = array_unique(array_merge($class, $newClass));
 
-        $input = Hash::insert($input, $useIndex, $class);
-
-        return $input;
+        return Hash::insert($input, $useIndex, $class);
     }
 }

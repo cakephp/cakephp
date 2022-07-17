@@ -641,9 +641,8 @@ class Router
             $routePass = $route->options['pass'] ?? [];
             $pass = array_slice($pass, count($routePass));
         }
-        $params = array_merge($params, $pass);
 
-        return $params;
+        return array_merge($params, $pass);
     }
 
     /**

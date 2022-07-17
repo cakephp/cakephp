@@ -383,14 +383,13 @@ class EventManager implements EventManagerInterface
     public function matchingListeners(string $eventKeyPattern): array
     {
         $matchPattern = '/' . preg_quote($eventKeyPattern, '/') . '/';
-        $matches = array_intersect_key(
+
+        return array_intersect_key(
             $this->_listeners,
             array_flip(
                 preg_grep($matchPattern, array_keys($this->_listeners), 0)
             )
         );
-
-        return $matches;
     }
 
     /**

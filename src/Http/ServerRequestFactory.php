@@ -94,9 +94,8 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ]);
 
         $request = static::marshalBodyAndRequestMethod($parsedBody ?? $_POST, $request);
-        $request = static::marshalFiles($files ?? $_FILES, $request);
 
-        return $request;
+        return static::marshalFiles($files ?? $_FILES, $request);
     }
 
     /**

@@ -179,6 +179,10 @@ class TableLocatorTest extends TestCase
 
         $result = $this->_locator->get(ArticlesTable::class);
         $this->assertSame('Articles', $result->getAlias());
+        $this->assertSame(ArticlesTable::class, $result->getRegistryAlias());
+
+        $result2 = $this->_locator->get($result->getRegistryAlias());
+        $this->assertSame($result, $result2);
     }
 
     /**

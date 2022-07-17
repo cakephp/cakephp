@@ -502,9 +502,7 @@ class FormHelper extends Helper
             'action' => $request->getParam('action'),
         ];
 
-        $action = (array)$options['url'] + $actionDefaults;
-
-        return $action;
+        return (array)$options['url'] + $actionDefaults;
     }
 
     /**
@@ -1230,9 +1228,7 @@ class FormHelper extends Helper
             $options['type'] = $this->_inputType($fieldName, $options);
         }
 
-        $options = $this->_magicOptions($fieldName, $options, $needsMagicType);
-
-        return $options;
+        return $this->_magicOptions($fieldName, $options, $needsMagicType);
     }
 
     /**

@@ -76,9 +76,8 @@ trait CellTrait
             $data = array_values($data);
         }
         $options = ['action' => $action, 'args' => $data] + $options;
-        $cell = $this->_createCell($className, $action, $plugin, $options);
 
-        return $cell;
+        return $this->_createCell($className, $action, $plugin, $options);
     }
 
     /**

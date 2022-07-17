@@ -77,12 +77,10 @@ class Runner implements RequestHandlerInterface
             return $this->fallbackHandler->handle($request);
         }
 
-        $response = new Response([
+        return new Response([
             'body' => 'Middleware queue was exhausted without returning a response '
                 . 'and no fallback request handler was set for Runner',
             'status' => 500,
         ]);
-
-        return $response;
     }
 }

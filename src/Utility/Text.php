@@ -886,9 +886,8 @@ class Text
         }
 
         $excerpt = mb_substr($text, $startPos, $endPos - $startPos);
-        $excerpt = $prepend . $excerpt . $append;
 
-        return $excerpt;
+        return $prepend . $excerpt . $append;
     }
 
     /**
@@ -1160,8 +1159,7 @@ class Text
         if (is_string($options['replacement']) && $options['replacement'] !== '') {
             $map[sprintf('/[%s]+/mu', $quotedReplacement)] = $options['replacement'];
         }
-        $string = preg_replace(array_keys($map), $map, $string);
 
-        return $string;
+        return preg_replace(array_keys($map), $map, $string);
     }
 }
