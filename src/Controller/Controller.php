@@ -579,13 +579,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function startupProcess(): ?ResponseInterface
     {
-        $event = $this->dispatchEvent('Controller.initialize');
-        if ($event->getResult() instanceof ResponseInterface) {
-            return $event->getResult();
+        $result = $this->dispatchEvent('Controller.initialize')->getResult();
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
-        $event = $this->dispatchEvent('Controller.startup');
-        if ($event->getResult() instanceof ResponseInterface) {
-            return $event->getResult();
+
+        $result = $this->dispatchEvent('Controller.startup')->getResult();
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
 
         return null;
@@ -602,9 +603,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function shutdownProcess(): ?ResponseInterface
     {
-        $event = $this->dispatchEvent('Controller.shutdown');
-        if ($event->getResult() instanceof ResponseInterface) {
-            return $event->getResult();
+        $result = $this->dispatchEvent('Controller.shutdown')->getResult();
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
 
         return null;
@@ -627,8 +628,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
-        if ($event->getResult() instanceof Response) {
-            return $this->response = $event->getResult();
+        $result = $event->getResult();
+        if ($result instanceof Response) {
+            return $this->response = $result;
         }
         if ($event->isStopped()) {
             return null;
