@@ -215,8 +215,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options = ['alias' => $classAlias] + $options;
         } elseif (!isset($options['alias'])) {
             $options['className'] = $alias;
-            /** @psalm-suppress PossiblyFalseOperand */
-            $alias = substr($alias, strrpos($alias, '\\') + 1, -5);
         }
 
         if (isset($this->_config[$alias])) {
