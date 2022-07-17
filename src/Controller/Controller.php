@@ -784,22 +784,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function referer(array|string|null $default = '/', bool $local = true): string
     {
         $referer = $this->request->referer($local);
-        if ($referer === null) {
-            $url = Router::url($default, !$local);
-            $base = $this->request->getAttribute('base');
-            if ($local && $base && str_starts_with($url, $base)) {
-                $url = substr($url, strlen($base));
-                if ($url[0] !== '/') {
-                    $url = '/' . $url;
-                }
+        if ($referer !== null) {
+            return $referer;
+        }
 
-                return $url;
+        $url = Router::url($default, !$local);
+        $base = $this->request->getAttribute('base');
+        if ($local && $base && str_starts_with($url, $base)) {
+            $url = substr($url, strlen($base));
+            if ($url[0] !== '/') {
+                $url = '/' . $url;
             }
 
             return $url;
         }
 
-        return $referer;
+        return $url;
     }
 
     /**
