@@ -104,7 +104,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    protected string $name = '';
+    protected string $name;
 
     /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
@@ -191,14 +191,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     ) {
         if ($name !== null) {
             $this->name = $name;
-        } elseif (!$this->name) {
+        } elseif (!isset($this->name)) {
             $controller = $request->getParam('controller');
             if ($controller) {
                 $this->name = $controller;
             }
         }
 
-        if (!$this->name) {
+        if (!isset($this->name)) {
             [, $name] = namespaceSplit(static::class);
             $this->name = substr($name, 0, -10);
         }
