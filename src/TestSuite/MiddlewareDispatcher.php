@@ -121,11 +121,10 @@ class MiddlewareDispatcher
             $spec['cookies'],
             $spec['files']
         );
-        $request = $request
+
+        return $request
             ->withAttribute('session', $spec['session'])
             ->withAttribute('flash', new FlashMessage($spec['session']));
-
-        return $request;
     }
 
     /**

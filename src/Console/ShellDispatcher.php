@@ -179,9 +179,7 @@ class ShellDispatcher
         try {
             $result = $this->_dispatch($extra);
         } catch (StopException $e) {
-            $code = $e->getCode();
-
-            return $code;
+            return $e->getCode();
         }
         if ($result === null || $result === true) {
             /** @psalm-suppress DeprecatedClass */

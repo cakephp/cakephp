@@ -320,13 +320,11 @@ class BreadcrumbsHelper extends Helper
             $crumbTrail .= $this->formatTemplate($template, $templateParams);
         }
 
-        $crumbTrail = $this->formatTemplate('wrapper', [
+        return $this->formatTemplate('wrapper', [
             'content' => $crumbTrail,
             'attrs' => $templater->formatAttributes($attributes, ['templateVars']),
             'templateVars' => $attributes['templateVars'] ?? [],
         ]);
-
-        return $crumbTrail;
     }
 
     /**

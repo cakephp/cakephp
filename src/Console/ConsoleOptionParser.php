@@ -245,7 +245,7 @@ class ConsoleOptionParser
      */
     public function toArray(): array
     {
-        $result = [
+        return [
             'command' => $this->_command,
             'arguments' => $this->_args,
             'options' => $this->_options,
@@ -253,8 +253,6 @@ class ConsoleOptionParser
             'description' => $this->_description,
             'epilog' => $this->_epilog,
         ];
-
-        return $result;
     }
 
     /**

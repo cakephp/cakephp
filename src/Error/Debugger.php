@@ -1125,9 +1125,8 @@ class Debugger
     {
         $message = h($message);
         $message = preg_replace('/`([^`]+)`/', '<code>$1</code>', $message);
-        $message = nl2br($message);
 
-        return $message;
+        return nl2br($message);
     }
 
     /**
