@@ -410,6 +410,10 @@ EXPECTED;
         stackTrace($opts); $expected = Debugger::trace($opts);
         $result = ob_get_clean();
         $this->assertSame($expected, $result);
+
+        $opts = ['format' => 'array'];
+        $trace = Debugger::trace($opts);
+        $this->assertEmpty(array_column($trace, 'args'));
     }
 
     /**

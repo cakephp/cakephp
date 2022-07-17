@@ -463,6 +463,9 @@ class Debugger
             if ($options['format'] === 'points') {
                 $back[] = ['file' => $trace['file'], 'line' => $trace['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
+                if (!$options['args']) {
+                    unset($trace['args']);
+                }
                 $back[] = $trace;
             } else {
                 if (isset($self->_templates[$options['format']]['traceLine'])) {
