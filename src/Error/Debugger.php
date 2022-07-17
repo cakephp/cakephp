@@ -463,6 +463,9 @@ class Debugger
             if ($options['format'] === 'points') {
                 $back[] = ['file' => $trace['file'], 'line' => $trace['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
+                if (!$options['args']) {
+                    unset($trace['args']);
+                }
                 $back[] = $trace;
             } else {
                 if (isset($self->_templates[$options['format']]['traceLine'])) {
@@ -1122,9 +1125,8 @@ class Debugger
     {
         $message = h($message);
         $message = preg_replace('/`([^`]+)`/', '<code>$1</code>', $message);
-        $message = nl2br($message);
 
-        return $message;
+        return nl2br($message);
     }
 
     /**

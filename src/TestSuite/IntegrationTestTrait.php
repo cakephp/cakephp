@@ -628,9 +628,8 @@ trait IntegrationTestTrait
 
         $props['cookies'] = $this->_cookie;
         $session->write($this->_session);
-        $props = Hash::merge($props, $this->_request);
 
-        return $props;
+        return Hash::merge($props, $this->_request);
     }
 
     /**

@@ -310,13 +310,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $offset = $offset->sql($binder);
         }
 
-        $sql = sprintf(
+        return sprintf(
             '%s %s',
             $offset ?? 'UNBOUNDED',
             $direction
         );
-
-        return $sql;
     }
 
     /**
