@@ -104,7 +104,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    protected string $name = '';
+    protected string $name;
 
     /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
@@ -191,14 +191,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     ) {
         if ($name !== null) {
             $this->name = $name;
-        } elseif (!$this->name) {
+        } elseif (!isset($this->name)) {
             $controller = $request->getParam('controller');
             if ($controller) {
                 $this->name = $controller;
             }
         }
 
-        if (!$this->name) {
+        if (!isset($this->name)) {
             [, $name] = namespaceSplit(static::class);
             $this->name = substr($name, 0, -10);
         }
@@ -579,13 +579,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function startupProcess(): ?ResponseInterface
     {
-        $event = $this->dispatchEvent('Controller.initialize');
-        if ($event->getResult() instanceof ResponseInterface) {
-            return $event->getResult();
+        $result = $this->dispatchEvent('Controller.initialize')->getResult();
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
-        $event = $this->dispatchEvent('Controller.startup');
-        if ($event->getResult() instanceof ResponseInterface) {
-            return $event->getResult();
+
+        $result = $this->dispatchEvent('Controller.startup')->getResult();
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
 
         return null;
@@ -602,9 +603,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function shutdownProcess(): ?ResponseInterface
     {
-        $event = $this->dispatchEvent('Controller.shutdown');
-        if ($event->getResult() instanceof ResponseInterface) {
-            return $event->getResult();
+        $result = $this->dispatchEvent('Controller.shutdown')->getResult();
+        if ($result instanceof ResponseInterface) {
+            return $result;
         }
 
         return null;
@@ -627,8 +628,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
-        if ($event->getResult() instanceof Response) {
-            return $this->response = $event->getResult();
+        $result = $event->getResult();
+        if ($result instanceof Response) {
+            return $this->response = $result;
         }
         if ($event->isStopped()) {
             return null;
@@ -782,22 +784,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function referer(array|string|null $default = '/', bool $local = true): string
     {
         $referer = $this->request->referer($local);
-        if ($referer === null) {
-            $url = Router::url($default, !$local);
-            $base = $this->request->getAttribute('base');
-            if ($local && $base && str_starts_with($url, $base)) {
-                $url = substr($url, strlen($base));
-                if ($url[0] !== '/') {
-                    $url = '/' . $url;
-                }
+        if ($referer !== null) {
+            return $referer;
+        }
 
-                return $url;
+        $url = Router::url($default, !$local);
+        $base = $this->request->getAttribute('base');
+        if ($local && $base && str_starts_with($url, $base)) {
+            $url = substr($url, strlen($base));
+            if ($url[0] !== '/') {
+                $url = '/' . $url;
             }
 
             return $url;
         }
 
-        return $referer;
+        return $url;
     }
 
     /**
@@ -856,7 +858,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $action The action to check.
      * @return bool Whether the method is accessible from a URL.
-     * @throws \ReflectionException
      */
     public function isAction(string $action): bool
     {
