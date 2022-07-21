@@ -733,7 +733,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '02', '0', '8,9'],
+                'pass' => ['1.0', '-0123456789', '0', '8,9'],
             ],
         ]);
         $controller = $this->factory->create($request);
@@ -742,7 +742,7 @@ class ControllerFactoryTest extends TestCase
         $data = json_decode((string)$result->getBody(), true);
 
         $this->assertNotNull($data);
-        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => ['8', '9']], $data);
+        $this->assertSame(['one' => 1.0, 'two' => -123456789, 'three' => false, 'four' => ['8', '9']], $data);
 
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/requiredTyped',
@@ -809,7 +809,7 @@ class ControllerFactoryTest extends TestCase
     /**
      * Test using invalid value for supported type
      */
-    public function testInvokePassedParametersUnsupportedIntCoercion(): void
+    public function testInvokePassedParametersUnsupportedIntCoercionFloat(): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/requiredTyped',
@@ -824,6 +824,48 @@ class ControllerFactoryTest extends TestCase
 
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage('Unable to coerce "2.0" to `int` for `two` in action Dependencies::requiredTyped()');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test using invalid value for supported type
+     */
+    public function testInvokePassedParametersUnsupportedIntCoercionEmpty(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1', '', '1'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Unable to coerce "" to `int` for `two` in action Dependencies::requiredTyped()');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test using invalid value for supported type
+     */
+    public function testInvokePassedParametersUnsupportedIntCoercionPartial(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1', '-', '1'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Unable to coerce "-" to `int` for `two` in action Dependencies::requiredTyped()');
         $this->factory->invoke($controller);
     }
 
