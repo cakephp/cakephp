@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -266,18 +267,18 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(string $feature): bool
+    public function supports(DriverFeatureEnum $feature): bool
     {
         return match ($feature) {
-            static::FEATURE_CTE,
-            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            static::FEATURE_SAVEPOINT,
-            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS,
-            static::FEATURE_WINDOW => true,
+            DriverFeatureEnum::CTE,
+            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeatureEnum::SAVEPOINT,
+            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeatureEnum::WINDOW => true,
 
-            static::FEATURE_JSON => false,
+            DriverFeatureEnum::JSON => false,
 
-            static::FEATURE_QUOTE => $this->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc',
+            DriverFeatureEnum::PDO_QUOTE => $this->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc',
 
             default => false,
         };

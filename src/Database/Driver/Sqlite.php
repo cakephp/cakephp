@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\QueryCompiler;
@@ -191,20 +192,20 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(string $feature): bool
+    public function supports(DriverFeatureEnum $feature): bool
     {
         return match ($feature) {
-            static::FEATURE_DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            static::FEATURE_QUOTE,
-            static::FEATURE_SAVEPOINT,
-            static::FEATURE_TRUNCATE_WITH_CONSTRAINTS => true,
+            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeatureEnum::PDO_QUOTE,
+            DriverFeatureEnum::SAVEPOINT,
+            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS => true,
 
-            static::FEATURE_JSON => false,
+            DriverFeatureEnum::JSON => false,
 
-            static::FEATURE_CTE,
-            static::FEATURE_WINDOW => version_compare(
+            DriverFeatureEnum::CTE,
+            DriverFeatureEnum::WINDOW => version_compare(
                 $this->version(),
-                $this->featureVersions[$feature],
+                $this->featureVersions[$feature->value],
                 '>='
             ),
 
