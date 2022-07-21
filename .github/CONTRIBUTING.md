@@ -49,7 +49,7 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 Here are some rules which **prevent** `BC breaking` code changes:
 
 * Configuration doesn't need to change
-* Public API doesn't change aka any code using/overriding public methods shouldn't break.
+* Public API doesn't change. For example, any user land code using/overriding public methods shouldn't break.
 
 Also see our current [Release Policy](https://book.cakephp.org/4/en/release-policy.html)
 
