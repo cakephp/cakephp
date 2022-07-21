@@ -120,37 +120,6 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     ];
 
     /**
-     * The list of query clauses to traverse for generating a SELECT statement
-     *
-     * @var array<string>
-     */
-    protected array $_selectParts = [
-        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-        'offset', 'union', 'epilog',
-    ];
-
-    /**
-     * The list of query clauses to traverse for generating an UPDATE statement
-     *
-     * @var array<string>
-     */
-    protected array $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
-
-    /**
-     * The list of query clauses to traverse for generating a DELETE statement
-     *
-     * @var array<string>
-     */
-    protected array $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
-
-    /**
-     * The list of query clauses to traverse for generating an INSERT statement
-     *
-     * @var array<string>
-     */
-    protected array $_insertParts = ['with', 'insert', 'values', 'epilog'];
-
-    /**
      * Indicates whether internal state of this query was changed, this is used to
      * discard internal cached objects such as the transformed query or the reference
      * to the executed statement.
