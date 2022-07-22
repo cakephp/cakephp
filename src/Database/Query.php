@@ -101,6 +101,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The list of query clauses to traverse for generating a SELECT statement
      *
      * @var array<string>
+     * @deprecated 4.4.3 This property is unused.
      */
     protected $_selectParts = [
         'with', 'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
@@ -111,6 +112,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The list of query clauses to traverse for generating an UPDATE statement
      *
      * @var array<string>
+     * @deprecated 4.4.3 This property is unused.
      */
     protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
@@ -118,6 +120,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var array<string>
+     * @deprecated 4.4.3 This property is unused.
      */
     protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
@@ -125,6 +128,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var array<string>
+     * @deprecated 4.4.3 This property is unused.
      */
     protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
