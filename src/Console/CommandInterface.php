@@ -45,7 +45,6 @@ interface CommandInterface
      *
      * @param string $name The name the command uses in the collection.
      * @return $this
-     * @throws \InvalidArgumentException
      */
     public function setName(string $name);
 

@@ -181,7 +181,6 @@ class Client implements ClientInterface
      *   to use. Short class names are resolved to the `Http\Client\Auth` namespace.
      *
      * @param array<string, mixed> $config Config options for scoped clients.
-     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {

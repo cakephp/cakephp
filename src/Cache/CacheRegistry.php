@@ -68,7 +68,7 @@ class CacheRegistry extends ObjectRegistry
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config An array of settings to use for the cache engine.
      * @return \Cake\Cache\CacheEngine The constructed CacheEngine class.
-     * @throws \Cake\Core\Exception\CakeException when an object doesn't implement the correct interface.
+     * @throws \Cake\Core\Exception\CakeException When the cache engine cannot be initialized.
      */
     protected function _create(object|string $class, string $alias, array $config): CacheEngine
     {

@@ -111,7 +111,6 @@ class WidgetLocator
      *
      * @param array $widgets Array of widgets to use.
      * @return void
-     * @throws \InvalidArgumentException When class does not implement WidgetInterface.
      */
     public function add(array $widgets): void
     {
