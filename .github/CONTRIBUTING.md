@@ -25,26 +25,33 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 ## Making Changes
 
 * Create a topic branch from where you want to base your work.
-  * This is usually the master branch.
-  * Only target release branches if you are certain your fix must be on that
-    branch.
-  * To quickly create a topic branch based on master; `git branch
-    master/my_contribution master` then checkout the new branch with `git
-    checkout master/my_contribution`. Better avoid working directly on the
-    `master` branch, to avoid conflicts if you pull in updates from origin.
+  * This is usually the current default branch - `4.x` right now.
+  * To quickly create a topic branch based on `4.x`
+    `git branch 4.x/my_contribution 4.x` then checkout the new branch with `git
+    checkout 4.x/my_contribution`. Better avoid working directly on the
+    `4.x` branch, to avoid conflicts if you pull in updates from origin.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
 * Use descriptive commit messages and reference the #issue number.
-* Core test cases should continue to pass. You can run tests locally or enable
-  [travis-ci](https://travis-ci.org/) for your fork, so all tests and codesniffs
-  will be executed.
+* [Core test cases, static analysis and codesniffer](#test-cases-codesniffer-and-static-analysis) should continue to pass.
 * Your work should apply the [CakePHP coding standards](https://book.cakephp.org/4/en/contributing/cakephp-coding-conventions.html).
 
 ## Which branch to base the work
 
-* Bugfix branches will be based on master.
-* New features that are backwards compatible will be based on the appropriate 'next' branch. For example if you want to contribute to the next 3.x branch, you should base your changes on `3.next`.
-* New features or other non backwards compatible changes will go in the next major release branch. Development on 4.0 has not started yet, so breaking changes are unlikely to be merged in.
+* Bugfix branches will be based on the current default branch - `4.x` right now.
+* New features that are **backwards compatible** will be based on the appropriate `next` branch. For example if you want to contribute to the next 4.x branch, you should base your changes on `4.next`.
+* New features or other **non backwards compatible** changes will go in the next major release branch.
+
+## What is "backwards compatible" (BC)
+
+`BC breaking` code changes mean, that a given PR introduces code changes which can't be performed by everyone without the need to manually adjust code.
+
+Here are some rules which **prevent** `BC breaking` code changes:
+
+* Configuration doesn't need to change
+* Public API doesn't change. For example, any user land code using/overriding public methods shouldn't break.
+
+Also see our current [Release Policy](https://book.cakephp.org/4/en/release-policy.html)
 
 ## Submitting Changes
 
@@ -52,31 +59,30 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 * Submit a pull request to the repository in the CakePHP organization, with the
   correct target branch.
 
-## Test cases and codesniffer
-
-CakePHP tests requires [PHPUnit](https://phpunit.de/manual/current/en/installation.html).
-To install PHPUnit use composer:
-
-    php composer.phar require "phpunit/phpunit:*"
+## Test cases, codesniffer and static analysis
 
 To run the test cases locally use the following command:
 
-    vendor/bin/phpunit
+    composer test
 
 You can copy file `phpunit.xml.dist` to `phpunit.xml` and modify the database
 driver settings as required to run tests for a particular database.
 
-You can also register on [Travis CI](https://travis-ci.org/) and from your
-[profile](https://travis-ci.org/profile) page enable the service hook for your
-CakePHP fork on GitHub for automated test builds.
-
 To run the sniffs for CakePHP coding standards:
 
-    vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src
+    composer cs-check
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to set up the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
 for the sniff and phpcs.
+
+To run static analysis tools [PHPStan](https://github.com/phpstan/phpstan) and [Psalm](https://github.com/vimeo/psalm) you first have to install the additional packages via:
+
+    composer stan-setup
+
+And after that perform the checks via:
+
+    composer stan
 
 ## Reporting a Security Issue
 
@@ -89,4 +95,8 @@ If you've found a security related issue in CakePHP, please don't open an issue 
 * [Development Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps)
 * [General GitHub documentation](https://help.github.com/)
 * [GitHub pull request documentation](https://help.github.com/articles/creating-a-pull-request/)
-* `#cakephp` IRC channel on freenode.org
+* [Forum](https://discourse.cakephp.org/)
+* [Stackoverflow](https://stackoverflow.com/tags/cakephp)
+* [IRC channel #cakephp](https://kiwiirc.com/client/irc.freenode.net#cakephp)
+* [Slack](https://cakesf.herokuapp.com/)
+* [Discord](https://discord.gg/k4trEMPebj)
