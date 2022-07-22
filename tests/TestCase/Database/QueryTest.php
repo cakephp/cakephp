@@ -3572,10 +3572,9 @@ class QueryTest extends TestCase
             'This test fails sporadically in SQLServer'
         );
 
-        $profiles = $this->getTableLocator()->get('Profiles');
-
-        $query = $profiles
-            ->find()
+        $query = (new Query($this->connection))
+            ->select('*')
+            ->from('profiles')
             ->where(
                 new TupleComparison(
                     ['id', 'user_id'],
@@ -3585,7 +3584,7 @@ class QueryTest extends TestCase
                 )
             );
 
-        $result = $query->firstOrFail();
+        $result = $query->execute()->fetch(StatementInterface::FETCH_TYPE_ASSOC);
 
         $bindings = array_values($query->getValueBinder()->bindings());
         $this->assertCount(2, $bindings);
@@ -3594,8 +3593,8 @@ class QueryTest extends TestCase
         $this->assertSame(1, $bindings[1]['value']);
         $this->assertSame('integer', $bindings[1]['type']);
 
-        $this->assertSame(1, $result['id']);
-        $this->assertSame(1, $result['user_id']);
+        $this->assertSame('1', $result['id']);
+        $this->assertSame('1', $result['user_id']);
     }
 
     /**
@@ -3613,10 +3612,9 @@ class QueryTest extends TestCase
             'This test fails sporadically in SQLServer'
         );
 
-        $profiles = $this->getTableLocator()->get('Profiles');
-
-        $query = $profiles
-            ->find()
+        $query = (new Query($this->connection))
+            ->select('*')
+            ->from('profiles')
             ->where(
                 new TupleComparison(
                     ['id', 'user_id'],
@@ -3625,7 +3623,7 @@ class QueryTest extends TestCase
                     'IN'
                 )
             );
-        $result = $query->firstOrFail();
+        $result = $query->execute()->fetch(StatementInterface::FETCH_TYPE_ASSOC);
 
         $bindings = array_values($query->getValueBinder()->bindings());
         $this->assertCount(2, $bindings);
@@ -3634,8 +3632,8 @@ class QueryTest extends TestCase
         $this->assertSame(1, $bindings[1]['value']);
         $this->assertNull($bindings[1]['type']);
 
-        $this->assertSame(1, $result['id']);
-        $this->assertSame(1, $result['user_id']);
+        $this->assertSame('1', $result['id']);
+        $this->assertSame('1', $result['user_id']);
     }
 
     /**

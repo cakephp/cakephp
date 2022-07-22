@@ -22,6 +22,9 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\Query;
+use Cake\Database\StatementInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDOException;
 use RuntimeException;
@@ -44,11 +47,35 @@ class TupleComparisonQueryTest extends TestCase
         'core.Articles',
     ];
 
+    /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var \Cake\Database\Query
+     */
+    protected $query;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->connection = ConnectionManager::get('test');
+        $this->query = new Query($this->connection);
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        unset($this->query);
+        unset($this->connection);
+    }
+
     public function testTransformWithInvalidOperator(): void
     {
-        $articles = $this->getTableLocator()->get('Articles');
-
-        $driver = $articles->getConnection()->getDriver();
+        $driver = $this->connection->getDriver();
         if (
             $driver instanceof Sqlite ||
             $driver instanceof Sqlserver
@@ -61,127 +88,112 @@ class TupleComparisonQueryTest extends TestCase
             $this->markTestSkipped('Tuple comparisons are only being transformed for Sqlite and Sqlserver.');
         }
 
-        $articles
-            ->find()
-            ->select(['Articles.id', 'Articles.author_id'])
+        $this->query
+            ->select(['articles.id', 'articles.author_id'])
+            ->from('articles')
             ->where([
                 new TupleComparison(
-                    ['Articles.id', 'Articles.author_id'],
-                    $articles
-                        ->subquery()
+                    ['articles.id', 'articles.author_id'],
+                    (new Query($this->connection))
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => $articles->getTable()])
+                        ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'NOT IN'
                 ),
             ])
-            ->orderAsc('Articles.id')
-            ->disableHydration()
-            ->toArray();
+            ->orderAsc('articles.id')
+            ->execute();
     }
 
     public function testInWithMultiResultSubquery(): void
     {
-        $articles = $this->getTableLocator()->get('Articles');
-
-        $query = $articles
-            ->find()
-            ->select(['Articles.id', 'Articles.author_id'])
+        $query = $this->query
+            ->select(['articles.id', 'articles.author_id'])
+            ->from('articles')
             ->where([
                 new TupleComparison(
-                    ['Articles.id', 'Articles.author_id'],
-                    $articles
-                        ->subquery()
+                    ['articles.id', 'articles.author_id'],
+                    (new Query($this->connection))
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => $articles->getTable()])
+                        ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'IN'
                 ),
             ])
-            ->orderAsc('Articles.id')
-            ->disableHydration();
+            ->orderAsc('articles.id');
 
         $expected = [
             [
-                'id' => 1,
-                'author_id' => 1,
+                'id' => '1',
+                'author_id' => '1',
             ],
             [
-                'id' => 3,
-                'author_id' => 1,
+                'id' => '3',
+                'author_id' => '1',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testInWithSingleResultSubquery(): void
     {
-        $articles = $this->getTableLocator()->get('Articles');
-
-        $query = $articles
-            ->find()
-            ->select(['Articles.id', 'Articles.author_id'])
+        $query = $this->query
+            ->select(['articles.id', 'articles.author_id'])
+            ->from('articles')
             ->where([
                 new TupleComparison(
-                    ['Articles.id', 'Articles.author_id'],
-                    $articles
-                        ->subquery()
+                    ['articles.id', 'articles.author_id'],
+                    (new Query($this->connection))
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => $articles->getTable()])
+                        ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.id' => 1]),
                     [],
                     'IN'
                 ),
-            ])
-            ->disableHydration();
+            ]);
 
         $expected = [
             [
-                'id' => 1,
-                'author_id' => 1,
+                'id' => '1',
+                'author_id' => '1',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testInWithMultiArrayValues(): void
     {
-        $articles = $this->getTableLocator()->get('Articles');
-
-        $query = $articles
-            ->find()
-            ->select(['Articles.id', 'Articles.author_id'])
+        $query = $this->query
+            ->select(['articles.id', 'articles.author_id'])
+            ->from('articles')
             ->where([
                 new TupleComparison(
-                    ['Articles.id', 'Articles.author_id'],
+                    ['articles.id', 'articles.author_id'],
                     [[1, 1], [3, 1]],
                     ['integer', 'integer'],
                     'IN'
                 ),
             ])
-            ->orderAsc('Articles.id')
-            ->disableHydration();
+            ->orderAsc('articles.id');
 
         $expected = [
             [
-                'id' => 1,
-                'author_id' => 1,
+                'id' => '1',
+                'author_id' => '1',
             ],
             [
-                'id' => 3,
-                'author_id' => 1,
+                'id' => '3',
+                'author_id' => '1',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testEqualWithMultiResultSubquery(): void
     {
-        $articles = $this->getTableLocator()->get('Articles');
-
-        $driver = $articles->getConnection()->getDriver();
+        $driver = $this->connection->getDriver();
         if (
             $driver instanceof Mysql ||
             $driver instanceof Postgres
@@ -196,80 +208,71 @@ class TupleComparisonQueryTest extends TestCase
             );
         }
 
-        $articles
-            ->find()
-            ->select(['Articles.id', 'Articles.author_id'])
+        $this->query
+            ->select(['articles.id', 'articles.author_id'])
+            ->from('articles')
             ->where([
                 new TupleComparison(
-                    ['Articles.id', 'Articles.author_id'],
-                    $articles
-                        ->subquery()
+                    ['articles.id', 'articles.author_id'],
+                    (new Query($this->connection))
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => $articles->getTable()])
+                        ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     '='
                 ),
             ])
-            ->orderAsc('Articles.id')
-            ->disableHydration()
-            ->toArray();
+            ->orderAsc('articles.id')
+            ->execute();
     }
 
     public function testEqualWithSingleResultSubquery(): void
     {
-        $articles = $this->getTableLocator()->get('Articles');
-
-        $query = $articles
-            ->find()
-            ->select(['Articles.id', 'Articles.author_id'])
+        $query = $this->query
+            ->select(['articles.id', 'articles.author_id'])
+            ->from('articles')
             ->where([
                 new TupleComparison(
-                    ['Articles.id', 'Articles.author_id'],
-                    $articles
-                        ->subquery()
+                    ['articles.id', 'articles.author_id'],
+                    (new Query($this->connection))
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => $articles->getTable()])
+                        ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.id' => 1]),
                     [],
                     '='
                 ),
-            ])
-            ->disableHydration();
+            ]);
 
         $expected = [
             [
-                'id' => 1,
-                'author_id' => 1,
+                'id' => '1',
+                'author_id' => '1',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testEqualWithSingleArrayValue(): void
     {
-        $articles = $this->getTableLocator()->get('Articles');
-
-        $query = $articles
-            ->find()
-            ->select(['Articles.id', 'Articles.author_id'])
+        $query = $this->query
+            ->select(['articles.id', 'articles.author_id'])
+            ->from('articles')
             ->where([
                 new TupleComparison(
-                    ['Articles.id', 'Articles.author_id'],
+                    ['articles.id', 'articles.author_id'],
                     [1, 1],
                     ['integer', 'integer'],
                     '='
                 ),
             ])
-            ->orderAsc('Articles.id')
-            ->disableHydration();
+            ->orderAsc('articles.id');
 
         $expected = [
             [
-                'id' => 1,
-                'author_id' => 1,
+                'id' => '1',
+                'author_id' => '1',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 }
