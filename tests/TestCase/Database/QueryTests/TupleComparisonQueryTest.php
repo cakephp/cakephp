@@ -24,6 +24,7 @@ use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDOException;
@@ -108,6 +109,11 @@ class TupleComparisonQueryTest extends TestCase
 
     public function testInWithMultiResultSubquery(): void
     {
+        $typeMap = new TypeMap([
+            'id' => 'integer',
+            'author_id' => 'integer',
+        ]);
+
         $query = $this->query
             ->select(['articles.id', 'articles.author_id'])
             ->from('articles')
@@ -122,16 +128,17 @@ class TupleComparisonQueryTest extends TestCase
                     'IN'
                 ),
             ])
-            ->orderAsc('articles.id');
+            ->orderAsc('articles.id')
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
-                'id' => '1',
-                'author_id' => '1',
+                'id' => 1,
+                'author_id' => 1,
             ],
             [
-                'id' => '3',
-                'author_id' => '1',
+                'id' => 3,
+                'author_id' => 1,
             ],
         ];
         $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
@@ -139,6 +146,11 @@ class TupleComparisonQueryTest extends TestCase
 
     public function testInWithSingleResultSubquery(): void
     {
+        $typeMap = new TypeMap([
+            'id' => 'integer',
+            'author_id' => 'integer',
+        ]);
+
         $query = $this->query
             ->select(['articles.id', 'articles.author_id'])
             ->from('articles')
@@ -152,12 +164,13 @@ class TupleComparisonQueryTest extends TestCase
                     [],
                     'IN'
                 ),
-            ]);
+            ])
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
-                'id' => '1',
-                'author_id' => '1',
+                'id' => 1,
+                'author_id' => 1,
             ],
         ];
         $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
@@ -165,6 +178,11 @@ class TupleComparisonQueryTest extends TestCase
 
     public function testInWithMultiArrayValues(): void
     {
+        $typeMap = new TypeMap([
+            'id' => 'integer',
+            'author_id' => 'integer',
+        ]);
+
         $query = $this->query
             ->select(['articles.id', 'articles.author_id'])
             ->from('articles')
@@ -176,16 +194,17 @@ class TupleComparisonQueryTest extends TestCase
                     'IN'
                 ),
             ])
-            ->orderAsc('articles.id');
+            ->orderAsc('articles.id')
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
-                'id' => '1',
-                'author_id' => '1',
+                'id' => 1,
+                'author_id' => 1,
             ],
             [
-                'id' => '3',
-                'author_id' => '1',
+                'id' => 3,
+                'author_id' => 1,
             ],
         ];
         $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
@@ -228,6 +247,11 @@ class TupleComparisonQueryTest extends TestCase
 
     public function testEqualWithSingleResultSubquery(): void
     {
+        $typeMap = new TypeMap([
+            'id' => 'integer',
+            'author_id' => 'integer',
+        ]);
+
         $query = $this->query
             ->select(['articles.id', 'articles.author_id'])
             ->from('articles')
@@ -241,12 +265,13 @@ class TupleComparisonQueryTest extends TestCase
                     [],
                     '='
                 ),
-            ]);
+            ])
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
-                'id' => '1',
-                'author_id' => '1',
+                'id' => 1,
+                'author_id' => 1,
             ],
         ];
         $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
@@ -254,6 +279,11 @@ class TupleComparisonQueryTest extends TestCase
 
     public function testEqualWithSingleArrayValue(): void
     {
+        $typeMap = new TypeMap([
+            'id' => 'integer',
+            'author_id' => 'integer',
+        ]);
+
         $query = $this->query
             ->select(['articles.id', 'articles.author_id'])
             ->from('articles')
@@ -265,12 +295,13 @@ class TupleComparisonQueryTest extends TestCase
                     '='
                 ),
             ])
-            ->orderAsc('articles.id');
+            ->orderAsc('articles.id')
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
-                'id' => '1',
-                'author_id' => '1',
+                'id' => 1,
+                'author_id' => 1,
             ],
         ];
         $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));

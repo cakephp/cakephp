@@ -99,6 +99,10 @@ class CaseExpressionQueryTest extends TestCase
 
     public function testSearchedCase(): void
     {
+        $typeMap = new TypeMap([
+            'price' => 'integer',
+        ]);
+
         $query = $this->query
             ->select(function (Query $query) {
                 return [
@@ -115,22 +119,23 @@ class CaseExpressionQueryTest extends TestCase
             })
             ->from('products')
             ->orderAsc('price')
-            ->orderAsc('name');
+            ->orderAsc('name')
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
                 'name' => 'First product',
-                'price' => '10',
+                'price' => 10,
                 'price_range' => 'Under $20',
             ],
             [
                 'name' => 'Second product',
-                'price' => '20',
+                'price' => 20,
                 'price_range' => 'Under $30',
             ],
             [
                 'name' => 'Third product',
-                'price' => '30',
+                'price' => 30,
                 'price_range' => '$30 and above',
             ],
         ];
@@ -139,6 +144,11 @@ class CaseExpressionQueryTest extends TestCase
 
     public function testOrderByCase(): void
     {
+        $typeMap = new TypeMap([
+            'article_id' => 'integer',
+            'user_id' => 'integer',
+        ]);
+
         $query = $this->query
             ->select(['article_id', 'user_id'])
             ->from('comments')
@@ -154,32 +164,33 @@ class CaseExpressionQueryTest extends TestCase
                     ->case($query->identifier('comments.article_id'))
                     ->when(2)
                     ->then($query->identifier('comments.user_id'));
-            });
+            })
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
-                'article_id' => '1',
-                'user_id' => '4',
+                'article_id' => 1,
+                'user_id' => 4,
             ],
             [
-                'article_id' => '1',
-                'user_id' => '2',
+                'article_id' => 1,
+                'user_id' => 2,
             ],
             [
-                'article_id' => '1',
-                'user_id' => '1',
+                'article_id' => 1,
+                'user_id' => 1,
             ],
             [
-                'article_id' => '1',
-                'user_id' => '1',
+                'article_id' => 1,
+                'user_id' => 1,
             ],
             [
-                'article_id' => '2',
-                'user_id' => '1',
+                'article_id' => 2,
+                'user_id' => 1,
             ],
             [
-                'article_id' => '2',
-                'user_id' => '2',
+                'article_id' => 2,
+                'user_id' => 2,
             ],
         ];
         $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
@@ -248,10 +259,10 @@ class CaseExpressionQueryTest extends TestCase
             ->from('comments')
             ->where(['comments.published' => 'Y']);
 
-        $this->assertSame('1', $query->execute()->fetch()[0]);
+        $this->assertSame(1, (int)$query->execute()->fetch()[0]);
 
         $query->where(['comments.published' => 'N'], [], true);
-        $this->assertSame('5', $query->execute()->fetch()[0]);
+        $this->assertSame(5, (int)$query->execute()->fetch()[0]);
     }
 
     public function testInferredReturnType(): void

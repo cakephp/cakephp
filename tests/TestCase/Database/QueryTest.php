@@ -3593,8 +3593,8 @@ class QueryTest extends TestCase
         $this->assertSame(1, $bindings[1]['value']);
         $this->assertSame('integer', $bindings[1]['type']);
 
-        $this->assertSame('1', $result['id']);
-        $this->assertSame('1', $result['user_id']);
+        $this->assertSame(1, (int)$result['id']);
+        $this->assertSame(1, (int)$result['user_id']);
     }
 
     /**
@@ -3632,8 +3632,8 @@ class QueryTest extends TestCase
         $this->assertSame(1, $bindings[1]['value']);
         $this->assertNull($bindings[1]['type']);
 
-        $this->assertSame('1', $result['id']);
-        $this->assertSame('1', $result['user_id']);
+        $this->assertSame(1, (int)$result['id']);
+        $this->assertSame(1, (int)$result['user_id']);
     }
 
     /**
