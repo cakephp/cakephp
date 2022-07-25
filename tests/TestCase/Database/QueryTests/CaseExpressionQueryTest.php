@@ -235,11 +235,11 @@ class CaseExpressionQueryTest extends TestCase
             ->from('comments')
             ->where(['comments.published' => 'Y']);
 
-        $this->assertSame('5', $query->execute()->fetch()[0]);
+        $this->assertSame(5, (int)$query->execute()->fetch()[0]);
 
         $query->where(['comments.published' => 'N'], [], true);
 
-        $this->assertSame('1', $query->execute()->fetch()[0]);
+        $this->assertSame(1, (int)$query->execute()->fetch()[0]);
 
         $query = (new Query($this->connection))
             ->update('comments')
