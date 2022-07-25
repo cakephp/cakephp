@@ -733,7 +733,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '02', '0', '8,9'],
+                'pass' => ['1.0', '2', '0', '8,9'],
             ],
         ]);
         $controller = $this->factory->create($request);
@@ -748,7 +748,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '02', '0', ''],
+                'pass' => ['1.0', '2', '0', ''],
             ],
         ]);
         $controller = $this->factory->create($request);
