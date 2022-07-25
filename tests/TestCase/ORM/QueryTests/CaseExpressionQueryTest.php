@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\QueryTests;
 
+use Cake\Database\Driver\Postgres;
 use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 
@@ -65,46 +66,47 @@ class CaseExpressionQueryTest extends TestCase
         $this->assertSame($expected, $query->toArray());
     }
 
-    public function bindingValueDataProvider(): array
+    public function testInferredReturnType(): void
     {
-        return [
-            ['1', 3],
-            ['2', 4],
-        ];
-    }
-
-    /**
-     * @dataProvider bindingValueDataProvider
-     * @param string $when The `WHEN` value.
-     * @param int $result The result value.
-     */
-    public function testBindValues(string $when, int $result): void
-    {
-        $value = '1';
-        $then = '3';
-        $else = '4';
-
         $query = $this->getTableLocator()->get('Products')
             ->find()
             ->select(function (Query $query) {
+                $expression = $query->newExpr()
+                    ->case()
+                    ->when(['Products.price <' => 20])
+                    ->then(true)
+                    ->else(false);
+
+                if ($query->getConnection()->getDriver() instanceof Postgres) {
+                    $expression = $query->func()->cast($expression, 'boolean');
+                }
+
                 return [
-                    'val' => $query->newExpr()
-                        ->case($query->newExpr(':value'))
-                        ->when($query->newExpr(':when'))
-                        ->then($query->newExpr(':then'))
-                        ->else($query->newExpr(':else'))
-                        ->setReturnType('integer'),
+                    'Products.name',
+                    'Products.price',
+                    'is_cheap' => $expression,
                 ];
             })
-            ->bind(':value', $value, 'integer')
-            ->bind(':when', $when, 'integer')
-            ->bind(':then', $then, 'integer')
-            ->bind(':else', $else, 'integer')
             ->disableHydration();
 
         $expected = [
-            'val' => $result,
+            [
+                'name' => 'First product',
+                'price' => 10,
+                'is_cheap' => true,
+            ],
+            [
+                'name' => 'Second product',
+                'price' => 20,
+                'is_cheap' => false,
+            ],
+            [
+                'name' => 'Third product',
+                'price' => 30,
+                'is_cheap' => false,
+            ],
         ];
-        $this->assertSame($expected, $query->first());
+
+        $this->assertSame($expected, $query->toArray());
     }
 }

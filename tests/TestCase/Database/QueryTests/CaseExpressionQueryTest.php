@@ -265,51 +265,49 @@ class CaseExpressionQueryTest extends TestCase
         $this->assertSame(5, (int)$query->execute()->fetch()[0]);
     }
 
-    public function testInferredReturnType(): void
+    public function bindingValueDataProvider(): array
     {
+        return [
+            ['1', 3],
+            ['2', 4],
+        ];
+    }
+
+    /**
+     * @dataProvider bindingValueDataProvider
+     * @param string $when The `WHEN` value.
+     * @param int $result The result value.
+     */
+    public function testBindValues(string $when, int $result): void
+    {
+        $value = '1';
+        $then = '3';
+        $else = '4';
+
         $typeMap = new TypeMap([
-            'price' => 'integer',
-            'is_cheap' => 'boolean',
+            'val' => 'integer',
         ]);
 
         $query = $this->query
             ->select(function (Query $query) {
-                $expression = $query->newExpr()
-                    ->case()
-                    ->when(['products.price <' => 20])
-                    ->then(true)
-                    ->else(false);
-
-                if ($query->getConnection()->getDriver() instanceof Postgres) {
-                    $expression = $query->func()->cast($expression, 'boolean');
-                }
-
                 return [
-                    'products.name',
-                    'products.price',
-                    'is_cheap' => $expression,
+                    'val' => $query->newExpr()
+                        ->case($query->newExpr(':value'))
+                        ->when($query->newExpr(':when'))
+                        ->then($query->newExpr(':then'))
+                        ->else($query->newExpr(':else')),
                 ];
             })
             ->from('products')
+            ->bind(':value', $value, 'integer')
+            ->bind(':when', $when, 'integer')
+            ->bind(':then', $then, 'integer')
+            ->bind(':else', $else, 'integer')
             ->setSelectTypeMap($typeMap);
 
         $expected = [
-            [
-                'name' => 'First product',
-                'price' => 10,
-                'is_cheap' => true,
-            ],
-            [
-                'name' => 'Second product',
-                'price' => 20,
-                'is_cheap' => false,
-            ],
-            [
-                'name' => 'Third product',
-                'price' => 30,
-                'is_cheap' => false,
-            ],
+            'val' => $result,
         ];
-        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
+        $this->assertSame($expected, $query->execute()->fetch(StatementInterface::FETCH_TYPE_ASSOC));
     }
 }
