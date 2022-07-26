@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Form;
 
-use Cake\Core\Exception\CakeException;
 use Cake\Form\Form;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
@@ -33,14 +32,6 @@ class FormContextTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-    }
-
-    public function testConstructor()
-    {
-        $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('`$context[\'entity\']` must be an instance of Cake\Form\Form');
-
-        new FormContext([]);
     }
 
     /**

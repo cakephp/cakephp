@@ -20,7 +20,6 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 
 /**
  * Base class for console commands.
@@ -45,11 +44,10 @@ abstract class BaseCommand implements CommandInterface
      */
     public function setName(string $name)
     {
-        if (!strpos($name, ' ')) {
-            throw new InvalidArgumentException(
-                "The name '{$name}' is missing a space. Names should look like `cake routes`"
-            );
-        }
+        assert(
+            strpos($name, ' '),
+            "The name '{$name}' is missing a space. Names should look like `cake routes`"
+        );
         $this->name = $name;
 
         return $this;
@@ -265,16 +263,12 @@ abstract class BaseCommand implements CommandInterface
     public function executeCommand(CommandInterface|string $command, array $args = [], ?ConsoleIo $io = null): ?int
     {
         if (is_string($command)) {
-            if (!class_exists($command)) {
-                throw new InvalidArgumentException("Command class '{$command}' does not exist.");
-            }
-            $command = new $command();
-        }
-        if (!$command instanceof CommandInterface) {
-            $commandType = get_debug_type($command);
-            throw new InvalidArgumentException(
-                "Command '{$commandType}' is not a subclass of Cake\Console\CommandInterface."
+            assert(
+                is_subclass_of($command, CommandInterface::class),
+                "Command '{$command}' is not a subclass of Cake\Console\CommandInterface."
             );
+
+            $command = new $command();
         }
         $io = $io ?: new ConsoleIo();
 

@@ -133,6 +133,7 @@ Security::setSalt('a-long-but-not-random-value');
 
 ini_set('intl.default_locale', 'en_US');
 ini_set('session.gc_divisor', '1');
+ini_set('assert.exception', '1');
 
 // Fixate sessionid early on, as php7.2+
 // does not allow the sessionid to be set after stdout

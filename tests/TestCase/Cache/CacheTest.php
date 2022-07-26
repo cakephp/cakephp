@@ -246,7 +246,7 @@ class CacheTest extends TestCase
         ]);
 
         $this->expectError();
-        $this->expectErrorMessage('Cache engines must use Cake\Cache\CacheEngine');
+        $this->expectErrorMessage('Cache engines must extend Cake\Cache\CacheEngine');
 
         Cache::pool('tests');
     }

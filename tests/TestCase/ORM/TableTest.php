@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
+use AssertionError;
 use BadMethodCallException;
 use Cake\Collection\Collection;
 use Cake\Database\Driver\Sqlserver;
@@ -2098,7 +2099,7 @@ class TableTest extends TestCase
      */
     public function testBeforeSaveException(): void
     {
-        $this->expectException(DatabaseException::class);
+        $this->expectException(AssertionError::class);
         $this->expectExceptionMessage('The beforeSave callback must return `false` or `EntityInterface` instance. Got `int` instead.');
 
         $table = $this->getTableLocator()->get('users');
@@ -3348,7 +3349,7 @@ class TableTest extends TestCase
         $table->expects($this->once())
             ->method('validationBad');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(AssertionError::class);
         $this->expectExceptionMessage(sprintf(
             'The %s::validationBad() validation method must return an instance of Cake\Validation\Validator.',
             get_class($table)

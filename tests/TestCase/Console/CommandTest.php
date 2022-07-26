@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use AssertionError;
 use Cake\Command\Command;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
@@ -25,7 +26,6 @@ use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
@@ -71,7 +71,7 @@ class CommandTest extends TestCase
      */
     public function testSetNameInvalid(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(AssertionError::class);
         $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
 
         $command = new Command();
@@ -83,7 +83,7 @@ class CommandTest extends TestCase
      */
     public function testSetNameInvalidLeadingSpace(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(AssertionError::class);
 
         $command = new Command();
         $command->setName(' routes_show');
@@ -243,18 +243,6 @@ class CommandTest extends TestCase
         $result = $command->executeCommand(DemoCommand::class, [], $this->getMockIo($output));
         $this->assertNull($result);
         $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
-    }
-
-    /**
-     * test executeCommand with an invalid string class
-     */
-    public function testExecuteCommandStringInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Command class 'Nope' does not exist");
-
-        $command = new Command();
-        $command->executeCommand('Nope', [], $this->getMockIo(new StubConsoleOutput()));
     }
 
     /**

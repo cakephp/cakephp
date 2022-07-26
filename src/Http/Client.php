@@ -181,7 +181,6 @@ class Client implements ClientInterface
      *   to use. Short class names are resolved to the `Http\Client\Auth` namespace.
      *
      * @param array<string, mixed> $config Config options for scoped clients.
-     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {
@@ -202,9 +201,6 @@ class Client implements ClientInterface
             $adapter = new $adapter();
         }
 
-        if (!$adapter instanceof AdapterInterface) {
-            throw new InvalidArgumentException('Adapter must be an instance of Cake\Http\Client\AdapterInterface');
-        }
         $this->_adapter = $adapter;
 
         if (!empty($this->_config['cookieJar'])) {

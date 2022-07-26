@@ -29,7 +29,6 @@ use Cake\Datasource\QueryTrait;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Closure;
-use InvalidArgumentException;
 use JsonSerializable;
 
 /**
@@ -156,13 +155,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param \Cake\ORM\Table $repository The default table object to use.
      * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function repository(RepositoryInterface $repository)
     {
-        if (!$repository instanceof Table) {
-            throw new InvalidArgumentException('$repository must be an instance of Cake\ORM\Table.');
-        }
+        assert(
+            $repository instanceof Table,
+            '$repository must be an instance of Cake\ORM\Table.'
+        );
 
         $this->_repository = $repository;
 

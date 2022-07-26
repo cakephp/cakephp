@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use Cake\Core\Exception\CakeException;
 use League\Container\DefinitionContainerInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
@@ -48,14 +47,14 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
     {
         $container = parent::getContainer();
 
-        if (!($container instanceof ContainerInterface)) {
-            $message = sprintf(
+        assert(
+            $container instanceof ContainerInterface,
+            sprintf(
                 'Unexpected container type. Expected `%s` got `%s` instead.',
                 ContainerInterface::class,
                 get_debug_type($container)
-            );
-            throw new CakeException($message);
-        }
+            )
+        );
 
         return $container;
     }

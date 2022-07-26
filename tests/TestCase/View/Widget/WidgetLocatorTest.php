@@ -21,7 +21,6 @@ use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
-use stdClass;
 use TestApp\View\Widget\TestUsingViewWidget;
 
 /**
@@ -128,21 +127,6 @@ class WidgetLocatorTest extends TestCase
         ]);
         $result = $inputs->get('hidden');
         $this->assertInstanceOf('Cake\View\Widget\WidgetInterface', $result);
-    }
-
-    /**
-     * Test adding an instance of an invalid type.
-     */
-    public function testAddInvalidType(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Widget objects must implement `Cake\View\Widget\WidgetInterface`. Got `stdClass` instance instead.'
-        );
-        $inputs = new WidgetLocator($this->templates, $this->view);
-        $inputs->add([
-            'text' => new stdClass(),
-        ]);
     }
 
     /**
