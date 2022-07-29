@@ -18,7 +18,10 @@ namespace Cake\Test\TestCase\Database\QueryTests;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
-use Cake\ORM\Query;
+use Cake\Database\Query;
+use Cake\Database\StatementInterface;
+use Cake\Database\TypeMap;
+use Cake\Datasource\ConnectionManager;
 use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\CommentsFixture;
 use Cake\Test\Fixture\ProductsFixture;
@@ -32,15 +35,40 @@ class CaseExpressionQueryTest extends TestCase
         ProductsFixture::class,
     ];
 
+    /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var \Cake\Database\Query
+     */
+    protected $query;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->connection = ConnectionManager::get('test');
+        $this->query = new Query($this->connection);
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        unset($this->query);
+        unset($this->connection);
+    }
+
     public function testSimpleCase(): void
     {
-        $query = $this->getTableLocator()->get('Products')
-            ->find()
+        $query = $this->query
             ->select(function (Query $query) {
                 return [
                     'name',
                     'category_name' => $query->newExpr()
-                        ->case($query->identifier('Products.category'))
+                        ->case($query->identifier('products.category'))
                         ->when(1)
                         ->then('Touring')
                         ->when(2)
@@ -48,9 +76,9 @@ class CaseExpressionQueryTest extends TestCase
                         ->else('Other'),
                 ];
             })
+            ->from('products')
             ->orderAsc('category')
-            ->orderAsc('name')
-            ->disableHydration();
+            ->orderAsc('name');
 
         $expected = [
             [
@@ -66,13 +94,16 @@ class CaseExpressionQueryTest extends TestCase
                 'category_name' => 'Other',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testSearchedCase(): void
     {
-        $query = $this->getTableLocator()->get('Products')
-            ->find()
+        $typeMap = new TypeMap([
+            'price' => 'integer',
+        ]);
+
+        $query = $this->query
             ->select(function (Query $query) {
                 return [
                     'name',
@@ -86,9 +117,10 @@ class CaseExpressionQueryTest extends TestCase
                         ->else('$30 and above'),
                 ];
             })
+            ->from('products')
             ->orderAsc('price')
             ->orderAsc('name')
-            ->disableHydration();
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
@@ -107,28 +139,33 @@ class CaseExpressionQueryTest extends TestCase
                 'price_range' => '$30 and above',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testOrderByCase(): void
     {
-        $query = $this->getTableLocator()->get('Comments')
-            ->find()
+        $typeMap = new TypeMap([
+            'article_id' => 'integer',
+            'user_id' => 'integer',
+        ]);
+
+        $query = $this->query
             ->select(['article_id', 'user_id'])
-            ->orderAsc('Comments.article_id')
+            ->from('comments')
+            ->orderAsc('comments.article_id')
             ->orderDesc(function (QueryExpression $exp, Query $query) {
                 return $query->newExpr()
-                    ->case($query->identifier('Comments.article_id'))
+                    ->case($query->identifier('comments.article_id'))
                     ->when(1)
-                    ->then($query->identifier('Comments.user_id'));
+                    ->then($query->identifier('comments.user_id'));
             })
             ->orderAsc(function (QueryExpression $exp, Query $query) {
                 return $query->newExpr()
-                    ->case($query->identifier('Comments.article_id'))
+                    ->case($query->identifier('comments.article_id'))
                     ->when(2)
-                    ->then($query->identifier('Comments.user_id'));
+                    ->then($query->identifier('comments.user_id'));
             })
-            ->disableHydration();
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             [
@@ -156,23 +193,20 @@ class CaseExpressionQueryTest extends TestCase
                 'user_id' => 2,
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testHavingByCase(): void
     {
-        $articlesTable = $this->getTableLocator()->get('Articles');
-        $articlesTable->hasMany('Comments');
-
-        $query = $articlesTable
-            ->find()
-            ->select(['Articles.title'])
-            ->leftJoinWith('Comments')
-            ->group(['Articles.id', 'Articles.title'])
+        $query = $this->query
+            ->select(['articles.title'])
+            ->from('articles')
+            ->leftJoin('comments', ['comments.article_id = articles.id'])
+            ->group(['articles.id', 'articles.title'])
             ->having(function (QueryExpression $exp, Query $query) {
                 $expression = $query->newExpr()
                     ->case()
-                    ->when(['Comments.published' => 'Y'])
+                    ->when(['comments.published' => 'Y'])
                     ->then(1);
 
                 if ($query->getConnection()->getDriver() instanceof Postgres) {
@@ -184,121 +218,51 @@ class CaseExpressionQueryTest extends TestCase
                     2,
                     'integer'
                 );
-            })
-            ->disableHydration();
+            });
 
         $expected = [
             [
                 'title' => 'First Article',
             ],
         ];
-        $this->assertSame($expected, $query->toArray());
+        $this->assertSame($expected, $query->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC));
     }
 
     public function testUpdateFromCase(): void
     {
-        $commentsTable = $this->getTableLocator()->get('Comments');
+        $query = $this->query
+            ->select(['count' => $this->query->func()->count('*')])
+            ->from('comments')
+            ->where(['comments.published' => 'Y']);
 
-        $this->assertSame(5, $commentsTable->find()->where(['Comments.published' => 'Y'])->count());
-        $this->assertSame(1, $commentsTable->find()->where(['Comments.published' => 'N'])->count());
+        $this->assertSame(5, (int)$query->execute()->fetch()[0]);
 
-        $commentsTable->updateAll(
-            [
+        $query->where(['comments.published' => 'N'], [], true);
+
+        $this->assertSame(1, (int)$query->execute()->fetch()[0]);
+
+        $query = (new Query($this->connection))
+            ->update('comments')
+            ->set([
                 'published' =>
-                    $commentsTable->query()->newExpr()
+                    $this->query->newExpr()
                         ->case()
                         ->when(['published' => 'Y'])
                         ->then('N')
                         ->else('Y'),
-            ],
-            '1 = 1'
-        );
+            ])
+            ->where(['1 = 1'])
+            ->execute();
 
-        $this->assertSame(1, $commentsTable->find()->where(['Comments.published' => 'Y'])->count());
-        $this->assertSame(5, $commentsTable->find()->where(['Comments.published' => 'N'])->count());
-    }
+        $query = (new Query($this->connection))
+            ->select(['count' => $this->query->func()->count('*')])
+            ->from('comments')
+            ->where(['comments.published' => 'Y']);
 
-    public function testInferredReturnType(): void
-    {
-        $query = $this->getTableLocator()->get('Products')
-            ->find()
-            ->select(function (Query $query) {
-                $expression = $query->newExpr()
-                    ->case()
-                    ->when(['Products.price <' => 20])
-                    ->then(true)
-                    ->else(false);
+        $this->assertSame(1, (int)$query->execute()->fetch()[0]);
 
-                if ($query->getConnection()->getDriver() instanceof Postgres) {
-                    $expression = $query->func()->cast($expression, 'boolean');
-                }
-
-                return [
-                    'Products.name',
-                    'Products.price',
-                    'is_cheap' => $expression,
-                ];
-            })
-            ->disableHydration();
-
-        $expected = [
-            [
-                'name' => 'First product',
-                'price' => 10,
-                'is_cheap' => true,
-            ],
-            [
-                'name' => 'Second product',
-                'price' => 20,
-                'is_cheap' => false,
-            ],
-            [
-                'name' => 'Third product',
-                'price' => 30,
-                'is_cheap' => false,
-            ],
-        ];
-        $this->assertSame($expected, $query->toArray());
-    }
-
-    public function testOverwrittenReturnType(): void
-    {
-        $query = $this->getTableLocator()->get('Products')
-            ->find()
-            ->select(function (Query $query) {
-                return [
-                    'name',
-                    'price',
-                    'is_cheap' => $query->newExpr()
-                        ->case()
-                        ->when(['price <' => 20])
-                        ->then(1)
-                        ->else(0)
-                        ->setReturnType('boolean'),
-                ];
-            })
-            ->orderAsc('price')
-            ->orderAsc('name')
-            ->disableHydration();
-
-        $expected = [
-            [
-                'name' => 'First product',
-                'price' => 10,
-                'is_cheap' => true,
-            ],
-            [
-                'name' => 'Second product',
-                'price' => 20,
-                'is_cheap' => false,
-            ],
-            [
-                'name' => 'Third product',
-                'price' => 30,
-                'is_cheap' => false,
-            ],
-        ];
-        $this->assertSame($expected, $query->toArray());
+        $query->where(['comments.published' => 'N'], [], true);
+        $this->assertSame(5, (int)$query->execute()->fetch()[0]);
     }
 
     public function bindingValueDataProvider(): array
@@ -320,27 +284,30 @@ class CaseExpressionQueryTest extends TestCase
         $then = '3';
         $else = '4';
 
-        $query = $this->getTableLocator()->get('Products')
-            ->find()
+        $typeMap = new TypeMap([
+            'val' => 'integer',
+        ]);
+
+        $query = $this->query
             ->select(function (Query $query) {
                 return [
                     'val' => $query->newExpr()
                         ->case($query->newExpr(':value'))
                         ->when($query->newExpr(':when'))
                         ->then($query->newExpr(':then'))
-                        ->else($query->newExpr(':else'))
-                        ->setReturnType('integer'),
+                        ->else($query->newExpr(':else')),
                 ];
             })
+            ->from('products')
             ->bind(':value', $value, 'integer')
             ->bind(':when', $when, 'integer')
             ->bind(':then', $then, 'integer')
             ->bind(':else', $else, 'integer')
-            ->disableHydration();
+            ->setSelectTypeMap($typeMap);
 
         $expected = [
             'val' => $result,
         ];
-        $this->assertSame($expected, $query->first());
+        $this->assertSame($expected, $query->execute()->fetch(StatementInterface::FETCH_TYPE_ASSOC));
     }
 }

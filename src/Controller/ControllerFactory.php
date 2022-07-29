@@ -264,7 +264,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         return match ($type->getName()) {
             'string' => $argument,
             'float' => is_numeric($argument) ? (float)$argument : null,
-            'int' => ctype_digit($argument) ? (int)$argument : null,
+            'int' => filter_var($argument, FILTER_VALIDATE_INT) ? (int)$argument : null,
             'bool' => $argument === '0' ? false : ($argument === '1' ? true : null),
             'array' => $argument === '' ? [] : explode(',', $argument),
             default => null,
