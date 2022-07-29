@@ -29,7 +29,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
-use Cake\Datasource\ResultSetInterface;
 use Cake\Datasource\RulesAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -2187,9 +2186,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Exception
      */
     public function saveMany(
-        ResultSetInterface|array $entities,
+        iterable $entities,
         array $options = []
-    ): ResultSetInterface|array|false {
+    ): iterable|false {
         try {
             return $this->_saveMany($entities, $options);
         } catch (PersistenceFailedException $exception) {
@@ -2210,7 +2209,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */
-    public function saveManyOrFail(iterable $entities, array $options = []): ResultSetInterface|array
+    public function saveManyOrFail(iterable $entities, array $options = []): iterable
     {
         return $this->_saveMany($entities, $options);
     }
@@ -2223,9 +2222,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
      */
     protected function _saveMany(
-        ResultSetInterface|array $entities,
+        iterable $entities,
         array $options = []
-    ): ResultSetInterface|array {
+    ): iterable {
         $options = new ArrayObject(
             $options + [
                 'atomic' => true,
@@ -2238,7 +2237,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         /** @var array<bool> $isNew */
         $isNew = [];
         $cleanupOnFailure = function ($entities) use (&$isNew): void {
-            /** @var array<\Cake\Datasource\EntityInterface> $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unset($this->getPrimaryKey());
@@ -2247,17 +2245,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
-        /** @var \Cake\Datasource\EntityInterface|null $failed */
         $failed = null;
         try {
             $this->getConnection()
                 ->transactional(function () use ($entities, $options, &$isNew, &$failed) {
                     // Cache array cast since options are the same for each entity
                     $options = (array)$options;
-                    /**
-                     * @var string $key
-                     * @var \Cake\Datasource\EntityInterface $entity
-                     */
                     foreach ($entities as $key => $entity) {
                         $isNew[$key] = $entity->isNew();
                         if ($this->save($entity, $options) === false) {
@@ -2374,7 +2367,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   on success, false on failure.
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
-    public function deleteMany(iterable $entities, array $options = []): ResultSetInterface|array|false
+    public function deleteMany(iterable $entities, array $options = []): iterable|false
     {
         $failed = $this->_deleteMany($entities, $options);
 
