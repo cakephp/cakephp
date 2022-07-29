@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 
 class CaseExpressionQueryTest extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Products',
     ];
 
