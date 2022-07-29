@@ -17,8 +17,6 @@ You can define as many or as few loggers as your application needs. Loggers
 should be configured using `Cake\Core\Log.` An example would be:
 
 ```php
-use Cake\Cache\Cache;
-
 use Cake\Log\Log;
 
 // Short classname
