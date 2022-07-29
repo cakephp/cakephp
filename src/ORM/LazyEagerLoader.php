@@ -135,11 +135,11 @@ class LazyEagerLoader
      * Injects the results of the eager loader query into the original list of
      * entities.
      *
-     * @param \Traversable|array<\Cake\Datasource\EntityInterface> $objects The original list of entities
+     * @param iterable<\Cake\Datasource\EntityInterface> $objects The original list of entities
      * @param \Cake\ORM\Query $results The loaded results
      * @param array<string> $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
-     * @return array
+     * @return array<\Cake\Datasource\EntityInterface>
      */
     protected function _injectResults(iterable $objects, $results, array $associations, Table $source): array
     {
