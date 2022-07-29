@@ -733,15 +733,13 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '02', '0', '8,9'],
+                'pass' => ['1.0', '2', '0', '8,9'],
             ],
         ]);
         $controller = $this->factory->create($request);
 
         $result = $this->factory->invoke($controller);
         $data = json_decode((string)$result->getBody(), true);
-
-        $this->assertNotNull($data);
         $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => ['8', '9']], $data);
 
         $request = new ServerRequest([
@@ -750,16 +748,29 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '02', '0', ''],
+                'pass' => ['1.0', '2', '0', ''],
             ],
         ]);
         $controller = $this->factory->create($request);
 
         $result = $this->factory->invoke($controller);
         $data = json_decode((string)$result->getBody(), true);
-
-        $this->assertNotNull($data);
         $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => []], $data);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1.0', '-1', '0', ''],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+        $this->assertSame(['one' => 1.0, 'two' => -1, 'three' => false, 'four' => []], $data);
     }
 
     /**
@@ -781,7 +792,6 @@ class ControllerFactoryTest extends TestCase
         $result = $this->factory->invoke($controller);
         $data = json_decode((string)$result->getBody(), true);
 
-        $this->assertNotNull($data);
         $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => true], $data);
     }
 

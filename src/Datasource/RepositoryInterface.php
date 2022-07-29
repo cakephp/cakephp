@@ -242,7 +242,7 @@ interface RepositoryInterface
      * $article = $this->Articles->patchEntities($articles, $this->request->getData());
      * ```
      *
-     * @param \Traversable|array<\Cake\Datasource\EntityInterface> $entities the entities that will get the
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities the entities that will get the
      * data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array<string, mixed> $options A list of options for the objects hydration.
