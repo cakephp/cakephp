@@ -89,7 +89,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      *
      * @var string
      */
-    protected string $_type = 'select';
+    protected string $_type = self::TYPE_SELECT;
 
     /**
      * List of SQL parts that will be used to build this query.
@@ -252,7 +252,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function all(): iterable
     {
-        if ($this->_type !== Query::TYPE_SELECT) {
+        if ($this->_type !== self::TYPE_SELECT) {
             throw new CakeException(
                 '`all()` supports SELECT queries only. Use `execute()` to run all other queries.'
             );
@@ -508,7 +508,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
         }
 
         $this->_dirty();
-        $this->_type = 'select';
+        $this->_type = self::TYPE_SELECT;
 
         return $this;
     }
@@ -1688,7 +1688,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
         $this->_dirty();
-        $this->_type = 'insert';
+        $this->_type = self::TYPE_INSERT;
         $this->_parts['insert'][1] = $columns;
         if (!$this->_parts['values']) {
             $this->_parts['values'] = new ValuesExpression($columns, $this->getTypeMap()->setTypes($types));
@@ -1708,7 +1708,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     public function into(string $table)
     {
         $this->_dirty();
-        $this->_type = 'insert';
+        $this->_type = self::TYPE_INSERT;
         $this->_parts['insert'][0] = $table;
 
         return $this;
@@ -1749,7 +1749,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
      */
     public function values(ValuesExpression|Query|array $data)
     {
-        if ($this->_type !== 'insert') {
+        if ($this->_type !== self::TYPE_INSERT) {
             throw new DatabaseException(
                 'You cannot add values before defining columns to use.'
             );
@@ -1783,7 +1783,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     public function update(ExpressionInterface|string $table)
     {
         $this->_dirty();
-        $this->_type = 'update';
+        $this->_type = self::TYPE_UPDATE;
         $this->_parts['update'][0] = $table;
 
         return $this;
@@ -1863,7 +1863,7 @@ class Query implements ExpressionInterface, IteratorAggregate, Stringable
     public function delete(?string $table = null)
     {
         $this->_dirty();
-        $this->_type = 'delete';
+        $this->_type = self::TYPE_DELETE;
         if ($table !== null) {
             $this->from($table);
         }
