@@ -67,9 +67,9 @@ class CorsMiddleware implements MiddlewareInterface
     protected $allowedHeaders = [];
 
     /**
-     * @var int Access-Control-Max-Age
+     * @var array Access-Control-Max-Age
      */
-    protected $maxAge = 0;
+    protected $maxAge = [];
 
     /**
      * Access-Control-Allow-Origin
@@ -77,11 +77,14 @@ class CorsMiddleware implements MiddlewareInterface
      * Sets the allowed origins. You can use *.example.com wildcards to accept subdomains, or * to allow all domains
      *
      * @param array|string $origins list of allowed cors request origins or '*' to allow all origins
+     * @param array|string $path the scope of the current configuration. Can be a string or an array of string
      * @return $this
      */
-    public function setAllowedOrigins($origins)
+    public function setAllowedOrigins($origins, $path = '/')
     {
-        $this->allowedOrigins = $origins;
+        foreach ((array)$path as $_path) {
+            $this->allowedOrigins[$this->normalizePath($_path)] = $origins;
+        }
 
         return $this;
     }
@@ -92,11 +95,14 @@ class CorsMiddleware implements MiddlewareInterface
      * enable / disabled allowed credentials
      *
      * @param bool $enabled enable / disable value
+     * @param array|string $path the scope of the current configuration. Can be a string or an array of string
      * @return $this
      */
-    public function setAllowCredentials(bool $enabled)
+    public function setAllowCredentials(bool $enabled, $path = '/')
     {
-        $this->allowCredentials = $origins;
+        foreach ((array)$path as $_path) {
+            $this->allowCredentials[$this->normalizePath($_path)] = $enabled;
+        }
 
         return $this;
     }
@@ -107,11 +113,14 @@ class CorsMiddleware implements MiddlewareInterface
      * Sets the headers to expose
      *
      * @param array $headers list of headers to expose
+     * @param array|string $path the scope of the current configuration. Can be a string or an array of string
      * @return $this
      */
-    public function setExposedHeaders(array $headers)
+    public function setExposedHeaders(array $headers, $path = '/')
     {
-        $this->exposedHeaders = $headers;
+        foreach ((array)$path as $_path) {
+            $this->exposedHeaders[$this->normalizePath($_path)] = $headers;
+        }
 
         return $this;
     }
@@ -122,11 +131,14 @@ class CorsMiddleware implements MiddlewareInterface
      * Sets the allowed HTTP methods
      *
      * @param array $methods list of allowed cors request http methods
+     * @param array|string $path the scope of the current configuration. Can be a string or an array of string
      * @return $this
      */
-    public function setAllowedMethods(array $methods)
+    public function setAllowedMethods(array $methods, $path = '/')
     {
-        $this->allowedMethods = $methods;
+        foreach ((array)$path as $_path) {
+            $this->allowedMethods[$this->normalizePath($_path)] = $methods;
+        }
 
         return $this;
     }
@@ -137,11 +149,14 @@ class CorsMiddleware implements MiddlewareInterface
      * Sets the allowed HTTP request headers
      *
      * @param array|string $headers list of allowed cors request http headers or '*' to allow all headers
+     * @param array|string $path the scope of the current configuration. Can be a string or an array of string
      * @return $this
      */
-    public function setAllowedHeaders($headers)
+    public function setAllowedHeaders($headers, $path = '/')
     {
-        $this->allowedHeaders = $headers;
+        foreach ((array)$path as $_path) {
+            $this->allowedHeaders[$this->normalizePath($_path)] = $headers;
+        }
 
         return $this;
     }
@@ -180,26 +195,31 @@ class CorsMiddleware implements MiddlewareInterface
     protected function getPreflightResponse(ServerRequest $request): ResponseInterface
     {
         $response = new Response();
+        $path = $request->getPath();
         $cors = new CorsBuilder($response, $request->getHeaderLine('Origin'), $request->scheme() == 'https');
-        $cors->maxAge($this->maxAge);
+        $cors->maxAge(
+            $this->getByPath($path, $this->maxAge, 0)
+        );
         //set the allowed origin on top so the browsers will show debug informations
         //in case of wrong cors directive
         $cors->allowOrigin($request->getHeaderLine('Origin'));
 
         $requestMethod = $request->getHeaderLine('Access-Control-Request-Method');
+        $allowMethods = $this->getByPath($path, $this->allowedMethods, []);
 
-        if ($this->allowedMethods && in_array($requestMethod, $this->allowedMethods, true)) {
+        if ($this->allowedMethods && in_array($requestMethod, $allowMethods, true)) {
             $cors->allowMethods([$requestMethod]);
         } else {
             return $cors->build()->withStatus(405);
         }
 
+        $allowedHeaders = $this->getByPath($path, $this->allowedHeaders, []);
         $requestHeaders = $request->getHeaderLine('Access-Control-Request-Headers')
             ? explode(', ', $request->getHeaderLine('Access-Control-Request-Headers')) :
             [];
-        $allowedHeaders = $this->allowedHeaders == '*'
+        $allowedHeaders = $allowedHeaders == '*'
             ? $requestHeaders
-            : $this->allowedHeaders;
+            : $allowedHeaders;
         $requestHeaders = array_filter($requestHeaders, function ($h) {
 
             return !in_array(strtolower($h), $this->simpleHeaders);
@@ -214,7 +234,7 @@ class CorsMiddleware implements MiddlewareInterface
             }
         }
 
-        if ($this->allowCredentials) {
+        if ($this->getByPath($path, $this->allowCredentials, false)) {
             $cors->allowCredentials();
         }
 
@@ -233,8 +253,9 @@ class CorsMiddleware implements MiddlewareInterface
         $cors = new CorsBuilder($response, $request->getHeaderLine('Origin'), $request->scheme() == 'https');
         $cors->allowOrigin($request->getHeaderLine('Origin'));
 
-        if ($this->exposedHeaders) {
-            $cors->exposeHeaders($this->exposedHeaders);
+        $exposedHeaders = $this->getByPath($request->getPath(), $this->exposedHeaders, []);
+        if ($exposedHeaders) {
+            $cors->exposeHeaders($exposedHeaders);
         }
 
         return $cors->build();
@@ -249,7 +270,7 @@ class CorsMiddleware implements MiddlewareInterface
     protected function checkOrigin(ServerRequest $request): bool
     {
         $origin = $request->getHeaderLine('Origin');
-        $allowedOrigins = $this->allowedOrigins;
+        $allowedOrigins = $this->getByPath($request->getPath(), $this->allowedOrigins, []);
 
         if ($allowedOrigins == '*') {
             return true;
@@ -279,6 +300,51 @@ class CorsMiddleware implements MiddlewareInterface
         $response = new Response();
 
         return $response->withStatus(204);
+    }
+
+    /**
+     * Get configured properties based on the requested path
+     *
+     * @param string $path the current path
+     * @param array $props the array containing per path config
+     * @param mixed $default the default value to return if no path found
+     * @return mixed
+     */
+    protected function getByPath(string $path, array $props, $default = null)
+    {
+        $value = $default;
+        $priority = 0;
+        foreach ($props as $propPath => $propValue) {
+            if ($propPath == '/' || preg_match('/^' . preg_quote($propPath, '/') . '(\/|$)/i', $path)) {
+                //if the path matches a configured path with more matching segments
+                $pathPriority = $propPath == '/' ? 0 : count(explode('/', $propPath));
+                if ($pathPriority >= $priority) {
+                    $priority = $pathPriority;
+                    $value = $propValue;
+                }
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Normalize a path adding a slash at start and
+     * remove trailing slash
+     *
+     * @param string $path the current path
+     * @return string
+     */
+    protected function normalizePath($path)
+    {
+        if ($path[0] != '/') {
+            $path = '/' . $path;
+        }
+        if ($path[-1] == '/') {
+            $path = substr($path, 0, -1);
+        }
+
+        return $path;
     }
 
     /**
