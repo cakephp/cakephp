@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -194,7 +195,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query
             ->select([
                 'posts.author_id',
@@ -225,7 +226,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query
             ->select([
                 'posts.author_id',

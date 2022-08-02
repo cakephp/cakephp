@@ -21,6 +21,7 @@ use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -244,14 +245,14 @@ class SqlserverTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
             ->offset(10);
         $this->assertSame('SELECT id, title FROM articles ORDER BY id OFFSET 10 ROWS', $query->sql());
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
@@ -259,13 +260,13 @@ class SqlserverTest extends TestCase
             ->offset(50);
         $this->assertSame('SELECT id, title FROM articles ORDER BY id OFFSET 50 ROWS FETCH FIRST 10 ROWS ONLY', $query->sql());
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->offset(10);
         $this->assertSame('SELECT id, title FROM articles ORDER BY (SELECT NULL) OFFSET 10 ROWS', $query->sql());
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->limit(10);
@@ -292,14 +293,14 @@ class SqlserverTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->limit(10);
         $expected = 'SELECT TOP 10 id, title FROM articles';
         $this->assertSame($expected, $query->sql());
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->offset(10);
@@ -312,7 +313,7 @@ class SqlserverTest extends TestCase
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertSame($expected, $query->sql());
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
@@ -322,7 +323,7 @@ class SqlserverTest extends TestCase
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertSame($expected, $query->sql());
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
@@ -334,8 +335,8 @@ class SqlserverTest extends TestCase
             'WHERE (_cake_paging_._cake_page_rownum_ > 50 AND _cake_paging_._cake_page_rownum_ <= 60)';
         $this->assertSame($expected, $query->sql());
 
-        $query = new Query($connection);
-        $subquery = new Query($connection);
+        $query = new SelectQuery($connection);
+        $subquery = new SelectQuery($connection);
         $subquery->select(1);
         $query
             ->select([
@@ -355,7 +356,7 @@ class SqlserverTest extends TestCase
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertSame($expected, $query->sql());
 
-        $subqueryA = new Query($connection);
+        $subqueryA = new SelectQuery($connection);
         $subqueryA
             ->select('count(*)')
             ->from(['a' => 'articles'])
@@ -364,7 +365,7 @@ class SqlserverTest extends TestCase
                 'a.published' => 'Y',
             ]);
 
-        $subqueryB = new Query($connection);
+        $subqueryB = new SelectQuery($connection);
         $subqueryB
             ->select('count(*)')
             ->from(['b' => 'articles'])
@@ -373,7 +374,7 @@ class SqlserverTest extends TestCase
                 'b.published' => 'N',
             ]);
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query
             ->select([
                 'id',
@@ -441,7 +442,7 @@ class SqlserverTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query
             ->select([
                 'posts.author_id',
@@ -475,7 +476,7 @@ class SqlserverTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query
             ->select([
                 'posts.author_id',

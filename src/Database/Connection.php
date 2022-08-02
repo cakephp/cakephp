@@ -24,6 +24,7 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -282,6 +283,16 @@ class Connection implements ConnectionInterface
     public function newQuery(): Query
     {
         return new Query($this);
+    }
+
+    /**
+     * Create a new SelectQuery instance for this connection.
+     *
+     * @return \Cake\Database\Query\SelectQuery
+     */
+    public function newSelectQuery(): SelectQuery
+    {
+        return new SelectQuery($this);
     }
 
     /**

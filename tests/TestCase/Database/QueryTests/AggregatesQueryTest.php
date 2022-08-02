@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Database\QueryTests;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
-use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -62,7 +62,7 @@ class AggregatesQueryTest extends TestCase
         }
         $this->skipif($skip);
 
-        $query = new Query($this->connection);
+        $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->filter(['article_id' => 2])])
             ->from('comments')

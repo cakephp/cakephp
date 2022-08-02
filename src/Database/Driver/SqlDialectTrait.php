@@ -21,6 +21,7 @@ use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Closure;
 use InvalidArgumentException;
 
@@ -144,10 +145,10 @@ trait SqlDialectTrait
     /**
      * Apply translation steps to select queries.
      *
-     * @param \Cake\Database\Query $query The query to translate
-     * @return \Cake\Database\Query The modified query
+     * @param \Cake\Database\Query\SelectQuery $query The query to translate
+     * @return \Cake\Database\Query\SelectQuery The modified query
      */
-    protected function _selectQueryTranslator(Query $query): Query
+    protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
     {
         return $this->_transformDistinct($query);
     }
@@ -156,10 +157,10 @@ trait SqlDialectTrait
      * Returns the passed query after rewriting the DISTINCT clause, so that drivers
      * that do not support the "ON" part can provide the actual way it should be done
      *
-     * @param \Cake\Database\Query $query The query to be transformed
-     * @return \Cake\Database\Query
+     * @param \Cake\Database\Query\SelectQuery $query The query to be transformed
+     * @return \Cake\Database\Query\SelectQuery
      */
-    protected function _transformDistinct(Query $query): Query
+    protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         if (is_array($query->clause('distinct'))) {
             $query->group($query->clause('distinct'), true);

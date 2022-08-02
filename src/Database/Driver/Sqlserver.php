@@ -25,6 +25,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqlserverSchemaDialect;
@@ -309,7 +310,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _selectQueryTranslator(Query $query): Query
+    protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
     {
         $limit = $query->clause('limit');
         $offset = $query->clause('offset');
@@ -335,12 +336,12 @@ class Sqlserver extends Driver
      * Prior to SQLServer 2012 there was no equivalent to LIMIT OFFSET, so a subquery must
      * be used.
      *
-     * @param \Cake\Database\Query $original The query to wrap in a subquery.
+     * @param \Cake\Database\Query\SelectQuery $original The query to wrap in a subquery.
      * @param int|null $limit The number of rows to fetch.
      * @param int|null $offset The number of rows to offset.
-     * @return \Cake\Database\Query Modified query object.
+     * @return \Cake\Database\Query\SelectQuery Modified query object.
      */
-    protected function _pagingSubquery(Query $original, ?int $limit, ?int $offset): Query
+    protected function _pagingSubquery(SelectQuery $original, ?int $limit, ?int $offset): SelectQuery
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
@@ -378,7 +379,7 @@ class Sqlserver extends Driver
             ->offset(null)
             ->order([], true);
 
-        $outer = new Query($query->getConnection());
+        $outer = $query->getConnection()->newSelectQuery();
         $outer->select('*')
             ->from(['_cake_paging_' => $query]);
 

@@ -3958,4 +3958,22 @@ class QueryTest extends TestCase
             ->disableResultsCasting()
             ->firstOrFail();
     }
+
+    /**
+     * Tests that passing a ORM query as an argument wraps the query SQL into parentheses.
+     */
+    public function testFunctionWithOrmQuery(): void
+    {
+        $query = $this->getTableLocator()->get('Articles')
+            ->setSchema(['column' => 'integer'])
+            ->find()
+            ->select(['column']);
+
+        $binder = new ValueBinder();
+        $function = new $this->expressionClass('MyFunction', [$query]);
+        $this->assertSame(
+            'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
+            preg_replace('/[`"\[\]]/', '', $function->sql($binder))
+        );
+    }
 }
