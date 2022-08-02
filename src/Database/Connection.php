@@ -24,6 +24,7 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
@@ -296,6 +297,16 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Create a new InsertQuery instance for this connection.
+     *
+     * @return \Cake\Database\Query\InsertQuery
+     */
+    public function newInsertQuery(): InsertQuery
+    {
+        return new InsertQuery($this);
+    }
+
+    /**
      * Sets a Schema\Collection object for this connection.
      *
      * @param \Cake\Database\Schema\CollectionInterface $collection The schema collection object
@@ -342,7 +353,7 @@ class Connection implements ConnectionInterface
     {
         $columns = array_keys($values);
 
-        return $this->newQuery()->insert($columns, $types)
+        return $this->newInsertQuery()->insert($columns, $types)
             ->into($table)
             ->values($values)
             ->execute();

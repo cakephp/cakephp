@@ -47,7 +47,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
 
     protected function _insert(): void
     {
-        $query = $this->connection->newQuery();
+        $query = $this->connection->newInsertQuery();
         $query
             ->insert(['id', 'published', 'name'], ['id' => 'ordered_uuid'])
             ->into('ordered_uuid_items')

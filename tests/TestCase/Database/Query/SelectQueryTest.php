@@ -35,6 +35,7 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use DateTimeImmutable;
@@ -48,6 +49,8 @@ use TestApp\Database\Type\BarType;
  */
 class SelectQueryTest extends TestCase
 {
+    use QueryAssertsTrait;
+
     protected array $fixtures = [
         'core.Articles',
         'core.Authors',
@@ -3848,26 +3851,6 @@ class SelectQueryTest extends TestCase
         // Had the type casting being remembered from the first time,
         // The value would be a truncated float (1.0)
         $this->assertEquals([['a' => 1.5]], $result);
-    }
-
-    /**
-     * Assertion for comparing a regex pattern against a query having its identifiers
-     * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
-     * parameter is set to true, it will alter the pattern to both accept quoted and
-     * unquoted queries
-     *
-     * @param string $pattern
-     * @param string $query the result to compare against
-     * @param bool $optional
-     */
-    public function assertQuotedQuery($pattern, $query, $optional = false): void
-    {
-        if ($optional) {
-            $optional = '?';
-        }
-        $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
-        $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
-        $this->assertMatchesRegularExpression('#' . $pattern . '#', $query);
     }
 
     /**

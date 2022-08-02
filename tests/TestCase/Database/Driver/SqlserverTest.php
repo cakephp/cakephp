@@ -20,7 +20,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\MissingConnectionException;
-use Cake\Database\Query;
+use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -414,7 +414,7 @@ class SqlserverTest extends TestCase
             ->onlyMethods(['connect'])
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
-        $query = new Query($connection);
+        $query = new InsertQuery($connection);
         $query->insert(['title'])
             ->into('articles')
             ->values(['title' => 'A new article']);

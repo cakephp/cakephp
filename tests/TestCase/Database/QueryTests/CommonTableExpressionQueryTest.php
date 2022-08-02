@@ -260,7 +260,7 @@ class CommonTableExpressionQueryTest extends TestCase
             '`INSERT INTO ... WITH` syntax is not supported in SQL Server.'
         );
 
-        $query = $this->connection->newQuery()
+        $query = $this->connection->newInsertQuery()
             ->insert(['title', 'body'])
             ->into('articles')
             ->values(
