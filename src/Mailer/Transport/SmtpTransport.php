@@ -42,6 +42,7 @@ class SmtpTransport extends AbstractTransport
         'client' => null,
         'tls' => false,
         'keepAlive' => false,
+        'authType' => null,
     ];
 
     /**
@@ -215,6 +216,38 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
+     * Parses the last response line and extract the preferred authentication type.
+     *
+     * @return void
+     */
+    protected function _parseAuthType(): void
+    {
+        if (!empty($this->_config['authType'])) {
+            return;
+        }
+
+        $auth = '';
+        foreach ($this->_lastResponse as $line) {
+            if (empty($line['message']) || substr($line['message'], 0, 5) === 'AUTH ') {
+                $auth = $line['message'];
+                break;
+            }
+        }
+
+        if (strpos($auth, 'PLAIN') !== false) {
+            $this->_config['authType'] = 'PLAIN';
+
+            return;
+        }
+
+        if (strpos($auth, 'LOGIN') !== false) {
+            $this->_config['authType'] = 'LOGIN';
+
+            return;
+        }
+    }
+
+    /**
      * Connect to SMTP Server
      *
      * @return void
@@ -265,6 +298,8 @@ class SmtpTransport extends AbstractTransport
                 throw new SocketException('SMTP server did not accept the connection.', null, $e2);
             }
         }
+
+        $this->_parseAuthType();
     }
 
     /**
@@ -281,13 +316,28 @@ class SmtpTransport extends AbstractTransport
 
         $username = $this->_config['username'];
         $password = $this->_config['password'];
+        if (empty($this->_options['authType'])) {
+            $replyCode = $this->_authPlain($username, $password);
+            if ($replyCode === '235') {
+                return;
+            }
 
-        $replyCode = $this->_authPlain($username, $password);
-        if ($replyCode === '235') {
+            $this->_authLogin($username, $password);
+
             return;
         }
 
-        $this->_authLogin($username, $password);
+        if ($this->_options['authType'] === 'PLAIN') {
+            $this->_authPlain($username, $password);
+
+            return;
+        }
+
+        if ($this->_options['authType'] === 'LOGIN') {
+            $this->_authLogin($username, $password);
+
+            return;
+        }
     }
 
     /**
