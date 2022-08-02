@@ -384,7 +384,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $this->assertEquals(['count' => '3'], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $query = $this->connection->newQuery()
+        $query = $this->connection->newDeleteQuery()
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
                 $query->select('articles.id')
                     ->from('articles')

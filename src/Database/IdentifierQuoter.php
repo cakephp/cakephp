@@ -19,6 +19,7 @@ namespace Cake\Database;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use InvalidArgumentException;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -106,7 +107,11 @@ class IdentifierQuoter
     protected function _quoteParts(Query $query): void
     {
         foreach (['distinct', 'select', 'from', 'group'] as $part) {
-            $contents = $query->clause($part);
+            try {
+                $contents = $query->clause($part);
+            } catch (InvalidArgumentException) {
+                continue;
+            }
 
             if (!is_array($contents)) {
                 continue;

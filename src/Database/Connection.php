@@ -24,6 +24,7 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
@@ -318,6 +319,16 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Create a new DeleteQuery instance for this connection.
+     *
+     * @return \Cake\Database\Query\DeleteQuery
+     */
+    public function newDeleteQuery(): DeleteQuery
+    {
+        return new DeleteQuery($this);
+    }
+
+    /**
      * Sets a Schema\Collection object for this connection.
      *
      * @param \Cake\Database\Schema\CollectionInterface $collection The schema collection object
@@ -397,7 +408,7 @@ class Connection implements ConnectionInterface
      */
     public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->newQuery()->delete($table)
+        return $this->newDeleteQuery()->delete($table)
             ->where($conditions, $types)
             ->execute();
     }

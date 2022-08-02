@@ -1311,26 +1311,6 @@ class Query implements ExpressionInterface, Stringable
     }
 
     /**
-     * Create a delete query.
-     *
-     * Can be combined with from(), where() and other methods to
-     * create delete queries with specific conditions.
-     *
-     * @param string|null $table The table to use when deleting.
-     * @return $this
-     */
-    public function delete(?string $table = null)
-    {
-        $this->_dirty();
-        $this->_type = self::TYPE_DELETE;
-        if ($table !== null) {
-            $this->from($table);
-        }
-
-        return $this;
-    }
-
-    /**
      * A string or expression that will be appended to the generated query
      *
      * ### Examples:

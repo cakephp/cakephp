@@ -16,13 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\Query\SelectQuery;
-use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -41,19 +38,6 @@ class QueryTest extends TestCase
         'core.Profiles',
         'core.MenuLinkTrees',
     ];
-
-    /**
-     * @var int
-     */
-    public const ARTICLE_COUNT = 3;
-    /**
-     * @var int
-     */
-    public const AUTHOR_COUNT = 4;
-    /**
-     * @var int
-     */
-    public const COMMENT_COUNT = 6;
 
     /**
      * @var \Cake\Database\Connection
@@ -95,125 +79,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test a basic delete using from()
-     */
-    public function testDeleteWithFrom(): void
-    {
-        $query = new Query($this->connection);
-
-        $query->delete()
-            ->from('authors')
-            ->where('1 = 1');
-
-        $result = $query->sql();
-        $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
-
-        $result = $query->execute();
-        $this->assertInstanceOf(StatementInterface::class, $result);
-        $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
-        $result->closeCursor();
-    }
-
-    /**
-     * Test delete with from and alias.
-     */
-    public function testDeleteWithAliasedFrom(): void
-    {
-        $query = new Query($this->connection);
-
-        $query->delete()
-            ->from(['a ' => 'authors'])
-            ->where(['a.id !=' => 99]);
-
-        $result = $query->sql();
-        $this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, !$this->autoQuote);
-
-        $result = $query->execute();
-        $this->assertInstanceOf(StatementInterface::class, $result);
-        $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
-        $result->closeCursor();
-    }
-
-    /**
-     * Test a basic delete with no from() call.
-     */
-    public function testDeleteNoFrom(): void
-    {
-        $query = new Query($this->connection);
-
-        $query->delete('authors')
-            ->where('1 = 1');
-
-        $result = $query->sql();
-        $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
-
-        $result = $query->execute();
-        $this->assertInstanceOf(StatementInterface::class, $result);
-        $this->assertSame(self::AUTHOR_COUNT, $result->rowCount());
-        $result->closeCursor();
-    }
-
-    /**
-     * Tests that delete queries that contain joins do trigger a notice,
-     * warning about possible incompatibilities with aliases being removed
-     * from the conditions.
-     */
-    public function testDeleteRemovingAliasesCanBreakJoins(): void
-    {
-        $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
-        $query = new Query($this->connection);
-
-        $query
-            ->delete('authors')
-            ->from(['a ' => 'authors'])
-            ->innerJoin('articles')
-            ->where(['a.id' => 1]);
-
-        $query->sql();
-    }
-
-    /**
-     * Tests that aliases are stripped from delete query conditions
-     * where possible.
-     */
-    public function testDeleteStripAliasesFromConditions(): void
-    {
-        $query = new Query($this->connection);
-
-        $query
-            ->delete()
-            ->from(['a' => 'authors'])
-            ->where([
-                'OR' => [
-                    'a.id' => 1,
-                    'a.name IS' => null,
-                    'a.email IS NOT' => null,
-                    'AND' => [
-                        'b.name NOT IN' => ['foo', 'bar'],
-                        'OR' => [
-                            $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
-                            'd.name' => 'baz',
-                            (new SelectQuery($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
-                        ],
-                    ],
-                ],
-            ]);
-
-        $this->assertQuotedQuery(
-            'DELETE FROM <authors> WHERE \(' .
-                '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> NOT IN \(:c1,:c2\) AND \(' .
-                        '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
-                    '\)' .
-                '\)' .
-            '\)',
-            $query->sql(),
-            !$this->autoQuote
-        );
-    }
-
-    /**
      * Tests that the identifier method creates an expression object.
      */
     public function testIdentifierExpression(): void
@@ -239,22 +104,6 @@ class QueryTest extends TestCase
 
         $identifier->setIdentifier('title');
         $this->assertSame('title', $identifier->getIdentifier());
-    }
-
-    /**
-     * Test that epilog() will actually append a string to a delete query
-     */
-    public function testAppendDelete(): void
-    {
-        $query = new Query($this->connection);
-        $sql = $query
-            ->delete('articles')
-            ->where(['id' => 1])
-            ->epilog('RETURNING id')
-            ->sql();
-        $this->assertStringContainsString('DELETE FROM', $sql);
-        $this->assertStringContainsString('WHERE', $sql);
-        $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
     /**
@@ -432,36 +281,6 @@ class QueryTest extends TestCase
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
-    }
-
-    /**
-     * Test use of modifiers in a DELETE query
-     *
-     * Testing the generated SQL since the modifiers are usually different per driver
-     */
-    public function testDeleteModifiers(): void
-    {
-        $query = new Query($this->connection);
-        $result = $query->delete()
-            ->from('authors')
-            ->where('1 = 1')
-            ->modifier('IGNORE');
-        $this->assertQuotedQuery(
-            'DELETE IGNORE FROM <authors> WHERE 1 = 1',
-            $result->sql(),
-            !$this->autoQuote
-        );
-
-        $query = new Query($this->connection);
-        $result = $query->delete()
-            ->from('authors')
-            ->where('1 = 1')
-            ->modifier(['IGNORE', 'QUICK']);
-        $this->assertQuotedQuery(
-            'DELETE IGNORE QUICK FROM <authors> WHERE 1 = 1',
-            $result->sql(),
-            !$this->autoQuote
-        );
     }
 
     /**
