@@ -478,8 +478,6 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $this->assertFalse($request->is('undefined-behavior'));
-
         $request = $request->withEnv('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
@@ -496,6 +494,16 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('REQUEST_METHOD', 'delete');
         $this->assertFalse($request->is('delete'));
+    }
+
+    public function testExceptionForInvalidType()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('No detector set for type `nonexistent`');
+
+        $request = new ServerRequest();
+
+        $this->assertFalse($request->is('nonexistent'));
     }
 
     /**
