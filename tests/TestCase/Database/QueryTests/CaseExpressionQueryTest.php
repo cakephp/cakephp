@@ -20,6 +20,7 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
+use Cake\Database\Query\UpdateQuery;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
@@ -242,7 +243,7 @@ class CaseExpressionQueryTest extends TestCase
 
         $this->assertSame(1, (int)$query->execute()->fetch()[0]);
 
-        $query = (new Query($this->connection))
+        $query = (new UpdateQuery($this->connection))
             ->update('comments')
             ->set([
                 'published' =>

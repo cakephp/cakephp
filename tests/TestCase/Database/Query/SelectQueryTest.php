@@ -3714,32 +3714,6 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Tests that the JSON type can save and get data symmetrically
-     */
-    public function testSymmetricJsonType(): void
-    {
-        $query = new SelectQuery($this->connection);
-        $update = $query
-            ->update('comments')
-            ->set('comment', ['a' => 'b', 'c' => true], 'json')
-            ->where(['id' => 1])
-            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
-        $query->execute()->closeCursor();
-
-        $query = new SelectQuery($this->connection);
-        $query
-            ->select(['comment'])
-            ->from('comments')
-            ->where(['id' => 1])
-            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
-
-        $result = $query->execute();
-        $comment = $result->fetchAll('assoc')[0]['comment'];
-        $result->closeCursor();
-        $this->assertSame(['a' => 'b', 'c' => true], $comment);
-    }
-
-    /**
      * Test removeJoin().
      */
     public function testRemoveJoin(): void

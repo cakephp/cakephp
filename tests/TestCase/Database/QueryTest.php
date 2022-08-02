@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -24,10 +23,8 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\StatementInterface;
-use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use DateTime;
 use InvalidArgumentException;
 
 /**
@@ -217,246 +214,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test a simple update.
-     */
-    public function testUpdateSimple(): void
-    {
-        $query = new Query($this->connection);
-        $query->update('authors')
-            ->set('name', 'mark')
-            ->where(['id' => 1]);
-        $result = $query->sql();
-        $this->assertQuotedQuery('UPDATE <authors> SET <name> = :', $result, !$this->autoQuote);
-
-        $result = $query->execute();
-        $this->assertSame(1, $result->rowCount());
-        $result->closeCursor();
-    }
-
-    /**
-     * Test update with multiple fields.
-     */
-    public function testUpdateMultipleFields(): void
-    {
-        $query = new Query($this->connection);
-        $query->update('articles')
-            ->set('title', 'mark', 'string')
-            ->set('body', 'some text', 'string')
-            ->where(['id' => 1]);
-        $result = $query->sql();
-
-        $this->assertQuotedQuery(
-            'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
-            $result,
-            !$this->autoQuote
-        );
-
-        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
-        $result = $query->execute();
-        $this->assertSame(1, $result->rowCount());
-        $result->closeCursor();
-    }
-
-    /**
-     * Test updating multiple fields with an array.
-     */
-    public function testUpdateMultipleFieldsArray(): void
-    {
-        $query = new Query($this->connection);
-        $query->update('articles')
-            ->set([
-                'title' => 'mark',
-                'body' => 'some text',
-            ], ['title' => 'string', 'body' => 'string'])
-            ->where(['id' => 1]);
-        $result = $query->sql();
-
-        $this->assertQuotedQuery(
-            'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
-            $result,
-            !$this->autoQuote
-        );
-        $this->assertQuotedQuery('WHERE <id> = :', $result, !$this->autoQuote);
-
-        $result = $query->execute();
-        $this->assertSame(1, $result->rowCount());
-        $result->closeCursor();
-    }
-
-    /**
-     * Test updates with an expression.
-     */
-    public function testUpdateWithExpression(): void
-    {
-        $query = new Query($this->connection);
-
-        $expr = $query->newExpr()->equalFields('article_id', 'user_id');
-
-        $query->update('comments')
-            ->set($expr)
-            ->where(['id' => 1]);
-        $result = $query->sql();
-
-        $this->assertQuotedQuery(
-            'UPDATE <comments> SET <article_id> = <user_id> WHERE <id> = :',
-            $result,
-            !$this->autoQuote
-        );
-
-        $result = $query->execute();
-        $this->assertSame(1, $result->rowCount());
-        $result->closeCursor();
-    }
-
-    /**
-     * Tests update with subquery that references itself
-     */
-    public function testUpdateSubquery(): void
-    {
-        $this->skipIf($this->connection->getDriver() instanceof Mysql);
-
-        $subquery = new SelectQuery($this->connection);
-        $subquery
-            ->select('created')
-            ->from(['c' => 'comments'])
-            ->where(['c.id' => new IdentifierExpression('comments.id')]);
-
-        $query = new Query($this->connection);
-        $query->update('comments')
-            ->set('updated', $subquery);
-
-        $this->assertEqualsSql(
-            'UPDATE comments SET updated = (SELECT created FROM comments c WHERE c.id = comments.id)',
-            $query->sql(new ValueBinder())
-        );
-
-        $result = $query->execute();
-        $this->assertSame(6, $result->rowCount());
-        $result->closeCursor();
-
-        $result = (new SelectQuery($this->connection))->select(['created', 'updated'])->from('comments')->execute();
-        foreach ($result->fetchAll('assoc') as $row) {
-            $this->assertSame($row['created'], $row['updated']);
-        }
-        $result->closeCursor();
-    }
-
-    /**
-     * Test update with array fields and types.
-     */
-    public function testUpdateArrayFields(): void
-    {
-        $query = new Query($this->connection);
-        $date = new DateTime();
-        $query->update('comments')
-            ->set(['comment' => 'mark', 'created' => $date], ['created' => 'date'])
-            ->where(['id' => 1]);
-        $result = $query->sql();
-
-        $this->assertQuotedQuery(
-            'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
-            $result,
-            !$this->autoQuote
-        );
-
-        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
-        $result = $query->execute();
-        $this->assertSame(1, $result->rowCount());
-
-        $query = new SelectQuery($this->connection);
-        $result = $query->select('created')->from('comments')->where(['id' => 1])->execute();
-        $result = $result->fetchAll('assoc')[0]['created'];
-        $this->assertStringStartsWith($date->format('Y-m-d'), $result);
-    }
-
-    /**
-     * Test update with callable in set
-     */
-    public function testUpdateSetCallable(): void
-    {
-        $query = new Query($this->connection);
-        $date = new DateTime();
-        $query->update('comments')
-            ->set(function ($exp) use ($date) {
-                return $exp
-                    ->eq('comment', 'mark')
-                    ->eq('created', $date, 'date');
-            })
-            ->where(['id' => 1]);
-        $result = $query->sql();
-
-        $this->assertQuotedQuery(
-            'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
-            $result,
-            !$this->autoQuote
-        );
-
-        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
-        $result = $query->execute();
-        $this->assertSame(1, $result->rowCount());
-    }
-
-    /**
-     * Tests that aliases are stripped from update query conditions
-     * where possible.
-     */
-    public function testUpdateStripAliasesFromConditions(): void
-    {
-        $query = new Query($this->connection);
-
-        $query
-            ->update('authors')
-            ->set(['name' => 'name'])
-            ->where([
-                'OR' => [
-                    'a.id' => 1,
-                    'a.name IS' => null,
-                    'a.email IS NOT' => null,
-                    'AND' => [
-                        'b.name NOT IN' => ['foo', 'bar'],
-                        'OR' => [
-                            $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
-                            'd.name' => 'baz',
-                            (new SelectQuery($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
-                        ],
-                    ],
-                ],
-            ]);
-
-        $this->assertQuotedQuery(
-            'UPDATE <authors> SET <name> = :c0 WHERE \(' .
-                '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> NOT IN \(:c2,:c3\) AND \(' .
-                        '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
-                    '\)' .
-                '\)' .
-            '\)',
-            $query->sql(),
-            !$this->autoQuote
-        );
-    }
-
-    /**
-     * Tests that update queries that contain joins do trigger a notice,
-     * warning about possible incompatibilities with aliases being removed
-     * from the conditions.
-     */
-    public function testUpdateRemovingAliasesCanBreakJoins(): void
-    {
-        $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
-        $query = new Query($this->connection);
-
-        $query
-            ->update('authors')
-            ->set(['name' => 'name'])
-            ->innerJoin('articles')
-            ->where(['a.id' => 1]);
-
-        $query->sql();
-    }
-
-    /**
      * Tests that the identifier method creates an expression object.
      */
     public function testIdentifierExpression(): void
@@ -485,24 +242,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that epilog() will actually append a string to an update query
-     */
-    public function testAppendUpdate(): void
-    {
-        $query = new Query($this->connection);
-        $sql = $query
-            ->update('articles')
-            ->set(['title' => 'foo'])
-            ->where(['id' => 1])
-            ->epilog('RETURNING id')
-            ->sql();
-        $this->assertStringContainsString('UPDATE', $sql);
-        $this->assertStringContainsString('SET', $sql);
-        $this->assertStringContainsString('WHERE', $sql);
-        $this->assertSame(' RETURNING id', substr($sql, -13));
-    }
-
-    /**
      * Test that epilog() will actually append a string to a delete query
      */
     public function testAppendDelete(): void
@@ -528,72 +267,6 @@ class QueryTest extends TestCase
         $result = $query->__debugInfo();
         $this->assertStringContainsString('incomplete', $result['sql']);
         $this->assertSame([], $result['params']);
-    }
-
-    /**
-     * Performs the simple update query and verifies the row count.
-     */
-    public function testRowCountAndClose(): void
-    {
-        $statementMock = $this->getMockBuilder(StatementInterface::class)
-            ->onlyMethods(['rowCount', 'closeCursor'])
-            ->getMockForAbstractClass();
-
-        $statementMock->expects($this->once())
-            ->method('rowCount')
-            ->willReturn(500);
-
-        $statementMock->expects($this->once())
-            ->method('closeCursor');
-
-        /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $queryMock */
-        $queryMock = $this->getMockBuilder(Query::class)
-            ->onlyMethods(['execute'])
-            ->setConstructorArgs([$this->connection])
-            ->getMock();
-
-        $queryMock->expects($this->once())
-            ->method('execute')
-            ->willReturn($statementMock);
-
-        $rowCount = $queryMock->update('authors')
-            ->set('name', 'mark')
-            ->where(['id' => 1])
-            ->rowCountAndClose();
-
-        $this->assertEquals(500, $rowCount);
-    }
-
-    public function testCloneUpdateExpression(): void
-    {
-        $query = new Query($this->connection);
-        $query->update($query->newExpr('update'));
-
-        $clause = $query->clause('update');
-        $clauseClone = (clone $query)->clause('update');
-
-        $this->assertIsArray($clause);
-
-        foreach ($clause as $key => $value) {
-            $this->assertEquals($value, $clauseClone[$key]);
-            $this->assertNotSame($value, $clauseClone[$key]);
-        }
-    }
-
-    public function testCloneSetExpression(): void
-    {
-        $query = new Query($this->connection);
-        $query
-            ->update('table')
-            ->set(['column' => $query->newExpr('value')]);
-
-        $clause = $query->clause('set');
-        $clauseClone = (clone $query)->clause('set');
-
-        $this->assertInstanceOf(ExpressionInterface::class, $clause);
-
-        $this->assertEquals($clause, $clauseClone);
-        $this->assertNotSame($clause, $clauseClone);
     }
 
     public function testCloneWithExpression(): void
@@ -759,47 +432,6 @@ class QueryTest extends TestCase
 
         $this->assertEquals($clause, $clauseClone);
         $this->assertNotSame($clause, $clauseClone);
-    }
-
-    /**
-     * Test use of modifiers in a UPDATE query
-     *
-     * Testing the generated SQL since the modifiers are usually different per driver
-     */
-    public function testUpdateModifiers(): void
-    {
-        $query = new Query($this->connection);
-        $result = $query
-            ->update('authors')
-            ->set('name', 'mark')
-            ->modifier('TOP 10 PERCENT');
-        $this->assertQuotedQuery(
-            'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
-            $result->sql(),
-            !$this->autoQuote
-        );
-
-        $query = new Query($this->connection);
-        $result = $query
-            ->update('authors')
-            ->set('name', 'mark')
-            ->modifier(['TOP 10 PERCENT', 'FOO']);
-        $this->assertQuotedQuery(
-            'UPDATE TOP 10 PERCENT FOO <authors> SET <name> = :c0',
-            $result->sql(),
-            !$this->autoQuote
-        );
-
-        $query = new Query($this->connection);
-        $result = $query
-            ->update('authors')
-            ->set('name', 'mark')
-            ->modifier([$query->newExpr('TOP 10 PERCENT')]);
-        $this->assertQuotedQuery(
-            'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
-            $result->sql(),
-            !$this->autoQuote
-        );
     }
 
     /**

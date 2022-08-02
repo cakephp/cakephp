@@ -26,6 +26,7 @@ use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
+use Cake\Database\Query\UpdateQuery;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -307,6 +308,16 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Create a new UpdateQuery instance for this connection.
+     *
+     * @return \Cake\Database\Query\UpdateQuery
+     */
+    public function newUpdateQuery(): UpdateQuery
+    {
+        return new UpdateQuery($this);
+    }
+
+    /**
      * Sets a Schema\Collection object for this connection.
      *
      * @param \Cake\Database\Schema\CollectionInterface $collection The schema collection object
@@ -370,7 +381,7 @@ class Connection implements ConnectionInterface
      */
     public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->newQuery()->update($table)
+        return $this->newUpdateQuery()->update($table)
             ->set($values, $types)
             ->where($conditions, $types)
             ->execute();
