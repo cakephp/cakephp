@@ -763,8 +763,7 @@ trait IntegrationTestTrait
      */
     public function viewVariable(string $name): mixed
     {
-        return $this->_controller?->viewBuilder()
-            ->getVar($name);
+        return $this->_controller?->viewBuilder()->getVar($name);
     }
 
     /**
