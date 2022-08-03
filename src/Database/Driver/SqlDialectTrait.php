@@ -20,8 +20,10 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\IdentifierQuoter;
-use Cake\Database\Query;
+use Cake\Database\Query\DeleteQuery;
+use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
+use Cake\Database\Query\UpdateQuery;
 use Closure;
 use InvalidArgumentException;
 
@@ -179,10 +181,10 @@ trait SqlDialectTrait
      *
      * We are intentionally not supporting deletes with joins as they have even poorer support.
      *
-     * @param \Cake\Database\Query $query The query to translate
-     * @return \Cake\Database\Query The modified query
+     * @param \Cake\Database\Query\DeleteQuery $query The query to translate
+     * @return \Cake\Database\Query\DeleteQuery The modified query
      */
-    protected function _deleteQueryTranslator(Query $query): Query
+    protected function _deleteQueryTranslator(DeleteQuery $query): DeleteQuery
     {
         $hadAlias = false;
         $tables = [];
@@ -211,10 +213,10 @@ trait SqlDialectTrait
      *
      * Just like for delete queries, joins are currently not supported for update queries.
      *
-     * @param \Cake\Database\Query $query The query to translate
-     * @return \Cake\Database\Query The modified query
+     * @param \Cake\Database\Query\UpdateQuery $query The query to translate
+     * @return \Cake\Database\Query\UpdateQuery The modified query
      */
-    protected function _updateQueryTranslator(Query $query): Query
+    protected function _updateQueryTranslator(UpdateQuery $query): UpdateQuery
     {
         return $this->_removeAliasesFromConditions($query);
     }
@@ -222,12 +224,12 @@ trait SqlDialectTrait
     /**
      * Removes aliases from the `WHERE` clause of a query.
      *
-     * @param \Cake\Database\Query $query The query to process.
-     * @return \Cake\Database\Query The modified query.
+     * @param \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery $query The query to process.
+     * @return \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery The modified query.
      * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
      */
-    protected function _removeAliasesFromConditions(Query $query): Query
+    protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {
         if ($query->clause('join')) {
             throw new DatabaseException(
@@ -273,10 +275,10 @@ trait SqlDialectTrait
     /**
      * Apply translation steps to insert queries.
      *
-     * @param \Cake\Database\Query $query The query to translate
-     * @return \Cake\Database\Query The modified query
+     * @param \Cake\Database\Query\InsertQuery $query The query to translate
+     * @return \Cake\Database\Query\InsertQuery The modified query
      */
-    protected function _insertQueryTranslator(Query $query): Query
+    protected function _insertQueryTranslator(InsertQuery $query): InsertQuery
     {
         return $query;
     }

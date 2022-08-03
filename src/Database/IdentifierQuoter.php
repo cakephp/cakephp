@@ -19,6 +19,8 @@ namespace Cake\Database;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\UpdateQuery;
 use InvalidArgumentException;
 
 /**
@@ -57,9 +59,9 @@ class IdentifierQuoter
         $binder = $query->getValueBinder();
         $query->setValueBinder(null);
 
-        if ($query->type() === 'insert') {
+        if ($query instanceof InsertQuery) {
             $this->_quoteInsert($query);
-        } elseif ($query->type() === 'update') {
+        } elseif ($query instanceof UpdateQuery) {
             $this->_quoteUpdate($query);
         } else {
             $this->_quoteParts($query);
@@ -178,10 +180,10 @@ class IdentifierQuoter
     /**
      * Quotes the table name and columns for an insert query
      *
-     * @param \Cake\Database\Query $query The insert query to quote.
+     * @param \Cake\Database\Query\InsertQuery $query The insert query to quote.
      * @return void
      */
-    protected function _quoteInsert(Query $query): void
+    protected function _quoteInsert(InsertQuery $query): void
     {
         $insert = $query->clause('insert');
         if (!isset($insert[0]) || !isset($insert[1])) {
@@ -200,10 +202,10 @@ class IdentifierQuoter
     /**
      * Quotes the table name for an update query
      *
-     * @param \Cake\Database\Query $query The update query to quote.
+     * @param \Cake\Database\Query\UpdateQuery $query The update query to quote.
      * @return void
      */
-    protected function _quoteUpdate(Query $query): void
+    protected function _quoteUpdate(UpdateQuery $query): void
     {
         $table = $query->clause('update')[0];
 

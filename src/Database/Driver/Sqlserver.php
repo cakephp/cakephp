@@ -216,7 +216,7 @@ class Sqlserver extends Driver
         );
 
         $typeMap = null;
-        if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === Query::TYPE_SELECT) {
+        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
             $typeMap = $query->getSelectTypeMap();
         }
 
@@ -407,7 +407,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _transformDistinct(Query $query): Query
+    protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         if (!is_array($query->clause('distinct'))) {
             return $query;
@@ -437,7 +437,7 @@ class Sqlserver extends Driver
             ->offset(null)
             ->order([], true);
 
-        $outer = new Query($query->getConnection());
+        $outer = new SelectQuery($query->getConnection());
         $outer->select('*')
             ->from(['_cake_distinct_' => $query])
             ->where(['_cake_distinct_pivot_' => 1]);
