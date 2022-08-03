@@ -173,16 +173,6 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
-     * Returns the authentication type detected and used to connect to the SMTP server.
-     * If no authentication was detected, null is returned.
-     * @return string|null
-     */
-    public function getAuthType(): ?string
-    {
-        return $this->authType;
-    }
-
-    /**
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Message instance
