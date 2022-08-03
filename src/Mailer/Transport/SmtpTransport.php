@@ -42,7 +42,6 @@ class SmtpTransport extends AbstractTransport
         'client' => null,
         'tls' => false,
         'keepAlive' => false,
-        'authType' => null,
     ];
 
     /**
@@ -65,6 +64,13 @@ class SmtpTransport extends AbstractTransport
      * @var array
      */
     protected $_lastResponse = [];
+
+    /**
+     * Detected authentication type.
+     *
+     * @var string
+     */
+    protected $authType = null;
 
     /**
      * Destructor
@@ -222,9 +228,7 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _parseAuthType(): void
     {
-        if (!empty($this->_config['authType'])) {
-            return;
-        }
+        $this->authType = null;
 
         $auth = '';
         foreach ($this->_lastResponse as $line) {
@@ -235,13 +239,13 @@ class SmtpTransport extends AbstractTransport
         }
 
         if (strpos($auth, 'PLAIN') !== false) {
-            $this->_config['authType'] = 'PLAIN';
+            $this->authType = 'PLAIN';
 
             return;
         }
 
         if (strpos($auth, 'LOGIN') !== false) {
-            $this->_config['authType'] = 'LOGIN';
+            $this->authType = 'LOGIN';
 
             return;
         }
@@ -316,7 +320,7 @@ class SmtpTransport extends AbstractTransport
 
         $username = $this->_config['username'];
         $password = $this->_config['password'];
-        if (empty($this->_options['authType'])) {
+        if (empty($this->authType)) {
             $replyCode = $this->_authPlain($username, $password);
             if ($replyCode === '235') {
                 return;
@@ -327,13 +331,13 @@ class SmtpTransport extends AbstractTransport
             return;
         }
 
-        if ($this->_options['authType'] === 'PLAIN') {
+        if ($this->authType === 'PLAIN') {
             $this->_authPlain($username, $password);
 
             return;
         }
 
-        if ($this->_options['authType'] === 'LOGIN') {
+        if ($this->authType === 'LOGIN') {
             $this->_authLogin($username, $password);
 
             return;
@@ -517,6 +521,7 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('QUIT', false);
         $this->_socket()->disconnect();
+        $this->authType = null;
     }
 
     /**
