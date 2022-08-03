@@ -91,16 +91,16 @@ class PoFileParser
                 $this->_addMessage($messages, $item);
                 $item = $defaults;
                 $stage = [];
-            } elseif (substr($line, 0, 7) === 'msgid "') {
+            } elseif (str_starts_with($line, 'msgid "')) {
                 // We start a new msg so save previous
                 $this->_addMessage($messages, $item);
                 /** @psalm-suppress InvalidArrayOffset */
                 $item['ids']['singular'] = substr($line, 7, -1);
                 $stage = ['ids', 'singular'];
-            } elseif (substr($line, 0, 8) === 'msgstr "') {
+            } elseif (str_starts_with($line, 'msgstr "')) {
                 $item['translated'] = substr($line, 8, -1);
                 $stage = ['translated'];
-            } elseif (substr($line, 0, 9) === 'msgctxt "') {
+            } elseif (str_starts_with($line, 'msgctxt "')) {
                 $item['context'] = substr($line, 9, -1);
                 $stage = ['context'];
             } elseif ($line[0] === '"') {
@@ -123,11 +123,11 @@ class PoFileParser
                         $item[$stage[0]] .= substr($line, 1, -1);
                         break;
                 }
-            } elseif (substr($line, 0, 14) === 'msgid_plural "') {
+            } elseif (str_starts_with($line, 'msgid_plural "')) {
                 /** @psalm-suppress InvalidArrayOffset */
                 $item['ids']['plural'] = substr($line, 14, -1);
                 $stage = ['ids', 'plural'];
-            } elseif (substr($line, 0, 7) === 'msgstr[') {
+            } elseif (str_starts_with($line, 'msgstr[')) {
                 /** @var int $size */
                 $size = strpos($line, ']');
                 $row = (int)substr($line, 7, 1);

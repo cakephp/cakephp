@@ -494,7 +494,7 @@ abstract class Driver
             (
                 is_numeric($value) &&
                 !str_contains($value, ',') &&
-                substr($value, 0, 1) !== '0' &&
+                !str_starts_with($value, '0') &&
                 !str_contains($value, 'e')
             )
         ) {

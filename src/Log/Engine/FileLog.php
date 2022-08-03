@@ -96,7 +96,7 @@ class FileLog extends BaseLog
 
         if (!empty($this->_config['file'])) {
             $this->_file = $this->_config['file'];
-            if (substr($this->_file, -4) !== '.log') {
+            if (!str_ends_with($this->_file, '.log')) {
                 $this->_file .= '.log';
             }
         }

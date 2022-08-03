@@ -170,7 +170,7 @@ class Asset
         if (
             !empty($options['ext']) &&
             !str_contains($path, '?') &&
-            substr($path, -strlen($options['ext'])) !== $options['ext']
+            !str_ends_with($path, $options['ext'])
         ) {
             $path .= $options['ext'];
         }

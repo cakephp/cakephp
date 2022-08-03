@@ -154,7 +154,7 @@ class Response extends Message implements ResponseInterface
         }
         $offset = 0;
         // Look for gzip 'signature'
-        if (substr($body, 0, 2) === "\x1f\x8b") {
+        if (str_starts_with($body, "\x1f\x8b")) {
             $offset = 2;
         }
         // Check the format byte
@@ -177,7 +177,7 @@ class Response extends Message implements ResponseInterface
     protected function _parseHeaders(array $headers): void
     {
         foreach ($headers as $value) {
-            if (substr($value, 0, 5) === 'HTTP/') {
+            if (str_starts_with($value, 'HTTP/')) {
                 preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
                 $this->protocol = $matches[1];
                 $this->code = (int)$matches[2];

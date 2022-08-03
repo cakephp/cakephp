@@ -279,7 +279,7 @@ class CookieCollection implements IteratorAggregate, Countable
                 continue;
             }
             $domain = $cookie->getDomain();
-            $leadingDot = substr($domain, 0, 1) === '.';
+            $leadingDot = str_starts_with($domain, '.');
             if ($leadingDot) {
                 $domain = ltrim($domain, '.');
             }

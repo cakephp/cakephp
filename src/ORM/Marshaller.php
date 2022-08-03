@@ -91,7 +91,7 @@ class Marshaller
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
             if (!$this->_table->hasAssociation($key)) {
-                if (substr($key, 0, 1) !== '_') {
+                if (!str_starts_with($key, '_')) {
                     throw new InvalidArgumentException(sprintf(
                         'Cannot marshal data for "%s" association. It is not associated with "%s".',
                         (string)$key,

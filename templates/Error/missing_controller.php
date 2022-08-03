@@ -21,7 +21,7 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 $namespace = Configure::read('App.namespace');
 $prefixNs = $prefixPath = '';
 
-$incompleteInflection = (strpos($class, '_') !== false || strpos($class, '-'));
+$incompleteInflection = (str_contains($class, '_') || str_contains($class, '-'));
 $originalClass = $class;
 
 $class = Inflector::camelize($class);
