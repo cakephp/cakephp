@@ -179,7 +179,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
-        $this->socket->expects($this->any())
+        $this->socket->expects($this->exactly(3))
             ->method('read')
             ->will($this->onConsecutiveCalls(
                 "220 Welcome message\r\n",
@@ -195,7 +195,7 @@ class SmtpTransportTest extends TestCase
 
         $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->connect();
-        $this->assertEquals($this->SmtpTransport->getConfig('authType'), 'PLAIN');
+        $this->assertEquals($this->SmtpTransport->getAuthType(), 'PLAIN');
     }
 
     public function testConnectEhloWithAuthLogin(): void
@@ -207,9 +207,11 @@ class SmtpTransportTest extends TestCase
             ->will($this->onConsecutiveCalls(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH LOGIN\r\n",
-                "235 OK\r\n",
+                "334 Login\r\n",
+                "334 Pass\r\n",
+                "235 OK\r\n"
             ));
-        $this->socket->expects($this->exactly(2))
+        $this->socket->expects($this->exactly(4))
             ->method('write')
             ->withConsecutive(
                 ["EHLO localhost\r\n"],
@@ -220,7 +222,7 @@ class SmtpTransportTest extends TestCase
 
         $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->connect();
-        $this->assertEquals($this->SmtpTransport->getConfig('authType'), 'LOGIN');
+        $this->assertEquals($this->SmtpTransport->getAuthType(), 'LOGIN');
     }
 
     /**
