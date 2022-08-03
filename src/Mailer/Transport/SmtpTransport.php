@@ -68,7 +68,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Detected authentication type.
      *
-     * @var string
+     * @var string|null
      */
     protected $authType = null;
 
