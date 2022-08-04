@@ -416,7 +416,7 @@ class Behavior implements EventListenerInterface
                 continue;
             }
 
-            if (substr($methodName, 0, 4) === 'find') {
+            if (str_starts_with($methodName, 'find')) {
                 $return['finders'][lcfirst(substr($methodName, 4))] = $methodName;
             } else {
                 $return['methods'][$methodName] = $methodName;

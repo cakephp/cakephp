@@ -312,7 +312,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     {
         [, $baseClass] = namespaceSplit(get_class($exception));
 
-        if (substr($baseClass, -9) === 'Exception') {
+        if (str_ends_with($baseClass, 'Exception')) {
             $baseClass = substr($baseClass, 0, -9);
         }
 
@@ -399,7 +399,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $attributes = $e->getAttributes();
             if (
                 $e instanceof MissingLayoutException ||
-                strpos($attributes['file'], 'error500') !== false
+                str_contains($attributes['file'], 'error500')
             ) {
                 return $this->_outputMessageSafe('error500');
             }

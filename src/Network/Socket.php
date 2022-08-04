@@ -236,7 +236,7 @@ class Socket
     protected function _setSslContext(string $host): void
     {
         foreach ($this->_config as $key => $value) {
-            if (substr($key, 0, 4) !== 'ssl_') {
+            if (!str_starts_with($key, 'ssl_')) {
                 continue;
             }
             $contextKey = substr($key, 4);

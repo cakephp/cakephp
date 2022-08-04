@@ -94,7 +94,7 @@ class MissingOptionException extends ConsoleException
     {
         $bestGuess = null;
         foreach ($haystack as $item) {
-            if (strpos($item, $needle) === 0) {
+            if (str_starts_with($item, $needle)) {
                 return $item;
             }
         }

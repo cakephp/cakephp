@@ -500,7 +500,7 @@ class SmtpTransport extends AbstractTransport
         while ($checkCode !== false) {
             $response = '';
             $startTime = time();
-            while (substr($response, -2) !== "\r\n" && (time() - $startTime < $timeout)) {
+            while (!str_ends_with($response, "\r\n") && (time() - $startTime < $timeout)) {
                 $bytes = $this->_socket->read();
                 if ($bytes === null) {
                     break;
@@ -508,7 +508,7 @@ class SmtpTransport extends AbstractTransport
                 $response .= $bytes;
             }
             // Catch empty or malformed responses.
-            if (substr($response, -2) !== "\r\n") {
+            if (!str_ends_with($response, "\r\n")) {
                 // Use response message or assume operation timed out.
                 throw new SocketException($response ?: 'SMTP timeout.');
             }
