@@ -148,7 +148,4 @@ if (env('FIXTURE_SCHEMA_METADATA')) {
     $loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
 }
 
-FactoryLocator::add(
-    'Table',
-    (new TableLocator())->allowFallbackClass(false)
-);
+FactoryLocator::add('Table', new TableLocator());
