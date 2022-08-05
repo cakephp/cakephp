@@ -491,6 +491,7 @@ class ServerRequest implements ServerRequestInterface
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
      * @return bool Whether the request is the type you are checking.
+     * @throws \InvalidArgumentException If no detector has been set for the provided type.
      */
     public function is(array|string $type, mixed ...$args): bool
     {
@@ -506,7 +507,7 @@ class ServerRequest implements ServerRequestInterface
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
-            return false;
+            throw new InvalidArgumentException("No detector set for type `{$type}`");
         }
         if ($args) {
             return $this->_is($type, $args);

@@ -415,9 +415,12 @@ SQL;
             ],
         ];
 
-        if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
+        $driver = ConnectionManager::get('test')->getDriver();
+        if ($driver->isMariaDb()) {
             $expected['created_with_precision']['default'] = 'current_timestamp(3)';
             $expected['created_with_precision']['comment'] = '';
+        }
+        if ($driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=')) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
             $expected['body']['collate'] = 'utf8mb3_general_ci';
         }
