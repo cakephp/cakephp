@@ -927,6 +927,7 @@ class TimeTest extends TestCase
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);
 
+        $result = str_replace('temps universel coordonné', 'UTC', $result);
         $result = str_replace('Temps universel coordonné', 'UTC', $result);
         $result = str_replace('tiempo universal coordinado', 'GMT', $result);
         $result = str_replace('Coordinated Universal Time', 'GMT', $result);
