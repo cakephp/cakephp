@@ -50,6 +50,17 @@ class ControllerFactoryTest extends TestCase
         static::setAppNamespace();
         $this->container = new Container();
         $this->factory = new ControllerFactory($this->container);
+
+        ini_set('precision', '17');
+        ini_set('serialize_precision', '17');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        ini_set('precision', '-1');
+        ini_set('serialize_precision', '-1');
     }
 
     /**
@@ -505,9 +516,8 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
         $response = $this->factory->invoke($controller);
 
-        $expected = ['one' => 1.1, 'two' => 2, 'three' => true, 'four' => ['foo' => 'bar']];
-        $data = json_decode((string)$response->getBody(), true);
-        $this->assertSame($expected, $data);
+        $expected = ['float' => 1.1, 'int' => 2, 'bool' => true, 'array' => ['foo' => 'bar']];
+        $this->assertSame($expected, unserialize((string)$response->getBody()));
     }
 
     /**
@@ -722,10 +732,50 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
+    public function validParameterCoercionProvider(): array
+    {
+        return [
+            'zero' => [
+                ['float' => '0.0', 'int' => '0', 'bool' => '0', 'array' => '0'],
+                ['float' => 0.0, 'int' => 0, 'bool' => false, 'array' => ['0']],
+            ],
+            'one' => [
+                ['float' => '1.0', 'int' => '1', 'bool' => '1', 'array' => '1'],
+                ['float' => 1.0, 'int' => 1, 'bool' => true, 'array' => ['1']],
+            ],
+            'max' => [
+                ['float' => (string)PHP_FLOAT_MAX, 'int' => (string)PHP_INT_MAX, 'bool' => '1', 'array' => (string)PHP_INT_MAX],
+                ['float' => PHP_FLOAT_MAX, 'int' => PHP_INT_MAX, 'bool' => true, 'array' => [(string)PHP_INT_MAX]],
+            ],
+            'min' => [
+                ['float' => (string)PHP_FLOAT_MIN, 'int' => (string)PHP_INT_MIN, 'bool' => '0', 'array' => (string)PHP_INT_MIN],
+                ['float' => PHP_FLOAT_MIN, 'int' => PHP_INT_MIN, 'bool' => false, 'array' => [(string)PHP_INT_MIN]],
+            ],
+            'inf_float' => [
+                ['float' => PHP_FLOAT_MAX . '0', 'int' => '0', 'bool' => '0', 'array' => ''],
+                ['float' => INF, 'int' => 0, 'bool' => false, 'array' => []],
+            ],
+            'int_to_float_empty_array' => [
+                ['float' => '1', 'int' => '0', 'bool' => '0', 'array' => ''],
+                ['float' => 1.0, 'int' => 0, 'bool' => false, 'array' => []],
+            ],
+            'multiple_array' => [
+                ['float' => '0', 'int' => '0', 'bool' => '0', 'array' => '1,2,3,4,5,' . PHP_INT_MAX],
+                ['float' => 0.0, 'int' => 0, 'bool' => false, 'array' => ['1','2','3','4','5',(string)PHP_INT_MAX]],
+            ],
+            'empty_array_element' => [
+                ['float' => '0', 'int' => '0', 'bool' => '0', 'array' => ',,'],
+                ['float' => 0.0, 'int' => 0, 'bool' => false, 'array' => ['','','']],
+            ],
+        ];
+    }
+
     /**
      * Test that coercing string to float, int and bool params
+     *
+     * @dataProvider validParameterCoercionProvider
      */
-    public function testInvokePassedParametersCoercion(): void
+    public function testInvokePassedParametersCoercion(array $params, array $coerced): void
     {
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/requiredTyped',
@@ -733,44 +783,14 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '2', '0', '8,9'],
+                'pass' => $params,
             ],
         ]);
         $controller = $this->factory->create($request);
 
         $result = $this->factory->invoke($controller);
-        $data = json_decode((string)$result->getBody(), true);
-        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => ['8', '9']], $data);
-
-        $request = new ServerRequest([
-            'url' => 'test_plugin_three/dependencies/requiredTyped',
-            'params' => [
-                'plugin' => null,
-                'controller' => 'Dependencies',
-                'action' => 'requiredTyped',
-                'pass' => ['1.0', '0', '0', ''],
-            ],
-        ]);
-        $controller = $this->factory->create($request);
-
-        $result = $this->factory->invoke($controller);
-        $data = json_decode((string)$result->getBody(), true);
-        $this->assertSame(['one' => 1.0, 'two' => 0, 'three' => false, 'four' => []], $data);
-
-        $request = new ServerRequest([
-            'url' => 'test_plugin_three/dependencies/requiredTyped',
-            'params' => [
-                'plugin' => null,
-                'controller' => 'Dependencies',
-                'action' => 'requiredTyped',
-                'pass' => ['1.0', '-1', '0', ''],
-            ],
-        ]);
-        $controller = $this->factory->create($request);
-
-        $result = $this->factory->invoke($controller);
-        $data = json_decode((string)$result->getBody(), true);
-        $this->assertSame(['one' => 1.0, 'two' => -1, 'three' => false, 'four' => []], $data);
+        $data = unserialize((string)$result->getBody());
+        $this->assertSame($coerced, $data);
     }
 
     /**
@@ -812,7 +832,7 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce "true" to `float` for `one` in action Dependencies::requiredTyped()');
+        $this->expectExceptionMessage('Unable to coerce "true" to `float` for `float` in action Dependencies::requiredTyped()');
         $this->factory->invoke($controller);
     }
 
@@ -833,7 +853,7 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce "2.0" to `int` for `two` in action Dependencies::requiredTyped()');
+        $this->expectExceptionMessage('Unable to coerce "2.0" to `int` for `int` in action Dependencies::requiredTyped()');
         $this->factory->invoke($controller);
     }
 
@@ -854,7 +874,7 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce "true" to `bool` for `three` in action Dependencies::requiredTyped()');
+        $this->expectExceptionMessage('Unable to coerce "true" to `bool` for `bool` in action Dependencies::requiredTyped()');
         $this->factory->invoke($controller);
     }
 

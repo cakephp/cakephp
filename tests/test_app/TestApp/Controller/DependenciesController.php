@@ -43,11 +43,10 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(compact('str')));
     }
 
-    public function requiredTyped(float $one, int $two, bool $three, array $four)
+    public function requiredTyped(float $float, int $int, bool $bool, array $array)
     {
-        return $this->response->withStringBody(json_encode(
-            compact('one', 'two', 'three', 'four'),
-            JSON_PRESERVE_ZERO_FRACTION
+        return $this->response->withStringBody(serialize(
+            compact('float', 'int', 'bool', 'array'),
         ));
     }
 
