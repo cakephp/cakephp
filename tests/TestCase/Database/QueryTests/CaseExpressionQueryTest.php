@@ -19,6 +19,8 @@ namespace Cake\Test\TestCase\Database\QueryTests;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
+use Cake\Database\Query\UpdateQuery;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
@@ -41,7 +43,7 @@ class CaseExpressionQueryTest extends TestCase
     protected $connection;
 
     /**
-     * @var \Cake\Database\Query
+     * @var \Cake\Database\Query\SelectQuery
      */
     protected $query;
 
@@ -50,7 +52,7 @@ class CaseExpressionQueryTest extends TestCase
         parent::setUp();
 
         $this->connection = ConnectionManager::get('test');
-        $this->query = new Query($this->connection);
+        $this->query = new SelectQuery($this->connection);
     }
 
     public function tearDown(): void
@@ -241,7 +243,7 @@ class CaseExpressionQueryTest extends TestCase
 
         $this->assertSame(1, (int)$query->execute()->fetch()[0]);
 
-        $query = (new Query($this->connection))
+        $query = (new UpdateQuery($this->connection))
             ->update('comments')
             ->set([
                 'published' =>
@@ -254,7 +256,7 @@ class CaseExpressionQueryTest extends TestCase
             ->where(['1 = 1'])
             ->execute();
 
-        $query = (new Query($this->connection))
+        $query = (new SelectQuery($this->connection))
             ->select(['count' => $this->query->func()->count('*')])
             ->from('comments')
             ->where(['comments.published' => 'Y']);

@@ -20,6 +20,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use InvalidArgumentException;
 
 /**
@@ -69,7 +70,7 @@ trait TupleComparisonTranslatorTrait
         $value = $expression->getValue();
         $true = new QueryExpression('1');
 
-        if ($value instanceof Query) {
+        if ($value instanceof SelectQuery) {
             $selected = array_values($value->clause('select'));
             foreach ($fields as $i => $field) {
                 $value->andWhere([$field => new IdentifierExpression($selected[$i])]);
@@ -90,7 +91,7 @@ trait TupleComparisonTranslatorTrait
         }
 
         $surrogate = $query->getConnection()
-            ->newQuery()
+            ->newSelectQuery()
             ->select($true);
 
         if (!is_array(current($value))) {

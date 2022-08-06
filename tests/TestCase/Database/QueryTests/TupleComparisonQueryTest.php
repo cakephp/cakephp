@@ -22,7 +22,7 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
@@ -54,7 +54,7 @@ class TupleComparisonQueryTest extends TestCase
     protected $connection;
 
     /**
-     * @var \Cake\Database\Query
+     * @var \Cake\Database\SelectQuery
      */
     protected $query;
 
@@ -63,7 +63,7 @@ class TupleComparisonQueryTest extends TestCase
         parent::setUp();
 
         $this->connection = ConnectionManager::get('test');
-        $this->query = new Query($this->connection);
+        $this->query = new SelectQuery($this->connection);
     }
 
     public function tearDown(): void
@@ -95,7 +95,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    (new Query($this->connection))
+                    $this->connection->newSelectQuery()
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
                         ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.author_id' => 1]),
@@ -120,7 +120,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    (new Query($this->connection))
+                    $this->connection->newSelectQuery()
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
                         ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.author_id' => 1]),
@@ -157,7 +157,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    (new Query($this->connection))
+                    $this->connection->newSelectQuery()
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
                         ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.id' => 1]),
@@ -233,7 +233,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    (new Query($this->connection))
+                    $this->connection->newSelectQuery()
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
                         ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.author_id' => 1]),
@@ -258,7 +258,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    (new Query($this->connection))
+                    $this->connection->newSelectQuery()
                         ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
                         ->from(['ArticlesAlias' => 'articles'])
                         ->where(['ArticlesAlias.id' => 1]),

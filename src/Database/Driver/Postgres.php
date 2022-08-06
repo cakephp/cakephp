@@ -23,6 +23,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\PostgresCompiler;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
@@ -198,7 +199,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    protected function _transformDistinct(Query $query): Query
+    protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         return $query;
     }

@@ -46,12 +46,12 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testCteConstructor(): void
     {
-        $cte = new CommonTableExpression('test', $this->connection->newQuery());
+        $cte = new CommonTableExpression('test', $this->connection->newSelectQuery());
         $this->assertEqualsSql('test AS ()', $cte->sql(new ValueBinder()));
 
         $cte = (new CommonTableExpression())
             ->name('test')
-            ->query($this->connection->newQuery());
+            ->query($this->connection->newSelectQuery());
         $this->assertEqualsSql('test AS ()', $cte->sql(new ValueBinder()));
     }
 
@@ -60,7 +60,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testFields(): void
     {
-        $cte = (new CommonTableExpression('test', $this->connection->newQuery()))
+        $cte = (new CommonTableExpression('test', $this->connection->newSelectQuery()))
             ->field('col1')
             ->field([new IdentifierExpression('col2')]);
         $this->assertEqualsSql('test(col1, col2) AS ()', $cte->sql(new ValueBinder()));
@@ -71,7 +71,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testMaterialized(): void
     {
-        $cte = (new CommonTableExpression('test', $this->connection->newQuery()))
+        $cte = (new CommonTableExpression('test', $this->connection->newSelectQuery()))
             ->materialized();
         $this->assertEqualsSql('test AS MATERIALIZED ()', $cte->sql(new ValueBinder()));
 
@@ -95,12 +95,12 @@ class CommonTableExpressionTest extends TestCase
     public function testQueryClosures(): void
     {
         $cte = new CommonTableExpression('test', function () {
-            return $this->connection->newQuery();
+            return $this->connection->newSelectQuery();
         });
         $this->assertEqualsSql('test AS ()', $cte->sql(new ValueBinder()));
 
         $cte->query(function () {
-            return $this->connection->newQuery()->select('1');
+            return $this->connection->newSelectQuery()->select('1');
         });
         $this->assertEqualsSql('test AS (SELECT 1)', $cte->sql(new ValueBinder()));
     }
@@ -110,7 +110,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testTraverse(): void
     {
-        $query = $this->connection->newQuery()->select('1');
+        $query = $this->connection->newSelectQuery()->select('1');
         $cte = (new CommonTableExpression('test', $query))->field('field');
 
         $expressions = [];
@@ -129,7 +129,7 @@ class CommonTableExpressionTest extends TestCase
     public function testClone(): void
     {
         $cte = new CommonTableExpression('test', function () {
-            return $this->connection->newQuery()->select('1');
+            return $this->connection->newSelectQuery()->select('1');
         });
         $cte2 = (clone $cte)->name('test2');
         $this->assertNotSame($cte->sql(new ValueBinder()), $cte2->sql(new ValueBinder()));
