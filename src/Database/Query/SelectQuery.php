@@ -35,6 +35,13 @@ use Traversable;
 class SelectQuery extends Query implements IteratorAggregate
 {
     /**
+     * Type of this query.
+     *
+     * @var string
+     */
+    protected string $_type = self::TYPE_SELECT;
+
+    /**
      * List of SQL parts that will be used to build this query.
      *
      * @var array<string, mixed>
@@ -163,7 +170,6 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         $this->_dirty();
-        $this->_type = 'select';
 
         return $this;
     }
@@ -656,7 +662,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * ### Examples
      *
      * ```
-     * $union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->union($union);
      * ```
      *
@@ -691,7 +697,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * Unlike UNION, UNION ALL will not remove duplicate rows.
      *
      * ```
-     * $union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->unionAll($union);
      * ```
      *

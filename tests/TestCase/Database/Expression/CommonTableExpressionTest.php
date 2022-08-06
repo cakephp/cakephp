@@ -84,7 +84,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testRecursive(): void
     {
-        $cte = (new CommonTableExpression('test', $this->connection->newQuery()))
+        $cte = (new CommonTableExpression('test', $this->connection->newSelectQuery()))
             ->recursive();
         $this->assertTrue($cte->isRecursive());
     }

@@ -24,6 +24,13 @@ use Cake\Database\Query;
 class DeleteQuery extends Query
 {
     /**
+     * Type of this query.
+     *
+     * @var string
+     */
+    protected string $_type = self::TYPE_DELETE;
+
+    /**
      * List of SQL parts that will be used to build this query.
      *
      * @var array<string, mixed>
@@ -52,7 +59,6 @@ class DeleteQuery extends Query
     public function delete(?string $table = null)
     {
         $this->_dirty();
-        $this->_type = self::TYPE_DELETE;
         if ($table !== null) {
             $this->from($table);
         }

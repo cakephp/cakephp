@@ -49,18 +49,27 @@ class QueryTest extends TestCase
      */
     protected $autoQuote;
 
+    protected Query $query;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
+        $this->query = $this->newQuery();
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
+        unset($this->query);
         unset($this->connection);
+    }
+
+    protected function newQuery()
+    {
+        return $this->getMockForAbstractClass(Query::class, [$this->connection]);
     }
 
     /**
@@ -68,14 +77,13 @@ class QueryTest extends TestCase
      */
     public function testWhereEmptyValues(): void
     {
-        $query = new Query($this->connection);
-        $query->from('comments')
+        $this->query->from('comments')
             ->where('');
 
-        $this->assertCount(0, $query->clause('where'));
+        $this->assertCount(0, $this->query->clause('where'));
 
-        $query->where([]);
-        $this->assertCount(0, $query->clause('where'));
+        $this->query->where([]);
+        $this->assertCount(0, $this->query->clause('where'));
     }
 
     /**
@@ -83,9 +91,8 @@ class QueryTest extends TestCase
      */
     public function testIdentifierExpression(): void
     {
-        $query = new Query($this->connection);
         /** @var \Cake\Database\Expression\IdentifierExpression $identifier */
-        $identifier = $query->identifier('foo');
+        $identifier = $this->query->identifier('foo');
 
         $this->assertInstanceOf(IdentifierExpression::class, $identifier);
         $this->assertSame('foo', $identifier->getIdentifier());
@@ -96,8 +103,7 @@ class QueryTest extends TestCase
      */
     public function testIdentifierInterface(): void
     {
-        $query = new Query($this->connection);
-        $identifier = $query->identifier('description');
+        $identifier = $this->query->identifier('description');
 
         $this->assertInstanceOf(ExpressionInterface::class, $identifier);
         $this->assertSame('description', $identifier->getIdentifier());
@@ -111,21 +117,20 @@ class QueryTest extends TestCase
      */
     public function testDebugInfoIncompleteQuery(): void
     {
-        $query = (new Query($this->connection))
+        $this->query = $this->newQuery()
             ->from(['articles']);
-        $result = $query->__debugInfo();
+        $result = $this->query->__debugInfo();
         $this->assertStringContainsString('incomplete', $result['sql']);
         $this->assertSame([], $result['params']);
     }
 
     public function testCloneWithExpression(): void
     {
-        $query = new Query($this->connection);
-        $query
+        $this->query
             ->with(
                 new CommonTableExpression(
                     'cte',
-                    new Query($this->connection)
+                    $this->newQuery()
                 )
             )
             ->with(function (CommonTableExpression $cte, Query $query) {
@@ -134,8 +139,8 @@ class QueryTest extends TestCase
                     ->query($query);
             });
 
-        $clause = $query->clause('with');
-        $clauseClone = (clone $query)->clause('with');
+        $clause = $this->query->clause('with');
+        $clauseClone = (clone $this->query)->clause('with');
 
         $this->assertIsArray($clause);
 
@@ -147,11 +152,10 @@ class QueryTest extends TestCase
 
     public function testCloneModifierExpression(): void
     {
-        $query = new Query($this->connection);
-        $query->modifier($query->newExpr('modifier'));
+        $this->query->modifier($this->query->newExpr('modifier'));
 
-        $clause = $query->clause('modifier');
-        $clauseClone = (clone $query)->clause('modifier');
+        $clause = $this->query->clause('modifier');
+        $clauseClone = (clone $this->query)->clause('modifier');
 
         $this->assertIsArray($clause);
 
@@ -163,11 +167,10 @@ class QueryTest extends TestCase
 
     public function testCloneFromExpression(): void
     {
-        $query = new Query($this->connection);
-        $query->from(['alias' => new Query($this->connection)]);
+        $this->query->from(['alias' => $this->newQuery()]);
 
-        $clause = $query->clause('from');
-        $clauseClone = (clone $query)->clause('from');
+        $clause = $this->query->clause('from');
+        $clauseClone = (clone $this->query)->clause('from');
 
         $this->assertIsArray($clause);
 
@@ -179,23 +182,22 @@ class QueryTest extends TestCase
 
     public function testCloneJoinExpression(): void
     {
-        $query = new Query($this->connection);
-        $query
+        $this->query
             ->innerJoin(
-                ['alias_inner' => new Query($this->connection)],
+                ['alias_inner' => $this->newQuery()],
                 ['alias_inner.fk = parent.pk']
             )
             ->leftJoin(
-                ['alias_left' => new Query($this->connection)],
+                ['alias_left' => $this->newQuery()],
                 ['alias_left.fk = parent.pk']
             )
             ->rightJoin(
-                ['alias_right' => new Query($this->connection)],
+                ['alias_right' => $this->newQuery()],
                 ['alias_right.fk = parent.pk']
             );
 
-        $clause = $query->clause('join');
-        $clauseClone = (clone $query)->clause('join');
+        $clause = $this->query->clause('join');
+        $clauseClone = (clone $this->query)->clause('join');
 
         $this->assertIsArray($clause);
 
@@ -210,13 +212,12 @@ class QueryTest extends TestCase
 
     public function testCloneWhereExpression(): void
     {
-        $query = new Query($this->connection);
-        $query
-            ->where($query->newExpr('where'))
-            ->where(['field' => $query->newExpr('where')]);
+        $this->query
+            ->where($this->query->newExpr('where'))
+            ->where(['field' => $this->query->newExpr('where')]);
 
-        $clause = $query->clause('where');
-        $clauseClone = (clone $query)->clause('where');
+        $clause = $this->query->clause('where');
+        $clauseClone = (clone $this->query)->clause('where');
 
         $this->assertInstanceOf(ExpressionInterface::class, $clause);
 
@@ -226,14 +227,13 @@ class QueryTest extends TestCase
 
     public function testCloneOrderExpression(): void
     {
-        $query = new Query($this->connection);
-        $query
-            ->order($query->newExpr('order'))
-            ->orderAsc($query->newExpr('order_asc'))
-            ->orderDesc($query->newExpr('order_desc'));
+        $this->query
+            ->order($this->query->newExpr('order'))
+            ->orderAsc($this->query->newExpr('order_asc'))
+            ->orderDesc($this->query->newExpr('order_desc'));
 
-        $clause = $query->clause('order');
-        $clauseClone = (clone $query)->clause('order');
+        $clause = $this->query->clause('order');
+        $clauseClone = (clone $this->query)->clause('order');
 
         $this->assertInstanceOf(ExpressionInterface::class, $clause);
 
@@ -243,11 +243,10 @@ class QueryTest extends TestCase
 
     public function testCloneLimitExpression(): void
     {
-        $query = new Query($this->connection);
-        $query->limit($query->newExpr('1'));
+        $this->query->limit($this->query->newExpr('1'));
 
-        $clause = $query->clause('limit');
-        $clauseClone = (clone $query)->clause('limit');
+        $clause = $this->query->clause('limit');
+        $clauseClone = (clone $this->query)->clause('limit');
 
         $this->assertInstanceOf(ExpressionInterface::class, $clause);
 
@@ -257,11 +256,10 @@ class QueryTest extends TestCase
 
     public function testCloneOffsetExpression(): void
     {
-        $query = new Query($this->connection);
-        $query->offset($query->newExpr('1'));
+        $this->query->offset($this->query->newExpr('1'));
 
-        $clause = $query->clause('offset');
-        $clauseClone = (clone $query)->clause('offset');
+        $clause = $this->query->clause('offset');
+        $clauseClone = (clone $this->query)->clause('offset');
 
         $this->assertInstanceOf(ExpressionInterface::class, $clause);
 
@@ -271,11 +269,10 @@ class QueryTest extends TestCase
 
     public function testCloneEpilogExpression(): void
     {
-        $query = new Query($this->connection);
-        $query->epilog($query->newExpr('epilog'));
+        $this->query->epilog($this->query->newExpr('epilog'));
 
-        $clause = $query->clause('epilog');
-        $clauseClone = (clone $query)->clause('epilog');
+        $clause = $this->query->clause('epilog');
+        $clauseClone = (clone $this->query)->clause('epilog');
 
         $this->assertInstanceOf(ExpressionInterface::class, $clause);
 
@@ -288,9 +285,7 @@ class QueryTest extends TestCase
      */
     public function testGetValueBinder(): void
     {
-        $query = new Query($this->connection);
-
-        $this->assertInstanceOf('Cake\Database\ValueBinder', $query->getValueBinder());
+        $this->assertInstanceOf('Cake\Database\ValueBinder', $this->query->getValueBinder());
     }
 
     /**
@@ -300,8 +295,8 @@ class QueryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The \'nope\' clause is not defined. Valid clauses are: delete, update');
-        $query = new Query($this->connection);
-        $this->assertEmpty($query->clause('where'));
-        $query->clause('nope');
+
+        $this->assertEmpty($this->query->clause('where'));
+        $this->query->clause('nope');
     }
 }

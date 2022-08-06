@@ -279,16 +279,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Create a new Query instance for this connection.
-     *
-     * @return \Cake\Database\Query
-     */
-    public function newQuery(): Query
-    {
-        return new Query($this);
-    }
-
-    /**
      * Create a new SelectQuery instance for this connection.
      *
      * @return \Cake\Database\Query\SelectQuery

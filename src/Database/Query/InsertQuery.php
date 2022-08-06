@@ -27,6 +27,13 @@ use InvalidArgumentException;
 class InsertQuery extends Query
 {
     /**
+     * Type of this query.
+     *
+     * @var string
+     */
+    protected string $_type = self::TYPE_INSERT;
+
+    /**
      * List of SQL parts that will be used to build this query.
      *
      * @var array<string, mixed>
@@ -56,7 +63,6 @@ class InsertQuery extends Query
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
         $this->_dirty();
-        $this->_type = self::TYPE_INSERT;
         $this->_parts['insert'][1] = $columns;
         if (!$this->_parts['values']) {
             $this->_parts['values'] = new ValuesExpression($columns, $this->getTypeMap()->setTypes($types));
@@ -76,7 +82,6 @@ class InsertQuery extends Query
     public function into(string $table)
     {
         $this->_dirty();
-        $this->_type = self::TYPE_INSERT;
         $this->_parts['insert'][0] = $table;
 
         return $this;
@@ -96,11 +101,6 @@ class InsertQuery extends Query
      */
     public function values(ValuesExpression|Query|array $data)
     {
-        if ($this->_type !== self::TYPE_INSERT) {
-            throw new DatabaseException(
-                'You cannot add values before defining columns to use.'
-            );
-        }
         if (empty($this->_parts['insert'])) {
             throw new DatabaseException(
                 'You cannot add values before defining columns to use.'
