@@ -89,7 +89,7 @@ class EnumType extends BaseType implements BatchCastingInterface
      */
     public function marshal(mixed $value): ?string
     {
-        if ($value === null || is_array($value)) {
+        if ($value === null) {
             return null;
         }
 
