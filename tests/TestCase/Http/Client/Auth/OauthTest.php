@@ -374,10 +374,17 @@ class OauthTest extends TestCase
             'privateKey' => $privateKey,
         ];
         $auth = new Oauth();
-        $request = $auth->authentication($request, $options);
-
-        $result = $request->getHeaderLine('Authorization');
-        $this->assertSignatureFormat($result);
+        try {
+            $request = $auth->authentication($request, $options);
+            $result = $request->getHeaderLine('Authorization');
+            $this->assertSignatureFormat($result);
+        } catch (RuntimeException $e) {
+            // Handle 22.04 + OpenSSL bug. This should be safe to remove in the future.
+            if (strpos($e->getMessage(), 'unexpected eof while reading') !== false) {
+                $this->markTestSkipped('Skipping because of OpenSSL bug.');
+            }
+            throw $e;
+        }
     }
 
     public function testRsaSigningInvalidKey(): void
