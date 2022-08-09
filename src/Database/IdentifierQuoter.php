@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -60,15 +61,17 @@ class IdentifierQuoter
         $binder = $query->getValueBinder();
         $query->setValueBinder(null);
 
-        if ($query instanceof SelectQuery) {
-            $this->_quoteSelect($query);
-        } elseif ($query instanceof InsertQuery) {
-            $this->_quoteInsert($query);
-        } elseif ($query instanceof UpdateQuery) {
-            $this->_quoteUpdate($query);
-        } elseif ($query instanceof DeleteQuery) {
-            $this->_quoteDelete($query);
-        }
+        match (true) {
+            $query instanceof InsertQuery => $this->_quoteInsert($query),
+            $query instanceof SelectQuery => $this->_quoteSelect($query),
+            $query instanceof UpdateQuery => $this->_quoteUpdate($query),
+            $query instanceof DeleteQuery => $this->_quoteDelete($query),
+            default =>
+                throw new DatabaseException(sprintf(
+                    'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
+                    get_debug_type($query)
+                ))
+        };
 
         $query->traverseExpressions($this->quoteExpression(...));
         $query->setValueBinder($binder);
