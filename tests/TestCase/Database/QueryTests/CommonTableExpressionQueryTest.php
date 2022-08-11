@@ -206,7 +206,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $result->closeCursor();
 
         $query = $this->connection
-            ->newQuery()
+            ->newInsertQuery()
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
                 return $cte
                     ->name('cte')

@@ -32,7 +32,7 @@ use Stringable;
  * for dynamically constructing each query part, execute it and transform it
  * to a specific SQL dialect.
  */
-class Query implements ExpressionInterface, Stringable
+abstract class Query implements ExpressionInterface, Stringable
 {
     use TypeMapTrait;
 
@@ -79,11 +79,13 @@ class Query implements ExpressionInterface, Stringable
     protected Connection $_connection;
 
     /**
-     * Type of this query (select, insert, update, delete).
+     * Type of this query.
+     *
+     * Must be a value of one of the TYPE_* constants.
      *
      * @var string
      */
-    protected string $_type = self::TYPE_SELECT;
+    protected string $_type;
 
     /**
      * List of SQL parts that will be used to build this query.

@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
-use InvalidArgumentException;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -59,13 +61,17 @@ class IdentifierQuoter
         $binder = $query->getValueBinder();
         $query->setValueBinder(null);
 
-        if ($query instanceof InsertQuery) {
-            $this->_quoteInsert($query);
-        } elseif ($query instanceof UpdateQuery) {
-            $this->_quoteUpdate($query);
-        } else {
-            $this->_quoteParts($query);
-        }
+        match (true) {
+            $query instanceof InsertQuery => $this->_quoteInsert($query),
+            $query instanceof SelectQuery => $this->_quoteSelect($query),
+            $query instanceof UpdateQuery => $this->_quoteUpdate($query),
+            $query instanceof DeleteQuery => $this->_quoteDelete($query),
+            default =>
+                throw new DatabaseException(sprintf(
+                    'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
+                    get_debug_type($query)
+                ))
+        };
 
         $query->traverseExpressions($this->quoteExpression(...));
         $query->setValueBinder($binder);
@@ -101,19 +107,16 @@ class IdentifierQuoter
     }
 
     /**
-     * Quotes all identifiers in each of the clauses of a query
+     * Quotes all identifiers in each of the clauses/parts of a query
      *
      * @param \Cake\Database\Query $query The query to quote.
+     * @param array $parts Query clauses.
      * @return void
      */
-    protected function _quoteParts(Query $query): void
+    protected function _quoteParts(Query $query, array $parts): void
     {
-        foreach (['distinct', 'select', 'from', 'group'] as $part) {
-            try {
-                $contents = $query->clause($part);
-            } catch (InvalidArgumentException) {
-                continue;
-            }
+        foreach ($parts as $part) {
+            $contents = $query->clause($part);
 
             if (!is_array($contents)) {
                 continue;
@@ -123,12 +126,6 @@ class IdentifierQuoter
             if (!empty($result)) {
                 $query->{$part}($result, true);
             }
-        }
-
-        $joins = $query->clause('join');
-        if ($joins) {
-            $joins = $this->_quoteJoins($joins);
-            $query->join($joins, [], true);
         }
     }
 
@@ -175,6 +172,40 @@ class IdentifierQuoter
         }
 
         return $result;
+    }
+
+    /**
+     * Quotes all identifiers in each of the clauses of a SELECT query
+     *
+     * @param \Cake\Database\Query\SelectQuery $query The query to quote.
+     * @return void
+     */
+    protected function _quoteSelect(SelectQuery $query): void
+    {
+        $this->_quoteParts($query, ['select', 'distinct', 'from', 'group']);
+
+        $joins = $query->clause('join');
+        if ($joins) {
+            $joins = $this->_quoteJoins($joins);
+            $query->join($joins, [], true);
+        }
+    }
+
+    /**
+     * Quotes all identifiers in each of the clauses of a DELETE query
+     *
+     * @param \Cake\Database\Query\DeleteQuery $query The query to quote.
+     * @return void
+     */
+    protected function _quoteDelete(DeleteQuery $query): void
+    {
+        $this->_quoteParts($query, ['from']);
+
+        $joins = $query->clause('join');
+        if ($joins) {
+            $joins = $this->_quoteJoins($joins);
+            $query->join($joins, [], true);
+        }
     }
 
     /**

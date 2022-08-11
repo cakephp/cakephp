@@ -35,6 +35,13 @@ use Traversable;
 class SelectQuery extends Query implements IteratorAggregate
 {
     /**
+     * Type of this query.
+     *
+     * @var string
+     */
+    protected string $_type = self::TYPE_SELECT;
+
+    /**
      * List of SQL parts that will be used to build this query.
      *
      * @var array<string, mixed>
@@ -163,7 +170,6 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         $this->_dirty();
-        $this->_type = 'select';
 
         return $this;
     }
@@ -656,7 +662,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * ### Examples
      *
      * ```
-     * $union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->union($union);
      * ```
      *
@@ -691,7 +697,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * Unlike UNION, UNION ALL will not remove duplicate rows.
      *
      * ```
-     * $union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->unionAll($union);
      * ```
      *
@@ -858,36 +864,11 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function __clone()
     {
-        $this->_statement = null;
+        parent::__clone();
+
         $this->_results = null;
-        if ($this->_valueBinder !== null) {
-            $this->_valueBinder = clone $this->_valueBinder;
-        }
         if ($this->_selectTypeMap !== null) {
             $this->_selectTypeMap = clone $this->_selectTypeMap;
-        }
-        foreach ($this->_parts as $name => $part) {
-            if (empty($part)) {
-                continue;
-            }
-            if (is_array($part)) {
-                foreach ($part as $i => $piece) {
-                    if (is_array($piece)) {
-                        foreach ($piece as $j => $value) {
-                            if ($value instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
-                                $this->_parts[$name][$i][$j] = clone $value;
-                            }
-                        }
-                    } elseif ($piece instanceof ExpressionInterface) {
-                        /** @psalm-suppress PossiblyUndefinedMethod */
-                        $this->_parts[$name][$i] = clone $piece;
-                    }
-                }
-            }
-            if ($part instanceof ExpressionInterface) {
-                $this->_parts[$name] = clone $part;
-            }
         }
     }
 
@@ -899,29 +880,9 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function __debugInfo(): array
     {
-        $sql = 'SQL could not be generated for this query as it is incomplete.';
-        $params = [];
-        try {
-            set_error_handler(
-                /** @return no-return */
-                function ($errno, $errstr): void {
-                    throw new CakeException($errstr, $errno);
-                },
-                E_ALL
-            );
-            $sql = $this->sql();
-            $params = $this->getValueBinder()->bindings();
-        } finally {
-            restore_error_handler();
+        $return = parent::__debugInfo();
+        $return['decorators'] = count($this->_resultDecorators);
 
-            return [
-                '(help)' => 'This is a Query object, to get the results execute or iterate it.',
-                'sql' => $sql,
-                'params' => $params,
-                'defaultTypes' => $this->getDefaultTypes(),
-                'decorators' => count($this->_resultDecorators),
-                'executed' => $this->_statement ? true : false,
-            ];
-        }
+        return $return;
     }
 }

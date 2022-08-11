@@ -27,6 +27,13 @@ use Closure;
 class UpdateQuery extends Query
 {
     /**
+     * Type of this query.
+     *
+     * @var string
+     */
+    protected string $_type = self::TYPE_UPDATE;
+
+    /**
      * List of SQL parts that will be used to build this query.
      *
      * @var array<string, mixed>
@@ -54,7 +61,6 @@ class UpdateQuery extends Query
     public function update(ExpressionInterface|string $table)
     {
         $this->_dirty();
-        $this->_type = self::TYPE_UPDATE;
         $this->_parts['update'][0] = $table;
 
         return $this;
