@@ -104,6 +104,8 @@ class Connection implements ConnectionInterface
      */
     protected ?NestedTransactionRollbackException $nestedTransactionRollbackException = null;
 
+    protected QueryFactory $queryFactory;
+
     /**
      * Constructor.
      *
@@ -279,43 +281,73 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Get query factory instance.
+     *
+     * @return \Cake\Database\QueryFactory
+     */
+    public function queryFactory(): QueryFactory
+    {
+        return $this->queryFactory ??= new QueryFactory($this);
+    }
+
+    /**
      * Create a new SelectQuery instance for this connection.
      *
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields Fields/columns list for the query.
+     * @param array|string $tables List of tables to query.
+     * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\SelectQuery
      */
-    public function newSelectQuery(): SelectQuery
-    {
-        return new SelectQuery($this);
+    public function newSelectQuery(
+        ExpressionInterface|Closure|array|string|float|int $fields = [],
+        array|string $tables = [],
+        array $types = []
+    ): SelectQuery {
+        return $this->queryFactory()->select($fields, $tables, $types);
     }
 
     /**
      * Create a new InsertQuery instance for this connection.
      *
+     * @param string|null $table The table to insert rows into.
+     * @param array $values Associative array of column => value to be inserted.
+     * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\InsertQuery
      */
-    public function newInsertQuery(): InsertQuery
+    public function newInsertQuery(?string $table = null, array $values = [], array $types = []): InsertQuery
     {
-        return new InsertQuery($this);
+        return $this->queryFactory()->insert($table, $values, $types);
     }
 
     /**
      * Create a new UpdateQuery instance for this connection.
      *
+     * @param string|null $table The table to update rows of.
+     * @param array $values Values to be updated.
+     * @param array $conditions Conditions to be set for the update statement.
+     * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\UpdateQuery
      */
-    public function newUpdateQuery(): UpdateQuery
-    {
-        return new UpdateQuery($this);
+    public function newUpdateQuery(
+        ?string $table = null,
+        array $values = [],
+        array $conditions = [],
+        array $types = []
+    ): UpdateQuery {
+        return $this->queryFactory()->update($table, $values, $conditions, $types);
     }
 
     /**
      * Create a new DeleteQuery instance for this connection.
      *
+     * @param string|null $table The table to delete rows from.
+     * @param array $conditions Conditions to be set for the delete statement.
+     * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\DeleteQuery
      */
-    public function newDeleteQuery(): DeleteQuery
+    public function newDeleteQuery(?string $table = null, array $conditions = [], array $types = []): DeleteQuery
     {
-        return new DeleteQuery($this);
+        return $this->queryFactory()->delete($table, $conditions, $types);
     }
 
     /**
@@ -363,12 +395,7 @@ class Connection implements ConnectionInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface
     {
-        $columns = array_keys($values);
-
-        return $this->newInsertQuery()->insert($columns, $types)
-            ->into($table)
-            ->values($values)
-            ->execute();
+        return $this->newInsertQuery($table, $values)->execute();
     }
 
     /**
@@ -382,10 +409,7 @@ class Connection implements ConnectionInterface
      */
     public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->newUpdateQuery()->update($table)
-            ->set($values, $types)
-            ->where($conditions, $types)
-            ->execute();
+        return $this->newUpdateQuery($table, $values, $conditions, $types)->execute();
     }
 
     /**
@@ -398,9 +422,7 @@ class Connection implements ConnectionInterface
      */
     public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->newDeleteQuery()->delete($table)
-            ->where($conditions, $types)
-            ->execute();
+        return $this->newDeleteQuery($table, $conditions, $types)->execute();
     }
 
     /**
