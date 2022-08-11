@@ -378,7 +378,7 @@ class OauthTest extends TestCase
             $request = $auth->authentication($request, $options);
             $result = $request->getHeaderLine('Authorization');
             $this->assertSignatureFormat($result);
-        } catch (RuntimeException $e) {
+        } catch (CakeException $e) {
             // Handle 22.04 + OpenSSL bug. This should be safe to remove in the future.
             if (strpos($e->getMessage(), 'unexpected eof while reading') !== false) {
                 $this->markTestSkipped('Skipping because of OpenSSL bug.');
