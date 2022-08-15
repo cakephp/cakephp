@@ -716,26 +716,26 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test is(ssl)
+     * Test is(https)
      */
-    public function testIsSsl(): void
+    public function testIsHttps(): void
     {
         $request = new ServerRequest();
 
         $request = $request->withEnv('HTTPS', 'on');
-        $this->assertTrue($request->is('ssl'));
+        $this->assertTrue($request->is('https'));
 
         $request = $request->withEnv('HTTPS', '1');
-        $this->assertTrue($request->is('ssl'));
+        $this->assertTrue($request->is('https'));
 
         $request = $request->withEnv('HTTPS', 'I am not empty');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
 
         $request = $request->withEnv('HTTPS', 'off');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
 
         $request = $request->withEnv('HTTPS', '');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
     }
 
     /**
