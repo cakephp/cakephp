@@ -54,7 +54,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Content of email to return
      *
-     * @var array<string, mixed>
+     * @var array<string, string>
      */
     protected $_content = [];
 
@@ -169,7 +169,7 @@ class SmtpTransport extends AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Message instance
-     * @return array<string, mixed>
+     * @return array<string, string>
      * @throws \Cake\Network\Exception\SocketException
      * @psalm-return array{headers: string, message: string}
      */
