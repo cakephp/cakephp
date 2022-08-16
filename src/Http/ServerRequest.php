@@ -69,14 +69,14 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Array of cookie data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $cookies = [];
 
     /**
      * Array of environment data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_environment = [];
 
@@ -140,7 +140,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Instance cache for results of is(something) calls
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $_detectorCache = [];
 
@@ -1331,7 +1331,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get all the cookie data from the request.
      *
-     * @return array An array of cookie data.
+     * @return array<string, mixed> An array of cookie data.
      */
     public function getCookieParams(): array
     {
