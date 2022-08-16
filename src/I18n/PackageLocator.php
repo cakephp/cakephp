@@ -88,11 +88,13 @@ class PackageLocator
         }
 
         if (!$this->converted[$name][$locale]) {
+            /** @var callable $func */
             $func = $this->registry[$name][$locale];
             $this->registry[$name][$locale] = $func();
             $this->converted[$name][$locale] = true;
         }
 
+        /** @var \Cake\I18n\Package */
         return $this->registry[$name][$locale];
     }
 

@@ -81,10 +81,13 @@ class FormatterLocator
         }
 
         if (!$this->converted[$name]) {
-            $this->registry[$name] = new $this->registry[$name]();
+            /** @var class-string<\Cake\I18n\FormatterInterface> $formatter */
+            $formatter = $this->registry[$name];
+            $this->registry[$name] = new $formatter();
             $this->converted[$name] = true;
         }
 
+        /** @var \Cake\I18n\FormatterInterface */
         return $this->registry[$name];
     }
 }
