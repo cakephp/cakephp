@@ -46,7 +46,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     /**
      * Method mappings.
      *
-     * @var array<string, mixed>
+     * @var array<string, array>
      */
     protected $_methodMap = [];
 
