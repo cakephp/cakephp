@@ -29,7 +29,7 @@ class FormatterLocator
     /**
      * A registry to retain formatter objects.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $registry = [];
 
@@ -44,7 +44,7 @@ class FormatterLocator
     /**
      * Constructor.
      *
-     * @param array $registry An array of key-value pairs where the key is the
+     * @param array<string, string> $registry An array of key-value pairs where the key is the
      * formatter name the value is a FQCN for the formatter.
      */
     public function __construct(array $registry = [])

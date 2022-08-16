@@ -71,7 +71,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Options for the table.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_options = [];
 

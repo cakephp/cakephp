@@ -91,7 +91,7 @@ class EagerLoader
      * A map of table aliases pointing to the association objects they represent
      * for the query.
      *
-     * @var array
+     * @var array<string, \Cake\ORM\EagerLoadable>
      */
     protected $_joinsMap = [];
 

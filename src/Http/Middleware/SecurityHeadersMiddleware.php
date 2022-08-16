@@ -98,7 +98,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     /**
      * Security related headers to set
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $headers = [];
 

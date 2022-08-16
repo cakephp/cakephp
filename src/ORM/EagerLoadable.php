@@ -51,7 +51,7 @@ class EagerLoadable
      * A list of options to pass to the association object for loading
      * the records.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_config = [];
 

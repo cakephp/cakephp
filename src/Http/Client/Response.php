@@ -115,7 +115,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Cached decoded JSON data.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $_json;
 
@@ -411,7 +411,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * @return array<mixed>
      */
     protected function _getJson()
     {

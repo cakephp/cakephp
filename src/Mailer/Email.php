@@ -93,7 +93,7 @@ class Email implements JsonSerializable, Serializable
      * A copy of the configuration profile for this
      * instance. This copy can be modified with Email::profile().
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_profile = [];
 
@@ -305,7 +305,7 @@ class Email implements JsonSerializable, Serializable
             unset($name);
         }
 
-        $this->_profile = array_merge($this->_profile, $config);
+        $this->_profile = $config + $this->_profile;
 
         $simpleMethods = [
             'transport',

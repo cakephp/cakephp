@@ -54,7 +54,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Content of email to return
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_content = [];
 
