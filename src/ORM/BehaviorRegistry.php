@@ -53,7 +53,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     /**
      * Finder method mappings.
      *
-     * @var array<string, mixed>
+     * @var array<string, array>
      */
     protected $_finderMap = [];
 
