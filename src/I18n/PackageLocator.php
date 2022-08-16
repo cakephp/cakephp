@@ -33,7 +33,7 @@ class PackageLocator
      * key is a package name, the second key is a locale code, and the value
      * is a callable that returns a Package object for that name and locale.
      *
-     * @var array<string, array<string, mixed>>
+     * @var array<string, array<string, \Cake\I18n\Package|callable>>
      */
     protected $registry = [];
 
