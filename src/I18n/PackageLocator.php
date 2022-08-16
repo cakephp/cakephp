@@ -48,7 +48,7 @@ class PackageLocator
     /**
      * Constructor.
      *
-     * @param array<string, array<string, mixed>> $registry A registry of packages.
+     * @param array<string, array<string, \Cake\I18n\Package|callable>> $registry A registry of packages.
      * @see PackageLocator::$registry
      */
     public function __construct(array $registry = [])
