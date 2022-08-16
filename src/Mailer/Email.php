@@ -443,7 +443,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Log the email message delivery.
      *
-     * @param array $contents The content with 'headers' and 'message' keys.
+     * @param array<string, string> $contents The content with 'headers' and 'message' keys.
      * @return void
      */
     protected function _logDelivery(array $contents): void
