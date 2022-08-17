@@ -241,6 +241,10 @@ class ExceptionTrap
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
         }
+        // Use this constant as a proxy for cakephp tests.
+        if (PHP_SAPI == 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {
+            exit(1);
+        }
     }
 
     /**
