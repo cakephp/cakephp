@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
+use Cake\Chronos\ChronosInterface;
 use Cake\Chronos\DifferenceFormatterInterface;
 use Cake\Core\Exception\CakeException;
 use Closure;
@@ -481,6 +482,34 @@ trait DateFormatTrait
     public static function setDiffFormatter(DifferenceFormatterInterface $formatter): void
     {
         static::$diffFormatter = $formatter;
+    }
+
+    /**
+     * Get the difference in a human readable format.
+     *
+     * When comparing a value in the past to default now:
+     * 1 hour ago
+     * 5 months ago
+     *
+     * When comparing a value in the future to default now:
+     * 1 hour from now
+     * 5 months from now
+     *
+     * When comparing a value in the past to another value:
+     * 1 hour before
+     * 5 months before
+     *
+     * When comparing a value in the future to another value:
+     * 1 hour after
+     * 5 months after
+     *
+     * @param \Cake\Chronos\ChronosInterface|null $other The datetime to compare with.
+     * @param bool $absolute removes time difference modifiers ago, after, etc
+     * @return string
+     */
+    public function diffForHumans(?ChronosInterface $other = null, bool $absolute = false): string
+    {
+        return static::getDiffFormatter()->diffForHumans($this, $other, $absolute);
     }
 
     /**
