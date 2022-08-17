@@ -232,7 +232,7 @@ class SmtpTransport extends AbstractTransport
 
         $auth = '';
         foreach ($this->_lastResponse as $line) {
-            if (empty($line['message']) || substr($line['message'], 0, 5) === 'AUTH ') {
+            if (strlen($line['message']) == 0 || substr($line['message'], 0, 5) === 'AUTH ') {
                 $auth = $line['message'];
                 break;
             }
