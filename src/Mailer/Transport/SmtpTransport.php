@@ -28,6 +28,9 @@ use RuntimeException;
  */
 class SmtpTransport extends AbstractTransport
 {
+    protected const AUTH_PLAN = 'PLAIN';
+    protected const AUTH_LOGIN = 'LOGIN';
+
     /**
      * Default config for this class
      *
@@ -232,20 +235,20 @@ class SmtpTransport extends AbstractTransport
 
         $auth = '';
         foreach ($this->_lastResponse as $line) {
-            if (strlen($line['message']) == 0 || substr($line['message'], 0, 5) === 'AUTH ') {
+            if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
                 $auth = $line['message'];
                 break;
             }
         }
 
-        if (strpos($auth, 'PLAIN') !== false) {
-            $this->authType = 'PLAIN';
+        if (strpos($auth, self::AUTH_PLAN) !== false) {
+            $this->authType = self::AUTH_PLAN;
 
             return;
         }
 
-        if (strpos($auth, 'LOGIN') !== false) {
-            $this->authType = 'LOGIN';
+        if (strpos($auth, self::AUTH_LOGIN) !== false) {
+            $this->authType = self::AUTH_LOGIN;
 
             return;
         }
@@ -331,13 +334,13 @@ class SmtpTransport extends AbstractTransport
             return;
         }
 
-        if ($this->authType === 'PLAIN') {
+        if ($this->authType === self::AUTH_PLAN) {
             $this->_authPlain($username, $password);
 
             return;
         }
 
-        if ($this->authType === 'LOGIN') {
+        if ($this->authType === self::AUTH_LOGIN) {
             $this->_authLogin($username, $password);
 
             return;
