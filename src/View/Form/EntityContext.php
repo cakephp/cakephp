@@ -55,7 +55,7 @@ class EntityContext implements ContextInterface
     /**
      * Context data for this object.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_context;
 
@@ -91,7 +91,7 @@ class EntityContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param array $context Context info.
+     * @param array<string, mixed> $context Context info.
      */
     public function __construct(array $context)
     {

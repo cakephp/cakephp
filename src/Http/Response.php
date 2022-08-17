@@ -401,7 +401,7 @@ class Response implements ResponseInterface
      * Holds all the cache directives that will be converted
      * into headers when sending the request
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_cacheDirectives = [];
 

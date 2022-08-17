@@ -327,6 +327,14 @@
       <code>ModelAwareTrait</code>
     </DeprecatedTrait>
   </file>
+  <file src="src/Mailer/Transport/SmtpTransport.php">
+    <LessSpecificReturnStatement occurrences="1">
+      <code>$this-&gt;_content</code>
+    </LessSpecificReturnStatement>
+    <MoreSpecificReturnType occurrences="1">
+      <code>array{headers: string, message: string}</code>
+    </MoreSpecificReturnType>
+  </file>
   <file src="src/ORM/Locator/LocatorAwareTrait.php">
     <DeprecatedClass occurrences="1">
       <code>$this</code>

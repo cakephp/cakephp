@@ -37,7 +37,7 @@ class Configure
     /**
      * Array of values currently stored in Configure.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static $_values = [
         'debug' => false,

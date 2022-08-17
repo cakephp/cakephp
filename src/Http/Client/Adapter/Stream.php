@@ -41,14 +41,14 @@ class Stream implements AdapterInterface
     /**
      * Array of options/content for the HTTP stream context.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_contextOptions = [];
 
     /**
      * Array of options/content for the SSL stream context.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_sslContextOptions = [];
 
@@ -320,7 +320,7 @@ class Stream implements AdapterInterface
             restore_error_handler();
         }
 
-        if (!$this->_stream || !empty($this->_connectionErrors)) {
+        if (!$this->_stream || $this->_connectionErrors) {
             throw new RequestException(implode("\n", $this->_connectionErrors), $request);
         }
     }
@@ -330,7 +330,7 @@ class Stream implements AdapterInterface
      *
      * Useful for debugging and testing context creation.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function contextOptions(): array
     {

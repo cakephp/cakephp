@@ -37,7 +37,7 @@ class RuleInvoker
     /**
      * Rule options
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $options = [];
 

@@ -32,7 +32,7 @@ class HttpException extends CakeException
     protected $_defaultCode = 500;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $headers = [];
 

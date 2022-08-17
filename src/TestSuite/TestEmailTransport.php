@@ -38,8 +38,7 @@ class TestEmailTransport extends DebugTransport
      * Stores email for later assertions
      *
      * @param \Cake\Mailer\Message $message Message
-     * @return array
-     * @psalm-return array{headers: string, message: string}
+     * @return array{headers: string, message: string}
      */
     public function send(Message $message): array
     {

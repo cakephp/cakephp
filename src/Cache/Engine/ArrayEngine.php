@@ -35,7 +35,7 @@ class ArrayEngine extends CacheEngine
      *
      * Structured as [key => [exp => expiration, val => value]]
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $data = [];
 

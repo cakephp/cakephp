@@ -32,7 +32,7 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Options for this session engine
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_options = [];
 
