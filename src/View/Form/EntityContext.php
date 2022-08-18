@@ -400,7 +400,7 @@ class EntityContext implements ContextInterface
      *
      * Traverse the path until an entity cannot be found. Lists containing
      * entities will be traversed if the first element contains an entity.
-     * Otherwise the containing Entity will be assumed to be the terminal one.
+     * Otherwise, the containing Entity will be assumed to be the terminal one.
      *
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.

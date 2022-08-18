@@ -30,7 +30,7 @@ if (!function_exists('h')) {
      *
      * @param mixed $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
-     *    implement a `__toString` method. Otherwise the class name will be used.
+     *    implement a `__toString` method. Otherwise, the class name will be used.
      *    Other scalar types will be returned unchanged.
      * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping.

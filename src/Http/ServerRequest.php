@@ -1149,7 +1149,7 @@ class ServerRequest implements ServerRequestInterface
      * ```$request->acceptLanguage('es-es');```
      *
      * @param string|null $language The language to test.
-     * @return array|bool If a $language is provided, a boolean. Otherwise the array of accepted languages.
+     * @return array|bool If a $language is provided, a boolean. Otherwise, the array of accepted languages.
      */
     public function acceptLanguage(?string $language = null)
     {
