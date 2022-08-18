@@ -837,10 +837,10 @@ abstract class Association
      * with the default empty value according to whether the association was
      * joined or fetched externally.
      *
-     * @param array $row The row to set a default on.
+     * @param array<string, mixed> $row The row to set a default on.
      * @param bool $joined Whether the row is a result of a direct join
      *   with this association
-     * @return array
+     * @return array<string, mixed>
      */
     public function defaultRowValue(array $row, bool $joined): array
     {

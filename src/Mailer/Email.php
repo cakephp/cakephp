@@ -207,7 +207,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Sets variables to be set on render.
      *
-     * @param array $viewVars Variables to set for view.
+     * @param array<string, mixed> $viewVars Variables to set for view.
      * @return $this
      */
     public function setViewVars(array $viewVars)
@@ -220,7 +220,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Gets variables to be set on render.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getViewVars(): array
     {
@@ -348,7 +348,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Gets the configuration profile to use for this instance.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getProfile(): array
     {

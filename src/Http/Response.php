@@ -1339,7 +1339,7 @@ class Response implements ResponseInterface
      *
      * Returns an associative array of cookie name => cookie data.
      *
-     * @return array
+     * @return array<string, array>
      */
     public function getCookies(): array
     {

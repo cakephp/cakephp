@@ -175,7 +175,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Store the additional attributes attached to the request.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $attributes = [];
 
@@ -1635,7 +1635,7 @@ class ServerRequest implements ServerRequestInterface
      * This will include the params, webroot, base, and here attributes that CakePHP
      * provides.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAttributes(): array
     {

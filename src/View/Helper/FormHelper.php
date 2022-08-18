@@ -1290,7 +1290,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName The name of the field to find options for.
      * @param array<string, mixed> $options Options list.
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _optionsOptions(string $fieldName, array $options): array
     {

@@ -224,7 +224,7 @@ trait QueryTrait
      *
      * @param string $field The field to alias
      * @param string|null $alias the alias used to prefix the field
-     * @return array
+     * @return array<string, string>
      */
     public function aliasField(string $field, ?string $alias = null): array
     {
@@ -247,7 +247,7 @@ trait QueryTrait
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array<string>
+     * @return array<string, string>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array
     {

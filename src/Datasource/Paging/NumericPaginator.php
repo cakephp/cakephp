@@ -55,7 +55,7 @@ class NumericPaginator implements PaginatorInterface
     /**
      * Paging params after pagination operation is done.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_pagingParams = [];
 
@@ -402,7 +402,7 @@ class NumericPaginator implements PaginatorInterface
     /**
      * Get paging params after pagination operation.
      *
-     * @return array
+     * @return array<string, array>
      */
     public function getPagingParams(): array
     {
