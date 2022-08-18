@@ -28,6 +28,9 @@ use RuntimeException;
  */
 class SmtpTransport extends AbstractTransport
 {
+    protected const AUTH_PLAIN = 'PLAIN';
+    protected const AUTH_LOGIN = 'LOGIN';
+
     /**
      * Default config for this class
      *
@@ -64,6 +67,13 @@ class SmtpTransport extends AbstractTransport
      * @var array
      */
     protected $_lastResponse = [];
+
+    /**
+     * Detected authentication type.
+     *
+     * @var string|null
+     */
+    protected $authType = null;
 
     /**
      * Destructor
@@ -214,6 +224,36 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
+     * Parses the last response line and extract the preferred authentication type.
+     *
+     * @return void
+     */
+    protected function _parseAuthType(): void
+    {
+        $this->authType = null;
+
+        $auth = '';
+        foreach ($this->_lastResponse as $line) {
+            if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
+                $auth = $line['message'];
+                break;
+            }
+        }
+
+        if (strpos($auth, self::AUTH_PLAIN) !== false) {
+            $this->authType = self::AUTH_PLAIN;
+
+            return;
+        }
+
+        if (strpos($auth, self::AUTH_LOGIN) !== false) {
+            $this->authType = self::AUTH_LOGIN;
+
+            return;
+        }
+    }
+
+    /**
      * Connect to SMTP Server
      *
      * @return void
@@ -264,6 +304,8 @@ class SmtpTransport extends AbstractTransport
                 throw new SocketException('SMTP server did not accept the connection.', null, $e2);
             }
         }
+
+        $this->_parseAuthType();
     }
 
     /**
@@ -280,13 +322,28 @@ class SmtpTransport extends AbstractTransport
 
         $username = $this->_config['username'];
         $password = $this->_config['password'];
+        if (empty($this->authType)) {
+            $replyCode = $this->_authPlain($username, $password);
+            if ($replyCode === '235') {
+                return;
+            }
 
-        $replyCode = $this->_authPlain($username, $password);
-        if ($replyCode === '235') {
+            $this->_authLogin($username, $password);
+
             return;
         }
 
-        $this->_authLogin($username, $password);
+        if ($this->authType === self::AUTH_PLAIN) {
+            $this->_authPlain($username, $password);
+
+            return;
+        }
+
+        if ($this->authType === self::AUTH_LOGIN) {
+            $this->_authLogin($username, $password);
+
+            return;
+        }
     }
 
     /**
@@ -466,6 +523,7 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('QUIT', false);
         $this->_socket()->disconnect();
+        $this->authType = null;
     }
 
     /**
