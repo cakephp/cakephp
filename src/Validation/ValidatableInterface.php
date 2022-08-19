@@ -18,6 +18,8 @@ namespace Cake\Validation;
 
 /**
  * Describes objects that can be validated by passing a Validator object.
+ *
+ * @deprecated 4.4.5 This interface is unused.
  */
 interface ValidatableInterface
 {
