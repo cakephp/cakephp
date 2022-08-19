@@ -41,20 +41,20 @@ class QueryFactory
      * Create a new SelectQuery instance.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields Fields/columns list for the query.
-     * @param array|string $tables List of tables to query.
+     * @param array|string $table List of tables to query.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\SelectQuery
      */
     public function select(
         ExpressionInterface|Closure|array|string|float|int $fields = [],
-        array|string $tables = [],
+        array|string $table = [],
         array $types = []
     ): SelectQuery {
         $query = new SelectQuery($this->connection);
 
         $query
             ->select($fields)
-            ->from($tables)
+            ->from($table)
             ->setDefaultTypes($types);
 
         return $query;

@@ -294,13 +294,13 @@ class Connection implements ConnectionInterface
      * Create a new SelectQuery instance for this connection.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields Fields/columns list for the query.
-     * @param array|string $tables List of tables to query.
+     * @param array|string $table The table or list of tables to query.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\SelectQuery
      */
     public function newSelectQuery(
         ExpressionInterface|Closure|array|string|float|int $fields = [],
-        array|string $tables = [],
+        array|string $table = [],
         array $types = []
     ): SelectQuery {
         return $this->queryFactory()->select($fields, $tables, $types);
@@ -395,7 +395,7 @@ class Connection implements ConnectionInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface
     {
-        return $this->newInsertQuery($table, $values)->execute();
+        return $this->newInsertQuery($table, $values, $types)->execute();
     }
 
     /**
