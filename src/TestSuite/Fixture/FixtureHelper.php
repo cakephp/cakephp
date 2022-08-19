@@ -272,7 +272,7 @@ class FixtureHelper
      *
      * @param \Cake\Database\Connection $connection Database connection
      * @param \Cake\Datasource\FixtureInterface $fixture Database fixture
-     * @return array
+     * @return array<string>
      */
     protected function getForeignReferences(Connection $connection, FixtureInterface $fixture): array
     {

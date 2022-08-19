@@ -35,7 +35,7 @@ class SaveOptionsBuilder extends ArrayObject
     /**
      * Options
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_options = [];
 
@@ -66,7 +66,7 @@ class SaveOptionsBuilder extends ArrayObject
      * This can be used to turn an options array into the object.
      *
      * @throws \InvalidArgumentException If a given option key does not exist.
-     * @param array $array Options array.
+     * @param array<string, mixed> $array Options array.
      * @return $this
      */
     public function parseArrayOptions(array $array)
@@ -201,7 +201,7 @@ class SaveOptionsBuilder extends ArrayObject
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

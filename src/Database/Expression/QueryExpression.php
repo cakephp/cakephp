@@ -51,7 +51,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
     /**
      * Constructor. A new expression object can be created without any params and
-     * be built dynamically. Otherwise it is possible to pass an array of conditions
+     * be built dynamically. Otherwise, it is possible to pass an array of conditions
      * containing either a tree-like array structure to be parsed and/or other
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
