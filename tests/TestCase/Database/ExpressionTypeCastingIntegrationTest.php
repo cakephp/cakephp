@@ -135,7 +135,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testSelectWithBetween(): void
     {
         $this->_insert();
-        $result = $this->connection->newSelectQuery('id', 'ordered_uuid_items')
+        $result = $this->connection->newSelectQuery(fields: 'id', table: 'ordered_uuid_items')
             ->where(function (QueryExpression $exp) {
                 return $exp->between(
                     'id',
@@ -156,7 +156,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testSelectWithFunction(): void
     {
         $this->_insert();
-        $result = $this->connection->newSelectQuery('id', 'ordered_uuid_items')
+        $result = $this->connection->newSelectQuery(fields: 'id', table: 'ordered_uuid_items')
             ->where(function (QueryExpression $exp, Query $q) {
                 return $exp->eq(
                     'id',

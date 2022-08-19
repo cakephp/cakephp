@@ -263,8 +263,8 @@ class TupleComparisonQueryTest extends TestCase
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
                     $this->connection->newSelectQuery(
-                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
+                        fields: ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                        table: ['ArticlesAlias' => 'articles']
                     )
                     ->where(['ArticlesAlias.id' => 1]),
                     [],

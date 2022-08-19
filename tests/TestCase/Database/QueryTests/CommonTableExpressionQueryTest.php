@@ -72,7 +72,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $query = $this->connection->newSelectQuery()
             ->with(new CommonTableExpression('cte', function () {
-                return $this->connection->newSelectQuery(['col' => 1]);
+                return $this->connection->newSelectQuery(fields: ['col' => 1]);
             }))
             ->select('col')
             ->from('cte');
@@ -195,7 +195,7 @@ class CommonTableExpressionQueryTest extends TestCase
         );
 
         // test initial state
-        $result = $this->connection->newSelectQuery('*', 'articles')
+        $result = $this->connection->newSelectQuery(fields: '*', table: 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertFalse($result->fetch('assoc'));
@@ -213,7 +213,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->into('articles')
             ->values(
                 $this->connection
-                    ->newSelectQuery('*', 'cte')
+                    ->newSelectQuery(fields: '*', table: 'cte')
             );
 
         $this->assertRegExpSql(
@@ -252,7 +252,7 @@ class CommonTableExpressionQueryTest extends TestCase
             '`INSERT INTO ... WITH` syntax is not supported in SQL Server.'
         );
 
-        $query = $this->connection->newInsertQuery('articles')
+        $query = $this->connection->newInsertQuery(table: 'articles')
             ->insert(['title', 'body'])
             ->values(
                 $this->connection->newSelectQuery()
@@ -285,7 +285,7 @@ class CommonTableExpressionQueryTest extends TestCase
         ];
 
         // test updated state
-        $result = $this->connection->newSelectQuery('*', 'articles')
+        $result = $this->connection->newSelectQuery(fields: '*', table: 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertEquals($expected, $result->fetch('assoc'));
@@ -303,7 +303,7 @@ class CommonTableExpressionQueryTest extends TestCase
         );
 
         // test initial state
-        $result = $this->connection->newSelectQuery(['count' => 'COUNT(*)'], 'articles')
+        $result = $this->connection->newSelectQuery(fields: ['count' => 'COUNT(*)'], table: 'articles')
             ->where(['published' => 'Y'])
             ->execute();
         $this->assertEquals(['count' => '3'], $result->fetch('assoc'));

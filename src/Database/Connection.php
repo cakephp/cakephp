@@ -303,7 +303,7 @@ class Connection implements ConnectionInterface
         array|string $table = [],
         array $types = []
     ): SelectQuery {
-        return $this->queryFactory()->select($fields, $tables, $types);
+        return $this->queryFactory()->select($fields, $table, $types);
     }
 
     /**
