@@ -529,6 +529,9 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _is(string $type, array $args): bool
     {
+        if ($type === 'ssl') {
+            deprecationWarning('The `ssl` detector is deprecated. Use `https` instead.');
+        }
         $detect = static::$_detectors[$type];
         if (is_callable($detect)) {
             array_unshift($args, $this);
