@@ -260,7 +260,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         if ($isDebug) {
             $trace = (array)Debugger::formatTrace($exception->getTrace(), [
                 'format' => 'array',
-                'args' => false,
+                'args' => true,
             ]);
             $origin = [
                 'file' => $exception->getFile() ?: 'null',

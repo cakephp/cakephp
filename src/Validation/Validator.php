@@ -155,7 +155,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Contains the validation messages associated with checking the presence
      * for each corresponding field.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $_presenceMessages = [];
 
@@ -170,14 +170,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Contains the validation messages associated with checking the emptiness
      * for each corresponding field.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $_allowEmptyMessages = [];
 
     /**
      * Contains the flags which specify what is empty for each corresponding field.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected $_allowEmptyFlags = [];
 

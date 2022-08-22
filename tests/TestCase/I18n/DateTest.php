@@ -16,9 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
+use Cake\I18n\I18n;
+use Cake\I18n\Package;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -38,6 +41,16 @@ class DateTest extends TestCase
         Configure::write('Error.ignoredDeprecationPaths', [
             'src/I18n/Date.php',
         ]);
+
+        Cache::clear('_cake_core_');
+        I18n::setTranslator('cake', function () {
+            $package = new Package();
+            $package->setMessages([
+                '{0} ago' => '{0} ago (translated)',
+            ]);
+
+            return $package;
+        }, 'fr_FR');
     }
 
     /**
@@ -112,6 +125,17 @@ class DateTest extends TestCase
         $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'en-US');
         $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM';
         $this->assertStringStartsWith($expected, $result);
+    }
+
+    /**
+     * @dataProvider classNameProvider
+     */
+    public function testDiffForHumans(string $class): void
+    {
+        I18n::setLocale('fr_FR');
+        $time = new $class('yesterday');
+        $this->assertSame('1 day ago (translated)', $time->diffForHumans());
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**

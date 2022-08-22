@@ -166,7 +166,7 @@ class Inflector
     /**
      * Method cache array.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static $_cache = [];
 

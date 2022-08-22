@@ -99,7 +99,7 @@ class PaginatorComponent extends Component
      * These settings are used to build the queries made and control other pagination settings.
      *
      * If your settings contain a key with the current table's alias. The data inside that key will be used.
-     * Otherwise the top level configuration will be used.
+     * Otherwise, the top level configuration will be used.
      *
      * ```
      *  $settings = [

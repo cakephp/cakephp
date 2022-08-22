@@ -115,7 +115,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Cached decoded JSON data.
      *
-     * @var array
+     * @var mixed
      */
     protected $_json;
 

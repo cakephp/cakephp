@@ -260,6 +260,7 @@ use Cake\Error\Debugger;
         border-bottom: 1px solid #ccc;
     }
     </style>
+    <?php require CAKE . 'Error/Debug/dumpHeader.html'; ?>
 </head>
 <body>
     <header>

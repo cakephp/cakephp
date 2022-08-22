@@ -73,7 +73,7 @@ class ArrayContext implements ContextInterface
     /**
      * Context data for this object.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_context;
 

@@ -137,7 +137,7 @@ class Shell
      * Contains tasks to load and instantiate
      *
      * @var array|bool
-     * @link https://book.cakephp.org/4/en/console-and-shells.html#Shell::$tasks
+     * @link https://book.cakephp.org/4/en/console-commands/shells.html#shell-tasks
      */
     public $tasks = [];
 
@@ -181,7 +181,7 @@ class Shell
      *
      * @param \Cake\Console\ConsoleIo|null $io An io instance.
      * @param \Cake\ORM\Locator\LocatorInterface|null $locator Table locator instance.
-     * @link https://book.cakephp.org/4/en/console-and-shells.html#Shell
+     * @link https://book.cakephp.org/4/en/console-commands/shells.html
      */
     public function __construct(?ConsoleIo $io = null, ?LocatorInterface $locator = null)
     {

@@ -29,7 +29,7 @@ class FormatterLocator
     /**
      * A registry to retain formatter objects.
      *
-     * @var array
+     * @var array<string, \Cake\I18n\FormatterInterface|class-string<\Cake\I18n\FormatterInterface>>
      */
     protected $registry = [];
 
@@ -44,7 +44,7 @@ class FormatterLocator
     /**
      * Constructor.
      *
-     * @param array $registry An array of key-value pairs where the key is the
+     * @param array<string, class-string<\Cake\I18n\FormatterInterface>> $registry An array of key-value pairs where the key is the
      * formatter name the value is a FQCN for the formatter.
      */
     public function __construct(array $registry = [])
@@ -58,7 +58,7 @@ class FormatterLocator
      * Sets a formatter into the registry by name.
      *
      * @param string $name The formatter name.
-     * @param string $className A FQCN for a formatter.
+     * @param class-string<\Cake\I18n\FormatterInterface> $className A FQCN for a formatter.
      * @return void
      */
     public function set(string $name, string $className): void
@@ -81,10 +81,13 @@ class FormatterLocator
         }
 
         if (!$this->converted[$name]) {
-            $this->registry[$name] = new $this->registry[$name]();
+            /** @var class-string<\Cake\I18n\FormatterInterface> $formatter */
+            $formatter = $this->registry[$name];
+            $this->registry[$name] = new $formatter();
             $this->converted[$name] = true;
         }
 
+        /** @var \Cake\I18n\FormatterInterface */
         return $this->registry[$name];
     }
 }

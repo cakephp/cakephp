@@ -133,7 +133,7 @@ class SelectLoader
     /**
      * Returns the default options to use for the eagerLoader
      *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _defaultOptions(): array
     {

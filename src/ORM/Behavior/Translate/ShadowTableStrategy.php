@@ -593,7 +593,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the main table fields.
      *
-     * @return array
+     * @return array<string>
      */
     protected function mainFields()
     {
@@ -613,7 +613,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the translation table fields.
      *
-     * @return array
+     * @return array<string>
      */
     protected function translatedFields()
     {

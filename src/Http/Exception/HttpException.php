@@ -32,7 +32,7 @@ class HttpException extends CakeException
     protected $_defaultCode = 500;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $headers = [];
 
@@ -51,7 +51,7 @@ class HttpException extends CakeException
     /**
      * Sets HTTP response headers.
      *
-     * @param array $headers Array of header name and value pairs.
+     * @param array<string, mixed> $headers Array of header name and value pairs.
      * @return void
      */
     public function setHeaders(array $headers): void
@@ -62,7 +62,7 @@ class HttpException extends CakeException
     /**
      * Returns array of response headers.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getHeaders(): array
     {

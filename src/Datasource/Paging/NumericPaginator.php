@@ -55,7 +55,7 @@ class NumericPaginator implements PaginatorInterface
     /**
      * Paging params after pagination operation is done.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected $_pagingParams = [];
 
@@ -69,7 +69,7 @@ class NumericPaginator implements PaginatorInterface
      * and control other pagination settings.
      *
      * If your settings contain a key with the current table's alias. The data
-     * inside that key will be used. Otherwise the top level configuration will
+     * inside that key will be used. Otherwise, the top level configuration will
      * be used.
      *
      * ```
@@ -402,7 +402,7 @@ class NumericPaginator implements PaginatorInterface
     /**
      * Get paging params after pagination operation.
      *
-     * @return array
+     * @return array<string, array>
      */
     public function getPagingParams(): array
     {

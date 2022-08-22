@@ -63,7 +63,7 @@ class Socket
     /**
      * This variable contains an array with the last error number (num) and string (str)
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $lastError = [];
 
@@ -96,7 +96,7 @@ class Socket
      * Used to capture connection warnings which can happen when there are
      * SSL errors for example.
      *
-     * @var array
+     * @var array<string>
      */
     protected $_connectionErrors = [];
 

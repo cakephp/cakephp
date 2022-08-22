@@ -51,7 +51,7 @@ class EagerLoadable
      * A list of options to pass to the association object for loading
      * the records.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_config = [];
 
@@ -250,7 +250,7 @@ class EagerLoadable
      * Gets the list of options to pass to the association object for loading
      * the records.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getConfig(): array
     {
@@ -291,7 +291,7 @@ class EagerLoadable
      * Returns a representation of this object that can be passed to
      * Cake\ORM\EagerLoader::contain()
      *
-     * @return array
+     * @return array<string, array>
      */
     public function asContainArray(): array
     {

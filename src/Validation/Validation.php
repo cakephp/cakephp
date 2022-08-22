@@ -696,7 +696,7 @@ class Validation
      * The list of what is considered to be boolean values, may be set via $booleanValues.
      *
      * @param string|int|bool $check Value to check.
-     * @param array $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
+     * @param array<string|int|bool> $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success.
      */
     public static function boolean($check, array $booleanValues = []): bool
@@ -714,7 +714,7 @@ class Validation
      * The list of what is considered to be truthy values, may be set via $truthyValues.
      *
      * @param string|int|bool $check Value to check.
-     * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
+     * @param array<string|int|bool> $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
      * @return bool Success.
      */
     public static function truthy($check, array $truthyValues = []): bool
@@ -732,7 +732,7 @@ class Validation
      * The list of what is considered to be falsey values, may be set via $falseyValues.
      *
      * @param string|int|bool $check Value to check.
-     * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
+     * @param array<string|int|bool> $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
      * @return bool Success.
      */
     public static function falsey($check, array $falseyValues = []): bool

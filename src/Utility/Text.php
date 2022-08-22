@@ -954,7 +954,7 @@ class Text
      * to the decimal value of the character
      *
      * @param string $string String to convert.
-     * @return array
+     * @return array<int>
      */
     public static function utf8(string $string): array
     {

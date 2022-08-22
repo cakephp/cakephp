@@ -73,7 +73,7 @@ class ResultSet implements ResultSetInterface
      * List of associations that should be placed under the `_matchingData`
      * result key.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_matchingMap = [];
 
@@ -88,7 +88,7 @@ class ResultSet implements ResultSetInterface
      * Map of fields that are fetched from the statement with
      * their type and the table they belong to
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_map = [];
 
@@ -96,7 +96,7 @@ class ResultSet implements ResultSetInterface
      * List of matching associations and the column keys to expect
      * from each of them.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_matchingMapColumns = [];
 
@@ -568,7 +568,7 @@ class ResultSet implements ResultSetInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo()
     {

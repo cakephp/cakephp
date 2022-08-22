@@ -1071,7 +1071,7 @@ trait EntityTrait
     /**
      * Get a list of invalid fields and their data for errors upon validation/patching
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getInvalid(): array
     {
@@ -1096,7 +1096,7 @@ trait EntityTrait
      * This value could not be patched into the entity and is simply copied into the _invalid property for debugging
      * purposes or to be able to log it away.
      *
-     * @param array $fields The values to set.
+     * @param array<string, mixed> $fields The values to set.
      * @param bool $overwrite Whether to overwrite pre-existing values for $field.
      * @return $this
      */

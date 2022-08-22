@@ -118,7 +118,7 @@ class FieldTypeConverter
      * using the corresponding Type class.
      *
      * @param array $row The array with the fields to be casted
-     * @return array
+     * @return array<string, mixed>
      */
     public function __invoke(array $row): array
     {
