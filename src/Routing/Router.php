@@ -401,7 +401,7 @@ class Router
      * - `_port` - Set the port if you need to create links on non-standard ports.
      * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
      * - `#` - Allows you to set URL hash fragments.
-     * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
+     * - `_https` - Set to true to convert the generated URL to https, or false to force http.
      * - `_name` - Name of route. If you have setup named routes you can use this key
      *   to specify it.
      *
@@ -449,7 +449,13 @@ class Router
             }
 
             if (isset($url['_ssl'])) {
-                $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
+                deprecationWarning('`_ssl` option is deprecated. Use `_https` instead.');
+                $url['_https'] = $url['_ssl'];
+                unset($url['_ssl']);
+            }
+
+            if (isset($url['_https'])) {
+                $url['_scheme'] = $url['_https'] === true ? 'https' : 'http';
             }
 
             if (isset($url['_full']) && $url['_full'] === true) {
@@ -458,7 +464,7 @@ class Router
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
             }
-            unset($url['_ssl'], $url['_full'], $url['#']);
+            unset($url['_https'], $url['_full'], $url['#']);
 
             $url = static::_applyUrlFilters($url);
 

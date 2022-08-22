@@ -271,7 +271,7 @@ class RoutesCommandTest extends TestCase
      */
     public function testGenerateBoolParams(): void
     {
-        $this->exec('routes generate controller:Articles action:index _ssl:true _host:example.com');
+        $this->exec('routes generate controller:Articles action:index _https:true _host:example.com');
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('> https://example.com/app/articles');
     }
