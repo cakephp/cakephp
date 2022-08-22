@@ -31,7 +31,7 @@ interface BatchCastingInterface
      * @param array $values The original array of values containing the fields to be casted
      * @param array<string> $fields The field keys to cast
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted.
-     * @return array
+     * @return array<string, mixed>
      */
     public function manyToPHP(array $values, array $fields, Driver $driver): array;
 }

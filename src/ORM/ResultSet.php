@@ -200,7 +200,7 @@ class ResultSet implements ResultSetInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

@@ -402,7 +402,7 @@ class Response implements ResponseInterface, Stringable
      * Holds all the cache directives that will be converted
      * into headers when sending the request
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_cacheDirectives = [];
 
@@ -1169,7 +1169,7 @@ class Response implements ResponseInterface, Stringable
      *
      * In order to interact with this method you must mark responses as not modified.
      * You need to set at least one of the `Last-Modified` or `Etag` response headers
-     * before calling this method. Otherwise a comparison will not be possible.
+     * before calling this method. Otherwise, a comparison will not be possible.
      *
      * @param \Cake\Http\ServerRequest $request Request object
      * @return bool Whether the response is 'modified' based on cache headers.
@@ -1276,7 +1276,7 @@ class Response implements ResponseInterface, Stringable
      *
      * Returns an associative array of cookie name => cookie data.
      *
-     * @return array
+     * @return array<string, array>
      */
     public function getCookies(): array
     {
@@ -1324,9 +1324,9 @@ class Response implements ResponseInterface, Stringable
     public function cors(ServerRequest $request): CorsBuilder
     {
         $origin = $request->getHeaderLine('Origin');
-        $ssl = $request->is('ssl');
+        $https = $request->is('https');
 
-        return new CorsBuilder($this, $origin, $ssl);
+        return new CorsBuilder($this, $origin, $https);
     }
 
     /**

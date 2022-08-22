@@ -55,7 +55,7 @@ interface ConnectionInterface
     /**
      * Get the configuration data used to create the connection.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function config(): array;
 }

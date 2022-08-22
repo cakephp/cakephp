@@ -169,7 +169,7 @@ class PostsController extends AppController
     {
         $data = [
             'host' => $this->request->host(),
-            'isSsl' => $this->request->is('ssl'),
+            'isSsl' => $this->request->is('https'),
         ];
 
         return $this->getResponse()->withStringBody(json_encode($data));

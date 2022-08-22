@@ -128,8 +128,8 @@ class IdentifierQuoter
     /**
      * A generic identifier quoting function used for various parts of the query
      *
-     * @param array $part the part of the query to quote
-     * @return array
+     * @param array<string, mixed> $part the part of the query to quote
+     * @return array<string, mixed>
      */
     protected function _basicQuoter(array $part): array
     {
@@ -148,7 +148,7 @@ class IdentifierQuoter
      * object
      *
      * @param array $joins The joins to quote.
-     * @return array
+     * @return array<string, array>
      */
     protected function _quoteJoins(array $joins): array
     {

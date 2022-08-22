@@ -108,7 +108,7 @@ class Router
     /**
      * A hash of request context data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $_requestContext = [];
 
@@ -160,7 +160,7 @@ class Router
     /**
      * Cache of parsed route paths
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $_routePaths = [];
 
