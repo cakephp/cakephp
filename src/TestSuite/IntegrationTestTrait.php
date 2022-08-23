@@ -594,7 +594,7 @@ trait IntegrationTestTrait
             'QUERY_STRING' => $query,
             'REQUEST_URI' => $url,
         ];
-        if (!empty($hostInfo['ssl'])) {
+        if (!empty($hostInfo['https'])) {
             $env['HTTPS'] = 'on';
         }
         if (isset($hostInfo['host'])) {
@@ -733,7 +733,7 @@ trait IntegrationTestTrait
             $hostData['host'] = $uri->getHost();
         }
         if ($uri->getScheme()) {
-            $hostData['ssl'] = $uri->getScheme() === 'https';
+            $hostData['https'] = $uri->getScheme() === 'https';
         }
 
         return [$path, $query, $hostData];

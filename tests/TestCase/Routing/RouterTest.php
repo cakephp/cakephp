@@ -1929,13 +1929,12 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test that the ssl option works.
+     * Test that the https option works.
      */
-    public function testGenerationWithSslOption(): void
+    public function testGenerationWithHttpsOption(): void
     {
         Router::fullBaseUrl('http://app.test');
-        $routes = Router::createRouteBuilder('/');
-        $routes->connect('/{controller}/{action}/*');
+        Router::createRouteBuilder('/')->connect('/{controller}/{action}/*');
         $request = new ServerRequest([
             'url' => '/images/index',
             'params' => [
@@ -1946,23 +1945,22 @@ class RouterTest extends TestCase
         Router::setRequest($request);
 
         $result = Router::url([
-            '_ssl' => true,
+            '_https' => true,
         ]);
         $this->assertSame('https://app.test/Images/index', $result);
 
         $result = Router::url([
-            '_ssl' => false,
+            '_https' => false,
         ]);
         $this->assertSame('http://app.test/Images/index', $result);
     }
 
     /**
-     * Test ssl option when the current request is ssl.
+     * Test https option when the current request is https.
      */
-    public function testGenerateWithSslInSsl(): void
+    public function testGenerateWithHttpsInHttps(): void
     {
-        $routes = Router::createRouteBuilder('/');
-        $routes->connect('/{controller}/{action}/*');
+        Router::createRouteBuilder('/')->connect('/{controller}/{action}/*');
         $request = new ServerRequest([
             'url' => '/images/index',
             'environment' => ['HTTP_HOST' => 'app.test', 'HTTPS' => 'on'],
@@ -1975,12 +1973,12 @@ class RouterTest extends TestCase
         Router::setRequest($request);
 
         $result = Router::url([
-            '_ssl' => false,
+            '_https' => false,
         ]);
         $this->assertSame('http://app.test/Images/index', $result);
 
         $result = Router::url([
-            '_ssl' => true,
+            '_https' => true,
         ]);
         $this->assertSame('https://app.test/Images/index', $result);
     }
