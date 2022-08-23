@@ -7,6 +7,5 @@ class ReflectionDependency
 {
     public function __construct()
     {
-
     }
 }
