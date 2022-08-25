@@ -22,6 +22,7 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -1695,25 +1696,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test update method.
-     */
-    public function testUpdateWithTableExpression(): void
-    {
-        $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
-        $table = $this->getTableLocator()->get('articles');
-
-        $query = $table->query();
-        $result = $query->update($query->newExpr('articles, authors'))
-            ->set(['title' => 'First'])
-            ->where(['articles.author_id = authors.id'])
-            ->andWhere(['authors.name' => 'mariano'])
-            ->execute();
-
-        $this->assertInstanceOf(StatementInterface::class, $result);
-        $this->assertGreaterThan(0, $result->rowCount());
-    }
-
-    /**
      * Test insert method.
      */
     public function testInsert(): void
@@ -1890,16 +1872,17 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $query = new Query($this->connection, $table);
-        $query
+        $results = $query
             ->select()
             ->contain([
-                'articles' => function ($q) {
+                'articles' => function (Query $q) {
                     return $q->where(['articles.id' => 1]);
                 },
-            ]);
+            ])
+            ->all();
 
         $ids = [];
-        foreach ($query as $entity) {
+        foreach ($results as $entity) {
             foreach ((array)$entity->articles as $article) {
                 $ids[] = $article->id;
             }
@@ -1916,14 +1899,15 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $query = new Query($this->connection, $table);
-        $query
+        $results = $query
             ->select()
             ->contain('articles', function ($q) {
                 return $q->where(['articles.id' => 1]);
-            });
+            })
+            ->all();
 
         $ids = [];
-        foreach ($query as $entity) {
+        foreach ($results as $entity) {
             foreach ((array)$entity->articles as $article) {
                 $ids[] = $article->id;
             }
@@ -2299,7 +2283,7 @@ class QueryTest extends TestCase
     public function testCountCacheDirty(): void
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->disableOriginalConstructor()
+            ->setConstructorArgs([$this->connection, $this->fetchTable('Articles')])
             ->onlyMethods(['_performCount'])
             ->getMock();
 
@@ -2564,8 +2548,8 @@ class QueryTest extends TestCase
                 'articles.published' => 'string',
                 'published' => 'string',
             ],
-            'decorators' => 0,
             'executed' => false,
+            'decorators' => 0,
             'hydrate' => false,
             'formatters' => 1,
             'mapReducers' => 1,
@@ -3970,10 +3954,24 @@ class QueryTest extends TestCase
             ->select(['column']);
 
         $binder = new ValueBinder();
-        $function = new $this->expressionClass('MyFunction', [$query]);
+        $function = new FunctionExpression('MyFunction', [$query]);
         $this->assertSame(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
             preg_replace('/[`"\[\]]/', '', $function->sql($binder))
         );
+    }
+
+    public function testUnionBindings()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+
+        $queryA = $table->find()->select('id')->where(['published' => 'N']);
+        $queryB = $table->find()->select('id')->where(['published' => 'Y', 'author_id !=' => 3]);
+
+        $union = $queryA->union($queryB);
+
+        $union->all();
+
+        $this->expectNotToPerformAssertions();
     }
 }

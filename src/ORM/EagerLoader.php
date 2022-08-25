@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use Cake\Database\Query as DatabaseQuery;
 use Closure;
 use InvalidArgumentException;
 
@@ -240,7 +241,7 @@ class EagerLoader
     {
         $this->_matching ??= new static();
 
-        $options += ['joinType' => Query::JOIN_TYPE_INNER];
+        $options += ['joinType' => DatabaseQuery::JOIN_TYPE_INNER];
         $sharedOptions = ['negateMatch' => false, 'matching' => true] + $options;
 
         $contains = [];

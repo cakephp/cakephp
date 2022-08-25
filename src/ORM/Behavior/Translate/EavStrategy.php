@@ -20,6 +20,7 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Database\Query as DatabaseQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
@@ -134,7 +135,7 @@ class EavStrategy implements TranslateStrategyInterface
             $this->table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
-                'joinType' => $filter ? Query::JOIN_TYPE_INNER : Query::JOIN_TYPE_LEFT,
+                'joinType' => $filter ? DatabaseQuery::JOIN_TYPE_INNER : DatabaseQuery::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
                 'propertyName' => $field . '_translation',
             ]);
@@ -210,8 +211,8 @@ class EavStrategy implements TranslateStrategyInterface
 
             if ($changeFilter) {
                 $filter = $options['filterByCurrentLocale']
-                    ? Query::JOIN_TYPE_INNER
-                    : Query::JOIN_TYPE_LEFT;
+                    ? DatabaseQuery::JOIN_TYPE_INNER
+                    : DatabaseQuery::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }

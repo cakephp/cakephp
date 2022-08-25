@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Query as DatabaseQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectWithPivotLoader;
@@ -59,7 +60,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected string $_joinType = Query::JOIN_TYPE_INNER;
+    protected string $_joinType = DatabaseQuery::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
@@ -1108,7 +1109,7 @@ class BelongsToMany extends Association
             $name => [
                 'table' => $junctionTable->getTable(),
                 'conditions' => $conditions,
-                'type' => Query::JOIN_TYPE_INNER,
+                'type' => DatabaseQuery::JOIN_TYPE_INNER,
             ],
         ];
 
@@ -1278,7 +1279,7 @@ class BelongsToMany extends Association
             $present[$i] = array_values($entity->extract($assocForeignKey));
         }
 
-        foreach ($existing as $existingLink) {
+        foreach ($existing->all() as $existingLink) {
             $existingKeys = $existingLink->extract($keys);
             $found = false;
             foreach ($unmatchedEntityKeys as $i => $unmatchedKeys) {

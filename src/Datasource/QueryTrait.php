@@ -287,7 +287,7 @@ trait QueryTrait
             $results = $this->_cache->fetch($this);
         }
         if ($results === null) {
-            $results = $this->_decorateResults($this->_execute());
+            $results = $this->_decorateResults($this->executeSelect());
             if ($this->_cache) {
                 $this->_cache->store($this, $results);
             }
@@ -552,7 +552,7 @@ trait QueryTrait
      *
      * @return iterable
      */
-    abstract protected function _execute(): iterable;
+    abstract protected function executeSelect(): iterable;
 
     /**
      * Decorates the results iterator with MapReduce routines and formatters

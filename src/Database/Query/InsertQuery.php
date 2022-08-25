@@ -19,6 +19,7 @@ namespace Cake\Database\Query;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Query;
+use Cake\Database\QueryInterface;
 use InvalidArgumentException;
 
 /**
@@ -94,12 +95,12 @@ class InsertQuery extends Query
      * or by providing an array of value sets. Additionally $data can be a Query
      * instance to insert data from another SELECT statement.
      *
-     * @param \Cake\Database\Expression\ValuesExpression|\Cake\Database\Query|array $data The data to insert.
+     * @param \Cake\Database\Expression\ValuesExpression|\Cake\Database\QueryInterface|array $data The data to insert.
      * @return $this
      * @throws \Cake\Database\Exception\DatabaseException if you try to set values before declaring columns.
      *   Or if you try to set values on non-insert queries.
      */
-    public function values(ValuesExpression|Query|array $data)
+    public function values(ValuesExpression|QueryInterface|array $data)
     {
         if (empty($this->_parts['insert'])) {
             throw new DatabaseException(

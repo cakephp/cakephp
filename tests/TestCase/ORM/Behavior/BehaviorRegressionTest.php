@@ -60,7 +60,7 @@ class BehaviorRegressionTest extends TestCase
         $table->setEntityClass(NumberTree::class);
 
         /** @var \TestApp\Model\Entity\NumberTree[] $all */
-        $all = $table->find('threaded')->find('translations');
+        $all = $table->find('threaded')->find('translations')->all();
         $results = [];
         foreach ($all as $node) {
             $results[] = $node->translation('dan')->name;

@@ -1196,13 +1196,19 @@ class HasManyTest extends TestCase
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
         $sizeArticles = count($entity->articles);
-        $this->assertCount($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
+        $this->assertCount(
+            $sizeArticles,
+            $authors->Articles->find('all')->where(['author_id' => $entity['id']])->all()
+        );
 
         $entity->set('articles', []);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
 
-        $this->assertCount(0, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
+        $this->assertCount(
+            0,
+            $authors->Articles->find('all')->where(['author_id' => $entity['id']])->all()
+        );
     }
 
     /**

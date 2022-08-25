@@ -20,11 +20,11 @@ use Cake\Collection\Collection;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Query as DatabaseQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
-use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Closure;
 use InvalidArgumentException;
@@ -49,7 +49,7 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected string $_joinType = Query::JOIN_TYPE_INNER;
+    protected string $_joinType = DatabaseQuery::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
@@ -524,7 +524,7 @@ class HasMany extends Association
                 });
                 $query = $this->find()->where($conditions);
                 $ok = true;
-                foreach ($query as $assoc) {
+                foreach ($query->all() as $assoc) {
                     $ok = $ok && $target->delete($assoc, $options);
                 }
 

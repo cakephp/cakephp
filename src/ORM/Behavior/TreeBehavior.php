@@ -197,7 +197,7 @@ class TreeBehavior extends Behavior
             'for' => $primaryKeyValue,
             'fields' => [$this->_getPrimaryKey(), $config['parent'], $config['level']],
             'order' => $config['left'],
-        ]);
+        ])->all();
 
         /** @var \Cake\Datasource\EntityInterface $node */
         foreach ($children as $node) {
@@ -228,19 +228,25 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $query = $this->_scope($this->_table->query())
-                ->where(
-                    fn (QueryExpression $exp) => $exp
-                        ->gte($config['leftField'], $left + 1)
-                        ->lte($config['leftField'], $right - 1)
-                );
             if ($this->getConfig('cascadeCallbacks')) {
+                $query = $this->_scope($this->_table->query())
+                    ->where(
+                        fn (QueryExpression $exp) => $exp
+                            ->gte($config['leftField'], $left + 1)
+                            ->lte($config['leftField'], $right - 1)
+                    );
+
                 $entities = $query->toArray();
                 foreach ($entities as $entityToDelete) {
                     $this->_table->delete($entityToDelete, ['atomic' => false]);
                 }
             } else {
-                $query->delete()
+                $query = $this->_scope($this->_table->query()->delete())
+                    ->where(
+                        fn (QueryExpression $exp) => $exp
+                            ->gte($config['leftField'], $left + 1)
+                            ->lte($config['leftField'], $right - 1)
+                    )
                     ->execute();
             }
         }
@@ -900,7 +906,7 @@ class TreeBehavior extends Behavior
 
         /** @var \Cake\Database\Expression\IdentifierExpression $field */
         foreach ([$config['leftField'], $config['rightField']] as $field) {
-            $query = $this->_scope($this->_table->query());
+            $query = $this->_table->query()->update();
             $exp = $query->newExpr();
 
             $movement = clone $exp;
@@ -914,7 +920,7 @@ class TreeBehavior extends Behavior
             $where = clone $exp;
             $where->add($field)->add($conditions)->setConjunction('');
 
-            $query->update()
+            $this->_scope($query)
                 ->set($exp->eq($field, $movement))
                 ->where($where)
                 ->execute();

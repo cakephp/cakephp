@@ -1273,7 +1273,7 @@ trait PaginatorTestTrait
     {
         /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['all', 'count', 'applyOptions'])
+            ->onlyMethods(['all', 'count', 'applyOptions', 'getConnection', 'getRepository'])
             ->addMethods(['total'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -1283,6 +1283,10 @@ trait PaginatorTestTrait
             ->getMock();
 
         $query->expects($this->any())
+            ->method('getConnection')
+            ->willReturn(ConnectionManager::get('test'));
+
+        $query->expects($this->any())
             ->method('count')
             ->will($this->returnValue(2));
 
@@ -1290,9 +1294,9 @@ trait PaginatorTestTrait
             ->method('all')
             ->will($this->returnValue($results));
 
-        if ($table) {
-            $query->repository($table);
-        }
+        $query->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($table ?: $this->_getMockPosts(['query']));
 
         return $query;
     }

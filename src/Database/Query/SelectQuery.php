@@ -22,6 +22,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\QueryInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Closure;
@@ -670,11 +671,11 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * `SELECT id, name FROM things d UNION SELECT id, title FROM articles a`
      *
-     * @param \Cake\Database\Query|string $query full SQL query to be used in UNION operator
+     * @param \Cake\Database\QueryInterface|string $query full SQL query to be used in UNION operator
      * @param bool $overwrite whether to reset the list of queries to be operated or not
      * @return $this
      */
-    public function union(Query|string $query, bool $overwrite = false)
+    public function union(QueryInterface|string $query, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['union'] = [];
@@ -705,11 +706,11 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * `SELECT id, name FROM things d UNION ALL SELECT id, title FROM articles a`
      *
-     * @param \Cake\Database\Query|string $query full SQL query to be used in UNION operator
+     * @param \Cake\Database\QueryInterface|string $query full SQL query to be used in UNION operator
      * @param bool $overwrite whether to reset the list of queries to be operated or not
      * @return $this
      */
-    public function unionAll(Query|string $query, bool $overwrite = false)
+    public function unionAll(QueryInterface|string $query, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['union'] = [];

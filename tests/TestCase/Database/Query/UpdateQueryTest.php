@@ -159,6 +159,24 @@ class UpdateQueryTest extends TestCase
     }
 
     /**
+     * Test update with table expression.
+     */
+    public function testUpdateWithTableExpression(): void
+    {
+        $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
+
+        $query = $this->connection->newUpdateQuery();
+        $result = $query->update($query->newExpr('articles, authors'))
+            ->set(['title' => 'First'])
+            ->where(['articles.author_id = authors.id'])
+            ->andWhere(['authors.name' => 'mariano'])
+            ->execute();
+
+        $this->assertInstanceOf(StatementInterface::class, $result);
+        $this->assertGreaterThan(0, $result->rowCount());
+    }
+
+    /**
      * Tests update with subquery that references itself
      */
     public function testUpdateSubquery(): void

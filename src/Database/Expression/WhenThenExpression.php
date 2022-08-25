@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Query;
+use Cake\Database\QueryInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -277,7 +277,7 @@ class WhenThenExpression implements ExpressionInterface
         ) {
             $when = $this->_castToExpression($when, $this->whenType);
         }
-        if ($when instanceof Query) {
+        if ($when instanceof QueryInterface) {
             $when = sprintf('(%s)', $when->sql($binder));
         } elseif ($when instanceof ExpressionInterface) {
             $when = $when->sql($binder);

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Query;
+use Cake\Database\QueryInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
@@ -529,7 +529,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $template = $len === 1 ? '%s' : '(%s)';
         $parts = [];
         foreach ($this->_conditions as $part) {
-            if ($part instanceof Query) {
+            if ($part instanceof QueryInterface) {
                 $part = '(' . $part->sql($binder) . ')';
             } elseif ($part instanceof ExpressionInterface) {
                 $part = $part->sql($binder);

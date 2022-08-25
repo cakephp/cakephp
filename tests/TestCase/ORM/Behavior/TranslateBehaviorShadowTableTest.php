@@ -836,7 +836,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertNotFalse($table->save($article));
 
         $results = $this->_extractTranslations(
-            $table->find('translations')->where(['id' => 1])
+            $table->find('translations')->where(['id' => 1])->all()
         )->first();
 
         $this->assertSame('Mi nuevo titulo', $results['spa']['title']);
@@ -890,7 +890,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
                 ],
             ],
         ];
-        $result = $table->find('translations')->where(['id' => $result->id]);
+        $result = $table->find('translations')->where(['id' => $result->id])->all();
         $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
     }
 

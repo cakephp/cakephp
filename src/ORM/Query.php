@@ -17,10 +17,14 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayObject;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\Query\SelectQuery;
+use Cake\Database\QueryInterface as DatabaseQueryInterface;
+use Cake\Database\StatementInterface;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -38,8 +42,36 @@ use JsonSerializable;
  * required.
  *
  * @property \Cake\ORM\Table $_repository Instance of a table object this query is bound to.
+ * @method mixed clause(string $name)
+ * @method \Cake\Database\Expression\QueryExpression newExpr(\Cake\Database\ExpressionInterface|array|string|null $rawExpression = null)
+ * @method \Cake\Database\FunctionsBuilder func()
+ * @method $this setValueBinder(?\Cake\Database\ValueBinder $binder)
+ * @method \Cake\Database\ValueBinder getValueBinder()
+ * @method \Cake\Database\TypeMap getTypeMap()
+ * @method \Cake\Database\TypeMap getSelectTypeMap()
+ * @method array<string, string> getDefaultTypes()
+ * @method $this from(array|string $tables = [], bool $overwrite = false)
+ * @method $this select(\Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields = [], bool $overwrite = false)
+ * @method $this group(\Cake\Database\ExpressionInterface|array|string $fields, bool $overwrite = false)
+ * @method $this union(\Cake\Database\QueryInterface|string $query, bool $overwrite = false)
+ * @method $this unionAll(\Cake\Database\QueryInterface|string $query, bool $overwrite = false)
+ * @method $this order(\Cake\Database\ExpressionInterface|\Closure|array|string $fields, bool $overwrite = false)
+ * @method $this orderAsc(\Cake\Database\ExpressionInterface|\Closure|array|string $fields, bool $overwrite = false)
+ * @method $this orderDesc(\Cake\Database\ExpressionInterface|\Closure|array|string $fields, bool $overwrite = false)
+ * @method $this setSelectTypeMap(\Cake\Database\TypeMap $typeMap)
+ * @method $this enableResultsCasting()
+ * @method $this disableResultsCasting()
+ * @method $this decorateResults(?\Closure $callback, bool $overwrite = false)
+ * @method $this delete(?string $table = null)
+ * @method $this join(array|string $tables, array $types = [], bool $overwrite = false)
+ * @method $this innerJoin(array|string $table, \Cake\Database\ExpressionInterface|\Closure|array|string $conditions = [], array $types = [])
+ * @method $this update(\Cake\Database\ExpressionInterface|string $table)
+ * @method $this set(\Cake\Database\Expression\QueryExpression|\Closure|array|string $key, mixed $value = null, array|string $types = [])
+ * @method $this values(\Cake\Database\Expression\ValuesExpression|\Cake\Database\QueryInterface|array $data)
+ * @method $this insert(array $columns, array $types = [])
+ * @method $this into(string $table)
  */
-class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
+class Query implements DatabaseQueryInterface, JsonSerializable, QueryInterface
 {
     use QueryTrait {
         cache as private _cache;
@@ -66,6 +98,19 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @var bool
      */
     public const OVERWRITE = true;
+
+    protected Connection $connection;
+
+    protected DatabaseQuery $dbQuery;
+
+    /**
+     * Indicates whether internal state of this query was changed, this is used to
+     * discard internal cached objects such as the transformed query or the reference
+     * to the executed statement.
+     *
+     * @var bool
+     */
+    protected bool $_dirty = true;
 
     /**
      * Whether the user select any fields before being executed, this is used
@@ -144,9 +189,77 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function __construct(Connection $connection, Table $table)
     {
-        parent::__construct($connection);
+        $this->connection = $connection;
         $this->repository($table);
-        $this->addDefaultTypes($table);
+    }
+
+    /**
+     * Sets the connection instance to be used for executing and transforming this query.
+     *
+     * @param \Cake\Database\Connection $connection Connection instance
+     * @return $this
+     */
+    public function setConnection(Connection $connection)
+    {
+        $this->_dirty();
+        $this->connection = $connection;
+
+        return $this;
+    }
+
+    /**
+     * Gets the connection instance to be used for executing and transforming this query.
+     *
+     * @return \Cake\Database\Connection
+     */
+    public function getConnection(): Connection
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Get database query instance.
+     *
+     * @param string|null $type Query type.
+     * @return \Cake\Database\Query
+     * @template T of string|null
+     * @psalm-param T $type
+     * @psalm-return (
+     *     T is \Cake\Database\Query::TYPE_UPDATE
+     *     ? \Cake\Database\Query\UpdateQuery
+     *     : (
+     *          T is \Cake\Database\Query::TYPE_INSERT
+     *          ? \Cake\Database\Query\InsertQuery
+     *          : (
+     *              T is \Cake\Database\Query::TYPE_DELETE
+     *              ? \Cake\Database\Query\DeleteQuery
+     *              : \Cake\Database\Query\SelectQuery
+     *          )
+     *     )
+     * )
+     */
+    protected function dbQuery(?string $type = null): DatabaseQuery
+    {
+        if (!isset($this->dbQuery)) {
+            $this->dbQuery = match ($type) {
+                DatabaseQuery::TYPE_SELECT => $this->getConnection()->newSelectQuery(),
+                DatabaseQuery::TYPE_UPDATE => $this->getConnection()->newUpdateQuery(),
+                DatabaseQuery::TYPE_INSERT => $this->getConnection()->newInsertQuery(),
+                DatabaseQuery::TYPE_DELETE => $this->getConnection()->newDeleteQuery(),
+                default => $this->getConnection()->newSelectQuery(),
+            };
+
+            $this->addDefaultTypes($this->getRepository());
+
+            return $this->dbQuery;
+        }
+
+        if ($type && $this->dbQuery->type() !== $type) {
+            throw new CakeException('Query type conversion is pending');
+        }
+
+        /** @phpstan-ignore-next-line */
+        return $this->dbQuery;
     }
 
     /**
@@ -223,19 +336,26 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         ExpressionInterface|Table|Association|Closure|array|string|float|int $fields = [],
         bool $overwrite = false
     ) {
-        if ($fields instanceof Association) {
-            $fields = $fields->getTarget();
-        }
+        if ($fields instanceof Closure) {
+            $fields = $fields($this);
+        } else {
+            if ($fields instanceof Association) {
+                $fields = $fields->getTarget();
+            }
 
-        if ($fields instanceof Table) {
-            if ($this->aliasingEnabled) {
-                $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->getAlias());
-            } else {
-                $fields = $fields->getSchema()->columns();
+            if ($fields instanceof Table) {
+                if ($this->aliasingEnabled) {
+                    $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->getAlias());
+                } else {
+                    $fields = $fields->getSchema()->columns();
+                }
             }
         }
 
-        return parent::select($fields, $overwrite);
+        $this->dbQuery(DatabaseQuery::TYPE_SELECT)->select($fields, $overwrite);
+        $this->_dirty();
+
+        return $this;
     }
 
     /**
@@ -262,6 +382,347 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         return $this->select($fields, $overwrite);
+    }
+
+    /**
+     * Adds a condition or set of conditions to be used in the WHERE clause for this
+     * query. Conditions can be expressed as an array of fields as keys with
+     * comparison operators in it, the values for the array will be used for comparing
+     * the field to such literal. Finally, conditions can be expressed as a single
+     * string or an array of strings.
+     *
+     * When using arrays, each entry will be joined to the rest of the conditions using
+     * an `AND` operator. Consecutive calls to this function will also join the new
+     * conditions specified using the AND operator. Additionally, values can be
+     * expressed using expression objects which can include other query objects.
+     *
+     * Any conditions created with this methods can be used with any `SELECT`, `UPDATE`
+     * and `DELETE` type of queries.
+     *
+     * ### Conditions using operators:
+     *
+     * ```
+     * $query->where([
+     *     'posted >=' => new DateTime('3 days ago'),
+     *     'title LIKE' => 'Hello W%',
+     *     'author_id' => 1,
+     * ], ['posted' => 'datetime']);
+     * ```
+     *
+     * The previous example produces:
+     *
+     * `WHERE posted >= 2012-01-27 AND title LIKE 'Hello W%' AND author_id = 1`
+     *
+     * Second parameter is used to specify what type is expected for each passed
+     * key. Valid types can be used from the mapped with Database\Type class.
+     *
+     * ### Nesting conditions with conjunctions:
+     *
+     * ```
+     * $query->where([
+     *     'author_id !=' => 1,
+     *     'OR' => ['published' => true, 'posted <' => new DateTime('now')],
+     *     'NOT' => ['title' => 'Hello']
+     * ], ['published' => boolean, 'posted' => 'datetime']
+     * ```
+     *
+     * The previous example produces:
+     *
+     * `WHERE author_id = 1 AND (published = 1 OR posted < '2012-02-01') AND NOT (title = 'Hello')`
+     *
+     * You can nest conditions using conjunctions as much as you like. Sometimes, you
+     * may want to define 2 different options for the same key, in that case, you can
+     * wrap each condition inside a new array:
+     *
+     * `$query->where(['OR' => [['published' => false], ['published' => true]])`
+     *
+     * Would result in:
+     *
+     * `WHERE (published = false) OR (published = true)`
+     *
+     * Keep in mind that every time you call where() with the third param set to false
+     * (default), it will join the passed conditions to the previous stored list using
+     * the `AND` operator. Also, using the same array key twice in consecutive calls to
+     * this method will not override the previous value.
+     *
+     * ### Using expressions objects:
+     *
+     * ```
+     * $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
+     * $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
+     * ```
+     *
+     * The previous example produces:
+     *
+     * `WHERE (id != 100 OR author_id != 1) AND published = 1`
+     *
+     * Other Query objects that be used as conditions for any field.
+     *
+     * ### Adding conditions in multiple steps:
+     *
+     * You can use callbacks to construct complex expressions, functions
+     * receive as first argument a new QueryExpression object and this query instance
+     * as second argument. Functions must return an expression object, that will be
+     * added the list of conditions for the query using the `AND` operator.
+     *
+     * ```
+     * $query
+     *   ->where(['title !=' => 'Hello World'])
+     *   ->where(function ($exp, $query) {
+     *     $or = $exp->or(['id' => 1]);
+     *     $and = $exp->and(['id >' => 2, 'id <' => 10]);
+     *    return $or->add($and);
+     *   });
+     * ```
+     *
+     * * The previous example produces:
+     *
+     * `WHERE title != 'Hello World' AND (id = 1 OR (id > 2 AND id < 10))`
+     *
+     * ### Conditions as strings:
+     *
+     * ```
+     * $query->where(['articles.author_id = authors.id', 'modified IS NULL']);
+     * ```
+     *
+     * The previous example produces:
+     *
+     * `WHERE articles.author_id = authors.id AND modified IS NULL`
+     *
+     * Please note that when using the array notation or the expression objects, all
+     * *values* will be correctly quoted and transformed to the correspondent database
+     * data type automatically for you, thus securing your application from SQL injections.
+     * The keys however, are not treated as unsafe input, and should be validated/sanitized.
+     *
+     * If you use string conditions make sure that your values are correctly quoted.
+     * The safest thing you can do is to never use string conditions.
+     *
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to filter on.
+     * @param array<string, string> $types Associative array of type names used to bind values to query
+     * @param bool $overwrite whether to reset conditions with passed list or not
+     * @see \Cake\Database\TypeFactory
+     * @see \Cake\Database\Expression\QueryExpression
+     * @return $this
+     */
+    public function where(
+        ExpressionInterface|Closure|array|string|null $conditions = null,
+        array $types = [],
+        bool $overwrite = false
+    ) {
+        if ($conditions instanceof Closure) {
+            $conditions = $conditions($this->newExpr(), $this);
+        }
+
+        $this->dbQuery()->where($conditions, $types, $overwrite);
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Connects any previously defined set of conditions to the provided list
+     * using the AND operator. This function accepts the conditions list in the same
+     * format as the method `where` does, hence you can use arrays, expression objects
+     * callback functions or strings.
+     *
+     * It is important to notice that when calling this function, any previous set
+     * of conditions defined for this query will be treated as a single argument for
+     * the AND operator. This function will not only operate the most recently defined
+     * condition, but all the conditions as a whole.
+     *
+     * When using an array for defining conditions, creating constraints form each
+     * array entry will use the same logic as with the `where()` function. This means
+     * that each array entry will be joined to the other using the AND operator, unless
+     * you nest the conditions in the array using other operator.
+     *
+     * ### Examples:
+     *
+     * ```
+     * $query->where(['title' => 'Hello World')->andWhere(['author_id' => 1]);
+     * ```
+     *
+     * Will produce:
+     *
+     * `WHERE title = 'Hello World' AND author_id = 1`
+     *
+     * ```
+     * $query
+     *   ->where(['OR' => ['published' => false, 'published is NULL']])
+     *   ->andWhere(['author_id' => 1, 'comments_count >' => 10])
+     * ```
+     *
+     * Produces:
+     *
+     * `WHERE (published = 0 OR published IS NULL) AND author_id = 1 AND comments_count > 10`
+     *
+     * ```
+     * $query
+     *   ->where(['title' => 'Foo'])
+     *   ->andWhere(function ($exp, $query) {
+     *     return $exp
+     *       ->or(['author_id' => 1])
+     *       ->add(['author_id' => 2]);
+     *   });
+     * ```
+     *
+     * Generates the following conditions:
+     *
+     * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
+     *
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions to add with AND.
+     * @param array<string, string> $types Associative array of type names used to bind values to query
+     * @see \Cake\Database\Query::where()
+     * @see \Cake\Database\TypeFactory
+     * @return $this
+     */
+    public function andWhere(ExpressionInterface|Closure|array|string $conditions, array $types = [])
+    {
+        $this->dbQuery()->andWhere($conditions, $types);
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Set the page of results you want.
+     *
+     * This method provides an easier to use interface to set the limit + offset
+     * in the record set you want as results. If empty the limit will default to
+     * the existing limit clause, and if that too is empty, then `25` will be used.
+     *
+     * Pages must start at 1.
+     *
+     * @param int $num The page number you want.
+     * @param int|null $limit The number of rows you want in the page. If null
+     *  the current limit clause will be used.
+     * @return $this
+     * @throws \InvalidArgumentException If page number < 1.
+     */
+    public function page(int $num, ?int $limit = null)
+    {
+        $this->dbQuery()->page($num, $limit);
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Sets the number of records that should be retrieved from database,
+     * accepts an integer or an expression object that evaluates to an integer.
+     * In some databases, this operation might not be supported or will require
+     * the query to be transformed in order to limit the result set size.
+     *
+     * ### Examples
+     *
+     * ```
+     * $query->limit(10) // generates LIMIT 10
+     * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
+     * ```
+     *
+     * @param \Cake\Database\ExpressionInterface|int|null $limit number of records to be returned
+     * @return $this
+     */
+    public function limit(ExpressionInterface|int|null $limit)
+    {
+        $this->dbQuery()->limit($limit);
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Sets the number of records that should be skipped from the original result set
+     * This is commonly used for paginating large results. Accepts an integer or an
+     * expression object that evaluates to an integer.
+     *
+     * In some databases, this operation might not be supported or will require
+     * the query to be transformed in order to limit the result set size.
+     *
+     * ### Examples
+     *
+     * ```
+     * $query->offset(10) // generates OFFSET 10
+     * $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
+     * ```
+     *
+     * @param \Cake\Database\ExpressionInterface|int|null $offset number of records to be skipped
+     * @return $this
+     */
+    public function offset(ExpressionInterface|int|null $offset)
+    {
+        $this->dbQuery()->offset($offset);
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Adds a single or multiple fields to be used in the ORDER clause for this query.
+     * Fields can be passed as an array of strings, array of expression
+     * objects, a single expression or a single string.
+     *
+     * If an array is passed, keys will be used as the field itself and the value will
+     * represent the order in which such field should be ordered. When called multiple
+     * times with the same fields as key, the last order definition will prevail over
+     * the others.
+     *
+     * By default this function will append any passed argument to the list of fields
+     * to be selected, unless the second argument is set to true.
+     *
+     * ### Examples:
+     *
+     * ```
+     * $query->order(['title' => 'DESC', 'author_id' => 'ASC']);
+     * ```
+     *
+     * Produces:
+     *
+     * `ORDER BY title DESC, author_id ASC`
+     *
+     * ```
+     * $query
+     *     ->order(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->order('author_id');
+     * ```
+     *
+     * Will generate:
+     *
+     * `ORDER BY title DESC NULLS FIRST, author_id`
+     *
+     * ```
+     * $expression = $query->newExpr()->add(['id % 2 = 0']);
+     * $query->order($expression)->order(['title' => 'ASC']);
+     * ```
+     *
+     * and
+     *
+     * ```
+     * $query->order(function ($exp, $query) {
+     *     return [$exp->add(['id % 2 = 0']), 'title' => 'ASC'];
+     * });
+     * ```
+     *
+     * Will both become:
+     *
+     * `ORDER BY (id %2 = 0), title ASC`
+     *
+     * Order fields/directions are not sanitized by the query builder.
+     * You should use an allowed list of fields/directions when passing
+     * in user-supplied data to `order()`.
+     *
+     * If you need to set complex expressions as order conditions, you
+     * should use `orderAsc()` or `orderDesc()`.
+     *
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $fields fields to be added to the list
+     * @param bool $overwrite whether to reset order with field list or not
+     * @return $this
+     */
+    public function order(ExpressionInterface|Closure|array|string $fields, bool $overwrite = false)
+    {
+        $this->dbQuery()->order($fields, $overwrite);
+        $this->_dirty();
+
+        return $this;
     }
 
     /**
@@ -627,7 +1088,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_LEFT,
+                'joinType' => DatabaseQuery::JOIN_TYPE_LEFT,
                 'fields' => false,
             ])
             ->getMatching();
@@ -676,7 +1137,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_INNER,
+                'joinType' => DatabaseQuery::JOIN_TYPE_INNER,
                 'fields' => false,
             ])
             ->getMatching();
@@ -740,7 +1201,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_LEFT,
+                'joinType' => DatabaseQuery::JOIN_TYPE_LEFT,
                 'fields' => false,
                 'negateMatch' => true,
             ])
@@ -868,8 +1329,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $clone->offset(null);
         $clone->mapReduce(null, null, true);
         $clone->formatResults(null, self::OVERWRITE);
-        $clone->setSelectTypeMap(new TypeMap());
-        $clone->decorateResults(null, true);
+        if (isset($clone->dbQuery) && $clone->dbQuery instanceof SelectQuery) {
+            $clone->setSelectTypeMap(new TypeMap());
+            $clone->decorateResults(null, true);
+        }
 
         return $clone;
     }
@@ -894,7 +1357,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function __clone()
     {
-        parent::__clone();
+        if (isset($this->dbQuery)) {
+            $this->dbQuery = clone $this->dbQuery;
+        }
+
         if ($this->_eagerLoader !== null) {
             $this->_eagerLoader = clone $this->_eagerLoader;
         }
@@ -946,7 +1412,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             }
         }
 
-        if (!$complex && $this->_valueBinder !== null) {
+        if (!$complex && $this->getValueBinder()->bindings()) {
             /** @var \Cake\Database\Expression\QueryExpression|null $order */
             $order = $this->clause('order');
             $complex = $order === null ? false : $order->hasNestedExpression();
@@ -961,9 +1427,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->disableAutoFields()
                 ->execute();
         } else {
-            $statement = $this->getConnection()->newQuery()
-                ->select($count)
-                ->from(['count_source' => $query])
+            $statement = $this->getConnection()->newSelectQuery($count, ['count_source' => $query])
                 ->execute();
         }
 
@@ -1055,7 +1519,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function cache($key, $config = 'default')
     {
-        if ($this->_type !== self::TYPE_SELECT) {
+        if ($this->dbQuery()->type() !== DatabaseQuery::TYPE_SELECT) {
             throw new DatabaseException('You cannot cache the results of non-select queries.');
         }
 
@@ -1070,7 +1534,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function all(): ResultSetInterface
     {
-        if ($this->_type !== self::TYPE_SELECT) {
+        if ($this->dbQuery()->type() !== DatabaseQuery::TYPE_SELECT) {
             throw new DatabaseException(
                 'You cannot call all() on a non-select query. Use execute() instead.'
             );
@@ -1088,7 +1552,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function triggerBeforeFind(): void
     {
-        if (!$this->_beforeFindFired && $this->_type === self::TYPE_SELECT) {
+        if (!$this->_beforeFindFired && $this->dbQuery()->type() === DatabaseQuery::TYPE_SELECT) {
             $this->_beforeFindFired = true;
 
             $repository = $this->getRepository();
@@ -1105,11 +1569,40 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function sql(?ValueBinder $binder = null): string
     {
-        $this->triggerBeforeFind();
+        if ($this->_dirty) {
+            $this->triggerBeforeFind();
+            $this->_transformQuery();
+        }
 
+        return $this->dbQuery()->sql($binder);
+    }
+
+    /**
+     * Compiles the SQL representation of this query and executes it using the
+     * configured connection object. Returns the resulting statement object.
+     *
+     * Executing a query internally executes several steps, the first one is
+     * letting the connection transform this object to fit its particular dialect,
+     * this might result in generating a different Query object that will be the one
+     * to actually be executed. Immediately after, literal values are passed to the
+     * connection so they are bound to the query in a safe way. Finally, the resulting
+     * statement is decorated with custom objects to execute callbacks for each row
+     * retrieved if necessary.
+     *
+     * Resulting statement is traversable, so it can be used in any loop as you would
+     * with an array.
+     *
+     * This method can be overridden in query subclasses to decorate behavior
+     * around query execution.
+     *
+     * @return \Cake\Database\StatementInterface
+     */
+    public function execute(): StatementInterface
+    {
         $this->_transformQuery();
+        $this->_dirty = false;
 
-        return parent::sql($binder);
+        return $this->dbQuery()->execute();
     }
 
     /**
@@ -1117,18 +1610,26 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return iterable
      */
-    protected function _execute(): iterable
+    protected function executeSelect(): iterable
     {
+        if ($this->_results) {
+            return $this->_results;
+        }
+
         $this->triggerBeforeFind();
         if ($this->_results) {
             return $this->_results;
         }
 
-        $results = parent::all();
+        $this->_transformQuery();
+
+        $results = $this->dbQuery()->all();
         if (!is_array($results)) {
             $results = iterator_to_array($results);
         }
         $results = $this->getEagerLoader()->loadExternal($this, $results);
+
+        $this->_dirty = false;
 
         return $this->resultSetFactory()->createResultSet($this, $results);
     }
@@ -1161,13 +1662,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     protected function _transformQuery(): void
     {
-        if (!$this->_dirty || $this->_type !== self::TYPE_SELECT) {
+        if (!$this->_dirty || $this->dbQuery()->type() !== DatabaseQuery::TYPE_SELECT) {
             return;
         }
 
         $repository = $this->getRepository();
 
-        if (empty($this->_parts['from'])) {
+        if (!$this->dbQuery()->clause('from')) {
             $this->from([$repository->getAlias() => $repository->getTable()]);
         }
         $this->_addDefaultFields();
@@ -1253,7 +1754,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $this->_results = null;
         $this->_resultsCount = null;
-        parent::_dirty();
+        $this->_dirty = true;
     }
 
     /**
@@ -1262,17 +1763,16 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This changes the query type to be 'update'.
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param \Cake\Database\ExpressionInterface|string|null $table Unused parameter.
      * @return $this
      */
-    public function update(ExpressionInterface|string|null $table = null)
+    public function update()
     {
-        if (!$table) {
-            $repository = $this->getRepository();
-            $table = $repository->getTable();
-        }
+        $repository = $this->getRepository();
 
-        return parent::update($table);
+        $this->dbQuery(DatabaseQuery::TYPE_UPDATE)->update($repository->getTable());
+        $this->_dirty();
+
+        return $this;
     }
 
     /**
@@ -1281,16 +1781,18 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This changes the query type to be 'delete'.
      * Can be combined with the where() method to create delete queries.
      *
-     * @param string|null $table Unused parameter.
      * @return $this
      */
-    public function delete(?string $table = null)
+    public function delete()
     {
         $repository = $this->getRepository();
-        $this->from([$repository->getAlias() => $repository->getTable()]);
+        $table = [$repository->getAlias() => $repository->getTable()];
 
-        // We do not pass $table to parent class here
-        return parent::delete();
+        $this->dbQuery(DatabaseQuery::TYPE_DELETE)
+            ->from($table);
+        $this->_dirty();
+
+        return $this;
     }
 
     /**
@@ -1312,7 +1814,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $table = $repository->getTable();
         $this->into($table);
 
-        return parent::insert($columns, $types);
+        $this->dbQuery(DatabaseQuery::TYPE_INSERT)->insert($columns, $types);
+        $this->_dirty();
+
+        return $this;
     }
 
     /**
@@ -1336,7 +1841,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $eagerLoader = $this->getEagerLoader();
 
-        return parent::__debugInfo() + [
+        return $this->dbQuery()->__debugInfo() + [
             'hydrate' => $this->_hydrate,
             'formatters' => count($this->_formatters),
             'mapReducers' => count($this->_mapReduce),
@@ -1398,5 +1903,67 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function isAutoFieldsEnabled(): ?bool
     {
         return $this->_autoFields;
+    }
+
+    /**
+     * Will iterate over every specified part. Traversing functions can aggregate
+     * results using variables in the closure or instance variables. This function
+     * is commonly used as a way for traversing all query parts that
+     * are going to be used for constructing a query.
+     *
+     * The callback will receive 2 parameters, the first one is the value of the query
+     * part that is being iterated and the second the name of such part.
+     *
+     * ### Example
+     * ```
+     * $query->select(['title'])->from('articles')->traverse(function ($value, $clause) {
+     *     if ($clause === 'select') {
+     *         var_dump($value);
+     *     }
+     * });
+     * ```
+     *
+     * @param \Closure $callback Callback to be executed for each part
+     * @return $this
+     */
+    public function traverse(Closure $callback)
+    {
+        $this->dbQuery()->traverse($callback);
+
+        return $this;
+    }
+
+    /**
+     * Magic method for proxing calls to internal database query instance.
+     *
+     * @param string $name Method name.
+     * @param array $arguments Arguments.
+     * @return mixed
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        $type = match ($name) {
+            'update', 'set' => DatabaseQuery::TYPE_UPDATE,
+            'insert', 'into', 'values' => DatabaseQuery::TYPE_INSERT,
+            'delete' => DatabaseQuery::TYPE_DELETE,
+            default => null,
+        };
+
+        if (
+            in_array($name, ['andWhere', 'having', 'andHaving', 'order'])
+            && isset($arguments[0])
+            && $arguments[0] instanceof Closure
+        ) {
+            $arguments[0] = $arguments[0]($this->newExpr(), $this);
+            $this->_dirty();
+        }
+
+        $return = call_user_func_array([$this->dbQuery($type), $name], $arguments);
+
+        if ($return instanceof DatabaseQuery) {
+            return $this;
+        }
+
+        return $return;
     }
 }

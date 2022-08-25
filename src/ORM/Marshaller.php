@@ -410,7 +410,7 @@ class Marshaller
 
             $existing = [];
             /** @var \Cake\Datasource\EntityInterface $row */
-            foreach ($query as $row) {
+            foreach ($query->all() as $row) {
                 $k = implode(';', $row->extract($keyFields));
                 $existing[$k] = $row;
             }
@@ -692,7 +692,7 @@ class Marshaller
 
         if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {
             /** @var \Cake\Datasource\EntityInterface $entity */
-            foreach ($maybeExistentQuery as $entity) {
+            foreach ($maybeExistentQuery->all() as $entity) {
                 $key = implode(';', $entity->extract($primary));
                 if (isset($indexed[$key])) {
                     $output[] = $this->merge($entity, $indexed[$key], $options);

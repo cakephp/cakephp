@@ -32,7 +32,7 @@ use Stringable;
  * for dynamically constructing each query part, execute it and transform it
  * to a specific SQL dialect.
  */
-abstract class Query implements ExpressionInterface, Stringable
+abstract class Query implements QueryInterface, Stringable
 {
     use TypeMapTrait;
 

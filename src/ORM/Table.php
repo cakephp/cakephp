@@ -23,6 +23,7 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -1753,7 +1754,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function exists(QueryExpression|Closure|array|string|null $conditions): bool
+    public function exists(ExpressionInterface|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
             $this->find('all')

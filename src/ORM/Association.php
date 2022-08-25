@@ -24,6 +24,7 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Query as DatabaseQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -163,7 +164,7 @@ abstract class Association
      *
      * @var string
      */
-    protected string $_joinType = Query::JOIN_TYPE_LEFT;
+    protected string $_joinType = DatabaseQuery::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table

@@ -18,7 +18,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Query;
+use Cake\Database\QueryInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypeMap;
 use Cake\Database\TypeMapTrait;
@@ -51,11 +51,11 @@ class ValuesExpression implements ExpressionInterface
     protected array $_columns = [];
 
     /**
-     * The Query object to use as a values expression
+     * The QueryInterface object to use as a values expression
      *
-     * @var \Cake\Database\Query|null
+     * @var \Cake\Database\QueryInterface|null
      */
-    protected ?Query $_query = null;
+    protected ?QueryInterface $_query = null;
 
     /**
      * Whether values have been casted to expressions
@@ -80,17 +80,17 @@ class ValuesExpression implements ExpressionInterface
     /**
      * Add a row of data to be inserted.
      *
-     * @param \Cake\Database\Query|array $values Array of data to append into the insert, or
+     * @param \Cake\Database\QueryInterface|array $values Array of data to append into the insert, or
      *   a query for doing INSERT INTO .. SELECT style commands
      * @return void
-     * @throws \Cake\Database\Exception\DatabaseException When mixing array + Query data types.
+     * @throws \Cake\Database\Exception\DatabaseException When mixing array + QueryInterface data types.
      */
-    public function add(Query|array $values): void
+    public function add(QueryInterface|array $values): void
     {
         if (
             (
                 count($this->_values) &&
-                $values instanceof Query
+                $values instanceof QueryInterface
             ) ||
             (
                 $this->_query &&
@@ -101,7 +101,7 @@ class ValuesExpression implements ExpressionInterface
                 'You cannot mix subqueries and array values in inserts.'
             );
         }
-        if ($values instanceof Query) {
+        if ($values instanceof QueryInterface) {
             $this->setQuery($values);
 
             return;
@@ -187,10 +187,10 @@ class ValuesExpression implements ExpressionInterface
      * Sets the query object to be used as the values expression to be evaluated
      * to insert records in the table.
      *
-     * @param \Cake\Database\Query $query The query to set
+     * @param \Cake\Database\QueryInterface $query The query to set
      * @return $this
      */
-    public function setQuery(Query $query)
+    public function setQuery(QueryInterface $query)
     {
         $this->_query = $query;
 
@@ -201,9 +201,9 @@ class ValuesExpression implements ExpressionInterface
      * Gets the query object to be used as the values expression to be evaluated
      * to insert records in the table.
      *
-     * @return \Cake\Database\Query|null
+     * @return \Cake\Database\QueryInterface|null
      */
-    public function getQuery(): ?Query
+    public function getQuery(): ?QueryInterface
     {
         return $this->_query;
     }

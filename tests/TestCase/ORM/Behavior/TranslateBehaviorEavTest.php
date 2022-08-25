@@ -465,7 +465,7 @@ class TranslateBehaviorEavTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $results = $table->find('translations');
+        $results = $table->find('translations')->all();
         $expected = [
             [
                 'eng' => ['title' => 'Title #1', 'body' => 'Content #1', 'description' => 'Description #1', 'locale' => 'eng'],
@@ -493,7 +493,7 @@ class TranslateBehaviorEavTest extends TestCase
             3 => ['Third Article' => 'Third Article Body'],
         ];
 
-        $grouped = $results->all()->combine('title', 'body', 'id');
+        $grouped = $results->combine('title', 'body', 'id');
         $this->assertEquals($expected, $grouped->toArray());
     }
 
@@ -504,7 +504,7 @@ class TranslateBehaviorEavTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $results = $table->find('translations', ['locales' => ['deu', 'cze']]);
+        $results = $table->find('translations', ['locales' => ['deu', 'cze']])->all();
         $expected = [
             [
                 'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
@@ -529,7 +529,7 @@ class TranslateBehaviorEavTest extends TestCase
             3 => ['Third Article' => 'Third Article Body'],
         ];
 
-        $grouped = $results->all()->combine('title', 'body', 'id');
+        $grouped = $results->combine('title', 'body', 'id');
         $this->assertEquals($expected, $grouped->toArray());
     }
 
@@ -546,7 +546,8 @@ class TranslateBehaviorEavTest extends TestCase
                 'valueField' => '_translations.deu.title',
                 'groupField' => 'id',
             ])
-            ->find('translations', ['locales' => ['deu']]);
+            ->find('translations', ['locales' => ['deu']])
+            ->all();
 
         $expected = [
             1 => ['First Article' => 'Titel #1'],
@@ -564,7 +565,7 @@ class TranslateBehaviorEavTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->setLocale('cze');
-        $results = $table->find('translations', ['locales' => ['deu', 'cze']]);
+        $results = $table->find('translations', ['locales' => ['deu', 'cze']])->all();
         $expected = [
             [
                 'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
@@ -589,7 +590,7 @@ class TranslateBehaviorEavTest extends TestCase
             3 => ['Titulek #3' => 'Obsah #3'],
         ];
 
-        $grouped = $results->all()->combine('title', 'body', 'id');
+        $grouped = $results->combine('title', 'body', 'id');
         $this->assertEquals($expected, $grouped->toArray());
     }
 
@@ -1447,7 +1448,7 @@ class TranslateBehaviorEavTest extends TestCase
                 ],
             ],
         ];
-        $result = $table->find('translations')->where(['id' => $result->id]);
+        $result = $table->find('translations')->where(['id' => $result->id])->all();
         $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
     }
 
@@ -1482,7 +1483,7 @@ class TranslateBehaviorEavTest extends TestCase
                 ],
             ],
         ];
-        $result = $table->find('translations')->where(['id' => $result->id]);
+        $result = $table->find('translations')->where(['id' => $result->id])->all();
         $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
     }
 
@@ -1510,7 +1511,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotFalse($table->save($article));
 
         $results = $this->_extractTranslations(
-            $table->find('translations')->where(['id' => 1])
+            $table->find('translations')->where(['id' => 1])->all()
         )->first();
 
         $this->assertArrayHasKey('es', $results, 'New translation added');
@@ -1548,7 +1549,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotFalse($table->save($article));
 
         $results = $this->_extractTranslations(
-            $table->find('translations')->where(['id' => 1])
+            $table->find('translations')->where(['id' => 1])->all()
         )->first();
 
         $this->assertSame('Mi nuevo titulo', $results['spa']['title']);
