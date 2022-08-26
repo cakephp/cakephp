@@ -95,10 +95,11 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery()
-                        ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => 'articles'])
-                        ->where(['ArticlesAlias.author_id' => 1]),
+                    $this->connection->newSelectQuery(
+                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                        ['ArticlesAlias' => 'articles']
+                    )
+                    ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'NOT IN'
                 ),
@@ -120,10 +121,11 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery()
-                        ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => 'articles'])
-                        ->where(['ArticlesAlias.author_id' => 1]),
+                    $this->connection->newSelectQuery(
+                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                        ['ArticlesAlias' => 'articles']
+                    )
+                    ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'IN'
                 ),
@@ -157,10 +159,11 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery()
-                        ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => 'articles'])
-                        ->where(['ArticlesAlias.id' => 1]),
+                    $this->connection->newSelectQuery(
+                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                        ['ArticlesAlias' => 'articles']
+                    )
+                    ->where(['ArticlesAlias.id' => 1]),
                     [],
                     'IN'
                 ),
@@ -233,10 +236,11 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery()
-                        ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => 'articles'])
-                        ->where(['ArticlesAlias.author_id' => 1]),
+                    $this->connection->newSelectQuery(
+                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                        ['ArticlesAlias' => 'articles']
+                    )
+                    ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     '='
                 ),
@@ -258,10 +262,11 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery()
-                        ->select(['ArticlesAlias.id', 'ArticlesAlias.author_id'])
-                        ->from(['ArticlesAlias' => 'articles'])
-                        ->where(['ArticlesAlias.id' => 1]),
+                    $this->connection->newSelectQuery(
+                        fields: ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                        table: ['ArticlesAlias' => 'articles']
+                    )
+                    ->where(['ArticlesAlias.id' => 1]),
                     [],
                     '='
                 ),

@@ -99,8 +99,7 @@ class FunctionExpressionTest extends TestCase
     public function testFunctionWithDatabaseQuery(): void
     {
         $query = ConnectionManager::get('test')
-            ->newSelectQuery()
-            ->select(['column']);
+            ->newSelectQuery(['column']);
 
         $binder = new ValueBinder();
         $function = new $this->expressionClass('MyFunction', [$query]);

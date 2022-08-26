@@ -72,7 +72,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $query = $this->connection->newSelectQuery()
             ->with(new CommonTableExpression('cte', function () {
-                return $this->connection->newSelectQuery()->select(['col' => 1]);
+                return $this->connection->newSelectQuery(fields: ['col' => 1]);
             }))
             ->select('col')
             ->from('cte');
@@ -101,7 +101,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $query = $this->connection->newSelectQuery()
             ->with(new CommonTableExpression('cte', function () {
-                return $this->connection->newSelectQuery()->select(['col' => '1']);
+                return $this->connection->newSelectQuery(['col' => '1']);
             }))
             ->select('col')
             ->from('cte');
@@ -130,11 +130,9 @@ class CommonTableExpressionQueryTest extends TestCase
                 $anchorQuery = $query->select(1);
 
                 $recursiveQuery = $query->getConnection()
-                    ->newSelectQuery()
-                    ->select(function (Query $query) {
+                    ->newSelectQuery(function (Query $query) {
                         return $query->newExpr('col + 1');
-                    })
-                    ->from('cte')
+                    }, 'cte')
                     ->where(['col !=' => 3], ['col' => 'integer']);
 
                 $cteQuery = $anchorQuery->unionAll($recursiveQuery);
@@ -197,9 +195,7 @@ class CommonTableExpressionQueryTest extends TestCase
         );
 
         // test initial state
-        $result = $this->connection->newSelectQuery()
-            ->select('*')
-            ->from('articles')
+        $result = $this->connection->newSelectQuery(fields: '*', table: 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertFalse($result->fetch('assoc'));
@@ -217,9 +213,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->into('articles')
             ->values(
                 $this->connection
-                    ->newSelectQuery()
-                    ->select('*')
-                    ->from('cte')
+                    ->newSelectQuery(fields: '*', table: 'cte')
             );
 
         $this->assertRegExpSql(
@@ -241,9 +235,7 @@ class CommonTableExpressionQueryTest extends TestCase
         ];
 
         // test updated state
-        $result = $this->connection->newSelectQuery()
-            ->select('*')
-            ->from('articles')
+        $result = $this->connection->newSelectQuery('*', 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertEquals($expected, $result->fetch('assoc'));
@@ -260,9 +252,8 @@ class CommonTableExpressionQueryTest extends TestCase
             '`INSERT INTO ... WITH` syntax is not supported in SQL Server.'
         );
 
-        $query = $this->connection->newInsertQuery()
+        $query = $this->connection->newInsertQuery(table: 'articles')
             ->insert(['title', 'body'])
-            ->into('articles')
             ->values(
                 $this->connection->newSelectQuery()
                     ->with(function (CommonTableExpression $cte, SelectQuery $query) {
@@ -294,9 +285,7 @@ class CommonTableExpressionQueryTest extends TestCase
         ];
 
         // test updated state
-        $result = $this->connection->newSelectQuery()
-            ->select('*')
-            ->from('articles')
+        $result = $this->connection->newSelectQuery(fields: '*', table: 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertEquals($expected, $result->fetch('assoc'));
@@ -314,9 +303,7 @@ class CommonTableExpressionQueryTest extends TestCase
         );
 
         // test initial state
-        $result = $this->connection->newSelectQuery()
-            ->select(['count' => 'COUNT(*)'])
-            ->from('articles')
+        $result = $this->connection->newSelectQuery(fields: ['count' => 'COUNT(*)'], table: 'articles')
             ->where(['published' => 'Y'])
             ->execute();
         $this->assertEquals(['count' => '3'], $result->fetch('assoc'));
@@ -340,9 +327,7 @@ class CommonTableExpressionQueryTest extends TestCase
                     'articles.id',
                     $query
                         ->getConnection()
-                        ->newSelectQuery()
-                        ->select('cte.id')
-                        ->from('cte')
+                        ->newSelectQuery('cte.id', 'cte')
                 );
             });
 
@@ -356,9 +341,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $query->execute()->closeCursor();
 
         // test updated state
-        $result = $this->connection->newSelectQuery()
-            ->select(['count' => 'COUNT(*)'])
-            ->from('articles')
+        $result = $this->connection->newSelectQuery(['count' => 'COUNT(*)'], 'articles')
             ->where(['published' => 'Y'])
             ->execute();
         $this->assertEquals(['count' => '1'], $result->fetch('assoc'));
@@ -377,9 +360,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
         // test initial state
         $result = $this->connection
-            ->newSelectQuery()
-            ->select(['count' => 'COUNT(*)'])
-            ->from('articles')
+            ->newSelectQuery(['count' => 'COUNT(*)'], 'articles')
             ->execute();
         $this->assertEquals(['count' => '3'], $result->fetch('assoc'));
         $result->closeCursor();
@@ -401,9 +382,7 @@ class CommonTableExpressionQueryTest extends TestCase
                     'a.id',
                     $query
                         ->getConnection()
-                        ->newSelectQuery()
-                        ->select('cte.id')
-                        ->from('cte')
+                        ->newSelectQuery('cte.id', 'cte')
                 );
             });
 
@@ -425,9 +404,7 @@ class CommonTableExpressionQueryTest extends TestCase
         ];
 
         // test updated state
-        $result = $this->connection->newSelectQuery()
-            ->select('*')
-            ->from('articles')
+        $result = $this->connection->newSelectQuery('*', 'articles')
             ->execute();
         $this->assertEquals($expected, $result->fetch('assoc'));
         $result->closeCursor();
