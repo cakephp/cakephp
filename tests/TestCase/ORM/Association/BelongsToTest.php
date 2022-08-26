@@ -388,6 +388,31 @@ class BelongsToTest extends TestCase
     }
 
     /**
+     * Tests that finder options are passed down their respective associations
+     */
+    public function testFinderOptionsArePassedDownToAssociations(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors = $this->getTableLocator()->get('Authors');
+        $articles->belongsTo('Authors');
+
+        $articlesCalled = $authorsCalled = false;
+        $customOptions = ['myOption' => 'myValue'];
+        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use ($customOptions, &$articlesCalled): void {
+            $this->assertSame($options->getArrayCopy(), $customOptions);
+            $articlesCalled = true;
+        });
+        $authors->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use ($customOptions, &$authorsCalled): void {
+            $this->assertSame($options->getArrayCopy(), $customOptions);
+            $authorsCalled = true;
+        });
+
+        $articles->find('all', $customOptions)->contain(['Authors'])->first();
+        $this->assertTrue($articlesCalled, 'Articles Listener should be called.');
+        $this->assertTrue($authorsCalled, 'Authors Listener should be called.');
+    }
+
+    /**
      * Test that failing to add the foreignKey to the list of fields will
      * still attach associated data.
      */

@@ -770,6 +770,7 @@ abstract class Association
             );
         }
 
+        $dummy->applyOptions($query->getOptions());
         $dummy->where($options['conditions']);
         $this->_dispatchBeforeFind($dummy);
 
