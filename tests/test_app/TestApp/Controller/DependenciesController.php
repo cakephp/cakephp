@@ -71,6 +71,15 @@ class DependenciesController extends Controller
     }
 
     /**
+     * @param \TestApp\ReflectionDependency $dep
+     * @return \Cake\Http\Response
+     */
+    public function reflectionDep(\TestApp\ReflectionDependency $dep)
+    {
+        return $this->response->withStringBody(json_encode(compact('dep')));
+    }
+
+    /**
      * @param mixed $any
      * @return \Cake\Http\Response
      */

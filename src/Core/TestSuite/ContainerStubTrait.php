@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Event\EventInterface;
 use Closure;
+use League\Container\Exception\NotFoundException;
 use LogicException;
 
 /**
@@ -144,7 +145,11 @@ trait ContainerStubTrait
         }
         foreach ($this->containerServices as $key => $factory) {
             if ($container->has($key)) {
-                $container->extend($key)->setConcrete($factory);
+                try {
+                    $container->extend($key)->setConcrete($factory);
+                } catch (NotFoundException $e) {
+                    $container->add($key, $factory);
+                }
             } else {
                 $container->add($key, $factory);
             }
