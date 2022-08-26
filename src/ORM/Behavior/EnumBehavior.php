@@ -107,7 +107,7 @@ class EnumBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity to transform data on
      * @return \Cake\Datasource\EntityInterface
      */
-    private function setEnumField(EntityInterface $entity): EntityInterface
+    protected function setEnumFields(EntityInterface $entity): EntityInterface
     {
         $fieldMap = $this->getConfig('fieldMap');
         /** @var \BackedEnum $enumType */
