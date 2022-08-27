@@ -43,7 +43,7 @@ class EnumBehaviorTest extends TestCase
     /**
      * Check adding entity fields with an enum instance
      */
-    public function test_add_with_enum(): void
+    public function testAddWithEnum(): void
     {
         /** @var \TestApp\Model\Entity\Article $entity */
         $entity = $this->articles->newEntity([
@@ -60,7 +60,7 @@ class EnumBehaviorTest extends TestCase
     /**
      * Check adding entity fields with scalar value representing enum
      */
-    public function test_add_with_scalar_value(): void
+    public function testAddWithScalarValue(): void
     {
         /** @var \TestApp\Model\Entity\Article $entity */
         $entity = $this->articles->newEntity([
@@ -77,7 +77,7 @@ class EnumBehaviorTest extends TestCase
     /**
      * Check adding entity fields with invalid scalar value sets error on field
      */
-    public function test_add_with_invalid_scalar_value(): void
+    public function testAddWithInvalidScalarValue(): void
     {
         /** @var \TestApp\Model\Entity\Article $entity */
         $entity = $this->articles->newEntity([
@@ -95,7 +95,7 @@ class EnumBehaviorTest extends TestCase
     /**
      * Check to get an entity and automatically transform field to an enum instance
      */
-    public function test_get(): void
+    public function testGet(): void
     {
         /** @var \TestApp\Model\Entity\Article $entity */
         $entity = $this->articles->get(1);
@@ -105,7 +105,7 @@ class EnumBehaviorTest extends TestCase
     /**
      * Check updating an entity via an enum instance
      */
-    public function test_update_with_enum(): void
+    public function testUpdateWithEnum(): void
     {
         /** @var \TestApp\Model\Entity\Article $entity */
         $entity = $this->articles->get(1);
@@ -117,7 +117,7 @@ class EnumBehaviorTest extends TestCase
     /**
      * Check updating an entity with scalar value representing enum
      */
-    public function test_update_with_scalar_value(): void
+    public function testUpdateWithScalarValue(): void
     {
         /** @var \TestApp\Model\Entity\Article $entity */
         $entity = $this->articles->get(1);

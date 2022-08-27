@@ -23,7 +23,6 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use ValueError;
 
 /**
  * Enum behavior
@@ -88,11 +87,11 @@ class EnumBehavior extends Behavior
             if ($data->offsetExists($field)) {
                 $value = $data->offsetGet($field);
                 if (is_int($value) || is_string($value)) {
-                    try {
-                        $enumValue = $enumType::from($value);
+                    $enumValue = $enumType::tryFrom($value);
+                    if ($enumValue !== null) {
                         $entity->set($field, $enumValue);
-                    } catch (ValueError $error) {
-                        $entity->setError($field, __('Given value is not valid'));
+                    } else {
+                        $entity->setError($field, __d('cake', 'Given value is not valid'));
                     }
                 }
             }
