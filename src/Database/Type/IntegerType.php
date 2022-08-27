@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use BackedEnum;
 use Cake\Database\Driver;
 use InvalidArgumentException;
 use PDO;
@@ -56,10 +55,6 @@ class IntegerType extends BaseType implements BatchCastingInterface
     {
         if ($value === null || $value === '') {
             return null;
-        }
-
-        if ($value instanceof BackedEnum) {
-            $value = $value->value;
         }
 
         $this->checkNumeric($value);

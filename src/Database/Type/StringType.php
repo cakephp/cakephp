@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use BackedEnum;
 use Cake\Database\Driver;
 use InvalidArgumentException;
 use PDO;
@@ -48,10 +47,6 @@ class StringType extends BaseType implements OptionalConvertInterface
 
         if (is_scalar($value)) {
             return (string)$value;
-        }
-
-        if ($value instanceof BackedEnum) {
-            return $value->value;
         }
 
         throw new InvalidArgumentException(sprintf(
