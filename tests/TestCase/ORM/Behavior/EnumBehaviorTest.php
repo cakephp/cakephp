@@ -75,6 +75,24 @@ class EnumBehaviorTest extends TestCase
     }
 
     /**
+     * Check adding entity fields with invalid scalar value sets error on field
+     */
+    public function test_add_with_invalid_scalar_value(): void
+    {
+        /** @var \TestApp\Model\Entity\Article $entity */
+        $entity = $this->articles->newEntity([
+            'author_id' => 1,
+            'title' => 'My Title',
+            'body' => 'My post',
+            'published' => 'P',
+        ]);
+        $saved = $this->articles->save($entity);
+        $error = $entity->getError('published');
+        $this->assertFalse($saved);
+        $this->assertSame('Given value is not valid', $error[0]);
+    }
+
+    /**
      * Check to get an entity and automatically transform field to an enum instance
      */
     public function test_get(): void

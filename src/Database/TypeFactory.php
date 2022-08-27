@@ -53,6 +53,7 @@ class TypeFactory
         'timestampfractional' => Type\DateTimeFractionalType::class,
         'timestamptimezone' => Type\DateTimeTimezoneType::class,
         'uuid' => Type\UuidType::class,
+        'enum' => Type\EnumType::class,
     ];
 
     /**

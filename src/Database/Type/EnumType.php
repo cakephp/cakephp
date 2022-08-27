@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.1.2
+ * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Type;
@@ -20,64 +20,56 @@ use BackedEnum;
 use Cake\Database\Driver;
 use InvalidArgumentException;
 use PDO;
-use Stringable;
 
 /**
- * String type converter.
+ * Enum type converter.
  *
  * Use to convert string data between PHP and the database types.
  */
-class StringType extends BaseType implements OptionalConvertInterface
+class EnumType extends BaseType
 {
     /**
-     * Convert string data into the database format.
+     * Convert enum instances into the database format.
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string|null
+     * @return string|int|null
      */
-    public function toDatabase(mixed $value, Driver $driver): ?string
+    public function toDatabase(mixed $value, Driver $driver): string|int|null
     {
-        if ($value === null || is_string($value)) {
-            return $value;
-        }
-
-        if ($value instanceof Stringable) {
-            return (string)$value;
-        }
-
-        if (is_scalar($value)) {
-            return (string)$value;
+        if ($value === null) {
+            return null;
         }
 
         if ($value instanceof BackedEnum) {
             return $value->value;
         }
 
+        if (is_int($value) || is_string($value)) {
+            return $value;
+        }
+
         throw new InvalidArgumentException(sprintf(
-            'Cannot convert value of type `%s` to string',
+            'Cannot convert value of type `%s` to string or integer',
             get_debug_type($value)
         ));
     }
 
     /**
-     * Convert string values to PHP strings.
+     * Directly return string or integer because enum conversion happens in behavior
      *
+     * @see \Cake\ORM\Behavior\EnumBehavior::afterMarshal()
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string|null
+     * @return string|int|null
      */
-    public function toPHP(mixed $value, Driver $driver): ?string
+    public function toPHP(mixed $value, Driver $driver): string|int|null
     {
-        if ($value === null) {
-            return null;
-        }
-
-        return (string)$value;
+        return $value;
     }
 
     /**
-     * Get the correct PDO binding type for string data.
+     * Get the correct PDO binding type for string or integer data.
      *
      * @param mixed $value The value being bound.
      * @param \Cake\Database\Driver $driver The driver.
@@ -85,31 +77,21 @@ class StringType extends BaseType implements OptionalConvertInterface
      */
     public function toStatement(mixed $value, Driver $driver): int
     {
+        if (is_int($value)) {
+            return PDO::PARAM_INT;
+        }
+
         return PDO::PARAM_STR;
     }
 
     /**
-     * Marshals request data into PHP strings.
+     * Marshals request data
      *
      * @param mixed $value The value to convert.
-     * @return string|null Converted value.
+     * @return \BackedEnum|string|int|null Converted value.
      */
-    public function marshal(mixed $value): ?string
+    public function marshal(mixed $value): BackedEnum|string|int|null
     {
-        if ($value === null || is_array($value)) {
-            return null;
-        }
-
-        return (string)$value;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return bool False as database results are returned already as strings
-     */
-    public function requiresToPhpCast(): bool
-    {
-        return false;
+        return $value;
     }
 }

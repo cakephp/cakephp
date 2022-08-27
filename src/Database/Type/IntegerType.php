@@ -121,10 +121,6 @@ class IntegerType extends BaseType implements BatchCastingInterface
      */
     public function marshal(mixed $value): ?int
     {
-        if ($value instanceof BackedEnum) {
-            $value = $value->value;
-        }
-
         if ($value === null || $value === '' || !is_numeric($value)) {
             return null;
         }

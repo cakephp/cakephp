@@ -23,6 +23,7 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use ValueError;
 
 /**
  * Enum behavior
@@ -52,29 +53,54 @@ class EnumBehavior extends Behavior
     ];
 
     /**
-     * Transform array data into entity data
+     * Initialize hook
+     *
+     * @param array $config The config for this behavior.
+     * @return void
+     */
+    public function initialize(array $config): void
+    {
+        $schema = $this->_table->getSchema();
+        foreach (array_keys($this->getConfig('fieldMap')) as $field) {
+            $schema->setColumnType($field, 'enum');
+        }
+        $this->_table->setSchema($schema);
+    }
+
+    /**
+     * Transform scalar values to enum instances
      *
      * @param \Cake\Event\EventInterface $event The beforeMarshal event that was fired
-     * @param \ArrayObject $data Data present before converting to an entity
+     * @param \Cake\Datasource\EntityInterface $entity Entity created after marshaling
+     * @param \ArrayObject $data The original request data
      * @param \ArrayObject $options Options passed to the event
      * @return void
      */
-    public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
-    {
+    public function afterMarshal(
+        EventInterface $event,
+        EntityInterface $entity,
+        ArrayObject $data,
+        ArrayObject $options
+    ): void {
         $fieldMap = $this->getConfig('fieldMap');
         /** @var \BackedEnum $enumType */
         foreach ($fieldMap as $field => $enumType) {
             if ($data->offsetExists($field)) {
                 $value = $data->offsetGet($field);
                 if (is_int($value) || is_string($value)) {
-                    $data->offsetSet($field, $enumType::from($value));
+                    try {
+                        $enumValue = $enumType::from($value);
+                        $entity->set($field, $enumValue);
+                    } catch (ValueError $error) {
+                        $entity->setError($field, __('Given value is not valid'));
+                    }
                 }
             }
         }
     }
 
     /**
-     * Transform entity fields into enum instances if they are present.
+     * Transform entity fields into enum instances if they are present
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired
      * @param \Cake\ORM\Query $query Query
@@ -85,7 +111,7 @@ class EnumBehavior extends Behavior
     {
         $query->formatResults(function ($results) {
             return $results->map(function (Entity $entity) {
-                return $this->setEnumField($entity);
+                return $this->setEnumFields($entity);
             });
         });
     }
@@ -100,7 +126,7 @@ class EnumBehavior extends Behavior
      */
     public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
-        $this->setEnumField($entity);
+        $this->setEnumFields($entity);
     }
 
     /**
