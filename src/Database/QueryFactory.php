@@ -89,14 +89,14 @@ class QueryFactory
     /**
      * Create a new UpdateQuery instance.
      *
-     * @param string|null $table The table to update rows of.
+     * @param \Cake\Database\ExpressionInterface|string|null $table The table to update rows of.
      * @param array $values Values to be updated.
      * @param array $conditions Conditions to be set for the update statement.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\UpdateQuery
      */
     public function update(
-        ?string $table = null,
+        ExpressionInterface|string|null $table = null,
         array $values = [],
         array $conditions = [],
         array $types = []
