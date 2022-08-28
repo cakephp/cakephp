@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 use TestApp\Model\Enum\ArticleStatus;
 
@@ -54,7 +55,8 @@ class EnumTypeTest extends TestCase
     {
         $this->assertNull($this->type->toDatabase(null, $this->driver));
         $this->assertSame('Y', $this->type->toDatabase(ArticleStatus::PUBLISHED, $this->driver));
-        $this->assertSame('Y', $this->type->toDatabase(ArticleStatus::PUBLISHED->value, $this->driver));
+        $this->expectException(InvalidArgumentException::class);
+        $this->type->toDatabase(ArticleStatus::PUBLISHED->value, $this->driver);
     }
 
     /**
