@@ -32,7 +32,7 @@ use Cake\ORM\Query;
  *  * Add behavior + config to connect a field with a backed enum
  * ```
  * $this->addBehavior('Enum', [
- *     'fieldMap' => [
+ *     'fieldEnums' => [
  *         'published' => ArticleStatus::class
  *     ]
  * ]);
@@ -48,7 +48,7 @@ class EnumBehavior extends Behavior
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
-        'fieldMap' => [],
+        'fieldEnums' => [],
     ];
 
     /**
@@ -60,7 +60,7 @@ class EnumBehavior extends Behavior
     public function initialize(array $config): void
     {
         $schema = $this->_table->getSchema();
-        foreach (array_keys($this->getConfig('fieldMap')) as $field) {
+        foreach (array_keys($this->getConfig('fieldEnums')) as $field) {
             $schema->setColumnType($field, 'enum');
         }
         $this->_table->setSchema($schema);
@@ -81,9 +81,9 @@ class EnumBehavior extends Behavior
         ArrayObject $data,
         ArrayObject $options
     ): void {
-        $fieldMap = $this->getConfig('fieldMap');
+        $fieldEnums = $this->getConfig('fieldEnums');
         /** @var \BackedEnum $enumType */
-        foreach ($fieldMap as $field => $enumType) {
+        foreach ($fieldEnums as $field => $enumType) {
             if ($data->offsetExists($field)) {
                 $value = $data->offsetGet($field);
                 if (is_int($value) || is_string($value)) {
@@ -134,9 +134,9 @@ class EnumBehavior extends Behavior
      */
     protected function setEnumFields(EntityInterface $entity): EntityInterface
     {
-        $fieldMap = $this->getConfig('fieldMap');
+        $fieldEnums = $this->getConfig('fieldEnums');
         /** @var \BackedEnum $enumType */
-        foreach ($fieldMap as $field => $enumType) {
+        foreach ($fieldEnums as $field => $enumType) {
             if ($entity->has($field)) {
                 $dbValue = $entity->get($field);
                 if (!$dbValue instanceof BackedEnum) {

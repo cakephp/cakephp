@@ -34,7 +34,7 @@ class EnumBehaviorTest extends TestCase
         parent::setUp();
         $articles = $this->getTableLocator()->get('Articles');
         $this->articles = $articles->addBehavior('Enum', [
-            'fieldMap' => [
+            'fieldEnums' => [
                 'published' => ArticleStatus::class,
             ],
         ]);
