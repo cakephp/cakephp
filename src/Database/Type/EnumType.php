@@ -26,7 +26,7 @@ use PDO;
  *
  * Use to convert string data between PHP and the database types.
  */
-class EnumType extends BaseType
+class EnumType extends BaseType implements OptionalConvertInterface
 {
     /**
      * Convert enum instances into the database format.
@@ -93,5 +93,15 @@ class EnumType extends BaseType
     public function marshal(mixed $value): BackedEnum|string|int|null
     {
         return $value;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return bool False since the type class doesn't need to do any conversion for values read from db
+     */
+    public function requiresToPhpCast(): bool
+    {
+        return false;
     }
 }
