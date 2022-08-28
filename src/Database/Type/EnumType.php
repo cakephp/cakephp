@@ -45,8 +45,12 @@ class EnumType extends BaseType
             return $value->value;
         }
 
+        if (is_int($value) || is_string($value)) {
+            return $value;
+        }
+
         throw new InvalidArgumentException(sprintf(
-            'Provided value needs to be a BackedEnum or null. `%s` given',
+            'Cannot convert value of type `%s` to string or integer',
             get_debug_type($value)
         ));
     }

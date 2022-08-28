@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use TestApp\Model\Enum\ArticleStatus;
 
 /**
@@ -116,27 +115,13 @@ class EnumBehaviorTest extends TestCase
     }
 
     /**
-     * Check updating an entity with scalar value fails
+     * Check updating an entity with scalar value representing enum
      */
-    public function testUpdateWithScalarValueFails(): void
+    public function testUpdateWithScalarValue(): void
     {
         /** @var \TestApp\Model\Entity\Article $entity */
         $entity = $this->articles->get(1);
         $entity->published = 'N';
-        $this->expectException(InvalidArgumentException::class);
-        $this->articles->save($entity);
-    }
-
-    /**
-     * Check patching an entity with scalar value representing enum
-     */
-    public function testUpdateWithScalarValuePatchEntity(): void
-    {
-        /** @var \TestApp\Model\Entity\Article $entity */
-        $entity = $this->articles->get(1);
-        $entity = $this->articles->patchEntity($entity, [
-            'published' => 'N',
-        ]);
         $this->articles->save($entity);
         $this->assertSame(ArticleStatus::UNPUBLISHED, $entity->published);
     }
