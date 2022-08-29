@@ -606,8 +606,7 @@ class LinkConstraintTest extends TestCase
             'conditions' => function (QueryExpression $exp, Query $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
-                    ->newQuery()
-                    ->select(['RecentComments.id'])
+                    ->newSelectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
                         return $exp->eq(
@@ -643,8 +642,7 @@ class LinkConstraintTest extends TestCase
             'conditions' => function (QueryExpression $exp, Query $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
-                    ->newQuery()
-                    ->select(['RecentComments.id'])
+                    ->newSelectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
                         return $exp->eq(

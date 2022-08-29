@@ -1194,6 +1194,7 @@ trait PaginatorTestTrait
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])
             ->bind(':start', 1)
             ->bind(':end', 2);
+        debug($query->sql());
 
         $results = $this->Paginator->paginate($query, []);
 

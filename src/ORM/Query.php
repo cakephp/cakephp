@@ -18,9 +18,8 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use Cake\Database\Connection;
-use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\Query\SelectQuery as DbSelectQuery;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -32,14 +31,14 @@ use Closure;
 use JsonSerializable;
 
 /**
- * Extends the base Query class to provide new methods related to association
+ * Extends the Cake\Database\Query\SelectQuery class to provide new methods related to association
  * loading, automatic fields selection, automatic type casting and to wrap results
  * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
  * @property \Cake\ORM\Table $_repository Instance of a table object this query is bound to.
  */
-class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
+class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
 {
     use QueryTrait {
         cache as private _cache;
@@ -628,7 +627,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_LEFT,
+                'joinType' => static::JOIN_TYPE_LEFT,
                 'fields' => false,
             ])
             ->getMatching();
@@ -677,7 +676,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_INNER,
+                'joinType' => static::JOIN_TYPE_INNER,
                 'fields' => false,
             ])
             ->getMatching();
@@ -741,7 +740,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_LEFT,
+                'joinType' => static::JOIN_TYPE_LEFT,
                 'fields' => false,
                 'negateMatch' => true,
             ])
@@ -962,7 +961,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->disableAutoFields()
                 ->execute();
         } else {
-            $statement = $this->getConnection()->newQuery()
+            $statement = $this->getConnection()->newSelectQuery()
                 ->select($count)
                 ->from(['count_source' => $query])
                 ->execute();
@@ -1056,10 +1055,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function cache($key, $config = 'default')
     {
-        if ($this->_type !== self::TYPE_SELECT) {
-            throw new DatabaseException('You cannot cache the results of non-select queries.');
-        }
-
         return $this->_cache($key, $config);
     }
 
@@ -1071,12 +1066,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function all(): ResultSetInterface
     {
-        if ($this->_type !== self::TYPE_SELECT) {
-            throw new DatabaseException(
-                'You cannot call all() on a non-select query. Use execute() instead.'
-            );
-        }
-
         return $this->_all();
     }
 
@@ -1162,7 +1151,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     protected function _transformQuery(): void
     {
-        if (!$this->_dirty || $this->_type !== self::TYPE_SELECT) {
+        if (!$this->_dirty || $this->_type !== static::TYPE_SELECT) {
             return;
         }
 
@@ -1255,65 +1244,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $this->_results = null;
         $this->_resultsCount = null;
         parent::_dirty();
-    }
-
-    /**
-     * Create an update query.
-     *
-     * This changes the query type to be 'update'.
-     * Can be combined with set() and where() methods to create update queries.
-     *
-     * @param \Cake\Database\ExpressionInterface|string|null $table Unused parameter.
-     * @return $this
-     */
-    public function update(ExpressionInterface|string|null $table = null)
-    {
-        if (!$table) {
-            $repository = $this->getRepository();
-            $table = $repository->getTable();
-        }
-
-        return parent::update($table);
-    }
-
-    /**
-     * Create a delete query.
-     *
-     * This changes the query type to be 'delete'.
-     * Can be combined with the where() method to create delete queries.
-     *
-     * @param string|null $table Unused parameter.
-     * @return $this
-     */
-    public function delete(?string $table = null)
-    {
-        $repository = $this->getRepository();
-        $this->from([$repository->getAlias() => $repository->getTable()]);
-
-        // We do not pass $table to parent class here
-        return parent::delete();
-    }
-
-    /**
-     * Create an insert query.
-     *
-     * This changes the query type to be 'insert'.
-     * Note calling this method will reset any data previously set
-     * with Query::values()
-     *
-     * Can be combined with the where() method to create delete queries.
-     *
-     * @param array $columns The columns to insert into.
-     * @param array<string> $types A map between columns & their datatypes.
-     * @return $this
-     */
-    public function insert(array $columns, array $types = [])
-    {
-        $repository = $this->getRepository();
-        $table = $repository->getTable();
-        $this->into($table);
-
-        return parent::insert($columns, $types);
     }
 
     /**

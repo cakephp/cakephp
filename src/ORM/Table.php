@@ -41,6 +41,9 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
+use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Query\InsertQuery;
+use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
@@ -1690,6 +1693,36 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Creates a new insert query
+     *
+     * @return \Cake\ORM\Query\InsertQuery
+     */
+    public function insertQuery(): InsertQuery
+    {
+        return new InsertQuery($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new update query
+     *
+     * @return \Cake\ORM\Query\UpdateQuery
+     */
+    public function updateQuery(): UpdateQuery
+    {
+        return new UpdateQuery($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new delete query
+     *
+     * @return \Cake\ORM\Query\DeleteQuery
+     */
+    public function deleteQuery(): DeleteQuery
+    {
+        return new DeleteQuery($this->getConnection(), $this);
+    }
+
+    /**
      * Creates a new Query::subquery() instance for a table.
      *
      * @return \Cake\ORM\Query
@@ -1715,8 +1748,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         QueryExpression|Closure|array|string $fields,
         QueryExpression|Closure|array|string|null $conditions
     ): int {
-        $statement = $this->query()
-            ->update()
+        $statement = $this->updateQuery()
             ->set($fields)
             ->where($conditions)
             ->execute();
@@ -1740,8 +1772,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteAll(QueryExpression|Closure|array|string|null $conditions): int
     {
-        $statement = $this->query()
-            ->delete()
+        $statement = $this->deleteQuery()
             ->where($conditions)
             ->execute();
 
@@ -2082,7 +2113,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $statement = $this->query()->insert(array_keys($data))
+        $statement = $this->insertQuery()->insert(array_keys($data))
             ->values($data)
             ->execute();
 
@@ -2162,8 +2193,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException($message);
         }
 
-        $statement = $this->query()
-            ->update()
+        $statement = $this->updateQuery()
             ->set($data)
             ->where($primaryKey)
             ->execute();
@@ -2500,8 +2530,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $success;
         }
 
-        $statement = $this->query()
-            ->delete()
+        $statement = $this->deleteQuery()
             ->where($entity->extract($primaryKey))
             ->execute();
 

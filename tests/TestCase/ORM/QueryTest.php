@@ -22,6 +22,7 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -1685,8 +1686,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
-            ->update()
+        $result = $table->updateQuery()
             ->set(['title' => 'First'])
             ->execute();
 
@@ -1702,7 +1702,7 @@ class QueryTest extends TestCase
         $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
         $table = $this->getTableLocator()->get('articles');
 
-        $query = $table->query();
+        $query = $table->updateQuery();
         $result = $query->update($query->newExpr('articles, authors'))
             ->set(['title' => 'First'])
             ->where(['articles.author_id = authors.id'])
@@ -1720,7 +1720,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
+        $result = $table->insertQuery()
             ->insert(['title'])
             ->values(['title' => 'First'])
             ->values(['title' => 'Second'])
@@ -1739,8 +1739,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
-            ->delete()
+        $result = $table->deleteQuery()
             ->where(['id >=' => 1])
             ->execute();
 
@@ -1773,18 +1772,6 @@ class QueryTest extends TestCase
         $result = $query->getContain();
         $this->assertIsArray($result);
         $this->assertEmpty($result);
-    }
-
-    /**
-     * cache() should fail on non select queries.
-     */
-    public function testCacheErrorOnNonSelect(): void
-    {
-        $this->expectException(DatabaseException::class);
-        $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
-        $query->insert(['test']);
-        $query->cache('my_key');
     }
 
     /**
@@ -2564,8 +2551,8 @@ class QueryTest extends TestCase
                 'articles.published' => 'string',
                 'published' => 'string',
             ],
-            'decorators' => 0,
             'executed' => false,
+            'decorators' => 0,
             'hydrate' => false,
             'formatters' => 1,
             'mapReducers' => 1,
@@ -3970,7 +3957,7 @@ class QueryTest extends TestCase
             ->select(['column']);
 
         $binder = new ValueBinder();
-        $function = new $this->expressionClass('MyFunction', [$query]);
+        $function = new FunctionExpression('MyFunction', [$query]);
         $this->assertSame(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
             preg_replace('/[`"\[\]]/', '', $function->sql($binder))

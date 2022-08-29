@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -444,9 +443,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->addBehavior('CounterCache', [
             'Users' => [
                 'posts_published' => function (EventInterface $event, EntityInterface $entity, Table $table) {
-                    $query = new Query($this->connection);
-
-                    return $query->select(4);
+                    return $table->getConnection()->newSelectQuery(4);
                 },
             ],
         ]);
