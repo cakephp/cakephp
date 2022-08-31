@@ -178,7 +178,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function __construct(Connection $connection, Table $table)
     {
         parent::__construct($connection);
-        $this->repository($table);
+        $this->setRepository($table);
 
         if ($this->_repository !== null) {
             $this->addDefaultTypes($this->_repository);

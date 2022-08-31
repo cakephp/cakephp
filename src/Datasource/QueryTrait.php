@@ -89,8 +89,23 @@ trait QueryTrait
      *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table $repository The default table object to use
      * @return $this
+     * @deprecated 4.5.0 Use `setRepository()` instead.
      */
     public function repository(RepositoryInterface $repository)
+    {
+        deprecationWarning('`repository() method is deprecated. Use `setRepository()` instead.');
+
+        return $this->setRepository($repository);
+    }
+
+    /**
+     * Set the default Table object that will be used by this query
+     * and form the `FROM` clause.
+     *
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table $repository The default table object to use
+     * @return $this
+     */
+    public function setRepository(RepositoryInterface $repository)
     {
         $this->_repository = $repository;
 
