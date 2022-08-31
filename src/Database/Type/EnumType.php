@@ -18,9 +18,13 @@ namespace Cake\Database\Type;
 
 use BackedEnum;
 use Cake\Database\Driver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\TypeFactory;
+use Cake\Utility\Text;
 use InvalidArgumentException;
 use PDO;
+use ReflectionEnum;
+use ReflectionException;
 
 /**
  * Enum type converter.
@@ -30,18 +34,30 @@ use PDO;
 class EnumType extends BaseType
 {
     /**
-     * The backed enum
-     *
-     * @var \BackedEnum|string
-     */
-    protected BackedEnum|string $enum;
-
-    /**
      * The type of the enum which is either string or int
      *
      * @var string
      */
     protected string $typeOfEnum;
+
+    /**
+     * @param string $name The name identifying this type
+     * @param string $enum The associated enum classname
+     */
+    public function __construct(
+        string $name,
+        protected string $enum
+    ) {
+        parent::__construct($name);
+        try {
+            $reflectionEnum = new ReflectionEnum($enum);
+            $this->typeOfEnum = (string)$reflectionEnum->getBackingType();
+        } catch (ReflectionException) {
+            throw new DatabaseException(
+                sprintf('Given enum %s is not a backed enum ', $enum)
+            );
+        }
+    }
 
     /**
      * Convert enum instances into the database format.
@@ -147,33 +163,15 @@ class EnumType extends BaseType
     }
 
     /**
-     * @param \BackedEnum|string $enumName The enum name
+     * @param string $enumName The enum name
      * @return string
      */
-    public static function for(BackedEnum|string $enumName): string
+    public static function for(string $enumName): string
     {
-        $typeName = 'enum' . $enumName;
-        $instance = new self();
-        $instance->setEnum($enumName);
+        $typeName = 'enum' . strtolower(Text::slug($enumName));
+        $instance = new EnumType($typeName, $enumName);
         TypeFactory::set($typeName, $instance);
 
         return $typeName;
-    }
-
-    /**
-     * @return \BackedEnum|string
-     */
-    public function getEnum(): BackedEnum|string
-    {
-        return $this->enum;
-    }
-
-    /**
-     * @param \BackedEnum|string $enum
-     */
-    public function setEnum(BackedEnum|string $enum): void
-    {
-        $this->typeOfEnum = get_debug_type($enum::cases()[0]->value);
-        $this->enum = $enum;
     }
 }

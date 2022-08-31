@@ -17,12 +17,14 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Driver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Type\EnumType;
 use Cake\Database\TypeFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 
 /**
@@ -46,9 +48,15 @@ class EnumTypeTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->type = TypeFactory::build('enum');
-        $this->type->setEnum(ArticleStatus::class);
+        $typeName = EnumType::for(ArticleStatus::class);
+        $this->type = TypeFactory::build($typeName);
         $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+    }
+
+    public function testInvalidEnumClass(): void
+    {
+        $this->expectException(DatabaseException::class);
+        new EnumType('invalid', Article::class);
     }
 
     /**
