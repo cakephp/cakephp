@@ -54,7 +54,7 @@ class EnumType extends BaseType
             $this->typeOfEnum = (string)$reflectionEnum->getBackingType();
         } catch (ReflectionException) {
             throw new DatabaseException(
-                sprintf('Given enum %s is not a backed enum ', $enum)
+                sprintf('Given enum %s is not a backed enum', $enum)
             );
         }
     }
@@ -173,5 +173,13 @@ class EnumType extends BaseType
         TypeFactory::set($typeName, $instance);
 
         return $typeName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnum(): string
+    {
+        return $this->enum;
     }
 }

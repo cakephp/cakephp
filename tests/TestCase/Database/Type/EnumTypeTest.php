@@ -53,10 +53,21 @@ class EnumTypeTest extends TestCase
         $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
+    /**
+     * Check that 2nd argument must be a valid backed enum
+     */
     public function testInvalidEnumClass(): void
     {
         $this->expectException(DatabaseException::class);
         new EnumType('invalid', Article::class);
+    }
+
+    /**
+     * Check get enum class string
+     */
+    public function testGetEnum(): void
+    {
+        $this->assertSame(ArticleStatus::class, $this->type->getEnum());
     }
 
     /**
