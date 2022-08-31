@@ -21,6 +21,9 @@ use Cake\Database\Query\InsertQuery as DbInsertQuery;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Table;
 
+/**
+ * @inheritDoc
+ */
 class InsertQuery extends DbInsertQuery
 {
     use CommonQueryTrait;

@@ -21,6 +21,9 @@ use Cake\Database\Query\UpdateQuery as DbUpdateQuery;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Table;
 
+/**
+ * @inheritDoc
+ */
 class UpdateQuery extends DbUpdateQuery
 {
     use CommonQueryTrait;

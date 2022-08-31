@@ -21,6 +21,9 @@ use Cake\Database\Query\DeleteQuery as DbDeleteQuery;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Table;
 
+/**
+ * @inheritDoc
+ */
 class DeleteQuery extends DbDeleteQuery
 {
     use CommonQueryTrait;
