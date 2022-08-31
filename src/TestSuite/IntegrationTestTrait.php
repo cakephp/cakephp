@@ -1357,10 +1357,26 @@ trait IntegrationTestTrait
      */
     protected function extractExceptionMessage(Exception $exception): string
     {
-        return PHP_EOL .
-            sprintf('Possibly related to %s: "%s" ', get_class($exception), $exception->getMessage()) .
-            PHP_EOL .
-            $exception->getTraceAsString();
+        $exceptions = [$exception];
+        $previous = $exception->getPrevious();
+        while ($previous != null) {
+            $exceptions[] = $previous;
+            $previous = $previous->getPrevious();
+        }
+        $message = PHP_EOL;
+        foreach ($exceptions as $i => $error) {
+            if ($i == 0) {
+                $message .= sprintf('Possibly related to %s: "%s"', get_class($error), $error->getMessage());
+                $message .= PHP_EOL;
+            } else {
+                $message .= sprintf('Caused by %s: "%s"', get_class($error), $error->getMessage());
+                $message .= PHP_EOL;
+            }
+            $message .= $error->getTraceAsString();
+            $message .= PHP_EOL;
+        }
+
+        return $message;
     }
 
     /**
