@@ -16,8 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Query;
 
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 
+/**
+ * Trait with common methods used by all ORM query classes.
+ *
+ * @property \Cake\ORM\Table $_repository Instance of a table object this query is bound to.
+ */
 trait CommonQueryTrait
 {
     /**
@@ -31,7 +37,7 @@ trait CommonQueryTrait
      * @param \Cake\ORM\Table $table The table to pull types from
      * @return $this
      */
-    protected function addDefaultTypes(Table $table)
+    public function addDefaultTypes(Table $table)
     {
         $alias = $table->getAlias();
         $map = $table->getSchema()->typeMap();
@@ -42,5 +48,30 @@ trait CommonQueryTrait
         $this->getTypeMap()->addDefaults($fields);
 
         return $this;
+    }
+
+    /**
+     * Set the default Table object that will be used by this query
+     * and form the `FROM` clause.
+     *
+     * @param \Cake\ORM\Table $repository The default table object to use.
+     * @return $this
+     */
+    public function setRepository(RepositoryInterface $repository)
+    {
+        $this->_repository = $repository;
+
+        return $this;
+    }
+
+    /**
+     * Returns the default table object that will be used by this query,
+     * that is, the table that will appear in the from clause.
+     *
+     * @return \Cake\ORM\Table
+     */
+    public function getRepository(): Table
+    {
+        return $this->_repository;
     }
 }

@@ -18,6 +18,7 @@ namespace Cake\ORM\Query;
 
 use Cake\Database\Connection;
 use Cake\Database\Query\DeleteQuery as DbDeleteQuery;
+use Cake\Database\ValueBinder;
 use Cake\ORM\Table;
 
 class DeleteQuery extends DbDeleteQuery
@@ -34,7 +35,20 @@ class DeleteQuery extends DbDeleteQuery
     {
         parent::__construct($connection);
 
+        $this->setRepository($table);
         $this->addDefaultTypes($table);
-        $this->from([$table->getAlias() => $table->getTable()]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sql(?ValueBinder $binder = null): string
+    {
+        if (empty($this->_parts['from'])) {
+            $repository = $this->getRepository();
+            $this->from([$repository->getAlias() => $repository->getTable()]);
+        }
+
+        return parent::sql($binder);
     }
 }

@@ -18,6 +18,7 @@ namespace Cake\ORM\Query;
 
 use Cake\Database\Connection;
 use Cake\Database\Query\InsertQuery as DbInsertQuery;
+use Cake\Database\ValueBinder;
 use Cake\ORM\Table;
 
 class InsertQuery extends DbInsertQuery
@@ -34,7 +35,20 @@ class InsertQuery extends DbInsertQuery
     {
         parent::__construct($connection);
 
+        $this->setRepository($table);
         $this->addDefaultTypes($table);
-        $this->into($table->getTable());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sql(?ValueBinder $binder = null): string
+    {
+        if (empty($this->_parts['into'])) {
+            $repository = $this->getRepository();
+            $this->into($repository->getTable());
+        }
+
+        return parent::sql($binder);
     }
 }

@@ -25,8 +25,8 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
-use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
+use Cake\ORM\Query\CommonQueryTrait;
 use Closure;
 use JsonSerializable;
 
@@ -40,7 +40,9 @@ use JsonSerializable;
  */
 class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
 {
-    use QueryTrait {
+    use CommonQueryTrait, QueryTrait {
+        CommonQueryTrait::setRepository insteadof QueryTrait;
+        CommonQueryTrait::getRepository insteadof QueryTrait;
         cache as private _cache;
         all as private _all;
     }
@@ -149,37 +151,6 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Set the default Table object that will be used by this query
-     * and form the `FROM` clause.
-     *
-     * @param \Cake\ORM\Table $repository The default table object to use.
-     * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
-     */
-    public function repository(RepositoryInterface $repository)
-    {
-        assert(
-            $repository instanceof Table,
-            '$repository must be an instance of Cake\ORM\Table.'
-        );
-
-        $this->_repository = $repository;
-
-        return $this;
-    }
-
-    /**
-     * Returns the default table object that will be used by this query,
-     * that is, the table that will appear in the from clause.
-     *
-     * @return \Cake\ORM\Table
-     */
-    public function getRepository(): Table
-    {
-        return $this->_repository;
-    }
-
-    /**
      * Adds new fields to be returned by a `SELECT` statement when this query is
      * executed. Fields can be passed as an array of strings, array of expression
      * objects, a single expression or a single string.
@@ -262,30 +233,6 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
         }
 
         return $this->select($fields, $overwrite);
-    }
-
-    /**
-     * Hints this object to associate the correct types when casting conditions
-     * for the database. This is done by extracting the field types from the schema
-     * associated to the passed table object. This prevents the user from repeating
-     * themselves when specifying conditions.
-     *
-     * This method returns the same query object for chaining.
-     *
-     * @param \Cake\ORM\Table $table The table to pull types from
-     * @return $this
-     */
-    public function addDefaultTypes(Table $table)
-    {
-        $alias = $table->getAlias();
-        $map = $table->getSchema()->typeMap();
-        $fields = [];
-        foreach ($map as $f => $type) {
-            $fields[$f] = $fields[$alias . '.' . $f] = $fields[$alias . '__' . $f] = $type;
-        }
-        $this->getTypeMap()->addDefaults($fields);
-
-        return $this;
     }
 
     /**
