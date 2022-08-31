@@ -18,6 +18,7 @@ namespace Cake\Database\Type;
 
 use BackedEnum;
 use Cake\Database\Driver;
+use Cake\Database\TypeFactory;
 use InvalidArgumentException;
 use PDO;
 
@@ -26,8 +27,22 @@ use PDO;
  *
  * Use to convert string data between PHP and the database types.
  */
-class EnumType extends BaseType implements OptionalConvertInterface
+class EnumType extends BaseType
 {
+    /**
+     * The backed enum
+     *
+     * @var \BackedEnum|string
+     */
+    protected BackedEnum|string $enum;
+
+    /**
+     * The type of the enum which is either string or int
+     *
+     * @var string
+     */
+    protected string $typeOfEnum;
+
     /**
      * Convert enum instances into the database format.
      *
@@ -56,16 +71,27 @@ class EnumType extends BaseType implements OptionalConvertInterface
     }
 
     /**
-     * Directly return string or integer because enum conversion happens in behavior
+     * Transform DB value to backed enum instance
      *
-     * @see \Cake\ORM\Behavior\EnumBehavior::afterMarshal()
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string|int|null
+     * @return \BackedEnum|null
      */
-    public function toPHP(mixed $value, Driver $driver): string|int|null
+    public function toPHP(mixed $value, Driver $driver): ?BackedEnum
     {
-        return $value;
+        if ($value === null) {
+            return null;
+        }
+
+        if (get_debug_type($value) !== $this->typeOfEnum) {
+            throw new InvalidArgumentException(sprintf(
+                'Given value type `%s` does not match associated `%s` backed enum',
+                get_debug_type($value),
+                $this->typeOfEnum
+            ));
+        }
+
+        return $this->enum::tryFrom($value);
     }
 
     /**
@@ -88,20 +114,66 @@ class EnumType extends BaseType implements OptionalConvertInterface
      * Marshals request data
      *
      * @param mixed $value The value to convert.
-     * @return \BackedEnum|string|int|null Converted value.
+     * @return \BackedEnum|null Converted value.
      */
-    public function marshal(mixed $value): BackedEnum|string|int|null
+    public function marshal(mixed $value): ?BackedEnum
     {
-        return $value;
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value instanceof $this->enum) {
+            return $value;
+        }
+
+        if (get_debug_type($value) !== $this->typeOfEnum) {
+            throw new InvalidArgumentException(sprintf(
+                'Given value type `%s` does not match associated `%s` backed enum',
+                get_debug_type($value),
+                $this->typeOfEnum
+            ));
+        }
+
+        $enumInstance = $this->enum::tryFrom($value);
+        if ($enumInstance === null) {
+            throw new InvalidArgumentException(sprintf(
+                'Given value `%s` is not present inside associated `%s` backed enum',
+                $value,
+                $this->enum
+            ));
+        }
+
+        return $enumInstance;
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return bool False since the type class doesn't need to do any conversion for values read from db
+     * @param \BackedEnum|string $enumName The enum name
+     * @return string
      */
-    public function requiresToPhpCast(): bool
+    public static function for(BackedEnum|string $enumName): string
     {
-        return false;
+        $typeName = 'enum' . $enumName;
+        $instance = new self();
+        $instance->setEnum($enumName);
+        TypeFactory::set($typeName, $instance);
+
+        return $typeName;
+    }
+
+    /**
+     * @return \BackedEnum|string
+     */
+    public function getEnum(): BackedEnum|string
+    {
+        return $this->enum;
+    }
+
+    /**
+     * @param \BackedEnum|string $enum
+     */
+    public function setEnum(BackedEnum|string $enum): void
+    {
+        $this->typeOfEnum = get_debug_type($enum::cases()[0]->value);
+        $this->enum = $enum;
     }
 }
