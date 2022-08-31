@@ -75,8 +75,9 @@ This is a list of possible options that can be passed when creating a connection
 ## Using connections
 
 After creating a connection, you can immediately interact with the database. You can choose
-either to use the shorthand methods `execute()`, `insert()`, `update()`, `delete()` or use the
-`newQuery()` for using a query builder.
+either to use the shorthand methods `execute()`, `insert()`, `update()`, `delete()` or use
+one of `newSelectQuery()`, `newUpdateQuery()`, `newInsertQuery()` or `newDeleteQuery()`
+to get a query builder for particular type of query.
 
 The easiest way of executing queries is by using the `execute()` method, it will return a
 `Cake\Database\StatementInterface` that you can use to get the data back:
@@ -196,7 +197,7 @@ One of the goals of this library is to allow the generation of both simple and c
 ease. The query builder can be accessed by getting a new instance of a query:
 
 ```php
-$query = $connection->newQuery();
+$query = $connection->newSelectQuery();
 ```
 
 ### Selecting Fields
@@ -360,5 +361,5 @@ $results = $query->execute()->fetchAll('assoc');
 
 ## Official API
 
-You can read the official [official API docs](https://api.cakephp.org/4.x/namespace-Cake.Database.html) to learn more of what this library
+You can read the official [official API docs](https://api.cakephp.org/5.x/namespace-Cake.Database.html) to learn more of what this library
 has to offer.

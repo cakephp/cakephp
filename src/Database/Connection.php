@@ -632,7 +632,7 @@ class Connection implements ConnectionInterface
      *
      * ```
      * $connection->transactional(function ($connection) {
-     *   $connection->newQuery()->delete('users')->execute();
+     *   $connection->newDeleteQuery('users')->execute();
      * });
      * ```
      *
@@ -687,7 +687,7 @@ class Connection implements ConnectionInterface
      *
      * ```
      * $connection->disableConstraints(function ($connection) {
-     *   $connection->newQuery()->delete('users')->execute();
+     *   $connection->newQuery('users')->execute();
      * });
      * ```
      *

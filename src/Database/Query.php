@@ -339,8 +339,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * $cte = new \Cake\Database\Expression\CommonTableExpression(
      *     'cte',
      *     $connection
-     *         ->newQuery()
-     *         ->select('*')
+     *         ->newSelectQuery('*')
      *         ->from('articles')
      * );
      *
