@@ -85,7 +85,7 @@ class EnumTypeTest extends TestCase
      */
     public function testGetEnum(): void
     {
-        $this->assertSame(ArticleStatus::class, $this->type->getEnum());
+        $this->assertSame(ArticleStatus::class, $this->type->getEnumClassName());
     }
 
     /**
