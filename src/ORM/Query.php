@@ -1078,7 +1078,7 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
      */
     public function triggerBeforeFind(): void
     {
-        if (!$this->_beforeFindFired && $this->_type === self::TYPE_SELECT) {
+        if (!$this->_beforeFindFired) {
             $this->_beforeFindFired = true;
 
             $repository = $this->getRepository();
@@ -1151,7 +1151,7 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
      */
     protected function _transformQuery(): void
     {
-        if (!$this->_dirty || $this->_type !== static::TYPE_SELECT) {
+        if (!$this->_dirty) {
             return;
         }
 
