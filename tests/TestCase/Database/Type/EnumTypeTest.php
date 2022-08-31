@@ -43,14 +43,32 @@ class EnumTypeTest extends TestCase
     protected $driver;
 
     /**
+     * Original type map
+     *
+     * @var array
+     */
+    protected $_originalMap = [];
+
+    /**
      * Setup
      */
     public function setUp(): void
     {
         parent::setUp();
+        $this->_originalMap = TypeFactory::getMap();
         $typeName = EnumType::for(ArticleStatus::class);
         $this->type = TypeFactory::build($typeName);
         $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+    }
+
+    /**
+     * Restores Type class state
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        TypeFactory::setMap($this->_originalMap);
     }
 
     /**
