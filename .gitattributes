@@ -11,6 +11,8 @@
 *.pem eol=lf
 
 # Denote all files that are truly binary and should not be modified.
+*.avif binary
+*.webp binary
 *.png binary
 *.jpg binary
 *.gif binary
