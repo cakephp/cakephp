@@ -180,7 +180,7 @@ class EnumType extends BaseType
      */
     public static function for(string $enumClassName): string
     {
-        $typeName = 'enum' . strtolower(Text::slug($enumClassName));
+        $typeName = 'enum-' . strtolower(Text::slug($enumClassName));
         $instance = new EnumType($typeName, $enumClassName);
         TypeFactory::set($typeName, $instance);
 
