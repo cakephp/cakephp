@@ -66,7 +66,7 @@ trait TypeMapTrait
      * To add a default without overwriting existing ones
      * use `getTypeMap()->addDefaults()`
      *
-     * @param array<string, string> $types The array of types to set.
+     * @param array<int|string, string> $types The array of types to set.
      * @return $this
      * @see \Cake\Database\TypeMap::setDefaults()
      */
@@ -80,7 +80,7 @@ trait TypeMapTrait
     /**
      * Gets default types of current type map.
      *
-     * @return array<string, string>
+     * @return array<int|string, string>
      */
     public function getDefaultTypes(): array
     {
