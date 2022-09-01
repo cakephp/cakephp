@@ -21,6 +21,8 @@ use Countable;
 
 /**
  * The Event List
+ *
+ * @template-implements \ArrayAccess<int, \Cake\Event\EventInterface>
  */
 class EventList implements ArrayAccess, Countable
 {
@@ -69,9 +71,9 @@ class EventList implements ArrayAccess, Countable
      *
      * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
-     * @return mixed Can return all value types.
+     * @return \Cake\Event\EventInterface|null
      */
-    public function offsetGet(mixed $offset): mixed
+    public function offsetGet(mixed $offset): ?EventInterface
     {
         if (!$this->offsetExists($offset)) {
             return null;

@@ -67,7 +67,6 @@ trait ViewVarsTrait
             }
         }
 
-        /** @psalm-suppress RedundantPropertyInitializationCheck */
         return $builder->build(
             $this->request ?? null,
             $this->response ?? null,

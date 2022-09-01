@@ -720,6 +720,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $typeMultiple = true;
         }
 
+        /** @psalm-suppress RedundantCondition */
         if ($typeMultiple) {
             $value = $value instanceof ExpressionInterface ? $value : (array)$value;
         }

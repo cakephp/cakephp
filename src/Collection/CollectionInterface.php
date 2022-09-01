@@ -25,6 +25,8 @@ use const SORT_NUMERIC;
  * Describes the methods a Collection should implement. A collection is an immutable
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
+ *
+ * @template-extends \Iterator<mixed>
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {

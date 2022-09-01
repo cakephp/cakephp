@@ -23,6 +23,8 @@ use Traversable;
 /**
  * A type of collection that is aware of nested items and exposes methods to
  * check or retrieve them
+ *
+ * @template-implements \RecursiveIterator<mixed, mixed>
  */
 class NestIterator extends Collection implements RecursiveIterator
 {

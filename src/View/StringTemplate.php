@@ -375,7 +375,6 @@ class StringTemplate
             $newClass = explode(' ', $newClass);
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
         $class = array_unique(array_merge($class, $newClass));
 
         return Hash::insert($input, $useIndex, $class);

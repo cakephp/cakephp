@@ -94,7 +94,6 @@ class PoFileParser
             } elseif (str_starts_with($line, 'msgid "')) {
                 // We start a new msg so save previous
                 $this->_addMessage($messages, $item);
-                /** @psalm-suppress InvalidArrayOffset */
                 $item['ids']['singular'] = substr($line, 7, -1);
                 $stage = ['ids', 'singular'];
             } elseif (str_starts_with($line, 'msgstr "')) {
@@ -124,7 +123,6 @@ class PoFileParser
                         break;
                 }
             } elseif (str_starts_with($line, 'msgid_plural "')) {
-                /** @psalm-suppress InvalidArrayOffset */
                 $item['ids']['plural'] = substr($line, 14, -1);
                 $stage = ['ids', 'plural'];
             } elseif (str_starts_with($line, 'msgstr[')) {

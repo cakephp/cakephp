@@ -248,7 +248,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->uri->__toString();
     }

@@ -33,13 +33,15 @@ use TypeError;
  *
  * Provides an immutable collection of cookies objects. Adding or removing
  * to a collection returns a *new* collection that you must retain.
+ *
+ * @template-implements \IteratorAggregate<string, \Cake\Http\Cookie\CookieInterface>
  */
 class CookieCollection implements IteratorAggregate, Countable
 {
     /**
      * Cookie objects
      *
-     * @var array<\Cake\Http\Cookie\CookieInterface>
+     * @var array<string, \Cake\Http\Cookie\CookieInterface>
      */
     protected array $cookies = [];
 

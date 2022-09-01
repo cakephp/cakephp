@@ -90,7 +90,6 @@ trait StaticConfigTrait
         }
 
         if (isset(static::$_config[$key])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
         }
 
@@ -108,7 +107,7 @@ trait StaticConfigTrait
             $config['className'] = $config['engine'];
             unset($config['engine']);
         }
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
+
         static::$_config[$key] = $config;
     }
 

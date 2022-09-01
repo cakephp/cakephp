@@ -783,7 +783,6 @@ class TreeBehavior extends Behavior
      * @param mixed $id Record id.
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
-     * @psalm-suppress InvalidReturnType
      */
     protected function _getNode(mixed $id): EntityInterface
     {
@@ -804,7 +803,6 @@ class TreeBehavior extends Behavior
             throw new RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
         }
 
-        /** @psalm-suppress InvalidReturnStatement */
         return $node;
     }
 

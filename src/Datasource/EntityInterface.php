@@ -25,6 +25,7 @@ use Stringable;
  * comply with.
  *
  * @property mixed $id Alias for commonly used primary key.
+ * @template-extends \ArrayAccess<string, mixed>
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
 {
