@@ -95,6 +95,7 @@ class EnumTypeTest extends TestCase
     {
         $this->assertNull($this->type->toDatabase(null, $this->driver));
         $this->assertSame('Y', $this->type->toDatabase(ArticleStatus::PUBLISHED, $this->driver));
+        $this->expectException(InvalidArgumentException::class);
         $this->assertSame('Y', $this->type->toDatabase(ArticleStatus::PUBLISHED->value, $this->driver));
     }
 

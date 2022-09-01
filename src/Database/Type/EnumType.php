@@ -77,7 +77,10 @@ class EnumType extends BaseType
         }
 
         if (is_int($value) || is_string($value)) {
-            return $value;
+            throw new InvalidArgumentException(sprintf(
+                'Expected value of type BackedEnum, `%s` given.',
+                get_debug_type($value)
+            ));
         }
 
         throw new InvalidArgumentException(sprintf(
