@@ -166,6 +166,15 @@ class EnumType extends BaseType
     }
 
     /**
+     * Create an `EnumType` that is paired with the provided `$enumClassName`.
+     *
+     * ### Usage
+     *
+     * ```
+     * // In a table class
+     * $this->getSchema()->setColumnType('status', EnumType::for(StatusEnum::class));
+     * ```
+     *   
      * @param string $enumClassName The enum class name
      * @return string
      */
