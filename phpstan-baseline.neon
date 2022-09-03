@@ -221,16 +221,6 @@ parameters:
 			path: src/Datasource/ConnectionManager.php
 
 		-
-			message: "#^Cannot unset offset 'args' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
-			count: 1
-			path: src/Error/Debugger.php
-
-		-
-			message: "#^Cannot unset offset 'object' on array\\{path\\: string, reference\\: mixed\\}\\.$#"
-			count: 1
-			path: src/Error/Debugger.php
-
-		-
 			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php

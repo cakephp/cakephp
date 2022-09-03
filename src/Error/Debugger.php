@@ -484,7 +484,10 @@ class Debugger
             return $back;
         }
 
-        /** @psalm-suppress InvalidArgument */
+        /**
+         * @psalm-suppress InvalidArgument
+         * @phpstan-ignore-next-line
+         */
         return implode("\n", $back);
     }
 
