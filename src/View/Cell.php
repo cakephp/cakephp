@@ -242,7 +242,6 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             return $default;
         }
 
-        /** @psalm-suppress PossiblyFalseOperand */
         return $this->_cache + $default;
     }
 

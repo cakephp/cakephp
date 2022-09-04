@@ -219,7 +219,7 @@ class CounterCacheBehavior extends Behavior
         array $settings
     ): void {
         $foreignKeys = (array)$assoc->getForeignKey();
-        /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+        /** @psalm-suppress InvalidArgument */
         $countConditions = $entity->extract($foreignKeys);
 
         foreach ($countConditions as $field => $value) {
@@ -232,7 +232,7 @@ class CounterCacheBehavior extends Behavior
         $primaryKeys = (array)$assoc->getBindingKey();
         $updateConditions = array_combine($primaryKeys, $countConditions);
 
-        /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+        /** @psalm-suppress InvalidArgument */
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);

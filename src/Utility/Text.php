@@ -119,6 +119,7 @@ class Text
                 mb_strpos($data, $rightBound, $offset),
             ];
             for ($i = 0; $i < 3; $i++) {
+                /** @psalm-suppress InvalidArrayOffset */
                 if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset === -1)) {
                     $tmpOffset = $offsets[$i];
                 }
@@ -586,7 +587,7 @@ class Text
         $default = [
             'ellipsis' => '...', 'exact' => true, 'html' => false, 'trimWidth' => false,
         ];
-        if (!empty($options['html']) && strtolower((string)mb_internal_encoding()) === 'utf-8') {
+        if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
         $options += $default;

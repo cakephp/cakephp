@@ -972,7 +972,7 @@ class Validation
             foreach ($check as $val) {
                 $strict = !is_numeric($val);
                 if ($caseInsensitive) {
-                    $val = mb_strtolower($val);
+                    $val = mb_strtolower((string)$val);
                 }
                 if (!in_array((string)$val, $options['in'], $strict)) {
                     return false;

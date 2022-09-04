@@ -32,6 +32,8 @@ use Traversable;
  * Implements ArrayAccess to easily modify rules in the set
  *
  * @link https://book.cakephp.org/4/en/core-libraries/validation.html
+ * @template-implements \ArrayAccess<string, \Cake\Validation\ValidationSet>
+ * @template-implements \IteratorAggregate<string, \Cake\Validation\ValidationSet>
  */
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {

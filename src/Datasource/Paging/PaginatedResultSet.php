@@ -21,6 +21,8 @@ use IteratorIterator;
 
 /**
  * Paginated resultset.
+ *
+ * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
  */
 class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
 {

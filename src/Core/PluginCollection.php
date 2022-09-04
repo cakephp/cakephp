@@ -35,6 +35,8 @@ use Iterator;
  *
  * While its implementation supported nested iteration it does not
  * support using `continue` or `break` inside loops.
+ *
+ * @template-implements \Iterator<string, \Cake\Core\PluginInterface>
  */
 class PluginCollection implements Iterator, Countable
 {

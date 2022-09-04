@@ -28,6 +28,8 @@ use Traversable;
  * Used by Applications to specify their console commands.
  * CakePHP will use the mapped commands to construct and dispatch
  * shell commands.
+ *
+ * @template-implements \IteratorAggregate<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
  */
 class CommandCollection implements IteratorAggregate, Countable
 {
@@ -143,7 +145,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Implementation of IteratorAggregate.
      *
      * @return \Traversable
-     * @psalm-return \Traversable<string, \Cake\Console\CommandInterface|class-string>
+     * @psalm-return \Traversable<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
      */
     public function getIterator(): Traversable
     {

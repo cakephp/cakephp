@@ -1477,7 +1477,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
      *      incorrect number of elements.
      * @see \Cake\Datasource\RepositoryInterface::find()
-     * @psalm-suppress InvalidReturnType
      */
     public function get($primaryKey, array $options = []): EntityInterface
     {
@@ -1529,7 +1528,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $query->cache($cacheKey, $cacheConfig);
         }
 
-        /** @psalm-suppress InvalidReturnStatement */
         return $query->firstOrFail();
     }
 

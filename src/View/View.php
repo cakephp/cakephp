@@ -1654,6 +1654,7 @@ class View implements EventDispatcherInterface
         }
         $config['key'] = 'element_' . $config['key'];
 
+        /** @var array{config: string, key: string} */
         return $config;
     }
 

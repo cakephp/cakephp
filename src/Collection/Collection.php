@@ -23,6 +23,8 @@ use IteratorIterator;
 /**
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
+ *
+ * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
  */
 class Collection extends IteratorIterator implements CollectionInterface
 {

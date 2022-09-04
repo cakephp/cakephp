@@ -155,6 +155,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param \Cake\ORM\Table $repository The default table object to use.
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function repository(RepositoryInterface $repository)
     {

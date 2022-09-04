@@ -27,7 +27,6 @@ class ContentsContainRow extends ContentsRegExp
      *
      * @param mixed $other Row
      * @return bool
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function matches(mixed $other): bool
     {

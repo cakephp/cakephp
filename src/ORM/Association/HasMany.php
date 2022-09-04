@@ -166,7 +166,7 @@ class HasMany extends Association
             throw new InvalidArgumentException($message);
         }
 
-        /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+        /** @psalm-suppress InvalidArgument */
         $foreignKeyReference = array_combine(
             (array)$this->getForeignKey(),
             $entity->extract((array)$this->getBindingKey())
@@ -362,7 +362,7 @@ class HasMany extends Association
             'OR' => (new Collection($targetEntities))
                 ->map(function ($entity) use ($targetPrimaryKey) {
                     /** @var \Cake\Datasource\EntityInterface $entity */
-                    /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+                    /** @psalm-suppress InvalidArgument,UnusedPsalmSuppress */
                     return $entity->extract($targetPrimaryKey);
                 })
                 ->toList(),
@@ -524,7 +524,7 @@ class HasMany extends Association
                 });
                 $query = $this->find()->where($conditions);
                 $ok = true;
-                foreach ($query as $assoc) {
+                foreach ($query->all() as $assoc) {
                     $ok = $ok && $target->delete($assoc, $options);
                 }
 

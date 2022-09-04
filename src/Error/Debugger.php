@@ -307,7 +307,7 @@ class Debugger
         if ($backtrace instanceof Throwable) {
             $backtrace = $backtrace->getTrace();
         }
-        $self = Debugger::getInstance();
+
         $defaults = [
             'depth' => 999,
             'format' => 'text',
@@ -374,7 +374,10 @@ class Debugger
             return $back;
         }
 
-        /** @psalm-suppress InvalidArgument */
+        /**
+         * @psalm-suppress InvalidArgument
+         * @phpstan-ignore-next-line
+         */
         return implode("\n", $back);
     }
 

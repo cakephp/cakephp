@@ -410,7 +410,6 @@ trait CollectionTrait
             if ($count === 0) {
                 return null;
             }
-            /** @var iterable $iterator */
             $iterator = new LimitIterator($iterator, $count - 1, 1);
         }
 
@@ -943,6 +942,7 @@ trait CollectionTrait
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
             $currentCombination = array_map(function ($value, $keys, $index) {
+                /** @psalm-suppress InvalidArrayOffset */
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
@@ -1015,14 +1015,14 @@ trait CollectionTrait
      * Unwraps this iterator and returns the simplest
      * traversable that can be used for getting the data out
      *
-     * @return iterable
+     * @return \Iterator|array
      */
-    protected function optimizeUnwrap(): iterable
+    protected function optimizeUnwrap(): Iterator|array
     {
-        /** @var \ArrayObject $iterator */
         $iterator = $this->unwrap();
 
         if (get_class($iterator) === ArrayIterator::class) {
+            /** @phpstan-ignore-next-line */
             $iterator = $iterator->getArrayCopy();
         }
 

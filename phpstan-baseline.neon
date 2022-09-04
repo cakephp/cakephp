@@ -11,11 +11,6 @@ parameters:
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Collection.php
-
-		-
 			message: "#^Call to an undefined method Iterator\\:\\:getArrayCopy\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ExtractIterator.php
@@ -34,21 +29,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$items of class Cake\\\\Collection\\\\Iterator\\\\TreePrinter constructor expects RecursiveIterator, Iterator\\<mixed, mixed\\> given\\.$#"
 			count: 1
 			path: src/Collection/Iterator/TreeIterator.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/TreeIterator.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/TreePrinter.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/ZipIterator.php
 
 		-
 			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
@@ -234,11 +214,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/ORM/Query.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/ORM/ResultSet.php
 
 		-
 			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
