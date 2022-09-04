@@ -1492,6 +1492,20 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test for assertion message generation for previous.
+     *
+     * @return void
+     */
+    public function testAssertMessagePrevious()
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('Caused by RuntimeException');
+
+        $this->get('/posts/throw_chained');
+        $this->assertContentType('test');
+    }
+
+    /**
      * data provider for assertion failure messages
      *
      * @return array

@@ -111,7 +111,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * be added. When using an array and the key is 'OR' or 'AND' a new expression
      * object will be created with that conjunction and internal array value passed
      * as conditions.
-     * @param array<string, string> $types Associative array of fields pointing to the type of the
+     * @param array<int|string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @see \Cake\Database\Query::where() for examples on conditions
      * @return $this
@@ -702,7 +702,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * representation is wrapped around an adequate instance or of this class.
      *
      * @param array $conditions list of conditions to be stored in this object
-     * @param array<string, string> $types list of types associated on fields referenced in $conditions
+     * @param array<int|string, string> $types list of types associated on fields referenced in $conditions
      * @return void
      */
     protected function _addConditions(array $conditions, array $types): void

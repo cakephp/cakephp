@@ -19,6 +19,7 @@ namespace TestApp\Controller;
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
 use OutOfBoundsException;
+use RuntimeException;
 
 /**
  * PostsController class
@@ -208,5 +209,14 @@ class PostsController extends AppController
     {
         $this->Flash->error('Error 1');
         throw new OutOfBoundsException('oh no!');
+    }
+
+    /**
+     * @return \Cake\Http\Response
+     */
+    public function throw_chained()
+    {
+        $inner = new RuntimeException('inner badness');
+        throw new OutOfBoundsException('oh no!', 1, $inner);
     }
 }

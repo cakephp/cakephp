@@ -1306,7 +1306,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with the where() method to create delete queries.
      *
      * @param array $columns The columns to insert into.
-     * @param array<string, string> $types A map between columns & their datatypes.
+     * @param array<string> $types A map between columns & their datatypes.
      * @return $this
      */
     public function insert(array $columns, array $types = [])
