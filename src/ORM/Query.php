@@ -1683,6 +1683,18 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Disable auto adding table's alias to the fields of SELECT clause.
+     *
+     * @return $this
+     */
+    public function disableAutoAliasing()
+    {
+        $this->aliasingEnabled = false;
+
+        return $this;
+    }
+
+    /**
      * Marks a query as dirty, removing any preprocessed information
      * from in memory caching such as previous results
      *
@@ -1693,20 +1705,6 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
         $this->_results = null;
         $this->_resultsCount = null;
         parent::_dirty();
-    }
-
-    /**
-     * Returns a new Query that has automatic field aliasing disabled.
-     *
-     * @param \Cake\ORM\Table $table The table this query is starting on
-     * @return static
-     */
-    public static function subquery(Table $table): static
-    {
-        $query = new static($table->getConnection(), $table);
-        $query->aliasingEnabled = false;
-
-        return $query;
     }
 
     /**

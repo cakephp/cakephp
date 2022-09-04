@@ -22,6 +22,7 @@ use BadMethodCallException;
 use Cake\Collection\Collection;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
@@ -218,6 +219,66 @@ class TableTest extends TestCase
             $sql,
             !$this->connection->getDriver()->isAutoQuotingEnabled()
         );
+    }
+
+    /**
+     * Tests subquery() disables aliasing.
+     */
+    public function testSubqueryAliasing(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $subquery = $articles->subquery();
+
+        $subquery->select('Articles.field1');
+        $this->assertRegExpSql(
+            'SELECT <Articles>.<field1> FROM <articles> <Articles>',
+            $subquery->sql(),
+            !$this->connection->getDriver()->isAutoQuotingEnabled()
+        );
+
+        $subquery->select($articles, true);
+        $this->assertEqualsSql('SELECT id, author_id, title, body, published FROM articles Articles', $subquery->sql());
+
+        $subquery->selectAllExcept($articles, ['author_id'], true);
+        $this->assertEqualsSql('SELECT id, title, body, published FROM articles Articles', $subquery->sql());
+    }
+
+    /**
+     * Tests subquery() in where clause.
+     */
+    public function testSubqueryWhereClause(): void
+    {
+        $subquery = $this->getTableLocator()->get('Authors')->subquery()
+            ->select(['Authors.id'])
+            ->where(['Authors.name' => 'mariano']);
+
+        $query = $this->getTableLocator()->get('Articles')->find()
+            ->where(['Articles.author_id IN' => $subquery])
+            ->order(['Articles.id' => 'ASC']);
+
+        $results = $query->all()->toList();
+        $this->assertCount(2, $results);
+        $this->assertEquals([1, 3], array_column($results, 'id'));
+    }
+
+    /**
+     * Tests subquery() in join clause.
+     */
+    public function testSubqueryJoinClause(): void
+    {
+        $subquery = $this->getTableLocator()->get('Articles')->subquery()
+            ->select(['author_id']);
+
+        $query = $this->getTableLocator()->get('Authors')->find();
+        $query
+            ->select(['Authors.id', 'total_articles' => $query->func()->count('articles.author_id')])
+            ->leftJoin(['articles' => $subquery], ['articles.author_id' => new IdentifierExpression('Authors.id')])
+            ->group(['Authors.id'])
+            ->order(['Authors.id' => 'ASC']);
+
+        $results = $query->all()->toList();
+        $this->assertEquals(1, $results[0]->id);
+        $this->assertEquals(2, $results[0]->total_articles);
     }
 
     /**
@@ -2352,13 +2413,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + $config])
             ->getMock();
 
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['getConnection'])
-            ->setConstructorArgs([['table' => 'users']])
-            ->getMock();
-        $table->expects($this->any())->method('getConnection')
-            ->will($this->returnValue($connection));
+        $table = new Table(['table' => 'users', 'connection' => $connection]);
 
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('commit');
