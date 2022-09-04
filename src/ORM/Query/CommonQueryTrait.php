@@ -21,11 +21,16 @@ use Cake\ORM\Table;
 
 /**
  * Trait with common methods used by all ORM query classes.
- *
- * @property \Cake\ORM\Table $_repository Instance of a table object this query is bound to.
  */
 trait CommonQueryTrait
 {
+    /**
+     * Instance of a repository/table object this query is bound to.
+     *
+     * @var \Cake\ORM\Table
+     */
+    protected Table $_repository;
+
     /**
      * Hints this object to associate the correct types when casting conditions
      * for the database. This is done by extracting the field types from the schema
@@ -54,27 +59,29 @@ trait CommonQueryTrait
      * Set the default Table object that will be used by this query
      * and form the `FROM` clause.
      *
-     * @param \Cake\ORM\Table $repository The default table object to use.
+     * @param \Cake\Datasource\RepositoryInterface $repository The default table object to use
      * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function setRepository(RepositoryInterface $repository)
     {
-        /** @psalm-suppress UndefinedThisPropertyAssignment */
+        assert(
+            $repository instanceof Table,
+            '`$repository` must be an instance of Cake\ORM\Table.'
+        );
+
         $this->_repository = $repository;
 
         return $this;
     }
 
     /**
-     * Returns the default table object that will be used by this query,
+     * Returns the default repository object that will be used by this query,
      * that is, the table that will appear in the from clause.
      *
      * @return \Cake\ORM\Table
      */
     public function getRepository(): Table
     {
-        /** @psalm-suppress UndefinedThisPropertyFetch */
         return $this->_repository;
     }
 }
