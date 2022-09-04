@@ -9,6 +9,7 @@ use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use stdClass;
+use TestApp\ReflectionDependency;
 
 /**
  * DependenciesController class
@@ -75,6 +76,15 @@ class DependenciesController extends Controller
     public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
+    }
+
+    /**
+     * @param \TestApp\ReflectionDependency $dep
+     * @return \Cake\Http\Response
+     */
+    public function reflectionDep(ReflectionDependency $dep)
+    {
+        return $this->response->withStringBody(json_encode(compact('dep')));
     }
 
     /**

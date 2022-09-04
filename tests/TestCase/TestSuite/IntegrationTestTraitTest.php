@@ -37,6 +37,7 @@ use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\AssertionFailedError;
 use stdClass;
+use TestApp\ReflectionDependency;
 
 /**
  * Self test of the IntegrationTestTrait
@@ -1479,6 +1480,20 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test for assertion message generation for previous.
+     *
+     * @return void
+     */
+    public function testAssertMessagePrevious()
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('Caused by RuntimeException');
+
+        $this->get('/posts/throw_chained');
+        $this->assertContentType('test');
+    }
+
+    /**
      * data provider for assertion failure messages
      *
      * @return array
@@ -1678,6 +1693,19 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
+    }
+
+    /**
+     * Test that mockService() injects into controllers.
+     */
+    public function testHandleWithMockServicesFromReflectionContainer(): void
+    {
+        $this->mockService(ReflectionDependency::class, function () {
+            return new ReflectionDependency();
+        });
+        $this->get('/dependencies/reflectionDep');
+        $this->assertResponseOk();
+        $this->assertResponseContains('{"dep":{}}', 'Contains the data from the reflection container');
     }
 
     /**

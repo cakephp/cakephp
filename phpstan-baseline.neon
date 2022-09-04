@@ -101,6 +101,11 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
+			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			count: 1
+			path: src/Error/Renderer/ConsoleExceptionRenderer.php
+
+		-
 			message: "#^PHPDoc tag @param for parameter \\$subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Event/Event.php
@@ -114,11 +119,6 @@ parameters:
 			message: "#^PHPDoc tag @var for property Cake\\\\Event\\\\Event\\:\\:\\$_subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Event/Event.php
-
-		-
-			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
-			count: 1
-			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -207,6 +207,11 @@ parameters:
 
 		-
 			message: "#^Method Cake\\\\ORM\\\\Query\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\) but returns Cake\\\\ORM\\\\Query\\.$#"
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: "#^Property Cake\\\\ORM\\\\Query\\:\\:\\$_repository \\(Cake\\\\ORM\\\\Table\\) does not accept Cake\\\\Datasource\\\\RepositoryInterface\\.$#"
 			count: 1
 			path: src/ORM/Query.php
 

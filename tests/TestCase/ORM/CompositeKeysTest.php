@@ -196,7 +196,7 @@ class CompositeKeysTest extends TestCase
         ];
         $this->assertEquals($expected, $results);
 
-        $results = $query->repository($table)
+        $results = $query->setRepository($table)
             ->select()
             ->contain(['SiteArticles' => ['conditions' => ['SiteArticles.id' => 2]]])
             ->enableHydration(false)

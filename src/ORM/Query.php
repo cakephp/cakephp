@@ -145,7 +145,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function __construct(Connection $connection, Table $table)
     {
         parent::__construct($connection);
-        $this->repository($table);
+        $this->setRepository($table);
         $this->addDefaultTypes($table);
     }
 
@@ -1304,7 +1304,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with the where() method to create delete queries.
      *
      * @param array $columns The columns to insert into.
-     * @param array<string, string> $types A map between columns & their datatypes.
+     * @param array<string> $types A map between columns & their datatypes.
      * @return $this
      */
     public function insert(array $columns, array $types = [])

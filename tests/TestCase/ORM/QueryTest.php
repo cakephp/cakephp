@@ -284,7 +284,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results);
 
-        $results = $query->repository($table)
+        $results = $query->setRepository($table)
             ->select()
             ->contain(['articles' => ['conditions' => ['articles.id' => 2]]])
             ->enableHydration(false)
@@ -682,7 +682,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
 
-        $results = $query->repository($table)
+        $results = $query->setRepository($table)
             ->select()
             ->disableHydration()
             ->matching('Comments', function ($q) {
@@ -721,7 +721,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $table->hasMany('Comments');
 
-        $result = $query->repository($table)
+        $result = $query->setRepository($table)
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.user_id' => 4]);
             })
@@ -747,7 +747,7 @@ class QueryTest extends TestCase
         ]);
         $table->belongsToMany('Tags');
 
-        $results = $query->repository($table)->select()
+        $results = $query->setRepository($table)->select()
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.id' => 3]);
             })
@@ -812,7 +812,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $this->getTableLocator()->get('articles')->belongsToMany('tags');
 
-        $results = $query->repository($table)
+        $results = $query->setRepository($table)
             ->select()
             ->enableHydration(false)
             ->matching('articles.tags', function ($q) {
@@ -3087,7 +3087,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $this->getTableLocator()->get('articles')->belongsToMany('tags');
 
-        $result = $query->repository($table)
+        $result = $query->setRepository($table)
             ->select()
             ->matching('articles.tags', function ($q) {
                 return $q->where(['tags.id' => 2]);

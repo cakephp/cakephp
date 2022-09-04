@@ -26,6 +26,7 @@ use Closure;
  *   provided list using the AND operator. {@see \Cake\Database\Query::andWhere()}
  * @method \Cake\Datasource\EntityInterface|array firstOrFail() Get the first result from the executing query or raise an exception.
  *   {@see \Cake\Database\Query::firstOrFail()}
+ * @method $this setRepository(\Cake\Datasource\RepositoryInterface $repository) Set the default repository object that will be used by this query.
  */
 interface QueryInterface
 {
