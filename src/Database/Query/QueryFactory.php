@@ -14,12 +14,10 @@ declare(strict_types=1);
  * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Database\Query;
 
-use Cake\Database\Query\DeleteQuery;
-use Cake\Database\Query\InsertQuery;
-use Cake\Database\Query\SelectQuery;
-use Cake\Database\Query\UpdateQuery;
+use Cake\Database\Connection;
+use Cake\Database\ExpressionInterface;
 use Closure;
 
 /**

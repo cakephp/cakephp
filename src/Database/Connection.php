@@ -26,6 +26,7 @@ use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\QueryFactory;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
 use Cake\Database\Retry\ReconnectStrategy;
@@ -283,7 +284,7 @@ class Connection implements ConnectionInterface
     /**
      * Get query factory instance.
      *
-     * @return \Cake\Database\QueryFactory
+     * @return \Cake\Database\Query\QueryFactory
      */
     public function queryFactory(): QueryFactory
     {

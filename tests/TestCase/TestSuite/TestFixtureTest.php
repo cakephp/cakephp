@@ -173,7 +173,7 @@ class TestFixtureTest extends TestCase
             ->setConstructorArgs([$db])
             ->getMock();
         $db->expects($this->once())
-            ->method('newInsertQuery')
+            ->method('insertQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
