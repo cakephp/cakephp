@@ -339,7 +339,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * $cte = new \Cake\Database\Expression\CommonTableExpression(
      *     'cte',
      *     $connection
-     *         ->newSelectQuery('*')
+     *         ->selectQuery('*')
      *         ->from('articles')
      * );
      *
@@ -376,7 +376,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($cte instanceof Closure) {
-            $query = $this->getConnection()->newSelectQuery();
+            $query = $this->getConnection()->selectQuery();
             $cte = $cte(new CommonTableExpression(), $query);
             if (!($cte instanceof CommonTableExpression)) {
                 throw new CakeException(

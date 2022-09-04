@@ -1436,7 +1436,7 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
                 ->disableAutoFields()
                 ->execute();
         } else {
-            $statement = $this->getConnection()->newSelectQuery()
+            $statement = $this->getConnection()->selectQuery()
                 ->select($count)
                 ->from(['count_source' => $query])
                 ->execute();

@@ -1585,7 +1585,7 @@ class QueryRegressionTest extends TestCase
                         ->ABS([
                             $table
                                 ->getConnection()
-                                ->newSelectQuery(-1),
+                                ->selectQuery(-1),
                         ])
                         ->setReturnType('integer'),
                 ];
@@ -1640,7 +1640,7 @@ class QueryRegressionTest extends TestCase
                             [
                                 $table
                                     ->getConnection()
-                                    ->newSelectQuery(1.23456),
+                                    ->selectQuery(1.23456),
                                 2,
                             ],
                             [null, 'integer']

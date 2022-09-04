@@ -95,7 +95,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery(
+                    $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
                         ['ArticlesAlias' => 'articles']
                     )
@@ -121,7 +121,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery(
+                    $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
                         ['ArticlesAlias' => 'articles']
                     )
@@ -159,7 +159,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery(
+                    $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
                         ['ArticlesAlias' => 'articles']
                     )
@@ -236,7 +236,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery(
+                    $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
                         ['ArticlesAlias' => 'articles']
                     )
@@ -262,7 +262,7 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->newSelectQuery(
+                    $this->connection->selectQuery(
                         fields: ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
                         table: ['ArticlesAlias' => 'articles']
                     )
