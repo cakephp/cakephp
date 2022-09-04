@@ -63,7 +63,7 @@ class Socket
     /**
      * This variable contains an array with the last error number (num) and string (str)
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $lastError = [];
 
@@ -96,7 +96,7 @@ class Socket
      * Used to capture connection warnings which can happen when there are
      * SSL errors for example.
      *
-     * @var array
+     * @var array<string>
      */
     protected array $_connectionErrors = [];
 
@@ -236,7 +236,7 @@ class Socket
     protected function _setSslContext(string $host): void
     {
         foreach ($this->_config as $key => $value) {
-            if (substr($key, 0, 4) !== 'ssl_') {
+            if (!str_starts_with($key, 'ssl_')) {
                 continue;
             }
             $contextKey = substr($key, 4);

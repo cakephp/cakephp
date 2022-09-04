@@ -594,7 +594,7 @@ trait IntegrationTestTrait
             'QUERY_STRING' => $query,
             'REQUEST_URI' => $url,
         ];
-        if (!empty($hostInfo['ssl'])) {
+        if (!empty($hostInfo['https'])) {
             $env['HTTPS'] = 'on';
         }
         if (isset($hostInfo['host'])) {
@@ -733,7 +733,7 @@ trait IntegrationTestTrait
             $hostData['host'] = $uri->getHost();
         }
         if ($uri->getScheme()) {
-            $hostData['ssl'] = $uri->getScheme() === 'https';
+            $hostData['https'] = $uri->getScheme() === 'https';
         }
 
         return [$path, $query, $hostData];
@@ -763,7 +763,7 @@ trait IntegrationTestTrait
      */
     public function viewVariable(string $name): mixed
     {
-        return $this->_controller ? $this->_controller->viewBuilder()->getVar($name) : null;
+        return $this->_controller?->viewBuilder()->getVar($name);
     }
 
     /**
@@ -1362,10 +1362,26 @@ trait IntegrationTestTrait
      */
     protected function extractExceptionMessage(Exception $exception): string
     {
-        return PHP_EOL .
-            sprintf('Possibly related to %s: "%s" ', get_class($exception), $exception->getMessage()) .
-            PHP_EOL .
-            $exception->getTraceAsString();
+        $exceptions = [$exception];
+        $previous = $exception->getPrevious();
+        while ($previous != null) {
+            $exceptions[] = $previous;
+            $previous = $previous->getPrevious();
+        }
+        $message = PHP_EOL;
+        foreach ($exceptions as $i => $error) {
+            if ($i == 0) {
+                $message .= sprintf('Possibly related to %s: "%s"', get_class($error), $error->getMessage());
+                $message .= PHP_EOL;
+            } else {
+                $message .= sprintf('Caused by %s: "%s"', get_class($error), $error->getMessage());
+                $message .= PHP_EOL;
+            }
+            $message .= $error->getTraceAsString();
+            $message .= PHP_EOL;
+        }
+
+        return $message;
     }
 
     /**

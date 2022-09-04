@@ -748,14 +748,14 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredTyped',
-                'pass' => ['1.0', '2', '0', ''],
+                'pass' => ['1.0', '0', '0', ''],
             ],
         ]);
         $controller = $this->factory->create($request);
 
         $result = $this->factory->invoke($controller);
         $data = json_decode((string)$result->getBody(), true);
-        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => []], $data);
+        $this->assertSame(['one' => 1.0, 'two' => 0, 'three' => false, 'four' => []], $data);
 
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/requiredTyped',

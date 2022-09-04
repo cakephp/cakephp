@@ -698,9 +698,9 @@ class ConsoleOptionParser
             if (isset($this->_subcommands[$token])) {
                 continue;
             }
-            if (substr($token, 0, 2) === '--') {
+            if (str_starts_with($token, '--')) {
                 $params = $this->_parseLongOption($token, $params);
-            } elseif (substr($token, 0, 1) === '-') {
+            } elseif (str_starts_with($token, '-')) {
                 $params = $this->_parseShortOption($token, $params);
             } else {
                 $args = $this->_parseArg($token, $args);
@@ -936,7 +936,7 @@ class ConsoleOptionParser
      */
     protected function _optionExists(string $name): bool
     {
-        if (substr($name, 0, 2) === '--') {
+        if (str_starts_with($name, '--')) {
             return isset($this->_options[substr($name, 2)]);
         }
         if ($name[0] === '-' && $name[1] !== '-') {

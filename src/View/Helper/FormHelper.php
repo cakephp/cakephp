@@ -712,7 +712,7 @@ class FormHelper extends Helper
      */
     public function error(string $field, array|string|null $text = null, array $options = []): string
     {
-        if (substr($field, -5) === '._ids') {
+        if (str_ends_with($field, '._ids')) {
             $field = substr($field, 0, -5);
         }
         $options += ['escape' => true];
@@ -828,14 +828,14 @@ class FormHelper extends Helper
     {
         if ($text === null) {
             $text = $fieldName;
-            if (substr($text, -5) === '._ids') {
+            if (str_ends_with($text, '._ids')) {
                 $text = substr($text, 0, -5);
             }
             if (str_contains($text, '.')) {
                 $fieldElements = explode('.', $text);
                 $text = array_pop($fieldElements);
             }
-            if (substr($text, -3) === '_id') {
+            if (str_ends_with($text, '_id')) {
                 $text = substr($text, 0, -3);
             }
             $text = __(Inflector::humanize(Inflector::underscore($text)));
@@ -1248,7 +1248,7 @@ class FormHelper extends Helper
             return 'hidden';
         }
 
-        if (substr($fieldName, -3) === '_id') {
+        if (str_ends_with($fieldName, '_id')) {
             return 'select';
         }
 
@@ -1286,7 +1286,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName The name of the field to find options for.
      * @param array<string, mixed> $options Options list.
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _optionsOptions(string $fieldName, array $options): array
     {
@@ -1295,10 +1295,10 @@ class FormHelper extends Helper
         }
 
         $pluralize = true;
-        if (substr($fieldName, -5) === '._ids') {
+        if (str_ends_with($fieldName, '._ids')) {
             $fieldName = substr($fieldName, 0, -5);
             $pluralize = false;
-        } elseif (substr($fieldName, -3) === '_id') {
+        } elseif (str_ends_with($fieldName, '_id')) {
             $fieldName = substr($fieldName, 0, -3);
         }
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
@@ -1341,7 +1341,7 @@ class FormHelper extends Helper
             $options = $this->_optionsOptions($fieldName, $options);
         }
 
-        if ($allowOverride && substr($fieldName, -5) === '._ids') {
+        if ($allowOverride && str_ends_with($fieldName, '._ids')) {
             $options['type'] = 'select';
             if (!isset($options['multiple']) || ($options['multiple'] && $options['multiple'] !== 'checkbox')) {
                 $options['multiple'] = true;
@@ -2301,7 +2301,7 @@ class FormHelper extends Helper
 
         if (!isset($options['name'])) {
             $endsWithBrackets = '';
-            if (substr($field, -2) === '[]') {
+            if (str_ends_with($field, '[]')) {
                 $field = substr($field, 0, -2);
                 $endsWithBrackets = '[]';
             }

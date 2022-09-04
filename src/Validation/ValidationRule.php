@@ -74,7 +74,7 @@ class ValidationRule
     /**
      * Constructor
      *
-     * @param array $validator The validator properties
+     * @param array<string, mixed> $validator The validator properties
      */
     public function __construct(array $validator)
     {
@@ -185,7 +185,7 @@ class ValidationRule
     /**
      * Sets the rule properties from the rule entry in validate
      *
-     * @param array $validator [optional]
+     * @param array<string, mixed> $validator [optional]
      * @return void
      */
     protected function _addValidatorProps(array $validator = []): void

@@ -46,14 +46,14 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     /**
      * Method mappings.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected array $_methodMap = [];
 
     /**
      * Finder method mappings.
      *
-     * @var array
+     * @var array<string, array>
      */
     protected array $_finderMap = [];
 
@@ -137,7 +137,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config An array of config to use for the behavior.
      * @return \Cake\ORM\Behavior The constructed behavior class.
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     protected function _create(object|string $class, string $alias, array $config): Behavior
     {

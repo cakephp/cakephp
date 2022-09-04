@@ -11,11 +11,6 @@ parameters:
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Collection.php
-
-		-
 			message: "#^Call to an undefined method Iterator\\:\\:getArrayCopy\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ExtractIterator.php
@@ -34,21 +29,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$items of class Cake\\\\Collection\\\\Iterator\\\\TreePrinter constructor expects RecursiveIterator, Iterator\\<mixed, mixed\\> given\\.$#"
 			count: 1
 			path: src/Collection/Iterator/TreeIterator.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/TreeIterator.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/TreePrinter.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/ZipIterator.php
 
 		-
 			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
@@ -121,6 +101,11 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
+			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			count: 1
+			path: src/Error/Renderer/ConsoleExceptionRenderer.php
+
+		-
 			message: "#^PHPDoc tag @param for parameter \\$subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Event/Event.php
@@ -134,11 +119,6 @@ parameters:
 			message: "#^PHPDoc tag @var for property Cake\\\\Event\\\\Event\\:\\:\\$_subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
 			count: 1
 			path: src/Event/Event.php
-
-		-
-			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
-			count: 1
-			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -231,14 +211,14 @@ parameters:
 			path: src/ORM/Query.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: "#^Property Cake\\\\ORM\\\\Query\\:\\:\\$_repository \\(Cake\\\\ORM\\\\Table\\) does not accept Cake\\\\Datasource\\\\RepositoryInterface\\.$#"
 			count: 1
 			path: src/ORM/Query.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
-			path: src/ORM/ResultSet.php
+			path: src/ORM/Query.php
 
 		-
 			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"

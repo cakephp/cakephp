@@ -61,7 +61,7 @@ class NumericPaginator implements PaginatorInterface
      * and control other pagination settings.
      *
      * If your settings contain a key with the current table's alias. The data
-     * inside that key will be used. Otherwise the top level configuration will
+     * inside that key will be used. Otherwise, the top level configuration will
      * be used.
      *
      * ```

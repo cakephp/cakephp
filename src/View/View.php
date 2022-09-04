@@ -388,7 +388,7 @@ class View implements EventDispatcherInterface
         }
         $response = $this->getResponse();
         $responseType = $response->getHeaderLine('Content-Type');
-        if ($responseType === '' || substr($responseType, 0, 9) === 'text/html') {
+        if ($responseType === '' || str_starts_with($responseType, 'text/html')) {
             $response = $response->withType($viewContentType);
         }
         $this->setResponse($response);
@@ -1330,7 +1330,7 @@ class View implements EventDispatcherInterface
         if ($this->subDir !== '') {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if ($templatePath != $subDir && substr($templatePath, -strlen($subDir)) === $subDir) {
+            if ($templatePath != $subDir && str_ends_with($templatePath, $subDir)) {
                 $subDir = '';
             }
         }
@@ -1654,6 +1654,7 @@ class View implements EventDispatcherInterface
         }
         $config['key'] = 'element_' . $config['key'];
 
+        /** @var array{config: string, key: string} */
         return $config;
     }
 

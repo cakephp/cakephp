@@ -70,14 +70,14 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Array of cookie data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $cookies = [];
 
     /**
      * Array of environment data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_environment = [];
 
@@ -127,7 +127,7 @@ class ServerRequest implements ServerRequestInterface
         'delete' => ['env' => 'REQUEST_METHOD', 'value' => 'DELETE'],
         'head' => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
         'options' => ['env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'],
-        'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
+        'https' => ['env' => 'HTTPS', 'options' => [1, 'on']],
         'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => [
@@ -141,7 +141,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Instance cache for results of is(something) calls
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected array $_detectorCache = [];
 
@@ -176,7 +176,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Store the additional attributes attached to the request.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $attributes = [];
 
@@ -491,6 +491,7 @@ class ServerRequest implements ServerRequestInterface
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
      * @return bool Whether the request is the type you are checking.
+     * @throws \InvalidArgumentException If no detector has been set for the provided type.
      */
     public function is(array|string $type, mixed ...$args): bool
     {
@@ -506,7 +507,7 @@ class ServerRequest implements ServerRequestInterface
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
-            return false;
+            throw new InvalidArgumentException("No detector set for type `{$type}`");
         }
         if ($args) {
             return $this->_is($type, $args);
@@ -1150,7 +1151,7 @@ class ServerRequest implements ServerRequestInterface
      * ```$request->acceptLanguage('es-es');```
      *
      * @param string|null $language The language to test.
-     * @return array|bool If a $language is provided, a boolean. Otherwise the array of accepted languages.
+     * @return array|bool If a $language is provided, a boolean. Otherwise, the array of accepted languages.
      */
     public function acceptLanguage(?string $language = null): array|bool
     {
@@ -1286,7 +1287,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get all the cookie data from the request.
      *
-     * @return array An array of cookie data.
+     * @return array<string, mixed> An array of cookie data.
      */
     public function getCookieParams(): array
     {
@@ -1595,7 +1596,7 @@ class ServerRequest implements ServerRequestInterface
      * This will include the params, webroot, base, and here attributes that CakePHP
      * provides.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAttributes(): array
     {

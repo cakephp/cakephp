@@ -157,7 +157,6 @@ class Collection implements CollectionInterface
         } catch (PDOException $e) {
             throw new DatabaseException($e->getMessage(), 500, $e);
         }
-        /** @psalm-suppress PossiblyFalseIterator */
         foreach ($statement->fetchAll('assoc') as $row) {
             $this->_dialect->{$convertMethod}($schema, $row);
         }

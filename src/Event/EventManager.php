@@ -410,9 +410,7 @@ class EventManager implements EventManagerInterface
      */
     public function addEventToList(EventInterface $event)
     {
-        if ($this->_eventList) {
-            $this->_eventList->add($event);
-        }
+        $this->_eventList?->add($event);
 
         return $this;
     }

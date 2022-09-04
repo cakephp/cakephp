@@ -82,7 +82,7 @@ class ReconnectStrategy implements RetryStrategyInterface
         $message = $exception->getMessage();
 
         foreach (static::$causes as $cause) {
-            if (strstr($message, $cause) !== false) {
+            if (str_contains($message, $cause)) {
                 return $this->reconnect();
             }
         }

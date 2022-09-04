@@ -583,7 +583,7 @@ class BelongsToMany extends Association
         $conditions = [];
 
         if (!empty($bindingKey)) {
-            /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+            /** @psalm-suppress InvalidArgument */
             $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
         }
 
@@ -798,12 +798,12 @@ class BelongsToMany extends Association
             if (!$joint || !($joint instanceof EntityInterface)) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
-            /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+            /** @psalm-suppress InvalidArgument */
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
-            /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+            /** @psalm-suppress InvalidArgument */
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
-            /** @psalm-suppress InvalidScalarArgument getForeignKey() returns false */
+            /** @psalm-suppress InvalidArgument */
             $changedKeys = $sourceKeys !== $joint->extract($foreignKey) ||
                 $targetKeys !== $joint->extract($assocForeignKey);
 

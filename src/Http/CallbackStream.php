@@ -40,7 +40,6 @@ class CallbackStream extends BaseCallbackStream
     {
         $callback = $this->detach();
         $result = '';
-        /** @psalm-suppress TypeDoesNotContainType */
         if ($callback !== null) {
             $result = $callback();
         }

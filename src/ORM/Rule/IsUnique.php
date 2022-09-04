@@ -93,7 +93,7 @@ class IsUnique
      *
      * @param string $alias The alias to add.
      * @param array $conditions The conditions to alias.
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _alias(string $alias, array $conditions): array
     {

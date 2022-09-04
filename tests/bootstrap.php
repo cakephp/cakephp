@@ -17,8 +17,10 @@ use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FactoryLocator;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
+use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\Utility\Security;
 
@@ -145,3 +147,5 @@ if (env('FIXTURE_SCHEMA_METADATA')) {
     $loader = new SchemaLoader();
     $loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
 }
+
+FactoryLocator::add('Table', new TableLocator());

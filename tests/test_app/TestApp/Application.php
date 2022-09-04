@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace TestApp;
 
 use Cake\Console\CommandCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -25,6 +26,7 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
+use League\Container\ReflectionContainer;
 use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DependencyCommand;
@@ -96,5 +98,7 @@ class Application extends BaseApplication
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
         $container->add(DependencyCommand::class)
             ->addArgument(stdClass::class);
+        $container->add(ComponentRegistry::class);
+        $container->delegate(new ReflectionContainer());
     }
 }

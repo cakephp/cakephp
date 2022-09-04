@@ -29,6 +29,8 @@ use Traversable;
  *
  * Contains methods for managing associations, and
  * ordering operations around saving and deleting.
+ *
+ * @template-implements \IteratorAggregate<string, \Cake\ORM\Association>
  */
 class AssociationCollection implements IteratorAggregate
 {
@@ -38,7 +40,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Stored associations
      *
-     * @var array<\Cake\ORM\Association>
+     * @var array<string, \Cake\ORM\Association>
      */
     protected array $_items = [];
 

@@ -124,7 +124,6 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      */
     public function __construct(mixed $value = null, ?string $type = null)
     {
-        /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
         if (func_num_args() > 0) {
             if (
                 $value !== null &&
@@ -408,7 +407,6 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             throw new LogicException('Cannot call `else()` between `when()` and `then()`.');
         }
 
-        /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
         if (
             $result !== null &&
             !is_scalar($result) &&

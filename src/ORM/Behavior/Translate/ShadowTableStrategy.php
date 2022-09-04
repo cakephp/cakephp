@@ -265,7 +265,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     return $c;
                 }
 
-                /** @psalm-suppress ParadoxicalCondition */
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
                     $field = "$alias.$field";
@@ -323,7 +322,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     return;
                 }
 
-                /** @psalm-suppress ParadoxicalCondition */
                 if (in_array($field, $mainTableFields, true)) {
                     $expression->setField("$mainTableAlias.$field");
                 }
@@ -593,7 +591,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the main table fields.
      *
-     * @return array
+     * @return array<string>
      */
     protected function mainFields(): array
     {
@@ -613,7 +611,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the translation table fields.
      *
-     * @return array
+     * @return array<string>
      */
     protected function translatedFields(): array
     {

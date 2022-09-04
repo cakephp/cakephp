@@ -45,7 +45,7 @@ class ArrayLog extends BaseLog
     /**
      * Captured messages
      *
-     * @var array
+     * @var array<string>
      */
     protected array $content = [];
 

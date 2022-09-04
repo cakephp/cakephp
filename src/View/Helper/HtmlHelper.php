@@ -850,9 +850,9 @@ class HtmlHelper extends Helper
      * - `escape` Whether the contents should be html_entity escaped.
      *
      * @param string $name Tag name.
-     * @param string|null $text String content that will appear inside the div element.
+     * @param string|null $text String content that will appear inside the HTML element.
      *   If null, only a start tag will be printed
-     * @param array<string, mixed> $options Additional HTML attributes of the DIV tag, see above.
+     * @param array<string, mixed> $options Additional HTML attributes of the HTML tag, see above.
      * @return string The formatted tag element
      */
     public function tag(string $name, ?string $text = null, array $options = []): string

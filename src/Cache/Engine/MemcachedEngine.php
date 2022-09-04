@@ -262,7 +262,7 @@ class MemcachedEngine extends CacheEngine
         if (str_starts_with($server, $socketTransport)) {
             return [substr($server, strlen($socketTransport)), 0];
         }
-        if (substr($server, 0, 1) === '[') {
+        if (str_starts_with($server, '[')) {
             $position = strpos($server, ']:');
             if ($position !== false) {
                 $position++;

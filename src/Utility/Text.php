@@ -119,6 +119,7 @@ class Text
                 mb_strpos($data, $rightBound, $offset),
             ];
             for ($i = 0; $i < 3; $i++) {
+                /** @psalm-suppress InvalidArrayOffset */
                 if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset === -1)) {
                     $tmpOffset = $offsets[$i];
                 }
@@ -586,7 +587,7 @@ class Text
         $default = [
             'ellipsis' => '...', 'exact' => true, 'html' => false, 'trimWidth' => false,
         ];
-        if (!empty($options['html']) && strtolower((string)mb_internal_encoding()) === 'utf-8') {
+        if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
         $options += $default;
@@ -934,7 +935,7 @@ class Text
      * to the decimal value of the character
      *
      * @param string $string String to convert.
-     * @return array
+     * @return array<int>
      */
     public static function utf8(string $string): array
     {
@@ -1025,7 +1026,7 @@ class Text
             return (int)($size * pow(1024, $i + 1));
         }
 
-        if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
+        if (str_ends_with($size, 'B') && ctype_digit(substr($size, 0, -1))) {
             $size = substr($size, 0, -1);
 
             return (int)$size;

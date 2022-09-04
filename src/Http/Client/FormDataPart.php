@@ -30,60 +30,32 @@ use Stringable;
 class FormDataPart implements Stringable
 {
     /**
-     * Name of the value.
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
-     * Value to send.
-     *
-     * @var string
-     */
-    protected string $_value;
-
-    /**
      * Content type to use
      *
      * @var string|null
      */
-    protected ?string $_type = null;
-
-    /**
-     * Disposition to send
-     *
-     * @var string
-     */
-    protected string $_disposition;
+    protected ?string $type = null;
 
     /**
      * Filename to send if using files.
      *
      * @var string|null
      */
-    protected ?string $_filename = null;
+    protected ?string $filename = null;
 
     /**
      * The encoding used in this part.
      *
      * @var string|null
      */
-    protected ?string $_transferEncoding = null;
+    protected ?string $transferEncoding = null;
 
     /**
      * The contentId for the part
      *
      * @var string|null
      */
-    protected ?string $_contentId = null;
-
-    /**
-     * The charset attribute for the Content-Disposition header fields
-     *
-     * @var string|null
-     */
-    protected ?string $_charset = null;
+    protected ?string $contentId = null;
 
     /**
      * Constructor
@@ -93,12 +65,12 @@ class FormDataPart implements Stringable
      * @param string $disposition The type of disposition to use, defaults to form-data.
      * @param string|null $charset The charset of the data.
      */
-    public function __construct(string $name, string $value, string $disposition = 'form-data', ?string $charset = null)
-    {
-        $this->_name = $name;
-        $this->_value = $value;
-        $this->_disposition = $disposition;
-        $this->_charset = $charset;
+    public function __construct(
+        protected string $name,
+        protected string $value,
+        protected string $disposition = 'form-data',
+        protected ?string $charset = null
+    ) {
     }
 
     /**
@@ -113,10 +85,10 @@ class FormDataPart implements Stringable
     public function disposition(?string $disposition = null): string
     {
         if ($disposition === null) {
-            return $this->_disposition;
+            return $this->disposition;
         }
 
-        return $this->_disposition = $disposition;
+        return $this->disposition = $disposition;
     }
 
     /**
@@ -128,10 +100,10 @@ class FormDataPart implements Stringable
     public function contentId(?string $id = null): ?string
     {
         if ($id === null) {
-            return $this->_contentId;
+            return $this->contentId;
         }
 
-        return $this->_contentId = $id;
+        return $this->contentId = $id;
     }
 
     /**
@@ -146,10 +118,10 @@ class FormDataPart implements Stringable
     public function filename(?string $filename = null): ?string
     {
         if ($filename === null) {
-            return $this->_filename;
+            return $this->filename;
         }
 
-        return $this->_filename = $filename;
+        return $this->filename = $filename;
     }
 
     /**
@@ -161,10 +133,10 @@ class FormDataPart implements Stringable
     public function type(?string $type): ?string
     {
         if ($type === null) {
-            return $this->_type;
+            return $this->type;
         }
 
-        return $this->_type = $type;
+        return $this->type = $type;
     }
 
     /**
@@ -178,10 +150,10 @@ class FormDataPart implements Stringable
     public function transferEncoding(?string $type): ?string
     {
         if ($type === null) {
-            return $this->_transferEncoding;
+            return $this->transferEncoding;
         }
 
-        return $this->_transferEncoding = $type;
+        return $this->transferEncoding = $type;
     }
 
     /**
@@ -191,7 +163,7 @@ class FormDataPart implements Stringable
      */
     public function name(): string
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -201,7 +173,7 @@ class FormDataPart implements Stringable
      */
     public function value(): string
     {
-        return $this->_value;
+        return $this->value;
     }
 
     /**
@@ -214,27 +186,27 @@ class FormDataPart implements Stringable
     public function __toString(): string
     {
         $out = '';
-        if ($this->_disposition) {
-            $out .= 'Content-Disposition: ' . $this->_disposition;
-            if ($this->_name) {
-                $out .= '; ' . $this->_headerParameterToString('name', $this->_name);
+        if ($this->disposition) {
+            $out .= 'Content-Disposition: ' . $this->disposition;
+            if ($this->name) {
+                $out .= '; ' . $this->_headerParameterToString('name', $this->name);
             }
-            if ($this->_filename) {
-                $out .= '; ' . $this->_headerParameterToString('filename', $this->_filename);
+            if ($this->filename) {
+                $out .= '; ' . $this->_headerParameterToString('filename', $this->filename);
             }
             $out .= "\r\n";
         }
-        if ($this->_type) {
-            $out .= 'Content-Type: ' . $this->_type . "\r\n";
+        if ($this->type) {
+            $out .= 'Content-Type: ' . $this->type . "\r\n";
         }
-        if ($this->_transferEncoding) {
-            $out .= 'Content-Transfer-Encoding: ' . $this->_transferEncoding . "\r\n";
+        if ($this->transferEncoding) {
+            $out .= 'Content-Transfer-Encoding: ' . $this->transferEncoding . "\r\n";
         }
-        if ($this->_contentId) {
-            $out .= 'Content-ID: <' . $this->_contentId . ">\r\n";
+        if ($this->contentId) {
+            $out .= 'Content-ID: <' . $this->contentId . ">\r\n";
         }
         $out .= "\r\n";
-        $out .= $this->_value;
+        $out .= $this->value;
 
         return $out;
     }
@@ -253,8 +225,8 @@ class FormDataPart implements Stringable
     {
         $transliterated = Text::transliterate(str_replace('"', '', $value));
         $return = sprintf('%s="%s"', $name, $transliterated);
-        if ($this->_charset !== null && $value !== $transliterated) {
-            $return .= sprintf("; %s*=%s''%s", $name, strtolower($this->_charset), rawurlencode($value));
+        if ($this->charset !== null && $value !== $transliterated) {
+            $return .= sprintf("; %s*=%s''%s", $name, strtolower($this->charset), rawurlencode($value));
         }
 
         return $return;

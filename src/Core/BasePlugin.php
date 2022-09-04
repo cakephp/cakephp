@@ -157,7 +157,7 @@ class BasePlugin implements PluginInterface
         $path = dirname($reflection->getFileName());
 
         // Trim off src
-        if (substr($path, -3) === 'src') {
+        if (str_ends_with($path, 'src')) {
             $path = substr($path, 0, -3);
         }
         $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;

@@ -32,6 +32,8 @@ use Traversable;
  * Implements ArrayAccess to easily modify rules in the set
  *
  * @link https://book.cakephp.org/4/en/core-libraries/validation.html
+ * @template-implements \ArrayAccess<string, \Cake\Validation\ValidationSet>
+ * @template-implements \IteratorAggregate<string, \Cake\Validation\ValidationSet>
  */
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
@@ -152,7 +154,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Contains the validation messages associated with checking the presence
      * for each corresponding field.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $_presenceMessages = [];
 
@@ -167,14 +169,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Contains the validation messages associated with checking the emptiness
      * for each corresponding field.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected array $_allowEmptyMessages = [];
 
     /**
      * Contains the flags which specify what is empty for each corresponding field.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected array $_allowEmptyFlags = [];
 

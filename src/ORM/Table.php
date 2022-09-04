@@ -1429,7 +1429,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options the original options passed to a finder
      * @param array<string> $keys the keys to check in $options to build matchers from
      * the associated value
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _setFieldMatchers(array $options, array $keys): array
     {
@@ -1477,7 +1477,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
      *      incorrect number of elements.
      * @see \Cake\Datasource\RepositoryInterface::find()
-     * @psalm-suppress InvalidReturnType
      */
     public function get($primaryKey, array $options = []): EntityInterface
     {
@@ -1529,7 +1528,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $query->cache($cacheKey, $cacheConfig);
         }
 
-        /** @psalm-suppress InvalidReturnStatement */
         return $query->firstOrFail();
     }
 
@@ -3095,7 +3093,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

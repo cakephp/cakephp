@@ -26,6 +26,7 @@ use Closure;
  *   provided list using the AND operator. {@see \Cake\Database\Query::andWhere()}
  * @method \Cake\Datasource\EntityInterface|array firstOrFail() Get the first result from the executing query or raise an exception.
  *   {@see \Cake\Database\Query::firstOrFail()}
+ * @method $this setRepository(\Cake\Datasource\RepositoryInterface $repository) Set the default repository object that will be used by this query.
  */
 interface QueryInterface
 {
@@ -54,7 +55,7 @@ interface QueryInterface
      *
      * @param string $field The field to alias
      * @param string|null $alias the alias used to prefix the field
-     * @return array
+     * @return array<string, string>
      */
     public function aliasField(string $field, ?string $alias = null): array;
 
@@ -64,7 +65,7 @@ interface QueryInterface
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array<string>
+     * @return array<string, string>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array;
 

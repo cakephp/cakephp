@@ -197,6 +197,7 @@ class TestFixture implements FixtureInterface
         foreach ($fields as $field) {
             /** @var array $column */
             $column = $this->_schema->getColumn($field);
+            /** @psalm-suppress InvalidArrayOffset */
             $types[$field] = $column['type'];
         }
         $default = array_fill_keys($fields, null);

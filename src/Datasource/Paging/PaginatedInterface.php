@@ -23,6 +23,7 @@ use Traversable;
  * This interface describes the methods for pagination instance.
  *
  * @method int count() Item count for current page.
+ * @template-extends \Traversable<mixed>
  */
 interface PaginatedInterface extends Countable, Traversable
 {
