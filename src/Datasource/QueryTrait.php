@@ -85,20 +85,6 @@ trait QueryTrait
     protected bool $_eagerLoaded = false;
 
     /**
-     * Set the default repository object that will be used by this query.
-     *
-     * @param \Cake\Datasource\RepositoryInterface $repository The default repository object to use.
-     * @return $this
-     * @deprecated 4.5.0 Use `setRepository()` instead.
-     */
-    public function repository(RepositoryInterface $repository)
-    {
-        deprecationWarning('`repository() method is deprecated. Use `setRepository()` instead.');
-
-        return $this->setRepository($repository);
-    }
-
-    /**
      * Set the default Table object that will be used by this query
      * and form the `FROM` clause.
      *

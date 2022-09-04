@@ -311,7 +311,7 @@ class Connection implements ConnectionInterface
      *
      * @param string|null $table The table to insert rows into.
      * @param array $values Associative array of column => value to be inserted.
-     * @param array<string, string> $types Associative array containing the types to be used for casting.
+     * @param array<int|string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\InsertQuery
      */
     public function newInsertQuery(?string $table = null, array $values = [], array $types = []): InsertQuery

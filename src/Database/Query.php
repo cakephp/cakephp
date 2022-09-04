@@ -31,8 +31,6 @@ use Stringable;
  * different types like select, update, insert and delete. Exposes the methods
  * for dynamically constructing each query part, execute it and transform it
  * to a specific SQL dialect.
- *
- * @template-implements \IteratorAggregate<mixed>
  */
 abstract class Query implements ExpressionInterface, Stringable
 {

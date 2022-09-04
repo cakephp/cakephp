@@ -31,6 +31,8 @@ use Traversable;
 
 /**
  * This class is used to generate SELECT queries for the relational database.
+ *
+ * @template-implements \IteratorAggregate<mixed>
  */
 class SelectQuery extends Query implements IteratorAggregate
 {
@@ -467,7 +469,6 @@ class SelectQuery extends Query implements IteratorAggregate
      * to use for joining.
      * @param string $type the join type to use
      * @return array
-     * @psalm-suppress InvalidReturnType
      */
     protected function _makeJoin(
         array|string $table,
@@ -483,7 +484,6 @@ class SelectQuery extends Query implements IteratorAggregate
 
         /**
          * @psalm-suppress InvalidArrayOffset
-         * @psalm-suppress InvalidReturnStatement
          */
         return [
             $alias => [

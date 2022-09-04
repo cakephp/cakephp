@@ -56,9 +56,11 @@ trait CommonQueryTrait
      *
      * @param \Cake\ORM\Table $repository The default table object to use.
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function setRepository(RepositoryInterface $repository)
     {
+        /** @psalm-suppress UndefinedThisPropertyAssignment */
         $this->_repository = $repository;
 
         return $this;
@@ -72,6 +74,7 @@ trait CommonQueryTrait
      */
     public function getRepository(): Table
     {
+        /** @psalm-suppress UndefinedThisPropertyFetch */
         return $this->_repository;
     }
 }
