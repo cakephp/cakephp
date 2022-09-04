@@ -1340,7 +1340,7 @@ trait PaginatorTestTrait
             ->will($this->returnValue($results));
 
         if ($table) {
-            $query->repository($table);
+            $query->setRepository($table);
         }
 
         return $query;

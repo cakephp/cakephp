@@ -1403,7 +1403,7 @@ class PaginatorComponentTest extends TestCase
             ->will($this->returnValue(2));
 
         if ($table) {
-            $query->repository($table);
+            $query->setRepository($table);
         }
 
         return $query;
