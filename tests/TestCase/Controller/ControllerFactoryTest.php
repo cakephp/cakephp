@@ -283,8 +283,6 @@ class ControllerFactoryTest extends TestCase
             ->addArgument(ServerRequest::class)
             ->addArgument(null)
             ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(null)
             ->addArgument(stdClass::class);
 
         $controller = $this->factory->create($request);
