@@ -815,7 +815,7 @@ class Route
      */
     protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
-        $pass = array_filter($pass, fn(mixed $value): bool => $value !== null);
+        $pass = array_filter($pass, fn($value): bool => $value !== null);
         $pass = implode('/', array_map('rawurlencode', $pass));
         $out = $this->template;
 
