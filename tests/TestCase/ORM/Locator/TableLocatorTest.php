@@ -21,9 +21,11 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\TableLocator;
+use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use ReflectionProperty;
 use TestApp\Infrastructure\Table\AddressesTable;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\MyUsersTable;
@@ -675,5 +677,24 @@ class TableLocatorTest extends TestCase
         $table = $this->_locator->get('Articles', ['className' => ArticlesTable::class]);
 
         $this->assertSame($table, $mock);
+    }
+
+    public function testQueryFactoryInstance()
+    {
+        $articles = $this->_locator->get(ArticlesTable::class);
+        $prop1 = new ReflectionProperty($articles, 'queryFactory');
+        $prop1->setAccessible(true);
+
+        $users = $this->_locator->get(MyUsersTable::class);
+        $prop2 = new ReflectionProperty($users, 'queryFactory');
+        $prop2->setAccessible(true);
+
+        $this->assertInstanceOf(QueryFactory::class, $prop1->getValue($articles));
+        $this->assertSame($prop1->getValue($articles), $prop2->getValue($users));
+
+        $addresses = $this->_locator->get(AddressesTable::class, ['queryFactory' => new QueryFactory()]);
+        $prop3 = new ReflectionProperty($addresses, 'queryFactory');
+        $prop3->setAccessible(true);
+        $this->assertNotSame($prop1->getValue($articles), $prop3->getValue($addresses));
     }
 }

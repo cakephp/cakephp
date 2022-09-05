@@ -329,7 +329,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->_behaviors = $behaviors ?: new BehaviorRegistry();
         $this->_behaviors->setTable($this);
         $this->_associations = $associations ?: new AssociationCollection();
-        $this->queryFactory ??= new QueryFactory($this->getConnection(), $this);
+        $this->queryFactory ??= new QueryFactory();
 
         $this->initialize($config);
         $this->_eventManager->on($this);
@@ -1696,7 +1696,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function query(): Query
     {
-        return $this->queryFactory->select();
+        return $this->queryFactory->select($this);
     }
 
     /**
@@ -1706,7 +1706,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function insertQuery(): InsertQuery
     {
-        return $this->queryFactory->insert();
+        return $this->queryFactory->insert($this);
     }
 
     /**
@@ -1716,7 +1716,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function updateQuery(): UpdateQuery
     {
-        return $this->queryFactory->update();
+        return $this->queryFactory->update($this);
     }
 
     /**
@@ -1726,7 +1726,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteQuery(): DeleteQuery
     {
-        return $this->queryFactory->delete();
+        return $this->queryFactory->delete($this);
     }
 
     /**
@@ -1738,7 +1738,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function subquery(): Query
     {
-        return $this->queryFactory->select()->disableAutoAliasing();
+        return $this->queryFactory->select($this)->disableAutoAliasing();
     }
 
     /**

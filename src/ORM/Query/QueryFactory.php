@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Query;
 
-use Cake\Database\Connection;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
@@ -26,54 +25,46 @@ use Cake\ORM\Table;
 class QueryFactory
 {
     /**
-     * Constructor
-     *
-     * @param \Cake\Database\Connection $connection Connection instance.
-     * @param \Cake\ORM\Table $table The table the query instanced created will be starting on.
-     */
-    public function __construct(
-        protected Connection $connection,
-        protected Table $table
-    ) {
-    }
-
-    /**
      * Create a new Query instance.
      *
+     * @param \Cake\ORM\Table $table The table this query is starting on.
      * @return \Cake\ORM\Query
      */
-    public function select(): Query
+    public function select(Table $table): Query
     {
-        return new Query($this->connection, $this->table);
+        return new Query($table->getConnection(), $table);
     }
 
     /**
      * Create a new InsertQuery instance.
      *
+     * @param \Cake\ORM\Table $table The table this query is starting on.
      * @return \Cake\ORM\Query\InsertQuery
      */
-    public function insert(): InsertQuery
+    public function insert(Table $table): InsertQuery
     {
-        return new InsertQuery($this->connection, $this->table);
+        return new InsertQuery($table->getconnection(), $table);
     }
 
     /**
      * Create a new UpdateQuery instance.
      *
+     * @param \Cake\ORM\Table $table The table this query is starting on.
      * @return \Cake\ORM\Query\UpdateQuery
      */
-    public function update(): UpdateQuery
+    public function update(Table $table): UpdateQuery
     {
-        return new UpdateQuery($this->connection, $this->table);
+        return new UpdateQuery($table->getconnection(), $table);
     }
 
     /**
      * Create a new DeleteQuery instance.
      *
+     * @param \Cake\ORM\Table $table The table this query is starting on.
      * @return \Cake\ORM\Query\DeleteQuery
      */
-    public function delete(): DeleteQuery
+    public function delete(Table $table): DeleteQuery
     {
-        return new DeleteQuery($this->connection, $this->table);
+        return new DeleteQuery($table->getconnection(), $table);
     }
 }

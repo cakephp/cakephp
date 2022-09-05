@@ -23,6 +23,7 @@ use Cake\Datasource\Locator\AbstractLocator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Exception\MissingTableClassException;
+use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -76,13 +77,15 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     protected bool $allowFallbackClass = true;
 
+    protected QueryFactory $queryFactory;
+
     /**
      * Constructor.
      *
      * @param array<string>|null $locations Locations where tables should be looked for.
      *   If none provided, the default `Model\Table` under your app's namespace is used.
      */
-    public function __construct(?array $locations = null)
+    public function __construct(?array $locations = null, ?QueryFactory $queryFactory = null)
     {
         if ($locations === null) {
             $locations = [
@@ -93,6 +96,8 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         foreach ($locations as $location) {
             $this->addLocation($location);
         }
+
+        $this->queryFactory = $queryFactory ?: new QueryFactory();
     }
 
     /**
@@ -257,6 +262,9 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         if (empty($options['associations'])) {
             $associations = new AssociationCollection($this);
             $options['associations'] = $associations;
+        }
+        if (empty($options['queryFactory'])) {
+            $options['queryFactory'] = $this->queryFactory;
         }
 
         $options['registryAlias'] = $alias;
