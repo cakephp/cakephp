@@ -815,8 +815,7 @@ class Route
      */
     protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
-        $pass = array_filter($pass, fn($value): bool => $value !== null);
-        $pass = implode('/', array_map('rawurlencode', $pass));
+        $pass = implode('/', array_map(fn($value): string => rawurlencode((string) $value), $pass));
         $out = $this->template;
 
         $search = $replace = [];
