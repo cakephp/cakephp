@@ -31,8 +31,6 @@ use Stringable;
  * different types like select, update, insert and delete. Exposes the methods
  * for dynamically constructing each query part, execute it and transform it
  * to a specific SQL dialect.
- *
- * @template-implements \IteratorAggregate<mixed>
  */
 abstract class Query implements ExpressionInterface, Stringable
 {
@@ -341,7 +339,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * $cte = new \Cake\Database\Expression\CommonTableExpression(
      *     'cte',
      *     $connection
-     *         ->newSelectQuery('*')
+     *         ->selectQuery('*')
      *         ->from('articles')
      * );
      *
@@ -378,7 +376,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($cte instanceof Closure) {
-            $query = $this->getConnection()->newSelectQuery();
+            $query = $this->getConnection()->selectQuery();
             $cte = $cte(new CommonTableExpression(), $query);
             if (!($cte instanceof CommonTableExpression)) {
                 throw new CakeException(

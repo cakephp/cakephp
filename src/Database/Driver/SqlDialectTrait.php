@@ -228,6 +228,9 @@ trait SqlDialectTrait
      * @return \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery The modified query.
      * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
+     * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
+     * @psalm-param T $query
+     * @psalm-return T
      */
     protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {

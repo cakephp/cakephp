@@ -20,6 +20,7 @@ use Cake\Collection\CollectionInterface;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Query as DbQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
@@ -228,19 +229,25 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $query = $this->_scope($this->_table->query())
-                ->where(
-                    fn (QueryExpression $exp) => $exp
-                        ->gte($config['leftField'], $left + 1)
-                        ->lte($config['leftField'], $right - 1)
-                );
             if ($this->getConfig('cascadeCallbacks')) {
+                $query = $this->_scope($this->_table->query())
+                    ->where(
+                        fn (QueryExpression $exp) => $exp
+                            ->gte($config['leftField'], $left + 1)
+                            ->lte($config['leftField'], $right - 1)
+                    );
+
                 $entities = $query->toArray();
                 foreach ($entities as $entityToDelete) {
                     $this->_table->delete($entityToDelete, ['atomic' => false]);
                 }
             } else {
-                $query->delete()
+                $this->_scope($this->_table->deleteQuery())
+                    ->where(
+                        fn (QueryExpression $exp) => $exp
+                            ->gte($config['leftField'], $left + 1)
+                            ->lte($config['leftField'], $right - 1)
+                    )
                     ->execute();
             }
         }
@@ -898,7 +905,7 @@ class TreeBehavior extends Behavior
 
         /** @var \Cake\Database\Expression\IdentifierExpression $field */
         foreach ([$config['leftField'], $config['rightField']] as $field) {
-            $query = $this->_scope($this->_table->query());
+            $query = $this->_scope($this->_table->updateQuery());
             $exp = $query->newExpr();
 
             $movement = clone $exp;
@@ -912,7 +919,7 @@ class TreeBehavior extends Behavior
             $where = clone $exp;
             $where->add($field)->add($conditions)->setConjunction('');
 
-            $query->update()
+            $query
                 ->set($exp->eq($field, $movement))
                 ->where($where)
                 ->execute();
@@ -923,10 +930,13 @@ class TreeBehavior extends Behavior
      * Alters the passed query so that it only returns scoped records as defined
      * in the tree configuration.
      *
-     * @param \Cake\ORM\Query $query the Query to modify
-     * @return \Cake\ORM\Query
+     * @param \Cake\Database\Query $query the Query to modify
+     * @return \Cake\Database\Query
+     * @template T of \Cake\ORM\Query|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
+     * @psalm-param T $query
+     * @psalm-return T
      */
-    protected function _scope(Query $query): Query
+    protected function _scope(DbQuery $query): DbQuery
     {
         $scope = $this->getConfig('scope');
 

@@ -211,16 +211,6 @@ parameters:
 			path: src/ORM/Query.php
 
 		-
-			message: "#^Property Cake\\\\ORM\\\\Query\\:\\:\\$_repository \\(Cake\\\\ORM\\\\Table\\) does not accept Cake\\\\Datasource\\\\RepositoryInterface\\.$#"
-			count: 1
-			path: src/ORM/Query.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/ORM/Query.php
-
-		-
 			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
 			count: 1
 			path: src/ORM/Table.php

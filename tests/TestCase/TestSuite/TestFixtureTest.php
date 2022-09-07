@@ -173,7 +173,7 @@ class TestFixtureTest extends TestCase
             ->setConstructorArgs([$db])
             ->getMock();
         $db->expects($this->once())
-            ->method('newInsertQuery')
+            ->method('insertQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -217,7 +217,7 @@ class TestFixtureTest extends TestCase
         $fixture = new ArticlesFixture();
 
         $this->assertTrue($fixture->truncate(ConnectionManager::get('test')));
-        $rows = ConnectionManager::get('test')->newSelectQuery()->select('*')->from('articles')->execute();
+        $rows = ConnectionManager::get('test')->selectQuery()->select('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
     }
 }

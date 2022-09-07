@@ -114,11 +114,11 @@ jobs:
 
         if [[ ${{ matrix.php-version }} == '8.1' ]]; then
           export CODECOVERAGE=1
-          vendor/bin/phpunit tests/TestCase/Database --verbose --coverage-clover=coverage.xml
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit tests/TestCase/Database --verbose --testsuite=database
+          vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
         else
-          vendor/bin/phpunit tests/TestCase/Database
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit tests/TestCase/Database --testsuite=database
+          vendor/bin/phpunit
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
 
     - name: Prefer lowest check
@@ -191,14 +191,14 @@ jobs:
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
-          vendor/bin/phpunit tests/TestCase/Database --verbose
+          vendor/bin/phpunit --verbose
 
     - name: Run PHPUnit (autoquote enabled)
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
           set CAKE_TEST_AUTOQUOTE=1
-          vendor/bin/phpunit tests/TestCase/Database --verbose --testsuite=database
+          vendor/bin/phpunit --verbose --testsuite=database
 
   cs-stan:
     name: Coding Standard & Static Analysis
@@ -242,7 +242,7 @@ jobs:
 
     - name: Run phpstan
       if: always()
-      run: vendor/bin/phpstan.phar analyse tests/TestCase/Database --error-format=github
+      run: vendor/bin/phpstan.phar analyse --error-format=github
 
     - name: Run phpstan for tests
       if: always()

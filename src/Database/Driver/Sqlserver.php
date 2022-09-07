@@ -379,7 +379,7 @@ class Sqlserver extends Driver
             ->offset(null)
             ->order([], true);
 
-        $outer = $query->getConnection()->newSelectQuery();
+        $outer = $query->getConnection()->selectQuery();
         $outer->select('*')
             ->from(['_cake_paging_' => $query]);
 

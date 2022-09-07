@@ -26,6 +26,7 @@ use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\QueryFactory;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
 use Cake\Database\Retry\ReconnectStrategy;
@@ -283,7 +284,7 @@ class Connection implements ConnectionInterface
     /**
      * Get query factory instance.
      *
-     * @return \Cake\Database\QueryFactory
+     * @return \Cake\Database\Query\QueryFactory
      */
     public function queryFactory(): QueryFactory
     {
@@ -298,7 +299,7 @@ class Connection implements ConnectionInterface
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\SelectQuery
      */
-    public function newSelectQuery(
+    public function selectQuery(
         ExpressionInterface|Closure|array|string|float|int $fields = [],
         array|string $table = [],
         array $types = []
@@ -311,10 +312,10 @@ class Connection implements ConnectionInterface
      *
      * @param string|null $table The table to insert rows into.
      * @param array $values Associative array of column => value to be inserted.
-     * @param array<string, string> $types Associative array containing the types to be used for casting.
+     * @param array<int|string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\InsertQuery
      */
-    public function newInsertQuery(?string $table = null, array $values = [], array $types = []): InsertQuery
+    public function insertQuery(?string $table = null, array $values = [], array $types = []): InsertQuery
     {
         return $this->queryFactory()->insert($table, $values, $types);
     }
@@ -328,7 +329,7 @@ class Connection implements ConnectionInterface
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\UpdateQuery
      */
-    public function newUpdateQuery(
+    public function updateQuery(
         ExpressionInterface|string|null $table = null,
         array $values = [],
         array $conditions = [],
@@ -345,7 +346,7 @@ class Connection implements ConnectionInterface
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\DeleteQuery
      */
-    public function newDeleteQuery(?string $table = null, array $conditions = [], array $types = []): DeleteQuery
+    public function deleteQuery(?string $table = null, array $conditions = [], array $types = []): DeleteQuery
     {
         return $this->queryFactory()->delete($table, $conditions, $types);
     }
@@ -395,7 +396,7 @@ class Connection implements ConnectionInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface
     {
-        return $this->newInsertQuery($table, $values, $types)->execute();
+        return $this->insertQuery($table, $values, $types)->execute();
     }
 
     /**
@@ -409,7 +410,7 @@ class Connection implements ConnectionInterface
      */
     public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->newUpdateQuery($table, $values, $conditions, $types)->execute();
+        return $this->updateQuery($table, $values, $conditions, $types)->execute();
     }
 
     /**
@@ -422,7 +423,7 @@ class Connection implements ConnectionInterface
      */
     public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->newDeleteQuery($table, $conditions, $types)->execute();
+        return $this->deleteQuery($table, $conditions, $types)->execute();
     }
 
     /**
@@ -632,7 +633,7 @@ class Connection implements ConnectionInterface
      *
      * ```
      * $connection->transactional(function ($connection) {
-     *   $connection->newDeleteQuery('users')->execute();
+     *   $connection->deleteQuery('users')->execute();
      * });
      * ```
      *

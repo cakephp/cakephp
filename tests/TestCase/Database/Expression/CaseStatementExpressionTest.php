@@ -1341,7 +1341,7 @@ class CaseStatementExpressionTest extends TestCase
             [Chronos::now(), null, 'datetime'],
             [new IdentifierExpression('Table.column'), 'Table.column', null],
             [new QueryExpression('Table.column'), 'Table.column', null],
-            [ConnectionManager::get('test')->newSelectQuery('a'), '(SELECT a)', null],
+            [ConnectionManager::get('test')->selectQuery('a'), '(SELECT a)', null],
             [new TestObjectWithToString(), null, 'string'],
             [new stdClass(), null, null],
         ];
@@ -1459,7 +1459,7 @@ class CaseStatementExpressionTest extends TestCase
                 ],
             ],
             [
-                ConnectionManager::get('test')->newSelectQuery('a'),
+                ConnectionManager::get('test')->selectQuery('a'),
                 'CASE :c0 WHEN (SELECT a) THEN :c1 ELSE NULL END',
                 [
                     ':c0' => [
@@ -1591,7 +1591,7 @@ class CaseStatementExpressionTest extends TestCase
                 ],
             ],
             [
-                ConnectionManager::get('test')->newSelectQuery('a'),
+                ConnectionManager::get('test')->selectQuery('a'),
                 'CASE WHEN (SELECT a) THEN :c0 ELSE NULL END',
                 [
                     ':c0' => [
@@ -1686,7 +1686,7 @@ class CaseStatementExpressionTest extends TestCase
             [Chronos::now(), null, 'datetime'],
             [new IdentifierExpression('Table.column'), 'Table.column', null],
             [new QueryExpression('Table.column'), 'Table.column', null],
-            [ConnectionManager::get('test')->newSelectQuery('a'), '(SELECT a)', null],
+            [ConnectionManager::get('test')->selectQuery('a'), '(SELECT a)', null],
             [new TestObjectWithToString(), null, 'string'],
             [new stdClass(), null, null],
         ];
@@ -1762,7 +1762,7 @@ class CaseStatementExpressionTest extends TestCase
             [Chronos::now(), null, 'datetime'],
             [new IdentifierExpression('Table.column'), 'Table.column', null],
             [new QueryExpression('Table.column'), 'Table.column', null],
-            [ConnectionManager::get('test')->newSelectQuery('a'), '(SELECT a)', null],
+            [ConnectionManager::get('test')->selectQuery('a'), '(SELECT a)', null],
             [new TestObjectWithToString(), null, 'string'],
             [new stdClass(), null, null],
         ];

@@ -17,34 +17,33 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayObject;
+use Cake\Collection\Iterator\MapReduce;
 use Cake\Database\Connection;
-use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\Query\SelectQuery as DbSelectQuery;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\QueryCacher;
 use Cake\Datasource\QueryInterface;
-use Cake\Datasource\QueryTrait;
-use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Datasource\ResultSetInterface;
+use Cake\ORM\Query\CommonQueryTrait;
 use Closure;
+use InvalidArgumentException;
 use JsonSerializable;
+use Psr\SimpleCache\CacheInterface;
 
 /**
- * Extends the base Query class to provide new methods related to association
+ * Extends the Cake\Database\Query\SelectQuery class to provide new methods related to association
  * loading, automatic fields selection, automatic type casting and to wrap results
  * into a specific iterator that will be responsible for hydrating results if
  * required.
- *
- * @property \Cake\ORM\Table $_repository Instance of a table object this query is bound to.
  */
-class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
+class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
 {
-    use QueryTrait {
-        cache as private _cache;
-        all as private _all;
-    }
+    use CommonQueryTrait;
 
     /**
      * Indicates that the operation should append to the list
@@ -114,6 +113,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected ?EagerLoader $_eagerLoader = null;
 
     /**
+     * Whether the query is standalone or the product of an eager load operation.
+     *
+     * @var bool
+     */
+    protected bool $_eagerLoaded = false;
+
+    /**
      * True if the beforeFind event has already been triggered for this query
      *
      * @var bool
@@ -137,6 +143,54 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected ResultSetFactory $resultSetFactory;
 
     /**
+     * A ResultSet.
+     *
+     * When set, query execution will be bypassed.
+     *
+     * @var iterable|null
+     * @see \Cake\Datasource\QueryTrait::setResult()
+     */
+    protected ?iterable $_results = null;
+
+    /**
+     * Instance of a repository object this query is bound to.
+     *
+     * @var \Cake\ORM\Table
+     */
+    protected Table $_repository;
+
+    /**
+     * List of map-reduce routines that should be applied over the query
+     * result
+     *
+     * @var array
+     */
+    protected array $_mapReduce = [];
+
+    /**
+     * List of formatter classes or callbacks that will post-process the
+     * results when fetched
+     *
+     * @var array<\Closure>
+     */
+    protected array $_formatters = [];
+
+    /**
+     * A query cacher instance if this query has caching enabled.
+     *
+     * @var \Cake\Datasource\QueryCacher|null
+     */
+    protected ?QueryCacher $_cache = null;
+
+    /**
+     * Holds any custom options passed using applyOptions that could not be processed
+     * by any method in this class.
+     *
+     * @var array
+     */
+    protected array $_options = [];
+
+    /**
      * Constructor
      *
      * @param \Cake\Database\Connection $connection The connection object
@@ -150,34 +204,568 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Set the default Table object that will be used by this query
-     * and form the `FROM` clause.
+     * Set the result set for a query.
      *
-     * @param \Cake\ORM\Table $repository The default table object to use.
+     * Setting the resultset of a query will make execute() a no-op. Instead
+     * of executing the SQL query and fetching results, the ResultSet provided to this
+     * method will be returned.
+     *
+     * This method is most useful when combined with results stored in a persistent cache.
+     *
+     * @param iterable $results The results this query should return.
      * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function repository(RepositoryInterface $repository)
+    public function setResult(iterable $results)
     {
-        assert(
-            $repository instanceof Table,
-            '$repository must be an instance of Cake\ORM\Table.'
-        );
-
-        $this->_repository = $repository;
+        $this->_results = $results;
 
         return $this;
     }
 
     /**
-     * Returns the default table object that will be used by this query,
-     * that is, the table that will appear in the from clause.
+     * Executes this query and returns a results iterator. This function is required
+     * for implementing the IteratorAggregate interface and allows the query to be
+     * iterated without having to call execute() manually, thus making it look like
+     * a result set instead of the query itself.
      *
-     * @return \Cake\ORM\Table
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    public function getRepository(): Table
+    public function getIterator(): ResultSetInterface
     {
-        return $this->_repository;
+        return $this->all();
+    }
+
+    /**
+     * Enable result caching for this query.
+     *
+     * If a query has caching enabled, it will do the following when executed:
+     *
+     * - Check the cache for $key. If there are results no SQL will be executed.
+     *   Instead the cached results will be returned.
+     * - When the cached data is stale/missing the result set will be cached as the query
+     *   is executed.
+     *
+     * ### Usage
+     *
+     * ```
+     * // Simple string key + config
+     * $query->cache('my_key', 'db_results');
+     *
+     * // Function to generate key.
+     * $query->cache(function ($q) {
+     *   $key = serialize($q->clause('select'));
+     *   $key .= serialize($q->clause('where'));
+     *   return md5($key);
+     * });
+     *
+     * // Using a pre-built cache engine.
+     * $query->cache('my_key', $engine);
+     *
+     * // Disable caching
+     * $query->cache(false);
+     * ```
+     *
+     * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
+     *   When using a function, this query instance will be supplied as an argument.
+     * @param \Psr\SimpleCache\CacheInterface|string $config Either the name of the cache config to use, or
+     *   a cache engine instance.
+     * @return $this
+     */
+    public function cache(Closure|string|false $key, CacheInterface|string $config = 'default')
+    {
+        if ($key === false) {
+            $this->_cache = null;
+
+            return $this;
+        }
+
+        $this->_cache = new QueryCacher($key, $config);
+
+        return $this;
+    }
+
+    /**
+     * Returns the current configured query `_eagerLoaded` value
+     *
+     * @return bool
+     */
+    public function isEagerLoaded(): bool
+    {
+        return $this->_eagerLoaded;
+    }
+
+    /**
+     * Sets the query instance to be an eager loaded query. If no argument is
+     * passed, the current configured query `_eagerLoaded` value is returned.
+     *
+     * @param bool $value Whether to eager load.
+     * @return $this
+     */
+    public function eagerLoaded(bool $value)
+    {
+        $this->_eagerLoaded = $value;
+
+        return $this;
+    }
+
+    /**
+     * Returns a key => value array representing a single aliased field
+     * that can be passed directly to the select() method.
+     * The key will contain the alias and the value the actual field name.
+     *
+     * If the field is already aliased, then it will not be changed.
+     * If no $alias is passed, the default table for this query will be used.
+     *
+     * @param string $field The field to alias
+     * @param string|null $alias the alias used to prefix the field
+     * @return array<string, string>
+     */
+    public function aliasField(string $field, ?string $alias = null): array
+    {
+        if (str_contains($field, '.')) {
+            $aliasedField = $field;
+            [$alias, $field] = explode('.', $field);
+        } else {
+            $alias = $alias ?: $this->getRepository()->getAlias();
+            $aliasedField = $alias . '.' . $field;
+        }
+
+        $key = sprintf('%s__%s', $alias, $field);
+
+        return [$key => $aliasedField];
+    }
+
+    /**
+     * Runs `aliasField()` for each field in the provided list and returns
+     * the result under a single array.
+     *
+     * @param array $fields The fields to alias
+     * @param string|null $defaultAlias The default alias
+     * @return array<string, string>
+     */
+    public function aliasFields(array $fields, ?string $defaultAlias = null): array
+    {
+        $aliased = [];
+        foreach ($fields as $alias => $field) {
+            if (is_numeric($alias) && is_string($field)) {
+                $aliased += $this->aliasField($field, $defaultAlias);
+                continue;
+            }
+            $aliased[$alias] = $field;
+        }
+
+        return $aliased;
+    }
+
+    /**
+     * Fetch the results for this query.
+     *
+     * Will return either the results set through setResult(), or execute this query
+     * and return the ResultSetDecorator object ready for streaming of results.
+     *
+     * ResultSetDecorator is a traversable object that implements the methods found
+     * on Cake\Collection\Collection.
+     *
+     * @return \Cake\Datasource\ResultSetInterface
+     */
+    public function all(): ResultSetInterface
+    {
+        if ($this->_results !== null) {
+            if (!($this->_results instanceof ResultSetInterface)) {
+                $this->_results = $this->_decorateResults($this->_results);
+            }
+
+            return $this->_results;
+        }
+
+        $results = null;
+        if ($this->_cache) {
+            $results = $this->_cache->fetch($this);
+        }
+        if ($results === null) {
+            $results = $this->_decorateResults($this->_execute());
+            if ($this->_cache) {
+                $this->_cache->store($this, $results);
+            }
+        }
+        $this->_results = $results;
+
+        return $this->_results;
+    }
+
+    /**
+     * Returns an array representation of the results after executing the query.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->all()->toArray();
+    }
+
+    /**
+     * Register a new MapReduce routine to be executed on top of the database results
+     *
+     * The MapReduce routing will only be run when the query is executed and the first
+     * result is attempted to be fetched.
+     *
+     * If the third argument is set to true, it will erase previous map reducers
+     * and replace it with the arguments passed.
+     *
+     * @param \Closure|null $mapper The mapper function
+     * @param \Closure|null $reducer The reducing function
+     * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
+     * @return $this
+     * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
+     */
+    public function mapReduce(?Closure $mapper = null, ?Closure $reducer = null, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_mapReduce = [];
+        }
+        if ($mapper === null) {
+            if (!$overwrite) {
+                throw new InvalidArgumentException('$mapper can be null only when $overwrite is true.');
+            }
+
+            return $this;
+        }
+        $this->_mapReduce[] = compact('mapper', 'reducer');
+
+        return $this;
+    }
+
+    /**
+     * Returns the list of previously registered map reduce routines.
+     *
+     * @return array
+     */
+    public function getMapReducers(): array
+    {
+        return $this->_mapReduce;
+    }
+
+    /**
+     * Registers a new formatter callback function that is to be executed when trying
+     * to fetch the results from the database.
+     *
+     * If the second argument is set to true, it will erase previous formatters
+     * and replace them with the passed first argument.
+     *
+     * Callbacks are required to return an iterator object, which will be used as
+     * the return value for this query's result. Formatter functions are applied
+     * after all the `MapReduce` routines for this query have been executed.
+     *
+     * Formatting callbacks will receive two arguments, the first one being an object
+     * implementing `\Cake\Collection\CollectionInterface`, that can be traversed and
+     * modified at will. The second one being the query instance on which the formatter
+     * callback is being applied.
+     *
+     * Usually the query instance received by the formatter callback is the same query
+     * instance on which the callback was attached to, except for in a joined
+     * association, in that case the callback will be invoked on the association source
+     * side query, and it will receive that query instance instead of the one on which
+     * the callback was originally attached to - see the examples below!
+     *
+     * ### Examples:
+     *
+     * Return all results from the table indexed by id:
+     *
+     * ```
+     * $query->select(['id', 'name'])->formatResults(function ($results) {
+     *     return $results->indexBy('id');
+     * });
+     * ```
+     *
+     * Add a new column to the ResultSet:
+     *
+     * ```
+     * $query->select(['name', 'birth_date'])->formatResults(function ($results) {
+     *     return $results->map(function ($row) {
+     *         $row['age'] = $row['birth_date']->diff(new DateTime)->y;
+     *
+     *         return $row;
+     *     });
+     * });
+     * ```
+     *
+     * Add a new column to the results with respect to the query's hydration configuration:
+     *
+     * ```
+     * $query->formatResults(function ($results, $query) {
+     *     return $results->map(function ($row) use ($query) {
+     *         $data = [
+     *             'bar' => 'baz',
+     *         ];
+     *
+     *         if ($query->isHydrationEnabled()) {
+     *             $row['foo'] = new Foo($data)
+     *         } else {
+     *             $row['foo'] = $data;
+     *         }
+     *
+     *         return $row;
+     *     });
+     * });
+     * ```
+     *
+     * Retaining access to the association target query instance of joined associations,
+     * by inheriting the contain callback's query argument:
+     *
+     * ```
+     * // Assuming a `Articles belongsTo Authors` association that uses the join strategy
+     *
+     * $articlesQuery->contain('Authors', function ($authorsQuery) {
+     *     return $authorsQuery->formatResults(function ($results, $query) use ($authorsQuery) {
+     *         // Here `$authorsQuery` will always be the instance
+     *         // where the callback was attached to.
+     *
+     *         // The instance passed to the callback in the second
+     *         // argument (`$query`), will be the one where the
+     *         // callback is actually being applied to, in this
+     *         // example that would be `$articlesQuery`.
+     *
+     *         // ...
+     *
+     *         return $results;
+     *     });
+     * });
+     * ```
+     *
+     * @param \Closure|null $formatter The formatting function
+     * @param int|bool $mode Whether to overwrite, append or prepend the formatter.
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function formatResults(?Closure $formatter = null, int|bool $mode = self::APPEND)
+    {
+        if ($mode === self::OVERWRITE) {
+            $this->_formatters = [];
+        }
+        if ($formatter === null) {
+            /** @psalm-suppress RedundantCondition */
+            if ($mode !== self::OVERWRITE) {
+                throw new InvalidArgumentException('$formatter can be null only when $mode is overwrite.');
+            }
+
+            return $this;
+        }
+
+        if ($mode === self::PREPEND) {
+            array_unshift($this->_formatters, $formatter);
+
+            return $this;
+        }
+
+        $this->_formatters[] = $formatter;
+
+        return $this;
+    }
+
+    /**
+     * Returns the list of previously registered format routines.
+     *
+     * @return array<\Closure>
+     */
+    public function getResultFormatters(): array
+    {
+        return $this->_formatters;
+    }
+
+    /**
+     * Returns the first result out of executing this query, if the query has not been
+     * executed before, it will set the limit clause to 1 for performance reasons.
+     *
+     * ### Example:
+     *
+     * ```
+     * $singleUser = $query->select(['id', 'username'])->first();
+     * ```
+     *
+     * @return mixed The first result from the ResultSet.
+     */
+    public function first(): mixed
+    {
+        if ($this->_dirty) {
+            $this->limit(1);
+        }
+
+        return $this->all()->first();
+    }
+
+    /**
+     * Get the first result from the executing query or raise an exception.
+     *
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
+     * @return mixed The first result from the ResultSet.
+     */
+    public function firstOrFail(): mixed
+    {
+        $entity = $this->first();
+        if (!$entity) {
+            $table = $this->getRepository();
+            throw new RecordNotFoundException(sprintf(
+                'Record not found in table "%s"',
+                $table->getTable()
+            ));
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Returns an array with the custom options that were applied to this query
+     * and that were not already processed by another method in this class.
+     *
+     * ### Example:
+     *
+     * ```
+     *  $query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);
+     *  $query->getOptions(); // Returns ['doABarrelRoll' => true]
+     * ```
+     *
+     * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
+     * be processed by this class and not returned by this function
+     * @return array
+     * @see applyOptions()
+     */
+    public function getOptions(): array
+    {
+        return $this->_options;
+    }
+
+    /**
+     * Populates or adds parts to current query clauses using an array.
+     * This is handy for passing all query clauses at once.
+     *
+     * The method accepts the following query clause related options:
+     *
+     * - fields: Maps to the select method
+     * - conditions: Maps to the where method
+     * - limit: Maps to the limit method
+     * - order: Maps to the order method
+     * - offset: Maps to the offset method
+     * - group: Maps to the group method
+     * - having: Maps to the having method
+     * - contain: Maps to the contain options for eager loading
+     * - join: Maps to the join method
+     * - page: Maps to the page method
+     *
+     * All other options will not affect the query, but will be stored
+     * as custom options that can be read via `getOptions()`. Furthermore
+     * they are automatically passed to `Model.beforeFind`.
+     *
+     * ### Example:
+     *
+     * ```
+     * $query->applyOptions([
+     *   'fields' => ['id', 'name'],
+     *   'conditions' => [
+     *     'created >=' => '2013-01-01'
+     *   ],
+     *   'limit' => 10,
+     * ]);
+     * ```
+     *
+     * Is equivalent to:
+     *
+     * ```
+     * $query
+     *   ->select(['id', 'name'])
+     *   ->where(['created >=' => '2013-01-01'])
+     *   ->limit(10)
+     * ```
+     *
+     * Custom options can be read via `getOptions()`:
+     *
+     * ```
+     * $query->applyOptions([
+     *   'fields' => ['id', 'name'],
+     *   'custom' => 'value',
+     * ]);
+     * ```
+     *
+     * Here `$options` will hold `['custom' => 'value']` (the `fields`
+     * option will be applied to the query instead of being stored, as
+     * it's a query clause related option):
+     *
+     * ```
+     * $options = $query->getOptions();
+     * ```
+     *
+     * @param array<string, mixed> $options The options to be applied
+     * @return $this
+     * @see getOptions()
+     */
+    public function applyOptions(array $options)
+    {
+        $valid = [
+            'fields' => 'select',
+            'conditions' => 'where',
+            'join' => 'join',
+            'order' => 'order',
+            'limit' => 'limit',
+            'offset' => 'offset',
+            'group' => 'group',
+            'having' => 'having',
+            'contain' => 'contain',
+            'page' => 'page',
+        ];
+
+        ksort($options);
+        foreach ($options as $option => $values) {
+            if (isset($valid[$option], $values)) {
+                $this->{$valid[$option]}($values);
+            } else {
+                $this->_options[$option] = $values;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Decorates the results iterator with MapReduce routines and formatters
+     *
+     * @param iterable $result Original results
+     * @return \Cake\Datasource\ResultSetInterface
+     */
+    protected function _decorateResults(iterable $result): ResultSetInterface
+    {
+        $decorator = $this->_decoratorClass();
+
+        if (!empty($this->_mapReduce)) {
+            foreach ($this->_mapReduce as $functions) {
+                $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
+            }
+            $result = new $decorator($result);
+        }
+
+        if (!($result instanceof ResultSetInterface)) {
+            $result = new $decorator($result);
+        }
+
+        if (!empty($this->_formatters)) {
+            foreach ($this->_formatters as $formatter) {
+                $result = $formatter($result, $this);
+            }
+
+            if (!($result instanceof ResultSetInterface)) {
+                $result = new $decorator($result);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns the name of the class to be used for decorating results
+     *
+     * @return class-string<\Cake\Datasource\ResultSetInterface>
+     */
+    protected function _decoratorClass(): string
+    {
+        return ResultSetDecorator::class;
     }
 
     /**
@@ -263,30 +851,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         return $this->select($fields, $overwrite);
-    }
-
-    /**
-     * Hints this object to associate the correct types when casting conditions
-     * for the database. This is done by extracting the field types from the schema
-     * associated to the passed table object. This prevents the user from repeating
-     * themselves when specifying conditions.
-     *
-     * This method returns the same query object for chaining.
-     *
-     * @param \Cake\ORM\Table $table The table to pull types from
-     * @return $this
-     */
-    public function addDefaultTypes(Table $table)
-    {
-        $alias = $table->getAlias();
-        $map = $table->getSchema()->typeMap();
-        $fields = [];
-        foreach ($map as $f => $type) {
-            $fields[$f] = $fields[$alias . '.' . $f] = $fields[$alias . '__' . $f] = $type;
-        }
-        $this->getTypeMap()->addDefaults($fields);
-
-        return $this;
     }
 
     /**
@@ -628,7 +1192,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_LEFT,
+                'joinType' => static::JOIN_TYPE_LEFT,
                 'fields' => false,
             ])
             ->getMatching();
@@ -677,7 +1241,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_INNER,
+                'joinType' => static::JOIN_TYPE_INNER,
                 'fields' => false,
             ])
             ->getMatching();
@@ -741,103 +1305,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => Query::JOIN_TYPE_LEFT,
+                'joinType' => static::JOIN_TYPE_LEFT,
                 'fields' => false,
                 'negateMatch' => true,
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
         $this->_dirty();
-
-        return $this;
-    }
-
-    /**
-     * Populates or adds parts to current query clauses using an array.
-     * This is handy for passing all query clauses at once.
-     *
-     * The method accepts the following query clause related options:
-     *
-     * - fields: Maps to the select method
-     * - conditions: Maps to the where method
-     * - limit: Maps to the limit method
-     * - order: Maps to the order method
-     * - offset: Maps to the offset method
-     * - group: Maps to the group method
-     * - having: Maps to the having method
-     * - contain: Maps to the contain options for eager loading
-     * - join: Maps to the join method
-     * - page: Maps to the page method
-     *
-     * All other options will not affect the query, but will be stored
-     * as custom options that can be read via `getOptions()`. Furthermore
-     * they are automatically passed to `Model.beforeFind`.
-     *
-     * ### Example:
-     *
-     * ```
-     * $query->applyOptions([
-     *   'fields' => ['id', 'name'],
-     *   'conditions' => [
-     *     'created >=' => '2013-01-01'
-     *   ],
-     *   'limit' => 10,
-     * ]);
-     * ```
-     *
-     * Is equivalent to:
-     *
-     * ```
-     * $query
-     *   ->select(['id', 'name'])
-     *   ->where(['created >=' => '2013-01-01'])
-     *   ->limit(10)
-     * ```
-     *
-     * Custom options can be read via `getOptions()`:
-     *
-     * ```
-     * $query->applyOptions([
-     *   'fields' => ['id', 'name'],
-     *   'custom' => 'value',
-     * ]);
-     * ```
-     *
-     * Here `$options` will hold `['custom' => 'value']` (the `fields`
-     * option will be applied to the query instead of being stored, as
-     * it's a query clause related option):
-     *
-     * ```
-     * $options = $query->getOptions();
-     * ```
-     *
-     * @param array<string, mixed> $options The options to be applied
-     * @return $this
-     * @see getOptions()
-     */
-    public function applyOptions(array $options)
-    {
-        $valid = [
-            'fields' => 'select',
-            'conditions' => 'where',
-            'join' => 'join',
-            'order' => 'order',
-            'limit' => 'limit',
-            'offset' => 'offset',
-            'group' => 'group',
-            'having' => 'having',
-            'contain' => 'contain',
-            'page' => 'page',
-        ];
-
-        ksort($options);
-        foreach ($options as $option => $values) {
-            if (isset($valid[$option], $values)) {
-                $this->{$valid[$option]}($values);
-            } else {
-                $this->_options[$option] = $values;
-            }
-        }
 
         return $this;
     }
@@ -962,7 +1436,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->disableAutoFields()
                 ->execute();
         } else {
-            $statement = $this->getConnection()->newQuery()
+            $statement = $this->getConnection()->selectQuery()
                 ->select($count)
                 ->from(['count_source' => $query])
                 ->execute();
@@ -1045,42 +1519,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
-     *   When using a function, this query instance will be supplied as an argument.
-     * @param \Cake\Cache\CacheEngine|string $config Either the name of the cache config to use, or
-     *   a cache config instance.
-     * @return $this
-     * @throws \Cake\Database\Exception\DatabaseException When you attempt to cache a non-select query.
-     */
-    public function cache($key, $config = 'default')
-    {
-        if ($this->_type !== self::TYPE_SELECT) {
-            throw new DatabaseException('You cannot cache the results of non-select queries.');
-        }
-
-        return $this->_cache($key, $config);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Datasource\ResultSetInterface
-     * @throws \Cake\Database\Exception\DatabaseException if this method is called on a non-select Query.
-     */
-    public function all(): ResultSetInterface
-    {
-        if ($this->_type !== self::TYPE_SELECT) {
-            throw new DatabaseException(
-                'You cannot call all() on a non-select query. Use execute() instead.'
-            );
-        }
-
-        return $this->_all();
-    }
-
-    /**
      * Trigger the beforeFind event on the query's repository object.
      *
      * Will not trigger more than once, and only for select queries.
@@ -1089,7 +1527,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function triggerBeforeFind(): void
     {
-        if (!$this->_beforeFindFired && $this->_type === self::TYPE_SELECT) {
+        if (!$this->_beforeFindFired) {
             $this->_beforeFindFired = true;
 
             $repository = $this->getRepository();
@@ -1162,7 +1600,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     protected function _transformQuery(): void
     {
-        if (!$this->_dirty || $this->_type !== self::TYPE_SELECT) {
+        if (!$this->_dirty) {
             return;
         }
 
@@ -1245,6 +1683,18 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Disable auto adding table's alias to the fields of SELECT clause.
+     *
+     * @return $this
+     */
+    public function disableAutoAliasing()
+    {
+        $this->aliasingEnabled = false;
+
+        return $this;
+    }
+
+    /**
      * Marks a query as dirty, removing any preprocessed information
      * from in memory caching such as previous results
      *
@@ -1255,79 +1705,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $this->_results = null;
         $this->_resultsCount = null;
         parent::_dirty();
-    }
-
-    /**
-     * Create an update query.
-     *
-     * This changes the query type to be 'update'.
-     * Can be combined with set() and where() methods to create update queries.
-     *
-     * @param \Cake\Database\ExpressionInterface|string|null $table Unused parameter.
-     * @return $this
-     */
-    public function update(ExpressionInterface|string|null $table = null)
-    {
-        if (!$table) {
-            $repository = $this->getRepository();
-            $table = $repository->getTable();
-        }
-
-        return parent::update($table);
-    }
-
-    /**
-     * Create a delete query.
-     *
-     * This changes the query type to be 'delete'.
-     * Can be combined with the where() method to create delete queries.
-     *
-     * @param string|null $table Unused parameter.
-     * @return $this
-     */
-    public function delete(?string $table = null)
-    {
-        $repository = $this->getRepository();
-        $this->from([$repository->getAlias() => $repository->getTable()]);
-
-        // We do not pass $table to parent class here
-        return parent::delete();
-    }
-
-    /**
-     * Create an insert query.
-     *
-     * This changes the query type to be 'insert'.
-     * Note calling this method will reset any data previously set
-     * with Query::values()
-     *
-     * Can be combined with the where() method to create delete queries.
-     *
-     * @param array $columns The columns to insert into.
-     * @param array<string> $types A map between columns & their datatypes.
-     * @return $this
-     */
-    public function insert(array $columns, array $types = [])
-    {
-        $repository = $this->getRepository();
-        $table = $repository->getTable();
-        $this->into($table);
-
-        return parent::insert($columns, $types);
-    }
-
-    /**
-     * Returns a new Query that has automatic field aliasing disabled.
-     *
-     * @param \Cake\ORM\Table $table The table this query is starting on
-     * @return static
-     */
-    public static function subquery(Table $table): static
-    {
-        $query = new static($table->getConnection(), $table);
-        $query->aliasingEnabled = false;
-
-        return $query;
     }
 
     /**

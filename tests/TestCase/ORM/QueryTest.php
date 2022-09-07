@@ -22,6 +22,7 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -1685,8 +1686,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
-            ->update()
+        $result = $table->updateQuery()
             ->set(['title' => 'First'])
             ->execute();
 
@@ -1702,7 +1702,7 @@ class QueryTest extends TestCase
         $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
         $table = $this->getTableLocator()->get('articles');
 
-        $query = $table->query();
+        $query = $table->updateQuery();
         $result = $query->update($query->newExpr('articles, authors'))
             ->set(['title' => 'First'])
             ->where(['articles.author_id = authors.id'])
@@ -1720,7 +1720,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
+        $result = $table->insertQuery()
             ->insert(['title'])
             ->values(['title' => 'First'])
             ->values(['title' => 'Second'])
@@ -1739,8 +1739,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
-            ->delete()
+        $result = $table->deleteQuery()
             ->where(['id >=' => 1])
             ->execute();
 
@@ -1773,18 +1772,6 @@ class QueryTest extends TestCase
         $result = $query->getContain();
         $this->assertIsArray($result);
         $this->assertEmpty($result);
-    }
-
-    /**
-     * cache() should fail on non select queries.
-     */
-    public function testCacheErrorOnNonSelect(): void
-    {
-        $this->expectException(DatabaseException::class);
-        $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
-        $query->insert(['test']);
-        $query->cache('my_key');
     }
 
     /**
@@ -2564,8 +2551,8 @@ class QueryTest extends TestCase
                 'articles.published' => 'string',
                 'published' => 'string',
             ],
-            'decorators' => 0,
             'executed' => false,
+            'decorators' => 0,
             'hydrate' => false,
             'formatters' => 1,
             'mapReducers' => 1,
@@ -3842,75 +3829,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests subquery() copies connection by default.
-     */
-    public function testSubqueryConnection(): void
-    {
-        $subquery = Query::subquery($this->table);
-        $this->assertEquals($this->table->getConnection(), $subquery->getConnection());
-    }
-
-    /**
-     * Tests subquery() disables aliasing.
-     */
-    public function testSubqueryAliasing(): void
-    {
-        $articles = $this->getTableLocator()->get('Articles');
-        $subquery = Query::subquery($articles);
-
-        $subquery->select('Articles.field1');
-        $this->assertRegExpSql(
-            'SELECT <Articles>.<field1> FROM <articles> <Articles>',
-            $subquery->sql(),
-            !$this->connection->getDriver()->isAutoQuotingEnabled()
-        );
-
-        $subquery->select($articles, true);
-        $this->assertEqualsSql('SELECT id, author_id, title, body, published FROM articles Articles', $subquery->sql());
-
-        $subquery->selectAllExcept($articles, ['author_id'], true);
-        $this->assertEqualsSql('SELECT id, title, body, published FROM articles Articles', $subquery->sql());
-    }
-
-    /**
-     * Tests subquery() in where clause.
-     */
-    public function testSubqueryWhereClause(): void
-    {
-        $subquery = Query::subquery($this->getTableLocator()->get('Authors'))
-            ->select(['Authors.id'])
-            ->where(['Authors.name' => 'mariano']);
-
-        $query = $this->getTableLocator()->get('Articles')->find()
-            ->where(['Articles.author_id IN' => $subquery])
-            ->order(['Articles.id' => 'ASC']);
-
-        $results = $query->all()->toList();
-        $this->assertCount(2, $results);
-        $this->assertEquals([1, 3], array_column($results, 'id'));
-    }
-
-    /**
-     * Tests subquery() in join clause.
-     */
-    public function testSubqueryJoinClause(): void
-    {
-        $subquery = Query::subquery($this->getTableLocator()->get('Articles'))
-            ->select(['author_id']);
-
-        $query = $this->getTableLocator()->get('Authors')->find();
-        $query
-            ->select(['Authors.id', 'total_articles' => $query->func()->count('articles.author_id')])
-            ->leftJoin(['articles' => $subquery], ['articles.author_id' => new IdentifierExpression('Authors.id')])
-            ->group(['Authors.id'])
-            ->order(['Authors.id' => 'ASC']);
-
-        $results = $query->all()->toList();
-        $this->assertEquals(1, $results[0]->id);
-        $this->assertEquals(2, $results[0]->total_articles);
-    }
-
-    /**
      * Tests that queries that fetch associated data in separate queries do properly
      * inherit the hydration and results casting mode of the parent query.
      */
@@ -3970,7 +3888,7 @@ class QueryTest extends TestCase
             ->select(['column']);
 
         $binder = new ValueBinder();
-        $function = new $this->expressionClass('MyFunction', [$query]);
+        $function = new FunctionExpression('MyFunction', [$query]);
         $this->assertSame(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
             preg_replace('/[`"\[\]]/', '', $function->sql($binder))

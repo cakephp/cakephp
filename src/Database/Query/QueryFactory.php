@@ -14,12 +14,10 @@ declare(strict_types=1);
  * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Database\Query;
 
-use Cake\Database\Query\DeleteQuery;
-use Cake\Database\Query\InsertQuery;
-use Cake\Database\Query\SelectQuery;
-use Cake\Database\Query\UpdateQuery;
+use Cake\Database\Connection;
+use Cake\Database\ExpressionInterface;
 use Closure;
 
 /**
@@ -65,7 +63,7 @@ class QueryFactory
      *
      * @param string|null $table The table to insert rows into.
      * @param array $values Associative array of column => value to be inserted.
-     * @param array<string, string> $types Associative array containing the types to be used for casting.
+     * @param array<int|string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\InsertQuery
      */
     public function insert(?string $table = null, array $values = [], array $types = []): InsertQuery

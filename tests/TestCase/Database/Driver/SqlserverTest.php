@@ -495,7 +495,7 @@ class SqlserverTest extends TestCase
         $connection = ConnectionManager::get('test');
         $this->skipIf(!$connection->getDriver() instanceof Sqlserver);
 
-        $query = $connection->newSelectQuery()
+        $query = $connection->selectQuery()
             ->from('articles')
             ->whereInList('id', range(0, 2100));
 

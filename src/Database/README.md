@@ -76,7 +76,7 @@ This is a list of possible options that can be passed when creating a connection
 
 After creating a connection, you can immediately interact with the database. You can choose
 either to use the shorthand methods `execute()`, `insert()`, `update()`, `delete()` or use
-one of `newSelectQuery()`, `newUpdateQuery()`, `newInsertQuery()` or `newDeleteQuery()`
+one of `selectQuery()`, `updateQuery()`, `insertQuery()` or `deleteQuery()`
 to get a query builder for particular type of query.
 
 The easiest way of executing queries is by using the `execute()` method, it will return a
@@ -197,7 +197,7 @@ One of the goals of this library is to allow the generation of both simple and c
 ease. The query builder can be accessed by getting a new instance of a query:
 
 ```php
-$query = $connection->newSelectQuery();
+$query = $connection->selectQuery();
 ```
 
 ### Selecting Fields
