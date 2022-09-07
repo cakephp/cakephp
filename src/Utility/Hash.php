@@ -1196,6 +1196,7 @@ class Hash
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::nest
+     * @psalm-return list<array>
      */
     public static function nest(array $data, array $options = []): array
     {
@@ -1259,6 +1260,7 @@ class Hash
             }
         }
 
+        /** @psalm-var list<array> */
         return array_values($return);
     }
 }
