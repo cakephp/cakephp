@@ -811,7 +811,7 @@ class HasManyTest extends TestCase
         if ($this->autoQuote) {
             $connection = $query->getConnection();
             foreach ($expected as $key => $value) {
-                $expected[$connection->quoteIdentifier($key)] = $connection->quoteIdentifier($value);
+                $expected[$connection->getDriver()->quoteIdentifier($key)] = $connection->getDriver()->quoteIdentifier($value);
                 unset($expected[$key]);
             }
         }

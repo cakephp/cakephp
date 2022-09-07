@@ -39,8 +39,6 @@ use Throwable;
  */
 class Connection implements ConnectionInterface
 {
-    use TypeConverterTrait;
-
     /**
      * Contains the configuration params for this connection.
      *
@@ -663,48 +661,6 @@ class Connection implements ConnectionInterface
     public function inTransaction(): bool
     {
         return $this->_transactionStarted;
-    }
-
-    /**
-     * Quotes value to be used safely in database query.
-     *
-     * This uses `PDO::quote()` and requires `supportsQuoting()` to work.
-     *
-     * @param mixed $value The value to quote.
-     * @param \Cake\Database\TypeInterface|string|int $type Type to be used for determining kind of quoting to perform
-     * @return string Quoted value
-     */
-    public function quote(mixed $value, TypeInterface|string|int $type = 'string'): string
-    {
-        [$value, $type] = $this->cast($value, $type);
-
-        return $this->_driver->quote($value, $type);
-    }
-
-    /**
-     * Checks if using `quote()` is supported.
-     *
-     * This is not required to use `quoteIdentifier()`.
-     *
-     * @return bool
-     */
-    public function supportsQuoting(): bool
-    {
-        return $this->_driver->supports(DriverFeatureEnum::PDO_QUOTE);
-    }
-
-    /**
-     * Quotes a database identifier (a column name, table name, etc..) to
-     * be used safely in queries without the risk of using reserved words.
-     *
-     * This does not require `supportsQuoting()` to work.
-     *
-     * @param string $identifier The identifier to quote.
-     * @return string
-     */
-    public function quoteIdentifier(string $identifier): string
-    {
-        return $this->_driver->quoteIdentifier($identifier);
     }
 
     /**
