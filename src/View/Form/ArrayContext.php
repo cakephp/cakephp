@@ -259,6 +259,7 @@ class ArrayContext implements ContextInterface
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
 
+        /** @psalm-var list<string> */
         return array_keys($schema);
     }
 

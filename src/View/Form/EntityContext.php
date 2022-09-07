@@ -559,6 +559,7 @@ class EntityContext implements ContextInterface
      * If the context is for an array of entities, the 0th index will be used.
      *
      * @return array<string> Array of field names in the table/entity.
+     * @psalm-return list<string>
      */
     public function fieldNames(): array
     {
