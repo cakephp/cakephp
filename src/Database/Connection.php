@@ -688,7 +688,7 @@ class Connection implements ConnectionInterface
      *
      * ```
      * $connection->disableConstraints(function ($connection) {
-     *   $connection->newQuery('users')->execute();
+     *   $connection->insertQuery('users')->execute();
      * });
      * ```
      *
