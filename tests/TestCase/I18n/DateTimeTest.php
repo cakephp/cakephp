@@ -406,9 +406,6 @@ class DateTimeTest extends TestCase
         DateTime::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
-        if (PHP_OS_FAMILY === 'Windows') {
-            $expected = 'jeudi 14 janvier 2010 13:59:28 temps universel coordonné';
-        }
         $this->assertTimeFormat($expected, $result);
 
         // Test with a non-gregorian calendar in locale
@@ -511,9 +508,6 @@ class DateTimeTest extends TestCase
         DateTime::setDefaultLocale('fr-FR');
         DateTime::setToStringFormat(IntlDateFormatter::FULL);
         $expected = 'dimanche 20 avril 2014 22:10:00 UTC';
-        if (PHP_OS_FAMILY === 'Windows') {
-            $expected = 'dimanche 20 avril 2014 22:10:00 temps universel coordonné';
-        }
         $this->assertTimeFormat($expected, (string)$time);
     }
 
