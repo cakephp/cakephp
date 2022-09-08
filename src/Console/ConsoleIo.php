@@ -297,11 +297,10 @@ class ConsoleIo
      *
      * @param string $message Error message.
      * @param int $code Error code.
-     * @return void
-     * @psalm-return never-return
+     * @return never
      * @throws \Cake\Console\Exception\StopException
      */
-    public function abort(string $message, int $code = CommandInterface::CODE_ERROR): void
+    public function abort(string $message, int $code = CommandInterface::CODE_ERROR): never
     {
         $this->error($message);
 

@@ -241,10 +241,9 @@ abstract class BaseCommand implements CommandInterface
      *
      * @param int $code The exit code to use.
      * @throws \Cake\Console\Exception\StopException
-     * @return void
-     * @psalm-return never-return
+     * @return never
      */
-    public function abort(int $code = self::CODE_ERROR): void
+    public function abort(int $code = self::CODE_ERROR): never
     {
         throw new StopException('Command aborted', $code);
     }
