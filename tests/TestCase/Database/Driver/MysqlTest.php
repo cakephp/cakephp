@@ -137,17 +137,17 @@ class MysqlTest extends TestCase
     public function testIsConnected(): void
     {
         $connection = ConnectionManager::get('test');
-        $connection->disconnect();
-        $this->assertFalse($connection->isConnected(), 'Not connected now.');
+        $connection->getDriver()->disconnect();
+        $this->assertFalse($connection->getDriver()->isConnected(), 'Not connected now.');
 
-        $connection->connect();
-        $this->assertTrue($connection->isConnected(), 'Should be connected.');
+        $connection->getDriver()->connect();
+        $this->assertTrue($connection->getDriver()->isConnected(), 'Should be connected.');
     }
 
     public function testRollbackTransactionAutoConnect(): void
     {
         $connection = ConnectionManager::get('test');
-        $connection->disconnect();
+        $connection->getDriver()->disconnect();
 
         $driver = $connection->getDriver();
         $this->assertFalse($driver->rollbackTransaction());

@@ -112,15 +112,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * Tests connecting to database
-     */
-    public function testIsConnected(): void
-    {
-        $this->connection->connect();
-        $this->assertTrue($this->connection->isConnected());
-    }
-
-    /**
      * Tests creating a connection using no driver throws an exception
      */
     public function testNoDriver(): void
@@ -193,7 +184,7 @@ class ConnectionTest extends TestCase
 
         $e = null;
         try {
-            $connection->connect();
+            $connection->getDriver()->connect();
         } catch (MissingConnectionException $e) {
         }
 
@@ -702,7 +693,7 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect', 'commit', 'begin'])
+            ->onlyMethods(['commit', 'begin'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
         $connection->expects($this->once())->method('begin');
@@ -723,7 +714,7 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->onlyMethods(['commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
         $connection->expects($this->once())->method('begin');
@@ -748,7 +739,7 @@ class ConnectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->onlyMethods(['commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
         $connection->expects($this->once())->method('begin');
@@ -766,10 +757,7 @@ class ConnectionTest extends TestCase
     public function testSetSchemaCollection(): void
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver]);
 
         $schema = $connection->getSchemaCollection();
         $this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
@@ -787,29 +775,24 @@ class ConnectionTest extends TestCase
     public function testGetCachedCollection(): void
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([[
-                'driver' => $driver,
-                'name' => 'default',
-                'cacheMetadata' => true,
-            ]])
-            ->getMock();
+
+        $connection = new Connection([
+            'driver' => $driver,
+            'name' => 'default',
+            'cacheMetadata' => true,
+        ]);
 
         $schema = $connection->getSchemaCollection();
         $this->assertInstanceOf(CachedCollection::class, $schema);
         $this->assertSame('default_key', $schema->cacheKey('key'));
 
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([[
-                'driver' => $driver,
-                'name' => 'default',
-                'cacheMetadata' => true,
-                'cacheKeyPrefix' => 'foo',
-            ]])
-            ->getMock();
+        $connection = new Connection([
+            'driver' => $driver,
+            'name' => 'default',
+            'cacheMetadata' => true,
+            'cacheKeyPrefix' => 'foo',
+        ]);
 
         $schema = $connection->getSchemaCollection();
         $this->assertInstanceOf(CachedCollection::class, $schema);

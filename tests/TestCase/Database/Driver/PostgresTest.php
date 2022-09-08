@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Query\InsertQuery;
@@ -152,14 +153,11 @@ class PostgresTest extends TestCase
     public function testInsertReturning(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->onlyMethods(['createPdo', 'getPdo'])
+            ->onlyMethods(['createPdo', 'getPdo', 'connect', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $connection = $this
-            ->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $driver->method('enabled')->willReturn(true);
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new InsertQuery($connection);
         $query->insert(['id', 'title'])
@@ -190,10 +188,7 @@ class PostgresTest extends TestCase
         $driver->method('enabled')
             ->will($this->returnValue(true));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
         $query
@@ -221,10 +216,7 @@ class PostgresTest extends TestCase
         $driver->method('enabled')
             ->will($this->returnValue(true));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
         $query
