@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Query\InsertQuery;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
@@ -168,11 +169,11 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $query = $this->getMockBuilder('Cake\Database\Query')
+        $query = $this->getMockBuilder(InsertQuery::class)
             ->setConstructorArgs([$db])
             ->getMock();
         $db->expects($this->once())
-            ->method('newQuery')
+            ->method('insertQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -214,9 +215,9 @@ class TestFixtureTest extends TestCase
     public function testTruncate(): void
     {
         $fixture = new ArticlesFixture();
-        $articles = $this->getTableLocator()->get('Articles');
 
         $this->assertTrue($fixture->truncate(ConnectionManager::get('test')));
-        $this->assertEmpty($articles->find()->all());
+        $rows = ConnectionManager::get('test')->selectQuery()->select('*')->from('articles')->execute();
+        $this->assertEmpty($rows->fetchAll());
     }
 }

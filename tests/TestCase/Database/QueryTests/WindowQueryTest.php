@@ -22,7 +22,7 @@ use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
-use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -77,7 +77,7 @@ class WindowQueryTest extends TestCase
      */
     public function testWindowSql(): void
     {
-        $query = new Query($this->connection);
+        $query = new SelectQuery($this->connection);
         $sql = $query
             ->select('*')
             ->window('name', new WindowExpression())
@@ -101,7 +101,7 @@ class WindowQueryTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
-        (new Query($this->connection))->window('name', function () {
+        (new SelectQuery($this->connection))->window('name', function () {
             return new QueryExpression();
         });
     }
@@ -110,7 +110,7 @@ class WindowQueryTest extends TestCase
     {
         $this->skipIf($this->skipTests);
 
-        $query = new Query($this->connection);
+        $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->over()])
             ->from('comments')
@@ -118,7 +118,7 @@ class WindowQueryTest extends TestCase
             ->fetchAll();
         $this->assertCount(6, $result);
 
-        $query = new Query($this->connection);
+        $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->partition('article_id')])
             ->from('comments')
@@ -127,7 +127,7 @@ class WindowQueryTest extends TestCase
             ->fetchAll('assoc');
         $this->assertEquals(4, $result[0]['num_rows']);
 
-        $query = new Query($this->connection);
+        $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->partition('article_id')->order('updated')])
             ->from('comments')
@@ -150,7 +150,7 @@ class WindowQueryTest extends TestCase
         }
         $this->skipIf($skip);
 
-        $query = new Query($this->connection);
+        $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->over('window1')])
             ->from('comments')
@@ -173,7 +173,7 @@ class WindowQueryTest extends TestCase
         }
         $this->skipIf($skip);
 
-        $query = new Query($this->connection);
+        $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->over('window2')])
             ->from('comments')

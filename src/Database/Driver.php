@@ -22,6 +22,7 @@ use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -316,7 +317,7 @@ abstract class Driver
         $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
 
         $typeMap = null;
-        if ($query instanceof Query && $query->isResultsCastingEnabled() && $query->type() === Query::TYPE_SELECT) {
+        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
             $typeMap = $query->getSelectTypeMap();
         }
 

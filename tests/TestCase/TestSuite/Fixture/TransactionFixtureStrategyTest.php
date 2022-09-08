@@ -33,19 +33,19 @@ class TransactionFixtureStrategyTest extends TestCase
          * @var \Cake\Database\Connection $connection
          */
         $connection = ConnectionManager::get('test');
-        $connection->newQuery()->delete('articles')->execute()->closeCursor();
-        $rows = $connection->newQuery()->select('*')->from('articles')->execute();
+        $connection->deleteQuery()->delete('articles')->execute()->closeCursor();
+        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
 
         $strategy = new TransactionFixtureStrategy();
         $strategy->setupTest(['core.Articles']);
-        $rows = $connection->newQuery()->select('*')->from('articles')->execute();
+        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertNotEmpty($rows->fetchAll());
         $rows->closeCursor();
 
         $strategy->teardownTest();
-        $rows = $connection->newQuery()->select('*')->from('articles')->execute();
+        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
     }

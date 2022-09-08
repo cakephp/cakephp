@@ -18,7 +18,8 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
-use Cake\Database\Query;
+use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -160,7 +161,7 @@ class PostgresTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new InsertQuery($connection);
         $query->insert(['id', 'title'])
             ->into('articles')
             ->values([1, 'foo']);
@@ -168,7 +169,7 @@ class PostgresTest extends TestCase
         $query = $translator($query);
         $this->assertSame('RETURNING *', $query->clause('epilog'));
 
-        $query = new Query($connection);
+        $query = new InsertQuery($connection);
         $query->insert(['id', 'title'])
             ->into('articles')
             ->values([1, 'foo'])
@@ -194,7 +195,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query
             ->select([
                 'posts.author_id',
@@ -225,7 +226,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([['driver' => $driver, 'log' => false]])
             ->getMock();
 
-        $query = new Query($connection);
+        $query = new SelectQuery($connection);
         $query
             ->select([
                 'posts.author_id',

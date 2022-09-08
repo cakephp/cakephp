@@ -168,7 +168,7 @@ class TestFixture implements FixtureInterface
         if (!empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
             /** @var \Cake\Database\Connection $connection */
-            $query = $connection->newQuery()
+            $query = $connection->insertQuery()
                 ->insert($fields, $types)
                 ->into($this->sourceName());
 
