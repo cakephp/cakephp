@@ -296,7 +296,7 @@ class BehaviorRegistryTest extends TestCase
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $query = new Query($this->Table->getConnection(), $this->Table);
+        $query = new Query($this->Table);
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')

@@ -32,7 +32,7 @@ class QueryFactory
      */
     public function select(Table $table): Query
     {
-        return new Query($table->getConnection(), $table);
+        return new Query($table);
     }
 
     /**
@@ -43,7 +43,7 @@ class QueryFactory
      */
     public function insert(Table $table): InsertQuery
     {
-        return new InsertQuery($table->getconnection(), $table);
+        return new InsertQuery($table);
     }
 
     /**
@@ -54,7 +54,7 @@ class QueryFactory
      */
     public function update(Table $table): UpdateQuery
     {
-        return new UpdateQuery($table->getconnection(), $table);
+        return new UpdateQuery($table);
     }
 
     /**
@@ -65,6 +65,6 @@ class QueryFactory
      */
     public function delete(Table $table): DeleteQuery
     {
-        return new DeleteQuery($table->getconnection(), $table);
+        return new DeleteQuery($table);
     }
 }

@@ -18,7 +18,6 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use Cake\Collection\Iterator\MapReduce;
-use Cake\Database\Connection;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query\SelectQuery as DbSelectQuery;
 use Cake\Database\TypedResultInterface;
@@ -193,12 +192,12 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
     /**
      * Constructor
      *
-     * @param \Cake\Database\Connection $connection The connection object
      * @param \Cake\ORM\Table $table The table this query is starting on
      */
-    public function __construct(Connection $connection, Table $table)
+    public function __construct(Table $table)
     {
-        parent::__construct($connection);
+        parent::__construct($table->getConnection());
+
         $this->setRepository($table);
         $this->addDefaultTypes($table);
     }
