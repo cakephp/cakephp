@@ -146,7 +146,7 @@ class CompositeKeysTest extends TestCase
             'sort' => ['SiteArticles.id' => 'asc'],
             'foreignKey' => ['author_id', 'site_id'],
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $results = $query->select()
             ->contain('SiteArticles')
@@ -226,7 +226,7 @@ class CompositeKeysTest extends TestCase
             'foreignKey' => ['article_id', 'site_id'],
             'targetForeignKey' => ['tag_id', 'site_id'],
         ]);
-        $query = new Query($this->connection, $articles);
+        $query = new Query($articles);
 
         $results = $query->select()->contain('SiteTags')->enableHydration(false)->toArray();
         $expected = [
@@ -307,7 +307,7 @@ class CompositeKeysTest extends TestCase
             'strategy' => $strategy,
             'foreignKey' => ['author_id', 'site_id'],
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->where(['SiteArticles.id IN' => [1, 2]])
             ->contain('SiteAuthors')
@@ -355,7 +355,7 @@ class CompositeKeysTest extends TestCase
             'strategy' => $strategy,
             'foreignKey' => ['author_id', 'site_id'],
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->where(['SiteAuthors.id IN' => [1, 3]])
             ->contain('SiteArticles')
@@ -569,7 +569,7 @@ class CompositeKeysTest extends TestCase
         $table = $this->getTableLocator()->get('SiteAuthors');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['_addDefaultFields', 'execute'])
-            ->setConstructorArgs([$table->getConnection(), $table])
+            ->setConstructorArgs([$table])
             ->getMock();
 
         $items = new ResultSetDecorator([

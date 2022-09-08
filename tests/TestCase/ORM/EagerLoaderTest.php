@@ -191,7 +191,7 @@ class EagerLoaderTest extends TestCase
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['join'])
-            ->setConstructorArgs([$this->connection, $this->table])
+            ->setConstructorArgs([$this->table])
             ->getMock();
 
         $query->setTypeMap($this->clientsTypeMap);
@@ -410,7 +410,7 @@ class EagerLoaderTest extends TestCase
         ]);
         $builder = $loader->getContain()['clients']['queryBuilder'];
         $table = $this->getTableLocator()->get('foo');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query = $builder($query);
         $this->assertEquals(['a', 'b'], $query->clause('select'));
     }
@@ -430,7 +430,7 @@ class EagerLoaderTest extends TestCase
         ];
 
         $table = $this->getTableLocator()->get('foo');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $loader = new EagerLoader();
         $loader->contain($contains);
         $query->select('foo.id');
@@ -454,7 +454,7 @@ class EagerLoaderTest extends TestCase
     {
         $contains = ['clients' => ['orders']];
 
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $query->select()->contain($contains)->sql();
         $select = $query->clause('select');
         $expected = [
@@ -467,7 +467,7 @@ class EagerLoaderTest extends TestCase
         $this->assertEquals($expected, $select);
 
         $contains['clients']['fields'] = ['name'];
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $query->select('foo.id')->contain($contains)->sql();
         $select = $query->clause('select');
         $expected = ['foo__id' => 'foo.id', 'clients__name' => 'clients.name'];
@@ -476,7 +476,7 @@ class EagerLoaderTest extends TestCase
 
         $contains['clients']['fields'] = [];
         $contains['clients']['orders']['fields'] = false;
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $query->select()->contain($contains)->sql();
         $select = $query->clause('select');
         $expected = [
@@ -509,7 +509,7 @@ class EagerLoaderTest extends TestCase
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['join'])
-            ->setConstructorArgs([$this->connection, $this->table])
+            ->setConstructorArgs([$this->table])
             ->getMock();
 
         $loader = new EagerLoader();

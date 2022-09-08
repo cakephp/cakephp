@@ -154,7 +154,7 @@ class QueryTest extends TestCase
      */
     public function testGetRepository(): void
     {
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
 
         $result = $query->getRepository();
         $this->assertSame($this->table, $result);
@@ -171,7 +171,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $table->belongsTo('authors', ['strategy' => $strategy]);
 
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->contain('authors')
             ->enableHydration(false)
@@ -232,7 +232,7 @@ class QueryTest extends TestCase
             'strategy' => $strategy,
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $results = $query->select()
             ->contain('articles')
@@ -310,7 +310,7 @@ class QueryTest extends TestCase
             'strategy' => $strategy,
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $query = $query->select()
             ->contain('articles');
@@ -337,7 +337,7 @@ class QueryTest extends TestCase
         $this->getTableLocator()->get('articles');
         $table->hasMany('articles', ['propertyName' => 'articles'] + compact('strategy'));
 
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->contain([
                 'articles' => [
@@ -392,7 +392,7 @@ class QueryTest extends TestCase
             'sort' => ['articles.id' => 'asc'],
         ]);
         $article->belongsTo('authors');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $results = $query->select()
             ->contain(['articles' => ['authors']])
@@ -467,7 +467,7 @@ class QueryTest extends TestCase
         ]);
         $article->belongsTo('authors');
 
-        $query = new Query($this->connection, $article);
+        $query = new Query($article);
 
         $results = $query->select()
             ->contain(['authors' => ['posts']])
@@ -571,7 +571,7 @@ class QueryTest extends TestCase
             'strategy' => $strategy,
             'sort' => 'tag_id',
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $results = $query->select()->contain('Tags')->disableHydration()->toArray();
         $expected = [
@@ -679,7 +679,7 @@ class QueryTest extends TestCase
      */
     public function testFilteringByHasManyNoHydration(): void
     {
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
 
@@ -719,7 +719,7 @@ class QueryTest extends TestCase
     public function testFilteringByHasManyHydration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $table->hasMany('Comments');
 
         $result = $query->setRepository($table)
@@ -740,7 +740,7 @@ class QueryTest extends TestCase
      */
     public function testFilteringByBelongsToManyNoHydration(): void
     {
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $table = $this->getTableLocator()->get('Articles');
         $this->getTableLocator()->get('Tags');
         $this->getTableLocator()->get('ArticlesTags', [
@@ -774,7 +774,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results);
 
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.name' => 'tag2']);
@@ -807,7 +807,7 @@ class QueryTest extends TestCase
      */
     public function testMatchingDotNotation(): void
     {
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
         $table->hasMany('articles');
@@ -853,7 +853,7 @@ class QueryTest extends TestCase
      */
     public function testSetResult(): void
     {
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
 
         $results = new ResultSet([]);
         $query->setResult($results);
@@ -869,7 +869,7 @@ class QueryTest extends TestCase
     public function testClearResult(): void
     {
         $article = $this->getTableLocator()->get('articles');
-        $query = new Query($this->connection, $article);
+        $query = new Query($article);
 
         $firstCount = $query->count();
         $firstResults = $query->toArray();
@@ -927,7 +927,7 @@ class QueryTest extends TestCase
             'contain' => ['articles'],
             'join' => ['table_a' => ['conditions' => ['a > b']]],
         ];
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $query->applyOptions($options);
 
         $this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
@@ -962,7 +962,7 @@ class QueryTest extends TestCase
      */
     public function testApplyOptionsPageIsLast(): void
     {
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $opts = [
             'page' => 3,
             'limit' => 5,
@@ -980,7 +980,7 @@ class QueryTest extends TestCase
         $options = [
             'fields' => null,
         ];
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $query->applyOptions($options);
         $this->assertEquals([], $query->clause('select'));
     }
@@ -991,7 +991,7 @@ class QueryTest extends TestCase
     public function testGetOptions(): void
     {
         $options = ['doABarrelRoll' => true, 'fields' => ['id', 'name']];
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $query->applyOptions($options);
         $expected = ['doABarrelRoll' => true];
         $this->assertEquals($expected, $query->getOptions());
@@ -1010,7 +1010,7 @@ class QueryTest extends TestCase
         };
         $mapper2 = function (): void {
         };
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $this->assertSame($query, $query->mapReduce($mapper1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => null]],
@@ -1041,7 +1041,7 @@ class QueryTest extends TestCase
         };
         $reducer2 = function (): void {
         };
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
@@ -1071,7 +1071,7 @@ class QueryTest extends TestCase
         };
         $reducer2 = function (): void {
         };
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
@@ -1091,7 +1091,7 @@ class QueryTest extends TestCase
     public function testResultsAreWrappedInMapReduce(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select(['a' => 'id'])->limit(2)->order(['id' => 'ASC']);
         $query->mapReduce(function ($v, $k, $mr): void {
             $mr->emit($v['a']);
@@ -1114,7 +1114,7 @@ class QueryTest extends TestCase
     public function testFirstDirtyQuery(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $result = $query->select(['id'])->enableHydration(false)->first();
         $this->assertEquals(['id' => 1], $result);
         $this->assertEquals(1, $query->clause('limit'));
@@ -1128,7 +1128,7 @@ class QueryTest extends TestCase
     public function testFirstCleanQuery(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select(['id'])->toArray();
 
         $first = $query->enableHydration(false)->first();
@@ -1142,7 +1142,7 @@ class QueryTest extends TestCase
     public function testFirstSameResult(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select(['id'])->toArray();
 
         $first = $query->enableHydration(false)->first();
@@ -1164,7 +1164,7 @@ class QueryTest extends TestCase
         };
 
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select(['id'])
             ->enableHydration(false)
             ->mapReduce($map, $reduce);
@@ -1179,7 +1179,7 @@ class QueryTest extends TestCase
     public function testFirstUnbuffered(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select(['id']);
 
         $first = $query->enableHydration(false)->first();
@@ -1193,7 +1193,7 @@ class QueryTest extends TestCase
     public function testHydrateSimple(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()->toArray();
 
         $this->assertCount(3, $results);
@@ -1220,7 +1220,7 @@ class QueryTest extends TestCase
             'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->contain('articles')
             ->toArray();
@@ -1260,7 +1260,7 @@ class QueryTest extends TestCase
             'table' => 'articles_tags',
         ]);
         $table->belongsToMany('Tags');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $results = $query
             ->select()
@@ -1318,7 +1318,7 @@ class QueryTest extends TestCase
                 });
             });
 
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $results = $query
             ->select()
@@ -1371,7 +1371,7 @@ class QueryTest extends TestCase
         $this->getTableLocator()->get('authors');
         $table->belongsTo('authors', ['strategy' => $strategy]);
 
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->contain('authors')
             ->order(['articles.id' => 'asc'])
@@ -1398,7 +1398,7 @@ class QueryTest extends TestCase
             'sort' => ['articles.id' => 'asc'],
         ]);
         $article->belongsTo('authors', ['strategy' => $strategy]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $results = $query->select()
             ->contain(['articles' => ['authors']])
@@ -1422,7 +1422,7 @@ class QueryTest extends TestCase
             'table' => 'articles',
             'entityClass' => '\\' . $class,
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()->toArray();
 
         $this->assertCount(3, $results);
@@ -1456,7 +1456,7 @@ class QueryTest extends TestCase
             'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->contain('articles')
             ->toArray();
@@ -1490,7 +1490,7 @@ class QueryTest extends TestCase
         ]);
         $table->belongsTo('authors');
 
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->select()
             ->contain('authors')
             ->order(['articles.id' => 'asc'])
@@ -1755,7 +1755,7 @@ class QueryTest extends TestCase
         /** @var \Cake\ORM\Query $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all'])
-            ->setConstructorArgs([$this->connection, $this->table])
+            ->setConstructorArgs([$this->table])
             ->getMock();
 
         $query->contain([
@@ -1781,7 +1781,7 @@ class QueryTest extends TestCase
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['execute'])
-            ->setConstructorArgs([$this->connection, $this->table])
+            ->setConstructorArgs([$this->table])
             ->getMock();
         $resultSet = new ResultSet([]);
 
@@ -1807,7 +1807,7 @@ class QueryTest extends TestCase
     public function testCacheWriteIntegration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
 
         $query->select(['id', 'title']);
 
@@ -1832,7 +1832,7 @@ class QueryTest extends TestCase
     public function testCacheIntegrationWithFormatResults(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $cacher = new FileEngine();
         $cacher->init();
 
@@ -1844,7 +1844,7 @@ class QueryTest extends TestCase
             ->cache('my_key', $cacher);
 
         $expected = $query->toArray();
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $results = $query->cache('my_key', $cacher)->toArray();
         $this->assertSame($expected, $results);
     }
@@ -1876,7 +1876,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query
             ->select()
             ->contain([
@@ -1902,7 +1902,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query
             ->select()
             ->contain('articles', function ($q) {
@@ -1922,7 +1922,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query
             ->select()
             ->contain('articles', function ($q) {
@@ -1942,7 +1942,7 @@ class QueryTest extends TestCase
         $this->expectException(DatabaseException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select()
             ->contain([
                 'Articles' => [
@@ -1963,7 +1963,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasOne('Articles');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select()
             ->contain([
                 'Articles' => [
@@ -1979,7 +1979,7 @@ class QueryTest extends TestCase
 
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
-        $query = new Query($this->connection, $articles);
+        $query = new Query($articles);
         $query->select()
             ->contain([
                 'Authors' => [
@@ -2019,7 +2019,7 @@ class QueryTest extends TestCase
         $callback2 = function (): void {
         };
         $table = $this->getTableLocator()->get('authors');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $this->assertSame($query, $query->formatResults($callback1));
         $this->assertSame([$callback1], $query->getResultFormatters());
         $this->assertSame($query, $query->formatResults($callback2));
@@ -2203,7 +2203,7 @@ class QueryTest extends TestCase
     public function testQueryWithFormatter(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 
@@ -2218,7 +2218,7 @@ class QueryTest extends TestCase
     public function testQueryWithStackedFormatters(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $query = new Query($this->connection, $table);
+        $query = new Query($table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 
@@ -3069,7 +3069,7 @@ class QueryTest extends TestCase
      */
     public function testMatchingWithContain(): void
     {
-        $query = new Query($this->connection, $this->table);
+        $query = new Query($this->table);
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $this->getTableLocator()->get('articles')->belongsToMany('tags');
@@ -3735,7 +3735,7 @@ class QueryTest extends TestCase
     {
         $post = $this->getTableLocator()->get('posts');
 
-        $query = new Query($this->connection, $post);
+        $query = new Query($post);
 
         $results = $query
             ->select([

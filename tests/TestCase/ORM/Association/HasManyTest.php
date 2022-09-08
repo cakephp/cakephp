@@ -452,7 +452,7 @@ class HasManyTest extends TestCase
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all', 'andWhere', 'getRepository'])
-            ->setConstructorArgs([ConnectionManager::get('test'), $this->article])
+            ->setConstructorArgs([$this->article])
             ->getMock();
         $query->method('getRepository')
             ->will($this->returnValue($this->article));

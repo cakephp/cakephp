@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Query;
 
-use Cake\Database\Connection;
 use Cake\Database\Query\DeleteQuery as DbDeleteQuery;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Table;
@@ -31,12 +30,11 @@ class DeleteQuery extends DbDeleteQuery
     /**
      * Constructor
      *
-     * @param \Cake\Database\Connection $connection The connection object
      * @param \Cake\ORM\Table $table The table this query is starting on
      */
-    public function __construct(Connection $connection, Table $table)
+    public function __construct(Table $table)
     {
-        parent::__construct($connection);
+        parent::__construct($table->getConnection());
 
         $this->setRepository($table);
         $this->addDefaultTypes($table);
