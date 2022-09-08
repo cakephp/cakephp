@@ -469,6 +469,15 @@ class RouterTest extends TestCase
         $expected = '/CakePlugin/1/0';
         $this->assertSame($expected, $result);
 
+        $result = Router::url([
+            'plugin' => 'CakePlugin',
+            'controller' => 'Posts',
+            'action' => 'view',
+            'id' => '1',
+            null,
+        ]);
+        $expected = '/CakePlugin/1';
+
         Router::reload();
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/{controller}/{action}/{id}', [], ['id' => $ID]);
