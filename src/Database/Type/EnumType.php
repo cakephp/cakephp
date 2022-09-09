@@ -41,20 +41,28 @@ class EnumType extends BaseType
     protected string $backingType;
 
     /**
+     * The enum classname which is associated to the type instance
+     *
+     * @var string
+     */
+    protected string $enumClassName;
+
+    /**
      * @param string $name The name identifying this type
      * @param string $enumClassName The associated enum class name
      */
     public function __construct(
         string $name,
-        protected string $enumClassName
+        string $enumClassName
     ) {
         parent::__construct($name);
+        $this->enumClassName = $enumClassName;
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
             $this->backingType = (string)$reflectionEnum->getBackingType();
         } catch (ReflectionException) {
             throw new DatabaseException(
-                sprintf('Given enum %s is not a backed enum', $enumClassName)
+                sprintf('Unable to map enum %s for type %s, must be a backed enum.', $enumClassName, $name)
             );
         }
     }
@@ -74,13 +82,6 @@ class EnumType extends BaseType
 
         if ($value instanceof BackedEnum) {
             return $value->value;
-        }
-
-        if (is_int($value) || is_string($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Expected value of type BackedEnum, `%s` given.',
-                get_debug_type($value)
-            ));
         }
 
         throw new InvalidArgumentException(sprintf(
@@ -104,8 +105,9 @@ class EnumType extends BaseType
 
         if (get_debug_type($value) !== $this->backingType) {
             throw new InvalidArgumentException(sprintf(
-                'Given value type `%s` does not match associated `%s` backed enum',
+                'Cannot convert value of type %s to %s with type %s',
                 get_debug_type($value),
+                $this->enumClassName,
                 $this->backingType
             ));
         }
@@ -156,9 +158,9 @@ class EnumType extends BaseType
         $enumInstance = $this->enumClassName::tryFrom($value);
         if ($enumInstance === null) {
             throw new InvalidArgumentException(sprintf(
-                'Given value `%s` is not present inside associated `%s` backed enum',
-                $value,
-                $this->enumClassName
+                'Unable to marshal value to %s, got %s',
+                $this->enumClassName,
+                get_debug_type($value),
             ));
         }
 
@@ -172,13 +174,13 @@ class EnumType extends BaseType
      *
      * ```
      * // In a table class
-     * $this->getSchema()->setColumnType('status', EnumType::for(StatusEnum::class));
+     * $this->getSchema()->setColumnType('status', EnumType::from(StatusEnum::class));
      * ```
      *
      * @param string $enumClassName The enum class name
      * @return string
      */
-    public static function for(string $enumClassName): string
+    public static function from(string $enumClassName): string
     {
         $typeName = 'enum-' . strtolower(Text::slug($enumClassName));
         $instance = new EnumType($typeName, $enumClassName);
