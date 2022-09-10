@@ -512,28 +512,17 @@ class TableTest extends TestCase
         $this->assertNotNull($table->setSchema($schema));
     }
 
-    /**
-     * Tests that _initializeSchema can be used to alter the database schema
-     */
-    public function testSchemaInitialize(): void
+    public function testSchemaTypeOverrideInInitialize(): void
     {
-        $schema = $this->connection->getSchemaCollection()->describe('users');
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_initializeSchema'])
-            ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
-            ->getMock();
-        $table->expects($this->once())
-            ->method('_initializeSchema')
-            ->with($schema)
-            ->will($this->returnCallback(function ($schema) {
-                $schema->setColumnType('username', 'integer');
+        $table = new class (['table' => 'users', 'connection' => $this->connection]) extends Table {
+            public function initialize(array $config): void
+            {
+                $this->getSchema()->setColumnType('username', 'foobar');
+            }
+        };
 
-                return $schema;
-            }));
         $result = $table->getSchema();
-        $schema->setColumnType('username', 'integer');
-        $this->assertEquals($schema, $result);
-        $this->assertEquals($schema, $table->getSchema(), '_initializeSchema should be called once');
+        $this->assertSame('foobar', $result->getColumnType('username'));
     }
 
     /**
