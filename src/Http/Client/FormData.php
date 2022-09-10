@@ -17,6 +17,7 @@ namespace Cake\Http\Client;
 
 use Countable;
 use finfo;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Provides an interface for building
@@ -101,7 +102,7 @@ class FormData implements Countable
         if (is_string($name)) {
             if (is_array($value)) {
                 $this->addRecursive($name, $value);
-            } elseif (is_resource($value)) {
+            } elseif (is_resource($value) || $value instanceof UploadedFileInterface) {
                 $this->addFile($name, $value);
             } else {
                 $this->_parts[] = $this->newPart($name, (string)$value);
@@ -136,7 +137,8 @@ class FormData implements Countable
      * or a file handle.
      *
      * @param string $name The name to use.
-     * @param mixed $value Either a string filename, or a filehandle.
+     * @param string|resource|\Psr\Http\Message\UploadedFileInterface $value Either a string filename, or a filehandle,
+     *  or a UploadedFileInterface instance.
      * @return \Cake\Http\Client\FormDataPart
      */
     public function addFile(string $name, $value): FormDataPart
@@ -145,7 +147,11 @@ class FormData implements Countable
 
         $filename = false;
         $contentType = 'application/octet-stream';
-        if (is_resource($value)) {
+        if ($value instanceof UploadedFileInterface) {
+            $content = (string)$value->getStream();
+            $contentType = $value->getClientMediaType();
+            $filename = $value->getClientFilename();
+        } elseif (is_resource($value)) {
             $content = stream_get_contents($value);
             if (stream_is_local($value)) {
                 $finfo = new finfo(FILEINFO_MIME);
