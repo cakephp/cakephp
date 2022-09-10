@@ -81,6 +81,14 @@ class EnumType extends BaseType
         }
 
         if ($value instanceof BackedEnum) {
+            if (!$value instanceof $this->enumClassName) {
+                throw new InvalidArgumentException(sprintf(
+                    'Given value type `%s` does not match associated `%s` backed enum',
+                    get_debug_type($value),
+                    $this->backingType
+                ));
+            }
+
             return $value->value;
         }
 
@@ -124,7 +132,7 @@ class EnumType extends BaseType
      */
     public function toStatement(mixed $value, Driver $driver): int
     {
-        if (is_int($value)) {
+        if ($this->backingType === 'int') {
             return PDO::PARAM_INT;
         }
 

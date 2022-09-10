@@ -104,8 +104,8 @@ class EnumTypeTest extends TestCase
         $this->assertSame('Y', $this->stringtype->toDatabase(ArticleStatus::PUBLISHED, $this->driver));
         $this->expectException(InvalidArgumentException::class);
         $this->assertSame('Y', $this->stringtype->toDatabase(ArticleStatus::PUBLISHED->value, $this->driver));
-        $this->expectException(InvalidArgumentException::class);
         $this->stringtype->toDatabase([1, 2], $this->driver);
+        $this->stringtype->toDatabase(Priority::HIGH, $this->driver);
     }
 
     /**
@@ -117,8 +117,8 @@ class EnumTypeTest extends TestCase
         $this->assertSame(3, $this->integertype->toDatabase(Priority::HIGH, $this->driver));
         $this->expectException(InvalidArgumentException::class);
         $this->assertSame(3, $this->integertype->toDatabase(Priority::HIGH->value, $this->driver));
-        $this->expectException(InvalidArgumentException::class);
         $this->integertype->toDatabase('Y', $this->driver);
+        $this->integertype->toDatabase(ArticleStatus::PUBLISHED, $this->driver);
     }
 
     /**
@@ -148,8 +148,8 @@ class EnumTypeTest extends TestCase
      */
     public function testToStatement(): void
     {
-        $this->assertSame(PDO::PARAM_INT, $this->stringtype->toStatement(1, $this->driver));
         $this->assertSame(PDO::PARAM_STR, $this->stringtype->toStatement('Y', $this->driver));
+        $this->assertSame(PDO::PARAM_INT, $this->integertype->toStatement(1, $this->driver));
     }
 
     /**
@@ -320,6 +320,19 @@ class EnumTypeTest extends TestCase
         $entity->priority = Priority::HIGH;
         $featuredTags->save($entity);
         $this->assertSame(Priority::HIGH, $entity->priority);
+    }
+
+    /**
+     * Check updating an entity via a wrong backed enum instance throws an error
+     */
+    public function testTableUpdateWithWrongEnum(): void
+    {
+        $featuredTags = $this->getFeaturedTagsTable();
+        /** @var \TestApp\Model\Entity\Article $entity */
+        $entity = $featuredTags->get(1);
+        $entity->priority = ArticleStatus::PUBLISHED;
+        $this->expectException(InvalidArgumentException::class);
+        $featuredTags->save($entity);
     }
 
     private function getArticlesTable(): Table
