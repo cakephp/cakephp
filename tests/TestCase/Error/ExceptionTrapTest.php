@@ -29,6 +29,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
+use RuntimeException;
 use TestApp\Error\LegacyErrorLogger;
 use Throwable;
 
@@ -159,6 +160,25 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('nope', $out[0]);
         $this->assertStringContainsString('Stack', $out[0]);
         $this->assertStringContainsString('->testHandleExceptionConsoleRenderingWithStack', $out[0]);
+    }
+
+    public function testHandleExceptionConsoleRenderingWithPrevious()
+    {
+        $output = new StubConsoleOutput();
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => ConsoleExceptionRenderer::class,
+            'stderr' => $output,
+            'trace' => true,
+        ]);
+        $previous = new RuntimeException('underlying error');
+        $error = new InvalidArgumentException('nope', 0, $previous);
+
+        $trap->handleException($error);
+        $out = $output->messages();
+
+        $this->assertStringContainsString('nope', $out[0]);
+        $this->assertStringContainsString('Caused by [RuntimeException] underlying error', $out[0]);
+        $this->assertEquals(2, substr_count($out[0], 'Stack Trace'));
     }
 
     public function testHandleExceptionConsoleWithAttributes()
