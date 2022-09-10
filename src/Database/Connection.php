@@ -20,7 +20,6 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
-use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
@@ -207,50 +206,6 @@ class Connection implements ConnectionInterface
     public function getDriver(): Driver
     {
         return $this->_driver;
-    }
-
-    /**
-     * Connects to the configured database.
-     *
-     * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
-     * @return void
-     */
-    public function connect(): void
-    {
-        try {
-            $this->_driver->connect();
-        } catch (MissingConnectionException $e) {
-            throw $e;
-        } catch (Throwable $e) {
-            throw new MissingConnectionException(
-                [
-                    'driver' => App::shortName(get_class($this->_driver), 'Database/Driver'),
-                    'reason' => $e->getMessage(),
-                ],
-                null,
-                $e
-            );
-        }
-    }
-
-    /**
-     * Disconnects from database server.
-     *
-     * @return void
-     */
-    public function disconnect(): void
-    {
-        $this->_driver->disconnect();
-    }
-
-    /**
-     * Returns whether connection to database server was already established.
-     *
-     * @return bool
-     */
-    public function isConnected(): bool
-    {
-        return $this->_driver->isConnected();
     }
 
     /**

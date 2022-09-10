@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\MissingConnectionException;
@@ -240,10 +241,7 @@ class SqlserverTest extends TestCase
         $driver->method('enabled')
             ->will($this->returnValue(true));
 
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
@@ -288,10 +286,7 @@ class SqlserverTest extends TestCase
         $driver->method('enabled')
             ->will($this->returnValue(true));
 
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
@@ -410,10 +405,7 @@ class SqlserverTest extends TestCase
             ->getMock();
         $driver->method('enabled')
             ->will($this->returnValue(true));
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
         $query = new InsertQuery($connection);
         $query->insert(['title'])
             ->into('articles')
@@ -437,10 +429,7 @@ class SqlserverTest extends TestCase
         $driver->method('enabled')
             ->will($this->returnValue(true));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
         $query
@@ -471,10 +460,7 @@ class SqlserverTest extends TestCase
         $driver->method('enabled')
             ->will($this->returnValue(true));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->onlyMethods(['connect'])
-            ->setConstructorArgs([['driver' => $driver, 'log' => false]])
-            ->getMock();
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
         $query
