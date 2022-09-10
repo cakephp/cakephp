@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\FormData;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\UploadedFile;
 
 /**
  * Test case for FormData.
@@ -175,6 +176,36 @@ class FormDataTest extends TestCase
             'Content-Type: text/plain; charset=us-ascii',
             '',
             $contents,
+            '--' . $boundary . '--',
+            '',
+        ];
+        $this->assertSame(implode("\r\n", $expected), $result);
+    }
+
+    /**
+     * Test adding a part with a UploadedFileInterface instance.
+     */
+    public function testAddFileUploadedFile(): void
+    {
+        $file = new UploadedFile(
+            CORE_PATH . 'VERSION.txt',
+            filesize(CORE_PATH . 'VERSION.txt'),
+            0,
+            'VERSION.txt',
+            'text/plain'
+        );
+
+        $data = new FormData();
+        $data->add('upload', $file);
+        $boundary = $data->boundary();
+        $result = (string)$data;
+
+        $expected = [
+            '--' . $boundary,
+            'Content-Disposition: form-data; name="upload"; filename="VERSION.txt"',
+            'Content-Type: text/plain',
+            '',
+            (string)$file->getStream(),
             '--' . $boundary . '--',
             '',
         ];
