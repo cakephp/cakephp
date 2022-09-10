@@ -573,11 +573,26 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test positional argument parsing.
      */
-    public function testPositionalArgument(): void
+    public function testAddArgument(): void
     {
         $parser = new ConsoleOptionParser('test', false);
         $result = $parser->addArgument('name', ['help' => 'An argument']);
         $this->assertEquals($parser, $result, 'Should return this');
+    }
+
+    /**
+     * Add arguments that were once considered the same
+     */
+    public function testAddArgumentDuplicate(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addArgument('first', ['help' => 'An argument', 'choices' => [1, 2]])
+            ->addArgument('second', ['help' => 'An argument', 'choices' => [1, 2]]);
+        $args = $parser->arguments();
+        $this->assertCount(2, $args);
+        $this->assertEquals('first', $args[0]->name());
+        $this->assertEquals('second', $args[1]->name());
     }
 
     /**
