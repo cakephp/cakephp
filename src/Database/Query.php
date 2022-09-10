@@ -63,6 +63,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected $_connection;
 
     /**
+     * Connection role.
+     *
+     * @var string|null
+     */
+    protected $connectionRole;
+
+    /**
      * Type of this query (select, insert, update, delete).
      *
      * @var string
@@ -227,6 +234,40 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function getConnection(): Connection
     {
         return $this->_connection;
+    }
+
+    /**
+     * Overrides the default connection role.
+     *
+     * @param string $role Connection role
+     * @return $this
+     */
+    public function setConnectionRole(string $role)
+    {
+        $this->connectionRole = $role;
+
+        return $this;
+    }
+
+    /**
+     * Returns the connection role for the query.
+     *
+     * Defaults to Connection::ROLE_REPLICA for select queries.
+     * You can override the default using setConnectionRole().
+     *
+     * @return string
+     */
+    public function getConnectionRole(): string
+    {
+        if ($this->connectionRole !== null) {
+            return $this->connectionRole;
+        }
+
+        if ($this->_type === 'select') {
+            return Connection::ROLE_REPLICA;
+        }
+
+        return Connection::ROLE_PRIMARY;
     }
 
     /**

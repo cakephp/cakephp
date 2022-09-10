@@ -1306,11 +1306,10 @@ class ConnectionTest extends TestCase
         $statement->execute();
         $statement->closeCursor();
 
-        $prop = new ReflectionProperty($conn, '_driver');
+        $prop = new ReflectionProperty($conn, 'roles');
         $prop->setAccessible(true);
-        $oldDriver = $prop->getValue($conn);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-        $prop->setValue($conn, $newDriver);
+        $prop->setValue($conn, ['primary' => $newDriver,'replica' => $newDriver]);
 
         $newDriver->expects($this->exactly(2))
             ->method('prepare')
