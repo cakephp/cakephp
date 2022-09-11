@@ -25,6 +25,7 @@ use InvalidArgumentException;
 use PDO;
 use ReflectionEnum;
 use ReflectionException;
+use Throwable;
 
 /**
  * Enum type converter.
@@ -111,16 +112,15 @@ class EnumType extends BaseType
             return null;
         }
 
-        if (get_debug_type($value) !== $this->backingType) {
+        try {
+            return $this->enumClassName::tryFrom($value);
+        } catch (Throwable $e) {
             throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type %s to %s with type %s',
+                'Cannot convert value of type %s to %s',
                 get_debug_type($value),
                 $this->enumClassName,
-                $this->backingType
             ));
         }
-
-        return $this->enumClassName::tryFrom($value);
     }
 
     /**
