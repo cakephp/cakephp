@@ -43,13 +43,13 @@ class EnumType extends BaseType
     /**
      * The enum classname which is associated to the type instance
      *
-     * @var string
+     * @var class-string<\BackedEnum>
      */
     protected string $enumClassName;
 
     /**
      * @param string $name The name identifying this type
-     * @param string $enumClassName The associated enum class name
+     * @param class-string<\BackedEnum> $enumClassName The associated enum class name
      */
     public function __construct(
         string $name,
@@ -62,7 +62,7 @@ class EnumType extends BaseType
             $this->backingType = (string)$reflectionEnum->getBackingType();
         } catch (ReflectionException) {
             throw new DatabaseException(
-                sprintf('Unable to map enum %s for type %s, must be a backed enum.', $enumClassName, $name)
+                sprintf('Unable to use enum %s for type %s, must be a backed enum.', $enumClassName, $name)
             );
         }
     }
@@ -111,13 +111,11 @@ class EnumType extends BaseType
             return null;
         }
 
-        if (get_debug_type($value) !== $this->backingType) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type %s to %s with type %s',
-                get_debug_type($value),
-                $this->enumClassName,
-                $this->backingType
-            ));
+        if ($this->backingType === 'int' && is_string($value)) {
+            $intVal = filter_var($value, FILTER_VALIDATE_INT);
+            if ($intVal !== false) {
+                $value = $intVal;
+            }
         }
 
         return $this->enumClassName::tryFrom($value);
