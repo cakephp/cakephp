@@ -2581,6 +2581,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function callFinder(string $type, Query $query, array $options = []): Query
     {
+        assert(empty($options) || !array_is_list($options), 'Finder options should be an associative array not a list');
+
         $query->applyOptions($options);
         $options = $query->getOptions();
         $finder = 'find' . $type;
