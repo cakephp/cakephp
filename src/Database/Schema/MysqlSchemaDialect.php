@@ -238,7 +238,7 @@ class MysqlSchemaDialect extends SchemaDialect
             $name = $type = TableSchema::CONSTRAINT_PRIMARY;
         }
 
-        if (strlen($row['Column_name'] ?? '')) {
+        if (!empty($row['Column_name'])) {
             $columns[] = $row['Column_name'];
         }
 
