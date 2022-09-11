@@ -238,7 +238,9 @@ class MysqlSchemaDialect extends SchemaDialect
             $name = $type = TableSchema::CONSTRAINT_PRIMARY;
         }
 
-        $columns[] = $row['Column_name'];
+        if (!empty($row['Column_name'])) {
+            $columns[] = $row['Column_name'];
+        }
 
         if ($row['Index_type'] === 'FULLTEXT') {
             $type = TableSchema::INDEX_FULLTEXT;
